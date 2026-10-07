@@ -1,0 +1,1109 @@
+--- before/Assets/_Project/Scripts/ElementField/Solids/FixedSolidWorldProfile.cs
++++ after/Assets/_Project/Scripts/ElementField/Solids/FixedSolidWorldProfile.cs
+@@ -19,6 +19,8 @@
+         [SerializeField, Min(1)] private int _cellCapacityGmu = 1024;
+         [SerializeField, Min(1)] private int _maximumPendingDeposits = 128;
+         [SerializeField, Range(1, 64)] private int _maximumCellsPerTick = 32;
++        [Tooltip("一次出生的成块边长，单位为现有细格。只改变排列，不改变数量和世界查询精度。")]
++        [SerializeField, Range(1, 2)] private int _depositGrainCells = 1;
+         [SerializeField, Range(1, 8)] private int _maximumColliderChunksPerTick = 8;
+         [SerializeField, Range(1, 32)] private int _maximumNavigationBoxesPerChunk = 16;
+         [SerializeField] private FixedSolidMaterialBehavior[] _materials =
+@@ -30,6 +32,7 @@
+         public uint CellCapacityGmu => (uint)_cellCapacityGmu;
+         public int MaximumPendingDeposits => _maximumPendingDeposits;
+         public int MaximumCellsPerTick => _maximumCellsPerTick;
++        public int DepositGrainCells => _depositGrainCells;
+         public int MaximumColliderChunksPerTick => _maximumColliderChunksPerTick;
+         public int MaximumNavigationBoxesPerChunk => _maximumNavigationBoxesPerChunk;
+         public int MaterialCount => _materials != null ? _materials.Length : 0;
+--- before/Assets/_Project/Scripts/ElementField/Solids/FixedSolidWorldRuntime.cs
++++ after/Assets/_Project/Scripts/ElementField/Solids/FixedSolidWorldRuntime.cs
+@@ -28,7 +28,10 @@
+         private readonly Vector3Int[] _depositCells = new Vector3Int[64];
+         private readonly MaterialId[] _depositMaterials = new MaterialId[64];
+         private readonly uint[] _depositAmounts = new uint[64];
+-        private int _depositCellLimit;
++        private int _depositRequestLimit;
++        private readonly Vector3Int[] _grainCells = new Vector3Int[8];
++        private readonly uint[] _grainFree = new uint[8];
++        private readonly uint[] _grainAmounts = new uint[8];
+         public bool IsMaterialInitialized => _store != null;
+         public int ResidentCellCount => _store != null ? _store.ResidentCellCount : 0;
+         public int ResidentChunkCount => _store != null ? _store.ResidentChunkCount : 0;
+@@ -40,6 +43,9 @@
+         public int SurfaceCapacity => _physics != null ? _physics.Capacity : 0;
+         public uint SurfaceRebuildCount => _physics != null ? _physics.RebuildCount : 0;
+         public uint DeferredDeposits { get; private set; }
++        public int MaximumChunks => _store != null ? _store.MaximumChunks : 0;
++        public uint ChunkCapacityRejections { get; private set; }
++        public uint GeometryCapacityRejections { get; private set; }
+         public bool TryInitialize(ElementWorldRuntime world, ElementFieldSolidBaker baker, Vector3 origin, float size, int chunkSize)
+         {
+             if (_store != null) return true;
+@@ -47,6 +53,7 @@
+                 || !FluidSpawnRequestValidator.IsFinite(origin) || _profile.MaterialCount == 0
+                 || _profile.MaximumNavigationBoxesPerChunk < 1 || _profile.MaximumCellsPerTick < 1
+                 || _profile.MaximumCellsPerTick > _depositWork.Length || _profile.MaximumColliderChunksPerTick < 1
++                || _profile.DepositGrainCells < 1 || _profile.DepositGrainCells > 2
+                 || _profile.CellCapacityGmu == 0 || _profile.CellCapacityGmu > int.MaxValue) return false;
+             try
+             {
+@@ -64,7 +71,7 @@
+                 _store = new FixedSolidVolumeStore(chunkSize, _profile.MaximumChunks, _profile.CellCapacityGmu, materials);
+                 _conversionDirty = new ElementChunkKey[_profile.MaximumChunks];
+                 _pending = new MaterialPhaseDepositQueue(_profile.MaximumPendingDeposits);
+-                _depositCellLimit=_profile.MaximumCellsPerTick;
++                _depositRequestLimit=_profile.MaximumCellsPerTick;
+                 _physics = new FixedSolidPhysicsAdapter(transform, _store, BlocksMaterial,
+                     _profile.MaximumNavigationBoxesPerChunk, origin, size);
+                 return true;
+@@ -104,10 +111,12 @@
+         {
+             if (_store == null || _pending.Count == 0) return;
+             BeginConversionGeometry();
+-            int count=Math.Min(_profile.MaximumCellsPerTick,_pending.Count),requests=0,writes=0,scanBudget=256;
++            int count=Math.Min(_depositRequestLimit,_pending.Count),requests=0,writes=0,scanBudget=256;
++            int cellLimit=_profile.MaximumCellsPerTick,grain=_profile.DepositGrainCells;
++            ulong grainCapacity=(ulong)CellCapacity*(uint)(grain*grain*grain);
+             // Journal 只覆盖本批；全部几何可准备后才发布 Collider。提高“写格数”仍只产生
+             // 有界的 Chunk Cooking，避免把生成延迟换成一帧十几次 MeshCollider 重建。
+-            for(int i=0;i<count && writes<_depositCellLimit && scanBudget>0;i++)
++            for(int i=0;i<count && writes<cellLimit && scanBudget>0;i++)
+             {
+                 _pending.TryDequeue(out MaterialPhasePendingDeposit pending);
+                 _depositOriginal[requests]=pending.Remaining;
+@@ -118,27 +127,20 @@
+                 Vector3 normal=pending.Request.SurfaceNormal;
+                 var outward=new Vector3Int(Mathf.RoundToInt(normal.x),Mathf.RoundToInt(normal.y),Mathf.RoundToInt(normal.z));
+                 for(int n=0;n<2 && _baker!=null && _baker.SampleEnvironmentSolidWorldCell(center,_origin,_size);n++) center+=outward;
+-                int massRadius=pending.Request.TotalAmount<=CellCapacity?0:(int)Math.Ceiling(Math.Pow(pending.Request.TotalAmount/(double)CellCapacity*2*3/(4*Math.PI),1d/3d))+1;
+-                int radius = Mathf.Clamp(Math.Max(Mathf.CeilToInt(pending.Request.Radius / _size),massRadius), 0, 4);
++                // X/Z 在负坐标同样向下对齐；Y 以地面空气锚点为块底，不能对齐后嵌回地板。
++                center.x=Mathf.FloorToInt(center.x/(float)grain)*grain;
++                center.z=Mathf.FloorToInt(center.z/(float)grain)*grain;
++                int massRadius=pending.Request.TotalAmount<=grainCapacity?0:(int)Math.Ceiling(Math.Pow(pending.Request.TotalAmount/(double)grainCapacity*2*3/(4*Math.PI),1d/3d))+1;
++                int radius = Mathf.Clamp(Math.Max(Mathf.CeilToInt(pending.Request.Radius / (_size*grain)),massRadius), 0, 4);
+                 int samples=MaterialPhaseDepositQueue.SampleCount(radius);
+                 bool placed = false;
+-                for(int scan=0;scan<Math.Min(128,samples) && scanBudget>0 && pending.Remaining>0 && writes<_depositCellLimit;scan++)
++                for(int scan=0;scan<Math.Min(128,samples) && scanBudget>0 && pending.Remaining>0 && writes<cellLimit;scan++)
+                 {
+                     scanBudget--;
+                     Vector3Int offset = MaterialPhaseDepositQueue.Offset(pending.Cursor++, radius);
+                     if (pending.Cursor >= samples) pending.Cursor = 0;
+-                    Vector3Int cell = center + offset;
+-                    uint free = CellCapacity - _store.OccupancyAt(cell);
+-                    uint amount = Math.Min(free, pending.Remaining);
+-                    var material=pending.Request.MaterialKind;
+-                    if(amount==0 || !CanTrackDepositCell(cell)
+-                        || _baker!=null && _baker.SampleEnvironmentSolidWorldCell(cell,_origin,_size)
+-                        || BlocksMaterial(material) && IntersectsActor(cell,amount)
+-                        || _world!=null && _world.HasFluidOrGasAt(cell)) continue;
+-                    if(BlocksWholeCell(material) && _world!=null && !_world.TryPrepareMaterialTopologyChange(cell,true)) continue;
+-                    if(!_store.TryAdd(cell,material,amount)) continue;
+-                    TrackConversionCell(cell);
+-                    _depositCells[writes]=cell; _depositMaterials[writes]=material; _depositAmounts[writes++]=amount;
++                    Vector3Int cell = center + offset*grain;
++                    if(!TryDepositGrain(cell,pending.Request.MaterialKind,pending.Remaining,ref writes,out uint amount)) continue;
+                     pending.Remaining -= amount; placed = true;
+                 }
+                 // 普通固体的一发 <= 完整 Tick 写格预算。空间/同帧其它命中挤占预算时，
+@@ -159,13 +161,16 @@
+                 CancelConversionGeometry();
+                 // 导航段容量拒绝复杂批次时下次缩小批次重试；真实 Pending 不丢失，
+                 // 也不能永久重复一个必然失败的大批次。
+-                _depositCellLimit=Math.Max(1,_depositCellLimit/2);
++                GeometryCapacityRejections++;
++                // 只缩小请求批数。单发写格预算不得小于完整实体所需格数，否则整发回滚
++                // 与“成功才恢复预算”互相等待，导致以后所有普通法术永久无法生成。
++                _depositRequestLimit=Math.Max(1,requests/2);
+             }
+             else if(writes>0)
+             {
+                 PublishConversionGeometry();
+                 for(int i=0;i<writes;i++) _world?.NotifyMaterialTopologyChanged(_depositCells[i]);
+-                _depositCellLimit=Math.Min(_profile.MaximumCellsPerTick,_depositCellLimit+1);
++                _depositRequestLimit=Math.Min(_profile.MaximumCellsPerTick,_depositRequestLimit+1);
+             }
+             for(int i=0;i<requests;i++)
+             {
+@@ -174,6 +179,74 @@
+                 _pending.Requeue(in pending);
+             }
+             _store.ReclaimEmptyChunks(); _physics.ReleaseUnused(_store);
++        }
++        private bool TryDepositGrain(Vector3Int minimum,MaterialId material,uint remaining,ref int writes,out uint added)
++        {
++            added=0;
++            int grain=_profile.DepositGrainCells,layerCells=grain*grain,cellCount=layerCells*grain;
++            int writeStart=writes,dirtyStart=_conversionDirtyCount;
++            uint left=remaining;
++            // 每层按剩余空位均分，少量尾量仅产生对应高度；不能把 1 GMU 放大为满块。
++            // 所有数组初始化时预约，出生、预检与回滚均没有堆分配。
++            for(int y=0;y<grain;y++)
++            {
++                ulong layerFree=0; int slots=0;
++                for(int z=0;z<grain;z++) for(int x=0;x<grain;x++)
++                {
++                    int index=y*layerCells+z*grain+x;
++                    var cell=minimum+new Vector3Int(x,y,z); _grainCells[index]=cell;
++                    uint occupied=_store.OccupancyAt(cell);
++                    if(occupied>0 && !_store.TryGetQuantity(cell,material,out _)) return false;
++                    uint free=CellCapacity-occupied; _grainFree[index]=free; _grainAmounts[index]=0;
++                    layerFree+=free; if(free>0) slots++;
++                }
++                uint layerLeft=(uint)Math.Min((ulong)left,layerFree); left-=layerLeft;
++                for(int n=y*layerCells;n<(y+1)*layerCells && layerLeft>0;n++)
++                {
++                    if(_grainFree[n]==0) continue;
++                    uint share=(uint)(((ulong)layerLeft+(uint)slots-1)/(uint)slots);
++                    uint amount=Math.Min(_grainFree[n],share);
++                    _grainAmounts[n]=amount; layerLeft-=amount; slots--;
++                }
++            }
++            if(left==remaining) return false;
++            int needed=0; for(int n=0;n<cellCount;n++) if(_grainAmounts[n]>0) needed++;
++            if(writes+needed>_profile.MaximumCellsPerTick) return false;
++            for(int n=0;n<cellCount;n++)
++            {
++                uint amount=_grainAmounts[n]; if(amount==0) continue;
++                var cell=_grainCells[n];
++                ElementWorldCoordinates.GlobalCellToChunkAndLocal(cell,_store.ChunkSize,out var candidateKey,out _);
++                if(_store.GetChunkVersion(candidateKey)==0 && _store.ResidentChunkCount>=_store.MaximumChunks)
++                { ChunkCapacityRejections++; _conversionDirtyCount=dirtyStart; return false; }
++                if(!CanTrackDepositCell(cell)
++                    || _baker!=null && _baker.SampleEnvironmentSolidWorldCell(cell,_origin,_size)
++                    || BlocksMaterial(material) && IntersectsActor(cell,amount)
++                    || _world!=null && _world.HasFluidOrGasAt(cell)
++                    || BlocksWholeCell(material) && _world!=null && !_world.TryPrepareMaterialTopologyChange(cell,true))
++                { _conversionDirtyCount=dirtyStart; return false; }
++                // 尚未写入的中心 Chunk 同样占有几何预约，整块跨 Chunk 时不能逐格漏算预算。
++                for(int d=0;d<_dirtyCount;d++)
++                {
++                    bool found=false; for(int i=0;i<_conversionDirtyCount;i++) found|=_conversionDirty[i].Equals(_dirty[d]);
++                    if(!found) _conversionDirty[_conversionDirtyCount++]=_dirty[d];
++                }
++            }
++            for(int n=0;n<cellCount;n++)
++            {
++                uint amount=_grainAmounts[n]; if(amount==0) continue;
++                var cell=_grainCells[n];
++                if(!_store.TryAdd(cell,material,amount))
++                {
++                    ElementWorldCoordinates.GlobalCellToChunkAndLocal(cell,_store.ChunkSize,out var key,out _);
++                    if(_store.GetChunkVersion(key)==0 && _store.ResidentChunkCount>=_store.MaximumChunks) ChunkCapacityRejections++;
++                    for(int i=writes-1;i>=writeStart;i--) UndoConversionAdd(_depositCells[i],material,_depositAmounts[i]);
++                    writes=writeStart; _conversionDirtyCount=dirtyStart; return false;
++                }
++                _depositCells[writes]=cell; _depositMaterials[writes]=material; _depositAmounts[writes++]=amount;
++                added+=amount;
++            }
++            return true;
+         }
+         private bool CanTrackDepositCell(Vector3Int cell)
+         {
+--- before/Assets/_Project/Scripts/ElementField/Solids/FixedSolidSurfaceBuilder.cs
++++ after/Assets/_Project/Scripts/ElementField/Solids/FixedSolidSurfaceBuilder.cs
+@@ -19,6 +19,16 @@
+         private readonly FixedSolidVolumeStore _store;
+         private readonly Func<MaterialId, bool> _blocks;
+         private readonly int _size;
++        private readonly int _haloSize;
++        private readonly uint[] _quantities;
++        private readonly MaterialId[] _materials;
++        private readonly Face[] _faces;
++        private struct Face
++        {
++            internal uint Lower,Upper;
++            internal MaterialId Material;
++            internal bool Matches(in Face other) => Upper>0 && Lower==other.Lower && Upper==other.Upper && Material==other.Material;
++        }
+         public int VertexCount { get; private set; }
+         public int IndexCount { get; private set; }
+         public int NavigationBoxCount { get; private set; }
+@@ -28,46 +38,50 @@
+             Vertices = new Vector3[checked(store.CellsPerChunk * 24)]; Normals = new Vector3[Vertices.Length];
+             MaterialIds = new Color32[Vertices.Length]; Indices = new int[checked(store.CellsPerChunk * 36)];
+             NavigationBoxes = new Bounds[maximumBoxes]; _navigationVisited = new bool[store.CellsPerChunk];
++            _haloSize=_size+2;
++            _quantities=new uint[checked(_haloSize*_haloSize*_haloSize)];
++            _materials=new MaterialId[_quantities.Length]; _faces=new Face[checked(_size*_size)];
+         }
+         public void Build(ElementChunkKey key, float cellSize, bool blockingOnly)
+         {
+             VertexCount = 0; IndexCount = 0;
+-            Vector3Int origin = new Vector3Int(key.X, key.Y, key.Z) * _size;
+-            for (int z = 0; z < _size; z++) for (int y = 0; y < _size; y++) for (int x = 0; x < _size; x++)
++            FillHalo(key,blockingOnly);
++            // Greedy Meshing 在二维面掩码合并同材质、同平面的矩形。数量仍保留细格，
++            // 只消除平面内的冗余顶点/三角形；洞口、台阶和 Chunk 外邻格均参与去面。
++            for(int direction=0;direction<6;direction++) for(int slice=0;slice<_size;slice++)
+             {
+-                var cell = origin + new Vector3Int(x, y, z);
+-                float h = Height(cell, blockingOnly, out MaterialId material); if (h <= 0) continue;
+-                Vector3 p = new Vector3(x, y, z) * cellSize; float top = p.y + h * cellSize;
+-                var id = new Color32((byte)material, 0, 0, 255);
+-                if (h < 1f || Height(cell + Vector3Int.up, blockingOnly, out _) == 0)
+-                    Quad(new Vector3(p.x, top, p.z + cellSize), new Vector3(p.x + cellSize, top, p.z + cellSize),
+-                        new Vector3(p.x + cellSize, top, p.z), new Vector3(p.x, top, p.z), Vector3.up, id);
+-                if (Height(cell + Vector3Int.down, blockingOnly, out _) < 1f)
+-                    Quad(p, p + Vector3.right * cellSize, p + new Vector3(cellSize, 0, cellSize),
+-                        p + Vector3.forward * cellSize, Vector3.down, id);
+-                Side(cell, p, top, h, Vector3Int.right, cellSize, blockingOnly, id);
+-                Side(cell, p, top, h, Vector3Int.left, cellSize, blockingOnly, id);
+-                Side(cell, p, top, h, Vector3Int.forward, cellSize, blockingOnly, id);
+-                Side(cell, p, top, h, Vector3Int.back, cellSize, blockingOnly, id);
++                for(int v=0;v<_size;v++) for(int u=0;u<_size;u++)
++                    _faces[u+v*_size]=GetFace(direction,slice,u,v);
++                for(int v=0;v<_size;v++) for(int u=0;u<_size;u++)
++                {
++                    Face face=_faces[u+v*_size]; if(face.Upper==0) continue;
++                    int width=1,height=1;
++                    while(u+width<_size && face.Matches(in _faces[u+width+v*_size])) width++;
++                    // 侧面的部分高度不能跨 Y 层合并，否则会把层间空隙错误封成实心墙。
++                    if(direction<2 || face.Lower==0 && face.Upper==_store.CellCapacity)
++                        while(v+height<_size && SameFaceRow(u,v+height,width,in face)) height++;
++                    EmitFace(direction,slice,u,v,width,height,cellSize,in face);
++                    for(int y=v;y<v+height;y++) for(int x=u;x<u+width;x++) _faces[x+y*_size]=default;
++                }
+             }
+         }
+         public bool BuildNavigationBoxes(ElementChunkKey key, float cellSize)
+         {
+             NavigationBoxCount = 0; Array.Clear(_navigationVisited, 0, _navigationVisited.Length);
+-            Vector3Int origin = new Vector3Int(key.X, key.Y, key.Z) * _size;
++            FillHalo(key,true);
+             // 先合并 X/Z 等高矩形，再合并满格的 Y 层；访问标记防止重复段，真实洞口保持开放。
+             for (int z = 0; z < _size; z++) for (int y = 0; y < _size; y++) for (int x = 0; x < _size; x++)
+             {
+                 int index = x + _size * (y + _size * z); if (_navigationVisited[index]) continue;
+-                float height = Height(origin + new Vector3Int(x, y, z), true, out _); if (height == 0) continue;
++                float height = CachedHeight(x,y,z); if (height == 0) continue;
+                 int end = x + 1;
+                 while (end < _size && !_navigationVisited[end + _size * (y + _size * z)]
+-                    && Height(origin + new Vector3Int(end, y, z), true, out _) == height) end++;
++                    && CachedHeight(end,y,z) == height) end++;
+                 int endZ = z + 1;
+-                while (endZ < _size && SameRectangle(origin, x, end, y, endZ, endZ + 1, height)) endZ++;
++                while (endZ < _size && SameRectangle(x, end, y, endZ, endZ + 1, height)) endZ++;
+                 int endY = y + 1;
+                 if (height == 1f)
+-                    while (endY < _size && SameRectangle(origin, x, end, endY, z, endZ, height)) endY++;
++                    while (endY < _size && SameRectangle(x, end, endY, z, endZ, height)) endY++;
+                 if (NavigationBoxCount == NavigationBoxes.Length) return false;
+                 for (int ny = y; ny < endY; ny++) for (int nz = z; nz < endZ; nz++) for (int nx = x; nx < end; nx++)
+                     _navigationVisited[nx + _size * (ny + _size * nz)] = true;
+@@ -76,43 +90,67 @@
+             }
+             return true;
+         }
+-        private bool SameRectangle(Vector3Int origin, int x, int end, int y, int z, int endZ, float height)
++        private bool SameRectangle(int x, int end, int y, int z, int endZ, float height)
+         {
+             for (int nz = z; nz < endZ; nz++) for (int nx = x; nx < end; nx++)
+                 if (_navigationVisited[nx + _size * (y + _size * nz)]
+-                    || Height(origin + new Vector3Int(nx, y, nz), true, out _) != height) return false;
++                    || CachedHeight(nx,y,nz) != height) return false;
+             return true;
+         }
+-        private float Height(Vector3Int cell, bool blockingOnly, out MaterialId material)
++        private int HaloIndex(int x,int y,int z) => x+1+_haloSize*(y+1+_haloSize*(z+1));
++        private float CachedHeight(int x,int y,int z) => _quantities[HaloIndex(x,y,z)]/(float)_store.CellCapacity;
++        private void FillHalo(ElementChunkKey key,bool blockingOnly)
+         {
+-            material = MaterialId.Empty;
+-            for (int m = 0; m < _store.MaterialCount; m++)
++            var origin=new Vector3Int(key.X,key.Y,key.Z)*_size;
++            // 缓存一次 (K+2)^3 Halo；后续六个面和 Navigation 的重复邻格访问只读数组，
++            // 不为每个面反复查询 Sparse Store。CPU 固定缓存不随地面大小或帧数增长。
++            for(int z=-1;z<=_size;z++) for(int y=-1;y<=_size;y++) for(int x=-1;x<=_size;x++)
+             {
+-                var id = _store.GetMaterial(m);
+-                if (blockingOnly && !_blocks(id)) continue;
+-                if (_store.TryGetQuantity(cell, id, out uint quantity))
+-                { material = id; return quantity / (float)_store.CellCapacity; }
++                int index=HaloIndex(x,y,z); _quantities[index]=0; _materials[index]=MaterialId.Empty;
++                for(int m=0;m<_store.MaterialCount;m++)
++                {
++                    var id=_store.GetMaterial(m); if(blockingOnly && !_blocks(id)) continue;
++                    if(!_store.TryGetQuantity(origin+new Vector3Int(x,y,z),id,out uint quantity)) continue;
++                    _quantities[index]=quantity; _materials[index]=id; break;
++                }
+             }
+-            return 0;
+         }
+-        private void Side(Vector3Int cell, Vector3 p, float top, float height, Vector3Int direction,
+-            float size, bool blockingOnly, Color32 id)
++        private Face GetFace(int direction,int slice,int u,int v)
+         {
+-            float neighbor = Height(cell + direction, blockingOnly, out _);
+-            if (neighbor >= height) return;
+-            float low = p.y + neighbor * size;
+-            if (direction.x > 0)
+-                Quad(new Vector3(p.x + size, low, p.z), new Vector3(p.x + size, top, p.z),
+-                    new Vector3(p.x + size, top, p.z + size), new Vector3(p.x + size, low, p.z + size), Vector3.right, id);
+-            else if (direction.x < 0)
+-                Quad(new Vector3(p.x, low, p.z + size), new Vector3(p.x, top, p.z + size),
+-                    new Vector3(p.x, top, p.z), new Vector3(p.x, low, p.z), Vector3.left, id);
+-            else if (direction.z > 0)
+-                Quad(new Vector3(p.x, low, p.z + size), new Vector3(p.x + size, low, p.z + size),
+-                    new Vector3(p.x + size, top, p.z + size), new Vector3(p.x, top, p.z + size), Vector3.forward, id);
+-            else
+-                Quad(new Vector3(p.x + size, low, p.z), new Vector3(p.x, low, p.z),
+-                    new Vector3(p.x, top, p.z), new Vector3(p.x + size, top, p.z), Vector3.back, id);
++            int x=direction<2?u:direction<4?slice:u;
++            int y=direction<2?slice:v,z=direction<2?v:direction<4?u:slice;
++            int index=HaloIndex(x,y,z); uint quantity=_quantities[index]; if(quantity==0) return default;
++            uint neighbor=direction==0?_quantities[HaloIndex(x,y+1,z)]:direction==1?_quantities[HaloIndex(x,y-1,z)]
++                :direction==2?_quantities[HaloIndex(x+1,y,z)]:direction==3?_quantities[HaloIndex(x-1,y,z)]
++                :direction==4?_quantities[HaloIndex(x,y,z+1)]:_quantities[HaloIndex(x,y,z-1)];
++            if(direction==0 && quantity==_store.CellCapacity && neighbor>0
++                || direction==1 && neighbor==_store.CellCapacity || direction>=2 && neighbor>=quantity) return default;
++            return new Face{Material=_materials[index],Lower=direction<2?0:neighbor,Upper=direction==1?_store.CellCapacity:quantity};
++        }
++        private bool SameFaceRow(int u,int v,int width,in Face face)
++        {
++            for(int x=u;x<u+width;x++) if(!face.Matches(in _faces[x+v*_size])) return false;
++            return true;
++        }
++        private void EmitFace(int direction,int slice,int u,int v,int width,int height,float size,in Face face)
++        {
++            var id=new Color32((byte)face.Material,0,0,255);
++            float a=u*size,b=(u+width)*size;
++            if(direction<2)
++            {
++                float c=v*size,d=(v+height)*size,y=(slice+(direction==0?face.Upper/(float)_store.CellCapacity:0))*size;
++                if(direction==0) Quad(new Vector3(a,y,d),new Vector3(b,y,d),new Vector3(b,y,c),new Vector3(a,y,c),Vector3.up,id);
++                else Quad(new Vector3(a,y,c),new Vector3(b,y,c),new Vector3(b,y,d),new Vector3(a,y,d),Vector3.down,id);
++                return;
++            }
++            float low=(v+face.Lower/(float)_store.CellCapacity)*size;
++            float top=(v+height-1+face.Upper/(float)_store.CellCapacity)*size;
++            float plane=(slice+(direction==2 || direction==4?1:0))*size;
++            // 顶点在 Chunk Local Space，三角形绕序与外法线一致；MeshCollider 复用同一表面。
++            if(direction==2) Quad(new Vector3(plane,low,a),new Vector3(plane,top,a),new Vector3(plane,top,b),new Vector3(plane,low,b),Vector3.right,id);
++            else if(direction==3) Quad(new Vector3(plane,low,b),new Vector3(plane,top,b),new Vector3(plane,top,a),new Vector3(plane,low,a),Vector3.left,id);
++            else if(direction==4) Quad(new Vector3(a,low,plane),new Vector3(b,low,plane),new Vector3(b,top,plane),new Vector3(a,top,plane),Vector3.forward,id);
++            else Quad(new Vector3(b,low,plane),new Vector3(a,low,plane),new Vector3(a,top,plane),new Vector3(b,top,plane),Vector3.back,id);
+         }
+         private void Quad(Vector3 a, Vector3 b, Vector3 c, Vector3 d, Vector3 normal, Color32 id)
+         {
+--- before/Assets/_Project/Scripts/ElementField/Gases/GasWorldProfile.cs
++++ after/Assets/_Project/Scripts/ElementField/Gases/GasWorldProfile.cs
+@@ -26,7 +26,7 @@
+         [Tooltip("所有命中共用的出生候选扫描上限；Physics 预算独立，不随此数增长。")]
+         [SerializeField, Range(128,4096)] private int _maximumBirthScansPerTick = 2048;
+         [Tooltip("世界空间 Wind Velocity，单位 m/s；影响真实气体数量与接触范围。墙面仍由地形阻挡。")]
+-        [SerializeField] private Vector3 _windVelocity = new Vector3(.25f,0f,.08f);
++        [SerializeField] private Vector3 _windVelocity = Vector3.zero;
+         [Header("Extremely Dilute Gas")]
+         [Tooltip("0 关闭尾雾消散。生产值 1 GMU/格；混合气体总浓度也必须满足此门槛。")]
+         [SerializeField, Min(0)] private int _diluteMaximumCellGmu;
+@@ -36,7 +36,8 @@
+         [SerializeField, Range(1,8)] private int _diluteChunksPerTick=2;
+         [SerializeField] private GasMaterialBehavior[] _materials =
+         {
+-            new GasMaterialBehavior { Material = MaterialId.Steam, DiffusionPerSecond = 1f, BuoyancyPerSecond = .6f },
++            // 暂未引入温度浮力/环境风：默认按浓度向所有开放方向扩散，避免固定漂移方向。
++            new GasMaterialBehavior { Material = MaterialId.Steam, DiffusionPerSecond = 1f, BuoyancyPerSecond = 0f },
+             new GasMaterialBehavior { Material = MaterialId.ToxicVapor, DiffusionPerSecond = 1f, BuoyancyPerSecond = 0f }
+         };
+         public int MaximumChunks => _maximumChunks;
+--- before/Assets/_Project/Scripts/ElementField/Gases/GasWorldRuntime.cs
++++ after/Assets/_Project/Scripts/ElementField/Gases/GasWorldRuntime.cs
+@@ -144,8 +144,11 @@
+                     if(normal.sqrMagnitude>0 && Vector3.Dot((Vector3)offset,normal)<0) continue;
+                     Vector3Int cell = center + offset;
+                     uint occupied=_store.OccupancyAt(cell);
+-                    if(occupied>=depositCapacity || !IsBirthReachable(center,cell)) continue;
+-                    uint amount=Math.Min(pending.Remaining,depositCapacity-occupied);
++                    _store.TryGetQuantity(cell,pending.Request.MaterialKind,out uint sameMaterial);
++                    // 半浓度是本材料的出生目标；另一气体不是固体墙。混合仍共享真实最大
++                    // 浓度，不覆盖毒素、不生成超容量云团，两个 Exposure 分量独立保留。
++                    if(sameMaterial>=depositCapacity || occupied>=CellCapacity || !IsBirthReachable(center,cell)) continue;
++                    uint amount=Math.Min(pending.Remaining,Math.Min(depositCapacity-sameMaterial,CellCapacity-occupied));
+                     if (amount == 0 || !_store.TryAdd(cell, pending.Request.MaterialKind, amount)) continue;
+                     pending.Remaining -= amount; _activity.WakeNeighbors(cell);
+                 }
+--- before/Assets/_Project/Scripts/ElementField/Gases/GasFluxSolver.cs
++++ after/Assets/_Project/Scripts/ElementField/Gases/GasFluxSolver.cs
+@@ -24,6 +24,7 @@
+         private readonly Vector3Int[] _creditKeys;
+         private readonly double[] _credits;
+         private int _creditCount,_creditCursor;
++        private uint _step;
+         public ulong VentedQuantity { get; private set; }
+         private readonly ulong[] _ventedByMaterial=new ulong[256];
+         internal ulong VentedMaterialQuantity(MaterialId material) => _ventedByMaterial[(byte)material];
+@@ -59,6 +60,7 @@
+             for (int i = 0; i < count; i++)
+                 if (_activity.TryDequeue(out Vector3Int cell)) _work[ProcessedCellsLastTick++] = cell;
+             _store.BeginFluxTick();
++            _step++;
+             for (int i = 0; i < ProcessedCellsLastTick; i++)
+             {
+                 Vector3Int source = _work[i];
+@@ -70,8 +72,10 @@
+                     if (!_store.TryGetQuantity(source, behavior.Material, out uint original)) continue;
+                     if(creditSlot<0) creditSlot=CreditSlot(source);
+                     uint remaining = original;
+-                    for (int side = 0; side < Directions.Length && remaining > 0; side++)
++                    int first=FirstFace(source,_step,m);
++                    for (int visit = 0; visit < Directions.Length && remaining > 0; visit++)
+                     {
++                        int side=(first+visit)%Directions.Length;
+                         Vector3Int target = source + Directions[side];
+                         // 冻结边界暂停通量，不伪造永久墙；返场后的恢复扫描再次推进。
+                         if (!_activity.Contains(target)) continue;
+@@ -110,6 +114,18 @@
+             }
+             _store.CommitFluxTick();
+         }
++        private static int FirstFace(Vector3Int cell,uint tick,int material)
++        {
++            // 整数 GMU 的首个可用面会先消费余量。坐标/Tick 的 Hash 打散访问优先级，
++            // 不再总向 Up 偏移；Diffusion 仍受浓度梯度控制，不把 Random 当作虚构风力。
++            // 确定性 Hash 无全局 Unity Random 状态、分配或冻结时间补算。
++            unchecked
++            {
++                uint hash=(uint)cell.x*73856093u^(uint)cell.y*19349663u^(uint)cell.z*83492791u^tick*2654435761u^(uint)material*374761393u;
++                hash^=hash>>16; hash*=2246822519u; hash^=hash>>13; hash*=3266489917u; hash^=hash>>16;
++                return (int)(hash%6);
++            }
++        }
+         private int CreditSlot(Vector3Int cell)
+         {
+             if(_creditSlots.TryGetValue(cell,out int slot)) return slot;
+--- before/Assets/_Project/Scripts/Rendering/ElementField/GasFieldVolumeRenderer.cs
++++ after/Assets/_Project/Scripts/Rendering/ElementField/GasFieldVolumeRenderer.cs
+@@ -19,7 +19,9 @@
+         [SerializeField, Min(1)] private float _fadeStart = 32f;
+         [SerializeField, Min(1)] private float _fadeEnd = 56f;
+         [Tooltip("固定 10Hz 场的密度在此时间内逐帧过渡；新出生不等待。仅影响显示，非 Solver 频率。")]
+-        [SerializeField, Range(.02f,.2f)] private float _densityBlendSeconds=.1f;
++        private const float MinimumDensityBlendSeconds=.3f;
++        [Tooltip("有效过渡至少 0.3s；兼容旧已加载 Scene 的短过渡值，无需重载或保存场景。")]
++        [SerializeField, Range(.05f,.6f)] private float _densityBlendSeconds=MinimumDensityBlendSeconds;
+         private Texture3D[] _textures;
+         private ElementChunkKey[] _keys;
+         private bool[] _uploaded;
+@@ -46,6 +48,10 @@
+         public int UnrepresentedChunksLastFrame { get; private set; }
+         public int CopiedDensityChunksLastFrame { get; private set; }
+         public long UploadedDensityBytesLastFrame { get; private set; }
++        // Domain Reload 会反序列化现存对象的旧值，修改字段初始值不会迁移 P7。
++        // 只在读取时限定有效时长，不在 OnValidate/Start 写 Scene 或触发保存。
++        public float EffectiveDensityBlendSeconds => float.IsFinite(_densityBlendSeconds)
++            ? Mathf.Max(MinimumDensityBlendSeconds,_densityBlendSeconds):MinimumDensityBlendSeconds;
+         public int BoundTextureCount => _textures != null ? _textures.Length - _freeCount : 0;
+         // 这是 RGBA32 无 Mipmap 的 Texel 字节数；不冒称驱动实际显存或 Unity CPU 副本。
+         public long DensityTextureBytes => _textures != null ? (long)_textures.Length * _pixels.Length * 4 : 0;
+@@ -134,13 +140,13 @@
+                 }
+                 // Texture 量化后完全为 0 的 Chunk 原本就是全透明；跳过 Draw 保持同一画面，
+                 // 避免大量极稀薄残留仍执行覆盖整块 Bounds 的 Fragment Ray Marching。
+-                if (!_visibleDensity[textureSlot] || !_latestVisibleDensity[textureSlot]
+-                    && now-_blendStarts[textureSlot]>=_densityBlendSeconds) continue;
++                float blend=DensityBlend(now,textureSlot);
++                if (!_visibleDensity[textureSlot] || !_latestVisibleDensity[textureSlot] && blend>=1f) continue;
+                 float fade = 1f - Mathf.SmoothStep(0, 1, Mathf.InverseLerp(_fadeStart, _fadeEnd, distance));
+                 _properties.SetTexture(DensityId, _textures[textureSlot]);
+                 _properties.SetVector(LayoutId, new Vector4(size, _dimension, meters, 0));
+                 _properties.SetFloat(FadeId, fade);
+-                _properties.SetFloat(BlendId,Mathf.Clamp01((now-_blendStarts[textureSlot])/_densityBlendSeconds));
++                _properties.SetFloat(BlendId,blend);
+                 // Scaled Time 随游戏暂停停止；不使用 Shader 的 unscaled Time 让暂停界面里的气体仍飘动。
+                 _properties.SetFloat(TimeId,now);
+                 Graphics.DrawMesh(_cube, Matrix4x4.TRS(position, Quaternion.identity, Vector3.one * meters),
+@@ -153,13 +159,21 @@
+             using var uploadScope = UploadMarker.Auto();
+             bool visible=GasDensitySnapshot.Pack(source,key,_pixels,_steam,_toxic);
+             _latestVisibleDensity[slot]=visible;
+-            float blend=Mathf.Clamp01((now-_blendStarts[slot])/_densityBlendSeconds);
++            float blend=DensityBlend(now,slot);
+             GasDensitySnapshot.PackTemporalHistory(_pixels,_historyPixels,slot*_pixels.Length,blend,!_uploaded[slot]);
+-            // 当前量化为 0 时，前态仍在 0.1 秒内淡出；结束后跳过 Draw，保留稀薄残量的低成本。
++            // 当前量化为 0 时，前态在显示过渡内淡出；结束后跳过 Draw，保留稀薄残量的低成本。
+             for(int i=0;!visible && i<_pixels.Length;i++) visible=_pixels[i].r!=0 || _pixels[i].g!=0;
+             _blendStarts[slot]=now;
+             _textures[slot].SetPixelData(_pixels, 0); _textures[slot].Apply(false, false);
+             return visible;
++        }
++        private float DensityBlend(float now,int slot)
++        {
++            // 稀薄格的通量可能隔数个 Tick 才达到 1 GMU，或被有界工作队列推迟。
++            // 较长的统一过渡跨过 10Hz 间隙，SmoothStep 降低启停突兀；新快照从
++            // 当时可见值重定起点。只改变显示，不额外上传 Texture 或提高 Solver 频率。
++            float t=Mathf.Clamp01((now-_blendStarts[slot])/EffectiveDensityBlendSeconds);
++            return t*t*(3f-2f*t);
+         }
+         private static Mesh CreateCube()
+         {
+--- before/Assets/_Project/ScriptableObjects/ElementField/Phases/FixedSolidWorld_Default.asset
++++ after/Assets/_Project/ScriptableObjects/ElementField/Phases/FixedSolidWorld_Default.asset
+@@ -12,10 +12,11 @@
+   m_Script: {fileID: 11500000, guid: 04ec9d9f655f9f642a24c04e8e0e9846, type: 3}
+   m_Name: FixedSolidWorld_Default
+   m_EditorClassIdentifier: Game.ElementField::Game.ElementField.FixedSolidWorldProfile
+-  _maximumChunks: 32
++  _maximumChunks: 128
+   _cellCapacityGmu: 64
+   _maximumPendingDeposits: 128
+   _maximumCellsPerTick: 32
++  _depositGrainCells: 2
+   _maximumColliderChunksPerTick: 8
+   _maximumNavigationBoxesPerChunk: 16
+   _materials:
+--- before/Assets/_Project/ScriptableObjects/ElementField/Phases/GasWorld_Default.asset
++++ after/Assets/_Project/ScriptableObjects/ElementField/Phases/GasWorld_Default.asset
+@@ -20,7 +20,7 @@
+   _maximumPendingDeposits: 128
+   _maximumTerrainSamplesPerTick: 128
+   _maximumBirthScansPerTick: 2048
+-  _windVelocity: {x: 0.25, y: 0, z: 0.08}
++  _windVelocity: {x: 0, y: 0, z: 0}
+   _diluteMaximumCellGmu: 1
+   _diluteMaximumChunkConcentration: 0.005
+   _diluteDelaySeconds: 3
+@@ -28,7 +28,7 @@
+   _materials:
+   - Material: 7
+     DiffusionPerSecond: 1
+-    BuoyancyPerSecond: 0.6
++    BuoyancyPerSecond: 0
+   - Material: 8
+     DiffusionPerSecond: 1
+     BuoyancyPerSecond: 0
+--- before/Assets/_Project/Tests/ElementField/MaterialPhaseRuntimeTests.cs
++++ after/Assets/_Project/Tests/ElementField/MaterialPhaseRuntimeTests.cs
+@@ -8,6 +8,143 @@
+     public sealed class MaterialPhaseRuntimeTests
+     {
+         private static void Profile(object target, Object value) => target.GetType().GetField("_profile", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(target, value);
++        [Test]
++        public void NavigationRejectionsDoNotPermanentlyStarveLaterWholeSolidImpact()
++        {
++            var host=new GameObject("Solid Retry Budget Test"); host.SetActive(false);
++            var profile=ScriptableObject.CreateInstance<FixedSolidWorldProfile>();
++            JsonUtility.FromJsonOverwrite("{\"_maximumChunks\":4,\"_cellCapacityGmu\":64,\"_maximumCellsPerTick\":32,\"_maximumNavigationBoxesPerChunk\":1}",profile);
++            try
++            {
++                var runtime=host.AddComponent<FixedSolidWorldRuntime>(); Profile(runtime,profile);
++                Assert.That(runtime.TryInitialize(null,null,Vector3.one*100,.25f,8),Is.True);
++                var rejected=new ElementWriteRequest(Vector3.one*100.875f,MaterialId.Ice,1024,.75f,false);
++                runtime.TryEnqueueDeposit(in rejected); runtime.Step(); runtime.Step();
++                Assert.That(runtime.TotalQuantity,Is.Zero,"碎片形状确实超过一个 Navigation Box，必须完整回滚。");
++                // 远处已有完整结构只剩 4×4 平面孔洞。填满后整个 Chunk 可用一个 Box 表示；
++                // 用真实几何验证新请求可行，避免仅断言内部 budget 字段而漏掉永久排队。
++                var store=(FixedSolidVolumeStore)typeof(FixedSolidWorldRuntime).GetField("_store",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(runtime);
++                for(int z=0;z<8;z++) for(int y=0;y<8;y++) for(int x=0;x<8;x++)
++                    if(y!=3 || x<2 || x>5 || z<2 || z>5) store.TryAdd(new Vector3Int(x+32,y,z),MaterialId.Ice,64);
++                ulong before=runtime.TotalQuantity;
++                var valid=new ElementWriteRequest(new Vector3(108.875f,100.875f,100.875f),MaterialId.Ice,1024,.75f,false);
++                runtime.TryEnqueueDeposit(in valid);
++                for(int tick=0;tick<4;tick++) runtime.Step();
++                Assert.That(runtime.TotalQuantity,Is.EqualTo(before+1024),"早先失败不能把单发预算永久压到 16 格以下。");
++                Assert.That(runtime.PendingQuantity,Is.EqualTo(1024UL),"只有几何确实无法表达的原请求继续排队。");
++            }
++            finally { Object.DestroyImmediate(host); Object.DestroyImmediate(profile); }
++        }
++        [TestCase(MaterialId.Ice)]
++        [TestCase(MaterialId.DriedSlime)]
++        public void CoarseSolidGrainFormsHalfMeterCubeAndRetainsExactTailMass(MaterialId material)
++        {
++            var host=new GameObject("Coarse Solid Grain Test"); host.SetActive(false);
++            var profile=ScriptableObject.CreateInstance<FixedSolidWorldProfile>();
++            JsonUtility.FromJsonOverwrite("{\"_maximumChunks\":4,\"_cellCapacityGmu\":64,\"_depositGrainCells\":2}",profile);
++            try
++            {
++                var runtime=host.AddComponent<FixedSolidWorldRuntime>(); Profile(runtime,profile);
++                Assert.That(runtime.TryInitialize(null,null,Vector3.one*100,.25f,8),Is.True);
++                var request=new ElementWriteRequest(new Vector3(99.875f,100.875f,99.875f),material,512,0,false);
++                host.SetActive(true);
++                runtime.TryEnqueueDeposit(in request); runtime.Step();
++                Assert.That(runtime.TotalQuantity,Is.EqualTo(512UL));
++                int occupied=0; for(int i=0;i<runtime.ResidentCellCount;i++) if(runtime.TryGetCell(i,out _)) occupied++;
++                Assert.That(occupied,Is.EqualTo(8));
++                Assert.That(runtime.TryGetSurface(0,out Mesh mesh,out _),Is.True);
++                Assert.That(mesh.bounds.size,Is.EqualTo(Vector3.one*.5f),"负坐标也应组成连续 2×2×2 细格，不能散成八个小格。");
++                Physics.SyncTransforms();
++                Assert.That(Physics.Raycast(new Vector3(99.75f,102,99.75f),Vector3.down,out var hit,3,1<<8),Is.True);
++                Assert.That(hit.point.y,Is.EqualTo(101.25f).Within(.001f),"冰和固化粘液的成块 Collider 必须与可见顶部一致。");
++                var tail=new ElementWriteRequest(new Vector3(102.875f,100.875f,100.875f),material,129,0,false);
++                runtime.TryEnqueueDeposit(in tail); runtime.Step();
++                Assert.That(runtime.TotalQuantity,Is.EqualTo(641UL)); Assert.That(runtime.PendingQuantity,Is.Zero);
++            }
++            finally { Object.DestroyImmediate(host); Object.DestroyImmediate(profile); }
++        }
++        [Test]
++        public void SolidPoolExhaustionReportsCapacityAndKeepsPendingUntilAChunkIsReclaimed()
++        {
++            var host=new GameObject("Solid Capacity Diagnostic Test"); host.SetActive(false);
++            var profile=ScriptableObject.CreateInstance<FixedSolidWorldProfile>();
++            JsonUtility.FromJsonOverwrite("{\"_maximumChunks\":1,\"_cellCapacityGmu\":64}",profile);
++            try
++            {
++                var runtime=host.AddComponent<FixedSolidWorldRuntime>(); Profile(runtime,profile);
++                Assert.That(runtime.TryInitialize(null,null,Vector3.one*100,.25f,8),Is.True);
++                var first=new ElementWriteRequest(Vector3.one*100.125f,MaterialId.Ice,64,0,false);
++                runtime.TryEnqueueDeposit(in first); runtime.Step();
++                var second=new ElementWriteRequest(new Vector3(102.125f,100.125f,100.125f),MaterialId.Ice,64,0,false);
++                runtime.TryEnqueueDeposit(in second); runtime.Step();
++                Assert.That(runtime.MaximumChunks,Is.EqualTo(1));
++                Assert.That(runtime.ChunkCapacityRejections,Is.GreaterThan(0u));
++                Assert.That(runtime.TotalQuantity,Is.EqualTo(64UL)); Assert.That(runtime.PendingQuantity,Is.EqualTo(64UL));
++                Assert.That(runtime.TryRemove(Vector3Int.zero,MaterialId.Ice,64),Is.True);
++                runtime.Step();
++                Assert.That(runtime.PendingQuantity,Is.Zero);
++                Assert.That(runtime.TryGetQuantity(Vector3Int.right*8,MaterialId.Ice,out uint quantity),Is.True);
++                Assert.That(quantity,Is.EqualTo(64u));
++            }
++            finally { Object.DestroyImmediate(host); Object.DestroyImmediate(profile); }
++        }
++        [Test]
++        public void CoarseSolidSuccessfulBirthsUseBoundedCookingAndZeroManagedAllocation()
++        {
++            var host=new GameObject("Solid Grain Allocation Test"); host.SetActive(false);
++            var profile=ScriptableObject.CreateInstance<FixedSolidWorldProfile>();
++            JsonUtility.FromJsonOverwrite("{\"_maximumChunks\":4,\"_cellCapacityGmu\":64,\"_depositGrainCells\":2}",profile);
++            try
++            {
++                var runtime=host.AddComponent<FixedSolidWorldRuntime>(); Profile(runtime,profile);
++                Assert.That(runtime.TryInitialize(null,null,Vector3.one*100,.25f,8),Is.True);
++                var warm=new ElementWriteRequest(Vector3.one*99.125f,MaterialId.Ice,512,0,false);
++                runtime.TryEnqueueDeposit(in warm); runtime.Step();
++                bool accepted=true; uint maxRebuilds=0;
++                long before=System.GC.GetAllocatedBytesForCurrentThread();
++                for(int i=0;i<32;i++)
++                {
++                    var point=Vector3.one*100.125f+new Vector3(i%4*.5f,i/16*.5f,i/4%4*.5f);
++                    var request=new ElementWriteRequest(point,MaterialId.Ice,512,0,false);
++                    uint rebuilds=runtime.SurfaceRebuildCount;
++                    accepted&=runtime.TryEnqueueDeposit(in request); runtime.Step();
++                    maxRebuilds=System.Math.Max(maxRebuilds,runtime.SurfaceRebuildCount-rebuilds);
++                }
++                long allocated=System.GC.GetAllocatedBytesForCurrentThread()-before;
++                Assert.That(accepted,Is.True); Assert.That(runtime.PendingQuantity,Is.Zero);
++                Assert.That(runtime.TotalQuantity,Is.EqualTo(33UL*512));
++                Assert.That(maxRebuilds,Is.LessThanOrEqualTo(8u)); Assert.That(allocated,Is.Zero);
++            }
++            finally { Object.DestroyImmediate(host); Object.DestroyImmediate(profile); }
++        }
++        [Test]
++        public void SteamBirthCanOccupyRemainingConcentrationInsideToxicCloud()
++        {
++            var host=new GameObject("Mixed Gas Birth Test"); host.SetActive(false);
++            var profile=ScriptableObject.CreateInstance<GasWorldProfile>();
++            JsonUtility.FromJsonOverwrite("{\"_maximumChunks\":64,\"_cellCapacityGmu\":32,\"_maximumActiveCells\":8192,\"_materials\":[{\"Material\":7},{\"Material\":8}]}",profile);
++            try
++            {
++                var gas=host.AddComponent<GasWorldRuntime>(); Profile(gas,profile);
++                Assert.That(gas.TryInitialize(null,null,Vector3.zero,.25f,8),Is.True);
++                var store=(GasVolumeStore)typeof(GasWorldRuntime).GetField("_store",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(gas);
++                for(int z=-5;z<=5;z++) for(int y=-5;y<=5;y++) for(int x=-5;x<=5;x++)
++                    Assert.That(store.TryAdd(new Vector3Int(x,y,z),MaterialId.ToxicVapor,16),Is.True);
++                ulong poison=store.TotalQuantity;
++                var request=new ElementWriteRequest(Vector3.one*.125f,MaterialId.Steam,1600,.75f,false);
++                gas.TryEnqueueDeposit(in request); gas.Step(.1f);
++                Assert.That(gas.PendingQuantity,Is.Zero,"半浓度毒雾中的另一气体仍应在首 Tick 出生。");
++                Assert.That(gas.TotalQuantity,Is.EqualTo(poison+1600));
++                int mixed=0;
++                for(int i=0;i<gas.ResidentCellCount;i++) if(gas.TryGetCell(i,out var cell) && cell.Material==MaterialId.Steam)
++                {
++                    Assert.That(gas.TryGetQuantity(cell.Cell,MaterialId.ToxicVapor,out uint toxic),Is.True);
++                    Assert.That(toxic,Is.EqualTo(16u)); Assert.That(store.OccupancyAt(cell.Cell),Is.LessThanOrEqualTo(32u)); mixed++;
++                }
++                Assert.That(mixed,Is.EqualTo(100));
++            }
++            finally { Object.DestroyImmediate(host); Object.DestroyImmediate(profile); }
++        }
+         [TestCase(MaterialId.Ice)]
+         [TestCase(MaterialId.DriedSlime)]
+         public void BudgetDefersSecondOrdinarySolidImpactAsAWholeInsteadOfShowingHalf(MaterialId material)
+--- before/Assets/_Project/Tests/ElementField/MaterialSolidGasWorldTests.cs
++++ after/Assets/_Project/Tests/ElementField/MaterialSolidGasWorldTests.cs
+@@ -6,6 +6,27 @@
+ {
+     public sealed class MaterialSolidGasWorldTests
+     {
++        [Test]
++        public void ThinGasFirstMovementHasNoFixedPreferredFaceAndConservesQuantity()
++        {
++            var seen=new bool[6]; int directions=0;
++            for(int sample=0;sample<36;sample++)
++            {
++                var store=new GasVolumeStore(4,8,32,new[]{MaterialId.Steam});
++                var activity=new MaterialCellActivityQueue(128,store);
++                var solver=new GasFluxSolver(store,activity,new[]{new GasMaterialBehavior{Material=MaterialId.Steam,DiffusionPerSecond=1}},32,c=>false);
++                var source=new Vector3Int(sample*13,7,-sample*11);
++                store.TryAdd(source,MaterialId.Steam,1); activity.Wake(source);
++                for(int tick=0;tick<90 && store.OccupancyAt(source)>0;tick++) solver.Step(.1f);
++                Assert.That(store.TotalQuantity,Is.EqualTo(1UL));
++                Vector3Int move=default;
++                for(int i=0;i<store.ResidentCellCount;i++) if(store.TryGetCell(i,out var cell)) move=cell.Cell-source;
++                int face=move.x>0?0:move.x<0?1:move.y>0?2:move.y<0?3:move.z>0?4:5;
++                Assert.That(move.sqrMagnitude,Is.EqualTo(1));
++                if(!seen[face]) { seen[face]=true; directions++; }
++            }
++            Assert.That(directions,Is.GreaterThanOrEqualTo(4),"整数余量不能令每个薄格都先向上流出；均匀气体没有固定风向。");
++        }
+         [Test]
+         public void FractionalDiffusionEventuallyMovesOneGmuWithoutCreatingOrLosingMaterial()
+         {
+--- before/Assets/_Project/Tests/ElementField/FixedSolidGeometryTests.cs
++++ after/Assets/_Project/Tests/ElementField/FixedSolidGeometryTests.cs
+@@ -7,6 +7,44 @@
+     public sealed class FixedSolidGeometryTests
+     {
+         private static bool Blocks(MaterialId material) => material == MaterialId.Ice;
++        [Test]
++        public void FilledChunkMergesPlanesIntoSixQuadsWithoutChangingVolume()
++        {
++            var store=new FixedSolidVolumeStore(4,1,64,new[]{MaterialId.Ice});
++            for(int z=0;z<4;z++) for(int y=0;y<4;y++) for(int x=0;x<4;x++)
++                store.TryAdd(new Vector3Int(x,y,z),MaterialId.Ice,64);
++            var builder=new FixedSolidSurfaceBuilder(store,Blocks,8);
++            builder.Build(new ElementChunkKey(0,0,0),.25f,true);
++            Assert.That(builder.VertexCount,Is.EqualTo(24),"连续土/冰平面应合并，不能每个细格都留下独立四边形。");
++            float volume=0;
++            for(int i=0;i<builder.IndexCount;i+=3)
++                volume+=Vector3.Dot(builder.Vertices[builder.Indices[i]],Vector3.Cross(builder.Vertices[builder.Indices[i+1]],builder.Vertices[builder.Indices[i+2]]))/6f;
++            Assert.That(volume,Is.EqualTo(1f).Within(.0001f));
++            Assert.That(store.TotalQuantity,Is.EqualTo(4096UL));
++        }
++        [Test]
++        public void MergedSolidPlanesPreserveVerticalHoleAndMaterialBoundaries()
++        {
++            var store=new FixedSolidVolumeStore(4,1,64,new[]{MaterialId.Ice,MaterialId.DriedSlime});
++            for(int z=0;z<4;z++) for(int y=0;y<2;y++) for(int x=0;x<4;x++)
++                if(x!=1 || z!=1) store.TryAdd(new Vector3Int(x,y,z),x<2?MaterialId.Ice:MaterialId.DriedSlime,64);
++            var builder=new FixedSolidSurfaceBuilder(store,Blocks,8);
++            builder.Build(new ElementChunkKey(0,0,0),1,false);
++            float volume=0; bool ice=false,slime=false;
++            for(int i=0;i<builder.IndexCount;i+=3)
++                volume+=Vector3.Dot(builder.Vertices[builder.Indices[i]],Vector3.Cross(builder.Vertices[builder.Indices[i+1]],builder.Vertices[builder.Indices[i+2]]))/6f;
++            Assert.That(volume,Is.EqualTo(30f).Within(.0001f),"合并不能封洞、重叠体积或漏掉部分轮廓。");
++            for(int i=0;i<builder.VertexCount;i+=4)
++            {
++                byte material=builder.MaterialIds[i].r; ice|=material==(byte)MaterialId.Ice; slime|=material==(byte)MaterialId.DriedSlime;
++                for(int n=1;n<4;n++) Assert.That(builder.MaterialIds[i+n].r,Is.EqualTo(material));
++                if(builder.Normals[i]!=Vector3.up) continue;
++                float minX=float.MaxValue,maxX=float.MinValue,minZ=float.MaxValue,maxZ=float.MinValue;
++                for(int n=0;n<4;n++) { var p=builder.Vertices[i+n]; minX=Mathf.Min(minX,p.x);maxX=Mathf.Max(maxX,p.x);minZ=Mathf.Min(minZ,p.z);maxZ=Mathf.Max(maxZ,p.z); }
++                Assert.That(minX<1.5f && maxX>1.5f && minZ<1.5f && maxZ>1.5f,Is.False,"顶面不能盖住 1×1 的通孔。");
++            }
++            Assert.That(ice && slime,Is.True);
++        }
+         [Test]
+         public void AdjacentChunksRemoveInternalFacesAndPreservePartialHeight()
+         {
+--- before/Assets/_Project/Tests/Rendering/MaterialPhaseAssetTests.cs
++++ after/Assets/_Project/Tests/Rendering/MaterialPhaseAssetTests.cs
+@@ -34,11 +34,12 @@
+             }
+             Assert.That(steamWet,Is.True,"Steam 必须通过真实 Exposure 查询施加 Wet。");
+             var gas=AssetDatabase.LoadAssetAtPath<GasWorldProfile>("Assets/_Project/ScriptableObjects/ElementField/Phases/GasWorld_Default.asset");
++            Assert.That(gas.WindVelocity,Is.EqualTo(Vector3.zero),"尚无环境风规则，生产云团不得持续朝默认方向偏移。");
+             for(int i=0;i<gas.MaterialCount;i++)
+             {
+                 var behavior=gas.GetMaterial(i);
+                 Assert.That(behavior.DiffusionPerSecond,Is.InRange(.1f,1f));
+-                if(behavior.Material==MaterialId.Steam) Assert.That(behavior.BuoyancyPerSecond,Is.InRange(.1f,.6f));
++                Assert.That(behavior.BuoyancyPerSecond,Is.Zero);
+             }
+         }
+         [TestCase("Assets/_Project/ScriptableObjects/ElementField/Liquids/ElementWorldProfile_P7_DemoRun_Grid.asset")]
+@@ -95,7 +96,7 @@
+             finally { Object.DestroyImmediate(host); Object.DestroyImmediate(floor); Object.DestroyImmediate(profile); }
+         }
+         [Test]
+-        public void ActualSteamGasMovesUpAndWithWindInsteadOfLeavingExposureAtBirth()
++        public void ActualSteamGasDiffusesWithoutAmbientWindInsteadOfLeavingExposureAtBirth()
+         {
+             var prefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Art/Elemental/Prefabs/PF_ElementSteamProjectile.prefab");
+             var profile=Object.Instantiate(AssetDatabase.LoadAssetAtPath<GasWorldProfile>("Assets/_Project/ScriptableObjects/ElementField/Phases/GasWorld_Default.asset"));
+@@ -107,11 +108,11 @@
+                 Assert.That(gas.TryInitialize(null,null,Vector3.one*100,.25f,8),Is.True);
+                 prefab.GetComponent<ElementDepositOnImpact>().TryBuildImpactRequest(Vector3.one*100.875f,Vector3.down,Vector3.up,out var request);
+                 gas.TryEnqueueDeposit(in request); gas.Step(.1f);
+-                Vector3 first=GasCenter(gas);
++                float first=GasSpread(gas);
+                 for(int tick=0;tick<20;tick++) gas.Step(.1f);
+-                Vector3 last=GasCenter(gas);
+-                Assert.That(last.y-first.y,Is.GreaterThan(.1f),"蒸汽的真实浓度场需要向上漂移。");
+-                Assert.That(last.x-first.x,Is.GreaterThan(.05f),"真实风移动 Exposure，不能仅让 Shader 图案动。");
++                float last=GasSpread(gas);
++                Assert.That(profile.WindVelocity,Is.EqualTo(Vector3.zero));
++                Assert.That(last-first,Is.GreaterThan(.01f),"气体真实数量场仍须扩散，不能仅让 Shader 图案动。");
+                 Assert.That(gas.TotalQuantity+gas.PendingQuantity,Is.EqualTo((ulong)request.TotalAmount));
+             }
+             finally { Object.DestroyImmediate(host); Object.DestroyImmediate(profile); }
+@@ -122,6 +123,13 @@
+             for(int i=0;i<gas.ResidentCellCount;i++) if(gas.TryGetCell(i,out var cell))
+             { weighted+=(Vector3)cell.Cell*cell.Quantity; total+=cell.Quantity; }
+             return total==0?Vector3.zero:weighted/(float)total*.25f;
++        }
++        private static float GasSpread(GasWorldRuntime gas)
++        {
++            Vector3 center=GasCenter(gas)/.25f; double spread=0; ulong total=0;
++            for(int i=0;i<gas.ResidentCellCount;i++) if(gas.TryGetCell(i,out var cell))
++            { spread+=((Vector3)cell.Cell-center).sqrMagnitude*cell.Quantity; total+=cell.Quantity; }
++            return total==0?0:(float)(spread/total)*.25f*.25f;
+         }
+         [Test]
+         public void SteamProjectileCarriesTheSameFiniteWaterMassAsWaterProjectile()
+--- before/Assets/_Project/Tests/Rendering/GasFieldVolumePerformanceTests.cs
++++ after/Assets/_Project/Tests/Rendering/GasFieldVolumePerformanceTests.cs
+@@ -75,6 +75,48 @@
+             {Object.DestroyImmediate(Host);Object.DestroyImmediate(CameraHost);Object.DestroyImmediate(_profile);Object.DestroyImmediate(_material);}
+         }
+         [Test]
++        public void DefaultDensityTransitionStillMovesAfterOneTickAndNewBirthIsImmediate()
++        {
++            using var fixture=new Fixture();
++            var frame=(Action<float>)Delegate.CreateDelegate(typeof(Action<float>),fixture.Renderer,typeof(GasFieldVolumeRenderer).GetMethod("RenderFrame",Members));
++            fixture.Store.TryAdd(Vector3Int.zero,MaterialId.Steam,1000); frame(0);
++            Assert.That(fixture.Renderer.DrawnChunksLastFrame,Is.EqualTo(1));
++            fixture.Store.TryAdd(Vector3Int.zero,MaterialId.Steam,1000); frame(.1f);
++            frame(.25f);
++            var properties=(MaterialPropertyBlock)typeof(GasFieldVolumeRenderer).GetField("_properties",Members).GetValue(fixture.Renderer);
++            Assert.That(properties.GetFloat("_DensityBlend"),Is.EqualTo(.5f).Within(.001f),"显示应跨过 0.1s Tick 间隔持续变化，稀薄或被工作预算延后的通量也不直接跳变。");
++            Assert.That(fixture.Renderer.UploadedChunksLastFrame,Is.Zero);
++        }
++        [Test]
++        public void LegacySerializedShortBlendUsesTheNewMinimumWithoutReloadingScene()
++        {
++            using var fixture=new Fixture();
++            // 已加载 Scene 的 Domain Reload 会保留旧序列化字段；改 C# 初始值不会自动迁移。
++            typeof(GasFieldVolumeRenderer).GetField("_densityBlendSeconds",Members).SetValue(fixture.Renderer,.1f);
++            var frame=(Action<float>)Delegate.CreateDelegate(typeof(Action<float>),fixture.Renderer,typeof(GasFieldVolumeRenderer).GetMethod("RenderFrame",Members));
++            fixture.Store.TryAdd(Vector3Int.zero,MaterialId.Steam,1000); frame(0);
++            fixture.Store.TryAdd(Vector3Int.zero,MaterialId.Steam,1000); frame(.1f); frame(.25f);
++            var properties=(MaterialPropertyBlock)typeof(GasFieldVolumeRenderer).GetField("_properties",Members).GetValue(fixture.Renderer);
++            Assert.That(properties.GetFloat("_DensityBlend"),Is.EqualTo(.5f).Within(.001f),"当前 P7 的旧值必须在运行时生效迁移，不能要求重载/保存用户关卡。");
++            Assert.That(fixture.Renderer.UploadedChunksLastFrame,Is.Zero);
++        }
++        [Test]
++        public void InterruptedSmoothDensityTransitionRebasesFromActualDisplayedValue()
++        {
++            using var fixture=new Fixture();
++            var frame=(Action<float>)Delegate.CreateDelegate(typeof(Action<float>),fixture.Renderer,typeof(GasFieldVolumeRenderer).GetMethod("RenderFrame",Members));
++            fixture.Store.TryAdd(Vector3Int.zero,MaterialId.Steam,1000); frame(0);
++            fixture.Store.TryAdd(Vector3Int.zero,MaterialId.Steam,1000); frame(.1f); frame(.2f);
++            fixture.Store.TryAdd(Vector3Int.zero,MaterialId.Steam,1000); frame(.2f);
++            var slots=(System.Collections.Generic.Dictionary<ElementChunkKey,int>)typeof(GasFieldVolumeRenderer).GetField("_textureSlots",Members).GetValue(fixture.Renderer);
++            var textures=(Texture3D[])typeof(GasFieldVolumeRenderer).GetField("_textures",Members).GetValue(fixture.Renderer);
++            Color32 pixel=textures[slots[new ElementChunkKey(0,0,0)]].GetPixels32()[21];
++            int first=Mathf.RoundToInt(255f*1000/4096),second=Mathf.RoundToInt(255f*2000/4096);
++            Assert.That(pixel.r,Is.EqualTo(Mathf.RoundToInt(Mathf.Lerp(first,second,7f/27f))),"1/3 时间处 SmoothStep=7/27；重定起点必须采用屏幕当时显示的值。");
++            Assert.That(pixel.b,Is.EqualTo(Mathf.RoundToInt(255f*3000/4096)));
++            frame(.35f); Assert.That(fixture.Renderer.UploadedChunksLastFrame,Is.Zero);
++        }
++        [Test]
+         public void LastVisibleDensityFadesThroughInterpolationBeforeQuantizedTailStopsDrawing()
+         {
+             using var fixture=new Fixture();
+@@ -82,7 +124,7 @@
+             fixture.Store.TryAdd(Vector3Int.zero,MaterialId.Steam,1000); frame(0);
+             fixture.Store.TryRemove(Vector3Int.zero,MaterialId.Steam,999); frame(.1f);
+             Assert.That(fixture.Renderer.DrawnChunksLastFrame,Is.EqualTo(1),"量化后的当前值为零，前态仍需平滑淡出。");
+-            frame(.2f); Assert.That(fixture.Renderer.DrawnChunksLastFrame,Is.Zero);
++            frame(.4f); Assert.That(fixture.Renderer.DrawnChunksLastFrame,Is.Zero);
+             Assert.That(fixture.Renderer.UploadedChunksLastFrame,Is.Zero);
+         }
+         [Test]
+@@ -94,13 +136,13 @@
+             var frame=(Action<float>)Delegate.CreateDelegate(typeof(Action<float>),fixture.Renderer,method);
+             fixture.Store.TryAdd(Vector3Int.zero,MaterialId.Steam,1000); frame(0);
+             fixture.Store.TryAdd(Vector3Int.zero,MaterialId.Steam,1000); frame(.1f);
+-            frame(.15f);
++            frame(.25f);
+             var properties=(MaterialPropertyBlock)typeof(GasFieldVolumeRenderer).GetField("_properties",Members).GetValue(fixture.Renderer);
+             Assert.That(properties.GetFloat("_DensityBlend"),Is.EqualTo(.5f).Within(.001f));
+             Assert.That(fixture.Renderer.UploadedChunksLastFrame,Is.Zero);
+-            frame(.15f); Assert.That(properties.GetFloat("_DensityBlend"),Is.EqualTo(.5f).Within(.001f));
+-            Assert.That(properties.GetFloat("_PresentationTime"),Is.EqualTo(.15f));
+-            frame(.2f); Assert.That(properties.GetFloat("_DensityBlend"),Is.EqualTo(1f).Within(.001f));
++            frame(.25f); Assert.That(properties.GetFloat("_DensityBlend"),Is.EqualTo(.5f).Within(.001f));
++            Assert.That(properties.GetFloat("_PresentationTime"),Is.EqualTo(.25f));
++            frame(.4f); Assert.That(properties.GetFloat("_DensityBlend"),Is.EqualTo(1f).Within(.001f));
+         }
+         [Test]
+         public void ChangingGasDensityKeepsOldAndNewFieldsInTheSameTextureForFrameInterpolation()
+--- before/Assets/_Project/Editor/MaterialPhaseFocusedChecks.cs
++++ after/Assets/_Project/Editor/MaterialPhaseFocusedChecks.cs
+@@ -54,7 +54,8 @@
+                     if(profile!=null && !EditorUtility.IsPersistent(profile)) UnityEngine.Object.DestroyImmediate(host);
+                 }
+             int passed = 0, failed = 0;
+-            string[] fixtures = mode=="lifecycle"?new[]{"Game.Rendering.Tests.MaterialPhaseAssetTests","Game.ElementField.Tests.MaterialConversionTests","Game.ElementField.Tests.MaterialWorldSolidGasPerformanceTests","Game.Rendering.Tests.FallingLiquidPresentationTests","Game.Rendering.Tests.GridLiquidFieldSamplerTests"}
++            string[] fixtures = mode=="grain-gas"?new[]{"Game.ElementField.Tests.MaterialPhaseRuntimeTests","Game.ElementField.Tests.MaterialSolidGasWorldTests","Game.ElementField.Tests.FixedSolidGeometryTests","Game.Rendering.Tests.GasFieldVolumePerformanceTests"}
++                :mode=="lifecycle"?new[]{"Game.Rendering.Tests.MaterialPhaseAssetTests","Game.ElementField.Tests.MaterialConversionTests","Game.ElementField.Tests.MaterialWorldSolidGasPerformanceTests","Game.Rendering.Tests.FallingLiquidPresentationTests","Game.Rendering.Tests.GridLiquidFieldSamplerTests"}
+                 :mode=="phase-e"?new[]{"Game.ElementField.Tests.MaterialWorldSolidGasPerformanceTests","Game.Rendering.Tests.GasFieldVolumePerformanceTests"}
+                 :mode=="liquid-regression"?new[]{"Game.ElementField.Tests.StableLiquidRegionCandidateTests"}
+                 :conversionsOnly ? new[] { "Game.ElementField.Tests.MaterialConversionTests" } : new[] { "Game.ElementField.Tests.MaterialSolidGasWorldTests", "Game.ElementField.Tests.FixedSolidGeometryTests",
+--- before/Assets/_Project/Editor/MaterialWorldSolidGasSetup.cs
++++ after/Assets/_Project/Editor/MaterialWorldSolidGasSetup.cs
+@@ -71,6 +71,8 @@
+             SetInt(gasProfile, "_maximumBirthScansPerTick", 2048);
+             ConfigureLifecycleDefaults(gasProfile,conversionProfile);
+             SetInt(solidProfile, "_maximumCellsPerTick", 32);
++            SetInt(solidProfile, "_maximumChunks", 128);
++            SetInt(solidProfile, "_depositGrainCells", 2);
+             SetInt(solidProfile, "_maximumColliderChunksPerTick", 8);
+             var solidMaterial = GetMaterial("Assets/_Project/Art/Elemental/Materials/M_FixedSolidWorld.mat", "Game/Materials/FixedSolid");
+             var gasMaterial = GetMaterial("Assets/_Project/Art/Elemental/Materials/M_RealGasWorld.mat", "Game/Materials/RealGasVolume");
+@@ -215,6 +217,10 @@
+         {
+             // 迁移旧默认并支持缺失资产重建；非默认的冷凝参数不被 Installer 覆盖。
+             var gs=new SerializedObject(gas);
++            // 安装/补齐生产资产与共享默认一致；保留风/浮力字段供将来的环境规则接入。
++            gs.FindProperty("_windVelocity").vector3Value=Vector3.zero;
++            var gasMaterials=gs.FindProperty("_materials");
++            for(int i=0;i<gasMaterials.arraySize;i++) gasMaterials.GetArrayElementAtIndex(i).FindPropertyRelative("BuoyancyPerSecond").floatValue=0;
+             if(gs.FindProperty("_diluteMaximumCellGmu").intValue==0) gs.FindProperty("_diluteMaximumCellGmu").intValue=1;
+             gs.ApplyModifiedPropertiesWithoutUndo();
+             var cs=new SerializedObject(conversion);var rules=cs.FindProperty("_rules");
+--- before/Assets/_Project/Editor/MaterialWorldPhaseAudit.cs
++++ after/Assets/_Project/Editor/MaterialWorldPhaseAudit.cs
+@@ -38,17 +38,21 @@
+             public bool Initialized, SolidOwner, GasOwner, SolidRenderer, GasRenderer, Exposure;
+             public bool PresentationReferencesMatch, MaterialBindingsValid;
+             public int WorldChunkSize, SolidMaximumChunks, GasMaximumChunks, GasMaximumActiveCells,
++                SolidDepositGrainCells, SolidRuntimeMaximumChunks,
+                 GasMaximumCellsPerTick, GasMaximumTerrainSamplesPerTick, SolidPendingDeposits,
+                 SolidResidentChunks, GasPendingDeposits, GasResidentChunks, GasActiveCells,
+                 GasProcessedLastTick, GasTerrainSamplesLastTick, ConversionPending, ConversionProcessedLastTick,
+                 GasUploadedLastFrame, GasDrawnLastFrame, GasUnrepresentedLastFrame, GasCopiedChunksLastFrame;
+             public bool GasRecoveryPending;
+             public uint SolidRebuildCount, ConversionDeferred, ConversionOverflows;
++            public uint SolidChunkCapacityRejections, SolidGeometryCapacityRejections;
+             public ulong SolidQuantity, SolidPendingQuantity, GasQuantity, GasPendingQuantity, GasVentedQuantity;
+             public bool WaterFamilyAvailable, WaterFamilyBalanced;
+             public ulong WaterFamilyInjected, WaterFamilyResident, WaterFamilyPending, WaterFamilyVented, WaterFamilyConsumed;
+             public long GasUploadedBytesLastFrame, ConfiguredGasTexelBytes;
+             public float GasFadeStart, GasFadeEnd;
++            public float GasDensityBlendSeconds, GasConfiguredDensityBlendSeconds;
++            public Vector3 GasWindVelocity;
+         }
+         static MaterialWorldPhaseAudit()=>EditorApplication.update+=Poll;
+         private static void Poll()
+@@ -123,6 +127,8 @@
+                 GasProfile=AssetDatabase.GetAssetPath(gasProfile),ConversionProfile=AssetDatabase.GetAssetPath(conversion),
+                 WorldChunkSize=worldProfile!=null?worldProfile.ChunkSize:0,
+                 SolidMaximumChunks=solidProfile!=null?solidProfile.MaximumChunks:0,
++                SolidDepositGrainCells=solidProfile!=null?solidProfile.DepositGrainCells:0,
++                GasWindVelocity=gasProfile!=null?gasProfile.WindVelocity:Vector3.zero,
+                 GasMaximumChunks=gasProfile!=null?gasProfile.MaximumChunks:0,
+                 GasMaximumActiveCells=gasProfile!=null?gasProfile.MaximumActiveCells:0,
+                 GasMaximumCellsPerTick=gasProfile!=null?gasProfile.MaximumCellsPerTick:0,
+@@ -134,6 +140,8 @@
+             {
+                 var solidPresentation=new SerializedObject(solidRenderer);
+                 var gasPresentation=new SerializedObject(gasRenderer);
++                row.GasConfiguredDensityBlendSeconds=gasPresentation.FindProperty("_densityBlendSeconds").floatValue;
++                row.GasDensityBlendSeconds=gasRenderer.EffectiveDensityBlendSeconds;
+                 var solidMaterial=Reference<Material>(solidPresentation,"_material");
+                 var gasMaterial=Reference<Material>(gasPresentation,"_material");
+                 row.SolidMaterial=AssetDatabase.GetAssetPath(solidMaterial);row.GasMaterial=AssetDatabase.GetAssetPath(gasMaterial);
+@@ -147,6 +155,11 @@
+                 row.SolidPendingDeposits=solids.PendingDepositCount;row.SolidResidentChunks=solids.ResidentChunkCount;
+                 row.SolidQuantity=solids.TotalQuantity;row.SolidPendingQuantity=solids.PendingQuantity;
+                 row.SolidRebuildCount=solids.SurfaceRebuildCount;
++                // 配置容量与实际已初始化池分开记录；O(1) 原因计数用于区分存储满和几何拒绝，
++                // 不为诊断每帧扫描材料，也不把一次快照当成性能计时。
++                row.SolidRuntimeMaximumChunks=solids.MaximumChunks;
++                row.SolidChunkCapacityRejections=solids.ChunkCapacityRejections;
++                row.SolidGeometryCapacityRejections=solids.GeometryCapacityRejections;
+             }
+             if(gases!=null)
+             {
+--- before/docs/superpowers/plans/2026-10-06 元素世界固定固体与气体扩展实施计划.md
++++ after/docs/superpowers/plans/2026-10-06 元素世界固定固体与气体扩展实施计划.md
+@@ -526,3 +526,19 @@
+ 扩大回归时 all 76/3，发现当前 MaterialCatalog_Default.asset 仅有四种旧材料，而 P7/P8 路由引用了 Ice/DriedSlime/Steam/ToxicVapor，初始化会拒绝。补齐现有四个 MaterialDefinition GUID 引用；Steam/Toxic 两种真实 Exposure 路由均纳入集成断言，all 最终 80/0。这是既有共享资产接线修复，无新材料编号或新 Assembly。最终只读审计 Playing=false、ScriptCompilationFailed=false，P7/P8 DirtyBefore/After=false；没有保存/丢弃场景或进入 Play。
+ 
+ 下一步是用户正常 Play 验收慢扩散、极薄淡出、蒸汽 Wet、少量落水正面/俯视、持续固体和较短火焰，再采正常 Boss 战长窗口 CPU/GPU、GC Alloc 与 Frame P95/P99。整个固体/气体阶段继续“更新中”，不能用同步断言代替视觉和实战负载验收。
++
++### 2026-10-07 Task 11：固体持续生成、成块表面与随机混合云团
++
++本轮执行用户明确授权的五项修复，延续已有数量 Owner、细格地址、转换事务与只读 Rendering，不新增 Assembly 或材料体系，不使用 SubAgent，不进入 Play/重载当前关卡。开始时只读审计为 Playing=false、ScriptCompilationFailed=false。无外部素材依赖，沿用既有 Mesh/Collider、RGBA32 Texture3D 与程序 Noise。优先修复可复现的拒绝和重试错误，随后减少连续固体的表面负担与气体显示停顿；性能结论区分 CPU 数量/零分配断言、Editor 原生几何检查与尚待人工验证的画面/实战帧率。
++
++1. 固体批次失败后缩小的是“每 Tick 尝试的请求数”，保留单颗法术所需的完整写格预算。旧写格预算一旦低于 16 格，普通 1024 GMU 请求会永远回滚，而只有成功写入才恢复预算，形成死锁。用真实 Navigation 段拒绝后在另一 Chunk 施法的用例先取得 RED。生产 Chunk 保留有限预约，将 32 增至 128，公开容量和容量/几何拒绝计数；满额时继续保留 Pending，不挤掉永久固体。增长初始固定池是有限容量取舍，不能宣称无限造土已解决。
++2. 新增出生粒度参数：生产按 2×2×2 个 0.25m 细格组成约 0.5m 固体块。只调整出生排列，数量/相变/碰撞查询仍在原细格；X/Z 支持负坐标对齐，Y 保留地面空气锚点，不能把块底对齐进地板。逐块预检，完整请求一同发布；少量尾量仍准确保留，不把不足一块的物质放大成满块。连续同材料等高平面采用 Greedy Meshing，保留部分高度、材质分界、洞口与跨 Chunk 去面。复用 Halo 和面标记数组，不为细格新增 GameObject/Rigidbody。未来大地面主要由 Chunk Mesh 和合并 Navigation 段承担，不按粒子数提交 Draw/Physics。
++3. 气体出生的“半浓度”只限制同材料出生目标，另外检查两种气体相加后的真实最大浓度。毒雾占 16/32 时，蒸汽仍可占剩余 16；不覆盖毒素，不降低 Exposure，不创建新 Renderer。全满格仍受有限浓度约束，Pending 可继续找周围空气。用实际 Gas Runtime 的同格混合、总量/墙面/池满回归验证。
++4. 生产和新建默认 Profile 取消常驻 Wind 与 Steam 定向 Buoyancy。Diffusion 仍按浓度梯度传播，面访问顺序使用坐标+Tick 的确定性 Hash 轮换，避免稀薄整数通量总先向同一个面流出；保留显式配置 Wind/Buoyancy 的接口和既有测试，为未来环境规则留边界。极稀薄 Chunk 沿用 Task 10 的 1 GMU/格、0.5% 平均浓度、持续 3 秒、每 Tick 2 Chunk 的显式消散账本，不删浓云或冻结区。
++5. 显示过渡从 0.1s 延长至 0.3s，并以 SmoothStep 连续衔接；过渡中再次更新，从当前可见密度重新起步。首团仍立即可见，scaled Time 保留暂停，量化尾量完成淡出才停 Draw。使用统一时长避免相邻 Halo 各自自适应时长造成边界节奏不同。模拟仍 10Hz、原工作预算、Texture 分辨率和单次 Fetch，不靠增加模拟/上传频率解决视觉停顿。
++
++精确修改文件登记于 `docs/superpowers/validation/2026-10-07-solid-grain-gas-mixing/files.txt`，主要涉及 Solid/Gas Profile、Runtime/Solver/SurfaceBuilder、GasFieldVolumeRenderer、共享生产资产、既有 focused Fixture、Editor 检查桥和安装工具。测试先 RED 后实现，检查实际 Prefab 首 Tick、Actor/墙/部分体积、容量与请求公平、Greedy 几何体积/孔洞/材质、同格气体与随机薄量、插值中断/暂停/无额外上传和热路径零 Managed Alloc，再运行现有 phase/conversion 回归与实际 Unity 编译。保存本 Task 的 before/after、报告和差异；回滚只参考本轮精确差异，不覆盖已完成 Task 或用户场景。结束时更新 living explainer，明确当前进度和下一步人工验收项目。
++
++**实施收尾：** 正确 RED 38/7，真实单 Box 拒绝后，远处可填满孔洞的请求仍停在 31744/32768；毒雾内蒸汽 1600 全留 Pending；薄量首移方向全部 Up；完整 Chunk 顶点 384；显示过渡提前到 1。修复后最终 grain-gas 50/0、all 89/0、phase-e 27/0，模式有覆盖重叠。补充真实 Collider 顶部、129 GMU 尾量、满池回收、32 次成功出生的零 Managed Alloc、有向体积/通孔/材质和过渡中断检查。淡出浮点结束判据与容量诊断漏记分别留存中间 RED，现已修正。五个 Assembly 以当前 Unity References 编译通过；没有 Play/Boss Frame P95/P99 或整帧 Profiler GC Alloc 结论。Task 11 代码/原生检查完成，下一步由用户正常游戏验收成块大小、混合雾气和扩散观感，再采长窗口实际负载；阶段继续更新中。
++
++**旧字段兼容：** P7 已加载对象仍为旧 0.1s，P8 新加载对象为 0.3s，审计取得实际差异。兼容测试 RED phase-e 26/1；读取有效时长时限定至少 0.3s，避免 Domain Reload 继续用旧序列化字段，不通过重载/保存当前关卡迁移。配置值与有效值分开报告，phase-e 最终 27/0。用户可直接在当前项目测试。
+--- before/Assets/_Project/Docs/2026-10-06 元素世界固体气体与材料转换完整解析（更新中）.md
++++ after/Assets/_Project/Docs/2026-10-06 元素世界固体气体与材料转换完整解析（更新中）.md
+@@ -2,7 +2,7 @@
+ 
+ > 当前交付范围已扩展至 Phase D 局部转换，以及 Phase E 开发侧的有界工作、气体密度读取与缓存优化、双场景只读审计。Phase E 的场景视觉、NavMesh 与 Boss 长时帧率验收仍未执行，整个阶段继续标记“更新中”。
+ > 验证约束：采用源码分析、Unity 编译、小范围 EditMode 与原生 API 检查。未通关 P7，未进入 Boss 战，未录制新的长窗口 Profiler，不宣称已有 60 FPS 实战成绩。
+-> 最新行为以 Task 7–10 为准：固化粘液有实际高度的 Collider，普通固体命中完整发布；气体有真实 Wind Advection 与 RG/BA 时间插值，生产容量 32 GMU/细格、出生为半浓度。Task 10 将 Steam Diffusion 降至 1/s、Buoyancy 降至 0.6，极稀薄尾雾按预算消散；常温蒸汽不自动冷凝，低温冷凝每 8 份生成 1 份 Water、其余 7 份记入背景空气消散；Ice 自动融化禁用，Steam Exposure 可以积累 Wet。孤立少量自由落水使用按量缩放的水滴。普通火球仍注入 400 GMU、Radius 0.4m，P7/P8 残留火焰衰减均为 2 GMU/Tick。早期配置与完整冷凝守恒记录作为历史保留，不能代替当前生产规则。
++> 最新行为以 Task 7–11 为准：固化粘液有实际高度的 Collider，普通固体命中完整发布；Task 11 将共享固体池从 32 增至 128 Chunk，出生按约 0.5m 成块排列，连续平面用 Greedy Meshing 合并。气体真实 Diffusion 为 1/s，默认 Wind 与定向 Buoyancy 均为 0；显式风/浮力接口保留。生产容量 32 GMU/细格、单种出生半浓度，不同气体可以共享剩余浓度。RG/BA 快照采用 0.3s SmoothStep 过渡，极稀薄尾雾按预算消散。常温蒸汽不自动冷凝，低温冷凝每 8 份生成 1 份 Water、其余 7 份记入背景空气消散；Ice 自动融化禁用，Steam Exposure 可以积累 Wet。孤立少量自由落水使用按量缩放的水滴。普通火球仍注入 400 GMU、Radius 0.4m，P7/P8 残留火焰衰减均为 2 GMU/Tick。早期配置作为历史保留，不能代替当前生产规则。
+ 
+ ## Task 1：给固态和气态建立真实材料身份与唯一数量所有者
+ 
+@@ -603,3 +603,54 @@
+ P7/P8 接线采用只读审计，没有启动 Play、重载关卡、保存或丢弃 Scene、通关 Boss；原生证据是 Direct synchronous NUnit assertions 与真实 Unity API，不冒称官方 TestRunner XML。before/after、编译、原生报告和精确差异位于 `docs/superpowers/validation/2026-10-07-material-lifecycle-feedback/`。
+ 
+ 接下来正常 Play 分别观察：单颗蒸汽缓慢运动且常温不持续滴水，进入云团积累 Wet；毒雾移动淡化，浓团不被整体抹掉；少量落水正面/俯视不夸大、不卡成薄片或闪烁；冰/固化粘液维持 Collider；单火球残留较快减弱。然后用正常 Boss 战长窗口记录 CPU/GPU、GC Alloc、Gas Resident Chunks、Frame P95/P99，评估累积负载。Task 10 代码侧完成，下一步是画面、手感与负载验收，整个阶段保持“更新中”。
++
++## Task 11：恢复持续固体生成、成块表面与无默认风的混合云团
++
++本 Task 继续处理真实 Play 反馈：玩家生成一批永久固体后，再施法会看不到实体；固体小格形状过碎；毒雾中的蒸汽无法出现；气体始终偏向一个方向，扩散外观存在停顿。实现首先检查材料是否进入 Pending、数量 Store 是否有空槽，以及发布 Collider/Navigation 能否成功，再检查气体出生的浓度判定和时间插值。这里需要分清材料量、模拟精度与画面粒度：永久固体确实需要有限常驻容量；每个细格都保存数量，连续表面可以由很少的三角形表达；气体同格可以有多种成分，各自都参与接触状态查询。减少表面顶点不会删除材料，延长显示过渡也不会把中毒范围偷偷改成 Shader 的噪声形状。本轮修改延续共享生产 Profile、唯一数量 Owner、既有相变账本和只读 Rendering，没有引入新的模块依赖。固体与气体都沿用初始化预分配、每 Tick 有界工作；验证直接调用 Unity Editor 的同步断言和真实 Physics/Mesh API，不进入 Play、不操作玩家通关。整体阶段继续“更新中”，本 Task 的开发证据与后续视觉/负载验收分别记录。
++
++### 1. 生成拒绝的根因、成块排列与容量取舍
++
++症状对应两个不同限制。第一个是生产固体池最多 32 Chunk，每 Chunk 为 8³ 个 0.25m 细格，也就是 2m 边长。永久冰不自动融化后，池槽越来越难回收。第二个是几何批次失败时的重试死锁：固体球注入 1024 GMU，容量 64 GMU/细格，需要 16 个满细格；旧代码把失败后的写格预算依次降到 16、8，而完整单发只能全部写完才发布。一旦降到 8，后续请求都会撤回，预算又只在成功后恢复，从而永远无法恢复。并非所有不生成都由存储满导致，角色/墙体/Navigation 段满也能拒绝放置。
++
++新回归先产生真实的一个 Navigation Box 无法表达的碎片，再准备另一 Chunk 的 16 格孔洞。填满孔洞后是一整个可用单个 Box 表示的实体，旧实现却仍不写入：RED 的量停在 31744，目标为 32768。最终修复只减少每 Tick 尝试的**请求数**，保留 32 格单发写入预算；失败请求重新排到队尾，允许其他可行请求执行。已经无法放置的材料继续属于 Pending，源请求和已有固体均不丢失。原几何写入/回滚/发布事务保留，同 Tick Cooking 仍最多 8 Chunk。
++
++共享生产容量改为 128 Chunk，并在只读审计区分配置容量、Runtime 实际池容量、存储满计数与几何拒绝计数。它是有上限的预约，不能宣称无限造土已经实现。底层四个数量/工作数组约从 0.5 MiB 增至 2 MiB；Physics Adapter 仍在初始化预约 Chunk 宿主和最多 16 个 Navigation 段，空槽不提交表面或启用阻挡。这会增加初始化内存和对象数，代价换来更大的可用常驻区域。用合并形状减少已激活的段和 Mesh 面，再保留 Tick 工作上限，比运行中无限扩池更可控。容量满不按距离删除永久材料，不以清掉旧冰换取新冰。若以后要支持超过该池的大型土壤世界，需要另行设计固体库存分页与几何驻留，不能用这次容量调整冒充完成。
++
++出生粒度参数以细格为单位，默认值 1 保持通用测试兼容，生产值 2 组成约 0.5m 的块。普通 1024 GMU 球形成两个 2×2×2 的满格块，而不是 16 个零散细块。X/Z 对齐兼容负坐标，Y 用命中外侧的空气格作为底部，防止整体对齐进地板。少量余量按层均分到真实高度：129 GMU 不会被补成 512 GMU 的满块；同一整颗球仍一批发布。不能把这个参数理解为世界精度降低：碰撞查询、液体占据、转换地址和细格库存都保留原精度。原生检查还对冰与固化粘液的 0.5m 可见顶部执行 Raycast，确认 Collider 高度一致。
++
++### 2. 连续固体的 Greedy Meshing 与气体混合/连续显示
++
++固体本来就按 Chunk 提交 Mesh，没有给每颗土粒创建 Rigidbody。新的表面构建器先读取带一圈邻格的固定 Halo，再在六个面方向上建立二维面掩码，把同材料、同平面的连续矩形合并。上/下面在 X/Z 合并；侧面只有从底到顶完全填满的格才能跨 Y 合并，部分高度不能跨层填掉空气间隙。不同 MaterialId 的面保持分开，Chunk 边界仍读取邻 Chunk 去掉内部面，Collider 复用同一轮廓。Halo 数组与掩码都在构造时分配，一次 Build 的多次邻格读取直接访问数组，避免反复查询 Dictionary。
++
++完整 4³ 格立方体的表面从 384 个顶点变为 24 个，即六个四边形；测试用三角形的有向体积 V=Σ(a·(b×c))/6 验证外壳仍为 1m³。另外保留竖直通孔、材质分界、跨 Chunk 部分高度和 Navigation 洞口回归，不能只检查顶点少了便认为正确。该例证明连续平面的冗余几何被消除，尚无 Boss GPU ms/FPS 测量。
++
++气体 Store 原本支持混合，错误在出生限制：旧代码把毒雾和蒸汽的总量都与单种气体出生目标 16 GMU 比较，毒雾已有 16 时，蒸汽永远无法落位。现在出生允许量=min(请求剩余量, 本材料出生目标−本材料已有量, 总容量−所有气体已有量)。毒雾 16/32 可以同时容纳蒸汽 16/32；毒素不被替换，两个状态成分都保留。真正总满的格仍受容量约束，继续寻找可达空气。RED 中 1600 GMU 蒸汽全部留在 Pending；修复后首 Tick 放入 100 个已含毒雾的格，毒雾量不变，总量守恒、单格总浓度不超 32。已有墙面可达性和 Pending 安全继续验证。
++
++默认生产 Wind=0、两气体 Buoyancy=0，Diffusion 保留 1/s；因此气体按浓度向所有开放方向扩散。六面的访问顺序用坐标、Tick、材料分量的确定性 Hash 轮换，解决稀薄整数通量总先被 Up 消费的偏向。这个随机优先级没有额外物质量，也没有假造风速；冻结期间不补算 Tick，没有使用全局 Unity Random 或每格 Random 对象。显式风/浮力的 API 和对应定向风、封闭墙、恢复后不补算的测试保留。Task 10 的极稀薄消散条件继续生效：每格混合总量最多 1 GMU、Chunk 平均浓度最多 0.5%、持续 3 秒、每 Tick 至多详细检查 2 Chunk；浓雾和冻结区保留，消散量进入账本。
++
++旧 0.1s 线性显示过渡容易在量化通量或工作队列延后时提前结束，随后等待下次变化。新显示时长为 0.3s，权重 t²(3−2t) 是 SmoothStep；它降低开始/结束时的突兀。过渡未完又有真实数据更新时，用屏幕当时的密度重新作为起点，不能退回前一 Tick 的密度。RG 和 BA 仍装在同一 RGBA32 Texture3D，每帧只改一个权重，不逐帧上传新纹理；Shader 噪声继续描绘云内动感。统一时长避免相邻 Halo 采用不同自适应时间造成边界节奏差异，代价是成熟云团约数百毫秒的显示滞后。新 Chunk 首帧直接可见；scaled Time 保留暂停；量化尾量完成淡出才停 Draw。模拟继续 10Hz、每 Tick 1024 活动格预算，不增加纹理分辨率或 Fragment Fetch 数。
++
++### 3. 本轮文件责任、验证口径与下一步
++
++| 创建/修改文件 | Assembly/责任、调用与技术取舍 |
++|---|---|
++| `ElementField/Solids/FixedSolidWorldProfile.cs` | Game.ElementField；SO 保存出生粒度，生产与通用默认分开，细格容量协议保留 |
++| `ElementField/Solids/FixedSolidWorldRuntime.cs` | Game.ElementField；接收 Impact→Pending→成块预检→整请求事务→Collider 发布；请求批次回退、固定数组、容量/几何计数 |
++| `ElementField/Solids/FixedSolidSurfaceBuilder.cs` | Game.ElementField；Store→Halo→二维面掩码→合并 Mesh/Navigation；保持 Local Space、绕序、孔洞与材质边界 |
++| `ElementField/Gases/GasWorldProfile.cs` | Game.ElementField；数据驱动 Diffusion/Wind/Buoyancy，新建默认无定向风/浮力 |
++| `ElementField/Gases/GasWorldRuntime.cs` | Game.ElementField；出生检查分别读取单种量与混合占据，共享总浓度和地形预算 |
++| `ElementField/Gases/GasFluxSolver.cs` | Game.ElementField；Current/Next 通量，Hash 轮换面优先级，整数 Credit、数量守恒和显式风接口 |
++| `Rendering/ElementField/GasFieldVolumeRenderer.cs` | Game.Rendering；只读密度快照、SmoothStep、可见值重定起点、按版本上传、暂停与尾雾停 Draw |
++| `ScriptableObjects/ElementField/Phases/FixedSolidWorld_Default.asset`、`GasWorld_Default.asset` | P7/P8 共享生产数据；固体 128 Chunk/粒度 2，Gas 默认无风/浮力，材料编号不变 |
++| `Tests/ElementField/MaterialPhaseRuntimeTests.cs` | Game.ElementField.Tests；真实失败→另一请求恢复、两固体块形状/Collider/尾量、满池回收、出生零分配、同格混合 |
++| `Tests/ElementField/FixedSolidGeometryTests.cs`、`MaterialSolidGasWorldTests.cs` | Game.ElementField.Tests；有向体积/通孔/材质/去面、薄气体多个方向及原守恒/墙/冻结行为 |
++| `Tests/Rendering/GasFieldVolumePerformanceTests.cs`、`MaterialPhaseAssetTests.cs` | Game.Rendering.Tests；中断插值起点、无额外上传、暂停/淡出、真实共享 Prefab 与无默认风的扩散 |
++| `Editor/MaterialPhaseFocusedChecks.cs` | Editor；新增 grain-gas 聚焦模式，明确同步 NUnit 断言证据，不冒称官方 TestRunner XML |
++| `Editor/MaterialWorldSolidGasSetup.cs`、`MaterialWorldPhaseAudit.cs` | Editor；安装默认数据与生产一致；只读审计报告真实容量、粒度、风和插值时间，未运行安装/保存 Scene |
++| 本 living explainer、原实施计划、`validation/2026-10-07-solid-grain-gas-mixing/` 新记录/脚本 | 记录 Task 11 范围、before/after、RED/GREEN、编译与审计；不编辑旧 Task 的归档 |
++
++最终编译为五个 Assembly 当前源码/真实 Unity References 全部通过；Unity 同步检查 grain-gas=50/0、all=89/0、phase-e=27/0，各模式存在覆盖重叠，不能相加宣称独立用例总数。正确 RED 为 38/7；首轮修复 45/1 的剩余问题是淡出结束判据与显示权重的浮点边界不同，统一判据后修复。新增满池诊断曾为 48/1：容量满在几何预检先被拒绝而没有计入存储满计数，容量预检前置后，真实库存保留且回收后正常出生。32 次成功成块出生与有界 Cooking、合并几何反复构建、静止库存、Gas 通量和极薄消散等被覆盖线程/热路径测得 0 Managed Alloc；未测整帧 Unity Profiler GC Alloc。Shader 检查和 P7/P8 只读接线回归通过，不代替所有 GPU Variant/Play 画面验证。精确差异、before/after、报告与只读审计归档到 `docs/superpowers/validation/2026-10-07-solid-grain-gas-mixing/`，没有修改旧 Task 归档。
++
++本轮五项代码侧修改与原生回归完成。下一步为正常 Play 的成块大小、连续施法、毒雾中的蒸汽可见性、无默认风的慢扩散和镜头移动下的连续云团；再采正常 Boss 战长窗口 CPU/GPU、GC Alloc、Chunk 数与 Frame P95/P99。同步断言和少顶点不能代替这些画面/负载验收；整个固体/气体阶段继续“更新中”。
++
++**已加载对象兼容补充：** 最终配置审计发现当前 P7 对象仍保存旧 0.1s 字段，P8 新加载对象为 0.3s。Unity Domain Reload 会反序列化现有对象的旧值，改 C# 字段初始值并不会迁移这个对象，因此只改默认值不够。新增兼容 RED 为 phase-e 26/1；Renderer 读取时将有效过渡限定至少 0.3s，既有对象无需重载，旧字段不在 OnValidate/Start 写回 Scene。审计分别报告配置值与有效值；补充后 phase-e 27/0。这个检查说明“源码默认参数”与“当前已加载 Scene 实际行为”需要分别核实。

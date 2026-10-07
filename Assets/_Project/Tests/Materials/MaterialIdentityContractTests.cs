@@ -18,6 +18,22 @@ namespace Game.Materials.Tests
         }
 
         [Test]
+        public void FixedSolidAndGasHaveStableIdentitiesAndDistinctBehaviors()
+        {
+            string[] names = { "Ice", "DriedSlime", "Steam", "ToxicVapor" };
+            for (int i = 0; i < names.Length; i++)
+            {
+                Assert.That(Enum.TryParse(names[i], out MaterialId material), Is.True,
+                    "固体和气体必须是元素世界中可识别的真实材料。");
+                Assert.That((byte)material, Is.EqualTo(5 + i));
+            }
+            Assert.That(Enum.TryParse("Solid", out MaterialBehaviorKind solid), Is.True);
+            Assert.That((byte)solid, Is.EqualTo(3));
+            Assert.That(Enum.TryParse("Gas", out MaterialBehaviorKind gas), Is.True);
+            Assert.That((byte)gas, Is.EqualTo(4));
+        }
+
+        [Test]
         public void BehaviorKind_ContainsOnlyTheCurrentSemanticCategories()
         {
             Assert.That(
@@ -27,6 +43,8 @@ namespace Game.Materials.Tests
                     MaterialBehaviorKind.None,
                     MaterialBehaviorKind.Liquid,
                     MaterialBehaviorKind.ReactiveField,
+                    (MaterialBehaviorKind)3,
+                    (MaterialBehaviorKind)4,
                 }));
         }
 

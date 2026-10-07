@@ -135,6 +135,70 @@ namespace Game.ElementField.Tests
             }
         }
 
+        [Test]
+        public void NeighborWake_PropagatesVisibleMotionButIgnoresSettlingJitter()
+        {
+            IgnoreWithoutComputeSupport();
+            ComputeShader shader = AssetDatabase.LoadAssetAtPath<ComputeShader>(SpatialHashShaderPath);
+            Assert.That(shader, Is.Not.Null);
+            var resources = new FluidGpuResourceSet(2, 4, maxSpawnRequests: 1);
+            try
+            {
+                resources.PredictedPositions.SetData(new[]
+                {
+                    new Vector4(.1f, .1f, .1f, 1f),
+                    new Vector4(.2f, .1f, .1f, 1f)
+                });
+                uint sleeping = FluidGpuLayout.AliveFlag | FluidActivityFlags.InterestActive
+                    | FluidActivityFlags.Sleeping;
+                resources.Metadata.SetData(new[]
+                {
+                    new FluidGpuUInt2(1u, sleeping),
+                    new FluidGpuUInt2(1u, FluidGpuLayout.ActiveFlag)
+                });
+                resources.Velocities.SetData(new[]
+                {
+                    Vector4.zero,
+                    new Vector4(.05f, 0f, 0f, 0f)
+                });
+                // GraphicsBuffer 创建后内容未定义；Runtime 由 InitializeActivity 清零，独立 Kernel 测试需显式复现。
+                resources.WakeRequests.SetData(new uint[2]);
+                DispatchSpatialHash(shader, resources, 1f);
+
+                int wakeKernel = shader.FindKernel("MarkNeighborWakeRequests");
+                shader.SetInt("_ParticleCapacity", 2);
+                shader.SetInt("_HashTableCapacity", 4);
+                shader.SetFloat("_SmoothingRadius", 1f);
+                shader.SetFloat("_WakeVelocityThreshold", .1f);
+                shader.SetBuffer(wakeKernel, "_PredictedPositions", resources.PredictedPositions);
+                shader.SetBuffer(wakeKernel, "_Velocities", resources.Velocities);
+                shader.SetBuffer(wakeKernel, "_ParticleMetadata", resources.Metadata);
+                shader.SetBuffer(wakeKernel, "_SpatialCells", resources.SpatialCells);
+                shader.SetBuffer(wakeKernel, "_SpatialEntries", resources.SpatialEntries);
+                shader.SetBuffer(wakeKernel, "_CellRanges", resources.CellRanges);
+                shader.SetBuffer(wakeKernel, "_WakeRequests", resources.WakeRequests);
+                shader.Dispatch(wakeKernel, 1, 1, 1);
+                var wakes = new uint[2];
+                resources.WakeRequests.GetData(wakes);
+                Assert.That(wakes[0], Is.Zero,
+                    "低于静止阈值的 Solver 抖动不能阻止相邻粒子完成休眠。");
+
+                resources.Velocities.SetData(new[]
+                {
+                    Vector4.zero,
+                    new Vector4(.2f, 0f, 0f, 0f)
+                });
+                shader.Dispatch(wakeKernel, 1, 1, 1);
+                resources.WakeRequests.GetData(wakes);
+                Assert.That(wakes[0], Is.EqualTo(1u),
+                    "可见运动必须沿 PBF 邻域唤醒已休眠粒子。");
+            }
+            finally
+            {
+                resources.Dispose();
+            }
+        }
+
         private static void DispatchSpatialHash(
             ComputeShader shader,
             FluidGpuResourceSet resources,

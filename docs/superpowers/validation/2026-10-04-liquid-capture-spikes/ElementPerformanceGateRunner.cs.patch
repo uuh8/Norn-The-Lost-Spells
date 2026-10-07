@@ -1,0 +1,46 @@
+--- L4.27 before/ElementPerformanceGateRunner.cs
++++ L4.27 final/ElementPerformanceGateRunner.cs
+@@ -51,8 +51,9 @@
+             string dumpRequest = Path.Combine(ProjectRoot, "Temp/ElementPerformance/dump-profiler.request");
+             if (!EditorApplication.isCompiling && File.Exists(dumpRequest))
+             {
++                bool allFrames = File.ReadAllText(dumpRequest).Trim() == "all";
+                 File.Delete(dumpRequest);
+-                DumpProfiler();
++                DumpProfiler(allFrames);
+                 return;
+             }
+             if (EditorApplication.isCompiling || EditorApplication.isUpdating
+@@ -93,12 +94,21 @@
+             Run();
+         }
+ 
+-        private static void DumpProfiler()
++        private static void DumpProfiler(bool allFrames)
+         {
+             // 只读取已记录帧，不开启Deep Profile、不改变Play状态。离线导出分配不计入Gameplay。
+             string output = Path.Combine(ProjectRoot, "Temp/ElementPerformance/editor-profiler.tsv");
+             using var writer = new StreamWriter(output);
+             int last = UnityEditorInternal.ProfilerDriver.lastFrameIndex;
++            if (allFrames)
++            {
++                // 用户截图可能选择缓存中段。显式完整导出先保留原始.data，随后诊断Play
++                // 即使清掉Profiler缓存，也能逐帧核对；不替换当前记录或更改Profiler设置。
++                string archive = Path.Combine(ProjectRoot, "Backups/ElementPerformance/L427");
++                Directory.CreateDirectory(archive);
++                UnityEditorInternal.ProfilerDriver.SaveProfile(Path.Combine(archive,
++                    "user-capture-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss") + ".data"));
++            }
+             // 帧索引和UTC用于证明导出来自本次窗口，空/旧Profiler不能冒充有效性能数据。
+             File.WriteAllText(Path.Combine(ProjectRoot,"Temp/ElementPerformance/editor-profiler-state.txt"),
+                 DateTime.UtcNow.ToString("O")+"\nPlaying="+EditorApplication.isPlaying+"\nTimeScale="+Time.timeScale
+@@ -107,7 +117,8 @@
+                 +"\nGpuAvailability="+UnityEditorInternal.ProfilerDriver.GetGpuStatisticsAvailabilityState(last)
+                 +"\nGpuFrame="+UnityEditorInternal.ProfilerDriver.GetFormattedCounterValue(last,UnityEngine.Profiling.ProfilerArea.GPU,"GPU Frame Time"));
+             writer.WriteLine("frame\tthread\tsample\tms\tgcBytes\tstartMs");
+-            for (int frame = Math.Max(UnityEditorInternal.ProfilerDriver.firstFrameIndex, last - 59); frame <= last; frame++)
++            int first = UnityEditorInternal.ProfilerDriver.firstFrameIndex;
++            for (int frame = allFrames ? first : Math.Max(first, last - 59); frame <= last; frame++)
+             {
+                 for (int thread = 0; thread < 64; thread++)
+                 {

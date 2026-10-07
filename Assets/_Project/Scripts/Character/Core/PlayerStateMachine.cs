@@ -7,7 +7,6 @@ namespace Game.Character
     /// </summary>
     public class PlayerStateMachine
     {
-        // 单一当前状态引用：外部只能读取，只有 ChangeState 能替换，保证每帧最多路由到一个 Gameplay State。
         public PlayerStateBase CurrentState { get; private set; }
 
         /// <summary>

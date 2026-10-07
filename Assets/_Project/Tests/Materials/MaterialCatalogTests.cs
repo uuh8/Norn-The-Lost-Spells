@@ -98,7 +98,7 @@ namespace Game.Materials.Tests
             AssertDefinition(snapshot, MaterialId.Water, MaterialBehaviorKind.Liquid);
             AssertDefinition(snapshot, MaterialId.Fire, MaterialBehaviorKind.ReactiveField);
             AssertDefinition(snapshot, MaterialId.Poison, MaterialBehaviorKind.Liquid);
-            Assert.That(snapshot.TryGet(MaterialId.Sticky, out _), Is.False);
+            AssertDefinition(snapshot, MaterialId.Sticky, MaterialBehaviorKind.Liquid);
         }
 
         private static MaterialDefinition CreateDefinition(

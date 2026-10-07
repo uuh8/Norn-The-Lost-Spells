@@ -54,6 +54,25 @@ namespace Game.ElementField.Tests
             Assert.That(chunk.SolidMask[neighboringIndex], Is.False);
         }
 
+        [Test]
+        public void DefaultCubeBlocksGroundOnlyMaskButRigidbodyAndTriggerDoNot()
+        {
+            _solidObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            _solidObject.transform.position = new Vector3(90.5f, 120.5f, 80.5f);
+            _solidObject.transform.localScale = Vector3.one * .8f;
+            _bakerObject = new GameObject("Default environment sampling");
+            var baker = _bakerObject.AddComponent<ElementFieldSolidBaker>();
+            SetPrivateField(baker,"_solidLayerMask",(LayerMask)(1<<8));
+            Physics.SyncTransforms();
+            var cell = new Vector3Int(90,120,80);
+            Assert.That(baker.IsStaticSolidCell(cell,Vector3.zero,1f),Is.True);
+            _solidObject.GetComponent<BoxCollider>().isTrigger=true;
+            Assert.That(baker.IsStaticSolidCell(cell,Vector3.zero,1f),Is.False);
+            _solidObject.GetComponent<BoxCollider>().isTrigger=false;
+            _solidObject.AddComponent<Rigidbody>().isKinematic=true;
+            Assert.That(baker.IsStaticSolidCell(cell,Vector3.zero,1f),Is.False);
+        }
+
         private static void SetPrivateField<T>(object target, string fieldName, T value)
         {
             FieldInfo field = target.GetType().GetField(

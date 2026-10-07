@@ -1,0 +1,105 @@
+using System;
+using System.Globalization;
+using System.IO;
+using System.Reflection;
+using System.Text;
+using UnityEditor;
+using UnityEditorInternal;
+using UnityEngine;
+using UnityEngine.Profiling;
+
+namespace NornProfilerOffline
+{
+    // 独立临时项目只读取已保存的Profiler记录，不连接、暂停或改动用户项目。
+    public static class OfflineProfilerExport
+    {
+        [Serializable] public sealed class Configuration { public string[] Inputs; public string OutputDirectory; }
+        private static readonly CultureInfo Invariant = CultureInfo.InvariantCulture;
+
+        public static void Run()
+        {
+            string root = Directory.GetParent(Application.dataPath).FullName;
+            try
+            {
+                Configuration config = JsonUtility.FromJson<Configuration>(File.ReadAllText(Path.Combine(root, "config.json")));
+                Directory.CreateDirectory(config.OutputDirectory);
+                ProfilerDriver.enabled = false;
+                // 新分析项目默认只保留600帧；提高本进程容量后再导入，防止漏掉录制前半段。
+                typeof(ProfilerDriver).GetMethod("SetMaxFrameHistoryLength", BindingFlags.Static | BindingFlags.NonPublic)
+                    .Invoke(null, new object[] { 10000 });
+                foreach (string input in config.Inputs) Export(input, config.OutputDirectory);
+                File.WriteAllText(Path.Combine(config.OutputDirectory, "complete.txt"), DateTime.UtcNow.ToString("O"));
+            }
+            catch (Exception exception)
+            {
+                File.WriteAllText(Path.Combine(root, "export-error.txt"), exception.ToString());
+                EditorApplication.Exit(1);
+            }
+        }
+
+        private static string Safe(string value) => (value ?? "").Replace('\t', ' ').Replace('\n', ' ').Replace('\r', ' ');
+        private static string Number(double value) => value.ToString("R", Invariant);
+        private static bool Important(string name) => name.StartsWith("GridLiquid.", StringComparison.Ordinal)
+            || name.StartsWith("GpuFire.", StringComparison.Ordinal) || name.StartsWith("ElementWorld.", StringComparison.Ordinal)
+            || name.StartsWith("FireParcel.", StringComparison.Ordinal) || name.StartsWith("Gfx", StringComparison.Ordinal)
+            || name == "GC.Alloc";
+
+        private static void Export(string input, string directory)
+        {
+            if (!ProfilerDriver.LoadProfile(input, false)) throw new InvalidOperationException("LoadProfile failed: " + input);
+            int first = ProfilerDriver.firstFrameIndex, last = ProfilerDriver.lastFrameIndex;
+            string stem = Path.GetFileNameWithoutExtension(input);
+            using var frames = new StreamWriter(Path.Combine(directory, stem + ".frames.tsv"), false, new UTF8Encoding(false));
+            using var samples = new StreamWriter(Path.Combine(directory, stem + ".samples.tsv"), false, new UTF8Encoding(false));
+            using var info = new StreamWriter(Path.Combine(directory, stem + ".info.txt"), false, new UTF8Encoding(false));
+            frames.WriteLine("frame\tthreadIndex\tthread\tthreadGroup\tframeMs\tstartMs\tsampleCount\tgcBytes\tgpuAvailability\tgpuFrame");
+            samples.WriteLine("frame\tthreadIndex\tthread\tthreadGroup\tsampleIndex\tsample\tms\tselfMs\tstartMs\tgcBytes\tcategory\tparent");
+            info.WriteLine("Input=" + input + "\nFirst=" + first + "\nLast=" + last + "\nUnity=" + Application.unityVersion);
+            for (int frame = first; frame <= last; frame++)
+            {
+                string gpuState = ProfilerDriver.GetGpuStatisticsAvailabilityState(frame).ToString();
+                string gpuFrame = ProfilerDriver.GetFormattedCounterValue(frame, ProfilerArea.GPU, "GPU Frame Time");
+                for (int thread = 0; thread < 512; thread++)
+                {
+                    using var view = ProfilerDriver.GetRawFrameDataView(frame, thread);
+                    if (!view.valid) break;
+                    int count = view.sampleCount;
+                    // RawFrameDataView按树的前序排列。Offline计算直接子项耗时，避免父子项重复相加。
+                    var durations = new double[count];
+                    var childTotals = new double[count];
+                    var parents = new int[count];
+                    var stack = new int[count];
+                    var ends = new int[count];
+                    int depth = 0;
+                    for (int sample = 0; sample < count; sample++)
+                    {
+                        while (depth > 0 && sample > ends[depth - 1]) depth--;
+                        int parent = depth > 0 ? stack[depth - 1] : -1;
+                        parents[sample] = parent;
+                        durations[sample] = view.GetSampleTimeMs(sample);
+                        if (parent >= 0) childTotals[parent] += durations[sample];
+                        int descendants = view.GetSampleChildrenCountRecursive(sample);
+                        if (descendants > 0) { stack[depth] = sample; ends[depth] = sample + descendants; depth++; }
+                    }
+                    long gcTotal = 0;
+                    for (int sample = 0; sample < count; sample++)
+                    {
+                        // 部分内部同步Sample没有公开Marker名称，保留其时长与线程而不中断整个文件。
+                        string name = view.GetSampleName(sample) ?? "<unnamed>";
+                        long gc = name == "GC.Alloc" && view.GetSampleMetadataCount(sample) > 0 ? view.GetSampleMetadataAsLong(sample, 0) : 0;
+                        gcTotal += gc;
+                        if (durations[sample] < .25 && !Important(name)) continue;
+                        samples.Write(frame); samples.Write('\t'); samples.Write(thread); samples.Write('\t'); samples.Write(Safe(view.threadName)); samples.Write('\t'); samples.Write(Safe(view.threadGroupName)); samples.Write('\t');
+                        samples.Write(sample); samples.Write('\t'); samples.Write(Safe(name)); samples.Write('\t'); samples.Write(Number(durations[sample])); samples.Write('\t');
+                        samples.Write(Number(Math.Max(0, durations[sample] - childTotals[sample]))); samples.Write('\t'); samples.Write(Number(view.GetSampleStartTimeMs(sample))); samples.Write('\t');
+                        samples.Write(gc); samples.Write('\t'); samples.Write(view.GetSampleCategoryIndex(sample)); samples.Write('\t');
+                        samples.WriteLine(parents[sample] >= 0 ? Safe(view.GetSampleName(parents[sample])) : "");
+                    }
+                    frames.WriteLine(frame + "\t" + thread + "\t" + Safe(view.threadName) + "\t" + Safe(view.threadGroupName) + "\t" + Number(view.frameTimeMs)
+                        + "\t" + Number(view.frameStartTimeMs) + "\t" + count + "\t" + gcTotal + "\t" + gpuState + "\t" + Safe(gpuFrame));
+                }
+            }
+            info.WriteLine("ExportedAt=" + DateTime.UtcNow.ToString("O"));
+        }
+    }
+}

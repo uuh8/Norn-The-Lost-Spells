@@ -13,6 +13,16 @@ namespace Game.Rendering
         private const float InverseTwentyFourBitRange = 1f / 16777216f;
         private const float HorizontalJitterCellFraction = 0.35f;
 
+        public static float VisualHeat(byte amount,float minimumHeat) => amount==0?0f:
+            Mathf.Lerp(Mathf.Clamp01(minimumHeat),1f,Mathf.Sqrt(NormalizeAmount(amount)));
+
+        public static bool ShouldEmitVisual(Vector3Int cell,uint sequence,uint seed,
+            byte amount,float probability,float minimumHeat) => amount>0
+            && Hash01(cell,sequence,seed,0u)<Mathf.Clamp01(probability)*VisualHeat(amount,minimumHeat);
+
+        public static float GroundSourceHeight(float cellSize,float minimumHeight) =>
+            Mathf.Max(cellSize*.5f,minimumHeight);
+
         /// <summary>
         /// 把离散输入混合成 [0,1) 的可复现浮点数。
         /// 只保留低 24 bit，是因为 float 尾数可精确表达约 24 bit 随机精度；除数使用 2^24，

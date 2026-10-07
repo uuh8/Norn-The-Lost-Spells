@@ -1,0 +1,195 @@
+using System;
+using System.IO;
+using Game.Core;
+using UnityEditor;
+using UnityEditor.TestTools.TestRunner.Api;
+using UnityEngine;
+
+namespace Game.EditorTools
+{
+    /// <summary>
+    /// 仅 Editor 的显式测试入口。外部工具写入一次性请求后由主线程调用 TestRunner，
+    /// 避免关闭当前项目或在同一项目启动第二个 Unity；不自动修改场景和材料。
+    /// </summary>
+    [InitializeOnLoad]
+    internal static class ElementPerformanceGateRunner
+    {
+        private static readonly string ProjectRoot = Directory.GetParent(Application.dataPath).FullName;
+        private static readonly string RequestPath = Path.Combine(
+            ProjectRoot, "Temp", "ElementPerformance", "run-editmode.request");
+        private static readonly string ResultPath = Path.Combine(
+            ProjectRoot, "Temp", "ElementPerformance", "editmode-results.xml");
+        private const string RunningKey = "ElementPerformance.GateRunning";
+        private const string RefreshKey = "ElementPerformance.GateRefreshed";
+        private const string ReadyAtKey = "ElementPerformance.GateReadyAt";
+        private static TestRunnerApi _api;
+        private static GateCallbacks _callbacks;
+        private static double _nextPoll;
+
+        static ElementPerformanceGateRunner()
+        {
+            EditorApplication.update += Poll;
+            if (SessionState.GetBool(RunningKey, false))
+            {
+                if (File.Exists(RequestPath))
+                {
+                    // Editor 异常退出后 SessionState 可能保留 Running，但旧 TestRunner 已不存在；
+                    // 新的一次性请求就是显式恢复信号，清掉孤儿状态后按正常 Refresh 流程重跑。
+                    SessionState.SetBool(RunningKey, false);
+                }
+                else
+                {
+                    Register();
+                }
+            }
+        }
+
+        private static void Poll()
+        {
+            if (EditorApplication.timeSinceStartup < _nextPoll) return;
+            _nextPoll = EditorApplication.timeSinceStartup + 1d;
+            string dumpRequest = Path.Combine(ProjectRoot, "Temp/ElementPerformance/dump-profiler.request");
+            if (!EditorApplication.isCompiling && File.Exists(dumpRequest))
+            {
+                File.Delete(dumpRequest);
+                DumpProfiler();
+                return;
+            }
+            if (EditorApplication.isCompiling || EditorApplication.isUpdating
+                || EditorApplication.isPlayingOrWillChangePlaymode
+                || SessionState.GetBool(RunningKey, false) || !File.Exists(RequestPath)) return;
+            // 请求可能紧跟源码写入。先完成 Asset Refresh / Domain Reload，防止执行仍装载的上一版测试。
+            if (!SessionState.GetBool(RefreshKey, false))
+            {
+                SessionState.SetBool(RefreshKey, true);
+                SessionState.SetFloat(ReadyAtKey, (float)EditorApplication.timeSinceStartup + 5f);
+                AssetDatabase.Refresh();
+                return;
+            }
+            if (EditorApplication.timeSinceStartup < SessionState.GetFloat(ReadyAtKey, 0f)) return;
+            // 消费固定路径的一次性控制文件；不会删除测试结果或任何项目资产。
+            string requestText = File.ReadAllText(RequestPath).Trim();
+            File.Delete(RequestPath);
+            SessionState.SetBool(RefreshKey, false);
+            // 旧标记文本继续表示完整批次；JSON请求必须给出精确测试名，防止复查单个失败时重跑全套。
+            if (requestText.StartsWith("{", StringComparison.Ordinal))
+            {
+                try
+                {
+                    GateRequest request = JsonUtility.FromJson<GateRequest>(requestText);
+                    if (request == null || request.TestNames == null || request.TestNames.Length == 0)
+                        throw new ArgumentException("定向回归请求缺少 TestNames。");
+                    for (int i = 0; i < request.TestNames.Length; i++)
+                        if (string.IsNullOrWhiteSpace(request.TestNames[i]))
+                            throw new ArgumentException("TestNames 不允许空名称。");
+                    RunFiltered(request.TestNames);
+                }
+                catch (Exception exception)
+                {
+                    GameLog.Error($"[ELEMENT-PERF-GATE] Invalid request: {exception.Message}", "Editor");
+                }
+                return;
+            }
+            Run();
+        }
+
+        private static void DumpProfiler()
+        {
+            // 只读取已记录帧，不开启Deep Profile、不改变Play状态。离线导出分配不计入Gameplay。
+            string output = Path.Combine(ProjectRoot, "Temp/ElementPerformance/editor-profiler.tsv");
+            using var writer = new StreamWriter(output);
+            int last = UnityEditorInternal.ProfilerDriver.lastFrameIndex;
+            // 帧索引和UTC用于证明导出来自本次窗口，空/旧Profiler不能冒充有效性能数据。
+            File.WriteAllText(Path.Combine(ProjectRoot,"Temp/ElementPerformance/editor-profiler-state.txt"),
+                DateTime.UtcNow.ToString("O")+"\nPlaying="+EditorApplication.isPlaying+"\nTimeScale="+Time.timeScale
+                +"\nEnabled="+UnityEditorInternal.ProfilerDriver.enabled+"\nCpu="+UnityEditorInternal.ProfilerDriver.IsAreaEnabled(UnityEngine.Profiling.ProfilerArea.CPU)
+                +"\nConnected="+UnityEditorInternal.ProfilerDriver.connectedProfiler+"\nFirst="+UnityEditorInternal.ProfilerDriver.firstFrameIndex+"\nLast="+last
+                +"\nGpuAvailability="+UnityEditorInternal.ProfilerDriver.GetGpuStatisticsAvailabilityState(last)
+                +"\nGpuFrame="+UnityEditorInternal.ProfilerDriver.GetFormattedCounterValue(last,UnityEngine.Profiling.ProfilerArea.GPU,"GPU Frame Time"));
+            writer.WriteLine("frame\tthread\tsample\tms\tgcBytes\tstartMs");
+            for (int frame = Math.Max(UnityEditorInternal.ProfilerDriver.firstFrameIndex, last - 59); frame <= last; frame++)
+            {
+                for (int thread = 0; thread < 64; thread++)
+                {
+                    using var view = UnityEditorInternal.ProfilerDriver.GetRawFrameDataView(frame, thread);
+                    if (!view.valid) break;
+                    for (int sample = 0; sample < view.sampleCount; sample++)
+                    {
+                        float ms = view.GetSampleTimeMs(sample);
+                        string name=view.GetSampleName(sample);bool allocation=name=="GC.Alloc";
+                        if(ms<.05f && !allocation && !name.StartsWith("GridLiquid.",StringComparison.Ordinal))continue;
+                        long gc=allocation && view.GetSampleMetadataCount(sample)>0?view.GetSampleMetadataAsLong(sample,0):0;
+                        writer.WriteLine(frame + "\t" + view.threadName + "\t" + name
+                            + "\t" + ms.ToString(System.Globalization.CultureInfo.InvariantCulture)+"\t"+gc+"\t"+view.GetSampleStartTimeMs(sample).ToString(System.Globalization.CultureInfo.InvariantCulture));
+                    }
+                }
+            }
+            // 消费request只代表开始导出。先Flush再给完成标志，防止外部脚本复制到半份TSV。
+            writer.Flush();
+            File.WriteAllText(Path.Combine(ProjectRoot,"Temp/ElementPerformance/editor-profiler-finished.txt"),DateTime.UtcNow.ToString("O"));
+        }
+
+
+        [Serializable]
+        private sealed class GateRequest
+        {
+            public string[] TestNames = null;
+        }
+
+        [MenuItem("Tools/Element Performance/Run Element/Rendering EditMode Gate")]
+        private static void Run()
+        {
+            RunFiltered(null);
+        }
+
+        private static void RunFiltered(string[] testNames)
+        {
+            if (SessionState.GetBool(RunningKey, false)) return;
+            SessionState.SetBool(RunningKey, true);
+            Register();
+            GameLog.Info("[ELEMENT-PERF-GATE] Started", "Editor");
+            _api.Execute(new ExecutionSettings(new Filter
+            {
+                testMode = TestMode.EditMode,
+                testNames = testNames,
+                assemblyNames = new[] { "Game.ElementField.Tests", "Game.Rendering.Tests" }
+            }));
+        }
+
+        private static void Register()
+        {
+            _api = ScriptableObject.CreateInstance<TestRunnerApi>();
+            _callbacks = new GateCallbacks();
+            _api.RegisterCallbacks(_callbacks);
+        }
+
+        private sealed class GateCallbacks : ICallbacks
+        {
+            public void RunStarted(ITestAdaptor testsToRun) { }
+            public void TestStarted(ITestAdaptor test) { }
+            public void TestFinished(ITestResultAdaptor result) { }
+            public void RunFinished(ITestResultAdaptor result)
+            {
+                try
+                {
+                    Directory.CreateDirectory("Temp/ElementPerformance");
+                    TestRunnerApi.SaveResultToFile(result, ResultPath);
+                    GameLog.Info($"[ELEMENT-PERF-GATE] Passed={result.PassCount} Failed={result.FailCount} "
+                        + $"Skipped={result.SkipCount} Inconclusive={result.InconclusiveCount}", "Editor");
+                }
+                catch (Exception exception)
+                {
+                    GameLog.Error($"[ELEMENT-PERF-GATE] Result export failed: {exception.Message}", "Editor");
+                }
+                finally
+                {
+                    SessionState.SetBool(RunningKey, false);
+                    _api.UnregisterCallbacks(_callbacks);
+                    UnityEngine.Object.DestroyImmediate(_api);
+                    _api = null;
+                    _callbacks = null;
+                }
+            }
+        }
+    }
+}

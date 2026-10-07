@@ -1,0 +1,24 @@
+2026-10-06T08:38:15.4631880Z
+Mode=Direct synchronous NUnit assertions in Unity Editor; no Scene reload
+OfficialTestRunActive=False
+PASS Game.ElementField.Tests.MaterialConversionTests.ConversionFoundationProvidesQuantityTransactionAndEnvironmentRules
+PASS Game.ElementField.Tests.MaterialConversionTests.DryingKeepsRecipeRemainderAndSeparateTemperatureThresholds
+PASS Game.ElementField.Tests.MaterialConversionTests.TwoProductReservationFailureVersionChangeAndDuplicateCommitNeverLoseQuantity
+PASS Game.ElementField.Tests.MaterialConversionTests.RealOwnersRollbackBothProductsWhenSteamCapacityIsFull
+PASS Game.ElementField.Tests.MaterialConversionTests.RealDryingCommitsResidueAndSteamAndLeavesThreeUnitRemainder
+PASS Game.ElementField.Tests.MaterialConversionTests.ChangedSourceCancelsRealPreparedTransactionWithoutConsumingIt
+PASS Game.ElementField.Tests.MaterialConversionTests.FrozenConversionRestoresWithoutWallClockCatchUp
+PASS Game.ElementField.Tests.MaterialConversionTests.RealFreezeRejectsActorThenCommitsAndMeltsWithoutLosingWater
+PASS Game.ElementField.Tests.MaterialConversionTests.StableWaterEvaporationPreservesOwnerOnCancelAndSupportsCommit
+PASS Game.ElementField.Tests.MaterialConversionTests.ClosedConversionFamilyConservesQuantityAcrossThousandCyclesWithZeroManagedAllocAfterWarmup
+PASS Game.ElementField.Tests.MaterialConversionTests.FamilyAuditCountsPendingVentsAndExplicitFuelConsumptionExactlyOnce
+FAIL Game.ElementField.Tests.MaterialConversionTests.CancelledMeltingDoesNotLeaveLiquidSolidCacheOpen
+NUnit.Framework.AssertionException:   取消融化后，冰仍应阻挡后续液体。
+  Expected: False
+  But was:  True
+
+  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) [0x00039] in <f577cd9686154d6ab10efd7e65e64366>:0 
+  at Game.ElementField.Tests.MaterialConversionTests.CancelledMeltingDoesNotLeaveLiquidSolidCacheOpen () [0x000b0] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\MaterialConversionTests.cs:281 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+Passed=11 Failed=1

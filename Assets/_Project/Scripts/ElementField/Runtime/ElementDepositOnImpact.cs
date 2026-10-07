@@ -16,7 +16,7 @@ namespace Game.ElementField
     public sealed class ElementDepositOnImpact : MonoBehaviour
     {
         [Header("Deposit Request")]
-        [Tooltip("命中后写入 ElementField 的元素种类。P6-A 的可玩内容只使用 Water 或 Fire。")]
+        [Tooltip("命中后写入统一元素世界的材料身份；具体存储、移动和阻挡由该材料的 Route 与 Behavior 决定。")]
         [SerializeField] private MaterialId _materialKind = MaterialId.Water;
 
         [Tooltip("本次命中向覆盖范围分配的元素总量。它是总预算，不是每个 Cell 都写入这个值。")]

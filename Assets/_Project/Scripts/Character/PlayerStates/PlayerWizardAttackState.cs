@@ -30,7 +30,6 @@ namespace Game.Character
         public override void Enter()
         {
             _comboIndex = 0;
-            _player.AttackBufferCounter = 0f;
             _castReleased = false;
             // 在 Enter 锁存起手环境，避免攻击过程中 Ground Check 抖动导致动画/重力规则来回切换。
             _airborne = !_player.GroundChecker.IsGrounded;
@@ -57,7 +56,6 @@ namespace Game.Character
         public override void Exit()
         {
             _comboIndex = 0;
-            _player.AttackBufferCounter = 0f;
         }
 
         #endregion
@@ -66,12 +64,16 @@ namespace Game.Character
 
         private void StartSegment(int index)
         {
+            // 将“是否已释放法术/生成投射物”的标志位清零，防止同一帧或后续帧重复生成法术。
             _castReleased = false;
+
+            //  决定播放哪个动画 (空中与地面的分支)
             int hash = _airborne && _wizard.AirAttackStateHash != 0
-                ? _wizard.AirAttackStateHash
-                : _wizard.GetComboStateHash(index);
-            // CrossFadeInFixedTime 直接按 State hash 切入目标动画，并以秒指定混合时长；第 0 层是 Base Layer。
-            // 这种代码驱动进入不需要 Animator 入向 Transition，但目标 State 仍需配置正常的退出过渡。
+                ? _wizard.AirAttackStateHash        // 使用空中攻击的 Hash
+                : _wizard.GetComboStateHash(index); // 获取对应的地面连招动画 Hash
+
+            // CrossFadeInFixedTime：让角色的 Animator 立刻平滑过渡到上一步计算出的目标动画
+            // 代码直接指定目标状态进行跳转，进入不需要 Animator 中连接 Transition，但目标 State 仍需配置正常的退出过渡。
             _player.Animator.CrossFadeInFixedTime(hash, CrossFadeDuration, 0);
         }
 
@@ -100,6 +102,7 @@ namespace Game.Character
 
         private void HandleCastRelease()
         {
+            // 第一层检查：是否已经释放过
             if (_castReleased) return;
             // IsInTransition(0) 表示 Base Layer 正在混合两个 State；此时 Current State 进度可能仍属于旧动画，先不判出手。
             if (_player.Animator.IsInTransition(0)) return;
@@ -116,7 +119,7 @@ namespace Game.Character
             }
         }
 
-        /// <summary>运行当前法杖：朝按下瞬间锁存的 ClickAimPoint，从法杖前端施放所有 EmitCommand（由 SpellCaster 落地）。</summary>
+        /// <summary>运行当前法杖：朝本次攻击已经消费并锁定的瞄准点，从法杖前端施放所有 EmitCommand。</summary>
         private void ReleaseCast()
         {
             if (_wizard.SpellCaster == null || _wizard.FireballSpawnPoint == null)
@@ -127,9 +130,8 @@ namespace Game.Character
 
             // Transform.position 是生成挂点的世界空间坐标；历史名 FireballSpawnPoint 实际是通用法术生成点。
             Vector3 spawnPos = _wizard.FireballSpawnPoint.position;
-            Vector3 aimPoint = _wizard.HasClickAim
-                ? _wizard.ClickAimPoint
-                : spawnPos + _player.transform.forward * 10f; // 未锁存（理论上不会）才退回前向远点
+            // 当前攻击的 active 快照在切入 State 前已经固定；动画期间的新输入只影响下一次 pending 请求。
+            Vector3 aimPoint = _wizard.ActiveCastAimPoint;
             byte team = _wizard.Health != null ? _wizard.Health.TeamId : (byte)0;
             // GetInstanceID 返回当前 Unity Object 在本次运行期间的实例标识，用于伤害来源和事件过滤，不是跨存档稳定 ID。
             int attackerId = _player.gameObject.GetInstanceID();

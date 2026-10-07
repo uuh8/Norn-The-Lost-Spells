@@ -108,7 +108,9 @@ namespace Game.Rendering
 
             if (!world.IsInitialized || world.CellSize <= 0f)
                 return;
-            if (!WorldWaterChunkRelevance.ContainsWater(world, chunkKey))
+            // 空 Halo 页也拥有一部分跨页表面；不能在读取邻页样本前丢弃。
+            if (!workspace.AllowCrossChunkVisualSpread
+                && !WorldWaterChunkRelevance.ContainsWater(world, chunkKey))
                 return;
 
             workspace.SnapshotWorldCells(world, chunkKey, in settings);

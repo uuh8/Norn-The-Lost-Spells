@@ -26,4 +26,9 @@ namespace Game.ElementField
     {
         bool RequestWake(Vector3Int globalCell, FluidDormantWakeReason reason);
     }
+
+    public interface IFluidVisibleArchiveReadOnly
+    {
+        int CopyVisibleArchiveCells(MaterialId material, Bounds visible, LiquidMaterialCellSample[] destination);
+    }
 }

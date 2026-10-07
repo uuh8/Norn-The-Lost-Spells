@@ -1,0 +1,535 @@
+{
+  "Utc": "2026-10-04T03:48:49.580366+00:00",
+  "Gate": {
+    "Kind": "Direct NUnit method invocation; not Unity TestRunner XML",
+    "StartUtc": "2026-10-04T03:30:46.0783111Z",
+    "EndUtc": "2026-10-04T03:31:36.7571586Z",
+    "Passed": 255,
+    "Failed": 0,
+    "Skipped": 0,
+    "Planned": 255,
+    "Completed": 255,
+    "Aborted": false,
+    "SceneRestored": true
+  },
+  "GateFixtureCount": 28,
+  "SceneFileUnchangedThisTask": true,
+  "SceneSha256": "bdc44a9b3529128a85843aa842eb83970faeaffe322ab4774baeb4014c860b83",
+  "ComparisonScope": "Fixed input CPU Capture timing; not Play Mode frame rate or total GPU execution time",
+  "Comparisons": [
+    {
+      "Case": "sparse-capture",
+      "BeforeFile": "sparse-capture-original-final.json",
+      "AfterFile": "sparse-capture-optimized-final.json",
+      "BeforeMeanMs": 29.2753375,
+      "AfterMeanMs": 18.03677916666667,
+      "ReductionPercent": 38.38916744626199,
+      "Signature": 3405202243,
+      "Quantity": 46080,
+      "Pages": 48,
+      "Owners": 356,
+      "WarmAllocatedBytes": 0,
+      "Overflow": false
+    },
+    {
+      "Case": "sparse-dense",
+      "BeforeFile": "sparse-dense-original-final.json",
+      "AfterFile": "sparse-dense-optimized-final.json",
+      "BeforeMeanMs": 27.33662916666667,
+      "AfterMeanMs": 22.11491875,
+      "ReductionPercent": 19.10151535081669,
+      "Signature": 4186262329,
+      "Quantity": 46080,
+      "Pages": 48,
+      "Owners": 144,
+      "WarmAllocatedBytes": 0,
+      "Overflow": true
+    },
+    {
+      "Case": "mixed-signature",
+      "BeforeFile": "mixed-signature-original-final.json",
+      "AfterFile": "mixed-signature-optimized-final.json",
+      "BeforeMeanMs": 2.2216989583333335,
+      "AfterMeanMs": 2.2135791666666664,
+      "ReductionPercent": 0.36547668333779537,
+      "Signature": 3548606679,
+      "Quantity": 8022,
+      "Pages": 4,
+      "Owners": 8,
+      "WarmAllocatedBytes": 0,
+      "Overflow": false
+    }
+  ],
+  "RecordedSourceChangesSinceL424": [
+    {
+      "File": "Assets/_Project/Docs/2026-09-20 通用液体底层重构完整解析（更新中）.md",
+      "BeforeSha256": "d9ea8b6bb77a270cbf4a9097044fcabc9534c6e4c533adfca2f203a89f0219b3",
+      "AfterSha256": "788f6577d4276f3891f3fa76c908aa0f5aba0cd8f71916ccca206dc6ad6048b7"
+    },
+    {
+      "File": "Assets/_Project/Docs/湖泊与地形制作指南.md",
+      "BeforeSha256": "7cb428a399caeb03d0f68dc362cf5c12dcbf2c76cced1adfb333cca29dcd8599",
+      "AfterSha256": "353b14e1d5e0af4fb5e57f0cf58c6cdd1cd213f8bb7f2b27a6fbd3d48789db1f"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/GridLiquidFieldFrameTests.cs",
+      "BeforeSha256": "296804a33e759d395c54bb4aef11f724dde5c534882e69ac81b8a1e748da4f45",
+      "AfterSha256": "e69bab8620d8c44491d2d12a46bf27a1c17eb1eb75e3b192226abff842f0f9d8"
+    },
+    {
+      "File": "Tools/ElementPerformance/run_current_liquid_gate.py",
+      "BeforeSha256": "088dc97476041e236e37422ecf8fa1b05c603f221e25e63056faf6688f2be143",
+      "AfterSha256": "6ceb7c1d3dd68aae62bdfff3874880cefe4f81bf12c4fb4a2618640197ed4a61"
+    },
+    {
+      "File": "docs/superpowers/plans/2026-10-01 液体连续输运执行记录.md",
+      "BeforeSha256": "bafe42f6ed09d771cc994bb6baf3e7a98b2d0ea28a56f428ee8f97bcf7be9b29",
+      "AfterSha256": "29568062b9d08c86e2bd8332b029a47abfa2b4953edee2a74e0de94beb1ecc66"
+    },
+    {
+      "File": "docs/superpowers/plans/2026-10-01 液体重构新对话交接.md",
+      "BeforeSha256": "66e16ddc6fe8fe52a4d860aedc101b34231a34fda391ae571fa6b76914d30402",
+      "AfterSha256": "b440805661ba644d95b623fa8f70721f096b0246f3bf2180c1600941fc628dd3"
+    }
+  ],
+  "Sources": [
+    {
+      "File": "Assets/_Project/Art/Elemental/Compute/FireParcelLifecycle.compute",
+      "Sha256": "7642fdc539c31d488b547d6356a368ffb8d22a901d76d5ee88f0317b39f7010b"
+    },
+    {
+      "File": "Assets/_Project/Art/Elemental/Materials/M_ElementFireGasSplat.mat",
+      "Sha256": "657eabd153e0fc5e58058dc33ce8524434dbe58cf21e60c6c6243647749403b7"
+    },
+    {
+      "File": "Assets/_Project/Art/Elemental/Shaders/ElementFireParcelSplat.shader",
+      "Sha256": "21b6d77f321991c21273377eca6d8fb701f30fad56a21ef823937c6432dd8126"
+    },
+    {
+      "File": "Assets/_Project/Art/Elemental/Shaders/FireParcelAppearance.hlsl",
+      "Sha256": "a65cbcc92b5b9045e452ac0ecdfcd60f05f6ece00a5c919b01f697fff06d4768"
+    },
+    {
+      "File": "Assets/_Project/Docs/2026-08-09 GPU PBF流体模拟完整解析.md",
+      "Sha256": "482d06e0d703ce9601e8a3124d8d4f520682ea534012b7915647fdab0b969c94"
+    },
+    {
+      "File": "Assets/_Project/Docs/2026-09-20 通用液体底层重构完整解析（更新中）.md",
+      "Sha256": "788f6577d4276f3891f3fa76c908aa0f5aba0cd8f71916ccca206dc6ad6048b7"
+    },
+    {
+      "File": "Assets/_Project/Docs/湖泊与地形制作指南.md",
+      "Sha256": "353b14e1d5e0af4fb5e57f0cf58c6cdd1cd213f8bb7f2b27a6fbd3d48789db1f"
+    },
+    {
+      "File": "Assets/_Project/Editor/ElementLoadedSceneGate.cs",
+      "Sha256": "c068dfe2f78c667799fd96cb8767b442dab2e19edafa2c5ba23eacc3a89fb7b8"
+    },
+    {
+      "File": "Assets/_Project/Editor/GridLiquidPrototypeCapture.cs",
+      "Sha256": "5a96279d16107218bf79b905c0a4490d0e188cb679a1bd9fe4b5678f1b280010"
+    },
+    {
+      "File": "Assets/_Project/Scenes/P7_DemoRun.unity",
+      "Sha256": "bdc44a9b3529128a85843aa842eb83970faeaffe322ab4774baeb4014c860b83"
+    },
+    {
+      "File": "Assets/_Project/ScriptableObjects/ElementField/Fire/GpuFireParcelRenderProfile_Default.asset",
+      "Sha256": "b21a88e2877819a86613fc68b2d5ff87ff59e3fb3bed9d28cdc56c4e4f1ed66c"
+    },
+    {
+      "File": "Assets/_Project/ScriptableObjects/ElementField/Liquids/LiquidWorldProfile_P7_DemoRun_Grid.asset",
+      "Sha256": "e1d574f871ff7eb55f94386b9de4c42504711cc253f3c555488507dc37f429fd"
+    },
+    {
+      "File": "Assets/_Project/Scripts/ElementField/Liquids/LiquidActivityScheduler.cs",
+      "Sha256": "26b104af372c6fb7306e00130d6d469d07b9a83c2ce1ffaa19a05490dd378a02"
+    },
+    {
+      "File": "Assets/_Project/Scripts/ElementField/Liquids/LiquidFluxSolver.cs",
+      "Sha256": "852784a129a6938240d920edfe1135c2bd2248345d51c5b4a6e40e41eb36b377"
+    },
+    {
+      "File": "Assets/_Project/Scripts/ElementField/Liquids/LiquidWorldProfile.cs",
+      "Sha256": "3342bc7127d104f2a59f4c116ce51f76570a3a6596faaa3eb61ad1f0916b0eb3"
+    },
+    {
+      "File": "Assets/_Project/Scripts/ElementField/Liquids/LiquidWorldRuntime.cs",
+      "Sha256": "52f14e418ab469f7502fbfdaecf4037a4e61b27356a482ef465e0dc280e47d67"
+    },
+    {
+      "File": "Assets/_Project/Scripts/ElementField/Liquids/Stable/StableLiquidRegionRuntime.cs",
+      "Sha256": "f28e1bb0f86f5e47c81a78d919b7041340ca66c425cbbac75ea0b7e0b8a2010b"
+    },
+    {
+      "File": "Assets/_Project/Scripts/ElementField/Runtime/ElementWorldRuntime.Activity.cs",
+      "Sha256": "9ee547a2b98c597fe0a49672c9f7a3d3c77c2de8b05befc16d6064f2db9c7b5d"
+    },
+    {
+      "File": "Assets/_Project/Scripts/Rendering/ElementField/FireCellEmissionSampler.cs",
+      "Sha256": "977aed3999b816c968b70ad3d736f82cc1b949f45148b4768025036f2b94d194"
+    },
+    {
+      "File": "Assets/_Project/Scripts/Rendering/ElementField/FireParcelGpuLayout.cs",
+      "Sha256": "cfcc01cbf9cece3a28ceb146d0fc6e751f75380f0cb892ec0f3b235fa523ab2e"
+    },
+    {
+      "File": "Assets/_Project/Scripts/Rendering/ElementField/FireParcelSurfaceResources.cs",
+      "Sha256": "57b6a4e9599c1e0142e74d53837fe00a9e1ff0270601a25b58d668b5602b67a0"
+    },
+    {
+      "File": "Assets/_Project/Scripts/Rendering/ElementField/GpuFireParcelRenderProfile.cs",
+      "Sha256": "2c1980a6a5ac472fca63554f229a3ef4500f6a6d381813db62588044c1f2eb28"
+    },
+    {
+      "File": "Assets/_Project/Scripts/Rendering/ElementField/GpuFireParcelRenderer.cs",
+      "Sha256": "aa3b079fded2c5d38ec1754067af569d3d0d0b62755c026058e5b0730d6215e8"
+    },
+    {
+      "File": "Assets/_Project/Scripts/Rendering/ElementField/GridLiquidFieldLabDriver.cs",
+      "Sha256": "2bc25d8d01d31a6e3e58d03cd1226e6572ea1325f666bd602807a2d0273409a7"
+    },
+    {
+      "File": "Assets/_Project/Scripts/Rendering/ElementField/MaterialPresentationView.cs",
+      "Sha256": "664e71884202fba0343d1e6857ac7987dbf7ce3ccc9b566b276c3c47de40f98a"
+    },
+    {
+      "File": "Assets/_Project/Scripts/Rendering/ElementField/MaterialPresentationView.cs.meta",
+      "Sha256": "9d1690d4f38824ad214cf7bb7205bff40bc527eae91a3179a35df7f409e06a98"
+    },
+    {
+      "File": "Assets/_Project/Scripts/Rendering/ElementField/StableLiquidSurfaceRenderer.cs",
+      "Sha256": "1ce74d39364aeb7a2f7fbfef5a50c3f3494da9eb9d51af1475c13c28b0e5b73f"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/ElementWorldChunkSnapshotTests.cs",
+      "Sha256": "219b42c8254a8844323f73a4e660da6a882ad4add8f16f3af1cb825d8bbde5ce"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/ElementWorldFluidRoutingTests.cs",
+      "Sha256": "d18b4a28cf659c8c072ee3ab6ef69836700d18de20c039a8a986bc9372c10361"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/ElementWorldPersistentFireSourceTests.cs",
+      "Sha256": "c7099e5f7b45b14b08a756e114a5da58eb74d44e610903381e200469f82282ed"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/LiquidCapacityCurveTests.cs",
+      "Sha256": "d0eded52ef7530f0c07f3bd52d1c44bcee911b6019db184e637e39f8db19700b"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/LiquidCellReactionSystemTests.cs",
+      "Sha256": "606e697cacea52d3fb73c0678b7faa5710a99836dcd65c288e6b8671611091bd"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/LiquidDensityLayerTests.cs",
+      "Sha256": "33923f90a03bdec2edbf18ea97b427ad0bad83b27b0f6227b7bab2067aff9b43"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/LiquidFluxSolverDeadbandTests.cs",
+      "Sha256": "12db7cf3410cabbafd2e070a96aa51a3df9d2690df737b38865d3f5b4f85b57e"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/LiquidSlopeTransportTests.cs",
+      "Sha256": "1fe1c9efd197af532c51840c33a3f3ef9cf770f4d203fae64759d0aa9a49c628"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/LiquidSurfaceVersionTests.cs",
+      "Sha256": "9599ea0bc2e896dd8c29ec3652250fc110679c1d72c93f527e419ecbe358d62b"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/LiquidUserRegressionTests.cs",
+      "Sha256": "db1b27d770d9e13dceb3c6380895fc26adf18740aa84fbf6010687b212f5fecb"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/LiquidVolumeMappingTests.cs",
+      "Sha256": "57236e00c9845caa503a7611156b30abc2f74a7572eeef55335e60456890eac8"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/MaterialReactionProcessTableTests.cs",
+      "Sha256": "fc5d89ecc8c3d73c0473ad9b3d719d31450ec98a1b98a865907e0e6a58ed3ed1"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/StableLiquidExpansionTests.cs",
+      "Sha256": "6c4c32bb0847fbe303e980338f744ce997ba2fbd638b84e469d680f16514cd5b"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/StableLiquidRegionCandidateTests.cs",
+      "Sha256": "59cf16737eacfc37a3cf6cd173102becad2d67d784466bf2e616680bafc3cdce"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/StableLiquidSectorTests.cs",
+      "Sha256": "4abe401d31da254c6604778fb155ffdf2e9c81d15af7336f823783ef2c22509a"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/FireCellEmissionSamplerTests.cs",
+      "Sha256": "db9d315d68775e40abf0077510fd2b9982ae759097f2a30bdf7b4b11e4c17e58"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/FireParcelGpuLayoutTests.cs",
+      "Sha256": "c874a3b533f7d9ca2453443ef8b8a5b340cf57636af69fb3df147fba8e6acce5"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/FireParcelPhaseMathTests.cs",
+      "Sha256": "8df8f3eec62c2b99454f52322c548308ea98f37e773ba5a4f9ea356785826c00"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/GpuFireParcelShaderContractTests.cs",
+      "Sha256": "4a934fcd9464b2b5afee864ba3fc5871d0f3b468c9ee3b40c5d000dcd6436291"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/GpuFireParcelSplatTests.cs",
+      "Sha256": "f22d8e809fc4c49481998e8b345d1a775abc9f9c0ec4bcfb3b65dbecb478d72a"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/GpuFireParcelSurfaceTests.cs",
+      "Sha256": "f6c7a28adbfa0a8c712acbc28bf41b730cdb464e18c566e37f851345bfa1d597"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/GridLiquidFieldFrameTests.cs",
+      "Sha256": "e69bab8620d8c44491d2d12a46bf27a1c17eb1eb75e3b192226abff842f0f9d8"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/GridLiquidFieldGpuTests.cs",
+      "Sha256": "10dabd4f13217d43237e8a24964ae623e6955003f9eeeae27153c7ebf233127c"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/GridLiquidFieldLayoutTests.cs",
+      "Sha256": "530d9bd1d8d34b71c6ebc34f45a7531d2e96cca5034534865ed3e251b6957b6d"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/GridLiquidFieldSamplerTests.cs",
+      "Sha256": "5fe20080830032fa86a5ae1a77d31c7927071081c54b03076a0033580c325c73"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/GridLiquidVisibilityTests.cs",
+      "Sha256": "17788f2acc818f9e1e5c9fccf5c859c63b5efab5def579508eacf4334b5663cc"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/GridLiquidVisibilityTests.cs.meta",
+      "Sha256": "ec3b34061048c3688dce314418c1ea1e6134e59a5ea6f33f7aecc4f603f02298"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/LiquidSurfaceMeshBuilderTests.cs",
+      "Sha256": "6002685fd1e5ff8e1c755e134e1d0598142b590ebadada05b2e01454741baeca"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/StableLiquidShoreMesherTests.cs",
+      "Sha256": "ba10677061944e79459c4cf6564ff9a3101363fcafacf395a1be80d4c443503d"
+    },
+    {
+      "File": "Tools/ElementPerformance/archive_fire_view.py",
+      "Sha256": "146eee73e4c6244d051a661c5e2d27073d298c2cf15f731dcb4025166f2418cd"
+    },
+    {
+      "File": "Tools/ElementPerformance/archive_liquid_visibility.py",
+      "Sha256": "c393bb08b66a4e80106fd1d7cef4af3c0f73084582b9316c8d53ce9e1d94fc21"
+    },
+    {
+      "File": "Tools/ElementPerformance/archive_soft_fire.py",
+      "Sha256": "8f9df25f4b8f94eb73478bb48ebbb4fca8237f4817084517d37f1e9e5a22fc98"
+    },
+    {
+      "File": "Tools/ElementPerformance/capture_fire_visual.py",
+      "Sha256": "52508093f8305909065af455e71efbd0bca9239f78e2019f8e40b822c89099d2"
+    },
+    {
+      "File": "Tools/ElementPerformance/profile_liquid_visibility.py",
+      "Sha256": "fa925818ce2c96f93b2dd40791322d58e91f16d6b60bc8df4f010e99d64c681f"
+    },
+    {
+      "File": "Tools/ElementPerformance/profile_mixed_liquid.py",
+      "Sha256": "f270ee33387d91ff6f8cf1f4983d2c8e790568e834bd415e4d359df7c0e5656c"
+    },
+    {
+      "File": "Tools/ElementPerformance/run_current_liquid_gate.py",
+      "Sha256": "6ceb7c1d3dd68aae62bdfff3874880cefe4f81bf12c4fb4a2618640197ed4a61"
+    },
+    {
+      "File": "Tools/ElementPerformance/summarize_profiler.py",
+      "Sha256": "7469cae1a0c45c13b4472ebef736c65e29edad1ec6a62e78143d379c97d5b088"
+    },
+    {
+      "File": "docs/superpowers/plans/2026-08-24 GPU Fire Parcel两阶段表现实施计划.md",
+      "Sha256": "01423dc9d952ae1396ed7f9d17e8e90db85db0d6ec0e0fd5d42a002458cdeaf0"
+    },
+    {
+      "File": "docs/superpowers/plans/2026-10-01 液体密度分层混色与连续输运重构计划.md",
+      "Sha256": "44b8ae3a5475b0f018fac3b52b85ede3ee28586079d6698d57397363e4a91ec0"
+    },
+    {
+      "File": "docs/superpowers/plans/2026-10-01 液体连续输运执行记录.md",
+      "Sha256": "29568062b9d08c86e2bd8332b029a47abfa2b4953edee2a74e0de94beb1ecc66"
+    },
+    {
+      "File": "docs/superpowers/plans/2026-10-01 液体重构新对话交接.md",
+      "Sha256": "b440805661ba644d95b623fa8f70721f096b0246f3bf2180c1600941fc628dd3"
+    },
+    {
+      "File": "docs/superpowers/validation/2026-10-03-fire-unified-soft/README.md",
+      "Sha256": "adad06c6c179fd42b1152dcbbfea48d0110b7a5f3fcf641881ff0142f9b194b2"
+    },
+    {
+      "File": "docs/superpowers/validation/2026-10-03-fire-view-projection/README.md",
+      "Sha256": "0a84abd1070085bbea9bb74f62506b42130f750a01293d4f4193d7e7c245f492"
+    },
+    {
+      "File": "docs/superpowers/validation/2026-10-04-liquid-visibility/README.md",
+      "Sha256": "982a5adae0346c7c6443249d86be4bfb0889f50c66b820c7f9f51278f93c83f0"
+    },
+    {
+      "File": "Assets/_Project/Scripts/Rendering/ElementField/GridLiquidFieldFrame.cs",
+      "Sha256": "a7c78c49e321d707ae1b4b2db365f9906a4516fdf0b3a5144e00d0bf105a7a66"
+    },
+    {
+      "File": "Tools/ElementPerformance/analyze_saved_profiler.py",
+      "Sha256": "b4055a52a2fe9cbc0392293e357ff649475afe1a5aa4532ed644e16d88f119e1"
+    },
+    {
+      "File": "Tools/ElementPerformance/archive_saved_liquid_profiler.py",
+      "Sha256": "265188946cd967b19065152820f626d319c1846f7cef92ab3ad4487d98eb83a7"
+    },
+    {
+      "File": "Tools/ElementPerformance/run_current_liquid_gate.py",
+      "Sha256": "6ceb7c1d3dd68aae62bdfff3874880cefe4f81bf12c4fb4a2618640197ed4a61"
+    }
+  ],
+  "MeasuredFrameChange": {
+    "File": "Assets/_Project/Scripts/Rendering/ElementField/GridLiquidFieldFrame.cs",
+    "BeforeSha256": "47b69695f4080de83a3108555ecbfee8eb8557c97a4dd6ace9fd99d963089ecf",
+    "AfterSha256": "a7c78c49e321d707ae1b4b2db365f9906a4516fdf0b3a5144e00d0bf105a7a66",
+    "ProductionMatchesMeasuredOptimized": true
+  },
+  "AssemblyTimesUtc": [
+    {
+      "Assembly": "Game.Rendering.dll",
+      "LastWriteUtc": "2026-10-04T03:22:25.467329+00:00"
+    },
+    {
+      "Assembly": "Game.Rendering.Tests.dll",
+      "LastWriteUtc": "2026-10-04T03:19:05.549927+00:00"
+    }
+  ],
+  "Evidence": [
+    {
+      "File": "before-state.json",
+      "Sha256": "b0ad317b9a96d0d551f5816e110eba921d2357669fcc12f35e4777a9c55fa1ad"
+    },
+    {
+      "File": "final-editor-state.json",
+      "Sha256": "126a1d7122fba73fa1c86c2a174026878f633f93ec7f9382221736ae9004c1ca"
+    },
+    {
+      "File": "final-gate-frozen-presentation-signature.json",
+      "Sha256": "4a3ef89906902e8fcd0096b24c3bef777e39e46e4f470eed6943dfba8ac52742"
+    },
+    {
+      "File": "final-gate-sparse-presentation-capture.json",
+      "Sha256": "30951caab799fb30a37fc5cbc2aad6d29c17fe016819e95e1d4d878d4fc674b9"
+    },
+    {
+      "File": "final-gate-sparse-presentation-dense-fallback.json",
+      "Sha256": "2b7896f2550480fedfeda9e256b6028277176c0bd1bff1484f19bc75af4d5570"
+    },
+    {
+      "File": "frame-cpu-optimization.patch",
+      "Sha256": "7257ccc2318709e1590951ddc6797a06f374aad64da62695feb8736949d72d02"
+    },
+    {
+      "File": "gate-saved-root-state.json",
+      "Sha256": "cc0a23dd9409f9e006db13440e2a2db4bdc26b22a0d4cceb9c0c39af06f172ec"
+    },
+    {
+      "File": "GridLiquidFieldFrame.after.cs.txt",
+      "Sha256": "a7c78c49e321d707ae1b4b2db365f9906a4516fdf0b3a5144e00d0bf105a7a66"
+    },
+    {
+      "File": "GridLiquidFieldFrame.before.cs.txt",
+      "Sha256": "47b69695f4080de83a3108555ecbfee8eb8557c97a4dd6ace9fd99d963089ecf"
+    },
+    {
+      "File": "main-frames.tsv",
+      "Sha256": "89e5a911816ed8d40599d1d519ee91ff5591380c6126996eccf9fcb295dfaee0"
+    },
+    {
+      "File": "mixed-signature-optimized-final.json",
+      "Sha256": "0a7fa68fc0ae5804234153bdc30ce3167d190341bde92ada686500b0a0d15230"
+    },
+    {
+      "File": "mixed-signature-original-final.json",
+      "Sha256": "1c7bb5b989f87b8b0a5d2762f1ff3617b6ceaeec28260a4da8861e9bac633265"
+    },
+    {
+      "File": "Norn：The Lost Spells_2026-10-04_10-18-58.info.txt",
+      "Sha256": "5082efc4e90772d2a36610caa14287f6ad496ee6bf456094c6d5430cd9b74c5d"
+    },
+    {
+      "File": "Norn：The Lost Spells_2026-10-04_10-20-08.info.txt",
+      "Sha256": "c6c748ef755e3d6259848d842fc8b48d8b7935819071e45ba726c4c2a510527a"
+    },
+    {
+      "File": "offline-export-complete.txt",
+      "Sha256": "adfcbb28851c776e945c1083131a6c36f05593554469c784c2d4bbf16139703a"
+    },
+    {
+      "File": "offline-export-config.json",
+      "Sha256": "714991588fbdd318e8a02961df7ae44baa3de065f3352d742f60c527e7c78750"
+    },
+    {
+      "File": "OfflineProfilerExport.cs.txt",
+      "Sha256": "8e403900bcf47ad383d0d43df45291d737c937dd174c4cff24dd4bf584de62d4"
+    },
+    {
+      "File": "p7-grid-cutover-audit.txt",
+      "Sha256": "0f205488674fbb2aee6c0481dff955179de5828640ad62e784045b58bbade999"
+    },
+    {
+      "File": "README.md",
+      "Sha256": "fc7e42da8ac55e3aa9956fbb30ee6abfd376389c1bf30d2c07915c0a541e07a8"
+    },
+    {
+      "File": "saved-capture-summary.json",
+      "Sha256": "dad8e8e071c8e7f4375ce82983c1cb401857416adfc3fe3522bd0a2a3204091a"
+    },
+    {
+      "File": "sparse-capture-optimized-final.json",
+      "Sha256": "309013bdfc0c9a8439e0dc23f30a1250833d119192f85d07b55c5e970d124254"
+    },
+    {
+      "File": "sparse-capture-original-final.json",
+      "Sha256": "0b49f744075b984acdd955ab5d0245270b6d78ebd527ab01ff7a60c330347f87"
+    },
+    {
+      "File": "sparse-dense-optimized-final.json",
+      "Sha256": "89f72a4a1ad29d84d1ec71c69e7e9fbaf0208d637504c257a855adf52929d687"
+    },
+    {
+      "File": "sparse-dense-original-final.json",
+      "Sha256": "dc67d958c38f138d02295adb448ea6ed8a3356c1b189d4811671c452a147e840"
+    },
+    {
+      "File": "user-profiler-final-255-concentrated.json",
+      "Sha256": "d6c6e8a94c1d9db4ef7ed0703384ce2933e4c7ee17f5ce0416dc95371ccc608d"
+    },
+    {
+      "File": "user-profiler-final-concentrated.json",
+      "Sha256": "9af14f25dc2cccefbca389a0ec7b193481044a25f84c47fe6f58d69a5918b4da"
+    },
+    {
+      "File": "user-profiler-sparse-final-focused.json",
+      "Sha256": "0b150da7092b890fa228f847e090075fcb8ec1f3bdb0dcdc6e7b1b06684ab8bc"
+    },
+    {
+      "File": "user-profiler-sparse-optimized-final.json",
+      "Sha256": "d4c0abfdd38723602629a0b7e3d8178187d8419a180bd23081c26b9060cbf02e"
+    },
+    {
+      "File": "user-profiler-sparse-original-configurations.json",
+      "Sha256": "2aec86518101f20a3b6b9d3791092ab5ae73933c5d9c7aa6851a2f39460d743d"
+    },
+    {
+      "File": "user-profiler-sparse-original-final.json",
+      "Sha256": "ef42e35da98cf0e07f58638408917a86f1d86606296db8c0043d70703551c87f"
+    }
+  ]
+}

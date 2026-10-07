@@ -51,19 +51,26 @@ namespace Game.ElementField
 
     public static class FluidChunkStreamingPlanner
     {
+        public static double ArchiveRetryDelay(bool hasPendingWrites)
+        {
+            // Backpressure 已经影响玩家写入时，用更快但仍有上限的 10 Hz 事务节奏释放槽位；
+            // 无积压时维持 2 Hz，避免稳定世界为诊断和归档持续发起 Readback。
+            return hasPendingWrites ? .1d : .5d;
+        }
+
         public static bool ShouldIncludeSleepingRetained(
             bool localDormancyEnabled,
             uint freeParticles,
             int gameplayReserve,
             bool hasValidActivitySnapshot,
-            uint awakeParticles)
+            uint sleepingParticles)
         {
             if (!localDormancyEnabled || gameplayReserve < 0 || !hasValidActivitySnapshot)
                 return false;
 
-            // 第一版只在整个 GPU 池已经没有 Awake 粒子时归档本地 Sleeping 粒子。
-            // 这样同一 Chunk 不会同时保留可运动 GPU 粒子与 RAM Dormant 权威，避免查询遮蔽和重复恢复。
-            return awakeParticles == 0u && freeParticles <= (uint)gameplayReserve;
+            // 是否为完整 Sleeping Chunk 由归档读回后的事务过滤器最终确认；这里用 Counter
+            // 只避免在没有候选时发起昂贵 Readback，不能承担正确性判断。
+            return sleepingParticles > 0u && freeParticles <= (uint)gameplayReserve;
         }
 
         public static FluidChunkRegion BuildWarmRegion(

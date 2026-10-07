@@ -1,0 +1,542 @@
+{
+  "Utc": "2026-10-03T13:26:32.643297+00:00",
+  "FinalGate": {
+    "File": "fire-liquid-concentrated-verified.json",
+    "StartUtc": "2026-10-03T12:47:15.7965742Z",
+    "EndUtc": "2026-10-03T12:47:52.9674860Z",
+    "Passed": 238,
+    "Failed": 0,
+    "Skipped": 0,
+    "SceneRestored": true
+  },
+  "Sources": [
+    {
+      "File": "Assets/_Project/Art/Elemental/Compute/FireParcelDensity.compute",
+      "Sha256": "30af36706e4513b4441e2e3f26ac7d76400235af2b8abddebd9093405e1b4923"
+    },
+    {
+      "File": "Assets/_Project/Art/Elemental/Compute/FireParcelLifecycle.compute",
+      "Sha256": "7642fdc539c31d488b547d6356a368ffb8d22a901d76d5ee88f0317b39f7010b"
+    },
+    {
+      "File": "Assets/_Project/Art/Elemental/Compute/FireParcelMarchingCubes.compute",
+      "Sha256": "d8ba7c5f9dbe5b0e87a570167fb6fa20c097f1704333f12c13a179faadf7daa1"
+    },
+    {
+      "File": "Assets/_Project/Art/Elemental/Materials/M_ElementFireGasSplat.mat",
+      "Sha256": "657eabd153e0fc5e58058dc33ce8524434dbe58cf21e60c6c6243647749403b7"
+    },
+    {
+      "File": "Assets/_Project/Art/Elemental/Materials/M_ElementFireParcelSurface.mat",
+      "Sha256": "ddbc6ae07d2aaf7da495c964cb0f00e32c6d7deb7163b24a9e3cd5a6206357d6"
+    },
+    {
+      "File": "Assets/_Project/Art/Elemental/Shaders/ElementFireParcelSplat.shader",
+      "Sha256": "8094bc00e72ec61ee085c49fc35fd64f3492de02c20a1f37d75003d9cea18694"
+    },
+    {
+      "File": "Assets/_Project/Art/Elemental/Shaders/ElementFireParcelSurface.shader",
+      "Sha256": "3aaaf69db71b378965d24e9229ee3c7a2b843c0d53c6a9e15a824cd26ae97b16"
+    },
+    {
+      "File": "Assets/_Project/Art/Elemental/Shaders/FireParcelAppearance.hlsl",
+      "Sha256": "a65cbcc92b5b9045e452ac0ecdfcd60f05f6ece00a5c919b01f697fff06d4768"
+    },
+    {
+      "File": "Assets/_Project/Docs/2026-08-09 GPU PBF流体模拟完整解析.md",
+      "Sha256": "6258754db1de47ca42a6d630bec130705b1f4812dfd269ec693016f48f0da268"
+    },
+    {
+      "File": "Assets/_Project/Editor/ElementLoadedSceneGate.cs",
+      "Sha256": "c068dfe2f78c667799fd96cb8767b442dab2e19edafa2c5ba23eacc3a89fb7b8"
+    },
+    {
+      "File": "Assets/_Project/Editor/GridLiquidPrototypeCapture.cs",
+      "Sha256": "5a5ef0cad2c4fe8e153aeceff78b3dc3da746aa40fce8e132a7b3b3065042678"
+    },
+    {
+      "File": "Assets/_Project/Scenes/P7_DemoRun.unity",
+      "Sha256": "f7c1581d16d640d66ac5563ad79ad1070440094d2bcf14ffc8a23bf0dc1701b2"
+    },
+    {
+      "File": "Assets/_Project/ScriptableObjects/ElementField/Fire/GpuFireParcelRenderProfile_Default.asset",
+      "Sha256": "f7f8a1b53ea78e942b950453253184a39f5b150b86f440eb25a2957702e7e5cf"
+    },
+    {
+      "File": "Assets/_Project/Scripts/ElementField/Data/IElementWorldReadOnly.cs",
+      "Sha256": "cf22d79c4c6016478e4f93c8f180f3d979c776d40ce340cb5db23216f75a43f5"
+    },
+    {
+      "File": "Assets/_Project/Scripts/ElementField/Runtime/ElementWorldRuntime.cs",
+      "Sha256": "e2650cc92211ed98e02aa551cb7a9a6084c346b87db18329669073320e29ce4a"
+    },
+    {
+      "File": "Assets/_Project/Scripts/Rendering/ElementField/FireCellEmissionSampler.cs",
+      "Sha256": "977aed3999b816c968b70ad3d736f82cc1b949f45148b4768025036f2b94d194"
+    },
+    {
+      "File": "Assets/_Project/Scripts/Rendering/ElementField/FireParcelGpuLayout.cs",
+      "Sha256": "cfcc01cbf9cece3a28ceb146d0fc6e751f75380f0cb892ec0f3b235fa523ab2e"
+    },
+    {
+      "File": "Assets/_Project/Scripts/Rendering/ElementField/FireParcelPhaseMath.cs",
+      "Sha256": "a9bbf43234d9c4dcf149b72b0e58e3d88ca72660489909a661038053f522c900"
+    },
+    {
+      "File": "Assets/_Project/Scripts/Rendering/ElementField/FireParcelSurfaceGridPlanner.cs",
+      "Sha256": "ac60ad9f4e3ef3e4f9d1f002ceef69c2415db211634ef6c6f3723bb6cd1a3f13"
+    },
+    {
+      "File": "Assets/_Project/Scripts/Rendering/ElementField/FireParcelSurfaceResources.cs",
+      "Sha256": "57b6a4e9599c1e0142e74d53837fe00a9e1ff0270601a25b58d668b5602b67a0"
+    },
+    {
+      "File": "Assets/_Project/Scripts/Rendering/ElementField/GpuFireParcelRenderProfile.cs",
+      "Sha256": "f0a82a9bcf06d252523fbda53758d26736b1fa90d27ae958e5ca52bc00b28369"
+    },
+    {
+      "File": "Assets/_Project/Scripts/Rendering/ElementField/GpuFireParcelRenderer.cs",
+      "Sha256": "a73e926b8aa8e45e6640f3e6fbae37027a5ba42ddc4ad036cd1edf83694d445e"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/ElementWorldChunkSnapshotTests.cs",
+      "Sha256": "219b42c8254a8844323f73a4e660da6a882ad4add8f16f3af1cb825d8bbde5ce"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/ElementWorldFluidRoutingTests.cs",
+      "Sha256": "d18b4a28cf659c8c072ee3ab6ef69836700d18de20c039a8a986bc9372c10361"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/ElementWorldPersistentFireSourceTests.cs",
+      "Sha256": "c7099e5f7b45b14b08a756e114a5da58eb74d44e610903381e200469f82282ed"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/LiquidCapacityCurveTests.cs",
+      "Sha256": "d0eded52ef7530f0c07f3bd52d1c44bcee911b6019db184e637e39f8db19700b"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/LiquidCellReactionSystemTests.cs",
+      "Sha256": "606e697cacea52d3fb73c0678b7faa5710a99836dcd65c288e6b8671611091bd"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/LiquidDensityLayerTests.cs",
+      "Sha256": "33923f90a03bdec2edbf18ea97b427ad0bad83b27b0f6227b7bab2067aff9b43"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/LiquidFluxSolverDeadbandTests.cs",
+      "Sha256": "0257dbd426e84437f733a07cb8d7869dbafb66dd74436534a98c0109c8c2ec14"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/LiquidSlopeTransportTests.cs",
+      "Sha256": "1fe1c9efd197af532c51840c33a3f3ef9cf770f4d203fae64759d0aa9a49c628"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/LiquidSurfaceVersionTests.cs",
+      "Sha256": "9599ea0bc2e896dd8c29ec3652250fc110679c1d72c93f527e419ecbe358d62b"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/LiquidUserRegressionTests.cs",
+      "Sha256": "db1b27d770d9e13dceb3c6380895fc26adf18740aa84fbf6010687b212f5fecb"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/LiquidVolumeMappingTests.cs",
+      "Sha256": "57236e00c9845caa503a7611156b30abc2f74a7572eeef55335e60456890eac8"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/MaterialReactionProcessTableTests.cs",
+      "Sha256": "fc5d89ecc8c3d73c0473ad9b3d719d31450ec98a1b98a865907e0e6a58ed3ed1"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/StableLiquidExpansionTests.cs",
+      "Sha256": "6c4c32bb0847fbe303e980338f744ce997ba2fbd638b84e469d680f16514cd5b"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/StableLiquidRegionCandidateTests.cs",
+      "Sha256": "59cf16737eacfc37a3cf6cd173102becad2d67d784466bf2e616680bafc3cdce"
+    },
+    {
+      "File": "Assets/_Project/Tests/ElementField/StableLiquidSectorTests.cs",
+      "Sha256": "4abe401d31da254c6604778fb155ffdf2e9c81d15af7336f823783ef2c22509a"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/FireCellEmissionSamplerTests.cs",
+      "Sha256": "db9d315d68775e40abf0077510fd2b9982ae759097f2a30bdf7b4b11e4c17e58"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/FireParcelGpuLayoutTests.cs",
+      "Sha256": "c874a3b533f7d9ca2453443ef8b8a5b340cf57636af69fb3df147fba8e6acce5"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/FireParcelPhaseMathTests.cs",
+      "Sha256": "8df8f3eec62c2b99454f52322c548308ea98f37e773ba5a4f9ea356785826c00"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/GpuFireParcelShaderContractTests.cs",
+      "Sha256": "4a934fcd9464b2b5afee864ba3fc5871d0f3b468c9ee3b40c5d000dcd6436291"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/GpuFireParcelSurfaceTests.cs",
+      "Sha256": "f6c7a28adbfa0a8c712acbc28bf41b730cdb464e18c566e37f851345bfa1d597"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/GridLiquidFieldFrameTests.cs",
+      "Sha256": "09744f1af18d065ffdf52152e60760ee12b75dcea7620f77ff13dd788fb96c71"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/GridLiquidFieldGpuTests.cs",
+      "Sha256": "10dabd4f13217d43237e8a24964ae623e6955003f9eeeae27153c7ebf233127c"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/GridLiquidFieldLayoutTests.cs",
+      "Sha256": "530d9bd1d8d34b71c6ebc34f45a7531d2e96cca5034534865ed3e251b6957b6d"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/GridLiquidFieldSamplerTests.cs",
+      "Sha256": "5fe20080830032fa86a5ae1a77d31c7927071081c54b03076a0033580c325c73"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/LiquidSurfaceMeshBuilderTests.cs",
+      "Sha256": "6002685fd1e5ff8e1c755e134e1d0598142b590ebadada05b2e01454741baeca"
+    },
+    {
+      "File": "Assets/_Project/Tests/Rendering/StableLiquidShoreMesherTests.cs",
+      "Sha256": "ba10677061944e79459c4cf6564ff9a3101363fcafacf395a1be80d4c443503d"
+    },
+    {
+      "File": "Tools/ElementPerformance/archive_current_fire.py",
+      "Sha256": "229f7f902198cdd99890c8be83f3d95954a8dc4db69a96e6eeecaf33b18160cf"
+    },
+    {
+      "File": "Tools/ElementPerformance/capture_fire_visual.py",
+      "Sha256": "b88876f701244fc560f0a353fd39dbf96cc80daa60e1c1844775eead22f5721d"
+    },
+    {
+      "File": "Tools/ElementPerformance/profile_mixed_liquid.py",
+      "Sha256": "f270ee33387d91ff6f8cf1f4983d2c8e790568e834bd415e4d359df7c0e5656c"
+    },
+    {
+      "File": "Tools/ElementPerformance/run_current_liquid_gate.py",
+      "Sha256": "088dc97476041e236e37422ecf8fa1b05c603f221e25e63056faf6688f2be143"
+    },
+    {
+      "File": "Tools/ElementPerformance/summarize_profiler.py",
+      "Sha256": "7469cae1a0c45c13b4472ebef736c65e29edad1ec6a62e78143d379c97d5b088"
+    },
+    {
+      "File": "docs/superpowers/plans/2026-08-24 GPU Fire Parcel两阶段表现实施计划.md",
+      "Sha256": "90557a35afbc2b0c66e3382602e5547cc79aba961c3a9f4285a98e4ac3866f37"
+    },
+    {
+      "File": "docs/superpowers/plans/2026-10-01 液体重构新对话交接.md",
+      "Sha256": "98054abcefa0507938cb01c82b56b658256688c99d2cb58952be62e1401519a0"
+    },
+    {
+      "File": "docs/superpowers/validation/2026-10-03-fire-cohesion/README.md",
+      "Sha256": "d05be1e7fd99a28d5ce07f5f5340769f07f4506739532fea98c0edcfdc20cef5"
+    }
+  ],
+  "Assemblies": [
+    {
+      "Name": "Game.ElementField",
+      "ModifiedUtc": "2026-10-03T12:22:04.529019+00:00"
+    },
+    {
+      "Name": "Game.ElementField.Tests",
+      "ModifiedUtc": "2026-10-03T12:22:04.983855+00:00"
+    },
+    {
+      "Name": "Game.Rendering",
+      "ModifiedUtc": "2026-10-03T12:47:00.488728+00:00"
+    },
+    {
+      "Name": "Game.Rendering.Tests",
+      "ModifiedUtc": "2026-10-03T12:22:05.721377+00:00"
+    },
+    {
+      "Name": "Game.PbfTask13.Editor",
+      "ModifiedUtc": "2026-10-03T12:47:02.117199+00:00"
+    }
+  ],
+  "Evidence": [
+    {
+      "File": "fire-chunk-copy-red.json",
+      "Sha256": "5e523ddc207042ada8fd1ca57f2fb22d07b3673884996650364e0cb38e4a553f"
+    },
+    {
+      "File": "fire-chunk-optimized-live-mixed-10-state.txt",
+      "Sha256": "7fb2581c6fdfdb96a94d03690cb23f51146a34578f87c2c9c3710ba0704fb2eb"
+    },
+    {
+      "File": "fire-chunk-optimized-live-mixed-10.json",
+      "Sha256": "bafae28a96d7ce02cd427e6eab707ca474ae69029c67259bbcc9f3a05932b9cb"
+    },
+    {
+      "File": "fire-chunk-optimized-live-mixed-10.summary.json",
+      "Sha256": "cb56f2d6f5b23916de4916b7f19ff630dd4b90d68ff3349bc06a2b105f86a189"
+    },
+    {
+      "File": "fire-chunk-optimized-live-mixed-10.tsv",
+      "Sha256": "d0de2d8cc178ebf04e316b8d675e6c12c84e0714f5b8d4d30e11241bc1ef4caa"
+    },
+    {
+      "File": "fire-chunk-optimized-live-mixed-15-state.txt",
+      "Sha256": "73ce6a2e1278572017c25a96827f97a57370668d5313236523bcddd126004603"
+    },
+    {
+      "File": "fire-chunk-optimized-live-mixed-15.json",
+      "Sha256": "007579724149200d24bc6d2dda2de7084575d9ea0e46e9ad580d9037029b4492"
+    },
+    {
+      "File": "fire-chunk-optimized-live-mixed-15.summary.json",
+      "Sha256": "c0bad7b79d404f096bfc1f1940c5a535a1f3635292796ac032ffd0497e02978d"
+    },
+    {
+      "File": "fire-chunk-optimized-live-mixed-15.tsv",
+      "Sha256": "67a9f108029a5ea02770506661e98ed41b689e7926329d83944c2124d54bad16"
+    },
+    {
+      "File": "fire-chunk-optimized-live-mixed-5-state.txt",
+      "Sha256": "c83e4758cc2b1e2aacdf8264be899bb9612b7b66d82e5638942e84b9f7d20e28"
+    },
+    {
+      "File": "fire-chunk-optimized-live-mixed-5.json",
+      "Sha256": "1d6f6e8cc18a29a887e70d2ff157bf564d85620faaf47afcb8de10330ae00492"
+    },
+    {
+      "File": "fire-chunk-optimized-live-mixed-5.summary.json",
+      "Sha256": "1e226e6ba8a7bcfb48851ba391bf09dd7247a9e141fb69d2a13d2de121a0b600"
+    },
+    {
+      "File": "fire-chunk-optimized-live-mixed-5.tsv",
+      "Sha256": "13cd7b926af3bca0b70bea5579c4784d9687a7096db6245d475b05678b509422"
+    },
+    {
+      "File": "fire-depth-tail-near-0.png",
+      "Sha256": "1889b0f9df5a4fc19b4b922680af5623bbaf464c658ba2da16a95482ca21efa0"
+    },
+    {
+      "File": "fire-depth-tail-near-1.png",
+      "Sha256": "1889b0f9df5a4fc19b4b922680af5623bbaf464c658ba2da16a95482ca21efa0"
+    },
+    {
+      "File": "fire-focused-current-green.json",
+      "Sha256": "164e88ab1fc3e816cb5911e29b7b97b008e422f95a846d0276aa02ae3f6a3492"
+    },
+    {
+      "File": "fire-layer-diagnosis-near-low.json",
+      "Sha256": "9fd7f8d1ba609a990b45d00c9a84a1f6eb3fe569be96c9da55b2f2b14dba59f7"
+    },
+    {
+      "File": "fire-layer-diagnosis-near-low.png",
+      "Sha256": "77e8f3e6ba1ea06216819623242fccc3a599b781fe79847c8d54d1afc4b4b21e"
+    },
+    {
+      "File": "fire-layer-diagnosis-surface-only.json",
+      "Sha256": "c77257e0235a95059ac70f54ebd7b7b4e50926ff929a3c61a0127bdd2386347a"
+    },
+    {
+      "File": "fire-layer-diagnosis-surface-only.png",
+      "Sha256": "947ab50a858ca626f84084a228d2745e425f984ee380f77cab11d6aede6eeb5c"
+    },
+    {
+      "File": "fire-layer-diagnosis-surface-opaque.json",
+      "Sha256": "1359c6286acc09289931481d868c661d9f0ad57461442f93dc83f3b419622f4a"
+    },
+    {
+      "File": "fire-layer-diagnosis-surface-opaque.png",
+      "Sha256": "64fd2a0c5cfe6fd183bd930372d25c455697011b4386e84b25dfc80b8abb0ac8"
+    },
+    {
+      "File": "fire-liquid-concentrated-final.json",
+      "Sha256": "24c1865ccdd0d2131af471747866568162da3772196104e098504f07c626dc6f"
+    },
+    {
+      "File": "fire-liquid-concentrated-verified.json",
+      "Sha256": "b5c04d7e0784311e6109e25014348bdc17053ecb61a54f96784e8b591bc2d7a1"
+    },
+    {
+      "File": "fire-seed-diagnosis-live-mixed.json",
+      "Sha256": "e32ef2e0f7f3b26d0f0014926c4e96701c281b645eaf4cbad778bb094bf58628"
+    },
+    {
+      "File": "fire-seed-diagnosis-live-mixed.summary.json",
+      "Sha256": "319863ad5a8deb9236a8faad44c851d1c0faf1ea555e8957eb21329d4d9daf85"
+    },
+    {
+      "File": "fire-seed-diagnosis-live-mixed.tsv",
+      "Sha256": "b0cdb2b2680a2c68200ebf92b08ccda04ba3d829b71279d4fe26b99770e67dba"
+    },
+    {
+      "File": "fire-surface-green2.json",
+      "Sha256": "fe0a313c39a7453e44f2403630dd570c8f00b834151b4fe6bc166eb671bbe81c"
+    },
+    {
+      "File": "fire-surface-red.json",
+      "Sha256": "8d97989eef299aee4e3d4d5d5a7e3dbd8d4fdc67c427ed2de017e59074d74d44"
+    },
+    {
+      "File": "fire-verified-final-forced-far-lod.json",
+      "Sha256": "df6223c5107963b27ae0c4812543f3c3851e1143560bdd37731d76afbfba6d61"
+    },
+    {
+      "File": "fire-verified-final-forced-far-lod.png",
+      "Sha256": "d95e237636db068d62c5291ed23b571cac919d2f14a2dbcaaefc19c7add7940b"
+    },
+    {
+      "File": "fire-verified-final-near-0.json",
+      "Sha256": "ceb9028ba935708bf2d9b3dbeb9f0edc85ed492617717e1e585733f4efab5020"
+    },
+    {
+      "File": "fire-verified-final-near-0.png",
+      "Sha256": "27346cca8fbb7fab3225a5655324a043a97f833ab7a8d6f7d13b24d3fe0306a1"
+    },
+    {
+      "File": "fire-verified-final-near-1.json",
+      "Sha256": "dc35fac63780962bfb6b6579092844f4d2988ec18fe2b6a7d243b67d93e223ab"
+    },
+    {
+      "File": "fire-verified-final-near-1.png",
+      "Sha256": "b26b6b89e657d05694dc6ae95f520da8683399d2d860ad90c1ecdf6a25df8e4c"
+    },
+    {
+      "File": "fire-verified-final-near-2.json",
+      "Sha256": "7ff6396a2e7e9ca06cb7b12d47fbb6b86e827139a2954c665c6898a4e82260ca"
+    },
+    {
+      "File": "fire-verified-final-near-2.png",
+      "Sha256": "10d6d1fca82291c68e6d49efa7d2938e2ca27951e4add22e81a9e8db3191c181"
+    },
+    {
+      "File": "fire-verified-final-near-low.json",
+      "Sha256": "be1ad51ddd3e8a1a08239d3ca15def66ab01f4688ac596d8019b5985ee8be497"
+    },
+    {
+      "File": "fire-verified-final-near-low.png",
+      "Sha256": "0d91c48213664ec52e4f63240085be1ed8af4aac0d5d5925162dbdff09250f41"
+    },
+    {
+      "File": "fire-verified-final-restored.json",
+      "Sha256": "802528587470b9421e07befd015a11368e7af20c5d9e0dea6684e58dc7d9d9ad"
+    },
+    {
+      "File": "fire-verified-final-row-input.json",
+      "Sha256": "c98366d62f8b5ee3b09782f8ef05026d2353908af9fd102f7aa3ddeadeea48ae"
+    },
+    {
+      "File": "fire-verified-final-row-profile-state.txt",
+      "Sha256": "313554681076099437e1a78ebfa07ac3ee1e07fb4aaa4272839f57186b9cd391"
+    },
+    {
+      "File": "fire-verified-final-row-profile.json",
+      "Sha256": "c2af89f3a17171ed4fec960cd0ed91010e33f97e079f8210403541c460ec9fe7"
+    },
+    {
+      "File": "fire-verified-final-row-profile.summary.json",
+      "Sha256": "bb6556eae76887d3e75cd9925444f95a27496accf7389f689993dbcc54e77756"
+    },
+    {
+      "File": "fire-verified-final-row-profile.tsv",
+      "Sha256": "dd9f19189ad7b906be21f75d6bae3068d69616a59e9ac0793bdbb5791f9ee225"
+    },
+    {
+      "File": "fire-verified-stress-baseline-state.txt",
+      "Sha256": "0cad7e14ddf8ebcc9089ba661b73cc19b3acd7c96ef87704e3cd6824650d95f6"
+    },
+    {
+      "File": "fire-verified-stress-baseline.json",
+      "Sha256": "7417105cbf9531c747899badcf6463d2c9801ca1e141116b03541c5ac4733ea5"
+    },
+    {
+      "File": "fire-verified-stress-baseline.summary.json",
+      "Sha256": "4871fe706655b3dc22bc17de0ad3a683f50946f73ddb41ee306e961f84ad5986"
+    },
+    {
+      "File": "fire-verified-stress-baseline.tsv",
+      "Sha256": "9b75bf6e2ea982b852e6a2b36a498b60cf8979986b835c5980d40fd2d95594d3"
+    },
+    {
+      "File": "fire-verified-stress-game.png",
+      "Sha256": "f87af68134b85d52dfc37321eee94c6e25c554d4be74a6b193357c1ec8bb4287"
+    },
+    {
+      "File": "fire-verified-stress-gc-context.json",
+      "Sha256": "c31108217a015e1899b0a33bd6784df5c35534b784329d19441535b779881fd5"
+    },
+    {
+      "File": "fire-verified-stress-live-mixed-10-state.txt",
+      "Sha256": "1f2ca784d7576258c7ddabdf218ee6b6e16dda919866d0510fc4db20e6528eab"
+    },
+    {
+      "File": "fire-verified-stress-live-mixed-10.json",
+      "Sha256": "fa8f4834f79da39872d51b485693b2e576f86c0a20bf57b8159d882f615d3698"
+    },
+    {
+      "File": "fire-verified-stress-live-mixed-10.summary.json",
+      "Sha256": "dcd8d08b62d6037710327b44ce0a3a3e62a64d2943be9b13c9407f57c55c0401"
+    },
+    {
+      "File": "fire-verified-stress-live-mixed-10.tsv",
+      "Sha256": "4342d1b4bee74029abf7876b965530b33c393bc28559ec882f66b74815f09529"
+    },
+    {
+      "File": "fire-verified-stress-live-mixed-15-state.txt",
+      "Sha256": "d7e0886677f44051cbb806f8a1055d6d7d945d1bdc4d87743b0c796fc368ac6c"
+    },
+    {
+      "File": "fire-verified-stress-live-mixed-15.json",
+      "Sha256": "b4751e2d345f417d6d79ce841daa80f027e78282a4f7ab09393f0726cb8cc9ec"
+    },
+    {
+      "File": "fire-verified-stress-live-mixed-15.summary.json",
+      "Sha256": "23bcaa8f6fc9f1df081f2d026016b8314dd9c0d22cec847dcb40544eefb26740"
+    },
+    {
+      "File": "fire-verified-stress-live-mixed-15.tsv",
+      "Sha256": "d51643a403c33a0076d44998a0de190f9cde825d81d4f7aa2fd336df75c5e536"
+    },
+    {
+      "File": "fire-verified-stress-live-mixed-5-state.txt",
+      "Sha256": "e67d3b7d951dbdb20068c72306873607c7e1c69012e59584695b9a551b53d1d6"
+    },
+    {
+      "File": "fire-verified-stress-live-mixed-5.json",
+      "Sha256": "9b5a8476b8217cd368ce0217a97485e1444763734927a16f98e72872b732c6de"
+    },
+    {
+      "File": "fire-verified-stress-live-mixed-5.summary.json",
+      "Sha256": "8acbf3fa6c4d7c35bee2baccd1710282da0b0c39c9aebb41f4e384d5f99a8845"
+    },
+    {
+      "File": "fire-verified-stress-live-mixed-5.tsv",
+      "Sha256": "d6beb4b631278410363c4d65a971ab9ef064ecaf8f0e649e3dd221c3107d9313"
+    },
+    {
+      "File": "fire-visual-before-baseline.json",
+      "Sha256": "4ef2170e54aac8d19735e7a12dfe6a8dfe9bb76481fc2172b7eb683506403883"
+    },
+    {
+      "File": "fire-visual-before-baseline.summary.json",
+      "Sha256": "77a5fcffd4c8a8ea538b3323db55ac04478eb4cab532edd892a23db35e17ad9a"
+    },
+    {
+      "File": "fire-visual-before-baseline.tsv",
+      "Sha256": "1f457830a8ab457b6036f6b49b481e08690b2aad8085f30bf62bc559e350baff"
+    },
+    {
+      "File": "fire-visual-before-game.png",
+      "Sha256": "40439fef7c2dc44d6b723bd3878a612e090b59a1fd7cd668ead3e4289deb4883"
+    },
+    {
+      "File": "gate-saved-root-state.json",
+      "Sha256": "cc0a23dd9409f9e006db13440e2a2db4bdc26b22a0d4cceb9c0c39af06f172ec"
+    },
+    {
+      "File": "grid-liquid-capture.json",
+      "Sha256": "8d28accf71980b6305ef275362ae3263239699fa7bb8b22a29e54eeddabb486e"
+    },
+    {
+      "File": "p7-grid-cutover-audit.txt",
+      "Sha256": "89867ec5ec7573e1af71dd945e804f8334c338570953e416164e77f1dfc5ada8"
+    }
+  ]
+}

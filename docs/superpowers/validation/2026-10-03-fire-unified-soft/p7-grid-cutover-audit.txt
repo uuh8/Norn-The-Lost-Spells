@@ -1,0 +1,64 @@
+﻿Current Scene Grid Cutover Audit | 2026-10-03T13:59:19.1340165Z | Failures=0
+Scope: current loaded scene; includes unsaved changes.
+Scene: Assets/_Project/Scenes/P7_DemoRun.unity | Dirty=False
+OK: 当前场景有效且已加载
+OK: Assets/_Project/Scenes/P7_DemoRun.unity 恰有一个 ElementWorldRuntime
+OK: 当前世界连接完整 World / Liquid Profile
+OK: Grid World 由 GridLiquid 独占 Water，旧 Fluid Streaming 关闭
+OK: Grid World 有 Material Catalog
+OK: Water 在 Catalog 中且 Behavior=Liquid
+OK: Poison 在 Catalog 中且 Behavior=Liquid
+OK: Sticky 在 Catalog 中且 Behavior=Liquid
+OK: P7 Grid 有材料到状态的投影规则
+OK: Water 以正剂量投影为 Wet
+OK: Poison 以正剂量投影为 Poisoned
+OK: Sticky 以正剂量投影为 Sticky
+OK: Grid World 有独立材料路由
+OK: Grid Route 是 P7 独立资产
+OK: P7 对照 Route 只配置 Fire、Poison、Sticky
+OK: Fire 恰有一条预期 Backend 路由
+OK: Poison 恰有一条预期 Backend 路由
+OK: Sticky 恰有一条预期 Backend 路由
+OK: P7 Grid Profile 只包含三种目标液体
+OK: Water Behavior 是 P7 独立资产
+OK: Water 允许稳定区域
+OK: Water 在 Grid Profile 中恰有一条行为
+OK: Poison Behavior 是 P7 独立资产
+OK: Poison 允许稳定区域
+OK: Poison 在 Grid Profile 中恰有一条行为
+OK: Sticky Behavior 是 P7 独立资产
+OK: Sticky 允许稳定区域
+OK: Sticky 在 Grid Profile 中恰有一条行为
+OK: P7 Grid Scene 的 ElementWorldRuntime 启用
+OK: P7 Grid 有且只有一个启用的角色接触投影组件，位于 World Runtime 同物体
+OK: P7 Grid 的角色接触 Layer 和采样间隔有效
+OK: P7 Wizard 有状态所有者，且至少一个启用 Collider 落在 Exposure Target Layers
+OK: P7 Grid Scene 引用独立 World Profile
+OK: P7 Grid Scene 连接且启用同场景 LiquidWorldRuntime
+OK: LiquidWorldRuntime 引用独立 P7 Liquid Profile
+OK: Water Dynamic Surface 启用并连到同一世界及材质／Shader
+OK: Water Dynamic Surface 复用原液体表面光照，波纹启用且纯色诊断关闭
+OK: Poison Dynamic Surface 启用并连到同一世界及材质／Shader
+OK: Poison Dynamic Surface 复用原液体表面光照，波纹启用且纯色诊断关闭
+OK: Sticky Dynamic Surface 启用并连到同一世界及材质／Shader
+OK: Sticky Dynamic Surface 复用原液体表面光照，波纹启用且纯色诊断关闭
+OK: Water Stable Surface 启用并连到同一世界及材质／Shader
+OK: Water Stable Surface 复用原液体表面光照，波纹启用且纯色诊断关闭
+OK: Poison Stable Surface 启用并连到同一世界及材质／Shader
+OK: Poison Stable Surface 复用原液体表面光照，波纹启用且纯色诊断关闭
+OK: Sticky Stable Surface 启用并连到同一世界及材质／Shader
+OK: Sticky Stable Surface 复用原液体表面光照，波纹启用且纯色诊断关闭
+OK: P7 Grid 中旧 Runtime／Renderer 全部停用
+OK: P7 Grid 中三材料各保留动态回退与稳定表面
+OK: 统一连续液体表面连到当前世界与渲染Profile
+OK: 统一外壳Compute与URP Shader引用完整
+OK: 统一Palette材料槽 0 完整
+OK: 统一Palette材料槽 1 完整
+OK: 统一Palette材料槽 2 完整
+OK: P7有唯一统一连续液体外壳
+OK: Water 动态表面唯一
+OK: Water 稳定表面唯一
+OK: Poison 动态表面唯一
+OK: Poison 稳定表面唯一
+OK: Sticky 动态表面唯一
+OK: Sticky 稳定表面唯一

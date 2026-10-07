@@ -30,6 +30,7 @@ namespace Game.ElementField
         public GraphicsBuffer SpawnRequests { get; private set; }
         public GraphicsBuffer ConsumeRequests { get; private set; }
         public GraphicsBuffer ConvertRequests { get; private set; }
+        public GraphicsBuffer ReactionParticleDeltas { get; private set; }
         public GraphicsBuffer ColliderProxies { get; private set; }
         public GraphicsBuffer CollisionContacts { get; private set; }
         public GraphicsBuffer GameplaySamples { get; private set; }
@@ -40,6 +41,7 @@ namespace Game.ElementField
         public GraphicsBuffer HashDispatchArgs { get; private set; }
         public GraphicsBuffer LiquidMaterialParameters { get; private set; }
         public GraphicsBuffer ArchiveSamples { get; private set; }
+        public GraphicsBuffer ArchiveUnlockIndices { get; private set; }
         public GraphicsBuffer RestoreParticles { get; private set; }
         public GraphicsBuffer RestoreReservedIndices { get; private set; }
         public GraphicsBuffer TransferStatus { get; private set; }
@@ -83,6 +85,10 @@ namespace Game.ElementField
                 SpawnRequests = CreateStructured(maxSpawnRequests, FluidGpuLayout.SpawnRequestStride);
                 ConsumeRequests = CreateStructured(maxSpawnRequests, FluidGpuLayout.ConsumeRequestStride);
                 ConvertRequests = CreateStructured(maxSpawnRequests, FluidGpuLayout.ConvertRequestStride);
+                ReactionParticleDeltas = CreateStructured(
+                    FluidGpuLayout.MaterialAuditSlotCount, sizeof(int));
+                // Cumulative ledger starts at zero once per Runtime lifetime; reactions only add signed deltas.
+                ReactionParticleDeltas.SetData(new int[FluidGpuLayout.MaterialAuditSlotCount]);
                 ColliderProxies = CreateStructured(maxFluidColliders, FluidGpuLayout.ColliderProxyStride);
                 CollisionContacts = CreateStructured(
                     particleCapacity,
@@ -111,6 +117,13 @@ namespace Game.ElementField
                 // 才能可靠进入 Shader 的 legacy-fixture fallback，而不是读取上一块 VRAM 残值。
                 LiquidMaterialParameters.SetData(materialRows);
                 ArchiveSamples = CreateStructured(particleCapacity, FluidGpuLayout.ArchiveSampleStride);
+                // Archive 排除列表来自 AsyncGPUReadback 后的 CPU 判定。LockBufferForWrite 让 CPU
+                // 直接写入映射上传区，避免 SetData 为复用同一 GraphicsBuffer 等待 GPU 管线清空。
+                ArchiveUnlockIndices = new GraphicsBuffer(
+                    GraphicsBuffer.Target.Structured,
+                    GraphicsBuffer.UsageFlags.LockBufferForWrite,
+                    particleCapacity,
+                    sizeof(uint));
                 RestoreParticles = CreateStructured(particleCapacity, FluidGpuRestoreParticle.Stride);
                 RestoreReservedIndices = CreateStructured(particleCapacity, sizeof(uint));
                 TransferStatus = CreateStructured(1, FluidGpuTransferStatus.Stride);
@@ -144,6 +157,7 @@ namespace Game.ElementField
             SpawnRequests = DisposeBuffer(SpawnRequests);
             ConsumeRequests = DisposeBuffer(ConsumeRequests);
             ConvertRequests = DisposeBuffer(ConvertRequests);
+            ReactionParticleDeltas = DisposeBuffer(ReactionParticleDeltas);
             ColliderProxies = DisposeBuffer(ColliderProxies);
             CollisionContacts = DisposeBuffer(CollisionContacts);
             GameplaySamples = DisposeBuffer(GameplaySamples);
@@ -154,6 +168,7 @@ namespace Game.ElementField
             HashDispatchArgs = DisposeBuffer(HashDispatchArgs);
             LiquidMaterialParameters = DisposeBuffer(LiquidMaterialParameters);
             ArchiveSamples = DisposeBuffer(ArchiveSamples);
+            ArchiveUnlockIndices = DisposeBuffer(ArchiveUnlockIndices);
             RestoreParticles = DisposeBuffer(RestoreParticles);
             RestoreReservedIndices = DisposeBuffer(RestoreReservedIndices);
             TransferStatus = DisposeBuffer(TransferStatus);

@@ -1,0 +1,585 @@
+{
+  "Method": "P50 median; P95 nearest rank. Marker durations are inclusive and must not be summed across nested scopes or threads.",
+  "PresentationSelection": "Main Thread contains GridLiquid.Field.Draw or GpuFire.Draw; other frames are not assumed paused.",
+  "SampleExportFilter": "Duration >= 0.25 ms, or selected material/render/wait/allocation marker prefixes; tiny unrelated scopes are not exported.",
+  "GpuTimingValid": false,
+  "GpuTimingReason": "Saved frames report NotSupportedWithNativeGfxJobs; GPU frame counters cannot establish total GPU execution cost.",
+  "IndependentBeforeAfter": false,
+  "SharedMainFrameTimestamps": 0,
+  "SharedPresentationTimestamps": 0,
+  "UniqueMainFrames": 1200,
+  "UniquePresentationFrames": 1200,
+  "Captures": [
+    {
+      "Capture": "Norn：The Lost Spells_2026-10-04_13-56-58",
+      "Input": "F:\\Develop Project\\RPG\\RPG\\ProfilerCaptures\\Norn：The Lost Spells_2026-10-04_13-56-58.data",
+      "InputBytes": 54986668,
+      "InputSha256": "944e92675855b7b558b1b4a0df4125e25490f56e46b0eb768f930d96eaee90c5",
+      "ExportInfo": {
+        "Input": "F:\\Develop Project\\RPG\\RPG\\ProfilerCaptures\\Norn：The Lost Spells_2026-10-04_13-56-58.data",
+        "First": "0",
+        "Last": "599",
+        "Unity": "6000.3.16f1",
+        "ExportedAt": "2026-10-04T06:08:12.4923201Z"
+      },
+      "ExportedMainFrames": 600,
+      "ExportedSampleRecords": 265204,
+      "PresentationFrames": 600,
+      "OtherFrames": 0,
+      "PresentationSegments": [
+        [
+          0,
+          599
+        ]
+      ],
+      "MaxThreadViewsPerFrame": 131,
+      "MainFrameMilliseconds": {
+        "Count": 600,
+        "Mean": 18.81780577023824,
+        "P50": 16.90369987487793,
+        "P95": 27.207700729370117,
+        "Max": 160.85049438476562
+      },
+      "PresentationMainFrameMilliseconds": {
+        "Count": 600,
+        "Mean": 18.81780577023824,
+        "P50": 16.90369987487793,
+        "P95": 27.207700729370117,
+        "Max": 160.85049438476562
+      },
+      "PresentationAllThreadGcBytes": {
+        "Count": 600,
+        "Mean": 323.4316666666667,
+        "P50": 0.0,
+        "P95": 593,
+        "Max": 44936
+      },
+      "GpuAvailability": [
+        "Supported, NotSupportedWithNativeGfxJobs"
+      ],
+      "GpuFrameCounterValues": [
+        "0ns",
+        "10.10ms",
+        "10.12ms",
+        "10.33ms",
+        "10.41ms",
+        "10.56ms",
+        "10.65ms",
+        "10.68ms",
+        "10.69ms",
+        "10.79ms",
+        "10.91ms",
+        "11.06ms",
+        "11.47ms",
+        "11.56ms",
+        "11.93ms",
+        "11.98ms",
+        "12.01ms",
+        "12.08ms",
+        "12.19ms",
+        "12.27ms",
+        "12.36ms",
+        "12.41ms",
+        "12.56ms",
+        "12.69ms",
+        "12.82ms",
+        "12.86ms",
+        "12.88ms",
+        "12.89ms",
+        "12.90ms",
+        "12.92ms",
+        "120.11ms",
+        "13.04ms",
+        "13.07ms",
+        "13.58ms",
+        "14.04ms",
+        "14.08ms",
+        "14.13ms",
+        "14.23ms",
+        "14.35ms",
+        "14.44ms",
+        "14.58ms",
+        "14.77ms",
+        "14.83ms",
+        "142.34us",
+        "15.03ms",
+        "15.16ms",
+        "15.26ms",
+        "15.49ms",
+        "15.57ms",
+        "15.58ms",
+        "15.65ms",
+        "15.82ms",
+        "15.96ms",
+        "16.03ms",
+        "16.05ms",
+        "16.26ms",
+        "18.53ms",
+        "18.65ms",
+        "184.32us",
+        "19.21ms",
+        "29.72ms",
+        "3.76ms",
+        "35.23ms",
+        "4.33ms",
+        "4.44ms",
+        "4.59ms",
+        "4.61ms",
+        "44.23ms",
+        "558.08us",
+        "6.21ms",
+        "6.30ms",
+        "602.11us",
+        "7.23ms",
+        "7.69ms",
+        "8.88ms",
+        "8.98ms",
+        "84.68ms",
+        "842.75us",
+        "9.02ms",
+        "9.37ms",
+        "9.72ms",
+        "9.74ms",
+        "9.78ms",
+        "9.84ms"
+      ],
+      "Markers": [
+        {
+          "Thread": "Render Thread",
+          "Marker": "RenderLoop",
+          "Calls": 635,
+          "MeanCallMs": 11.446994630886813,
+          "P50CallMs": 9.840200424194336,
+          "P95CallMs": 20.72559928894043,
+          "MaxCallMs": 155.4206085205078,
+          "TotalPerPresentationFrameMs": 12.114735984355212
+        },
+        {
+          "Thread": "Main Thread",
+          "Marker": "EditorLoop",
+          "Calls": 5014,
+          "MeanCallMs": 1.3893096642186074,
+          "P50CallMs": 0.5338000059127808,
+          "P95CallMs": 4.087599754333496,
+          "MaxCallMs": 137.24969482421875,
+          "TotalPerPresentationFrameMs": 11.609997760653496
+        },
+        {
+          "Thread": "Main Thread",
+          "Marker": "PlayerLoop",
+          "Calls": 600,
+          "MeanCallMs": 4.727643987735113,
+          "P50CallMs": 4.357450008392334,
+          "P95CallMs": 6.149199962615967,
+          "MaxCallMs": 100.90139770507812,
+          "TotalPerPresentationFrameMs": 4.727643987735113
+        },
+        {
+          "Thread": "Main Thread",
+          "Marker": "GridLiquid.Field.CpuBuildPage",
+          "Calls": 600,
+          "MeanCallMs": 2.6986213267842927,
+          "P50CallMs": 2.5140000581741333,
+          "P95CallMs": 4.097499847412109,
+          "MaxCallMs": 5.453199863433838,
+          "TotalPerPresentationFrameMs": 2.6986213267842927
+        },
+        {
+          "Thread": "Worker",
+          "Marker": "GfxDeviceD3D12.ExecuteCommandList",
+          "Calls": 718,
+          "MeanCallMs": 0.2550001386656818,
+          "P50CallMs": 0.2305999994277954,
+          "P95CallMs": 0.6050999760627747,
+          "MaxCallMs": 0.984000027179718,
+          "TotalPerPresentationFrameMs": 0.30515016593659916
+        },
+        {
+          "Thread": "Main Thread",
+          "Marker": "GridLiquid.Field.Draw",
+          "Calls": 600,
+          "MeanCallMs": 0.22204466618597507,
+          "P50CallMs": 0.22134999930858612,
+          "P95CallMs": 0.34630000591278076,
+          "MaxCallMs": 0.6212000250816345,
+          "TotalPerPresentationFrameMs": 0.22204466618597507
+        },
+        {
+          "Thread": "Main Thread",
+          "Marker": "GfxDeviceD3D12.WaitForLastPresentation",
+          "Calls": 600,
+          "MeanCallMs": 0.21949900370498654,
+          "P50CallMs": 0.003599999938160181,
+          "P95CallMs": 0.007300000172108412,
+          "MaxCallMs": 94.5687026977539,
+          "TotalPerPresentationFrameMs": 0.21949900370498654
+        },
+        {
+          "Thread": "Main Thread",
+          "Marker": "GfxDeviceD3D12.WaitForLastPresentation.WaitForGPU",
+          "Calls": 3,
+          "MeanCallMs": 43.117499033610024,
+          "P50CallMs": 18.452899932861328,
+          "P95CallMs": 94.56379699707031,
+          "MaxCallMs": 94.56379699707031,
+          "TotalPerPresentationFrameMs": 0.21558749516805012
+        },
+        {
+          "Thread": "Render Thread",
+          "Marker": "GfxDeviceD3D12.WaitForGPU",
+          "Calls": 24,
+          "MeanCallMs": 5.306858014315367,
+          "P50CallMs": 0.8960500061511993,
+          "P95CallMs": 2.27839994430542,
+          "MaxCallMs": 104.29569244384766,
+          "TotalPerPresentationFrameMs": 0.21227432057261467
+        },
+        {
+          "Thread": "Main Thread",
+          "Marker": "GridLiquid.StableSurface.Update",
+          "Calls": 1800,
+          "MeanCallMs": 0.011646055489675039,
+          "P50CallMs": 0.009700000286102295,
+          "P95CallMs": 0.023399999365210533,
+          "MaxCallMs": 0.08429999649524689,
+          "TotalPerPresentationFrameMs": 0.03493816646902512
+        },
+        {
+          "Thread": "Main Thread",
+          "Marker": "GpuFire.Draw",
+          "Calls": 600,
+          "MeanCallMs": 0.01614199990251412,
+          "P50CallMs": 0.016100000590085983,
+          "P95CallMs": 0.022499999031424522,
+          "MaxCallMs": 0.05920000001788139,
+          "TotalPerPresentationFrameMs": 0.01614199990251412
+        },
+        {
+          "Thread": "Worker",
+          "Marker": "GfxDeviceD3D12.Reuse",
+          "Calls": 718,
+          "MeanCallMs": 0.009054178226131393,
+          "P50CallMs": 0.0010000000474974513,
+          "P95CallMs": 0.054499998688697815,
+          "MaxCallMs": 0.11959999799728394,
+          "TotalPerPresentationFrameMs": 0.010834833277270566
+        },
+        {
+          "Thread": "Worker",
+          "Marker": "GfxDeviceD3D12.ResourceBarriers",
+          "Calls": 718,
+          "MeanCallMs": 0.008006267373782159,
+          "P50CallMs": 0.002949999994598329,
+          "P95CallMs": 0.03179999813437462,
+          "MaxCallMs": 0.13130000233650208,
+          "TotalPerPresentationFrameMs": 0.009580833290625984
+        },
+        {
+          "Thread": "Render Thread",
+          "Marker": "GfxDeviceD3D12.InsertEditorWaitForPresentFence",
+          "Calls": 600,
+          "MeanCallMs": 0.0024524999907346986,
+          "P50CallMs": 0.002300000051036477,
+          "P95CallMs": 0.00570000009611249,
+          "MaxCallMs": 0.02590000070631504,
+          "TotalPerPresentationFrameMs": 0.0024524999907346986
+        },
+        {
+          "Thread": "Timer-Scheduler",
+          "Marker": "GC.Alloc",
+          "Calls": 634,
+          "MeanCallMs": 0.0006187697093624787,
+          "P50CallMs": 9.999999747378752e-05,
+          "P95CallMs": 0.0026000000070780516,
+          "MaxCallMs": 0.05849999934434891,
+          "TotalPerPresentationFrameMs": 0.0006538333262263526
+        },
+        {
+          "Thread": "Thread Pool Worker",
+          "Marker": "GC.Alloc",
+          "Calls": 613,
+          "MeanCallMs": 0.0005433931425805386,
+          "P50CallMs": 9.999999747378752e-05,
+          "P95CallMs": 0.0020000000949949026,
+          "MaxCallMs": 0.005400000140070915,
+          "TotalPerPresentationFrameMs": 0.0005551666606697836
+        },
+        {
+          "Thread": "Main Thread",
+          "Marker": "GC.Alloc",
+          "Calls": 607,
+          "MeanCallMs": 0.00016177923835145042,
+          "P50CallMs": 9.999999747378752e-05,
+          "P95CallMs": 0.0005000000237487257,
+          "MaxCallMs": 0.0044999998062849045,
+          "TotalPerPresentationFrameMs": 0.000163666662798884
+        },
+        {
+          "Thread": "Plastic SCM Client Connection Pool thread",
+          "Marker": "GC.Alloc",
+          "Calls": 4,
+          "MeanCallMs": 0.0025000000023283064,
+          "P50CallMs": 0.0023499999660998583,
+          "P95CallMs": 0.003800000064074993,
+          "MaxCallMs": 0.003800000064074993,
+          "TotalPerPresentationFrameMs": 1.666666668218871e-05
+        },
+        {
+          "Thread": "Finalizer",
+          "Marker": "GC.Alloc",
+          "Calls": 14,
+          "MeanCallMs": 0.00019999999702642008,
+          "P50CallMs": 9.999999747378752e-05,
+          "P95CallMs": 0.0013000000035390258,
+          "MaxCallMs": 0.0013000000035390258,
+          "TotalPerPresentationFrameMs": 4.666666597283135e-06
+        },
+        {
+          "Thread": "Thread Pool I/O Selector",
+          "Marker": "GC.Alloc",
+          "Calls": 2,
+          "MeanCallMs": 0.00099999996018596,
+          "P50CallMs": 0.00099999996018596,
+          "P95CallMs": 0.0011999999405816197,
+          "MaxCallMs": 0.0011999999405816197,
+          "TotalPerPresentationFrameMs": 3.3333332006198664e-06
+        }
+      ]
+    },
+    {
+      "Capture": "Norn：The Lost Spells_2026-10-04_13-57-11",
+      "Input": "F:\\Develop Project\\RPG\\RPG\\ProfilerCaptures\\Norn：The Lost Spells_2026-10-04_13-57-11.data",
+      "InputBytes": 60274232,
+      "InputSha256": "2a9f9b4a7113e7e71c95547626699fd067bb9fda4302dcc66ee1ae32630e0383",
+      "ExportInfo": {
+        "Input": "F:\\Develop Project\\RPG\\RPG\\ProfilerCaptures\\Norn：The Lost Spells_2026-10-04_13-57-11.data",
+        "First": "0",
+        "Last": "599",
+        "Unity": "6000.3.16f1",
+        "ExportedAt": "2026-10-04T06:08:19.7887843Z"
+      },
+      "ExportedMainFrames": 600,
+      "ExportedSampleRecords": 355884,
+      "PresentationFrames": 600,
+      "OtherFrames": 0,
+      "PresentationSegments": [
+        [
+          0,
+          599
+        ]
+      ],
+      "MaxThreadViewsPerFrame": 131,
+      "MainFrameMilliseconds": {
+        "Count": 600,
+        "Mean": 16.931725744009018,
+        "P50": 16.675049781799316,
+        "P95": 21.570899963378906,
+        "Max": 53.78799819946289
+      },
+      "PresentationMainFrameMilliseconds": {
+        "Count": 600,
+        "Mean": 16.931725744009018,
+        "P50": 16.675049781799316,
+        "P95": 21.570899963378906,
+        "Max": 53.78799819946289
+      },
+      "PresentationAllThreadGcBytes": {
+        "Count": 600,
+        "Mean": 302.68,
+        "P50": 0.0,
+        "P95": 593,
+        "Max": 45051
+      },
+      "GpuAvailability": [
+        "Supported, NotSupportedWithNativeGfxJobs"
+      ],
+      "GpuFrameCounterValues": [
+        "0ns",
+        "11.99ms",
+        "12.31ms",
+        "12.37ms",
+        "12.48ms",
+        "13.17ms",
+        "13.59ms",
+        "13.67ms",
+        "13.88ms",
+        "14.58ms",
+        "15.25ms",
+        "16.97ms",
+        "9.30ms"
+      ],
+      "Markers": [
+        {
+          "Thread": "Render Thread",
+          "Marker": "RenderLoop",
+          "Calls": 615,
+          "MeanCallMs": 12.400856730511517,
+          "P50CallMs": 12.316300392150879,
+          "P95CallMs": 17.868200302124023,
+          "MaxCallMs": 50.590999603271484,
+          "TotalPerPresentationFrameMs": 12.710878148774306
+        },
+        {
+          "Thread": "Main Thread",
+          "Marker": "EditorLoop",
+          "Calls": 9266,
+          "MeanCallMs": 0.810812722255544,
+          "P50CallMs": 0.5311999917030334,
+          "P95CallMs": 1.7319999933242798,
+          "MaxCallMs": 44.514198303222656,
+          "TotalPerPresentationFrameMs": 12.521651140699785
+        },
+        {
+          "Thread": "Main Thread",
+          "Marker": "PlayerLoop",
+          "Calls": 600,
+          "MeanCallMs": 1.8471358253558476,
+          "P50CallMs": 1.890399992465973,
+          "P95CallMs": 2.3264999389648438,
+          "MaxCallMs": 3.2915000915527344,
+          "TotalPerPresentationFrameMs": 1.8471358253558476
+        },
+        {
+          "Thread": "Main Thread",
+          "Marker": "GridLiquid.Field.Draw",
+          "Calls": 600,
+          "MeanCallMs": 0.22811099929114184,
+          "P50CallMs": 0.22919999808073044,
+          "P95CallMs": 0.3384000062942505,
+          "MaxCallMs": 0.5694000124931335,
+          "TotalPerPresentationFrameMs": 0.22811099929114184
+        },
+        {
+          "Thread": "Worker",
+          "Marker": "GfxDeviceD3D12.ExecuteCommandList",
+          "Calls": 621,
+          "MeanCallMs": 0.1854871172643898,
+          "P50CallMs": 0.17720000445842743,
+          "P95CallMs": 0.3346000015735626,
+          "MaxCallMs": 0.6661999821662903,
+          "TotalPerPresentationFrameMs": 0.19197916636864346
+        },
+        {
+          "Thread": "Main Thread",
+          "Marker": "GridLiquid.StableSurface.Update",
+          "Calls": 1800,
+          "MeanCallMs": 0.011176444387787745,
+          "P50CallMs": 0.010099999606609344,
+          "P95CallMs": 0.017500000074505806,
+          "MaxCallMs": 0.12409999966621399,
+          "TotalPerPresentationFrameMs": 0.03352933316336324
+        },
+        {
+          "Thread": "Main Thread",
+          "Marker": "GpuFire.Draw",
+          "Calls": 600,
+          "MeanCallMs": 0.017160999920840064,
+          "P50CallMs": 0.01644999999552965,
+          "P95CallMs": 0.022499999031424522,
+          "MaxCallMs": 0.13950000703334808,
+          "TotalPerPresentationFrameMs": 0.017160999920840064
+        },
+        {
+          "Thread": "Render Thread",
+          "Marker": "GfxDeviceD3D12.WaitForGPU",
+          "Calls": 7,
+          "MeanCallMs": 0.9060285889676639,
+          "P50CallMs": 0.2696000039577484,
+          "P95CallMs": 2.4934000968933105,
+          "MaxCallMs": 2.4934000968933105,
+          "TotalPerPresentationFrameMs": 0.010570333537956078
+        },
+        {
+          "Thread": "Main Thread",
+          "Marker": "GfxDeviceD3D12.WaitForLastPresentation",
+          "Calls": 600,
+          "MeanCallMs": 0.007223999887161578,
+          "P50CallMs": 0.0038999998942017555,
+          "P95CallMs": 0.006899999920278788,
+          "MaxCallMs": 1.7201999425888062,
+          "TotalPerPresentationFrameMs": 0.007223999887161578
+        },
+        {
+          "Thread": "Worker",
+          "Marker": "GfxDeviceD3D12.ResourceBarriers",
+          "Calls": 621,
+          "MeanCallMs": 0.0030180353945666316,
+          "P50CallMs": 0.00139999995008111,
+          "P95CallMs": 0.014499999582767487,
+          "MaxCallMs": 0.03229999914765358,
+          "TotalPerPresentationFrameMs": 0.0031236666333764635
+        },
+        {
+          "Thread": "Worker",
+          "Marker": "GfxDeviceD3D12.Reuse",
+          "Calls": 621,
+          "MeanCallMs": 0.0029610305660261417,
+          "P50CallMs": 0.0007999999797903001,
+          "P95CallMs": 0.02630000002682209,
+          "MaxCallMs": 0.06040000170469284,
+          "TotalPerPresentationFrameMs": 0.003064666635837057
+        },
+        {
+          "Thread": "Main Thread",
+          "Marker": "GfxDeviceD3D12.WaitForLastPresentation.WaitForGPU",
+          "Calls": 1,
+          "MeanCallMs": 1.7165000438690186,
+          "P50CallMs": 1.7165000438690186,
+          "P95CallMs": 1.7165000438690186,
+          "MaxCallMs": 1.7165000438690186,
+          "TotalPerPresentationFrameMs": 0.0028608334064483642
+        },
+        {
+          "Thread": "Render Thread",
+          "Marker": "GfxDeviceD3D12.InsertEditorWaitForPresentFence",
+          "Calls": 600,
+          "MeanCallMs": 0.0027596666500297336,
+          "P50CallMs": 0.0024999999441206455,
+          "P95CallMs": 0.006000000052154064,
+          "MaxCallMs": 0.05810000002384186,
+          "TotalPerPresentationFrameMs": 0.0027596666500297336
+        },
+        {
+          "Thread": "Timer-Scheduler",
+          "Marker": "GC.Alloc",
+          "Calls": 578,
+          "MeanCallMs": 0.00048200691601819,
+          "P50CallMs": 9.999999747378752e-05,
+          "P95CallMs": 0.0019000000320374966,
+          "MaxCallMs": 0.006099999882280827,
+          "TotalPerPresentationFrameMs": 0.00046433332909752304
+        },
+        {
+          "Thread": "Thread Pool Worker",
+          "Marker": "GC.Alloc",
+          "Calls": 562,
+          "MeanCallMs": 0.00045569394583852373,
+          "P50CallMs": 9.999999747378752e-05,
+          "P95CallMs": 0.0017999999690800905,
+          "MaxCallMs": 0.014999999664723873,
+          "TotalPerPresentationFrameMs": 0.00042683332926875055
+        },
+        {
+          "Thread": "Main Thread",
+          "Marker": "GC.Alloc",
+          "Calls": 558,
+          "MeanCallMs": 0.00015089605367914807,
+          "P50CallMs": 9.999999747378752e-05,
+          "P95CallMs": 0.0005000000237487257,
+          "MaxCallMs": 0.0008999999845400453,
+          "TotalPerPresentationFrameMs": 0.0001403333299216077
+        },
+        {
+          "Thread": "Plastic SCM Client Connection Pool thread",
+          "Marker": "GC.Alloc",
+          "Calls": 3,
+          "MeanCallMs": 0.0027333333467443786,
+          "P50CallMs": 0.0024999999441206455,
+          "P95CallMs": 0.0034000000450760126,
+          "MaxCallMs": 0.0034000000450760126,
+          "TotalPerPresentationFrameMs": 1.3666666733721892e-05
+        }
+      ]
+    }
+  ]
+}

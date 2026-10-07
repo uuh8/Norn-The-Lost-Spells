@@ -1,0 +1,55 @@
+{
+    "Kind": "Direct NUnit method invocation; not Unity TestRunner XML",
+    "StartUtc": "2026-10-04T14:13:25.2234465Z",
+    "EndUtc": "2026-10-04T14:13:29.6349789Z",
+    "Reason": "",
+    "Passed": 3,
+    "Failed": 2,
+    "Skipped": 0,
+    "Planned": 5,
+    "Completed": 5,
+    "Aborted": false,
+    "SceneRestored": true,
+    "Cases": [
+        {
+            "Name": "Game.Rendering.Tests.P8ElementWorldSceneContractTests.ProductionSceneOwnsGridRuntimeAndUsesCurrentContinuousSurface",
+            "Arguments": "Assets/_Project/Scenes/P7_DemoRun.unity,Assets/_Project/ScriptableObjects/ElementField/Liquids/ElementWorldProfile_P7_DemoRun_Grid.asset",
+            "Error": "",
+            "Passed": true,
+            "Skipped": false,
+            "DurationSeconds": 0.052796600000874608
+        },
+        {
+            "Name": "Game.Rendering.Tests.P8ElementWorldSceneContractTests.ProductionSceneOwnsGridRuntimeAndUsesCurrentContinuousSurface",
+            "Arguments": "Assets/_Project/Scenes/P8_BossField.unity,Assets/_Project/ScriptableObjects/P8/ElementField/ElementWorldProfile_P8BossField.asset",
+            "Error": "NUnit.Framework.AssertionException:   Scene 必须明确选择当前 GridLiquid。\r\n  Expected: GridLiquid\r\n  But was:  GpuPbf\r\n\r\n  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) [0x00039] in <f577cd9686154d6ab10efd7e65e64366>:0 \r\n  at Game.Rendering.Tests.P8ElementWorldSceneContractTests+<>c__DisplayClass4_0.<ProductionSceneOwnsGridRuntimeAndUsesCurrentContinuousSurface>b__0 (UnityEngine.SceneManagement.Scene scene) [0x00037] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\P8ElementWorldSceneContractTests.cs:32 \r\n  at Game.Rendering.Tests.P8ElementWorldSceneContractTests.WithScene (System.String path, System.Action`1[T] check) [0x00034] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\P8ElementWorldSceneContractTests.cs:97 \r\n  at Game.Rendering.Tests.P8ElementWorldSceneContractTests.ProductionSceneOwnsGridRuntimeAndUsesCurrentContinuousSurface (System.String path, System.String profilePath) [0x0000e] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\P8ElementWorldSceneContractTests.cs:26 \r\n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\r\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 ",
+            "Passed": false,
+            "Skipped": false,
+            "DurationSeconds": 1.8267564999987372
+        },
+        {
+            "Name": "Game.Rendering.Tests.P8ElementWorldSceneContractTests.P8UsesCanonicalMaterialRulesAndOwnsACompleteGpuRuntimeChain",
+            "Arguments": "",
+            "Error": "NUnit.Framework.AssertionException:   Expected: 2\r\n  But was:  1\r\n\r\n  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) [0x00039] in <f577cd9686154d6ab10efd7e65e64366>:0 \r\n  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression) [0x00000] in <f577cd9686154d6ab10efd7e65e64366>:0 \r\n  at Game.Rendering.Tests.P8ElementWorldSceneContractTests+<>c.<P8UsesCanonicalMaterialRulesAndOwnsACompleteGpuRuntimeChain>b__5_0 (UnityEngine.SceneManagement.Scene scene) [0x00029] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\P8ElementWorldSceneContractTests.cs:66 \r\n  at Game.Rendering.Tests.P8ElementWorldSceneContractTests.WithScene (System.String path, System.Action`1[T] check) [0x00034] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\P8ElementWorldSceneContractTests.cs:97 \r\n  at Game.Rendering.Tests.P8ElementWorldSceneContractTests.P8UsesCanonicalMaterialRulesAndOwnsACompleteGpuRuntimeChain () [0x00001] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\P8ElementWorldSceneContractTests.cs:61 \r\n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\r\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 ",
+            "Passed": false,
+            "Skipped": false,
+            "DurationSeconds": 1.2631446000013967
+        },
+        {
+            "Name": "Game.Rendering.Tests.P8ElementWorldSceneContractTests.ProductionFireUsesUnifiedStyleAndItsOwnWorld",
+            "Arguments": "Assets/_Project/Scenes/P7_DemoRun.unity",
+            "Error": "",
+            "Passed": true,
+            "Skipped": false,
+            "DurationSeconds": 0.003923999996914063
+        },
+        {
+            "Name": "Game.Rendering.Tests.P8ElementWorldSceneContractTests.ProductionFireUsesUnifiedStyleAndItsOwnWorld",
+            "Arguments": "Assets/_Project/Scenes/P8_BossField.unity",
+            "Error": "",
+            "Passed": true,
+            "Skipped": false,
+            "DurationSeconds": 1.0588117000006606
+        }
+    ]
+}

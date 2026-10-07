@@ -36,7 +36,7 @@ namespace Game.Combat
         private void Awake()
         {
             _currentHp = _maxHp;
-            // GetInstanceID 获取 Unity 引擎分配的实例 ID。，供事件消费者筛选目标；它不是跨存档的永久 Id。
+            // GetInstanceID 获取 Unity 引擎分配的实例 ID，供事件消费者筛选目标；它不是跨存档的永久 Id。
             _id = gameObject.GetInstanceID();
         }
 

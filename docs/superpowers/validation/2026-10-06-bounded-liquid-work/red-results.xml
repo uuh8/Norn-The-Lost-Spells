@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 06:13:44Z" end-time="2026-10-06 06:13:45Z" duration="0.8440604">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="1254" result="Failed" site="Child" start-time="2026-10-06 06:13:44Z" end-time="2026-10-06 06:13:45Z" duration="0.844060" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1996" name="Game.ElementField.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.ElementField.Tests.dll" runstate="Runnable" testcasecount="563" result="Failed" site="Child" start-time="2026-10-06 06:13:44Z" end-time="2026-10-06 06:13:45Z" duration="0.740638" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="18732" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1997" name="Game" fullname="Game" runstate="Runnable" testcasecount="563" result="Failed" site="Child" start-time="2026-10-06 06:13:44Z" end-time="2026-10-06 06:13:45Z" duration="0.642854" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1998" name="ElementField" fullname="Game.ElementField" runstate="Runnable" testcasecount="563" result="Failed" site="Child" start-time="2026-10-06 06:13:45Z" end-time="2026-10-06 06:13:45Z" duration="0.531626" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1999" name="Tests" fullname="Game.ElementField.Tests" runstate="Runnable" testcasecount="563" result="Failed" site="Child" start-time="2026-10-06 06:13:45Z" end-time="2026-10-06 06:13:45Z" duration="0.424897" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1805" name="LiquidFluxSolverDeadbandTests" fullname="Game.ElementField.Tests.LiquidFluxSolverDeadbandTests" classname="Game.ElementField.Tests.LiquidFluxSolverDeadbandTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-06 06:13:45Z" end-time="2026-10-06 06:13:45Z" duration="0.256343" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1807" name="DomainChangeSpreadsSleepingWakeAcrossBoundedSteps" fullname="Game.ElementField.Tests.LiquidFluxSolverDeadbandTests.DomainChangeSpreadsSleepingWakeAcrossBoundedSteps" methodname="DomainChangeSpreadsSleepingWakeAcrossBoundedSteps" classname="Game.ElementField.Tests.LiquidFluxSolverDeadbandTests" runstate="Runnable" seed="836956315" result="Failed" start-time="2026-10-06 06:13:45Z" end-time="2026-10-06 06:13:45Z" duration="0.109765" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  移动活动范围不能在一次调用中唤醒整个休眠集合。
+  Expected: less than or equal to 128
+  But was:  2048
+]]></message>
+                  <stack-trace><![CDATA[at Game.ElementField.Tests.LiquidFluxSolverDeadbandTests.DomainChangeSpreadsSleepingWakeAcrossBoundedSteps () [0x00128] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\LiquidFluxSolverDeadbandTests.cs:59
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1806" name="OverflowRecoverySharesOneBudgetAcrossAllDequeues" fullname="Game.ElementField.Tests.LiquidFluxSolverDeadbandTests.OverflowRecoverySharesOneBudgetAcrossAllDequeues" methodname="OverflowRecoverySharesOneBudgetAcrossAllDequeues" classname="Game.ElementField.Tests.LiquidFluxSolverDeadbandTests" runstate="Runnable" seed="1378409864" result="Failed" start-time="2026-10-06 06:13:45Z" end-time="2026-10-06 06:13:45Z" duration="0.017327" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  一个 Tick 内多次取格子必须共享扫描预算，不能各自重置 1024。
+  Expected: less than or equal to 1024
+  But was:  16384
+]]></message>
+                  <stack-trace><![CDATA[at Game.ElementField.Tests.LiquidFluxSolverDeadbandTests.OverflowRecoverySharesOneBudgetAcrossAllDequeues () [0x000db] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\LiquidFluxSolverDeadbandTests.cs:29
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1958" name="StableLiquidRegionCandidateTests" fullname="Game.ElementField.Tests.StableLiquidRegionCandidateTests" classname="Game.ElementField.Tests.StableLiquidRegionCandidateTests" runstate="Runnable" testcasecount="15" result="Failed" site="Child" start-time="2026-10-06 06:13:45Z" end-time="2026-10-06 06:13:45Z" duration="0.056813" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1959" name="ContinuousRemoteWaterWritesDoNotStarveQuietWaterCompression" fullname="Game.ElementField.Tests.StableLiquidRegionCandidateTests.ContinuousRemoteWaterWritesDoNotStarveQuietWaterCompression" methodname="ContinuousRemoteWaterWritesDoNotStarveQuietWaterCompression" classname="Game.ElementField.Tests.StableLiquidRegionCandidateTests" runstate="Runnable" seed="1418431014" result="Failed" start-time="2026-10-06 06:13:45Z" end-time="2026-10-06 06:13:45Z" duration="0.024812" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  其他位置持续施法时，平静湖仍应进入 Stable 表示，避免长期重复动态处理。
+  Expected: 1
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at Game.ElementField.Tests.StableLiquidRegionCandidateTests.ContinuousRemoteWaterWritesDoNotStarveQuietWaterCompression () [0x00119] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\StableLiquidRegionCandidateTests.cs:34
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1960" name="LiquidAddedAbovePreviouslyCheckedColumnInvalidatesDiscovery" fullname="Game.ElementField.Tests.StableLiquidRegionCandidateTests.LiquidAddedAbovePreviouslyCheckedColumnInvalidatesDiscovery" methodname="LiquidAddedAbovePreviouslyCheckedColumnInvalidatesDiscovery" classname="Game.ElementField.Tests.StableLiquidRegionCandidateTests" runstate="Runnable" seed="57991160" result="Passed" start-time="2026-10-06 06:13:45Z" end-time="2026-10-06 06:13:45Z" duration="0.027479" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: C:/Users/zhy/AppData/LocalLow/Haoyu/Norn：The Lost Spells\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

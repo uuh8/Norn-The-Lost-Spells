@@ -10,6 +10,8 @@ namespace Game.ElementField
     {
         private readonly ElementGrid _grid;
         private int _nonEmptyCellCount;
+        private int _fireCellCount;
+        internal bool HasFire => _fireCellCount > 0;
         private int _unchangedSimulationTicks;
         private bool _requiresSimulation = true;
 
@@ -53,6 +55,8 @@ namespace Game.ElementField
 
             bool wasEmpty = before.IsEmpty;
             bool isEmpty = cell.IsEmpty;
+            if (!wasEmpty && before.MaterialKind == Game.Materials.MaterialId.Fire) _fireCellCount--;
+            if (!isEmpty && cell.MaterialKind == Game.Materials.MaterialId.Fire) _fireCellCount++;
 
             if (wasEmpty && !isEmpty)
             {
@@ -118,11 +122,14 @@ namespace Game.ElementField
             // Snapshot/Delta Stage 会整批交换 ElementGrid 的 Current/Next 数组，无法逐次经过 SetCell。
             // 每个完整 Tick 结束后统一重算一次，保证 Sleep/Reclaim 判定看到的 HasAnyElement 不会过期。
             int count = 0;
+            _fireCellCount = 0;
             ElementCell[] cells = _grid.CurrentCells;
             for (int index = 0; index < cells.Length; index++)
             {
                 if (!cells[index].IsEmpty)
                     count++;
+                if (!cells[index].IsEmpty && cells[index].MaterialKind == Game.Materials.MaterialId.Fire)
+                    _fireCellCount++;
             }
 
             _nonEmptyCellCount = count;

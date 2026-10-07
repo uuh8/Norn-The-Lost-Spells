@@ -1,0 +1,720 @@
+{
+  "Utc": "2026-10-04T12:49:54.943925+00:00",
+  "Kind": "L4.27 exact Half CPU decode and sparse presentation capture; phase in progress",
+  "Sources": [
+    {
+      "Path": "Assets/_Project/Scripts/Rendering/ElementField/GridLiquidFieldFrame.cs",
+      "Sha256": "24b836c71dab28f63da005f915c7a2b2a0559c3877ce480955fbf321d49ac00e",
+      "BeforeSha256": "56869cb7e1dabd538c2b8bfa2c2ed46f27d48a4d39fbca7b58fe72e7d1857c5a",
+      "ChangedThisRound": true
+    },
+    {
+      "Path": "Assets/_Project/Scripts/Rendering/ElementField/GridLiquidFieldGpuLayout.cs",
+      "Sha256": "eaf46ec9d2c52fed4e1c2be892afdf2270ff4a661ffa283b4830323f514688ec",
+      "BeforeSha256": "54a7f341f677360561dc4175642da469d4b9085215d97022c0bec9a12da15002",
+      "ChangedThisRound": true
+    },
+    {
+      "Path": "Assets/_Project/Scripts/Rendering/ElementField/GridLiquidFieldSurfaceRenderer.cs",
+      "Sha256": "6cc783087246d2d41382a72b5608679114ec1041b6889e554ca53afb5b9d33fc",
+      "BeforeSha256": "6cc783087246d2d41382a72b5608679114ec1041b6889e554ca53afb5b9d33fc",
+      "ChangedThisRound": false
+    },
+    {
+      "Path": "Assets/_Project/Scripts/Rendering/ElementField/GridLiquidFieldSampler.cs",
+      "Sha256": "6491ffd7c59a36aa75e885bec82b6eb21f72d11cf187e4900e69abd7457e5476",
+      "BeforeSha256": "6491ffd7c59a36aa75e885bec82b6eb21f72d11cf187e4900e69abd7457e5476",
+      "ChangedThisRound": false
+    },
+    {
+      "Path": "Assets/_Project/Scripts/Rendering/ElementField/GpuFireParcelRenderer.cs",
+      "Sha256": "4641d549bb2ec351112bf72d2065256653fee6ab7f90064a7d53844cc9c48a47",
+      "BeforeSha256": "aa3b079fded2c5d38ec1754067af569d3d0d0b62755c026058e5b0730d6215e8",
+      "ChangedThisRound": true
+    },
+    {
+      "Path": "Assets/_Project/Art/Elemental/Compute/GridLiquidField.compute",
+      "Sha256": "7481f4b186b359c4c3bb3765d51d81036f0623c69a65ae791fd2bc7e0c97d1cf",
+      "BeforeSha256": "7481f4b186b359c4c3bb3765d51d81036f0623c69a65ae791fd2bc7e0c97d1cf",
+      "ChangedThisRound": false
+    },
+    {
+      "Path": "Assets/_Project/Tests/Rendering/GridLiquidFieldFrameTests.cs",
+      "Sha256": "aa46e6cb035b495c7e3ee79106c5bc0a27b751eac020594f5ee9d2b6c1c91d6d",
+      "BeforeSha256": "e69bab8620d8c44491d2d12a46bf27a1c17eb1eb75e3b192226abff842f0f9d8",
+      "ChangedThisRound": true
+    },
+    {
+      "Path": "Assets/_Project/Tests/Rendering/GridLiquidFieldLayoutTests.cs",
+      "Sha256": "47ab02d077f1edb8fbfa3749c5df2bb3de7e7c14f188ae03562ae6d981177562",
+      "BeforeSha256": "530d9bd1d8d34b71c6ebc34f45a7531d2e96cca5034534865ed3e251b6957b6d",
+      "ChangedThisRound": true
+    },
+    {
+      "Path": "Assets/_Project/Tests/Rendering/GridLiquidFieldPerformanceTests.cs",
+      "Sha256": "2442275065670c71655ed1702607d16e9111fc16a554eff46fcdf415bdccc8ca",
+      "BeforeSha256": "2442275065670c71655ed1702607d16e9111fc16a554eff46fcdf415bdccc8ca",
+      "ChangedThisRound": false
+    },
+    {
+      "Path": "Assets/_Project/Editor/ElementPerformanceGateRunner.cs",
+      "Sha256": "8f2ca132d4603c1b0a428ec5c01c9afe1cdd891db82bea5535aedeb11773a359",
+      "BeforeSha256": "3542f3e057c17ed6d3d552f382e01f0c6240e1c4d4ca8d235488df65fd0df3f7",
+      "ChangedThisRound": true
+    },
+    {
+      "Path": "Assets/_Project/Editor/GridLiquidPrototypeCapture.cs",
+      "Sha256": "82686eae43dc31f050e2fe4868dafebf84ccfebb95a7621bc6ba55cc2e7dad69",
+      "BeforeSha256": "bd1d18d1c950c94cc2bdd85b32a7e638b5aa7dfa1ecab36b750a1a4e3b6626a1",
+      "ChangedThisRound": true
+    },
+    {
+      "Path": "Tools/ElementPerformance/profile_mixed_liquid.py",
+      "Sha256": "cabf8f0bbe7d4616b2a136956f516096039e57534e35bd3581c7f9d1ec8bbfce",
+      "BeforeSha256": "6d453c788bc8fa4fb4176afbb1f102d360ef1d1764c692130dc6975832174eb8",
+      "ChangedThisRound": true
+    },
+    {
+      "Path": "Tools/ElementPerformance/run_current_liquid_gate.py",
+      "Sha256": "b0b7ac73074389962ac1a6b0b26238ce80cc039d276a05435f5805fa496db039",
+      "BeforeSha256": "7bf87711245a8d6fdb59ff0e8de780720e354f2f5afe1870cd3d5f013789d006",
+      "ChangedThisRound": true
+    },
+    {
+      "Path": "Tools/ElementPerformance/archive_liquid_capture_spikes.py",
+      "Sha256": "8624d0abf58832a916d1c71aaa9085b45501eb293c236221c0076196704868a7"
+    }
+  ],
+  "SceneSha256Before": "bdc44a9b3529128a85843aa842eb83970faeaffe322ab4774baeb4014c860b83",
+  "SceneSha256Final": "bdc44a9b3529128a85843aa842eb83970faeaffe322ab4774baeb4014c860b83",
+  "EditorState": {
+    "Roots": [
+      {
+        "Name": "__Systems",
+        "Active": true
+      },
+      {
+        "Name": "__Gameplay",
+        "Active": true
+      },
+      {
+        "Name": "P8_RunSessionRoot",
+        "Active": true
+      },
+      {
+        "Name": "__Level",
+        "Active": true
+      },
+      {
+        "Name": "__Encounters",
+        "Active": true
+      },
+      {
+        "Name": "__UI",
+        "Active": true
+      },
+      {
+        "Name": "MusicRoot",
+        "Active": true
+      },
+      {
+        "Name": "Navigation",
+        "Active": true
+      },
+      {
+        "Name": "Cube",
+        "Active": true
+      },
+      {
+        "Name": "Cube (1)",
+        "Active": true
+      }
+    ],
+    "PauseReasons": "None",
+    "Utc": "2026-10-04T12:49:15.9807315Z",
+    "Scene": "Assets/_Project/Scenes/P7_DemoRun.unity",
+    "TotalQuantity": "0",
+    "PendingQuantity": "0",
+    "StableQuantity": "0",
+    "TransferCommitted": "0",
+    "SectorCommitted": "0",
+    "Absorbed": "0",
+    "AutoSeedInspections": "0",
+    "LastStableExpansionFailure": "None",
+    "LastStableRecaptureFailure": "None",
+    "SceneDirty": false,
+    "Playing": false,
+    "Paused": false,
+    "Initialized": false,
+    "RunInBackground": false,
+    "RemainingSteps": 0,
+    "Frame": 477,
+    "Samples": 219,
+    "ResidentChunks": 0,
+    "ActiveCells": 0,
+    "SleepingCells": 0,
+    "StableRegions": 0,
+    "GridFireChunks": 0,
+    "GridFireSamples": 0,
+    "FireReady": false,
+    "FireGcBytes": 0,
+    "FirePeakGcBytes": 0,
+    "FireLastSeeds": 0,
+    "FireTotalSeeds": 0,
+    "ResidentExpandedSectors": 0,
+    "Outlets": 0,
+    "OpenOutlets": 0,
+    "AutoCandidateAgeTicks": 0,
+    "WaterNew": 0,
+    "WaterDirty": 0,
+    "WaterOldest": 0,
+    "WaterOmitted": 0,
+    "WaterStableDraws": 0,
+    "PoisonNew": 0,
+    "PoisonDirty": 0,
+    "PoisonOldest": 0,
+    "PoisonOmitted": 0,
+    "StickyDirty": 0,
+    "P50Ms": 16.787996292114258,
+    "P95Ms": 24.20600128173828,
+    "MaxMs": 276.8682861328125,
+    "TimeScale": 1.0,
+    "ContinuousReady": false,
+    "ContinuousCpuFallback": false,
+    "ContinuousOverflow": false,
+    "ContinuousHybridVisible": false,
+    "MeasurementValid": false,
+    "FallbackReason": "",
+    "ContinuousRendererCount": 1,
+    "SourceInstanceId": 118822,
+    "VisibleFallbackPages": 0,
+    "ContinuousGpuBytes": 0,
+    "ContinuousGcBytes": 0,
+    "ContinuousPages": 0,
+    "ContinuousRebuiltPages": 0,
+    "ContinuousSubdivision": 0,
+    "ContinuousDrops": 0,
+    "ContinuousVisiblePages": 0,
+    "ContinuousHybridPages": 0,
+    "ContinuousCulledPages": 0,
+    "ContinuousAlpha": 0.0,
+    "ContinuousCaptureMs": 0.0,
+    "ContinuousDisplayLagMs": 0.0,
+    "ContinuousHybridLagMs": 0.0,
+    "TerrainFallbacks": 0,
+    "TransportHistoryOverflows": 0,
+    "DynamicWaterSurfaceVersion": 0,
+    "StableWaterSurfaceVersion": 0,
+    "DynamicWaterCandidateVersion": 0,
+    "WaterStableTopologyRebuilds": 0,
+    "DynamicStoreVersion": 0,
+    "DynamicStaticVersion": 0,
+    "Rejected": 0,
+    "Overflow": 0,
+    "AutoCompressed": 0,
+    "AutoPartialSurfaceCompressed": 0,
+    "AutoRejected": 0,
+    "AutoInvalidated": 0,
+    "ExpandedStableRegions": 0,
+    "RejectedStableExpansions": 0,
+    "RecapturedStableRegions": 0,
+    "RejectedStableRecaptures": 0
+  },
+  "UserCapture": {
+    "Path": "Backups\\ElementPerformance\\L427\\user-capture-20261004-114323.data",
+    "Bytes": 70049504,
+    "Sha256": "149617acdb62b14dbe115d72e0c0f7887a67fd7cd4de194aa2af28fb6d468690",
+    "CachedRange": [
+      5214,
+      5813
+    ],
+    "FramesWithMainThread": 245,
+    "SelectedUiFrame": 5389
+  },
+  "FinalDiagnostic": {
+    "Kind": "Direct NUnit method invocation; not Unity TestRunner XML",
+    "StartUtc": "2026-10-04T12:17:55.1966236Z",
+    "EndUtc": "2026-10-04T12:18:51.1326948Z",
+    "Passed": 261,
+    "Failed": 0,
+    "Skipped": 0,
+    "Planned": 261,
+    "Completed": 261,
+    "Aborted": false,
+    "SceneRestored": true
+  },
+  "FixedCpuCapture": {
+    "Record": {
+      "Utc": "2026-10-04T12:18:18.0314219Z",
+      "Signature": 3405202243,
+      "Quantity": 46080,
+      "Pages": 48,
+      "Owners": 356,
+      "Overflow": false,
+      "AllocatedBytes": 0,
+      "CaptureMilliseconds": [
+        11.1020125,
+        10.81645,
+        10.0266125,
+        10.1275875,
+        10.8503,
+        9.7112875
+      ],
+      "FullScanMilliseconds": [
+        22.7755,
+        20.78825,
+        23.053025,
+        21.077575,
+        19.999375,
+        18.2677
+      ]
+    },
+    "FullScanMeanMs": 20.993570833333333,
+    "SparseMeanMs": 10.439041666666666,
+    "ReductionPercent": 50.27505444623225,
+    "Meaning": "Same input and exact packed output; both modes use Half cache. Not game FPS."
+  },
+  "FullFallback": {
+    "Utc": "2026-10-04T12:18:20.4893983Z",
+    "Signature": 4186262329,
+    "Quantity": 46080,
+    "Pages": 48,
+    "Owners": 144,
+    "Overflow": true,
+    "AllocatedBytes": 0,
+    "CaptureMilliseconds": [
+      26.3185625,
+      26.744425,
+      33.7549375,
+      22.5104,
+      17.7194625,
+      19.769825
+    ],
+    "FullScanMilliseconds": [
+      25.103725,
+      23.9294,
+      26.8540375,
+      20.110175,
+      18.5778875,
+      19.5955
+    ]
+  },
+  "HalfDecode": {
+    "Utc": "2026-10-04T12:18:36.3652956Z",
+    "NativeImplementation": "InternalCall",
+    "NativeMilliseconds": [
+      3.9906,
+      4.0067,
+      4.6462,
+      5.7347,
+      5.9113,
+      7.0652,
+      7.1861,
+      7.2611,
+      6.2246
+    ],
+    "ActualMilliseconds": [
+      1.5384,
+      1.6427,
+      2.2115,
+      2.1946,
+      2.184,
+      2.307,
+      2.4041,
+      2.1741,
+      2.8685
+    ],
+    "AllocatedBytes": 0
+  },
+  "FinalGpuEquivalence": [
+    {
+      "Utc": "2026-10-04T12:18:37.2975889Z",
+      "Vertices": 1470,
+      "MaximumPositionError": 0.0,
+      "MaximumNormalError": 0.0,
+      "MaximumSwellError": 0.0
+    },
+    {
+      "Utc": "2026-10-04T12:18:38.6475569Z",
+      "Vertices": 1434,
+      "MaximumPositionError": 0.0,
+      "MaximumNormalError": 0.0,
+      "MaximumSwellError": 0.0
+    },
+    {
+      "Utc": "2026-10-04T12:18:38.8265757Z",
+      "Vertices": 1229,
+      "MaximumPositionError": 0.0,
+      "MaximumNormalError": 0.0,
+      "MaximumSwellError": 0.0
+    },
+    {
+      "Utc": "2026-10-04T12:18:39.0015614Z",
+      "Vertices": 1868,
+      "MaximumPositionError": 0.0,
+      "MaximumNormalError": 0.0,
+      "MaximumSwellError": 0.0
+    },
+    {
+      "Utc": "2026-10-04T12:18:39.3543915Z",
+      "Vertices": 717,
+      "MaximumPositionError": 0.0,
+      "MaximumNormalError": 0.0,
+      "MaximumSwellError": 0.0
+    }
+  ],
+  "NormalGameplayWindows": {
+    "l427-before-baseline": {
+      "Utc": "2026-10-04T11:46:52.9337739Z",
+      "Samples": 136,
+      "TotalQuantity": "6220",
+      "ActiveCells": 25,
+      "ContinuousPages": 16,
+      "ContinuousRebuiltPages": 8,
+      "P50Ms": 17.070598602294922,
+      "P95Ms": 34.9484977722168,
+      "MaxMs": 53.9901008605957,
+      "TimeScale": 1.0,
+      "MeasurementValid": true,
+      "ContinuousGcBytes": 0,
+      "FireGcBytes": 0,
+      "ContinuousGpuBytes": 131774080
+    },
+    "l427-before-live-mixed-5": {
+      "Utc": "2026-10-04T11:46:58.0251569Z",
+      "Samples": 146,
+      "TotalQuantity": "16804",
+      "ActiveCells": 163,
+      "ContinuousPages": 20,
+      "ContinuousRebuiltPages": 12,
+      "P50Ms": 21.910402297973633,
+      "P95Ms": 31.78899383544922,
+      "MaxMs": 36.88099670410156,
+      "TimeScale": 1.0,
+      "MeasurementValid": true,
+      "ContinuousGcBytes": 0,
+      "FireGcBytes": 0,
+      "ContinuousGpuBytes": 131774080
+    },
+    "l427-before-live-mixed-10": {
+      "Utc": "2026-10-04T11:47:03.5849854Z",
+      "Samples": 131,
+      "TotalQuantity": "27196",
+      "ActiveCells": 222,
+      "ContinuousPages": 26,
+      "ContinuousRebuiltPages": 18,
+      "P50Ms": 30.94000244140625,
+      "P95Ms": 44.500999450683594,
+      "MaxMs": 44.829803466796875,
+      "TimeScale": 1.0,
+      "MeasurementValid": true,
+      "ContinuousGcBytes": 0,
+      "FireGcBytes": 0,
+      "ContinuousGpuBytes": 131774080
+    },
+    "l427-before-live-mixed-15": {
+      "Utc": "2026-10-04T11:47:10.1821487Z",
+      "Samples": 150,
+      "TotalQuantity": "35684",
+      "ActiveCells": 237,
+      "ContinuousPages": 26,
+      "ContinuousRebuiltPages": 18,
+      "P50Ms": 33.83660125732422,
+      "P95Ms": 49.50570297241211,
+      "MaxMs": 55.99049758911133,
+      "TimeScale": 1.0,
+      "MeasurementValid": true,
+      "ContinuousGcBytes": 0,
+      "FireGcBytes": 0,
+      "ContinuousGpuBytes": 131774080
+    },
+    "l427-before-live-mixed-20": {
+      "Utc": "2026-10-04T11:47:17.0683670Z",
+      "Samples": 129,
+      "TotalQuantity": "43850",
+      "ActiveCells": 369,
+      "ContinuousPages": 26,
+      "ContinuousRebuiltPages": 18,
+      "P50Ms": 35.79899978637695,
+      "P95Ms": 51.67550277709961,
+      "MaxMs": 57.83359909057617,
+      "TimeScale": 1.0,
+      "MeasurementValid": true,
+      "ContinuousGcBytes": 0,
+      "FireGcBytes": 0,
+      "ContinuousGpuBytes": 131774080
+    },
+    "l427-after-baseline": {
+      "Utc": "2026-10-04T12:05:47.7085927Z",
+      "Samples": 169,
+      "TotalQuantity": "6220",
+      "ActiveCells": 27,
+      "ContinuousPages": 16,
+      "ContinuousRebuiltPages": 8,
+      "P50Ms": 17.534395217895508,
+      "P95Ms": 34.620399475097656,
+      "MaxMs": 43.13939666748047,
+      "TimeScale": 1.0,
+      "MeasurementValid": true,
+      "ContinuousGcBytes": 0,
+      "FireGcBytes": 0,
+      "ContinuousGpuBytes": 131774080
+    },
+    "l427-after-live-mixed-5": {
+      "Utc": "2026-10-04T12:05:52.5897767Z",
+      "Samples": 140,
+      "TotalQuantity": "16451",
+      "ActiveCells": 129,
+      "ContinuousPages": 20,
+      "ContinuousRebuiltPages": 12,
+      "P50Ms": 22.11629867553711,
+      "P95Ms": 32.578895568847656,
+      "MaxMs": 55.29899597167969,
+      "TimeScale": 1.0,
+      "MeasurementValid": true,
+      "ContinuousGcBytes": 0,
+      "FireGcBytes": 0,
+      "ContinuousGpuBytes": 131774080
+    },
+    "l427-after-live-mixed-10": {
+      "Utc": "2026-10-04T12:05:57.9975452Z",
+      "Samples": 128,
+      "TotalQuantity": "27228",
+      "ActiveCells": 245,
+      "ContinuousPages": 20,
+      "ContinuousRebuiltPages": 12,
+      "P50Ms": 26.984304428100586,
+      "P95Ms": 40.07539367675781,
+      "MaxMs": 61.57600402832031,
+      "TimeScale": 1.0,
+      "MeasurementValid": true,
+      "ContinuousGcBytes": 0,
+      "FireGcBytes": 0,
+      "ContinuousGpuBytes": 131774080
+    },
+    "l427-after-live-mixed-15": {
+      "Utc": "2026-10-04T12:06:04.8345994Z",
+      "Samples": 149,
+      "TotalQuantity": "35595",
+      "ActiveCells": 206,
+      "ContinuousPages": 26,
+      "ContinuousRebuiltPages": 18,
+      "P50Ms": 35.606201171875,
+      "P95Ms": 54.989505767822266,
+      "MaxMs": 62.05939483642578,
+      "TimeScale": 1.0,
+      "MeasurementValid": true,
+      "ContinuousGcBytes": 0,
+      "FireGcBytes": 0,
+      "ContinuousGpuBytes": 131774080
+    },
+    "l427-after-live-mixed-20": {
+      "Utc": "2026-10-04T12:06:11.5832529Z",
+      "Samples": 132,
+      "TotalQuantity": "43390",
+      "ActiveCells": 206,
+      "ContinuousPages": 26,
+      "ContinuousRebuiltPages": 18,
+      "P50Ms": 37.78789520263672,
+      "P95Ms": 54.69900131225586,
+      "MaxMs": 71.35269927978516,
+      "TimeScale": 1.0,
+      "MeasurementValid": true,
+      "ContinuousGcBytes": 0,
+      "FireGcBytes": 0,
+      "ContinuousGpuBytes": 131774080
+    },
+    "l427-isolation-baseline": {
+      "Utc": "2026-10-04T12:20:15.4592824Z",
+      "Samples": 133,
+      "TotalQuantity": "6220",
+      "ActiveCells": 39,
+      "ContinuousPages": 8,
+      "ContinuousRebuiltPages": 8,
+      "P50Ms": 98.78779602050781,
+      "P95Ms": 165.2924041748047,
+      "MaxMs": 217.9512939453125,
+      "TimeScale": 1.0,
+      "MeasurementValid": true,
+      "ContinuousGcBytes": 0,
+      "FireGcBytes": 0,
+      "ContinuousGpuBytes": 131774080
+    },
+    "l427-isolation-live-mixed-5": {
+      "Utc": "2026-10-04T12:20:30.5103015Z",
+      "Samples": 128,
+      "TotalQuantity": "13544",
+      "ActiveCells": 96,
+      "ContinuousPages": 8,
+      "ContinuousRebuiltPages": 8,
+      "P50Ms": 97.23310089111328,
+      "P95Ms": 124.98139953613281,
+      "MaxMs": 232.7445068359375,
+      "TimeScale": 1.0,
+      "MeasurementValid": true,
+      "ContinuousGcBytes": 0,
+      "FireGcBytes": 0,
+      "ContinuousGpuBytes": 131774080
+    },
+    "l427-isolation-live-mixed-10": {
+      "Utc": "2026-10-04T12:20:49.7273602Z",
+      "Samples": 130,
+      "TotalQuantity": "18822",
+      "ActiveCells": 115,
+      "ContinuousPages": 12,
+      "ContinuousRebuiltPages": 12,
+      "P50Ms": 133.80010986328125,
+      "P95Ms": 160.5343017578125,
+      "MaxMs": 254.20510864257812,
+      "TimeScale": 1.0,
+      "MeasurementValid": true,
+      "ContinuousGcBytes": 0,
+      "FireGcBytes": 0,
+      "ContinuousGpuBytes": 131774080
+    },
+    "l427-isolation-live-mixed-15": {
+      "Utc": "2026-10-04T12:21:09.6806809Z",
+      "Samples": 129,
+      "TotalQuantity": "23590",
+      "ActiveCells": 139,
+      "ContinuousPages": 20,
+      "ContinuousRebuiltPages": 12,
+      "P50Ms": 137.1649932861328,
+      "P95Ms": 172.33309936523438,
+      "MaxMs": 211.7884063720703,
+      "TimeScale": 1.0,
+      "MeasurementValid": true,
+      "ContinuousGcBytes": 0,
+      "FireGcBytes": 0,
+      "ContinuousGpuBytes": 131774080
+    },
+    "l427-isolation-live-mixed-20": {
+      "Utc": "2026-10-04T12:21:38.1675263Z",
+      "Samples": 128,
+      "TotalQuantity": "25877",
+      "ActiveCells": 173,
+      "ContinuousPages": 26,
+      "ContinuousRebuiltPages": 18,
+      "P50Ms": 211.8759002685547,
+      "P95Ms": 242.03858947753906,
+      "MaxMs": 274.3214111328125,
+      "TimeScale": 1.0,
+      "MeasurementValid": true,
+      "ContinuousGcBytes": 0,
+      "FireGcBytes": 0,
+      "ContinuousGpuBytes": 131774080
+    }
+  },
+  "FrozenDiagnosticWindows": {
+    "l427-isolation-full": {
+      "Utc": "2026-10-04T12:22:21.3317127Z",
+      "Samples": 129,
+      "TotalQuantity": "25430",
+      "ActiveCells": 102,
+      "ContinuousPages": 26,
+      "ContinuousRebuiltPages": 26,
+      "P50Ms": 311.1515808105469,
+      "P95Ms": 340.814697265625,
+      "MaxMs": 350.4773864746094,
+      "TimeScale": 0.0,
+      "MeasurementValid": false,
+      "ContinuousGcBytes": 0,
+      "FireGcBytes": 0,
+      "ContinuousGpuBytes": 131774080
+    },
+    "l427-isolation-frozen-compute": {
+      "Utc": "2026-10-04T12:22:25.8420919Z",
+      "Samples": 138,
+      "TotalQuantity": "25430",
+      "ActiveCells": 102,
+      "ContinuousPages": 26,
+      "ContinuousRebuiltPages": 0,
+      "P50Ms": 16.529804229736328,
+      "P95Ms": 22.692602157592773,
+      "MaxMs": 24.62009620666504,
+      "TimeScale": 0.0,
+      "MeasurementValid": false,
+      "ContinuousGcBytes": 0,
+      "FireGcBytes": 0,
+      "ContinuousGpuBytes": 131774080
+    },
+    "l427-isolation-hidden-liquid": {
+      "Utc": "2026-10-04T12:22:29.7736855Z",
+      "Samples": 137,
+      "TotalQuantity": "25430",
+      "ActiveCells": 102,
+      "ContinuousPages": 26,
+      "ContinuousRebuiltPages": 0,
+      "P50Ms": 16.630300521850586,
+      "P95Ms": 23.065404891967773,
+      "MaxMs": 26.779895782470703,
+      "TimeScale": 0.0,
+      "MeasurementValid": false,
+      "ContinuousGcBytes": 0,
+      "FireGcBytes": 0,
+      "ContinuousGpuBytes": 131774080
+    },
+    "l427-isolation-full-repeat": {
+      "Utc": "2026-10-04T12:23:12.8381185Z",
+      "Samples": 128,
+      "TotalQuantity": "25430",
+      "ActiveCells": 102,
+      "ContinuousPages": 26,
+      "ContinuousRebuiltPages": 26,
+      "P50Ms": 324.10369873046875,
+      "P95Ms": 359.79901123046875,
+      "MaxMs": 383.02252197265625,
+      "TimeScale": 0.0,
+      "MeasurementValid": false,
+      "ContinuousGcBytes": 0,
+      "FireGcBytes": 0,
+      "ContinuousGpuBytes": 131774080
+    },
+    "l427-isolation-hidden-liquid-and-fire": {
+      "Utc": "2026-10-04T12:23:17.8774568Z",
+      "Samples": 137,
+      "TotalQuantity": "25430",
+      "ActiveCells": 102,
+      "ContinuousPages": 26,
+      "ContinuousRebuiltPages": 0,
+      "P50Ms": 16.216899871826172,
+      "P95Ms": 23.421598434448242,
+      "MaxMs": 26.258296966552734,
+      "TimeScale": 0.0,
+      "MeasurementValid": false,
+      "ContinuousGcBytes": 0,
+      "FireGcBytes": 0,
+      "ContinuousGpuBytes": 131774080
+    },
+    "l427-isolation-hidden-liquid-fire-repeat": {
+      "Utc": "2026-10-04T12:23:21.5659773Z",
+      "Samples": 135,
+      "TotalQuantity": "25430",
+      "ActiveCells": 102,
+      "ContinuousPages": 26,
+      "ContinuousRebuiltPages": 0,
+      "P50Ms": 16.905994415283203,
+      "P95Ms": 23.528600692749023,
+      "MaxMs": 26.94980239868164,
+      "TimeScale": 0.0,
+      "MeasurementValid": false,
+      "ContinuousGcBytes": 0,
+      "FireGcBytes": 0,
+      "ContinuousGpuBytes": 131774080
+    }
+  },
+  "Conclusion": "CPU capture reduced with exact output. No reliable overall FPS improvement; GPU Compute rebuild cost remains.",
+  "Limits": [
+    "Normal windows have different reactions, distribution and timing; not strict A/B.",
+    "Later normal isolation-run windows were slower (baseline 98.79ms, 20 groups 211.88ms P50); retained, cause not established.",
+    "Frozen diagnostics force full Compute rebuild and have TimeScale=0; cannot certify normal FPS.",
+    "GPU availability includes NotSupportedWithNativeGfxJobs; WaitForGPU is not a full GPU pass timestamp.",
+    "32-thread experiment had 3 failures of 6 and was removed; no measured benefit retained."
+  ],
+  "Constraints": {
+    "NoSceneSaveOrDiscardOrReopenThisRound": true,
+    "NoCommit": true,
+    "NoSubAgents": true,
+    "GameplayAndVisualResolutionUnchanged": true
+  }
+}

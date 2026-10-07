@@ -34,6 +34,12 @@ namespace Game.ElementField
                     + ",\n\"recorders\":" + Json(_capture.RecorderAvailability)
                     + ",\n\"incomplete\":" + (_capture.Incomplete ? "true" : "false")
                     + ",\n\"frameCapacity\":" + _capture.Frames.Length + ",\n\"eventCapacity\":" + _capture.Writes.Length
+                    + ",\n\"frameTimingFeatureEnabled\":" + (_capture.TimingEnabled ? "true" : "false")
+                    + ",\n\"cpuTimerFrequency\":" + _capture.CpuTimerFrequency
+                    + ",\n\"gpuTimerFrequency\":" + _capture.GpuTimerFrequency
+                    + ",\n\"vSyncsPerSecond\":" + _capture.VSyncsPerSecond
+                    + ",\n\"validGpuTimingCount\":" + _capture.ValidGpuTimingCount
+                    + ",\n\"missingGpuTimingCount\":" + _capture.MissingGpuTimingCount
                     + ",\n\"gpuWindow\":\"Independent GPU timestamps; phase indicates receipt, not execution. GPU window percentiles intentionally omitted.\"\n}", new UTF8Encoding(false));
                 ExportFrames(Path.Combine(directory, "frames.csv"));
                 ExportGpu(Path.Combine(directory, "gpu-frames.csv"));
@@ -55,13 +61,13 @@ namespace Game.ElementField
         private void ExportFrames(string path)
         {
             using var writer = new StreamWriter(path, false, new UTF8Encoding(false));
-            writer.WriteLine("frame,at,phase,intervalMs,mainMs,renderMs,gcBytes,worldTicks,fluidTicks,pendingSpawns,submitted,worldDebt,fluidDebt,residentChunks,activeChunks,poolValid,poolVersion,poolRequestedAt,poolCompletedAt,alive,free,dropped,activityValid,activityVersion,activityRequestedAt,activityCompletedAt,awake,sleeping,interest,gameplayValid,snapshotVersion,gameplayRequestedAt,gameplayCompletedAt,gameplayPublishedAt,readbackErrors,archivedChunks,archivedRecords,archivedParticles,restoredParticles,dormantChunks,dormantRecords,dormantAmount,localDormancyArchives,dormantWakeRequests,lastDormantWakeReason,restorePreparing,restorePreparedParticles,retainedAliveSamples,retainedSpeedBelow01,retainedSpeedBelow05,retainedSpeedBelow10,retainedSpeedBelow25,retainedMaximumSpeed,pendingStreamingWrites,rejectedPendingWrites,archiveTransactions,restoreTransactions,archiveErrors,restoreErrors,archiveRollbacks,restoreRollbacks,capacityPressure,lastArchiveBytes,lastArchiveMs,lastRestoreParticles,lastRestoreMs,colliders,targets,exposureSaturated,burning,wet,poisoned,sticky,probeWater,processedWrites,rejectedWrites,reactionPairs,focused");
+            writer.WriteLine("frame,at,phase,intervalMs,mainMs,renderMs,gcBytes,worldTicks,fluidTicks,pendingSpawns,submitted,worldDebt,fluidDebt,residentChunks,activeChunks,poolValid,poolVersion,poolMutationVersion,poolRequestedAt,poolCompletedAt,alive,free,dropped,activityValid,activityVersion,activityRequestedAt,activityCompletedAt,awake,sleeping,interest,gameplayValid,snapshotVersion,gameplayRequestedAt,gameplayCompletedAt,gameplayPublishedAt,readbackErrors,archivedChunks,archivedRecords,archivedParticles,restoredParticles,dormantChunks,dormantRecords,dormantAmount,localDormancyArchives,dormantWakeRequests,lastDormantWakeReason,restorePreparing,restorePreparedParticles,retainedAliveSamples,retainedSpeedBelow01,retainedSpeedBelow05,retainedSpeedBelow10,retainedSpeedBelow25,retainedMaximumSpeed,pendingStreamingWrites,rejectedPendingWrites,archiveTransactions,restoreTransactions,archiveErrors,restoreErrors,archiveRollbacks,restoreRollbacks,capacityPressure,lastArchiveBytes,lastArchiveMs,lastArchiveLockedParticles,lastArchiveRecords,lastArchiveRollbackReason,lastArchiveStoreRejectionReason,lastRestoreParticles,lastRestoreMs,waterAuditValid,waterAuditEpoch,waterAuditSubmittedWatermark,waterAuditRequestedAt,waterAuditCompletedAt,waterExpectedGmu,waterGpuGmu,waterRamGmu,waterUnexplainedGmu,poisonAuditValid,poisonExpectedGmu,poisonGpuGmu,poisonRamGmu,poisonUnexplainedGmu,stickyAuditValid,stickyExpectedGmu,stickyGpuGmu,stickyRamGmu,stickyUnexplainedGmu,colliders,targets,exposureSaturated,burning,wet,poisoned,sticky,probeWater,processedWrites,rejectedWrites,reactionPairs,focused,regionCount,sourceCount,rejectedRegions,unitSourcesSkippedByBudget,projectileSourcesSkippedByBudget,pendingWakes,measureFire,measureWater,totalAllocatedMemory,totalReservedMemory,monoHeapMemory,monoUsedMemory,graphicsDriverMemory,archiveBuildMs,archiveCommitMs,materialAuditMs,archiveExcludeMs,archiveActiveCellsMs,archiveMixedSelectionMs,archiveUnlockUploadMs,archiveUnlockDispatchMs,archiveRebuildMs,archiveStoreMs");
             for (int i = 0; i < _capture.FrameCount; i++)
             {
                 var f = _capture.Frames[i];
                 writer.WriteLine(string.Join(",", f.Frame, N(f.At), (int)f.Phase, M(f.IntervalMs), M(f.MainMs), M(f.RenderMs), M(f.GcBytes),
                     f.WorldTicks, f.FluidTicks, f.PendingSpawns, f.Submitted, f.WorldDebt, f.FluidDebt, f.ResidentChunks, f.ActiveChunks,
-                    f.Pool.Valid, f.Pool.Version, N(f.Pool.RequestedAt), N(f.Pool.CompletedAt), f.Pool.Alive, f.Pool.Free, f.Pool.Dropped,
+                    f.Pool.Valid, f.Pool.Version, f.Pool.MutationVersion, N(f.Pool.RequestedAt), N(f.Pool.CompletedAt), f.Pool.Alive, f.Pool.Free, f.Pool.Dropped,
                     f.Activity.Valid, f.Activity.Version, N(f.Activity.RequestedAt), N(f.Activity.CompletedAt), f.Activity.Awake, f.Activity.Sleeping,
                     f.Activity.Interest, f.Gameplay.Valid, f.Gameplay.SnapshotVersion, N(f.Gameplay.RequestedAt), N(f.Gameplay.CompletedAt),
                     N(f.Gameplay.PublishedAt), f.Gameplay.ReadbackErrorCount,
@@ -73,21 +79,43 @@ namespace Game.ElementField
                     f.RetainedSpeedBelow10, f.RetainedSpeedBelow25, N(f.RetainedMaximumSpeed),
                     f.PendingStreamingWrites, f.RejectedPendingWrites, f.ArchiveTransactions, f.RestoreTransactions,
                     f.ArchiveErrors, f.RestoreErrors, f.ArchiveRollbacks, f.RestoreRollbacks, f.CapacityPressure,
-                    f.LastArchiveBytes, N(f.LastArchiveMs), f.LastRestoreParticles, N(f.LastRestoreMs),
+                    f.LastArchiveBytes, N(f.LastArchiveMs), f.LastArchiveLockedParticles,
+                    f.LastArchiveRecords, (byte)f.LastArchiveRollbackReason,
+                    (byte)f.LastArchiveStoreRejectionReason,
+                    f.LastRestoreParticles, N(f.LastRestoreMs),
+                    f.WaterAudit.Valid, f.WaterAudit.Epoch, f.WaterAudit.SubmittedParticleWatermark,
+                    N(f.WaterAudit.RequestedAt), N(f.WaterAudit.CompletedAt), f.WaterAudit.ExpectedGmu,
+                    f.WaterAudit.GpuAuthorityGmu, f.WaterAudit.RamAuthorityGmu, f.WaterAudit.UnexplainedGmu,
+                    f.PoisonAudit.Valid, f.PoisonAudit.ExpectedGmu, f.PoisonAudit.GpuAuthorityGmu,
+                    f.PoisonAudit.RamAuthorityGmu, f.PoisonAudit.UnexplainedGmu,
+                    f.StickyAudit.Valid, f.StickyAudit.ExpectedGmu, f.StickyAudit.GpuAuthorityGmu,
+                    f.StickyAudit.RamAuthorityGmu, f.StickyAudit.UnexplainedGmu,
                     f.Colliders, f.Targets, f.ExposureSaturated,
-                    N(f.Burning), N(f.Wet), N(f.Poisoned), N(f.Sticky), f.ProbeWater, f.ProcessedWrites, f.RejectedWrites, f.ReactionPairs, f.Focused));
+                    N(f.Burning), N(f.Wet), N(f.Poisoned), N(f.Sticky), f.ProbeWater, f.ProcessedWrites, f.RejectedWrites, f.ReactionPairs, f.Focused,
+                    f.ActivityRegions, f.ActivitySources, f.RejectedRegions,
+                    f.UnitSourcesSkippedByBudget, f.ProjectileSourcesSkippedByBudget,
+                    f.PendingWakes, f.MeasureFire, f.MeasureWater,
+                    f.TotalAllocatedMemory, f.TotalReservedMemory, f.MonoHeapMemory,
+                    f.MonoUsedMemory, f.GraphicsDriverMemory,
+                    M(f.ArchiveBuildMs), M(f.ArchiveCommitMs), M(f.MaterialAuditMs),
+                    M(f.ArchiveExcludeMs), M(f.ArchiveActiveCellsMs), M(f.ArchiveMixedSelectionMs),
+                    M(f.ArchiveUnlockUploadMs), M(f.ArchiveUnlockDispatchMs),
+                    M(f.ArchiveRebuildMs), M(f.ArchiveStoreMs)));
             }
         }
 
         private void ExportGpu(string path)
         {
             using var writer = new StreamWriter(path, false, new UTF8Encoding(false));
-            writer.WriteLine("frameStartTimestamp,receivedAt,phaseAtReceipt,cpuMs,gpuMs");
+            writer.WriteLine("frameStartTimestamp,firstSubmitTimestamp,cpuTimePresentCalled,cpuTimeFrameComplete,receivedAt,phaseAtReceipt,cpuMs,cpuMainThreadMs,cpuPresentWaitMs,cpuRenderThreadMs,gpuMs,syncInterval");
             for (int i = 0; i < _capture.GpuCount; i++)
             {
                 var f = _capture.GpuFrames[i];
-                writer.WriteLine(string.Join(",", f.Timestamp, N(f.ReceivedAt), (int)f.PhaseAtReceipt, N(f.CpuMs),
-                    f.GpuValid ? N(f.GpuMs) : "null"));
+                writer.WriteLine(string.Join(",", f.Timestamp, f.FirstSubmitTimestamp,
+                    f.CpuTimePresentCalled, f.CpuTimeFrameComplete, N(f.ReceivedAt),
+                    (int)f.PhaseAtReceipt, N(f.CpuMs), N(f.CpuMainThreadMs),
+                    N(f.CpuPresentWaitMs), N(f.CpuRenderThreadMs),
+                    f.GpuValid ? N(f.GpuMs) : "null", f.SyncInterval));
             }
         }
 

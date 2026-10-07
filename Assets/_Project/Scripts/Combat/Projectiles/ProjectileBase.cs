@@ -113,12 +113,16 @@ namespace Game.Combat
 
         protected virtual void OnEnable()
         {
+            EventBus<WorldActivitySourceEvent>.Publish(new WorldActivitySourceEvent
+                { Source = transform, Kind = WorldActivitySourceKind.Projectile, Enabled = true });
             if (_initialized)
                 RegisterAndIgnoreSameTeamProjectiles();
         }
 
         protected virtual void OnDisable()
         {
+            EventBus<WorldActivitySourceEvent>.Publish(new WorldActivitySourceEvent
+                { Source = transform, Kind = WorldActivitySourceKind.Projectile, Enabled = false });
             Unregister();
         }
 

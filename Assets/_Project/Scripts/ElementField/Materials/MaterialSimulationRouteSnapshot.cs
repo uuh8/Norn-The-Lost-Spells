@@ -62,7 +62,8 @@ namespace Game.ElementField
             }
 
             if (decision.WaterBackend != MaterialSimulationBackendKind.ElementCell
-                && decision.WaterBackend != MaterialSimulationBackendKind.GpuPbfLiquid)
+                && decision.WaterBackend != MaterialSimulationBackendKind.GpuPbfLiquid
+                && decision.WaterBackend != MaterialSimulationBackendKind.GridLiquid)
             {
                 throw new InvalidOperationException($"Water Compatibility Decision 使用无效 Backend：{decision.WaterBackend}。");
             }
@@ -89,12 +90,26 @@ namespace Game.ElementField
             int index = (byte)route.Material;
             if (hasRoute[index])
                 throw new InvalidOperationException($"Routing Profile 包含重复 Material Route：{route.Material}。");
-            if (route.Backend == MaterialSimulationBackendKind.GpuPbfLiquid
+            if ((route.Backend == MaterialSimulationBackendKind.GpuPbfLiquid
+                    || route.Backend == MaterialSimulationBackendKind.GridLiquid)
                 && definition.Behavior != MaterialBehaviorKind.Liquid)
             {
                 throw new InvalidOperationException(
-                    $"Material {route.Material} 的 Behavior={definition.Behavior}，不能绑定 GpuPbfLiquid。");
+                    $"Material {route.Material} 的 Behavior={definition.Behavior}，不能绑定液体模拟后端。");
             }
+
+            // 身份、宏观行为和求解 Owner 各自独立，但发布时必须匹配；禁止固体误入流体。
+            if (route.Backend == MaterialSimulationBackendKind.FixedSolid
+                    && definition.Behavior != MaterialBehaviorKind.Solid
+                || route.Backend == MaterialSimulationBackendKind.GridGas
+                    && definition.Behavior != MaterialBehaviorKind.Gas
+                || definition.Behavior == MaterialBehaviorKind.Solid
+                    && route.Backend != MaterialSimulationBackendKind.FixedSolid
+                    && route.Backend != MaterialSimulationBackendKind.Unsupported
+                || definition.Behavior == MaterialBehaviorKind.Gas
+                    && route.Backend != MaterialSimulationBackendKind.GridGas
+                    && route.Backend != MaterialSimulationBackendKind.Unsupported)
+                throw new InvalidOperationException($"Material {route.Material} 的行为与模拟后端不匹配。");
 
             backends[index] = route.Backend;
             hasRoute[index] = true;

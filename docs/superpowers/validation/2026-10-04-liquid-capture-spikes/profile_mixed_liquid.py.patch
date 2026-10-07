@@ -1,0 +1,44 @@
+--- L4.27 before/profile_mixed_liquid.py
++++ L4.27 final/profile_mixed_liquid.py
+@@ -2,7 +2,7 @@
+ 
+ t=pathlib.Path('Temp/ElementPerformance'); bridge=t/'grid-liquid-capture.request'
+ t.mkdir(parents=True,exist_ok=True)
+-archive=pathlib.Path('docs/superpowers/validation/2026-10-04-liquid-page-cache');archive.mkdir(parents=True,exist_ok=True)
++archive=pathlib.Path('docs/superpowers/validation/2026-10-04-liquid-capture-spikes');archive.mkdir(parents=True,exist_ok=True)
+ prefix=sys.argv[1] if len(sys.argv)>1 else 'mixed'
+ bursts=int(sys.argv[2]) if len(sys.argv)>2 else 1
+ live_only='live-only' in sys.argv[3:]
+@@ -20,7 +20,7 @@
+             time.sleep(.1)
+         return json.loads(result.read_text(encoding='utf-8-sig'))
+ 
+-def window(name,command=None):
++def window(name,command=None,live=True):
+     if command:send(command)
+     # 不把上个窗口导出的Editor分配/同步计入下个稳定窗口。
+     time.sleep(.5);send('profile-window')
+@@ -31,7 +31,7 @@
+         if time.time()>deadline:raise RuntimeError('Insufficient frames: '+name)
+     (t/(prefix+'-'+name+'.json')).write_text(json.dumps(r,ensure_ascii=False,indent=2),encoding='utf-8')
+     shutil.copyfile(t/(prefix+'-'+name+'.json'),archive/(prefix+'-'+name+'.json'))
+-    if not r['MeasurementValid'] or r['TimeScale']!=1:
++    if live and (not r['MeasurementValid'] or r['TimeScale']!=1):
+         # 玩家死亡/说明面板可能重新暂停世界。保留诊断JSON并结束本轮，
+         # 不把停止模拟的帧时间加入持续输运结论，也不继续施法假装有效。
+         raise RuntimeError('Invalid live window (world is paused): '+name+' Reason='+r.get('PauseReasons','unknown'))
+@@ -78,8 +78,13 @@
+     if not live_only and not r['ContinuousCpuFallback']:
+         send('isolate-freeze-clock');frozen=True
+         for name,command in [('full','isolate-liquid-full'),('frozen-compute','isolate-liquid-frozen'),('hidden-liquid','isolate-liquid-hidden'),('full-repeat','isolate-liquid-full')]:
+-            window(name,command)
++            window(name,command,live=False)
++        # 液体冻结且隐藏后再隐藏火焰，区分两种Presentation的GPU成本。
++        send('isolate-liquid-hidden')
++        window('hidden-liquid-and-fire','isolate-fire-hidden',live=False)
++        window('hidden-liquid-fire-repeat','isolate-fire-full',live=False)
+ finally:
++    send('isolate-fire-full')
+     send('isolate-liquid-restore')
+     if frozen:send('isolate-restore-clock')
+     send('finish-flow-profile')

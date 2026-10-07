@@ -13,6 +13,7 @@ namespace Game.Rendering
         public GraphicsBuffer Counter { get; }
         public GraphicsBuffer Overflow { get; }
         public GraphicsBuffer DrawArgs { get; }
+        public GraphicsBuffer DensityAccumulation { get; }
 
         public FireParcelSurfaceResources(in FireParcelSurfaceGridSettings grid, int maximumTriangles)
         {
@@ -25,8 +26,11 @@ namespace Game.Rendering
                 enableRandomWrite = true,
                 msaaSamples = 1
             };
-            Density = new RenderTexture(descriptor) { name = "GpuFire.Density", wrapMode = TextureWrapMode.Clamp };
+            Density = new RenderTexture(descriptor) { name = "GpuFire.Density", wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
             if (!Density.Create()) throw new InvalidOperationException("无法创建 Fire Density Texture。");
+            // uint Atomic Add 不依赖浮点原子指令；每格固定4字节，Resolve 后仍使用可过滤的 Float Texture。
+            DensityAccumulation = new GraphicsBuffer(GraphicsBuffer.Target.Structured,
+                grid.Resolution.x * grid.Resolution.y * grid.Resolution.z, sizeof(uint));
             Triangles = new GraphicsBuffer(GraphicsBuffer.Target.Structured, maximumTriangles, TriangleStride);
             Counter = new GraphicsBuffer(GraphicsBuffer.Target.Structured, 1, sizeof(uint));
             Overflow = new GraphicsBuffer(GraphicsBuffer.Target.Structured, 1, sizeof(uint));
@@ -35,8 +39,14 @@ namespace Game.Rendering
 
         public void Dispose()
         {
-            if (Density != null) { Density.Release(); UnityEngine.Object.Destroy(Density); }
-            Triangles?.Dispose(); Counter?.Dispose(); Overflow?.Dispose(); DrawArgs?.Dispose();
+            if (Density != null)
+            {
+                Density.Release();
+                // EditMode GPU验证也会持有资源；Destroy 只在 Play 中延迟销毁，Editor 使用立即释放。
+                if (Application.isPlaying) UnityEngine.Object.Destroy(Density);
+                else UnityEngine.Object.DestroyImmediate(Density);
+            }
+            Triangles?.Dispose(); Counter?.Dispose(); Overflow?.Dispose(); DrawArgs?.Dispose(); DensityAccumulation?.Dispose();
         }
     }
 }

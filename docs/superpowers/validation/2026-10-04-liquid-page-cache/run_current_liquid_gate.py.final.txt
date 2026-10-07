@@ -1,0 +1,71 @@
+"""Run explicit diagnostic fixtures without replacing or saving the loaded level.
+
+The Editor bridge restores persisted root states. This invokes NUnit methods
+directly; its JSON is deliberately not described as Unity Test Runner XML.
+"""
+import json
+import pathlib
+import shutil
+import sys
+import time
+
+root = pathlib.Path(__file__).resolve().parents[2]
+temporary = root / 'Temp/ElementPerformance'
+temporary.mkdir(parents=True, exist_ok=True)
+output = temporary / (sys.argv[1] if len(sys.argv) > 1 else 'current-liquid-gate.json')
+fixtures = sys.argv[2:]
+if not fixtures:
+    # 最新集中范围包含可见性、休眠、CPU缓存和火焰案例；旧185项索引会漏掉这些回归。
+    reference = root / 'docs/superpowers/validation/2026-10-04-liquid-visibility/liquid-visibility-final-concentrated.json'
+    report = json.loads(reference.read_text(encoding='utf-8-sig'))
+    fixtures = sorted({case['Name'].rsplit('.', 1)[0] for case in report['Cases']}
+                      | {'Game.ElementField.Tests.MaterialReactionProcessTableTests',
+                         'Game.Rendering.Tests.GridLiquidFieldPerformanceTests'})
+
+# Fail before sending an Editor request if a fixture name was mistyped.
+# A type-load failure occurs before the bridge's restoration transaction starts.
+# Waiting for a result in that case would waste the whole diagnostic timeout.
+for fixture in fixtures:
+    name = fixture.rsplit('.', 1)[-1]
+    folder = 'Rendering' if fixture.startswith('Game.Rendering.') else 'ElementField'
+    if not any((root / 'Assets/_Project/Tests' / folder).rglob(name + '.cs')):
+        raise RuntimeError('Fixture source does not exist: ' + fixture)
+
+# A consumed refresh request can precede compilation. Require the loaded DLLs
+# to be at least as recent as their sources before starting the diagnostic.
+deadline = time.monotonic() + 90
+for name, folder in [('Game.Rendering', 'Scripts/Rendering'),
+                     ('Game.Rendering.Tests', 'Tests/Rendering'),
+                     ('Game.ElementField', 'Scripts/ElementField'),
+                     ('Game.ElementField.Tests', 'Tests/ElementField'),
+                     ('Game.PbfTask13.Editor', 'Editor')]:
+    latest = max(path.stat().st_mtime for path in (root / 'Assets/_Project' / folder).rglob('*.cs'))
+    assembly = root / 'Library/ScriptAssemblies' / (name + '.dll')
+    while not assembly.exists() or assembly.stat().st_mtime < latest:
+        if time.monotonic() > deadline:
+            raise RuntimeError('Assembly is stale: ' + name)
+        time.sleep(.25)
+
+request = temporary / 'run-loaded-gate.request'
+if request.exists():
+    raise RuntimeError('An existing gate request is pending; do not overwrite it.')
+started = time.time()
+request.write_text(json.dumps({'Fixtures': fixtures}), encoding='utf-8')
+result = temporary / 'loaded-scene-gate.json'
+deadline = time.monotonic() + 190
+while not result.exists() or result.stat().st_mtime < started:
+    if time.monotonic() > deadline:
+        raise RuntimeError('Gate has not completed; inspect the Editor before further mutations.')
+    time.sleep(.25)
+shutil.copyfile(result, output)
+# 重启会删除 Temp；每次完成后立即留下可审计报告，不能等全部验证结束再归档。
+archive = root / 'docs/superpowers/validation/2026-10-04-liquid-page-cache'
+archive.mkdir(parents=True, exist_ok=True)
+shutil.copyfile(output, archive / output.name)
+report = json.loads(output.read_text(encoding='utf-8-sig'))
+print(json.dumps({key: report[key] for key in ('StartUtc', 'EndUtc', 'Passed', 'Failed',
+      'Skipped', 'Planned', 'Completed', 'Aborted', 'SceneRestored')}, ensure_ascii=False), flush=True)
+for case in report['Cases']:
+    if not case['Passed'] and not case['Skipped']:
+        print(case['Name'] + '\n' + case['Error'], flush=True)
+sys.exit(1 if report['Failed'] or report['Aborted'] or not report['SceneRestored'] else 0)

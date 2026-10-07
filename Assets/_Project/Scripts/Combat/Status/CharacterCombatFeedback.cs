@@ -127,6 +127,7 @@ namespace Game.Combat
             _dead = true;
 
             // 死亡动画
+            // CrossFadeInFixedTime是Unity Animator的API，作用是在固定的时间（秒）内，从当前动画平滑过渡到目标动画。
             if (_dieHash != 0 && _animator != null)
                 _animator.CrossFadeInFixedTime(_dieHash, _dieCrossFade, 0);
 
@@ -134,7 +135,10 @@ namespace Game.Combat
             if (_disableOnDeath != null)
             {
                 for (int i = 0; i < _disableOnDeath.Length; i++)
-                    if (_disableOnDeath[i] != null) _disableOnDeath[i].enabled = false;
+                    if (_disableOnDeath[i] != null)
+                    {
+                        _disableOnDeath[i].enabled = false;
+                    }
             }
 
             // 死亡动画播完后销毁

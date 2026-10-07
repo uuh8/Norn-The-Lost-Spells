@@ -1,0 +1,75 @@
+--- L4.25 final Frame
++++ L4.26 final Frame
+@@ -26,6 +26,16 @@
+         private Vector3Int _querySpan,_lastCell;
+         private int _lastIndex;
+         private bool _queryReady,_lastCellReady;
++        // 同一粗格内的细节点/投影会反复查询同一个175格邻域。只缓存非空候选，
++        // 保持原y/z/x及Previous/Current顺序；跳过空气不会改变浮点累加、密度或混色。
++        private readonly Vector3Int[] _queryCells=new Vector3Int[175];
++        private readonly byte[] _queryPhases=new byte[175];
++        private Vector3Int _queryCenter;
++        private bool _queryCellsReady;
++        internal int QueryCellCount {get;private set;}
++        internal Vector3Int QueryCell(int index)=>_queryCells[index];
++        internal bool QueryHasPhase(int index,bool previous)=>(_queryPhases[index]&(previous?1:2))!=0;
++        internal int InputPage(ElementChunkKey key)=>_pages.TryGetValue(key,out int slot)?slot:-1;
+         private Vector3 _priorityDeposit;
+         private bool _hasPriorityDeposit;
+         private readonly Dictionary<ElementChunkKey, int> _pages;
+@@ -137,11 +147,23 @@
+             // 随后数百次邻格读取只做整数寻址；同格的材料/地形/支撑复用最后一个地址。
+             var c=Vector3Int.FloorToInt((p-Origin)/CellSize);var min=Key(c-new Vector3Int(2,3,2),K);var max=Key(c+new Vector3Int(2,3,2),K);
+             var span=new Vector3Int(max.X-min.X+1,max.Y-min.Y+1,max.Z-min.Z+1);
+-            if(span.x*span.y*span.z>_querySlots.Length){_queryReady=false;return;}
+-            if(_queryReady && min.Equals(_queryMinimum) && span==_querySpan)return;
+-            _queryMinimum=min;_querySpan=span;_queryReady=true;_lastCellReady=false;
+-            for(int z=0;z<span.z;z++)for(int y=0;y<span.y;y++)for(int x=0;x<span.x;x++)
+-            {_querySlots[x+span.x*(y+span.y*z)]=_pages.TryGetValue(new ElementChunkKey(min.X+x,min.Y+y,min.Z+z),out int slot)?slot:-1;}
++            if(span.x*span.y*span.z>_querySlots.Length)_queryReady=false;
++            else if(!_queryReady || !min.Equals(_queryMinimum) || span!=_querySpan)
++            {
++                _queryMinimum=min;_querySpan=span;_queryReady=true;_lastCellReady=false;
++                for(int z=0;z<span.z;z++)for(int y=0;y<span.y;y++)for(int x=0;x<span.x;x++)
++                {_querySlots[x+span.x*(y+span.y*z)]=_pages.TryGetValue(new ElementChunkKey(min.X+x,min.Y+y,min.Z+z),out int slot)?slot:-1;}
++            }
++            if(_queryCellsReady && c==_queryCenter)return;
++            _queryCellsReady=true;_queryCenter=c;QueryCellCount=0;
++            for(int y=c.y-3;y<=c.y+3;y++)for(int z=c.z-2;z<=c.z+2;z++)for(int x=c.x-2;x<=c.x+2;x++)
++            {
++                var cell=new Vector3Int(x,y,z);int index=Index(cell);if(index<0)continue;
++                int row=index*MaterialCount;byte phases=0;
++                for(int m=0;m<MaterialCount;m++)
++                {if((Previous[row+m].QuantityFlags&65535u)!=0)phases|=1;if((Current[row+m].QuantityFlags&65535u)!=0)phases|=2;}
++                if(phases==0)continue;_queryCells[QueryCellCount]=cell;_queryPhases[QueryCellCount++]=phases;
++            }
+         }
+         public LiquidCellPresentationSample Read(Vector3Int c, int m, bool previous)
+         { int i = Index(c); return i >= 0 ? (previous ? Previous : Current)[i * MaterialCount + m].Decode() : default; }
+@@ -431,7 +453,7 @@
+         {
+             if(_snapshotOnly)throw new InvalidOperationException("CPU snapshot must copy a committed shaped frame.");
+             _rowMotion.Clear();
+-            _queryReady=_lastCellReady=false;
++            _queryReady=_lastCellReady=_queryCellsReady=false;
+             var swap = _previousPatches; _previousPatches = _currentPatches; _currentPatches = swap;
+             _previousPatchCount = _currentPatchCount; _currentPatchCount = _source.CopyAllStableSurfacePatches(_currentPatches);
+             _pages.Clear();_ownerSet.Clear();Array.Clear(_hasBounds,0,_hasBounds.Length); Count = OwnerCount = 0; Overflow = Animated = false;
+@@ -662,7 +684,7 @@
+             Array.Copy(source.Current,Current,Count*Cells*MaterialCount);
+             Array.Copy(source.Terrains,Terrains,Count*Cells);Array.Copy(source._bounds,_bounds,Count);Array.Copy(source._hasBounds,_hasBounds,Count);
+             _pages.Clear();for(int i=0;i<Count;i++)_pages.Add(Keys[i],i);
+-            _rowMotion.Clear();_queryReady=_lastCellReady=false;RebuildOwnerLookup();
++            _rowMotion.Clear();_queryReady=_lastCellReady=_queryCellsReady=false;RebuildOwnerLookup();
+         }
+         public void SelectGpuDomain(int inputCapacity,int outputCapacity)
+         {
+@@ -689,7 +711,7 @@
+                 copied++;
+             }
+             Count=copied;OwnerCount=owners;_pages.Clear();for(int i=0;i<Count;i++)_pages.Add(Keys[i],i);
+-            _rowMotion.Clear();_queryReady=_lastCellReady=false;RebuildOwnerLookup();
++            _rowMotion.Clear();_queryReady=_lastCellReady=_queryCellsReady=false;RebuildOwnerLookup();
+         }
+         private float MapHeightForBounds(float f)=>Mathf.Max(.5f,GridLiquidFieldSampler.MapHeight(f,CrownStrength));
+         public Bounds OwnerBounds(int owner)

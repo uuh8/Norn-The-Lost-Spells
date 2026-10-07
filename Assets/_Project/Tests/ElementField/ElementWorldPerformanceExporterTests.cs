@@ -16,6 +16,9 @@ namespace Game.ElementField.Tests
             Assert.That(exporter.TryExport(parentDirectory, run, out string directory, out string error), Is.True, error);
             StringAssert.Contains("\"mainMs\":null", File.ReadAllText(Path.Combine(directory, "summary.json")));
             StringAssert.Contains("water,\\\"probe\\\"\\nline", File.ReadAllText(Path.Combine(directory, "manifest.json")));
+            StringAssert.Contains("\"validGpuTimingCount\":0", File.ReadAllText(Path.Combine(directory, "manifest.json")));
+            StringAssert.StartsWith("frameStartTimestamp,firstSubmitTimestamp,cpuTimePresentCalled,cpuTimeFrameComplete",
+                File.ReadAllText(Path.Combine(directory, "gpu-frames.csv")));
             Assert.That(exporter.TryExport(parentDirectory, run, out _, out _), Is.False);
             Assert.That(exporter.TryExport(parentDirectory, "../outside", out _, out _), Is.False);
             Assert.That(ElementWorldPerformanceExporter.Csv("a,\"b\"\nc"), Is.EqualTo("\"a,\"\"b\"\"\nc\""));

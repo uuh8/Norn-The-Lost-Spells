@@ -1,18 +1,32 @@
 using System;
 using Game.Core;
+using Game.Materials;
 using Unity.Collections;
 using Unity.Profiling;
 using UnityEngine;
 
 namespace Game.ElementField
 {
+    public enum FluidArchiveRollbackReason : byte
+    {
+        None,
+        LeaseUnavailable,
+        ReadbackError,
+        LayoutMismatch,
+        FilteringFailed,
+        RebuildFailed,
+        EmptyAfterFiltering,
+        StoreRejected,
+        Unknown,
+    }
+
     /// <summary>
     /// 流体 Chunk Streaming 的 Unity 生命周期边界。GPU 归档期间仍是权威；只有 Readback 完整、
     /// RAM Store 原子提交成功后才释放 slot。回调只登记结果，世界权威变更统一在 Update 执行。
     /// </summary>
     [DefaultExecutionOrder(50)]
     [DisallowMultipleComponent]
-    public sealed class FluidChunkStreamingRuntime : MonoBehaviour, IFluidDepositSink,
+    public sealed partial class FluidChunkStreamingRuntime : MonoBehaviour, IFluidDepositSink,
         ILiquidOccupancyReadOnly, IFluidDormantReadOnly, IFluidDormantWakeSink
     {
         private static readonly ProfilerMarker PlanMarker =
@@ -21,6 +35,16 @@ namespace Game.ElementField
             new ProfilerMarker("GpuFluid.Streaming.ArchiveBuild");
         private static readonly ProfilerMarker ArchiveCommitMarker =
             new ProfilerMarker("GpuFluid.Streaming.ArchiveCommit");
+        private static readonly ProfilerMarker AuditMarker =
+            new ProfilerMarker("GpuFluid.Streaming.MaterialAudit");
+        private static readonly ProfilerMarker ArchiveExcludeMarker =
+            new ProfilerMarker("GpuFluid.Streaming.ArchiveExclude");
+        private static readonly ProfilerMarker ArchiveMixedSelectionMarker =
+            new ProfilerMarker("GpuFluid.Streaming.ArchiveMixedSelection");
+        private static readonly ProfilerMarker ArchiveRebuildMarker =
+            new ProfilerMarker("GpuFluid.Streaming.ArchiveRebuild");
+        private static readonly ProfilerMarker ArchiveStoreMarker =
+            new ProfilerMarker("GpuFluid.Streaming.ArchiveStore");
         private static readonly ProfilerMarker RestoreExpandMarker =
             new ProfilerMarker("GpuFluid.Streaming.RestoreExpand");
         private static readonly ProfilerMarker PendingReplayMarker =
@@ -56,6 +80,9 @@ namespace Game.ElementField
         [SerializeField] private int _debugRetainedSpeedBelow10;
         [SerializeField] private int _debugRetainedSpeedBelow25;
         [SerializeField] private float _debugRetainedMaximumSpeed;
+        [SerializeField] private FluidArchiveRollbackReason _debugLastArchiveRollbackReason;
+        [SerializeField] private int _debugLastArchiveLockedParticleCount;
+        [SerializeField] private int _debugLastArchiveRecordCount;
 
         private FluidChunkStreamingSettings _settings;
         private IFluidChunkTransferBackend _backend;
@@ -71,11 +98,22 @@ namespace Game.ElementField
         private NativeArray<FluidGpuTransferStatus> _restoreStatus;
         private FluidArchiveCellRecord[] _restoreRecords;
         private FluidGpuRestoreParticle[] _restoreParticleStaging;
+        private uint[] _archiveUnlockParticleIndices;
+        private LiquidMaterialCellSample[] _archiveCellSamples;
+        private LiquidMaterialCellSample[] _reactionContactSamples;
+        private Vector3Int[] _occupancyMergeKeys;
+        private int[] _occupancyMergeIndices;
+        private byte[] _occupancyMergeStates;
+        private int _occupancyMergeMask;
         private Action<bool> _readbackCallback;
         private Action<bool> _restoreStatusCallback;
         private FluidArchiveReadbackLease _lease;
         private FluidRestoreStatusReadbackLease _restoreLease;
         private LiquidMaterialAmountScaleSnapshot _amountScales;
+        private FluidMaterialAudit _materialAudit;
+        private ulong _materialAuditEpoch;
+        private uint _materialAuditTopologyVersion;
+        private uint _materialAuditMutationVersion;
         private ILiquidOccupancyReadOnly _gameplayOccupancy;
         private IFluidGameplayTopologyReadOnly _gameplayTopology;
         private ElementChunkKey _restoringChunk;
@@ -104,6 +142,7 @@ namespace Game.ElementField
         private bool _hasBackendLease;
         private bool _archiveAfterInterestChange;
         private bool _archiveIncludesSleepingRetained;
+        private bool _materialAuditRequested;
         private bool _isInitialized;
         private double _interestChangedAt;
         private double _nextArchiveAttemptAt;
@@ -146,6 +185,11 @@ namespace Game.ElementField
         public int RetainedSpeedBelow10 => _debugRetainedSpeedBelow10;
         public int RetainedSpeedBelow25 => _debugRetainedSpeedBelow25;
         public float RetainedMaximumSpeed => _debugRetainedMaximumSpeed;
+        public FluidArchiveRollbackReason LastArchiveRollbackReason => _debugLastArchiveRollbackReason;
+        public int LastArchiveLockedParticleCount => _debugLastArchiveLockedParticleCount;
+        public int LastArchiveRecordCount => _debugLastArchiveRecordCount;
+        public FluidArchiveStoreRejectionReason LastArchiveStoreRejectionReason =>
+            _store != null ? _store.LastRejectionReason : FluidArchiveStoreRejectionReason.None;
         public FluidChunkLifecycleState State => _debugState;
         public bool HasDormantData => _store != null && _store.DormantChunkCount > 0;
         public uint DormantVersion => _store != null ? _store.Version : 0u;
@@ -159,6 +203,30 @@ namespace Game.ElementField
         public uint SnapshotVersion => _gameplayOccupancy != null
             ? _gameplayOccupancy.SnapshotVersion
             : 0u;
+
+        public bool TryGetMaterialAudit(MaterialId material, out FluidMaterialAuditSnapshot snapshot)
+        {
+            if (_materialAudit == null || _materialAuditEpoch == 0u)
+            {
+                snapshot = default;
+                return false;
+            }
+            snapshot = _materialAudit.GetSnapshot(material, _materialAuditEpoch,
+                _materialAuditTopologyVersion, _materialAuditMutationVersion);
+            return snapshot.Valid;
+        }
+
+        public void RequestMaterialAudit(MaterialId material, ulong submittedParticleWatermark,
+            double lastWriteAt)
+        {
+            if (!_isInitialized || _transferState.IsInFlight || _restorePreparing
+                || _awaitingGameplayPublish)
+                return;
+            if (TryGetMaterialAudit(material, out FluidMaterialAuditSnapshot current)
+                && current.IsFreshFor(submittedParticleWatermark, lastWriteAt))
+                return;
+            _materialAuditRequested = true;
+        }
 
         internal bool TryInitialize(
             in FluidChunkStreamingSettings settings,
@@ -240,6 +308,7 @@ namespace Game.ElementField
                 _activeRadiusXZ = activeRadiusXZ;
                 _activeRadiusY = activeRadiusY;
                 _builder = new FluidChunkArchiveBuilder(_particleCapacity);
+                _materialAudit = new FluidMaterialAudit();
                 _store = new FluidChunkArchiveStore(
                     settings.MaximumArchivedChunks,
                     settings.MaximumArchivedCellRecords,
@@ -254,6 +323,16 @@ namespace Game.ElementField
                     1, Allocator.Persistent, NativeArrayOptions.ClearMemory);
                 _restoreRecords = new FluidArchiveCellRecord[_particleCapacity];
                 _restoreParticleStaging = new FluidGpuRestoreParticle[_particleCapacity];
+                _archiveUnlockParticleIndices = new uint[_particleCapacity];
+                _reactionContactSamples = new LiquidMaterialCellSample[_particleCapacity];
+                _archiveCellSamples = new LiquidMaterialCellSample[
+                    settings.MaximumArchivedCellRecords];
+                int occupancyCapacity = TableCapacity(checked(
+                    _particleCapacity + settings.MaximumArchivedCellRecords));
+                _occupancyMergeKeys = new Vector3Int[occupancyCapacity];
+                _occupancyMergeIndices = new int[occupancyCapacity];
+                _occupancyMergeStates = new byte[occupancyCapacity];
+                _occupancyMergeMask = occupancyCapacity - 1;
                 _readbackCallback = OnReadbackCompleted;
                 _restoreStatusCallback = OnRestoreStatusCompleted;
                 _debugState = FluidChunkLifecycleState.GpuResident;
@@ -291,14 +370,21 @@ namespace Game.ElementField
         public bool TryEnqueueDeposit(in ElementWriteRequest request)
         {
             if (!IsFluidInitialized) return false;
-            if (MustDelayWrite(in request))
+            if (!MustDelayWrite(in request)
+                && _downstream.TryEnqueueDeposit(in request))
+                return true;
+
+            // Downstream 的 false 同时表示 GPU Free 预算或固定 Queue 暂时不足；保留原请求，
+            // 由 Tick 在 Archive 释放 slot 后 FIFO 重放，不能让一次水球命中静默丢失。
+            if (_pendingWrites.TryEnqueue(in request))
             {
-                bool accepted = _pendingWrites.TryEnqueue(in request);
                 _debugPendingWriteCount = _pendingWrites.Count;
                 _debugRejectedPendingWriteCount = _pendingWrites.RejectedCount;
-                return accepted;
+                return true;
             }
-            return _downstream.TryEnqueueDeposit(in request);
+            _debugPendingWriteCount = _pendingWrites.Count;
+            _debugRejectedPendingWriteCount = _pendingWrites.RejectedCount;
+            return false;
         }
 
         private void Update()
@@ -318,6 +404,10 @@ namespace Game.ElementField
             ProcessReadbackCompletion();
             FinishRestoreAfterGameplayPublish();
             ReplayPendingWrites();
+            // Restore 已激活但 Gameplay 尚未发布时，Store 中仍保留旧查询镜像。
+            // 此时启动 Archive 可能把新量合入该镜像，随后 RemoveChunk 会误删新量。
+            // 将 Topology 发布作为完整事务边界；交接完成后下一 Tick 恢复压力回收。
+            if (_awaitingGameplayPublish) return;
             if (!_hasInterestChunk || _transferState.IsInFlight || (respectPause && Time.timeScale <= 0f))
                 return;
 
@@ -327,6 +417,8 @@ namespace Game.ElementField
                 return;
             }
 
+            PromoteQueuedWake();
+
             if (!_awaitingGameplayPublish && _hasRequestedRestoreChunk
                 && _store.ContainsChunk(_requestedRestoreChunk))
             {
@@ -334,12 +426,24 @@ namespace Game.ElementField
                 return;
             }
 
-            if (!_awaitingGameplayPublish
-                && _store.TryFindNearestChunk(
-                    _interestChunk, in _retainedRegion, FluidArchivedChunkKind.Cold,
-                    false, out ElementChunkKey restoreChunk))
+            if (!_awaitingGameplayPublish && TrySelectColdChunk(out ElementChunkKey restoreChunk))
             {
                 StartRestorePreparation(restoreChunk);
+                return;
+            }
+
+
+            if (_materialAuditRequested)
+            {
+                // 反应账本是正确性诊断的输入。先等它追上最新 GPU 反应命令，再取得
+                // Archive 快照，避免把两个不同时点的数据拼成伪造的守恒结论。
+                if (_backend is IFluidMaterialAuditPreparation preparation
+                    && !preparation.TryPrepareMaterialAudit())
+                    return;
+                _materialAuditRequested = false;
+                // 正确性 Gate 复用既有 Archive Readback 取得一个 GPU Queue 时点；即使没有
+                // 可归档粒子，ProcessReadbackCompletion 仍会先发布审计，再安全 Cancel 锁。
+                BeginArchive(now, false);
                 return;
             }
 
@@ -363,8 +467,8 @@ namespace Game.ElementField
                     _settings.EnableLocalDormancy,
                     freeParticles,
                     _settings.GameplaySpawnReserveParticles,
-                    _backend.TryGetActivityCounts(out uint awakeParticles, out _),
-                    awakeParticles);
+                    _backend.TryGetActivityCounts(out _, out uint sleepingParticles),
+                    sleepingParticles);
             BeginArchive(now, includeSleepingRetained);
         }
 
@@ -375,6 +479,14 @@ namespace Game.ElementField
             _debugTransactionId = transactionId;
 
             Bounds retainedBounds = _retainedRegion.ToWorldBounds(_worldOrigin, _cellSize, _chunkSize);
+            _frozenActivityRegions.Clear();
+            if (_hasActivityRegions)
+            {
+                _frozenActivityRegions.CopyFrom(_warmActivityRegions);
+                retainedBounds = _frozenActivityRegions.Envelope;
+            }
+            if (_backend is GpuPbfFluidRuntime gpu)
+                gpu.SetArchiveActivityRegions(_hasActivityRegions ? _frozenActivityRegions : null);
             if (!_backend.TryAcquireArchiveReadbackLease(
                     retainedBounds, _worldOrigin, _cellSize, _chunkSize,
                     includeSleepingRetained, transactionId, out _lease))
@@ -383,8 +495,10 @@ namespace Game.ElementField
                 _transferState.RecordCompletion(transactionId, true);
                 _transferState.Finish(transactionId);
                 if (_debugArchiveRollbackCount < uint.MaxValue) _debugArchiveRollbackCount++;
+                _debugLastArchiveRollbackReason = FluidArchiveRollbackReason.LeaseUnavailable;
                 _debugTransactionId = 0u;
-                _nextArchiveAttemptAt = now + 0.5d;
+                _nextArchiveAttemptAt = now + FluidChunkStreamingPlanner.ArchiveRetryDelay(
+                    _pendingWrites.Count > 0);
                 return;
             }
 
@@ -405,7 +519,8 @@ namespace Game.ElementField
                 ProcessReadbackCompletion();
             }
             // 无可归档粒子或 Driver 瞬时失败时避免容量压力导致每帧重试。
-            _nextArchiveAttemptAt = now + 0.5d;
+            _nextArchiveAttemptAt = now + FluidChunkStreamingPlanner.ArchiveRetryDelay(
+                _pendingWrites.Count > 0);
         }
 
         private void OnReadbackCompleted(bool hasError)
@@ -434,26 +549,49 @@ namespace Game.ElementField
 
             bool committed = false;
             int archivedParticles = 0;
+            FluidArchiveRollbackReason rollbackReason = FluidArchiveRollbackReason.None;
             try
             {
                 if (hasError || _lease.LayoutVersion != FluidGpuLayout.LayoutVersion)
                 {
+                    rollbackReason = hasError
+                        ? FluidArchiveRollbackReason.ReadbackError
+                        : FluidArchiveRollbackReason.LayoutMismatch;
                     if (hasError && _debugArchiveReadbackErrorCount < uint.MaxValue)
                         _debugArchiveReadbackErrorCount++;
                 }
                 else
                 {
+                    using (AuditMarker.Auto()) UpdateMaterialAudit();
                     UpdateRetainedSpeedDiagnostics();
                     var context = new FluidArchiveBuildContext(
                         _lease.WorldOrigin, _lease.CellSize, _lease.ChunkSize, _lease.AmountScales);
                     using (ArchiveBuildMarker.Auto())
                     {
-                        committed = !_archiveIncludesSleepingRetained
-                            || HasExclusiveRetainedArchiveAuthority();
+                        _debugLastArchiveLockedParticleCount = 0;
+                        for (int i = 0; i < _archiveSamples.Length; i++)
+                            if ((_archiveSamples[i].Flags
+                                & (FluidGpuLayout.AliveFlag | FluidActivityFlags.ArchiveLocked))
+                                == (FluidGpuLayout.AliveFlag | FluidActivityFlags.ArchiveLocked))
+                                _debugLastArchiveLockedParticleCount++;
+                        using (ArchiveExcludeMarker.Auto())
+                            committed = !_archiveIncludesSleepingRetained
+                                || TryExcludeMixedRetainedCells();
+                        if (!committed)
+                            rollbackReason = FluidArchiveRollbackReason.FilteringFailed;
                         if (committed)
-                            committed = _builder.TryRebuild(_archiveSamples, in context);
+                        {
+                            using (ArchiveRebuildMarker.Auto())
+                                committed = _builder.TryRebuild(_archiveSamples, in context);
+                            if (!committed)
+                                rollbackReason = FluidArchiveRollbackReason.RebuildFailed;
+                        }
+                        _debugLastArchiveRecordCount = committed ? _builder.RecordCount : 0;
                         if (committed && _builder.RecordCount == 0)
+                        {
                             committed = false;
+                            rollbackReason = FluidArchiveRollbackReason.EmptyAfterFiltering;
+                        }
                         if (committed)
                         {
                             for (int i = 0; i < _archiveSamples.Length; i++)
@@ -461,10 +599,15 @@ namespace Game.ElementField
                                     & (FluidGpuLayout.AliveFlag | FluidActivityFlags.ArchiveLocked))
                                     == (FluidGpuLayout.AliveFlag | FluidActivityFlags.ArchiveLocked))
                                     archivedParticles++;
-                            committed = _store.TryCommit(
-                                _builder, transactionId, in _retainedRegion);
+                            using (ArchiveStoreMarker.Auto())
+                                committed = _frozenActivityRegions.Count > 0
+                                    ? _store.TryCommit(_builder, transactionId, _frozenActivityRegions, _worldOrigin, _cellSize * _chunkSize)
+                                    : _store.TryCommit(_builder, transactionId, in _retainedRegion);
                             if (!committed && _debugCapacityPressureCount < uint.MaxValue)
+                            {
                                 _debugCapacityPressureCount++;
+                                rollbackReason = FluidArchiveRollbackReason.StoreRejected;
+                            }
                         }
                     }
                     if (committed) _amountScales = _lease.AmountScales;
@@ -472,6 +615,7 @@ namespace Game.ElementField
 
                 if (committed)
                 {
+                    _debugLastArchiveRollbackReason = FluidArchiveRollbackReason.None;
                     using (ArchiveCommitMarker.Auto())
                         _backend.CommitArchiveAndRelease(transactionId);
                     _debugArchivedParticleCount += (uint)archivedParticles;
@@ -484,6 +628,8 @@ namespace Game.ElementField
                 {
                     _backend.CancelArchive(transactionId);
                     if (_debugArchiveRollbackCount < uint.MaxValue) _debugArchiveRollbackCount++;
+                    _debugLastArchiveRollbackReason = rollbackReason == FluidArchiveRollbackReason.None
+                        ? FluidArchiveRollbackReason.Unknown : rollbackReason;
                 }
             }
             finally
@@ -504,19 +650,99 @@ namespace Game.ElementField
             }
         }
 
-        private bool HasExclusiveRetainedArchiveAuthority()
+        private void UpdateMaterialAudit()
         {
-            Bounds retained = _lease.RetainedBounds;
+            _materialAuditEpoch = _lease.AuditEpoch;
+            _materialAuditTopologyVersion = _lease.TopologyVersion;
+            _materialAuditMutationVersion = _lease.AuditMutationVersion;
+            _materialAudit.Begin(_materialAuditEpoch, _materialAuditTopologyVersion,
+                _materialAuditMutationVersion, _lease.SubmittedParticleWatermark,
+                _lease.AuditRequestedAt, Time.realtimeSinceStartupAsDouble);
+
+            // Restore Activate 到 Gameplay Topology 发布之间，RAM Chunk 是查询保底镜像；此时与
+            // GPU Alive 同时存在，不能相加。等待交接完成后下一次 Archive 才重新给出有效审计。
+            if (!_lease.AuditEligible || _lease.ExpectedGmuByMaterial == null
+                || _lease.AmountScales == null || _awaitingGameplayPublish)
+            {
+                _materialAudit.Invalidate();
+                return;
+            }
+
+            for (int index = 1; index < _lease.ExpectedGmuByMaterial.Length; index++)
+            {
+                ulong amount = _lease.ExpectedGmuByMaterial[index];
+                if (amount != 0u
+                    && !_materialAudit.TryAddExpected((MaterialId)(byte)index, amount))
+                    return;
+            }
+
             for (int i = 0; i < _archiveSamples.Length; i++)
             {
                 FluidGpuArchiveSample sample = _archiveSamples[i];
-                if ((sample.Flags & FluidGpuLayout.AliveFlag) == 0u
-                    || !retained.Contains(sample.Position))
-                    continue;
-                if ((sample.Flags & FluidActivityFlags.ArchiveLocked) == 0u)
-                    return false;
+                if ((sample.Flags & FluidGpuLayout.AliveFlag) == 0u) continue;
+                MaterialId material = (MaterialId)(byte)sample.MaterialId;
+                if (!_lease.AmountScales.TryGet(material, out uint scale)
+                    || !_materialAudit.TryAddGpu(material, scale))
+                {
+                    _materialAudit.Invalidate();
+                    return;
+                }
             }
-            return true;
+
+            if (!_store.TryAccumulateMaterialAudit(_materialAudit))
+                _materialAudit.Invalidate();
+        }
+
+        private bool TryExcludeMixedRetainedCells()
+        {
+            Bounds retained = _lease.RetainedBounds;
+            int unlockCount = 0;
+            using (ArchiveMixedSelectionMarker.Auto())
+            {
+                for (int i = 0; i < _archiveSamples.Length; i++)
+                {
+                    FluidGpuArchiveSample sample = _archiveSamples[i];
+                    if ((sample.Flags & (FluidGpuLayout.AliveFlag | FluidActivityFlags.ArchiveLocked))
+                        != (FluidGpuLayout.AliveFlag | FluidActivityFlags.ArchiveLocked)
+                        || !IsFrozenRetained(sample.Position, retained))
+                        continue;
+                    if (!TryGetSampleCell(in sample, out Vector3Int cell)) return false;
+                    ElementWorldCoordinates.GlobalCellToChunkAndLocal(
+                        cell, _chunkSize, out ElementChunkKey chunk, out _);
+                    // Dormant 查询会把 RAM 与 GPU 的不同粒子量按 Cell 合并，因此数量账本允许
+                    // 同 Cell 的 Sleeping 子集归档；这不保证 PBF 邻居支撑等价，仍需物理验收。
+                    // 只有已有 Cold 权威的 Chunk 必须
+                    // 等待 Restore，避免同一 Chunk 同时出现 Cold 与 Dormant 两种可见性语义。
+                    bool mustRemainOnGpu = _store.TryGetChunkKind(
+                        chunk, out FluidArchivedChunkKind kind)
+                        && kind == FluidArchivedChunkKind.Cold;
+                    if (!mustRemainOnGpu) continue;
+                    _archiveUnlockParticleIndices[unlockCount++] = (uint)i;
+                    _archiveSamples[i] = new FluidGpuArchiveSample(
+                        sample.Position, (Game.Materials.MaterialId)(byte)sample.MaterialId,
+                        sample.Velocity, sample.Flags & ~FluidActivityFlags.ArchiveLocked);
+                }
+            }
+            // GPU 先解锁与已有 Cold 权威冲突的候选，Commit 只释放 CPU Store 真正接收的子集。
+            return _backend.TryExcludeArchiveParticleIndices(
+                _archiveUnlockParticleIndices, unlockCount);
+        }
+
+        private bool TryGetSampleCell(
+            in FluidGpuArchiveSample sample, out Vector3Int cell)
+        {
+            try
+            {
+                cell = ElementWorldCoordinates.WorldToGlobalCell(
+                    sample.Position, _worldOrigin, _cellSize);
+                return true;
+            }
+            catch (Exception exception) when (
+                exception is ArgumentException || exception is OverflowException)
+            {
+                cell = default;
+                return false;
+            }
         }
 
         private void UpdateRetainedSpeedDiagnostics()
@@ -528,7 +754,7 @@ namespace Game.ElementField
             {
                 FluidGpuArchiveSample sample = _archiveSamples[i];
                 if ((sample.Flags & FluidGpuLayout.AliveFlag) == 0u
-                    || !retained.Contains(sample.Position))
+                    || !IsFrozenRetained(sample.Position, retained))
                     continue;
                 float speed = sample.Velocity.magnitude;
                 alive++;
@@ -718,13 +944,21 @@ namespace Game.ElementField
             if (!_isInitialized || !_hasInterestChunk) return false;
             ElementWorldCoordinates.GlobalCellToChunkAndLocal(
                 globalCell, _chunkSize, out ElementChunkKey chunk, out _);
+            if (_hasActivityRegions && !IsRetainedChunk(chunk)) return false;
             if (_store.ContainsChunk(chunk))
             {
-                // Cold 区域离屏暂停 Gameplay；进入 Warm 后 Archive 在 Topology Gate 完成前继续是权威。
-                if (!_retainedRegion.Contains(chunk)) return false;
-                _store.TryGetAmount(globalCell, materialKind, out uint archiveAmount);
-                amount = (byte)Math.Min(byte.MaxValue, archiveAmount);
-                return true;
+                // Cold 区域离屏暂停 Gameplay；Warm 内允许 Cell 级 GPU + Dormant 混合表示，
+                // 所以同一 Cell 的两侧 Amount 必须相加，不能用 Chunk 粒度遮掉整份 GPU Snapshot。
+                if (!IsRetainedChunk(chunk)) return false;
+                bool hasArchive = _store.TryGetAmount(
+                    globalCell, materialKind, out uint archiveAmount);
+                byte gameplayAmount = 0;
+                bool hasGameplay = _gameplayOccupancy != null
+                    && _gameplayOccupancy.TryGetAmount(
+                        globalCell, materialKind, out gameplayAmount);
+                amount = (byte)Math.Min(
+                    byte.MaxValue, archiveAmount + (hasGameplay ? gameplayAmount : 0u));
+                return hasArchive || hasGameplay;
             }
             return _gameplayOccupancy != null
                 && _gameplayOccupancy.TryGetAmount(globalCell, materialKind, out amount);
@@ -748,32 +982,96 @@ namespace Game.ElementField
             int count = _gameplayOccupancy != null
                 ? _gameplayOccupancy.CopyOccupiedCells(material, destination)
                 : 0;
-
-            // GPU Snapshot 可能已经包含刚 Activate 的粒子；Archive Authority 未交接前先原地剔除该 Chunk。
-            int write = 0;
+            Array.Clear(_occupancyMergeStates, 0, _occupancyMergeStates.Length);
             for (int i = 0; i < count; i++)
-            {
-                ElementWorldCoordinates.GlobalCellToChunkAndLocal(
-                    destination[i].GlobalCell, _chunkSize, out ElementChunkKey chunk, out _);
-                if (_store.ContainsChunk(chunk) && _retainedRegion.Contains(chunk)) continue;
-                destination[write++] = destination[i];
-            }
-            count = write;
+                AddOccupancyMergeCell(destination[i].GlobalCell, i);
 
-            if (_store.TryFindNearestChunk(
-                    _interestChunk, in _retainedRegion, FluidArchivedChunkKind.Cold,
-                    true, out ElementChunkKey archiveChunk))
+            int archiveCount = _hasActivityRegions
+                ? _store.CopyRegionCells(_warmActivityRegions, default, false, _worldOrigin,
+                    _cellSize * _chunkSize, material, _archiveCellSamples)
+                : _store.CopyCells(in _retainedRegion, material, _archiveCellSamples);
+            for (int i = 0; i < archiveCount; i++)
             {
-                int records = _store.CopyChunkRecords(archiveChunk, _restoreRecords);
-                for (int i = 0; i < records && count < destination.Length; i++)
+                LiquidMaterialCellSample archived = _archiveCellSamples[i];
+                if (TryGetOccupancyMergeIndex(archived.GlobalCell, out int existingIndex))
                 {
-                    FluidArchiveCellRecord record = _restoreRecords[i];
-                    if (record.Material != material) continue;
-                    destination[count++] = new LiquidMaterialCellSample(
-                        ToGlobalCell(record), (byte)Math.Min(byte.MaxValue, record.Amount));
+                    int merged = destination[existingIndex].Amount + archived.Amount;
+                    destination[existingIndex] = new LiquidMaterialCellSample(
+                        archived.GlobalCell, (byte)Math.Min(byte.MaxValue, merged));
+                    continue;
                 }
+                if (count >= destination.Length) break;
+                destination[count] = archived;
+                AddOccupancyMergeCell(archived.GlobalCell, count);
+                count++;
             }
             return count;
+        }
+
+        private void AddOccupancyMergeCell(Vector3Int cell, int index)
+        {
+            int slot = cell.GetHashCode() & int.MaxValue & _occupancyMergeMask;
+            for (int i = 0; i < _occupancyMergeStates.Length; i++)
+            {
+                if (_occupancyMergeStates[slot] == 0)
+                {
+                    _occupancyMergeStates[slot] = 1;
+                    _occupancyMergeKeys[slot] = cell;
+                    _occupancyMergeIndices[slot] = index;
+                    return;
+                }
+                if (_occupancyMergeKeys[slot] == cell) return;
+                slot = (slot + 1) & _occupancyMergeMask;
+            }
+        }
+
+        private bool TryGetOccupancyMergeIndex(Vector3Int cell, out int index)
+        {
+            int slot = cell.GetHashCode() & int.MaxValue & _occupancyMergeMask;
+            for (int i = 0; i < _occupancyMergeStates.Length; i++)
+            {
+                if (_occupancyMergeStates[slot] == 0) break;
+                if (_occupancyMergeKeys[slot] == cell)
+                {
+                    index = _occupancyMergeIndices[slot];
+                    return true;
+                }
+                slot = (slot + 1) & _occupancyMergeMask;
+            }
+            index = -1;
+            return false;
+        }
+
+        internal void RequestLiquidReactionContactWakes(MaterialId gpuMaterial, MaterialId dormantMaterial)
+        {
+            if (!_isInitialized || !HasDormantData || _gameplayOccupancy == null
+                || !_gameplayOccupancy.HasValidSnapshot) return;
+
+            // 只枚举 GPU Snapshot，不能枚举合并 RAM 的查询，否则休眠材料会相互唤醒。
+            // 每种材料的占用格数不超过 GPU 粒子数，初始化时一次分配即可覆盖全部候选。
+            int count = _gameplayOccupancy.CopyOccupiedCells(gpuMaterial, _reactionContactSamples);
+            for (int i = 0; i < count; i++)
+            {
+                LiquidMaterialCellSample sample = _reactionContactSamples[i];
+                if (sample.Amount == 0) continue;
+                Vector3Int cell = sample.GlobalCell;
+                // 与 LiquidCellReactionSystem 保持同格 + 六轴邻格的接触范围。
+                TryWakeDormantReactionPartner(cell, dormantMaterial);
+                TryWakeDormantReactionPartner(cell + Vector3Int.left, dormantMaterial);
+                TryWakeDormantReactionPartner(cell + Vector3Int.right, dormantMaterial);
+                TryWakeDormantReactionPartner(cell + Vector3Int.down, dormantMaterial);
+                TryWakeDormantReactionPartner(cell + Vector3Int.up, dormantMaterial);
+                TryWakeDormantReactionPartner(cell + Vector3Int.back, dormantMaterial);
+                TryWakeDormantReactionPartner(cell + Vector3Int.forward, dormantMaterial);
+            }
+        }
+
+        private void TryWakeDormantReactionPartner(Vector3Int cell, MaterialId material)
+        {
+            // Store 点查询后只发 Restore 请求。实际转换仍等 GPU Snapshot 发布后规划，
+            // 不提前减少 RAM Amount，也不向尚未恢复的粒子发 Convert 命令。
+            if (_store.TryGetAmount(cell, material, out uint amount) && amount > 0)
+                RequestWake(cell, FluidDormantWakeReason.Reaction);
         }
 
         public int CopyDormantCells(
@@ -797,10 +1095,19 @@ namespace Game.ElementField
 
         private bool RequestWakeChunk(ElementChunkKey chunk, FluidDormantWakeReason reason)
         {
-            if (!_retainedRegion.Contains(chunk)
+            if (!IsRetainedChunk(chunk)
                 || !_store.TryGetChunkKind(chunk, out FluidArchivedChunkKind kind)
                 || kind != FluidArchivedChunkKind.Dormant)
                 return false;
+            if ((_hasRequestedRestoreChunk && _requestedRestoreChunk == chunk)
+                || (_restorePreparing && _restoringChunk == chunk)
+                || (_transferState.IsInFlight
+                    && _transferState.Kind == FluidChunkTransferKind.Restore
+                    && _restoringChunk == chunk)
+                || (_awaitingGameplayPublish && _awaitingGameplayChunk == chunk))
+                return true;
+            if (_hasRequestedRestoreChunk)
+                return _wakeQueue.TryEnqueue(chunk, reason);
             _requestedRestoreChunk = chunk;
             _hasRequestedRestoreChunk = true;
             _debugLastDormantWakeReason = reason;
@@ -840,6 +1147,14 @@ namespace Game.ElementField
             return (float)Math.Max(0d, (Time.realtimeSinceStartupAsDouble - startedAt) * 1000d);
         }
 
+        private static int TableCapacity(int itemCapacity)
+        {
+            int capacity = 1;
+            int required = checked(itemCapacity * 2);
+            while (capacity < required) capacity = checked(capacity << 1);
+            return capacity;
+        }
+
         private bool MustDelayWrite(in ElementWriteRequest request)
         {
             if (!_hasInterestChunk) return false;
@@ -854,7 +1169,7 @@ namespace Game.ElementField
                 out ElementChunkKey maxChunk, out _);
 
             if (_transferState.IsInFlight
-                && (!_retainedRegion.Contains(minChunk) || !_retainedRegion.Contains(maxChunk)))
+                && (!IsRetainedChunk(minChunk) || !IsRetainedChunk(maxChunk)))
                 return true;
 
             for (int z = minChunk.Z; z <= maxChunk.Z; z++)
@@ -863,10 +1178,15 @@ namespace Game.ElementField
             {
                 ElementChunkKey candidate = new ElementChunkKey(x, y, z);
                 if (!_store.ContainsChunk(candidate)) continue;
-                if (_retainedRegion.Contains(candidate)
+                if (IsRetainedChunk(candidate)
                     && _store.TryGetChunkKind(candidate, out FluidArchivedChunkKind kind)
                     && kind == FluidArchivedChunkKind.Dormant)
                 {
+                    // 同材质继续写入可与静态 Cell 并存，由查询端合并 Amount；异材质可能触发反应，
+                    // 仍需恢复整 Chunk 后再提交，避免 RAM 物质绕过 GPU 反应链。
+                    if (!_store.ContainsMaterialOtherThanInRange(
+                            candidate, minCell, maxCell, request.MaterialKind))
+                        continue;
                     RequestWakeChunk(candidate, FluidDormantWakeReason.Write);
                 }
                 return true;

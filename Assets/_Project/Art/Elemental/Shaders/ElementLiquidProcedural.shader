@@ -72,45 +72,12 @@ Shader "Game/Elemental/Liquid Procedural"
             #pragma multi_compile_fragment _ _SHADOWS_SOFT
             #pragma multi_compile_fog
 
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
-            #include "ElementWaterCore.hlsl"
+            #include "ElementLiquidSurfaceLighting.hlsl"
 
             // UnityIndirect.cginc 只有在宏先定义后才生成无参数 helper。Vertex 必须先 Init，
             // 再用 GetIndirectVertexID 修正 Vulkan/GL 与 D3D 对 startVertex 的不同语义。
             #define UNITY_INDIRECT_DRAW_ARGS IndirectDrawArgs
             #include "UnityIndirect.cginc"
-
-            CBUFFER_START(UnityPerMaterial)
-                half4 _ShallowColor;
-                half4 _DeepColor;
-                half4 _FresnelColor;
-                half4 _FoamColor;
-
-                float _ShallowAlpha;
-                float _DeepAlpha;
-                float _FresnelAlphaStrength;
-                float _WaterAlpha;
-
-                float _WaveScaleA;
-                float _WaveScaleB;
-                float4 _WaveSpeedA;
-                float4 _WaveSpeedB;
-                float _WaveNormalStrength;
-                float _TriplanarSharpness;
-                float _VolumeWaveWorldScale;
-
-                float _DepthFadeDistance;
-                float _DepthNoiseStrength;
-                float _FresnelPower;
-                float _Smoothness;
-
-                float _FoamDistance;
-                float _FoamStrength;
-                float _FoamAlphaBoost;
-                float _DebugForceOpaqueFragment;
-            CBUFFER_END
 
             struct FluidSurfaceVertex
             {
@@ -132,17 +99,6 @@ Shader "Game/Elemental/Liquid Procedural"
             {
                 // SV_VertexID 是当前 Draw 的逻辑顶点编号，不需要创建 Unity Mesh/Vertex Buffer。
                 uint vertexID : SV_VertexID;
-            };
-
-            struct ProceduralVaryings
-            {
-                float3 positionWS : TEXCOORD0;
-                half3 normalWS : TEXCOORD1;
-                float4 shadowCoord : TEXCOORD2;
-                half fogFactor : TEXCOORD3;
-                half3 vertexSH : TEXCOORD4;
-                float4 positionCS : SV_POSITION;
-                UNITY_VERTEX_OUTPUT_STEREO
             };
 
             FluidSurfaceVertex GetSurfaceVertex(uint vertexID)
@@ -178,112 +134,6 @@ Shader "Game/Elemental/Liquid Procedural"
                 return output;
             }
 
-            half4 LiquidProceduralFragment(ProceduralVaryings input) : SV_Target
-            {
-                UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
-
-                // 受控诊断：仅旁路复杂 Fragment 光照/深度/波纹计算，Vertex、Cull、ZTest 与 Draw 保持不变。
-                // 若该颜色可见，说明 Rasterization 已成功，故障范围可收敛到下方 Fragment 计算。
-                if (_DebugForceOpaqueFragment > 0.5f)
-                    return half4(_ShallowColor.rgb, 1.0h);
-
-                float3 baseNormalWS = NormalizeNormalPerPixel(input.normalWS);
-                float3 tangentWS;
-                float3 bitangentWS;
-                ElementWaterBuildOrthonormalBasis(baseNormalWS, tangentWS, bitangentWS);
-                float3x3 tangentToWorld = float3x3(tangentWS, bitangentWS, baseNormalWS);
-
-                // 复用 Legacy Water Core 的 World-space Triplanar Noise；封闭水滴的侧壁不会拉花。
-                float waveNoiseA;
-                float waveNoiseB;
-                float combinedNoise;
-                ElementWaterVolumeWaves_float(
-                    input.positionWS,
-                    baseNormalWS,
-                    _Time.y,
-                    _WaveScaleA,
-                    _WaveScaleB,
-                    _WaveSpeedA.xy,
-                    _WaveSpeedB.xy,
-                    _VolumeWaveWorldScale,
-                    _TriplanarSharpness,
-                    waveNoiseA,
-                    waveNoiseB,
-                    combinedNoise);
-
-                float3 normalA = ElementWaterNormalFromHeight(
-                    waveNoiseA, _WaveNormalStrength, input.positionWS, tangentToWorld);
-                float3 normalB = ElementWaterNormalFromHeight(
-                    waveNoiseB, _WaveNormalStrength, input.positionWS, tangentToWorld);
-                float3 normalTS = ElementWaterBlendNormals(normalA, normalB);
-                float3 dynamicNormalWS = NormalizeNormalPerPixel(
-                    TransformTangentToWorld(normalTS, tangentToWorld));
-
-                // Camera Depth 给出水面后方第一个不透明几何的深度；两者之差近似视线方向水层厚度。
-                float2 screenUV = GetNormalizedScreenSpaceUV(input.positionCS);
-                float rawSceneDepth = SampleSceneDepth(screenUV);
-                float sceneEyeDepth = unity_OrthoParams.w == 0.0
-                    ? LinearEyeDepth(rawSceneDepth, _ZBufferParams)
-                    : LinearDepthToEyeDepth(rawSceneDepth);
-                float surfaceEyeDepth = -TransformWorldToView(input.positionWS).z;
-                float waterThickness = max(sceneEyeDepth - surfaceEyeDepth, 0.0);
-
-                float3 viewDirectionWS = GetWorldSpaceNormalizeViewDir(input.positionWS);
-                float3 viewDirectionTS = TransformWorldToTangent(viewDirectionWS, tangentToWorld);
-                float depthMask;
-                float fresnelMask;
-                ElementWaterSurface_float(
-                    waterThickness,
-                    _DepthFadeDistance,
-                    _DepthNoiseStrength,
-                    combinedNoise,
-                    normalTS,
-                    viewDirectionTS,
-                    _FresnelPower,
-                    depthMask,
-                    fresnelMask);
-
-                float contactMask = 1.0 - saturate(
-                    waterThickness / max(_FoamDistance, 0.0001));
-                float foamNoise = smoothstep(0.35, 0.70, combinedNoise);
-                float foamMask = saturate(contactMask * foamNoise * _FoamStrength);
-                half3 depthColor = lerp(_ShallowColor.rgb, _DeepColor.rgb, depthMask);
-                half3 fresnelColor = lerp(depthColor, _FresnelColor.rgb, fresnelMask);
-                half3 finalAlbedo = lerp(fresnelColor, _FoamColor.rgb, foamMask);
-                float depthAlpha = lerp(_ShallowAlpha, _DeepAlpha, depthMask);
-                half finalAlpha = saturate((depthAlpha
-                    + fresnelMask * _FresnelAlphaStrength
-                    + foamMask * _FoamAlphaBoost) * _WaterAlpha);
-                SurfaceData surfaceData = (SurfaceData)0;
-                surfaceData.albedo = finalAlbedo;
-                surfaceData.metallic = 0.0h;
-                surfaceData.specular = half3(0.0h, 0.0h, 0.0h);
-                surfaceData.smoothness = (half)_Smoothness;
-                surfaceData.normalTS = (half3)normalTS;
-                surfaceData.occlusion = 1.0h;
-                surfaceData.emission = half3(0.0h, 0.0h, 0.0h);
-                surfaceData.alpha = finalAlpha;
-                surfaceData.clearCoatMask = 0.0h;
-                surfaceData.clearCoatSmoothness = 0.0h;
-
-                InputData inputData = (InputData)0;
-                inputData.positionWS = input.positionWS;
-                inputData.positionCS = input.positionCS;
-                inputData.normalWS = dynamicNormalWS;
-                inputData.viewDirectionWS = (half3)viewDirectionWS;
-                inputData.shadowCoord = input.shadowCoord;
-                inputData.fogCoord = input.fogFactor;
-                inputData.vertexLighting = VertexLighting(input.positionWS, dynamicNormalWS);
-                inputData.bakedGI = SampleSHPixel(input.vertexSH, dynamicNormalWS);
-                inputData.normalizedScreenSpaceUV = screenUV;
-                inputData.shadowMask = half4(1.0h, 1.0h, 1.0h, 1.0h);
-                inputData.tangentToWorld = (half3x3)tangentToWorld;
-
-                half4 color = UniversalFragmentPBR(inputData, surfaceData);
-                color.rgb = MixFog(color.rgb, inputData.fogCoord);
-                color.a = finalAlpha;
-                return color;
-            }
             ENDHLSL
         }
     }

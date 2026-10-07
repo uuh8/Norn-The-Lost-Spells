@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-06 06:42:50Z" end-time="2026-10-06 06:42:50Z" duration="0.634206">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="1257" result="Failed" site="Child" start-time="2026-10-06 06:42:50Z" end-time="2026-10-06 06:42:50Z" duration="0.634206" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2017" name="Game.Materials.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Materials.Tests.dll" runstate="Runnable" testcasecount="12" result="Failed" site="Child" start-time="2026-10-06 06:42:50Z" end-time="2026-10-06 06:42:50Z" duration="0.538589" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="18732" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2018" name="Game" fullname="Game" runstate="Runnable" testcasecount="12" result="Failed" site="Child" start-time="2026-10-06 06:42:50Z" end-time="2026-10-06 06:42:50Z" duration="0.446344" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2019" name="Materials" fullname="Game.Materials" runstate="Runnable" testcasecount="12" result="Failed" site="Child" start-time="2026-10-06 06:42:50Z" end-time="2026-10-06 06:42:50Z" duration="0.347434" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2020" name="Tests" fullname="Game.Materials.Tests" runstate="Runnable" testcasecount="12" result="Failed" site="Child" start-time="2026-10-06 06:42:50Z" end-time="2026-10-06 06:42:50Z" duration="0.246887" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2011" name="MaterialIdentityContractTests" fullname="Game.Materials.Tests.MaterialIdentityContractTests" classname="Game.Materials.Tests.MaterialIdentityContractTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-06 06:42:50Z" end-time="2026-10-06 06:42:50Z" duration="0.144427" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2014" name="BehaviorKind_ContainsOnlyTheCurrentSemanticCategories" fullname="Game.Materials.Tests.MaterialIdentityContractTests.BehaviorKind_ContainsOnlyTheCurrentSemanticCategories" methodname="BehaviorKind_ContainsOnlyTheCurrentSemanticCategories" classname="Game.Materials.Tests.MaterialIdentityContractTests" runstate="Runnable" seed="1898355246" result="Failed" start-time="2026-10-06 06:42:50Z" end-time="2026-10-06 06:42:50Z" duration="0.028099" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected is <Game.Materials.MaterialBehaviorKind[5]>, actual is <Game.Materials.MaterialBehaviorKind[3]>
+  Values differ at index [3]
+  Missing:  < 3, 4 >]]></message>
+                  <stack-trace><![CDATA[at Game.Materials.Tests.MaterialIdentityContractTests.BehaviorKind_ContainsOnlyTheCurrentSemanticCategories () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Materials\MaterialIdentityContractTests.cs:39
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2013" name="FixedSolidAndGasHaveStableIdentitiesAndDistinctBehaviors" fullname="Game.Materials.Tests.MaterialIdentityContractTests.FixedSolidAndGasHaveStableIdentitiesAndDistinctBehaviors" methodname="FixedSolidAndGasHaveStableIdentitiesAndDistinctBehaviors" classname="Game.Materials.Tests.MaterialIdentityContractTests" runstate="Runnable" seed="935052058" result="Failed" start-time="2026-10-06 06:42:50Z" end-time="2026-10-06 06:42:50Z" duration="0.003355" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  固体和气体必须是元素世界中可识别的真实材料。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Materials.Tests.MaterialIdentityContractTests.FixedSolidAndGasHaveStableIdentitiesAndDistinctBehaviors () [0x0002d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Materials\MaterialIdentityContractTests.cs:26
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: C:/Users/zhy/AppData/LocalLow/Haoyu/Norn：The Lost Spells\TestResults.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

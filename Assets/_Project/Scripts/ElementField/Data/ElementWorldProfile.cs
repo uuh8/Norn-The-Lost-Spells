@@ -33,7 +33,7 @@ namespace Game.ElementField
         [SerializeField, Range(0, byte.MaxValue)] private int _fireDecayPerTick = 1;
 
         [Header("Water Simulation Backend")]
-        [Tooltip("Legacy Cell 为序列化默认值 0；Gpu PBF 只在退出并重新进入 Play Mode 后生效。")]
+        [Tooltip("Legacy Cell=0、Gpu PBF=1、Grid Liquid=2；后端切换仅在退出并重新进入 Play 后生效。")]
         [SerializeField] private WaterSimulationMode _waterSimulationMode = WaterSimulationMode.LegacyCell;
 
         [Header("Fluid Chunk Streaming")]
@@ -64,6 +64,13 @@ namespace Game.ElementField
         [SerializeField] private MaterialReactionBindingProfile _materialReactionBindings;
 
         public float CellSize => _cellSize;
+        [Header("World Activity Expansion")]
+        [SerializeField] private bool _enableWorldActivityExpansion;
+        [SerializeField, Min(0.25f)] private float _unitActivityRadius = 4f;
+        [SerializeField, Min(0.25f)] private float _projectileActivityRadius = 2f;
+        public bool EnableWorldActivityExpansion => _enableWorldActivityExpansion;
+        public float UnitActivityRadius => _unitActivityRadius;
+        public float ProjectileActivityRadius => _projectileActivityRadius;
         public int ChunkSize => _chunkSize;
         public int MaximumResidentChunks => _maximumResidentChunks;
         public int ActiveRadiusXZChunks => _activeRadiusXZChunks;
@@ -132,6 +139,9 @@ namespace Game.ElementField
         private void OnValidate()
         {
             _cellSize = Mathf.Max(0.01f, _cellSize);
+            // 活动半径会直接参与 Bounds 与 GPU Region 构造；旧资产或手改 YAML 也必须得到合法正值。
+            _unitActivityRadius = Mathf.Max(0.25f, _unitActivityRadius);
+            _projectileActivityRadius = Mathf.Max(0.25f, _projectileActivityRadius);
             _chunkSize = Mathf.Max(1, _chunkSize);
             _maximumResidentChunks = Mathf.Max(1, _maximumResidentChunks);
             _activeRadiusXZChunks = Mathf.Max(0, _activeRadiusXZChunks);

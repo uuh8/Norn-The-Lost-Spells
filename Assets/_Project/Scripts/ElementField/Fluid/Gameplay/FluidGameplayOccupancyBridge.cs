@@ -90,15 +90,20 @@ namespace Game.ElementField
             if (_requestState.IsCompleted)
                 FinishCompletedRequest();
 
+            // Interval 衡量两次提交之间的时间，包含异步传输期间；不能把传输耗时再串联到等待周期。
+            // 单请求约束仍由 IsInFlight 保证，完成后最多提交一次，不补发积压请求。
+            _elapsed += Time.unscaledDeltaTime;
             if (_requestState.IsInFlight)
                 return;
 
-            _elapsed += Time.unscaledDeltaTime;
             if (_elapsed < _readbackInterval)
                 return;
 
-            _elapsed = 0f;
-            TryStartReadback();
+            // Source 尚未就绪或暂不授予 Lease 时保留到期计时；不能据此推断 Archive/Restore 占用它。
+            // 只有本轮已经提交，或检测到需要等待
+            // 下个正常周期的结构性错误时才消费计时债务；临时争用保留到下一帧立即重试。
+            if (TryStartReadback())
+                _elapsed = 0f;
         }
 
         private void OnDisable()
@@ -159,7 +164,11 @@ namespace Game.ElementField
                 : 0;
         }
 
-        private void TryStartReadback()
+        /// <summary>
+        /// 返回 true 表示本周期应被消费：Readback 已成功提交，或本次失败不适合逐帧重试。
+        /// 返回 false 只表示 Runtime 尚未就绪或 Source Lease 临时繁忙，调用方应保留到期债务。
+        /// </summary>
+        private bool TryStartReadback()
         {
             using var marker = RequestMarker.Auto();
             if (!_elementWorldRuntime.IsInitialized
@@ -168,7 +177,7 @@ namespace Game.ElementField
                     _elementWorldRuntime.CellSize,
                     out _frozenLease))
             {
-                return;
+                return false;
             }
 
             if (!_readbackA.IsCreated
@@ -176,13 +185,13 @@ namespace Game.ElementField
             {
                 // Capacity 是初始化布局的一部分；运行中变化必须拒绝，不能在 LateUpdate 重分配 Persistent Array。
                 _source.ReleaseGameplayReadbackLease();
-                return;
+                return true;
             }
 
             if (!_requestState.TryBegin())
             {
                 _source.ReleaseGameplayReadbackLease();
-                return;
+                return true;
             }
             _requestStartedAt = Time.realtimeSinceStartupAsDouble;
             try
@@ -201,6 +210,7 @@ namespace Game.ElementField
                         _frozenLease.PackedSamples,
                         _cachedCallback);
                 }
+                return true;
             }
             catch (Exception)
             {
@@ -209,6 +219,8 @@ namespace Game.ElementField
                 _readbackErrorCount++;
                 Diagnostics = Diagnostics.WithReadbackErrorCount((uint)_readbackErrorCount);
                 ReportReadbackErrorRateLimited();
+                // 提交异常会分配 Exception；保持原低频重试，不能把损坏设备/Buffer 变成逐帧异常。
+                return true;
             }
         }
 

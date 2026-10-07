@@ -10,6 +10,47 @@ namespace Game.ElementField.Tests
 {
     public sealed class ElementWorldFluidRoutingTests
     {
+        [Test]
+        public void SparseFireCollectionPreservesSampleSequenceAcrossChunkAndCursorWrap()
+        {
+            const BindingFlags fields=BindingFlags.Instance|BindingFlags.NonPublic;
+            var host=new GameObject("Sparse fire collector order");host.SetActive(false);
+            var profile=ScriptableObject.CreateInstance<ElementWorldProfile>();
+            try
+            {
+                JsonUtility.FromJsonOverwrite("{\"_chunkSize\":4}",profile);
+                var runtime=host.AddComponent<ElementWorldRuntime>();
+                var chunks=new ElementWorldChunk[3];
+                for(int i=0;i<3;i++)chunks[i]=new ElementWorldChunk(new ElementChunkKey(i-1,0,0),4,64);
+                int[][] fire={new[]{0,12,63},new[]{0,31},new[]{0,63}};
+                for(int p=0;p<3;p++)for(int n=0;n<fire[p].Length;n++)
+                {int i=fire[p][n];chunks[p].SetCell(new Vector3Int(i%4,i/4%4,i/16),new ElementCell(MaterialId.Fire,(byte)(p*10+n+1)));}
+                var samples=new LiquidCellFireSample[4];
+                typeof(ElementWorldRuntime).GetField("_profile",fields).SetValue(runtime,profile);
+                typeof(ElementWorldRuntime).GetField("_activeChunks",fields).SetValue(runtime,new[]{chunks[2],chunks[0],chunks[1]});
+                typeof(ElementWorldRuntime).GetField("_activeChunkCount",fields).SetValue(runtime,3);
+                typeof(ElementWorldRuntime).GetField("_gridFireChunks",fields).SetValue(runtime,new ElementWorldChunk[3]);
+                typeof(ElementWorldRuntime).GetField("_fireReactionSamples",fields).SetValue(runtime,samples);
+                var sort=(Action)Delegate.CreateDelegate(typeof(Action),runtime,typeof(ElementWorldRuntime).GetMethod("CollectAndSortGridFireChunks",fields));
+                var collect=(Func<int>)Delegate.CreateDelegate(typeof(Func<int>),runtime,typeof(ElementWorldRuntime).GetMethod("CollectGridFireReactionSamples",fields));
+                sort();uint hash=2166136261u;int total=0;long gc=GC.GetAllocatedBytesForCurrentThread();
+                for(int tick=0;tick<12;tick++)
+                {
+                    int count=collect();total+=count;
+                    unchecked{hash=(hash^(uint)count)*16777619u;for(int i=0;i<count;i++)
+                    {var s=samples[i];hash=(hash^(uint)s.GlobalCell.x)*16777619u;hash=(hash^(uint)s.GlobalCell.y)*16777619u;
+                     hash=(hash^(uint)s.GlobalCell.z)*16777619u;hash=(hash^s.Amount)*16777619u;}}
+                }
+                long allocated=GC.GetAllocatedBytesForCurrentThread()-gc;
+                System.IO.File.WriteAllText("Temp/ElementPerformance/sparse-fire-sample-sequence.json",JsonUtility.ToJson(
+                    new FireSequenceReport{Utc=DateTime.UtcNow.ToString("O"),Signature=hash,Samples=total,GcBytes=allocated},true));
+                Assert.That(hash,Is.EqualTo(1675499582u),"负坐标、跨页和游标绕回后的采样数量/顺序必须与原版逐位一致。");
+                Assert.That(total,Is.EqualTo(48));Assert.That(allocated,Is.Zero);
+            }
+            finally{Object.DestroyImmediate(host);Object.DestroyImmediate(profile);}
+        }
+        [Serializable]private sealed class FireSequenceReport{public string Utc;public uint Signature;public int Samples;public long GcBytes;}
+
         [TestCase(MaterialSimulationBackendKind.ElementCell, 1, 0)]
         [TestCase(MaterialSimulationBackendKind.GpuPbfLiquid, 0, 1)]
         public void RequestReachesExactlyOneExpectedSink(
@@ -32,11 +73,19 @@ namespace Game.ElementField.Tests
         [Test]
         public void RouterHotPathAcceptsRouteContractInsteadOfWaterMode()
         {
-            MethodInfo method = typeof(ElementWorldWriteRouter).GetMethod(nameof(ElementWorldWriteRouter.TryRoute));
-            Assert.That(method, Is.Not.Null);
-            ParameterInfo[] parameters = method.GetParameters();
-            Assert.That(parameters[0].ParameterType, Is.EqualTo(typeof(IMaterialSimulationRouteReadOnly)));
-            Assert.That(Array.Exists(parameters, parameter => parameter.ParameterType == typeof(WaterSimulationMode)), Is.False);
+            int routeOverloads = 0;
+            foreach (MethodInfo method in typeof(ElementWorldWriteRouter).GetMethods(
+                BindingFlags.Public | BindingFlags.Static))
+            {
+                if (method.Name != nameof(ElementWorldWriteRouter.TryRoute)) continue;
+                routeOverloads++;
+                ParameterInfo[] parameters = method.GetParameters();
+                Assert.That(parameters[0].ParameterType,
+                    Is.EqualTo(typeof(IMaterialSimulationRouteReadOnly)));
+                Assert.That(Array.Exists(parameters,
+                    parameter => parameter.ParameterType == typeof(WaterSimulationMode)), Is.False);
+            }
+            Assert.That(routeOverloads, Is.GreaterThan(0));
         }
 
         [TestCase(MaterialSimulationBackendKind.Unsupported)]

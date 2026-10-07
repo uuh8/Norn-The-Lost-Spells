@@ -1,0 +1,55 @@
+{
+    "Kind": "Direct NUnit method invocation; not Unity TestRunner XML",
+    "StartUtc": "2026-10-03T02:29:11.3962334Z",
+    "EndUtc": "2026-10-03T02:29:11.8892771Z",
+    "Reason": "",
+    "Passed": 3,
+    "Failed": 2,
+    "Skipped": 0,
+    "Planned": 5,
+    "Completed": 5,
+    "Aborted": false,
+    "SceneRestored": true,
+    "Cases": [
+        {
+            "Name": "Game.Rendering.Tests.GridLiquidFieldLayoutTests.EmptyPackedCellIgnoresUnusedMotionBits",
+            "Arguments": "",
+            "Error": "NUnit.Framework.AssertionException:   Expected: (0.00, 0.00, 0.00)\r\n  But was:  (0.50, 0.20, 0.80)\r\n\r\n  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) [0x00039] in <f577cd9686154d6ab10efd7e65e64366>:0 \r\n  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression) [0x00000] in <f577cd9686154d6ab10efd7e65e64366>:0 \r\n  at Game.Rendering.Tests.GridLiquidFieldLayoutTests.EmptyPackedCellIgnoresUnusedMotionBits () [0x00072] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\GridLiquidFieldLayoutTests.cs:16 \r\n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\r\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 ",
+            "Passed": false,
+            "Skipped": false,
+            "DurationSeconds": 0.021869600000172796
+        },
+        {
+            "Name": "Game.Rendering.Tests.GridLiquidFieldLayoutTests.DefaultBudgetRetainsNinetySixR2PagesWithin128MiB",
+            "Arguments": "",
+            "Error": "NUnit.Framework.AssertionException:   稀疏输入不能预留掉全部显示容量，63页时不应整体退CPU。\r\n  Expected: greater than or equal to 96\r\n  But was:  64\r\n\r\n  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) [0x00039] in <f577cd9686154d6ab10efd7e65e64366>:0 \r\n  at Game.Rendering.Tests.GridLiquidFieldLayoutTests.DefaultBudgetRetainsNinetySixR2PagesWithin128MiB () [0x0001b] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\GridLiquidFieldLayoutTests.cs:25 \r\n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\r\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 ",
+            "Passed": false,
+            "Skipped": false,
+            "DurationSeconds": 0.00540690000025279
+        },
+        {
+            "Name": "Game.Rendering.Tests.GridLiquidFieldLayoutTests.PackedLayoutPreservesQuantityAndBoundedMotion",
+            "Arguments": "",
+            "Error": "",
+            "Passed": true,
+            "Skipped": false,
+            "DurationSeconds": 0.0033597999999983587
+        },
+        {
+            "Name": "Game.Rendering.Tests.GridLiquidFieldLayoutTests.ActualSharedGpuAllocationStaysWithin128MiB",
+            "Arguments": "",
+            "Error": "",
+            "Passed": true,
+            "Skipped": false,
+            "DurationSeconds": 0.0034913999998025249
+        },
+        {
+            "Name": "Game.Rendering.Tests.GridLiquidFieldLayoutTests.ContinuousShaderAndAllComputeKernelsImport",
+            "Arguments": "",
+            "Error": "",
+            "Passed": true,
+            "Skipped": false,
+            "DurationSeconds": 0.010334600000078354
+        }
+    ]
+}

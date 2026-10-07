@@ -21,7 +21,8 @@ namespace Game.Rendering
     {
         private readonly bool[] _visualWaterCommitEligibility;
 
-        public WaterVolumeMeshingWorkspace(int chunkSize, int samplesPerCell)
+        public WaterVolumeMeshingWorkspace(int chunkSize, int samplesPerCell,
+            bool allowCrossChunkVisualSpread = false)
         {
             if (chunkSize <= 0)
                 throw new ArgumentOutOfRangeException(nameof(chunkSize));
@@ -29,6 +30,7 @@ namespace Game.Rendering
                 throw new ArgumentOutOfRangeException(nameof(samplesPerCell));
 
             ChunkSize = chunkSize;
+            AllowCrossChunkVisualSpread = allowCrossChunkVisualSpread;
             SamplesPerCell = samplesPerCell;
             SampleResolution = checked(chunkSize * samplesPerCell);
             ScalarDimension = checked(SampleResolution + 4);
@@ -66,6 +68,7 @@ namespace Game.Rendering
         }
 
         public int ChunkSize { get; }
+        internal bool AllowCrossChunkVisualSpread { get; }
         public int SamplesPerCell { get; }
         public int SampleResolution { get; }
 
@@ -449,9 +452,12 @@ namespace Game.Rendering
                     int neighborGlobalX = targetGlobalX + dx;
                     int neighborGlobalY = targetGlobalY + dy;
                     int neighborGlobalZ = targetGlobalZ + dz;
-                    if (FloorDivide(neighborGlobalX, ChunkSize) != targetOwnerX
+                    // Dormant Renderer 为边缘的空页也分配 View，允许同一滤波核跨页连续。
+                    // 旧 Renderer 只创建含水页，仍保留原有 owner 限制。
+                    if (!AllowCrossChunkVisualSpread
+                        && (FloorDivide(neighborGlobalX, ChunkSize) != targetOwnerX
                         || FloorDivide(neighborGlobalY, ChunkSize) != targetOwnerY
-                        || FloorDivide(neighborGlobalZ, ChunkSize) != targetOwnerZ)
+                        || FloorDivide(neighborGlobalZ, ChunkSize) != targetOwnerZ))
                     {
                         continue;
                     }

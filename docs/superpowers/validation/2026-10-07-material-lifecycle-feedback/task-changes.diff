@@ -1,0 +1,1241 @@
+--- before/Assets/_Project/Scripts/ElementField/Gases/GasWorldProfile.cs
++++ after/Assets/_Project/Scripts/ElementField/Gases/GasWorldProfile.cs
+@@ -27,9 +27,16 @@
+         [SerializeField, Range(128,4096)] private int _maximumBirthScansPerTick = 2048;
+         [Tooltip("世界空间 Wind Velocity，单位 m/s；影响真实气体数量与接触范围。墙面仍由地形阻挡。")]
+         [SerializeField] private Vector3 _windVelocity = new Vector3(.25f,0f,.08f);
++        [Header("Extremely Dilute Gas")]
++        [Tooltip("0 关闭尾雾消散。生产值 1 GMU/格；混合气体总浓度也必须满足此门槛。")]
++        [SerializeField, Min(0)] private int _diluteMaximumCellGmu;
++        [Tooltip("整个 Chunk 的平均浓度上限；局部格和平均值同时极低才清理。")]
++        [SerializeField, Range(0f,.02f)] private float _diluteMaximumChunkConcentration=.005f;
++        [SerializeField, Min(1f)] private float _diluteDelaySeconds=3f;
++        [SerializeField, Range(1,8)] private int _diluteChunksPerTick=2;
+         [SerializeField] private GasMaterialBehavior[] _materials =
+         {
+-            new GasMaterialBehavior { Material = MaterialId.Steam, DiffusionPerSecond = 2f, BuoyancyPerSecond = 1f },
++            new GasMaterialBehavior { Material = MaterialId.Steam, DiffusionPerSecond = 1f, BuoyancyPerSecond = .6f },
+             new GasMaterialBehavior { Material = MaterialId.ToxicVapor, DiffusionPerSecond = 1f, BuoyancyPerSecond = 0f }
+         };
+         public int MaximumChunks => _maximumChunks;
+@@ -42,6 +49,10 @@
+         public int MaximumTerrainSamplesPerTick => _maximumTerrainSamplesPerTick;
+         public int MaximumBirthScansPerTick => _maximumBirthScansPerTick;
+         public Vector3 WindVelocity => _windVelocity;
++        public uint DiluteMaximumCellGmu => (uint)Math.Max(0,_diluteMaximumCellGmu);
++        public float DiluteMaximumChunkConcentration => _diluteMaximumChunkConcentration;
++        public float DiluteDelaySeconds => _diluteDelaySeconds;
++        public int DiluteChunksPerTick => _diluteChunksPerTick;
+         public int MaterialCount => _materials != null ? _materials.Length : 0;
+         public GasMaterialBehavior GetMaterial(int index) => _materials[index];
+     }
+--- before/Assets/_Project/Scripts/ElementField/Gases/GasWorldRuntime.cs
++++ after/Assets/_Project/Scripts/ElementField/Gases/GasWorldRuntime.cs
+@@ -16,6 +16,13 @@
+         private GasVolumeStore _store;
+         private MaterialCellActivityQueue _activity;
+         private GasFluxSolver _solver;
++        private GasDiluteDissipation _dissipation;
++        private Action<MaterialId,ulong> _dissipationAccounting;
++        public ulong DissipatedQuantity { get; private set; }
++        public int DissipationChunksCheckedLastTick=>_dissipation?.CheckedChunksLastTick ?? 0;
++        internal void SetDissipationAccounting(Action<MaterialId,ulong> consumed)=>_dissipationAccounting=consumed;
++        private void RecordDissipation(MaterialId material,ulong quantity)
++        { DissipatedQuantity+=quantity;_dissipationAccounting?.Invoke(material,quantity); }
+         private MaterialPhaseDepositQueue _pending;
+         private ElementWorldRuntime _world;
+         private ElementFieldSolidBaker _baker;
+@@ -63,7 +70,11 @@
+                 || _profile.MaximumTerrainSamplesPerTick < 1
+                 || _profile.MaximumBirthScansPerTick < 1
+                 || !float.IsFinite(_profile.InitialConcentration) || _profile.InitialConcentration<=0 || _profile.InitialConcentration>1
+-                || !FluidSpawnRequestValidator.IsFinite(_profile.WindVelocity)) return false;
++                || !FluidSpawnRequestValidator.IsFinite(_profile.WindVelocity)
++                || !float.IsFinite(_profile.DiluteMaximumChunkConcentration) || _profile.DiluteMaximumChunkConcentration<0 || _profile.DiluteMaximumChunkConcentration>.02f
++                || !float.IsFinite(_profile.DiluteDelaySeconds) || _profile.DiluteDelaySeconds<1
++                || _profile.DiluteChunksPerTick<1 || _profile.DiluteChunksPerTick>8
++                || _profile.DiluteMaximumCellGmu>_profile.CellCapacityGmu*.05f) return false;
+             try
+             {
+                 var materials = new MaterialId[_profile.MaterialCount];
+@@ -80,6 +91,7 @@
+                 _pending = new MaterialPhaseDepositQueue(_profile.MaximumPendingDeposits);
+                 _solver = new GasFluxSolver(_store, _activity, behaviors, _profile.MaximumCellsPerTick, IsBlocked, VentAmount,
+                     _profile.WindVelocity,size,_profile.MaximumActiveCells);
++                _dissipation=new GasDiluteDissipation(_store,_activity,_profile,RecordDissipation);
+                 return true;
+             }
+             catch (Exception ex) { GameLog.Error($"Gas 初始化失败：{ex.Message}", "ElementField"); _store = null; return false; }
+@@ -99,7 +111,7 @@
+         public void SetActivityDomain(ElementWorldActivityRegions regions) => _activity?.SetDomain(regions, _origin, _size);
+         public void Step(float deltaTime)
+         {
+-            if (_store == null || deltaTime <= 0) return;
++            if (_store == null || !float.IsFinite(deltaTime) || deltaTime <= 0) return;
+             using var simulationScope = SimulateMarker.Auto();
+             _samplesRemaining = _profile.MaximumTerrainSamplesPerTick;
+             int depositScans=_profile.MaximumBirthScansPerTick;
+@@ -140,9 +152,10 @@
+                 pending.WaitingTicks++; _pending.Requeue(in pending);
+             }
+             _solver.Step(deltaTime);
++            _dissipation.Step(deltaTime);
+             TerrainSamplesLastTick = _profile.MaximumTerrainSamplesPerTick - _samplesRemaining;
+             int chunks = _store.ResidentChunkCount;
+-            if (_solver.ProcessedCellsLastTick > 0) _store.ReclaimEmptyChunks();
++            if (_solver.ProcessedCellsLastTick > 0 || _dissipation.CheckedChunksLastTick>0) _store.ReclaimEmptyChunks();
+             if (chunks != _store.ResidentChunkCount) _activity.RequestRecovery();
+         }
+         private bool IsBirthReachable(Vector3Int center,Vector3Int cell)
+--- before/Assets/_Project/Scripts/ElementField/Materials/SparseMaterialVolumeStore.cs
++++ after/Assets/_Project/Scripts/ElementField/Materials/SparseMaterialVolumeStore.cs
+@@ -17,7 +17,7 @@
+         private readonly int[] _resident, _free;
+         private readonly int[] _materialSlots = new int[256];
+         private readonly MaterialId[] _materials;
+-        private readonly uint[] _amounts, _next, _nextStamps, _chunkVersions;
++        private readonly uint[] _amounts, _next, _nextStamps, _chunkVersions,_allocationVersions;
+         private readonly ulong[] _chunkTotals;
+         private readonly ulong[] _materialTotals=new ulong[256];
+         private readonly int[] _touched;
+@@ -57,6 +57,7 @@
+             _touched = new int[length]; _keys = new ElementChunkKey[maximumChunks];
+             _allocated = new bool[maximumChunks]; _resident = new int[maximumChunks];
+             _free = new int[maximumChunks]; _chunkVersions = new uint[maximumChunks];
++            _allocationVersions=new uint[maximumChunks];
+             _chunkTotals = new ulong[maximumChunks];
+             _indices = new Dictionary<ElementChunkKey, int>(maximumChunks);
+             for (int i = 0; i < maximumChunks; i++) _free[_freeCount++] = maximumChunks - 1 - i;
+@@ -91,6 +92,30 @@
+             }
+         }
+         public ulong GetChunkQuantity(int residentIndex) => _chunkTotals[_resident[residentIndex]];
++        internal int GetChunkSlot(int residentIndex)=>_resident[residentIndex];
++        internal uint GetChunkAllocationVersion(int residentIndex)=>_allocationVersions[_resident[residentIndex]];
++        internal bool IsChunkDilute(int residentIndex,uint maximumCell,ulong maximumTotal)
++        {
++            int slot=_resident[residentIndex]; if(_chunkTotals[slot]==0 || _chunkTotals[slot]>maximumTotal) return false;
++            int first=slot*CellsPerChunk*MaterialCount;
++            // 固定数组顺序扫描，浓 Chunk 用总量直接早退；Steam+Toxic 的浓度不能分别判断。
++            for(int cell=0;cell<CellsPerChunk;cell++)
++            { ulong total=0;for(int m=0;m<MaterialCount;m++)total+=_amounts[first+cell*MaterialCount+m];if(total>maximumCell)return false; }
++            return true;
++        }
++        internal ulong DissipateChunk(int residentIndex,Action<MaterialId,ulong> consumed)
++        {
++            if(_inTick) throw new InvalidOperationException("不能在 Flux 事务期间清理真实气体。");
++            int first=_resident[residentIndex]*CellsPerChunk*MaterialCount; ulong total=0;
++            for(int m=0;m<MaterialCount;m++)
++            {
++                ulong removed=0;
++                for(int cell=0;cell<CellsPerChunk;cell++)
++                { int offset=first+cell*MaterialCount+m;removed+=_amounts[offset];SetCurrent(offset,0); }
++                if(removed>0) consumed?.Invoke(_materials[m],removed); total+=removed;
++            }
++            return total;
++        }
+         public bool TryGetQuantity(Vector3Int cell, MaterialId material, out uint quantity)
+         {
+             quantity = 0;
+@@ -218,6 +243,7 @@
+                 slot = _free[--_freeCount]; _keys[slot] = key; _allocated[slot] = true;
+                 _indices.Add(key, slot); _resident[_residentCount++] = slot;
+                 _chunkVersions[slot] = BumpVersion();
++                _allocationVersions[slot]=_chunkVersions[slot];
+             }
+             int index = local.x + ChunkSize * (local.y + ChunkSize * local.z);
+             offset = (slot * CellsPerChunk + index) * MaterialCount + materialSlot;
+--- before/Assets/_Project/Scripts/ElementField/Transitions/MaterialConversionProfile.cs
++++ after/Assets/_Project/Scripts/ElementField/Transitions/MaterialConversionProfile.cs
+@@ -10,6 +10,10 @@
+     {
+         public MaterialId Source, FirstProduct, SecondProduct;
+         public uint InputUnits, FirstUnits, SecondUnits;
++        // Disabled 默认 false，旧 Profile 仍可读取；消散份额是进入背景空气的显式环境消耗。
++        // 它与可见产物共同占满输入配方，不允许靠减少输出字段悄悄丢量。
++        public bool Disabled;
++        public uint DissipatedUnits;
+         public MaterialConversionCondition Condition;
+         public float Threshold, InputGmuPerSecond, CooldownSeconds;
+         // 固定 GMU/s 保证稀薄尾量可耗尽；比例项使浓云按库存冷凝，避免密集蒸汽变成数分钟水源。
+@@ -17,7 +21,8 @@
+         public uint MinimumInputGmu;
+         public bool IsValid => Source != MaterialId.Empty && FirstProduct != MaterialId.Empty
+             && Source != FirstProduct && Source != SecondProduct && FirstProduct != SecondProduct
+-            && InputUnits > 0 && FirstUnits > 0 && (ulong)FirstUnits + SecondUnits == InputUnits
++            && InputUnits > 0 && FirstUnits > 0 && (ulong)FirstUnits + SecondUnits + DissipatedUnits == InputUnits
++            && (DissipatedUnits==0 || Source==MaterialId.Steam || Source==MaterialId.ToxicVapor)
+             && (SecondUnits == 0) == (SecondProduct == MaterialId.Empty)
+             && float.IsFinite(Threshold) && float.IsFinite(InputGmuPerSecond) && InputGmuPerSecond > 0
+             && float.IsFinite(InputFractionPerSecond) && InputFractionPerSecond >= 0 && InputFractionPerSecond <= 1
+--- before/Assets/_Project/Scripts/ElementField/Transitions/MaterialConversionEvaluator.cs
++++ after/Assets/_Project/Scripts/ElementField/Transitions/MaterialConversionEvaluator.cs
+@@ -13,7 +13,7 @@
+     {
+         public static bool Matches(in MaterialConversionRule rule, in MaterialEnvironmentSample environment)
+         {
+-            if (!rule.IsValid || !float.IsFinite(environment.Temperature) || !float.IsFinite(environment.Dryness)) return false;
++            if (rule.Disabled || !rule.IsValid || !float.IsFinite(environment.Temperature) || !float.IsFinite(environment.Dryness)) return false;
+             switch (rule.Condition)
+             {
+                 case MaterialConversionCondition.Heated: return environment.Temperature >= rule.Threshold;
+--- before/Assets/_Project/Scripts/ElementField/Transitions/MaterialConversionTransaction.cs
++++ after/Assets/_Project/Scripts/ElementField/Transitions/MaterialConversionTransaction.cs
+@@ -40,26 +40,27 @@
+         private readonly MaterialWorldQuantityLedger _ledger;
+         private readonly MaterialConversionPlacement[] _targets;
+         private MaterialConversionAddress _source;
+-        private uint _consume;
++        private uint _consume,_dissipated;
+         private int _count;
+         private MaterialConversionStamp _stamp;
+         public MaterialConversionTransactionState State { get; private set; }
+         public MaterialConversionTransaction(IMaterialConversionPort port, MaterialWorldQuantityLedger ledger, int capacity=128)
+         { _port=port ?? throw new ArgumentNullException(nameof(port)); _ledger=ledger ?? throw new ArgumentNullException(nameof(ledger)); _targets=new MaterialConversionPlacement[capacity]; }
+-        public bool TryPrepare(MaterialConversionAddress source, uint consume, MaterialConversionPlacement[] targets, int count)
++        public bool TryPrepare(MaterialConversionAddress source, uint consume, MaterialConversionPlacement[] targets, int count,uint dissipated=0)
+         {
+             if (State==MaterialConversionTransactionState.Prepared || targets==null || count<=0 || count>targets.Length
+-                || count>_targets.Length || !_ledger.Allows(source.Material,consume,targets,count)) return false;
++                || count>_targets.Length || !_ledger.Allows(source.Material,consume,targets,count,dissipated)) return false;
+             for(int i=0;i<count;i++) if (targets[i].Address.Material==source.Material) return false;
+             Array.Copy(targets,_targets,count);
+             if (!_port.TryPrepare(source,consume,_targets,count,out _stamp)) return false;
+-            _source=source; _consume=consume; _count=count; State=MaterialConversionTransactionState.Prepared; return true;
++            _source=source; _consume=consume; _dissipated=dissipated; _count=count; State=MaterialConversionTransactionState.Prepared; return true;
+         }
+         public bool Commit()
+         {
+             if (State!=MaterialConversionTransactionState.Prepared) return false;
+             if (!_port.TryCommit(_source,_consume,_targets,_count,in _stamp)) { Cancel(); return false; }
+-            _ledger.Record(_source.Material,_consume,_targets,_count); State=MaterialConversionTransactionState.Committed; return true;
++            // 只有真实 Owner 全部提交后才记环境消散；容量失败、版本失效和 Cancel 均不扣账。
++            _ledger.Record(_source.Material,_consume,_targets,_count,_dissipated); State=MaterialConversionTransactionState.Committed; return true;
+         }
+         public void Cancel()
+         {
+--- before/Assets/_Project/Scripts/ElementField/Transitions/MaterialConversionScheduler.cs
++++ after/Assets/_Project/Scripts/ElementField/Transitions/MaterialConversionScheduler.cs
+@@ -57,6 +57,7 @@
+             liquid.SetConversionObserver(NotifyLiquid); solid.SetConversionObserver(NotifySolid); gas.SetConversionObserver(NotifyGas);
+             liquid.SetMaterialSolidOccupancy(solid);
+             liquid.SetConversionAccounting(Ledger.RecordExternal,Ledger.RecordExplicitConsumption);
++            gas.SetDissipationAccounting(Ledger.RecordExplicitConsumption);
+             // 初始库存只在初始化边界合并一次；全量审计不放进每 Tick 的热路径。
+             for(int i=1;i<=8;i++)
+             {
+@@ -166,7 +167,11 @@
+                 if(candidate.Rule!=ruleIndex) { candidate.Credit=0; candidate.Rule=ruleIndex; }
+                 // 普通常温液体可以等 Fire/环境扫描重新唤醒；静止冰和稳定热蒸汽没有移动通知，
+                 // 必须留下有界条件检查，否则冷区升温后冰永远不融化。
+-                bool persistentCondition=candidate.Address.Material==MaterialId.Ice || candidate.Address.Material==MaterialId.Steam;
++                bool persistentCondition=false;
++                // 已禁用的固体规则不应让静止冰永久占用候选队列。环境区扫描仍可发现启用规则。
++                for(int r=0;r<_profile.RuleCount;r++)
++                { var pendingRule=_profile.GetRule(r); if(!pendingRule.Disabled && pendingRule.Source==candidate.Address.Material)
++                    persistentCondition=candidate.Address.Material==MaterialId.Ice || candidate.Address.Material==MaterialId.Steam; }
+                 if(ruleIndex<0 && candidate.Cooldown<=0 && !persistentCondition) { Release(index); continue; }
+                 if(ruleIndex>=0 && candidate.Cooldown<=0)
+                 {
+@@ -234,7 +239,7 @@
+             uint batches=consume/rule.InputUnits;
+             if(!BuildProducts(source,rule.FirstProduct,batches*rule.FirstUnits,ref count)) return false;
+             if(rule.SecondUnits>0 && !BuildProducts(source,rule.SecondProduct,batches*rule.SecondUnits,ref count)) return false;
+-            if(!_transaction.TryPrepare(source,consume,_placements,count) || !_transaction.Commit()) { DeferredTransactions++; return false; }
++            if(!_transaction.TryPrepare(source,consume,_placements,count,batches*rule.DissipatedUnits) || !_transaction.Commit()) { DeferredTransactions++; return false; }
+             if(!reaction) _commits++; if(solid) _solidCommits++; return true;
+         }
+         private bool BuildProducts(MaterialConversionAddress source,MaterialId target,uint amount,ref int count)
+--- before/Assets/_Project/Scripts/ElementField/Transitions/MaterialWorldQuantityLedger.cs
++++ after/Assets/_Project/Scripts/ElementField/Transitions/MaterialWorldQuantityLedger.cs
+@@ -19,18 +19,20 @@
+         public static MaterialQuantityFamily Family(MaterialId id) => id == MaterialId.Water || id == MaterialId.Steam
+             || id == MaterialId.Ice || id == MaterialId.Sticky || id == MaterialId.DriedSlime ? MaterialQuantityFamily.WaterBased
+             : id == MaterialId.Poison || id == MaterialId.ToxicVapor ? MaterialQuantityFamily.Toxic : MaterialQuantityFamily.None;
+-        internal bool Allows(MaterialId source, uint consume, MaterialConversionPlacement[] targets, int count)
++        internal bool Allows(MaterialId source, uint consume, MaterialConversionPlacement[] targets, int count,uint dissipated=0)
+         {
+             MaterialQuantityFamily family=Family(source); if (family==MaterialQuantityFamily.None || consume==0) return false;
++            if(dissipated>0 && source!=MaterialId.Steam && source!=MaterialId.ToxicVapor) return false;
+             ulong total=0;
+             for(int i=0;i<count;i++)
+             { if (targets[i].Quantity==0 || Family(targets[i].Address.Material)!=family) return false; total+=targets[i].Quantity; }
+-            return total==consume;
++            return total+dissipated==consume;
+         }
+-        internal void Record(MaterialId source, uint consume, MaterialConversionPlacement[] targets, int count)
++        internal void Record(MaterialId source, uint consume, MaterialConversionPlacement[] targets, int count,uint dissipated=0)
+         {
+             _consumed[(byte)source]+=consume;
+             for(int i=0;i<count;i++) _produced[(byte)targets[i].Address.Material]+=targets[i].Quantity;
++            RecordExplicitConsumption(source,dissipated);
+             CommittedTransactions++;
+         }
+     }
+--- before/Assets/_Project/Scripts/Rendering/ElementField/GridLiquidFieldFrame.cs
++++ after/Assets/_Project/Scripts/Rendering/ElementField/GridLiquidFieldFrame.cs
+@@ -70,6 +70,15 @@
+         private bool _sparseBodyRows;
+         private bool _sparseShapeRows;
+         private int _wetRowCount;
++        // 仅 ≤8 GMU 的无支撑尾滴绕开低分辨率 Surface Nets；满容量回到完整连续场，不截断显示。
++        internal const uint SmallAirFlag=8388608u;
++        private int[] _fallingRows;
++        private int _fallingRowCount;
++        internal bool UsesFallingDrops=>_fallingRows!=null;
++        internal bool FallingDropRow(Vector3Int cell,bool previous)
++        { int index=Index(cell);return UsesFallingDrops && index>=0 && ((previous?Previous:Current)[index*MaterialCount].QuantityFlags&SmallAirFlag)!=0; }
++        internal void ConfigureFallingDrops(int capacity)
++        { _fallingRows=new int[Math.Max(1,capacity)]; }
+         private readonly Body[] _bodies;
+         private readonly float[] _domes;
+         private struct Body
+@@ -291,7 +300,7 @@
+                 for(int work=0;work<workRows;work++)
+                 {
+                     int i=BodyRow(work),q=0;for(int m=0;m<MaterialCount;m++)q+=(int)(data[i*MaterialCount+m].QuantityFlags&65535u);
+-                    if(q==0)continue;_parents[i]=i;_bodies[i]=default;
++                    if(q==0 || (data[i*MaterialCount].QuantityFlags&SmallAirFlag)!=0)continue;_parents[i]=i;_bodies[i]=default;
+                 }
+             }
+             else
+@@ -300,7 +309,7 @@
+                 for(int i=0;i<rows;i++)
+                 {
+                     int q=0;for(int m=0;m<MaterialCount;m++)q+=(int)(data[i*MaterialCount+m].QuantityFlags&65535u);
+-                    _parents[i]=q>0?i:-1;if(q==0)continue;_bodies[i]=default;
++                    _parents[i]=q>0 && (data[i*MaterialCount].QuantityFlags&SmallAirFlag)==0?i:-1;if(_parents[i]<0)continue;_bodies[i]=default;
+                     if(wetRows<_fullScanShapeRows.Length)_fullScanShapeRows[wetRows]=i;wetRows++;
+                 }
+                 _bodyRows=_fullScanShapeRows;_sparseBodyRows=wetRows<=_bodyRows.Length;workRows=_sparseBodyRows?wetRows:rows;
+@@ -653,7 +662,7 @@
+ #if UNITY_EDITOR
+                 _sparseShapeRows&=!_validationFullRowScan;
+ #endif
+-                using(CrownMarker.Auto()){MergeSupportedColumns(Previous);MergeSupportedColumns(Current);ShapeBodies(Previous);ShapeBodies(Current);}
++                using(CrownMarker.Auto()){MergeSupportedColumns(Previous);MergeSupportedColumns(Current);RebuildFallingRows();ShapeBodies(Previous);ShapeBodies(Current);}
+                 // 原始姿态已被共同圆冠改写；清掉该批缓存，再由Bounds预热最终姿态给CPU宽核复用。
+                 _rowMotion.Clear();
+                 using(BoundsMarker.Auto())RebuildShapedBounds();
+@@ -693,6 +702,90 @@
+             }
+             if(view!=null && view.Enabled)SortOwners(view);
+             RebuildOwnerLookup();
++            if(CrownStrength<=.15f)RebuildFallingRows();
++        }
++        private void RebuildFallingRows()
++        {
++            _fallingRowCount=0;if(!UsesFallingDrops)return;
++            int rows=ShapeWorkRows;
++            // 复用 Capture 已收集的湿格索引；多块静止水和空气不能因几滴雨水新增全世界逐格扫描。
++            for(int work=0;work<rows;work++)for(int m=0;m<MaterialCount;m++)
++            {int i=ShapeRow(work);Current[i*MaterialCount+m].QuantityFlags&=~SmallAirFlag;Previous[i*MaterialCount+m].QuantityFlags&=~SmallAirFlag;}
++            for(int work=0;work<rows;work++)
++            {
++                int i=ShapeRow(work);
++                bool previous=IsTinyFreeRow(i,true),current=IsTinyFreeRow(i,false);if(!previous && !current)continue;
++                if(_fallingRowCount==_fallingRows.Length)
++                {
++                    // 不把固定显示池满当作删除物质的理由；整个快照保留旧连续场兜底。
++                    for(int clear=0;clear<rows;clear++)for(int m=0;m<MaterialCount;m++)
++                    {int row=ShapeRow(clear);Current[row*MaterialCount+m].QuantityFlags&=~SmallAirFlag;Previous[row*MaterialCount+m].QuantityFlags&=~SmallAirFlag;}
++                    _fallingRowCount=0;return;
++                }
++                _fallingRows[_fallingRowCount++]=i;
++                for(int m=0;m<MaterialCount;m++)
++                {if(previous)Previous[i*MaterialCount+m].QuantityFlags|=SmallAirFlag;if(current)Current[i*MaterialCount+m].QuantityFlags|=SmallAirFlag;}
++            }
++        }
++        private bool IsTinyFreeRow(int index,bool previous)
++        {
++            var data=previous?Previous:Current;uint flags=data[index*MaterialCount].QuantityFlags;
++            if((flags&65536u)!=0)return false;
++            uint quantity=0;for(int m=0;m<MaterialCount;m++)quantity+=data[index*MaterialCount+m].QuantityFlags&65535u;
++            if(quantity==0 || quantity>8)return false;
++            var cell=CellAt(index);
++            // 大流条旁的尾格继续参与连续表面，保留连接；只有孤立少量落水才使用实例。
++            for(int side=0;side<6;side++)
++            {
++                var delta=side==0?Vector3Int.up:side==1?Vector3Int.down:side==2?Vector3Int.left:side==3?Vector3Int.right:side==4?Vector3Int.forward:Vector3Int.back;
++                int other=Index(cell+delta);if(other<0)continue;uint amount=0;
++                for(int m=0;m<MaterialCount;m++)amount+=data[other*MaterialCount+m].QuantityFlags&65535u;
++                if(amount>8 && (data[other*MaterialCount].QuantityFlags&65536u)==0)return false;
++            }
++            return true;
++        }
++        internal int CopyFallingDrops(float alpha,GridLiquidSmallDrop[] destination)
++        {
++            alpha=Mathf.Clamp01(alpha);int count=0;
++            for(int i=0;i<_fallingRowCount && count<destination.Length;i++)
++            {
++                var drop=FallingMotion(_fallingRows[i]).Sample(alpha,Interval,CellSize,CartoonVolumeScale/Capacity);
++                if(drop.Radius>0)destination[count++]=drop;
++            }
++            return count;
++        }
++        internal int CopyFallingMotion(GridLiquidFallingMotion[] destination)
++        {int count=Math.Min(_fallingRowCount,destination.Length);for(int i=0;i<count;i++)destination[i]=FallingMotion(_fallingRows[i]);return count;}
++        private void CopyFallingRows(GridLiquidFieldFrame source)
++        {
++            _fallingRowCount=0;
++            // CopyFrom 不改变页序，直接复用已按行序收集的稀疏索引，不能为几滴雨水重扫所有空气格。
++            if(!UsesFallingDrops || source._fallingRowCount>_fallingRows.Length)
++            {
++                for(int i=0;i<source._fallingRowCount;i++)for(int m=0;m<MaterialCount;m++)
++                {
++                    int row=source._fallingRows[i]*MaterialCount+m;
++                    Current[row].QuantityFlags&=~SmallAirFlag;Previous[row].QuantityFlags&=~SmallAirFlag;
++                }
++                return;
++            }
++            _fallingRowCount=source._fallingRowCount;
++            if(_fallingRowCount>0)Array.Copy(source._fallingRows,_fallingRows,_fallingRowCount);
++        }
++        private GridLiquidFallingMotion FallingMotion(int index)
++        {
++            bool old=(Previous[index*MaterialCount].QuantityFlags&SmallAirFlag)!=0,now=(Current[index*MaterialCount].QuantityFlags&SmallAirFlag)!=0;
++            var a=old?ReadRowMotionAtIndex(index,true):default;var b=now?ReadRowMotionAtIndex(index,false):default;
++            Vector3 center=(Vector3)CellAt(index)+Vector3.one*.5f;
++            var motion=new GridLiquidFallingMotion{PreviousCenter=Origin+(center+a.OffsetCells)*CellSize,CurrentCenter=Origin+(center+b.OffsetCells)*CellSize,
++                PreviousVelocity=a.VelocityWorld,CurrentVelocity=b.VelocityWorld};
++            for(int m=0;m<MaterialCount;m++)
++            {
++                uint previous=old?(Previous[index*MaterialCount+m].QuantityFlags&65535u):0,current=now?(Current[index*MaterialCount+m].QuantityFlags&65535u):0;
++                if(m<4){motion.Previous0|=previous<<(m*8);motion.Current0|=current<<(m*8);}
++                else{motion.Previous1|=previous<<((m-4)*8);motion.Current1|=current<<((m-4)*8);}
++            }
++            return motion;
+         }
+         private void RebuildOwnerLookup()
+         {
+@@ -745,6 +838,7 @@
+             Array.Copy(source.Terrains,Terrains,Count*Cells);Array.Copy(source._bounds,_bounds,Count);Array.Copy(source._hasBounds,_hasBounds,Count);
+             _pages.Clear();for(int i=0;i<Count;i++)_pages.Add(Keys[i],i);
+             _rowMotion.Clear();_queryReady=_lastCellReady=_queryCellsReady=false;_sparseShapeRows=false;_wetRowCount=0;RebuildOwnerLookup();
++            CopyFallingRows(source);
+         }
+         public void SelectGpuDomain(int inputCapacity,int outputCapacity)
+         {
+@@ -760,9 +854,17 @@
+                 inputs+=added;owners++;
+             }
+             // 从完整可见场塑形后再压紧输入，保持共享边界的Dome/颜色/厚度不受GPU预算分组影响。
+-            int copied=0;
+-            for(int page=0;page<Count;page++)if(_gpuInputs[page])
+-            {
++            int copied=0,fallingRead=0,fallingWritten=0;
++            for(int page=0;page<Count;page++)
++            {
++                // 页裁剪只能压紧已有索引，不能在更小邻域重新分类；GPU 邻页被裁走不应改变尾滴外形。
++                // 原索引按页/行递增，原地双指针过滤为 O(页数+滴数)，没有空气逐格扫描或新数组。
++                while(fallingRead<_fallingRowCount && _fallingRows[fallingRead]/Cells==page)
++                {
++                    int row=_fallingRows[fallingRead++];
++                    if(_gpuInputs[page])_fallingRows[fallingWritten++]=copied*Cells+row%Cells;
++                }
++                if(!_gpuInputs[page])continue;
+                 if(copied!=page)
+                 {Keys[copied]=Keys[page];_bounds[copied]=_bounds[page];_hasBounds[copied]=_hasBounds[page];
+                     Array.Copy(Previous,page*Cells*MaterialCount,Previous,copied*Cells*MaterialCount,Cells*MaterialCount);
+@@ -772,6 +874,7 @@
+             }
+             Count=copied;OwnerCount=owners;_pages.Clear();for(int i=0;i<Count;i++)_pages.Add(Keys[i],i);
+             _rowMotion.Clear();_queryReady=_lastCellReady=_queryCellsReady=false;_sparseShapeRows=false;_wetRowCount=0;RebuildOwnerLookup();
++            _fallingRowCount=fallingWritten;
+         }
+         private float MapHeightForBounds(float f)=>Mathf.Max(.5f,GridLiquidFieldSampler.MapHeight(f,CrownStrength));
+         public Bounds OwnerBounds(int owner)
+--- before/Assets/_Project/Scripts/Rendering/ElementField/GridLiquidFieldSampler.cs
++++ after/Assets/_Project/Scripts/Rendering/ElementField/GridLiquidFieldSampler.cs
+@@ -123,6 +123,8 @@
+                         if(q>0){velocity/=q;offset/=q;}
+                     }
+                     if(q<=0)continue;
++                    // 少量自由落水按真实 GMU 使用实例；不再给几滴水造一张 1.6 格高的采样代理。
++                    if(_snapshot!=null && _snapshot.FallingDropRow(cell,previous))continue;
+                     Vector3 warp=Vector3.ClampMagnitude(velocity*(_source.Interval*(previous?alpha:alpha-1))/_source.CellSize,3);
+                     Vector3 center=new Vector3(x+.5f,y+.5f,z+.5f)+offset+warp;
+                     bool supported=_source.Supported(cell,previous);
+--- before/Assets/_Project/Scripts/Rendering/ElementField/GridLiquidFieldSurfaceRenderer.cs
++++ after/Assets/_Project/Scripts/Rendering/ElementField/GridLiquidFieldSurfaceRenderer.cs
+@@ -52,6 +52,7 @@
+         private GridLiquidFieldBudget _budget;
+         private GridLiquidFieldResources _gpu;
+         private GraphicsBuffer _cpuOwnerBuffer,_overflowOwnerBuffer;
++        private GraphicsBuffer _fallbackDropBuffer;
+         private GridLiquidFieldFrame _frame;
+         private GridLiquidFieldFrame _overflowFrame;
+         private GridLiquidFieldSampler _sampler;
+@@ -71,6 +72,8 @@
+         private bool[] _inputChanged,_inputAnimated,_ownerDirty,_ownerAnimated;
+         private int _cachedSubdivision,_cachedOwnerCount,_animatedSurfacePages;
+         private GridLiquidSmallDrop[] _drops;
++        private GridLiquidFallingMotion[] _fallingMotion;
++        private int _fallingMotionCount;
+         private readonly float[] _weights=new float[8];
+         private int _fieldKernel,_verticesKernel,_smoothKernel,_finishKernel,_normalsKernel,_facesKernel,_argsKernel,_clearKernel;
+         private uint _version=uint.MaxValue,_epoch=uint.MaxValue;
+@@ -126,6 +129,9 @@
+                 _overflowOwnerBuffer=new GraphicsBuffer(GraphicsBuffer.Target.Structured,_frame.OwnerLookup.Length,16);_gpuBytes=domainBytes;
+                 _gpuLookup=new GridLiquidChunkLookup[_budget.LookupSlots];_gpuOwnerLookup=new GridLiquidChunkLookup[_budget.LookupSlots];
+                 _ownerKeys=new GridLiquidChunkLookup[_budget.Views];_draws=new RenderParams[_budget.Views];_drops=new GridLiquidSmallDrop[65536];
++                _frame.ConfigureFallingDrops(_drops.Length);
++                _overflowFrame.ConfigureFallingDrops(_drops.Length);
++                _fallingMotion=new GridLiquidFallingMotion[_drops.Length];
+                 _ownerBounds=new Vector4[_budget.Views*2];
+                 int cachedRows=_budget.InputChunks*_source.ChunkSize*_source.ChunkSize*_source.ChunkSize;
+                 _cachedInputPages=new Dictionary<ElementChunkKey,int>(_budget.InputChunks);
+@@ -180,6 +186,11 @@
+                     }
+                 }
+                 else _fallbackReason=SystemInfo.supportsComputeShaders?"Compute reference missing; CPU reference surface.":"Compute unsupported; CPU reference surface.";
++                // 少量水滴只需 Vertex Shader 读取实例缓冲；CPU 表面回退也必须显示它们。
++                // GPU 路径复用预算中已有 Drops；只有无 Compute 路径额外分配同样固定大小的缓冲。
++                if(_gpu==null){_fallbackDropBuffer=new GraphicsBuffer(GraphicsBuffer.Target.Structured,_drops.Length,32);_gpuBytes+=(long)_drops.Length*32;}
++                var fallingProps=new MaterialPropertyBlock();fallingProps.SetBuffer("_SmallDrops",_gpu!=null?_gpu.Drops:_fallbackDropBuffer);
++                _dropDraw=new RenderParams(_dropMaterial){layer=gameObject.layer,shadowCastingMode=ShadowCastingMode.Off,receiveShadows=true,matProps=fallingProps};
+                 for(int i=0;i<Registry.Length;i++)if(Registry[i]==null){Registry[i]=this;break;}
+                 _valid=true;
+             }
+@@ -224,6 +235,8 @@
+         {
+             long started=System.Diagnostics.Stopwatch.GetTimestamp();
+             using(CaptureMarker.Auto())_frame.Capture(_view.Enabled?_view:null);
++            // 在 GPU 页面压紧前保留整个可见域的水滴；CPU 远页也跳过相同标记，只由此实例批次绘制一次。
++            _fallingMotionCount=_frame.CopyFallingMotion(_fallingMotion);
+             _captureMilliseconds=(float)((System.Diagnostics.Stopwatch.GetTimestamp()-started)*1000.0/System.Diagnostics.Stopwatch.Frequency);
+             _version=_source.SurfaceVersion;_epoch=_source.TransportEpoch;_capturedAt=Time.time;_captured=true;
+             _visibleSurfacePages=_frame.OwnerCount;_culledSourcePages=_frame.CulledSourcePages;_capacityOverflow=_frame.Overflow;
+@@ -280,6 +293,7 @@
+             Vector3 viewCenter=_world!=null?_world.InterestPosition:_viewCamera!=null?_viewCamera.transform.position:transform.position;
+             _view.Update(_viewCamera,viewCenter,_profile.VisibilityFadeStart,_profile.VisibilityFadeEnd,_profile.ViewPadding,_profile.CullByCamera);
+             _view.Bind(_material);_view.Bind(_cpu.Material);_view.Bind(_overflowCpu.Material);
++            _view.Bind(_dropMaterial);
+             bool viewChanged=_captured && (_frame.ViewSignature(_view.Enabled?_view:null)!=_frame.SelectionSignature
+                 || _hybrid && (viewCenter-_capturedViewCenter).sqrMagnitude>_source.CellSize*_source.CellSize);
+             if(viewChanged && IsPresentationPending)_cpu.CancelBuild();
+@@ -293,8 +307,10 @@
+             {
+                 // 首个CPU批次完成前继续显示上一套GPU结果，超预算并不代表撤掉可见液体。
+                 // 首次回退保留GPU；已有完整CPU结果时只画那份CPU，避免两份旧壳叠画。
+-                if(_cpu.IsBuilding && !_cpu.HasVisibleSurface && _uploaded)DrawGpu();
++                // 首次 CPU 回退保留旧连续 Mesh；水滴统一在下面更新并画一次，防止旧/新实例重复叠画。
++                if(_cpu.IsBuilding && !_cpu.HasVisibleSurface && _uploaded)DrawGpu(false);
+                 _cpu.UpdateAndDraw();
++                UpdateDrops();DrawDrops();
+                 if(!_cpu.IsBuilding && _cpuDomainPendingUpload)
+                 {_cpuOwnerBuffer.SetData(_frame.OwnerLookup);_cpuDomainUploaded=true;_cpuDomainPendingUpload=false;}
+                 _gcBytes+=GC.GetAllocatedBytesForCurrentThread()-before;return;
+@@ -305,8 +321,9 @@
+ #endif
+             if(_uploaded && rebuild)
+             {
+-                using(DispatchMarker.Auto())Dispatch();UpdateDrops();_lastAlpha=_alpha;
+-            }
++                using(DispatchMarker.Auto())Dispatch();_lastAlpha=_alpha;
++            }
++            UpdateDrops();
+             DrawGpu();
+             if(_hybrid)
+             {
+@@ -319,7 +336,7 @@
+             _hybridDisplayLagMilliseconds=_hybrid?(Time.time-(_overflowCpu.HasVisibleSurface?_overflowVisibleAt:_overflowCapturedAt))*1000:0;
+             _gcBytes+=GC.GetAllocatedBytesForCurrentThread()-before;
+         }
+-        private void DrawGpu()
++        private void DrawGpu(bool drawDrops=true)
+         {
+ #if UNITY_EDITOR
+             if(_validationHideDraw)return;
+@@ -332,7 +349,7 @@
+                     var key=_ownerKeys[i];_draws[i].worldBounds=new Bounds(_source.Origin+new Vector3((key.X+.5f)*span,(key.Y+.5f)*span,(key.Z+.5f)*span),Vector3.one*(span+_source.CellSize*8));
+                     Graphics.RenderPrimitivesIndexedIndirect(_draws[i],MeshTopology.Triangles,_gpu.Indices,_gpu.Arguments,1,i);
+                 }
+-                if(_smallDrops>0)Graphics.RenderMeshPrimitives(_dropDraw,_dropMesh,0,_smallDrops);
++                if(drawDrops)DrawDrops();
+             }
+         }
+         private void Dispatch()
+@@ -418,9 +435,18 @@
+         }
+         private void UpdateDrops()
+         {
+-            // 用户要求去掉逐格圆珠：GPU/CPU均从同一连续场画扁长流条。
+             _smallDrops=0;
+-        }
++            for(int i=0;i<_fallingMotionCount;i++)
++            {var drop=_fallingMotion[i].Sample(_alpha,_frame.Interval,_frame.CellSize,_frame.CartoonVolumeScale/_frame.Capacity);if(drop.Radius>0)_drops[_smallDrops++]=drop;}
++            if(_smallDrops==0)return;
++            (_gpu!=null?_gpu.Drops:_fallbackDropBuffer).SetData(_drops,0,0,_smallDrops);
++            // RenderMeshPrimitives 不知道程序化实例的位置；正确 World Bounds 才不会在转镜头时被误剔除。
++            var first=_drops[0];var bounds=new Bounds(first.Position,Vector3.one*(first.Radius*3));
++            for(int i=1;i<_smallDrops;i++) bounds.Encapsulate(new Bounds(_drops[i].Position,Vector3.one*(_drops[i].Radius*3)));
++            _dropDraw.worldBounds=bounds;
++        }
++        private void DrawDrops()
++        {if(_smallDrops>0)Graphics.RenderMeshPrimitives(_dropDraw,_dropMesh,0,_smallDrops);}
+         public void BindStableDomain(MaterialPropertyBlock properties)
+         {
+             bool cpuDomain=_cpuFallback && _cpuDomainUploaded;
+@@ -446,6 +472,7 @@
+         {
+             _valid=_captured=_uploaded=_cpuDomainUploaded=_cpuDomainPendingUpload=false;_gpuSurfacePages=_smallDrops=0;
+             _gpu?.Dispose();_gpu=null;_cpu?.Dispose();_cpu=null;_overflowCpu?.Dispose();_overflowCpu=null;
++            _fallbackDropBuffer?.Dispose();_fallbackDropBuffer=null;
+             _cpuOwnerBuffer?.Dispose();_cpuOwnerBuffer=null;_overflowOwnerBuffer?.Dispose();_overflowOwnerBuffer=null;_gpuBytes=0;
+             _hybrid=_overflowDomainUploaded=_overflowPendingUpload=false;_hybridPages=0;
+             _cachedSubdivision=_cachedOwnerCount=_animatedSurfacePages=0;_cachedInputPages?.Clear();
+--- before/Assets/_Project/Art/Elemental/Shaders/ElementLiquidContinuous.shader
++++ after/Assets/_Project/Art/Elemental/Shaders/ElementLiquidContinuous.shader
+@@ -87,7 +87,10 @@
+                 #if defined(LIQUID_CPU_REFERENCE)
+                 p=a.position;n=a.normal;output.first=a.first;output.second=a.second;swellWeight=a.swell.x;
+                 #elif defined(LIQUID_SMALL_DROP)
+-                SmallDrop drop=_SmallDrops[a.instance];p=drop.position+a.position*drop.radius;n=a.normal;
++                SmallDrop drop=_SmallDrops[a.instance];
++                // 纵向略拉长表现重力落滴，X/Z 同时缩窄；三个轴倍率之积为 1，显示体积不膨胀。
++                float3 dropletScale=float3(rsqrt(1.25),1.25,rsqrt(1.25));
++                p=drop.position+a.position*drop.radius*dropletScale;n=normalize(a.normal/dropletScale);
+                 output.first=float4(Unpack(drop.weights.x),Unpack(drop.weights.y));output.second=float4(Unpack(drop.weights.z),Unpack(drop.weights.w));
+                 // 模板共享几何，颜色仍按重底轻顶的密度层选组；不会把两种密度整体混成一滴。
+                 SelectDropLayer(a.position.y*.5+.5,output.first,output.second);
+--- before/Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl
++++ after/Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl
+@@ -132,6 +132,8 @@
+                 float q=0;float3 velocity=0,offset=0;uint flags=0;
+                 [loop]for(int m=0;m<_MaterialCount;m++){CellSample sample=ReadCell(index,m,previous);q+=sample.q;velocity+=sample.v*sample.q;offset+=sample.offset*sample.q;flags|=sample.flags;}
+                 if(q<=0)continue;velocity/=q;offset/=q;
++                // bit 7 由同一 CPU 快照分配少量落水实例；容量溢出时标志全清，连续场负责兜底。
++                if((flags&128u)!=0)continue;
+                 float3 warp=BoundedWarp(velocity,previous?SampleAlpha:SampleAlpha-1),center=float3(x,y,z)+.5+offset+warp;
+                 bool supported=(flags&1u)!=0;
+                 // 与贴地液体共用连续外壳；自由液体形成液舌/液帘，不走圆球实例。
+--- before/Assets/_Project/ScriptableObjects/ElementField/Phases/GasWorld_Default.asset
++++ after/Assets/_Project/ScriptableObjects/ElementField/Phases/GasWorld_Default.asset
+@@ -21,10 +21,14 @@
+   _maximumTerrainSamplesPerTick: 128
+   _maximumBirthScansPerTick: 2048
+   _windVelocity: {x: 0.25, y: 0, z: 0.08}
++  _diluteMaximumCellGmu: 1
++  _diluteMaximumChunkConcentration: 0.005
++  _diluteDelaySeconds: 3
++  _diluteChunksPerTick: 2
+   _materials:
+   - Material: 7
+-    DiffusionPerSecond: 2
+-    BuoyancyPerSecond: 1
++    DiffusionPerSecond: 1
++    BuoyancyPerSecond: 0.6
+   - Material: 8
+     DiffusionPerSecond: 1
+     BuoyancyPerSecond: 0
+--- before/Assets/_Project/ScriptableObjects/ElementField/Phases/MaterialConversions_Default.asset
++++ after/Assets/_Project/ScriptableObjects/ElementField/Phases/MaterialConversions_Default.asset
+@@ -31,15 +31,16 @@
+   - Source: 7
+     FirstProduct: 1
+     SecondProduct: 0
+-    InputUnits: 1
++    InputUnits: 8
+     FirstUnits: 1
+     SecondUnits: 0
++    DissipatedUnits: 7
+     Condition: 1
+-    Threshold: 35
+-    InputGmuPerSecond: 12
+-    InputFractionPerSecond: 0.4
++    Threshold: 10
++    InputGmuPerSecond: 0.5
++    InputFractionPerSecond: 0.05
+     MinimumInputGmu: 32
+-    CooldownSeconds: 3
++    CooldownSeconds: 8
+   - Source: 1
+     FirstProduct: 5
+     SecondProduct: 0
+@@ -53,6 +54,7 @@
+   - Source: 5
+     FirstProduct: 1
+     SecondProduct: 0
++    Disabled: 1
+     InputUnits: 1
+     FirstUnits: 1
+     SecondUnits: 0
+--- before/Assets/_Project/ScriptableObjects/Materials/MaterialStatusProjection_Default.asset
++++ after/Assets/_Project/ScriptableObjects/Materials/MaterialStatusProjection_Default.asset
+@@ -28,3 +28,6 @@
+   - Material: 8
+     Status: 2
+     MaximumApplyPerExposureTick: 10
++  - Material: 7
++    Status: 1
++    MaximumApplyPerExposureTick: 4
+--- before/Assets/_Project/ScriptableObjects/ElementField/Liquids/ElementWorldProfile_P7_DemoRun_Grid.asset
++++ after/Assets/_Project/ScriptableObjects/ElementField/Liquids/ElementWorldProfile_P7_DemoRun_Grid.asset
+@@ -24,7 +24,7 @@
+   _settleAfterUnchangedTicks: 2
+   _maxDownFlowPerTick: 64
+   _maxLateralFlowPerTick: 16
+-  _fireDecayPerTick: 1
++  _fireDecayPerTick: 2
+   _waterSimulationMode: 2
+   _enableFluidChunkStreaming: 0
+   _fluidWarmPaddingChunks: 1
+--- before/Assets/_Project/ScriptableObjects/P8/ElementField/ElementWorldProfile_P8BossField.asset
++++ after/Assets/_Project/ScriptableObjects/P8/ElementField/ElementWorldProfile_P8BossField.asset
+@@ -24,7 +24,7 @@
+   _settleAfterUnchangedTicks: 2
+   _maxDownFlowPerTick: 64
+   _maxLateralFlowPerTick: 16
+-  _fireDecayPerTick: 1
++  _fireDecayPerTick: 2
+   _waterSimulationMode: 2
+   _enableFluidChunkStreaming: 0
+   _fluidWarmPaddingChunks: 1
+--- before/Assets/_Project/Editor/MaterialWorldSolidGasSetup.cs
++++ after/Assets/_Project/Editor/MaterialWorldSolidGasSetup.cs
+@@ -69,6 +69,7 @@
+             // 生产 Gas 的同质量体积大于水；保持 Installer 与共享 Profile 一致。
+             SetInt(gasProfile, "_cellCapacityGmu", 32);
+             SetInt(gasProfile, "_maximumBirthScansPerTick", 2048);
++            ConfigureLifecycleDefaults(gasProfile,conversionProfile);
+             SetInt(solidProfile, "_maximumCellsPerTick", 32);
+             SetInt(solidProfile, "_maximumColliderChunksPerTick", 8);
+             var solidMaterial = GetMaterial("Assets/_Project/Art/Elemental/Materials/M_FixedSolidWorld.mat", "Game/Materials/FixedSolid");
+@@ -197,12 +198,38 @@
+         private static void AddGasProjection(MaterialStatusProjectionProfile projection)
+         {
+             var s = new SerializedObject(projection); var list = s.FindProperty("_bindings");
+-            for (int n = 0; n < list.arraySize; n++) if (list.GetArrayElementAtIndex(n).FindPropertyRelative("Material").intValue == (int)MaterialId.ToxicVapor) return;
+-            var binding = list.GetArrayElementAtIndex(list.arraySize++);
+-            binding.FindPropertyRelative("Material").intValue = (int)MaterialId.ToxicVapor;
+-            binding.FindPropertyRelative("Status").intValue = (int)StatusKind.Poisoned;
+-            binding.FindPropertyRelative("MaximumApplyPerExposureTick").floatValue = 10;
++            var materials=new[]{MaterialId.ToxicVapor,MaterialId.Steam};
++            for(int i=0;i<materials.Length;i++)
++            {
++                bool found=false;
++                for(int n=0;n<list.arraySize;n++) found|=list.GetArrayElementAtIndex(n).FindPropertyRelative("Material").intValue==(int)materials[i];
++                if(found) continue;
++                var binding=list.GetArrayElementAtIndex(list.arraySize++);
++                binding.FindPropertyRelative("Material").intValue=(int)materials[i];
++                binding.FindPropertyRelative("Status").intValue=(int)(i==0?StatusKind.Poisoned:StatusKind.Wet);
++                binding.FindPropertyRelative("MaximumApplyPerExposureTick").floatValue=i==0?10:4;
++            }
+             s.ApplyModifiedPropertiesWithoutUndo();
++        }
++        private static void ConfigureLifecycleDefaults(GasWorldProfile gas,MaterialConversionProfile conversion)
++        {
++            // 迁移旧默认并支持缺失资产重建；非默认的冷凝参数不被 Installer 覆盖。
++            var gs=new SerializedObject(gas);
++            if(gs.FindProperty("_diluteMaximumCellGmu").intValue==0) gs.FindProperty("_diluteMaximumCellGmu").intValue=1;
++            gs.ApplyModifiedPropertiesWithoutUndo();
++            var cs=new SerializedObject(conversion);var rules=cs.FindProperty("_rules");
++            for(int i=0;i<rules.arraySize;i++)
++            {
++                var rule=rules.GetArrayElementAtIndex(i);
++                int source=rule.FindPropertyRelative("Source").intValue,target=rule.FindPropertyRelative("FirstProduct").intValue;
++                if(source==(int)MaterialId.Ice && target==(int)MaterialId.Water) rule.FindPropertyRelative("Disabled").boolValue=true;
++                if(source!=(int)MaterialId.Steam || target!=(int)MaterialId.Water || rule.FindPropertyRelative("InputUnits").longValue!=1
++                    || rule.FindPropertyRelative("Threshold").floatValue!=35) continue;
++                rule.FindPropertyRelative("InputUnits").longValue=8;rule.FindPropertyRelative("DissipatedUnits").longValue=7;
++                rule.FindPropertyRelative("Threshold").floatValue=10;rule.FindPropertyRelative("InputGmuPerSecond").floatValue=.5f;
++                rule.FindPropertyRelative("InputFractionPerSecond").floatValue=.05f;rule.FindPropertyRelative("CooldownSeconds").floatValue=8;
++            }
++            cs.ApplyModifiedPropertiesWithoutUndo();
+         }
+         private static T GetOrCreate<T>(string path) where T : ScriptableObject
+         { var asset = AssetDatabase.LoadAssetAtPath<T>(path); if (asset == null) { asset = ScriptableObject.CreateInstance<T>(); AssetDatabase.CreateAsset(asset, path); } return asset; }
+--- before/Assets/_Project/Editor/MaterialPhaseFocusedChecks.cs
++++ after/Assets/_Project/Editor/MaterialPhaseFocusedChecks.cs
+@@ -54,7 +54,8 @@
+                     if(profile!=null && !EditorUtility.IsPersistent(profile)) UnityEngine.Object.DestroyImmediate(host);
+                 }
+             int passed = 0, failed = 0;
+-            string[] fixtures = mode=="phase-e"?new[]{"Game.ElementField.Tests.MaterialWorldSolidGasPerformanceTests","Game.Rendering.Tests.GasFieldVolumePerformanceTests"}
++            string[] fixtures = mode=="lifecycle"?new[]{"Game.Rendering.Tests.MaterialPhaseAssetTests","Game.ElementField.Tests.MaterialConversionTests","Game.ElementField.Tests.MaterialWorldSolidGasPerformanceTests","Game.Rendering.Tests.FallingLiquidPresentationTests","Game.Rendering.Tests.GridLiquidFieldSamplerTests"}
++                :mode=="phase-e"?new[]{"Game.ElementField.Tests.MaterialWorldSolidGasPerformanceTests","Game.Rendering.Tests.GasFieldVolumePerformanceTests"}
+                 :mode=="liquid-regression"?new[]{"Game.ElementField.Tests.StableLiquidRegionCandidateTests"}
+                 :conversionsOnly ? new[] { "Game.ElementField.Tests.MaterialConversionTests" } : new[] { "Game.ElementField.Tests.MaterialSolidGasWorldTests", "Game.ElementField.Tests.FixedSolidGeometryTests",
+                 "Game.ElementField.Tests.MaterialPhaseRuntimeTests", "Game.ElementField.Tests.MaterialPhaseIntegrationTests",
+--- before/Assets/_Project/Tests/Rendering/MaterialPhaseAssetTests.cs
++++ after/Assets/_Project/Tests/Rendering/MaterialPhaseAssetTests.cs
+@@ -8,6 +8,47 @@
+ {
+     public sealed class MaterialPhaseAssetTests
+     {
++        [Test]
++        public void ProductionSteamNeedsColdAirAndIceRemainsSolidAtAmbientTemperature()
++        {
++            var profile=AssetDatabase.LoadAssetAtPath<MaterialConversionProfile>("Assets/_Project/ScriptableObjects/ElementField/Phases/MaterialConversions_Default.asset");
++            var ambient=new MaterialEnvironmentSample(profile.AmbientTemperature,profile.AmbientDryness);
++            var cold=profile.GetRule(1); var melt=profile.GetRule(3);
++            Assert.That(profile.IsValid,Is.True);
++            Assert.That(MaterialConversionEvaluator.Matches(in cold,in ambient),Is.False,"常温不能把每团蒸汽当成持续滴水源。");
++            Assert.That(MaterialConversionEvaluator.Matches(in melt,in ambient),Is.False,"没有外界干扰时固体应保留。");
++            Assert.That(cold.FirstUnits/(float)cold.InputUnits,Is.LessThanOrEqualTo(.125f),"小气团只形成少量可见冷凝水。");
++            Assert.That(cold.InputFractionPerSecond,Is.LessThanOrEqualTo(.05f));
++        }
++        [Test]
++        public void ProductionSteamAppliesGentleWetAndGasDiffusionKeepsMovingSlowly()
++        {
++            var projection=new SerializedObject(AssetDatabase.LoadAssetAtPath<MaterialStatusProjectionProfile>("Assets/_Project/ScriptableObjects/Materials/MaterialStatusProjection_Default.asset"));
++            var bindings=projection.FindProperty("_bindings"); bool steamWet=false;
++            for(int i=0;i<bindings.arraySize;i++)
++            {
++                var binding=bindings.GetArrayElementAtIndex(i);
++                if(binding.FindPropertyRelative("Material").intValue!=(int)MaterialId.Steam) continue;
++                steamWet=binding.FindPropertyRelative("Status").intValue==(int)Game.Combat.StatusKind.Wet
++                    && binding.FindPropertyRelative("MaximumApplyPerExposureTick").floatValue>0;
++            }
++            Assert.That(steamWet,Is.True,"Steam 必须通过真实 Exposure 查询施加 Wet。");
++            var gas=AssetDatabase.LoadAssetAtPath<GasWorldProfile>("Assets/_Project/ScriptableObjects/ElementField/Phases/GasWorld_Default.asset");
++            for(int i=0;i<gas.MaterialCount;i++)
++            {
++                var behavior=gas.GetMaterial(i);
++                Assert.That(behavior.DiffusionPerSecond,Is.InRange(.1f,1f));
++                if(behavior.Material==MaterialId.Steam) Assert.That(behavior.BuoyancyPerSecond,Is.InRange(.1f,.6f));
++            }
++        }
++        [TestCase("Assets/_Project/ScriptableObjects/ElementField/Liquids/ElementWorldProfile_P7_DemoRun_Grid.asset")]
++        [TestCase("Assets/_Project/ScriptableObjects/P8/ElementField/ElementWorldProfile_P8BossField.asset")]
++        public void BothPlayableWorldsUseShorterResidualFire(string path)
++        {
++            var profile=new SerializedObject(AssetDatabase.LoadAssetAtPath<ElementWorldProfile>(path));
++            Assert.That(profile.FindProperty("_fireDecayPerTick").intValue,Is.EqualTo(2));
++            Assert.That(profile.FindProperty("_tickRate").floatValue,Is.EqualTo(10f));
++        }
+         [TestCase("Ice")]
+         [TestCase("DriedSlime")]
+         public void ActualSolidProjectileOnRaisedFloorPublishesTheWholeImpactInFirstTick(string name)
+@@ -110,6 +151,7 @@
+         }
+         [TestCase("Game/Materials/FixedSolid")]
+         [TestCase("Game/Materials/RealGasVolume")]
++        [TestCase("Game/Elemental/Liquid Continuous Field")]
+         public void NewShadersCompileWithoutErrors(string shaderName)
+         {
+             var shader = Shader.Find(shaderName); Assert.That(shader, Is.Not.Null);
+--- before/Assets/_Project/Tests/ElementField/MaterialConversionTests.cs
++++ after/Assets/_Project/Tests/ElementField/MaterialConversionTests.cs
+@@ -54,7 +54,7 @@
+             public bool TryCommit(MaterialConversionAddress source,uint consume,MaterialConversionPlacement[] targets,int count,in MaterialConversionStamp stamp)
+             {
+                 if(!Prepared || stamp.Gas!=Version || Source!=stamp.SourceQuantity) return false;
+-                Source-=consume; First+=targets[0].Quantity; Second+=targets[1].Quantity; Prepared=false; return true;
++                Source-=consume; First+=targets[0].Quantity; if(count>1)Second+=targets[1].Quantity; Prepared=false; return true;
+             }
+             public void Cancel() => Prepared=false;
+         }
+@@ -77,6 +77,40 @@
+             Assert.That(port.Source+port.First+port.Second,Is.EqualTo(7));
+             Assert.That(ledger.Consumed(MaterialId.Sticky),Is.EqualTo(4UL));
+             Assert.That(ledger.Produced(MaterialId.DriedSlime)+ledger.Produced(MaterialId.Steam),Is.EqualTo(4UL));
++        }
++        [Test]
++        public void LowYieldCondensationCommitsExplicitDissipationOnlyWithItsWater()
++        {
++            var port=new ReservationPort{Source=16};var ledger=new MaterialWorldQuantityLedger();
++            var transaction=new MaterialConversionTransaction(port,ledger);
++            var source=new MaterialConversionAddress(Vector3Int.zero,MaterialId.Steam);
++            var product=new[]{new MaterialConversionPlacement(Vector3Int.zero,MaterialId.Water,1)};
++            Assert.That(transaction.TryPrepare(source,8,product,1),Is.False,"缺少消散声明的数量缺口仍必须被拒绝。");
++            port.SecondTargetAvailable=false;
++            Assert.That(transaction.TryPrepare(source,8,product,1,7),Is.False);
++            Assert.That(ledger.ExplicitlyConsumed(MaterialId.Steam),Is.Zero);
++            port.SecondTargetAvailable=true;
++            Assert.That(transaction.TryPrepare(source,8,product,1,7),Is.True);transaction.Cancel();
++            Assert.That(port.Source,Is.EqualTo(16));Assert.That(ledger.ExplicitlyConsumed(MaterialId.Steam),Is.Zero);
++            Assert.That(transaction.TryPrepare(source,8,product,1,7),Is.True);port.Version++;
++            Assert.That(transaction.Commit(),Is.False);Assert.That(port.Source,Is.EqualTo(16));
++            Assert.That(transaction.TryPrepare(source,8,product,1,7),Is.True);Assert.That(transaction.Commit(),Is.True);
++            Assert.That(port.Source,Is.EqualTo(8));Assert.That(port.First,Is.EqualTo(1));
++            Assert.That(ledger.ExplicitlyConsumed(MaterialId.Steam),Is.EqualTo(7));
++            Assert.That((ulong)port.Source+port.First+ledger.ExplicitlyConsumed(MaterialId.Steam),Is.EqualTo(16));
++            Assert.That(transaction.Commit(),Is.False,"重复提交不能再次记录消散。");
++        }
++        [Test]
++        public void DisabledMeltingIsValidDataAndCannotMatchEvenAHotEnvironment()
++        {
++            var profile=ScriptableObject.CreateInstance<MaterialConversionProfile>();
++            try
++            {
++                var rule=profile.GetRule(3);rule.Disabled=true;var heat=new MaterialEnvironmentSample(100,.4f);
++                Assert.That(rule.IsValid,Is.True);Assert.That(MaterialConversionEvaluator.Matches(in rule,in heat),Is.False);
++                rule.Disabled=false;Assert.That(MaterialConversionEvaluator.Matches(in rule,in heat),Is.True);
++            }
++            finally{UnityEngine.Object.DestroyImmediate(profile);}
+         }
+ 
+         private sealed class World : IDisposable
+--- before/Assets/_Project/Tests/ElementField/MaterialWorldSolidGasPerformanceTests.cs
++++ after/Assets/_Project/Tests/ElementField/MaterialWorldSolidGasPerformanceTests.cs
+@@ -8,6 +8,68 @@
+ {
+     public sealed class MaterialWorldSolidGasPerformanceTests
+     {
++        [Test]
++        public void ExtremelyDiluteChunkDissipatesWithAccountingWhileDenseAndMixedGasRemain()
++        {
++            var profile=ScriptableObject.CreateInstance<GasWorldProfile>();
++            JsonUtility.FromJsonOverwrite("{\"_diluteMaximumCellGmu\":1,\"_diluteChunksPerTick\":2}",profile);
++            try
++            {
++                var store=new GasVolumeStore(8,8,32,new[]{MaterialId.Steam,MaterialId.ToxicVapor});
++                var activity=new MaterialCellActivityQueue(128,store);var ledger=new MaterialWorldQuantityLedger();
++                var dissipate=new GasDiluteDissipation(store,activity,profile,ledger.RecordExplicitConsumption);
++                store.TryAdd(Vector3Int.zero,MaterialId.Steam,1);
++                store.TryAdd(Vector3Int.right*8,MaterialId.Steam,2);
++                store.TryAdd(Vector3Int.right*16,MaterialId.Steam,1);store.TryAdd(Vector3Int.right*16,MaterialId.ToxicVapor,1);
++                // 局部格只有 1 GMU，但平均 0.78% 尚未到极稀薄；不能只看单格就清掉整个云团。
++                for(int n=0;n<128;n++)store.TryAdd(new Vector3Int(24+n%8,n/8%8,n/64),MaterialId.ToxicVapor,1);
++                for(int tick=0;tick<60;tick++){dissipate.Step(.1f);Assert.That(dissipate.CheckedChunksLastTick,Is.LessThanOrEqualTo(2));}
++                Assert.That(store.TotalQuantity,Is.EqualTo(132));Assert.That(ledger.ExplicitlyConsumed(MaterialId.Steam),Is.EqualTo(1));
++                Assert.That(store.TryGetQuantity(Vector3Int.right*8,MaterialId.Steam,out _),Is.True);
++                Assert.That(store.TryGetQuantity(Vector3Int.right*16,MaterialId.ToxicVapor,out _),Is.True);
++                store.ReclaimEmptyChunks();Assert.That(store.ResidentChunkCount,Is.EqualTo(3));
++            }
++            finally{UnityEngine.Object.DestroyImmediate(profile);}
++        }
++        [Test]
++        public void DiluteGasFreezesOutsideDomainAndReturningStartsANewGracePeriod()
++        {
++            var profile=ScriptableObject.CreateInstance<GasWorldProfile>();
++            JsonUtility.FromJsonOverwrite("{\"_diluteMaximumCellGmu\":1}",profile);
++            try
++            {
++                var store=new GasVolumeStore(8,2,32,new[]{MaterialId.Steam});var activity=new MaterialCellActivityQueue(32,store);
++                var dissipate=new GasDiluteDissipation(store,activity,profile,null);store.TryAdd(Vector3Int.zero,MaterialId.Steam,1);
++                for(int tick=0;tick<20;tick++)dissipate.Step(.1f);
++                var empty=new ElementWorldActivityRegions();activity.SetDomain(empty,Vector3.zero,1);
++                for(int tick=0;tick<100;tick++)dissipate.Step(.1f);
++                Assert.That(store.TotalQuantity,Is.EqualTo(1));
++                activity.SetDomain(null,Vector3.zero,1);dissipate.Step(.1f);
++                Assert.That(store.TotalQuantity,Is.EqualTo(1),"返场不能补算消散或延续离开前的删除倒计时。");
++                for(int tick=0;tick<31;tick++)dissipate.Step(.1f);
++                Assert.That(store.TotalQuantity,Is.Zero);
++            }
++            finally{UnityEngine.Object.DestroyImmediate(profile);}
++        }
++        [Test]
++        public void DiluteCleanupHasBoundedWorkAndZeroManagedAllocationWithRealRemoval()
++        {
++            var profile=ScriptableObject.CreateInstance<GasWorldProfile>();
++            JsonUtility.FromJsonOverwrite("{\"_diluteMaximumCellGmu\":1}",profile);
++            try
++            {
++                var store=new GasVolumeStore(8,64,32,new[]{MaterialId.Steam});var activity=new MaterialCellActivityQueue(128,store);
++                var dissipate=new GasDiluteDissipation(store,activity,profile,null);
++                for(int i=0;i<64;i++)store.TryAdd(Vector3Int.right*(i*8),MaterialId.Steam,i<32?1u:2u);
++                for(int tick=0;tick<10;tick++)dissipate.Step(.1f);
++                long before=GC.GetAllocatedBytesForCurrentThread();int maximum=0;
++                for(int tick=0;tick<150;tick++){dissipate.Step(.1f);maximum=Math.Max(maximum,dissipate.CheckedChunksLastTick);}
++                long allocated=GC.GetAllocatedBytesForCurrentThread()-before;
++                Assert.That(allocated,Is.Zero);Assert.That(maximum,Is.LessThanOrEqualTo(2));
++                Assert.That(store.TotalQuantity,Is.EqualTo(64),"测试期间确实清理 32 个薄 Chunk，保留全部浓格。");
++            }
++            finally{UnityEngine.Object.DestroyImmediate(profile);}
++        }
+         [Test]
+         public void AirTileCacheReusesBoundedSlotsWithRealPhysicsAndZeroManagedAlloc()
+         {
+--- before/Assets/_Project/Scripts/ElementField/Gases/MaterialCellActivityQueue.cs
++++ after/Assets/_Project/Scripts/ElementField/Gases/MaterialCellActivityQueue.cs
+@@ -35,6 +35,16 @@
+         }
+         public bool Contains(Vector3Int cell) => _regions == null
+             || _regions.Contains(_origin + ((Vector3)cell + Vector3.one * .5f) * _size);
++        internal bool ContainsChunk(ElementChunkKey key,int edge)
++        {
++            if(_regions==null)return true;
++            Vector3 minimum=_origin+(new Vector3(key.X*edge,key.Y*edge,key.Z*edge)+Vector3.one*.5f)*_size;
++            Vector3 maximum=minimum+Vector3.one*((edge-1)*_size);
++            // 必须由同一个活动 Bounds 覆盖整个 Chunk；分别落在两个房间的角点不能证明中间空隙也活动。
++            for(int i=0;i<_regions.Count;i++)
++            {var bounds=_regions.GetBounds(i);if(bounds.Contains(minimum) && bounds.Contains(maximum))return true;}
++            return false;
++        }
+         public void Wake(Vector3Int cell)
+         {
+             if (!Contains(cell) || _queued.Contains(cell)) return;
+--- before/Assets/_Project/Scripts/Rendering/ElementField/GridLiquidSmallDrop.cs
++++ after/Assets/_Project/Scripts/Rendering/ElementField/GridLiquidSmallDrop.cs
+@@ -10,4 +10,28 @@
+         public float Radius;
+         public uint First,Second,Third,Fourth;
+     }
++    /// <summary>完整可见快照的少量落水姿态；独立于随后 GPU/CPU 的页面划分，避免两种路径边界变形。</summary>
++    internal struct GridLiquidFallingMotion
++    {
++        internal Vector3 PreviousCenter,CurrentCenter,PreviousVelocity,CurrentVelocity;
++        // 极小滴每格总量 ≤8，8 个材料各用一个 byte 无损保存，共 16 Bytes，不创建每滴数组。
++        internal uint Previous0,Previous1,Current0,Current1;
++        internal uint Quantity(bool previous,int slot)
++        {uint packed=slot<4?(previous?Previous0:Current0):(previous?Previous1:Current1);return packed>>(slot%4*8)&255u;}
++        internal GridLiquidSmallDrop Sample(float alpha,float interval,float cellSize,float volumeScaleOverCapacity)
++        {
++            alpha=Mathf.Clamp01(alpha);float quantity=0;uint old=0,now=0;
++            for(int i=0;i<8;i++){old+=Quantity(true,i);now+=Quantity(false,i);}
++            quantity=Mathf.Lerp(old,now,alpha);if(quantity<=0)return default;
++            Vector3 a=PreviousCenter+Vector3.ClampMagnitude(PreviousVelocity*(interval*alpha),cellSize*3);
++            Vector3 b=CurrentCenter+Vector3.ClampMagnitude(CurrentVelocity*(interval*(alpha-1)),cellSize*3);
++            // scale/capacity 把 GMU 数量换成占格体积；艺术倍率与连续液体一致，不能使用固定最小半径。
++            float volume=quantity*cellSize*cellSize*cellSize*volumeScaleOverCapacity;
++            return new GridLiquidSmallDrop{Position=old>0 && now>0?Vector3.Lerp(a,b,alpha):old>0?a:b,
++                Radius=Mathf.Pow(3*volume/(4*Mathf.PI),1f/3f),First=Weights(0,alpha,quantity),Second=Weights(2,alpha,quantity),Third=Weights(4,alpha,quantity),Fourth=Weights(6,alpha,quantity)};
++        }
++        private uint Weights(int slot,float alpha,float quantity)=>GridLiquidPackedCell.HalfPair(
++            Mathf.Lerp(Quantity(true,slot),Quantity(false,slot),alpha)/quantity,
++            Mathf.Lerp(Quantity(true,slot+1),Quantity(false,slot+1),alpha)/quantity);
++    }
+ }
+--- before/Assets/_Project/ScriptableObjects/Materials/MaterialCatalog_Default.asset
++++ after/Assets/_Project/ScriptableObjects/Materials/MaterialCatalog_Default.asset
+@@ -17,3 +17,7 @@
+   - {fileID: 11400000, guid: a7ce351aa2d0b3448a1655b97d090551, type: 2}
+   - {fileID: 11400000, guid: 1f101dffa2658f3499d6547b271cb4f3, type: 2}
+   - {fileID: 11400000, guid: 035ecca874f97774d9fffacb47fe45d7, type: 2}
++  - {fileID: 11400000, guid: 0ca4fc2231831e7458835aa99b64c45b, type: 2}
++  - {fileID: 11400000, guid: aea29a36b905bc94cac64821befca093, type: 2}
++  - {fileID: 11400000, guid: 7ee4aac9cb0882c45922adcfbd247797, type: 2}
++  - {fileID: 11400000, guid: 61a5109d3507abf48bba8b1ecb443e45, type: 2}
+--- before/Assets/_Project/Tests/ElementField/MaterialPhaseIntegrationTests.cs
++++ after/Assets/_Project/Tests/ElementField/MaterialPhaseIntegrationTests.cs
+@@ -51,8 +51,9 @@
+             Assert.That(query.TryGetAmount(Vector3Int.zero, MaterialId.Steam, out byte steam), Is.True);
+             Assert.That(steam, Is.EqualTo(192));
+         }
+-        [Test]
+-        public void GasExposureSamplesBreathingHeightAndKeepsMaximumAcrossRepeatedColliders()
++        [TestCase(MaterialId.ToxicVapor, StatusKind.Poisoned)]
++        [TestCase(MaterialId.Steam, StatusKind.Wet)]
++        public void GasExposureSamplesBreathingHeightAndKeepsMaximumAcrossRepeatedColliders(MaterialId material,StatusKind status)
+         {
+             var host = new GameObject("Gas Exposure Test"); host.SetActive(false);
+             var profile = ScriptableObject.CreateInstance<ElementWorldProfile>();
+@@ -70,11 +71,11 @@
+                 Set(world, "_materialQuery", new MaterialStateQueryRouter(actualRoutes, null, null, null, null, gas));
+                 var exposure = host.AddComponent<ElementWorldExposureSystem>(); Set(exposure, "_runtime", world);
+                 Set(exposure, "_statusProjection", new MaterialStatusProjectionSnapshot(catalog, new[] {
+-                    new MaterialStatusProjectionBinding { Material = MaterialId.ToxicVapor, Status = StatusKind.Poisoned, MaximumApplyPerExposureTick = 10 } }));
++                    new MaterialStatusProjectionBinding { Material = material, Status = status, MaximumApplyPerExposureTick = material==MaterialId.Steam?4:10 } }));
+                 var maximum = new byte[64]; Set(exposure, "_maximumAmounts", maximum);
+                 var sample = typeof(ElementWorldExposureSystem).GetMethod("SampleBounds", BindingFlags.NonPublic | BindingFlags.Instance);
+                 object[] arguments = { new Bounds(new Vector3(.5f, .9f, .5f), new Vector3(1, 1.8f, 1)), new Bounds(Vector3.one, Vector3.one * 10), 0 };
+-                sample.Invoke(exposure, arguments); Assert.That(maximum[0], Is.Zero, "脚下毒气不等于吸入。");
++                sample.Invoke(exposure, arguments); Assert.That(maximum[0], Is.Zero, "脚下气体不等于身体进入气团。");
+                 gas.Y = 6; sample.Invoke(exposure, arguments); Assert.That(maximum[0], Is.EqualTo(192));
+                 gas.Y = 3; gas.Value = 64; sample.Invoke(exposure, arguments); Assert.That(maximum[0], Is.EqualTo(192), "多 Collider 只保留最大浓度。");
+             }
+--- before/Assets/_Project/Scripts/ElementField/Gases/GasDiluteDissipation.cs
++++ after/Assets/_Project/Scripts/ElementField/Gases/GasDiluteDissipation.cs
+@@ -0,0 +1,56 @@
++using System;
++using UnityEngine;
++using Game.Materials;
++
++namespace Game.ElementField
++{
++    /// <summary>极稀薄尾雾的有界生命周期；只处理模拟域内真实库存，不参与 Shader 或距离卸载。</summary>
++    internal sealed class GasDiluteDissipation
++    {
++        private readonly GasVolumeStore _store;
++        private readonly MaterialCellActivityQueue _activity;
++        private readonly GasWorldProfile _profile;
++        private readonly Action<MaterialId,ulong> _consumed;
++        private readonly float[] _thinSeconds;
++        private readonly bool[] _eligible;
++        private readonly uint[] _generations;
++        private int _cursor;
++        internal int CheckedChunksLastTick { get; private set; }
++        internal GasDiluteDissipation(GasVolumeStore store,MaterialCellActivityQueue activity,GasWorldProfile profile,Action<MaterialId,ulong> consumed)
++        {
++            _store=store;_activity=activity;_profile=profile;_consumed=consumed;
++            _thinSeconds=new float[store.MaximumChunks];_eligible=new bool[store.MaximumChunks];_generations=new uint[store.MaximumChunks];
++        }
++        internal void Step(float deltaTime)
++        {
++            CheckedChunksLastTick=0;
++            if(_profile.DiluteMaximumCellGmu==0 || _store.TotalQuantity==0) return;
++            // O(MaximumChunks) 只更新小表的时钟/域状态；详细读取最多两个 Chunk，不能每 Tick 扫整个浓度场。
++            // 每 Tick 发现离域就清掉尾雾计时，回来需重新验证，绝不补算离开时间。
++            for(int i=0;i<_store.ResidentChunkCount;i++)
++            {
++                int slot=_store.GetChunkSlot(i);uint generation=_store.GetChunkAllocationVersion(i);
++                if(_generations[slot]!=generation || !WholeChunkActive(_store.GetChunkKey(i)))
++                {_generations[slot]=generation;_thinSeconds[slot]=0;_eligible[slot]=false;}
++                else if(_eligible[slot]) _thinSeconds[slot]+=deltaTime;
++            }
++            ulong maximumTotal=(ulong)Math.Floor(_store.CellsPerChunk*(double)_store.CellCapacity*_profile.DiluteMaximumChunkConcentration);
++            int work=Math.Min(_profile.DiluteChunksPerTick,_store.ResidentChunkCount);
++            for(int scan=0;scan<work;scan++)
++            {
++                if(_cursor>=_store.ResidentChunkCount) _cursor=0;
++                int index=_cursor++,slot=_store.GetChunkSlot(index);
++                if(!WholeChunkActive(_store.GetChunkKey(index))) continue;
++                CheckedChunksLastTick++;
++                if(!_store.IsChunkDilute(index,_profile.DiluteMaximumCellGmu,maximumTotal))
++                {_thinSeconds[slot]=0;_eligible[slot]=false;continue;}
++                if(!_eligible[slot]) {_eligible[slot]=true;_thinSeconds[slot]=0;continue;}
++                if(_thinSeconds[slot]<_profile.DiluteDelaySeconds) continue;
++                // 最后一次重新验证浓度后才清理；版本通知会使 Renderer/Exposure 读取空量，账本同步记消散。
++                _store.DissipateChunk(index,_consumed);_eligible[slot]=false;_thinSeconds[slot]=0;
++            }
++        }
++        private bool WholeChunkActive(ElementChunkKey key)
++            =>_activity.ContainsChunk(key,_store.ChunkSize);
++    }
++}
+--- before/Assets/_Project/Scripts/ElementField/Gases/GasDiluteDissipation.cs.meta
++++ after/Assets/_Project/Scripts/ElementField/Gases/GasDiluteDissipation.cs.meta
+@@ -0,0 +1,2 @@
++fileFormatVersion: 2
++guid: f9c9be8e5f642414da5ef7bc639261cb--- before/Assets/_Project/Tests/Rendering/FallingLiquidPresentationTests.cs
++++ after/Assets/_Project/Tests/Rendering/FallingLiquidPresentationTests.cs
+@@ -0,0 +1,141 @@
++using System;
++using System.Reflection;
++using Game.ElementField;
++using Game.Materials;
++using NUnit.Framework;
++using UnityEditor;
++using UnityEngine;
++
++namespace Game.Rendering.Tests
++{
++    public sealed class FallingLiquidPresentationTests
++    {
++        private sealed class World:IDisposable
++        {
++            private readonly GameObject _host=new GameObject("Small Falling Liquid Test");
++            private readonly LiquidWorldProfile _profile=UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<LiquidWorldProfile>("Assets/_Project/ScriptableObjects/ElementField/Liquids/LiquidWorldProfile_P7_DemoRun_Grid.asset"));
++            internal readonly LiquidWorldRuntime Liquid;
++            internal readonly GridLiquidFieldFrame Frame;
++            internal World(int capacity=64)
++            {
++                _host.SetActive(false);_host.hideFlags=HideFlags.DontSave;
++                JsonUtility.FromJsonOverwrite("{\"_maximumChunks\":16,\"_maximumActiveCells\":128,\"_enableAutoStableDetection\":false}",_profile);
++                Liquid=_host.AddComponent<LiquidWorldRuntime>();
++                typeof(LiquidWorldRuntime).GetField("_profile",BindingFlags.Instance|BindingFlags.NonPublic).SetValue(Liquid,_profile);
++                Assert.That(Liquid.TryInitialize(Vector3.one*100,.25f,8,_host.AddComponent<ElementFieldSolidBaker>()),Is.True);
++                Frame=new GridLiquidFieldFrame(Liquid,32,128,.8f,1.8f);Frame.ConfigureFallingDrops(capacity);
++            }
++            public void Dispose(){UnityEngine.Object.DestroyImmediate(_host);UnityEngine.Object.DestroyImmediate(_profile);}
++        }
++        private static double Volume(GridLiquidSmallDrop drop)=>4*Math.PI/3*drop.Radius*drop.Radius*drop.Radius;
++        [Test]
++        public void TinyCondensateUsesOneMassScaledDropInsteadOfAThinProxySheet()
++        {
++            using var world=new World();var cell=new Vector3Int(0,3,0);
++            world.Liquid.TryAddInitial(cell,MaterialId.Water,2,false);
++            // 首次写入的 Previous=0 表示出生，不能把出生渐入误当作已有水量闪烁。
++            // 不唤醒 Solver，下一 Tick 清除出生 History 后才是两帧相同的静止量。
++            world.Liquid.Step(.1f);world.Frame.Capture();var drops=new GridLiquidSmallDrop[64];
++            double expected=2d/world.Liquid.CellCapacityGmu*Math.Pow(world.Liquid.CellSize,3)*world.Frame.CartoonVolumeScale;
++            for(int phase=0;phase<=4;phase++)
++            {
++                Assert.That(world.Frame.CopyFallingDrops(phase*.25f,drops),Is.EqualTo(1),"静止量的两个 Tick 不能重复叠画半量水滴。");
++                Assert.That(Volume(drops[0]),Is.EqualTo(expected).Within(expected*.0001));
++                Assert.That(drops[0].Radius,Is.LessThan(world.Liquid.CellSize*.2f),"几滴冷凝水不能成为宽大的空中液片。");
++            }
++            var sampler=new GridLiquidFieldSampler(world.Frame);
++            Assert.That(sampler.Evaluate(drops[0].Position,1),Is.LessThan(0),"水滴实例和连续 Mesh 不能重复表现同一份量。");
++            Assert.That(world.Liquid.TotalQuantity,Is.EqualTo(2));
++        }
++        [Test]
++        public void SmallDropCapacityOverflowKeepsTheCompleteContinuousField()
++        {
++            using var world=new World(1);var drops=new GridLiquidSmallDrop[1];
++            world.Liquid.TryAddInitial(new Vector3Int(0,3,0),MaterialId.Water,2,false);
++            world.Liquid.TryAddInitial(new Vector3Int(4,3,0),MaterialId.Water,2,false);world.Frame.Capture();
++            Assert.That(world.Frame.CopyFallingDrops(1,drops),Is.Zero);
++            Assert.That(new GridLiquidFieldSampler(world.Frame).Evaluate(world.Liquid.Origin+new Vector3(.5f,3.5f,.5f)*world.Liquid.CellSize,1),Is.GreaterThan(0));
++            Assert.That(world.Liquid.TotalQuantity,Is.EqualTo(4));
++        }
++        [Test]
++        public void SmallDropInterpolationAndPackingAllocateNothingAfterWarmup()
++        {
++            using var world=new World();var drops=new GridLiquidSmallDrop[64];
++            world.Liquid.TryAddInitial(new Vector3Int(0,3,0),MaterialId.Water,2,false);world.Liquid.Step(.1f);world.Frame.Capture();
++            world.Frame.CopyFallingDrops(.5f,drops);long before=GC.GetAllocatedBytesForCurrentThread();int total=0;
++            for(int i=0;i<300;i++)total+=world.Frame.CopyFallingDrops(i%5*.25f,drops);
++            long allocated=GC.GetAllocatedBytesForCurrentThread()-before;
++            Assert.That(total,Is.EqualTo(300));Assert.That(allocated,Is.Zero);
++        }
++        [Test]
++        public void FullDomainFallingSnapshotSurvivesGpuPageSelectionWithoutAVisibleBoundary()
++        {
++            using var world=new World();var motion=new GridLiquidFallingMotion[64];
++            world.Liquid.TryAddInitial(new Vector3Int(0,3,0),MaterialId.Water,2,false);
++            world.Liquid.TryAddInitial(new Vector3Int(64,3,0),MaterialId.Water,2,false);world.Liquid.Step(.1f);world.Frame.Capture();
++            int count=world.Frame.CopyFallingMotion(motion);Assert.That(count,Is.EqualTo(2));
++            double expected=4d/world.Liquid.CellCapacityGmu*Math.Pow(world.Liquid.CellSize,3)*world.Frame.CartoonVolumeScale;
++            world.Frame.SelectGpuDomain(1,1);double volume=0;
++            for(int i=0;i<count;i++)volume+=Volume(motion[i].Sample(.5f,world.Frame.Interval,world.Frame.CellSize,world.Frame.CartoonVolumeScale/world.Frame.Capacity));
++            Assert.That(volume,Is.EqualTo(expected).Within(expected*.001),"CPU 远页的落水也要在完整域实例批次中保持同一外形和数量。");
++        }
++        [Test]
++        public void NewlyBornDropFadesInWithItsQuantityWithoutAnOversizedMinimumRadius()
++        {
++            using var world=new World();var drops=new GridLiquidSmallDrop[64];
++            world.Liquid.TryAddInitial(new Vector3Int(0,3,0),MaterialId.Water,2,false);world.Frame.Capture();
++            double expected=2d/world.Liquid.CellCapacityGmu*Math.Pow(world.Liquid.CellSize,3)*world.Frame.CartoonVolumeScale;
++            Assert.That(world.Frame.CopyFallingDrops(0,drops),Is.Zero);
++            for(int phase=1;phase<=4;phase++)
++            {
++                Assert.That(world.Frame.CopyFallingDrops(phase*.25f,drops),Is.EqualTo(1));
++                Assert.That(Volume(drops[0]),Is.EqualTo(expected*phase*.25).Within(expected*.001));
++            }
++            Assert.That(world.Liquid.TotalQuantity,Is.EqualTo(2),"渐入只影响显示，Gameplay 数量在出生时已存在。");
++        }
++        [Test]
++        public void CopyToSmallerDropPoolFallsBackWithoutDroppingLiquidOrRescanningAir()
++        {
++            using var world=new World();
++            world.Liquid.TryAddInitial(new Vector3Int(0,3,0),MaterialId.Water,2,false);
++            world.Liquid.TryAddInitial(new Vector3Int(4,3,0),MaterialId.Water,2,false);world.Liquid.Step(.1f);world.Frame.Capture();
++            var smaller=new GridLiquidFieldFrame(world.Liquid,32,128,.8f,1.8f,true);smaller.ConfigureFallingDrops(1);
++            smaller.CopyFrom(world.Frame);
++            Assert.That(smaller.CopyFallingDrops(1,new GridLiquidSmallDrop[1]),Is.Zero);
++            Assert.That(new GridLiquidFieldSampler(smaller).Evaluate(world.Liquid.Origin+new Vector3(.5f,3.5f,.5f)*world.Liquid.CellSize,1),Is.GreaterThan(0));
++            Assert.That(world.Frame.CopyFallingDrops(1,new GridLiquidSmallDrop[64]),Is.EqualTo(2),"目标快照兜底不能改写来源快照。");
++            Assert.That(world.Liquid.TotalQuantity,Is.EqualTo(4));
++        }
++        [Test]
++        public void TinyWaterOnActualGroundRemainsAContinuousPuddle()
++        {
++            using var world=new World();var floor=new GameObject("Small Condensate Floor");
++            floor.transform.position=new Vector3(100,99.75f,100);floor.AddComponent<BoxCollider>().size=new Vector3(16,.5f,16);
++            try
++            {
++                Physics.SyncTransforms();world.Liquid.TryAddInitial(Vector3Int.zero,MaterialId.Water,2,false);world.Frame.Capture();
++                Assert.That(world.Frame.CopyFallingDrops(1,new GridLiquidSmallDrop[64]),Is.Zero,"接地少量水继续并入水滩，不能保留一颗悬浮圆珠。");
++                Assert.That(world.Liquid.TotalQuantity,Is.EqualTo(2));
++            }
++            finally{UnityEngine.Object.DestroyImmediate(floor);}
++        }
++        [Test]
++        public void FallingQuantityStaysConstantAcrossTickAndSubframeTransitions()
++        {
++            using var world=new World();var drops=new GridLiquidSmallDrop[64];
++            world.Liquid.TryAddInitial(new Vector3Int(0,6,0),MaterialId.Water,2,false);
++            double expected=2d/world.Liquid.CellCapacityGmu*Math.Pow(world.Liquid.CellSize,3)*world.Frame.CartoonVolumeScale;
++            for(int tick=0;tick<20;tick++)
++            {
++                world.Liquid.Step(.1f);world.Frame.Capture();
++                for(int phase=0;phase<=4;phase++)
++                {
++                    int count=world.Frame.CopyFallingDrops(phase*.25f,drops);double volume=0;
++                    for(int i=0;i<count;i++)volume+=Volume(drops[i]);
++                    Assert.That(volume,Is.EqualTo(expected).Within(expected*.001),"数量/半径在格转移时不能突然膨胀或缩水。");
++                }
++                Assert.That(world.Liquid.TotalQuantity,Is.EqualTo(2));
++            }
++        }
++    }
++}
+--- before/Assets/_Project/Tests/Rendering/FallingLiquidPresentationTests.cs.meta
++++ after/Assets/_Project/Tests/Rendering/FallingLiquidPresentationTests.cs.meta
+@@ -0,0 +1,2 @@
++fileFormatVersion: 2
++guid: f7bf206ae4fc30e4faf75ce2fefc1940

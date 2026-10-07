@@ -1,0 +1,79 @@
+{
+    "Kind": "Direct NUnit method invocation; not Unity TestRunner XML",
+    "StartUtc": "2026-10-03T16:29:49.2749386Z",
+    "EndUtc": "2026-10-03T16:29:53.1999084Z",
+    "Reason": "",
+    "Passed": 7,
+    "Failed": 1,
+    "Skipped": 0,
+    "Planned": 8,
+    "Completed": 8,
+    "Aborted": false,
+    "SceneRestored": true,
+    "Cases": [
+        {
+            "Name": "Game.ElementField.Tests.LiquidFluxSolverDeadbandTests.DistantWaterSleepsWithoutLossAndWakesWhenGameplayRegionReturns",
+            "Arguments": "",
+            "Error": "NUnit.Framework.AssertionException:   Grid Solver needs the existing world Gameplay activity domain, independently of Camera visibility.\r\n  Expected: not null\r\n  But was:  null\r\n\r\n  at NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) [0x00039] in <f577cd9686154d6ab10efd7e65e64366>:0 \r\n  at Game.ElementField.Tests.LiquidFluxSolverDeadbandTests.DistantWaterSleepsWithoutLossAndWakesWhenGameplayRegionReturns () [0x000e3] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\ElementField\\LiquidFluxSolverDeadbandTests.cs:18 \r\n  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)\r\n  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 ",
+            "Passed": false,
+            "Skipped": false,
+            "DurationSeconds": 0.028693300002487378
+        },
+        {
+            "Name": "Game.ElementField.Tests.LiquidFluxSolverDeadbandTests.FallingPoisonHandsPartialStableWaterToLayerSolverBeforeEntering",
+            "Arguments": "",
+            "Error": "",
+            "Passed": true,
+            "Skipped": false,
+            "DurationSeconds": 0.034469000005628917
+        },
+        {
+            "Name": "Game.ElementField.Tests.LiquidFluxSolverDeadbandTests.DryFrontKeepsWaterAndStickyFlowRateDifference",
+            "Arguments": "",
+            "Error": "",
+            "Passed": true,
+            "Skipped": false,
+            "DurationSeconds": 0.003718499996466562
+        },
+        {
+            "Name": "Game.ElementField.Tests.LiquidFluxSolverDeadbandTests.LightPoisonRisesAboveWaterWithoutChangingEitherMaterialTotal",
+            "Arguments": "",
+            "Error": "",
+            "Passed": true,
+            "Skipped": false,
+            "DurationSeconds": 0.0012347000010777265
+        },
+        {
+            "Name": "Game.ElementField.Tests.LiquidFluxSolverDeadbandTests.WaterDoesNotFlowHorizontallyIntoHigherMixedLiquidColumn",
+            "Arguments": "",
+            "Error": "",
+            "Passed": true,
+            "Skipped": false,
+            "DurationSeconds": 0.001090400000975933
+        },
+        {
+            "Name": "Game.ElementField.Tests.LiquidFluxSolverDeadbandTests.SmallDifferenceSleepsButVisibleDifferenceFlowsWithoutLosingQuantity",
+            "Arguments": "",
+            "Error": "",
+            "Passed": true,
+            "Skipped": false,
+            "DurationSeconds": 0.001211000002513174
+        },
+        {
+            "Name": "Game.Rendering.Tests.GridLiquidVisibilityTests.AccumulatedPagesDoNotBlockNewWaterNearCamera",
+            "Arguments": "False",
+            "Error": "",
+            "Passed": true,
+            "Skipped": false,
+            "DurationSeconds": 0.3548577000037767
+        },
+        {
+            "Name": "Game.Rendering.Tests.GridLiquidVisibilityTests.AccumulatedPagesDoNotBlockNewWaterNearCamera",
+            "Arguments": "True",
+            "Error": "",
+            "Passed": true,
+            "Skipped": false,
+            "DurationSeconds": 0.8131628999981331
+        }
+    ]
+}

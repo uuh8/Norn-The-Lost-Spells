@@ -9,5 +9,7 @@ namespace Game.Materials
         None = 0,
         Liquid = 1,
         ReactiveField = 2,
+        Solid = 3,
+        Gas = 4,
     }
 }

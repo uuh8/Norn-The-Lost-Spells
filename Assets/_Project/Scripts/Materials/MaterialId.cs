@@ -13,5 +13,10 @@ namespace Game.Materials
         // 显式编号已进入 Scene、Asset 与 GPU Buffer 协议，后续只能追加，不能重排。
         Poison = 3,
         Sticky = 4,
+        // 固体和气体保有独立身份；相变是数量转移，不能改写旧材料编号。
+        Ice = 5,
+        DriedSlime = 6,
+        Steam = 7,
+        ToxicVapor = 8,
     }
 }

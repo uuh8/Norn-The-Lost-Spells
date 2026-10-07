@@ -1,4 +1,6 @@
-#pragma kernel GatherFireDensity
+#pragma kernel ClearFireDensity
+#pragma kernel ScatterFireDensity
+#pragma kernel ResolveFireDensity
 
 struct FireParcelStateGpu
 {
@@ -9,46 +11,69 @@ struct FireParcelStateGpu
 };
 StructuredBuffer<FireParcelStateGpu> _FireParcelStates;
 RWTexture3D<float> _FireDensity;
+RWStructuredBuffer<uint> _DensityAccumulation;
 int _Capacity;
-int _SurfaceParcelBudget;
-int _SurfaceStartSlot;
+int _VoxelCount;
 int _GridResolutionX, _GridResolutionY, _GridResolutionZ;
 float3 _WorldOrigin;
 float3 _VoxelSize;
 float _SurfaceKernelScale;
 float _LiquidLikeRadiusMultiplier;
+float _CohesionRadius;
+float _SurfaceVerticalStretch;
 
-[numthreads(4,4,4)]
-void GatherFireDensity(uint3 id : SV_DispatchThreadID)
+uint Index(int3 p)
 {
-    if (id.x >= (uint)_GridResolutionX
-        || id.y >= (uint)_GridResolutionY
-        || id.z >= (uint)_GridResolutionZ)
-        return;
-    // point 在部分 HLSL importer 中会被解析为保留 token，使用明确的 World-space 名称。
-    float3 samplePositionWS = _WorldOrigin + (float3)id * _VoxelSize;
-    float density = 0.0;
-    int count = min(_Capacity, _SurfaceParcelBudget);
-    [loop] for (int i = 0; i < count; i++)
+    return (uint)((p.z * _GridResolutionY + p.y) * _GridResolutionX + p.x);
+}
+
+[numthreads(64,1,1)]
+void ClearFireDensity(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x < (uint)_VoxelCount) _DensityAccumulation[id.x] = 0;
+}
+
+[numthreads(64,1,1)]
+void ScatterFireDensity(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= (uint)_Capacity) return;
+    FireParcelStateGpu state = _FireParcelStates[id.x];
+    if (state.active < 0.5 || state.surfaceWeight <= 0.001) return;
+    // 紧支撑 Kernel 的重叠直接相加：邻近 Parcel 共用同一个等值面，远离火源不跨空地连通。
+    // 早期主体跟随 Source 的比例较高，避免粒子上升后根部变成一串悬浮火球。
+    float support = max(state.radius * _SurfaceKernelScale * _LiquidLikeRadiusMultiplier, _CohesionRadius);
+    float stretch = max(_SurfaceVerticalStretch, 1.0);
+    float3 centerWS = lerp(state.sourcePosition, state.position, 0.35) + float3(0, support * 0.25, 0);
+    // 运动已由 Lifecycle 的 Buoyancy/Noise 连续推进；这里不再按来源各自横向摆动，
+    // 否则相邻火源会周期性被拉开，出现时连时断的主体。
+    float3 extent = float3(support, support * stretch, support);
+    int3 first = max((int3)ceil((centerWS - extent - _WorldOrigin) / _VoxelSize), int3(0,0,0));
+    int3 last = min((int3)floor((centerWS + extent - _WorldOrigin) / _VoxelSize),
+        int3(_GridResolutionX - 1, _GridResolutionY - 1, _GridResolutionZ - 1));
+    float strength = state.surfaceWeight * lerp(0.55, 1.0, state.heat);
+    [loop] for (int z = first.z; z <= last.z; z++)
+    [loop] for (int y = first.y; y <= last.y; y++)
+    [loop] for (int x = first.x; x <= last.x; x++)
     {
-        // start 与 count 都小于等于 Capacity，所以和最多跨过 Ring 尾部一次；
-        // 条件减法规避每个 Voxel、每个 Parcel 都执行昂贵的整数 modulus。
-        int slot = _SurfaceStartSlot + i;
-        if (slot >= _Capacity)
-            slot -= _Capacity;
-        FireParcelStateGpu state = _FireParcelStates[slot];
-        if (state.active < 0.5 || state.surfaceWeight <= 0.001) continue;
-        // Surface 与 Gas 使用独立半径：这里仅增强 Liquid-like Density 的连通体积，
-        // Gas Billboard 的大小仍由 Shader 中的 GasRadiusMultiplier 控制。
-        float support = max(
-            state.radius * _SurfaceKernelScale * _LiquidLikeRadiusMultiplier,
-            0.001);
-        float q = length(samplePositionWS - state.position) / support;
-        if (q < 1.0)
+        float3 delta = (_WorldOrigin + float3(x,y,z) * _VoxelSize - centerWS) / support;
+        delta.y /= stretch;
+        // 上方渐窄，根部圆润且互相融合。shape 在中心连续，避免硬分段造成接缝。
+        float taper = lerp(1.0, 0.32, smoothstep(0.0, 1.0, delta.y));
+        delta.xz /= taper;
+        float q2 = dot(delta, delta);
+        if (q2 < 1.0)
         {
-            float x = 1.0 - q * q;
-            density += x * x * x * state.surfaceWeight * lerp(0.55, 1.0, state.heat);
+            float kernel = 1.0 - q2;
+            // 16-bit 小数精度：最大 Capacity=65535 时总量不溢出 uint；无浮点累加顺序抖动。
+            uint density = (uint)round(kernel * kernel * kernel * strength * 65536.0);
+            InterlockedAdd(_DensityAccumulation[Index(int3(x,y,z))], density);
         }
     }
-    _FireDensity[id] = density;
+}
+
+[numthreads(4,4,4)]
+void ResolveFireDensity(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= (uint)_GridResolutionX || id.y >= (uint)_GridResolutionY || id.z >= (uint)_GridResolutionZ) return;
+    _FireDensity[id] = _DensityAccumulation[Index((int3)id)] * (1.0 / 65536.0);
 }

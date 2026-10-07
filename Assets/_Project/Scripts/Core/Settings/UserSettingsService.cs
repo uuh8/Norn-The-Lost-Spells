@@ -27,6 +27,10 @@ namespace Game.Core
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void InitializeBeforeSceneLoad()
         {
+            // 正常游玩采用已约定的 60 FPS 目标，避免 VSync 关闭时无上限渲染持续占满 GPU。
+            // 仅在进入游戏时设置：专用 Performance Lab 可在 Start 中覆盖为 uncapped，
+            // 后续调整音量/全屏不会偷偷重置基准测试的帧率设置。
+            Application.targetFrameRate = 60;
             // 兼容关闭 Domain Reload 的 Editor 配置：每次进入 Play 都重新从持久化数据建立静态快照。
             _isLoaded = false;
             LoadFromPlayerPrefs(publishChange: false);

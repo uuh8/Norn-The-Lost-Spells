@@ -55,6 +55,13 @@ namespace Game.ElementField
                         MaterialSimulationBackendKind.ElementCell,
                         true);
 
+                case WaterSimulationMode.GridLiquid:
+                    return new WaterSimulationCompatibilityDecision(
+                        requestedMode,
+                        WaterSimulationMode.GridLiquid,
+                        MaterialSimulationBackendKind.GridLiquid,
+                        false);
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(requestedMode), requestedMode, "未知 Water Simulation Mode。");
             }

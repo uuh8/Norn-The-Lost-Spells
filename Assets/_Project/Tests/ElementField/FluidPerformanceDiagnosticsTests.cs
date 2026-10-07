@@ -26,6 +26,17 @@ namespace Game.ElementField.Tests
         }
 
         [Test]
+        public void PoolObservation_RejectsSnapshotFromEarlierTransferMutation()
+        {
+            var beforeArchiveCommit = new GpuFluidPoolDiagnostics(
+                true, 3, 8, 0, 0, 10, 10.02, 7);
+
+            Assert.That(beforeArchiveCommit.IsFreshFor(7), Is.True);
+            Assert.That(beforeArchiveCommit.IsFreshFor(8), Is.False,
+                "Archive/Restore 改写 Free List 后，旧 Alive 不能与新的 RAM Archive 计数相加。");
+        }
+
+        [Test]
         public void FailedReadback_KeepsLastSuccessfulSnapshotAgeAndVersion()
         {
             var published = new FluidGameplayDiagnostics(true, 9, 10, 10.01, 10.02, 0);

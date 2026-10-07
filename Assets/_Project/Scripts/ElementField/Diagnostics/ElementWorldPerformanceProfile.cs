@@ -44,6 +44,11 @@ namespace Game.ElementField
         public ElementPerformanceFrameRate FrameRateMode;
         public int MaxWritesPerFrame = 4;
         public bool CaptureEnabled = true;
+        public bool EnableWorldActivityExpansion;
+        public Vector3[] ActivitySourcePositions = Array.Empty<Vector3>();
+        public Vector3[] ProjectileActivitySourcePositions = Array.Empty<Vector3>();
+        public bool RemoveActivitySourcesAtMeasure;
+        public bool RequireFreshMaterialAuditAtDrain;
 
         public void ValidateConfiguration()
         {
@@ -68,6 +73,11 @@ namespace Game.ElementField
                     throw new ArgumentOutOfRangeException(nameof(ParticlesPerWrite), "单次 Amount 超过 ushort。");
             }
             foreach (Vector3 point in DepositPositions) FiniteVector(point);
+            if (ActivitySourcePositions == null) ActivitySourcePositions = Array.Empty<Vector3>();
+            foreach (Vector3 point in ActivitySourcePositions) FiniteVector(point);
+            if (ProjectileActivitySourcePositions == null)
+                ProjectileActivitySourcePositions = Array.Empty<Vector3>();
+            foreach (Vector3 point in ProjectileActivitySourcePositions) FiniteVector(point);
             FiniteVector(MeasurePosition); FiniteVector(InitialVelocity); FiniteVector(SurfaceNormal);
             if (SurfaceNormal.sqrMagnitude < 0.0001f) throw new ArgumentException("需要有效表面法线。");
             if (Movement != ElementPerformanceMovement.None)

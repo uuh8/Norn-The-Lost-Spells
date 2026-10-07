@@ -8,20 +8,31 @@ namespace Game.ElementField
         public readonly uint Alive;
         public readonly uint Free;
         public readonly uint Dropped;
+        public readonly uint MutationVersion;
         public readonly double RequestedAt;
         public readonly double CompletedAt;
 
         public GpuFluidPoolDiagnostics(bool valid, uint version, uint alive, uint free,
             uint dropped, double requestedAt, double completedAt)
+            : this(valid, version, alive, free, dropped, requestedAt, completedAt, 0u)
+        {
+        }
+
+        public GpuFluidPoolDiagnostics(bool valid, uint version, uint alive, uint free,
+            uint dropped, double requestedAt, double completedAt, uint mutationVersion)
         {
             Valid = valid;
             Version = version;
             Alive = alive;
             Free = free;
             Dropped = dropped;
+            MutationVersion = mutationVersion;
             RequestedAt = requestedAt;
             CompletedAt = completedAt;
         }
+
+        /// <summary>Archive/Restore 会改写 Alive/Free；只有同一 Mutation Version 的样本才能参与总账。</summary>
+        public bool IsFreshFor(uint mutationVersion) => Valid && MutationVersion == mutationVersion;
 
         public bool HasConsistentCapacity(uint capacity)
         {

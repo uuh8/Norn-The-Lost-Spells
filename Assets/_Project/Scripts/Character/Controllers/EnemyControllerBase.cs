@@ -105,7 +105,7 @@ namespace Game.Character
         {
             if (_dead || e.TargetId != _id) return;
             if (e.RemainingHp <= 0f) return;        // 致死那一击交给 OnDeath，不进硬直
-            if (!e.TriggerHitReaction) return;       // DoT/环境跳伤：不进硬直，避免被持续伤害锁死
+            if (!e.TriggerHitReaction) return;      // DoT/环境跳伤：不进硬直，避免被持续伤害锁死
             _stateMachine.ChangeState(_hurtState);
         }
 

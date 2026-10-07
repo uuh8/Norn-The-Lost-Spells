@@ -57,12 +57,13 @@ namespace Game.Character
         /// <summary>
         /// 远程瞄准：求屏幕中心（轨道相机朝向）的瞄准点。结果含俯仰，调用方据此算发射方向（瞄准点 - 生成点）。
         /// 实现已上移到 PlayerControllerBase，供状态与控制器（点按瞬间锁存准心）共用；此处仅转发。
-        /// buffer 由调用状态预分配复用（零每帧 GC）。
         /// </summary>
         protected Vector3 ResolveAimTargetPoint(LayerMask aimMask, float maxDistance, RaycastHit[] buffer)
             => _player.ResolveAimTargetPoint(aimMask, maxDistance, buffer);
 
-        /// <summary>把角色平滑转向相机的水平朝向（只 yaw）。远程攻击期间用：身体朝准心方向，"朝哪瞄就朝哪打"。</summary>
+        /// <summary>
+        /// 把角色平滑转向相机的水平朝向（只 yaw）。远程攻击期间用：身体朝准心方向，"朝哪瞄就朝哪打"。
+        /// </summary>
         protected void HandleAimRotation()
         {
             Camera cam = _player.MainCamera;

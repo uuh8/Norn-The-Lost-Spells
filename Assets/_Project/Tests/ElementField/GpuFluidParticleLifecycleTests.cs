@@ -301,6 +301,9 @@ namespace Game.ElementField.Tests
                 Assert.That(fireCount, Is.EqualTo(2));
                 Assert.That(counters[FluidGpuLayout.ActiveCountCounterIndex], Is.EqualTo(4u));
                 Assert.That(counters[FluidGpuLayout.FreeCountCounterIndex], Is.EqualTo(4u));
+                var reactionDeltas = new int[FluidGpuLayout.MaterialAuditSlotCount];
+                resources.ReactionParticleDeltas.GetData(reactionDeltas);
+                Assert.That(reactionDeltas[(byte)MaterialId.Water], Is.EqualTo(-2));
             }
             finally
             {
@@ -363,6 +366,10 @@ namespace Game.ElementField.Tests
                 Assert.That((waterCount, stickyCount, fireCount), Is.EqualTo((2, 2, 2)));
                 Assert.That(counters[FluidGpuLayout.ActiveCountCounterIndex], Is.EqualTo(6u));
                 Assert.That(counters[FluidGpuLayout.FreeCountCounterIndex], Is.EqualTo(2u));
+                var reactionDeltas = new int[FluidGpuLayout.MaterialAuditSlotCount];
+                resources.ReactionParticleDeltas.GetData(reactionDeltas);
+                Assert.That(reactionDeltas[(byte)MaterialId.Water], Is.EqualTo(-2));
+                Assert.That(reactionDeltas[(byte)MaterialId.Sticky], Is.EqualTo(2));
             }
             finally
             {
@@ -421,7 +428,7 @@ namespace Game.ElementField.Tests
         }
 
         [Test]
-        public void Activity_RestingUnderdenseSurfaceSleepsWhileOvercompressedParticleStaysAwake()
+        public void Activity_RestingParticlesSleepDespitePersistentPbfDensityError()
         {
             IgnoreWithoutComputeSupport();
             ComputeShader shader = AssetDatabase.LoadAssetAtPath<ComputeShader>(LifecycleShaderPath);
@@ -464,8 +471,41 @@ namespace Game.ElementField.Tests
                     "Free Surface 缺少外侧邻居会天然低于 Rest Density；低速边缘仍应允许休眠。");
                 Assert.That(velocities[0], Is.EqualTo(Vector4.zero),
                     "进入 Sleeping 时必须清掉阈值内的残余速度，防止 Wake 后恢复微抖动。");
-                Assert.That(FluidActivityFlags.RequiresSolver(metadata[1].Y), Is.True,
-                    "高于 Rest Density 允许误差的压缩粒子仍需继续求解，不能冻结压力。");
+                Assert.That(FluidActivityFlags.IsSleeping(metadata[1].Y), Is.True,
+                    "PBF 静止堆积会保留密度误差；持续低速才是本地休眠的可靠判据。");
+            }
+            finally
+            {
+                resources.Dispose();
+            }
+        }
+
+        [Test]
+        public void Activity_ParticleAboveSleepVelocityRemainsSolverEligible()
+        {
+            IgnoreWithoutComputeSupport();
+            ComputeShader shader = AssetDatabase.LoadAssetAtPath<ComputeShader>(LifecycleShaderPath);
+            Assert.That(shader, Is.Not.Null);
+            var resources = new FluidGpuResourceSet(1, 2, 1);
+            try
+            {
+                DispatchInitialize(shader, resources);
+                DispatchInitializeActivity(shader, resources);
+                resources.Positions.SetData(new[] { new Vector4(1f, 1f, 1f, 1f) });
+                resources.Velocities.SetData(new[] { new Vector4(.02f, 0f, 0f, 0f) });
+                resources.DensityLambda.SetData(new[] { new Vector2(1000f, 0f) });
+                resources.Metadata.SetData(new[]
+                {
+                    new FluidGpuUInt2(1u, FluidGpuLayout.ActiveFlag)
+                });
+                resources.StableTickCounters.SetData(new[] { 2u });
+
+                DispatchActivity(shader, resources, wakeAll: false, stableThreshold: 3);
+
+                var metadata = new FluidGpuUInt2[1];
+                resources.Metadata.GetData(metadata);
+                Assert.That(FluidActivityFlags.RequiresSolver(metadata[0].Y), Is.True);
+                Assert.That(FluidActivityFlags.IsSleeping(metadata[0].Y), Is.False);
             }
             finally
             {
@@ -545,6 +585,40 @@ namespace Game.ElementField.Tests
                 DivideRoundUp(resources.HashTableCapacity),
                 1,
                 1);
+        }
+
+        [Test]
+        public void Activity_DisjointRegionsAdvanceRemoteParticleButNotGapOrTwiceForOverlap()
+        {
+            IgnoreWithoutComputeSupport();
+            ComputeShader shader = Object.Instantiate(AssetDatabase.LoadAssetAtPath<ComputeShader>(LifecycleShaderPath));
+            var resources = new FluidGpuResourceSet(2, 4, 1);
+            try
+            {
+                DispatchInitialize(shader, resources);
+                DispatchInitializeActivity(shader, resources);
+                resources.Positions.SetData(new[] { new Vector4(100, 1, 0, 1), new Vector4(50, 1, 0, 1) });
+                resources.Metadata.SetData(new[] { new FluidGpuUInt2(1, 1), new FluidGpuUInt2(1, 1) });
+                shader.SetInt("_ActivityRegionCount", 3);
+                shader.SetVectorArray("_ActivityRegionMinima", new[] { new Vector4(-2,-2,-2,0), new Vector4(98,-2,-2,0), new Vector4(99,-2,-2,0) });
+                shader.SetVectorArray("_ActivityRegionMaxima", new[] { new Vector4(2,2,2,0), new Vector4(102,2,2,0), new Vector4(103,2,2,0) });
+                DispatchActivity(shader, resources, false, 30);
+                var metadata = new FluidGpuUInt2[2];
+                resources.Metadata.GetData(metadata);
+                Assert.That(FluidActivityFlags.RequiresSolver(metadata[0].Y), Is.True);
+                Assert.That(FluidActivityFlags.RequiresSolver(metadata[1].Y), Is.False);
+                int kernel = shader.FindKernel("ApplyGravity");
+                BindApplyGravity(shader, kernel, resources);
+                shader.SetFloat("_DeltaTime", .1f);
+                shader.SetFloat("_MaxSpeed", 100f);
+                shader.SetVector("_Gravity", new Vector3(0,-10,0));
+                shader.Dispatch(kernel, 1, 1, 1);
+                var velocities = new Vector4[2];
+                resources.Velocities.GetData(velocities);
+                Assert.That(velocities[0].y, Is.EqualTo(-1).Within(.001f));
+                Assert.That(velocities[1].y, Is.Zero);
+            }
+            finally { resources.Dispose(); Object.DestroyImmediate(shader); }
         }
 
         private static void DispatchInitializeActivity(
@@ -686,14 +760,11 @@ namespace Game.ElementField.Tests
             shader.SetVector("_WorldOrigin", worldOrigin);
             shader.SetFloat("_CellSize", cellSize);
             shader.SetBuffer(kernel, "_Positions", resources.Positions);
-            shader.SetBuffer(kernel, "_PredictedPositions", resources.PredictedPositions);
-            shader.SetBuffer(kernel, "_Velocities", resources.Velocities);
-            shader.SetBuffer(kernel, "_DensityLambda", resources.DensityLambda);
             shader.SetBuffer(kernel, "_ParticleMetadata", resources.Metadata);
-            shader.SetBuffer(kernel, "_DeltaPositions", resources.DeltaPositions);
             shader.SetBuffer(kernel, "_FreeIndices", resources.FreeIndices);
             shader.SetBuffer(kernel, "_Counters", resources.Counters);
             shader.SetBuffer(kernel, "_ConsumeRequests", resources.ConsumeRequests);
+            shader.SetBuffer(kernel, "_ReactionParticleDeltas", resources.ReactionParticleDeltas);
             shader.Dispatch(kernel, commandCount, 1, 1);
         }
 
@@ -713,6 +784,7 @@ namespace Game.ElementField.Tests
             shader.SetBuffer(kernel, "_ParticleMetadata", resources.Metadata);
             shader.SetBuffer(kernel, "_StableTickCounters", resources.StableTickCounters);
             shader.SetBuffer(kernel, "_ConvertRequests", resources.ConvertRequests);
+            shader.SetBuffer(kernel, "_ReactionParticleDeltas", resources.ReactionParticleDeltas);
             shader.Dispatch(kernel, commandCount, 1, 1);
         }
 

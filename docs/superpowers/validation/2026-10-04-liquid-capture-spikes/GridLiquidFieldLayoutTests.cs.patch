@@ -1,0 +1,63 @@
+--- L4.27 before/GridLiquidFieldLayoutTests.cs
++++ L4.27 final/GridLiquidFieldLayoutTests.cs
+@@ -1,3 +1,5 @@
++using System;
++using System.IO;
+ using System.Runtime.InteropServices;
+ using NUnit.Framework;
+ using UnityEditor;
+@@ -7,6 +9,54 @@
+ {
+     public sealed class GridLiquidFieldLayoutTests
+     {
++        [Test]
++        public void HalfDecodeKeepsEveryUnityBitPatternAndRemovesRepeatedNativeConversionCost()
++        {
++            // 包含Subnormal、正负零、Infinity和NaN。缓存必须复制Unity实际位模式，
++            // 不能换一套近似转换公式后只检查常见数值；所有16位输入一次穷举。
++            for(int bits=0;bits<65536;bits++)
++            {
++                uint pair=(uint)bits|((uint)(65535-bits)<<16);
++                Assert.That(BitConverter.SingleToInt32Bits(GridLiquidPackedCell.Low(pair)),
++                    Is.EqualTo(BitConverter.SingleToInt32Bits(Mathf.HalfToFloat((ushort)bits))));
++                Assert.That(BitConverter.SingleToInt32Bits(GridLiquidPackedCell.High(pair)),
++                    Is.EqualTo(BitConverter.SingleToInt32Bits(Mathf.HalfToFloat((ushort)(65535-bits)))));
++            }
++            for(int round=0;round<4;round++){DecodeWork(true);DecodeWork(false);}
++            var native=new double[9];var actual=new double[9];double expected=DecodeWork(true),result=0;
++            long allocated=GC.GetAllocatedBytesForCurrentThread();
++            for(int round=0;round<9;round++)
++            {
++                // 同输入交替测量，消除先后顺序/暖机的偏差。计时只包含数值解码。
++                bool nativeFirst=(round&1)==0;
++                long started=System.Diagnostics.Stopwatch.GetTimestamp();result=DecodeWork(nativeFirst);
++                double first=(System.Diagnostics.Stopwatch.GetTimestamp()-started)*1000.0/System.Diagnostics.Stopwatch.Frequency;
++                started=System.Diagnostics.Stopwatch.GetTimestamp();result=DecodeWork(!nativeFirst);
++                double second=(System.Diagnostics.Stopwatch.GetTimestamp()-started)*1000.0/System.Diagnostics.Stopwatch.Frequency;
++                native[round]=nativeFirst?first:second;actual[round]=nativeFirst?second:first;
++            }
++            allocated=GC.GetAllocatedBytesForCurrentThread()-allocated;
++            Directory.CreateDirectory("Backups/ElementPerformance/L427");
++            File.WriteAllText("Backups/ElementPerformance/L427/half-decode-work.json",JsonUtility.ToJson(new HalfWork
++            {Utc=DateTime.UtcNow.ToString("O"),NativeMilliseconds=native,ActualMilliseconds=actual,AllocatedBytes=allocated,
++                NativeImplementation=typeof(Mathf).GetMethod("HalfToFloat").GetMethodImplementationFlags().ToString()},true));
++            Assert.That(result,Is.EqualTo(expected));Assert.That(allocated,Is.Zero);
++            Array.Sort(native);Array.Sort(actual);
++            Assert.That(actual[4],Is.LessThan(native[4]*.7),"高频解码应明显快于重复调用Unity的HalfToFloat；不能只增加缓存而没有实际收益。");
++        }
++        private static double DecodeWork(bool native)
++        {
++            double sum=0;
++            for(int i=0;i<131072;i++)
++            {
++                uint pair=(uint)(0x3800+(i&2047))|((uint)(0x3800+((i*13)&2047))<<16);
++                sum+=native?Mathf.HalfToFloat((ushort)pair)+Mathf.HalfToFloat((ushort)(pair>>16))
++                    :GridLiquidPackedCell.Low(pair)+GridLiquidPackedCell.High(pair);
++            }
++            return sum;
++        }
++        [Serializable]private sealed class HalfWork
++        {public string Utc,NativeImplementation;public double[] NativeMilliseconds,ActualMilliseconds;public long AllocatedBytes;}
+         [Test]
+         public void EmptyPackedCellIgnoresUnusedMotionBits()
+         {

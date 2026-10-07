@@ -3,6 +3,7 @@
 #pragma kernel BuildFireDrawArgs
 
 Texture3D<float> _FireDensity;
+SamplerState sampler_FireDensity;
 struct SurfaceVertex { float3 positionWS; float pad0; float3 normalWS; float pad1; };
 struct SurfaceTriangle { SurfaceVertex v0; SurfaceVertex v1; SurfaceVertex v2; };
 RWStructuredBuffer<SurfaceTriangle> _FireSurfaceTriangles;
@@ -22,11 +23,14 @@ float Sample(int3 p)
 }
 float3 NormalAt(float3 gridPosition)
 {
-    int3 p = (int3)round(gridPosition);
-    float3 g = float3(Sample(p+int3(1,0,0))-Sample(p-int3(1,0,0)),
-                      Sample(p+int3(0,1,0))-Sample(p-int3(0,1,0)),
-                      Sample(p+int3(0,0,1))-Sample(p-int3(0,0,1)));
-    return normalize(-g + float3(0,0.00001,0));
+    // Trilinear Filtering 让法线连续，不能先把交点 round 到格心（会形成明显晶体切面）。
+    float3 size = float3(_GridResolutionX, _GridResolutionY, _GridResolutionZ);
+    float3 uv = (gridPosition + 0.5) / size, stepUV = 0.5 / size;
+    float3 g = float3(
+        _FireDensity.SampleLevel(sampler_FireDensity, uv + float3(stepUV.x,0,0),0) - _FireDensity.SampleLevel(sampler_FireDensity, uv - float3(stepUV.x,0,0),0),
+        _FireDensity.SampleLevel(sampler_FireDensity, uv + float3(0,stepUV.y,0),0) - _FireDensity.SampleLevel(sampler_FireDensity, uv - float3(0,stepUV.y,0),0),
+        _FireDensity.SampleLevel(sampler_FireDensity, uv + float3(0,0,stepUV.z),0) - _FireDensity.SampleLevel(sampler_FireDensity, uv - float3(0,0,stepUV.z),0)) / _VoxelSize;
+    return -g * rsqrt(max(dot(g,g), 0.00000001));
 }
 SurfaceVertex MakeVertex(float3 gridPosition)
 {
@@ -40,6 +44,10 @@ void Emit(float3 a, float3 b, float3 c)
     uint index; InterlockedAdd(_TriangleCounter[0], 1, index);
     if (index >= (uint)_MaximumTriangleCount) { InterlockedAdd(_OverflowCounter[0],1); return; }
     SurfaceTriangle t; t.v0=MakeVertex(a); t.v1=MakeVertex(b); t.v2=MakeVertex(c);
+    // Tetra 索引在不同 Case 下会反向；按 Density Gradient 统一外向 Winding，才可以 Cull Back。
+    if (dot(cross(t.v1.positionWS-t.v0.positionWS,t.v2.positionWS-t.v0.positionWS),
+        t.v0.normalWS+t.v1.normalWS+t.v2.normalWS) < 0)
+    { SurfaceVertex swap=t.v1; t.v1=t.v2; t.v2=swap; }
     _FireSurfaceTriangles[index]=t;
 }
 float3 CrossPoint(float3 a, float da, float3 b, float db)
@@ -50,16 +58,23 @@ float3 CrossPoint(float3 a, float da, float3 b, float db)
 }
 void PolygoniseTetra(float3 p[4], float d[4])
 {
-    static const uint2 edges[6] = { uint2(0,1),uint2(0,2),uint2(0,3),uint2(1,2),uint2(1,3),uint2(2,3) };
-    float3 points[4]; uint count=0;
-    [unroll] for(uint e=0;e<6;e++)
+    uint inside[4], outside[4], ni=0, no=0;
+    [unroll] for(uint i=0;i<4;i++) { if(d[i]>=_IsoLevel) inside[ni++]=i; else outside[no++]=i; }
+    if(ni==0 || ni==4) return;
+    if(ni==1 || ni==3)
     {
-        uint a=edges[e].x,b=edges[e].y;
-        if ((d[a] >= _IsoLevel) != (d[b] >= _IsoLevel) && count<4)
-            points[count++]=CrossPoint(p[a],d[a],p[b],d[b]);
+        uint a=ni==1?inside[0]:outside[0];
+        uint b=ni==1?outside[0]:inside[0], c=ni==1?outside[1]:inside[1], e=ni==1?outside[2]:inside[2];
+        Emit(CrossPoint(p[a],d[a],p[b],d[b]),CrossPoint(p[a],d[a],p[c],d[c]),CrossPoint(p[a],d[a],p[e],d[e]));
     }
-    if(count==3) Emit(points[0],points[1],points[2]);
-    else if(count==4) { Emit(points[0],points[1],points[2]); Emit(points[0],points[2],points[3]); }
+    else
+    {
+        // 两内两外产生四边形。按 ac→ad→bd→bc 的边界顺序拆分，不能按交点发现顺序接线。
+        uint a=inside[0], b=inside[1], c=outside[0], e=outside[1];
+        float3 ac=CrossPoint(p[a],d[a],p[c],d[c]), ad=CrossPoint(p[a],d[a],p[e],d[e]);
+        float3 bc=CrossPoint(p[b],d[b],p[c],d[c]), bd=CrossPoint(p[b],d[b],p[e],d[e]);
+        Emit(ac,ad,bd); Emit(ac,bd,bc);
+    }
 }
 
 [numthreads(1,1,1)] void ClearFireSurface(uint3 id:SV_DispatchThreadID)

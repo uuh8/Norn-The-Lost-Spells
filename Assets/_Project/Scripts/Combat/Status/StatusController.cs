@@ -48,10 +48,14 @@ namespace Game.Combat
         private void OnEnable()
         {
             EventBus<DeathEvent>.Subscribe(OnDeath);
+            EventBus<WorldActivitySourceEvent>.Publish(new WorldActivitySourceEvent
+                { Source = transform, Kind = WorldActivitySourceKind.Unit, Enabled = true });
         }
 
         private void OnDisable()
         {
+            EventBus<WorldActivitySourceEvent>.Publish(new WorldActivitySourceEvent
+                { Source = transform, Kind = WorldActivitySourceKind.Unit, Enabled = false });
             // OnEnable/OnDisable 成对订阅，防止 EventBus 留下指向已禁用组件的 delegate。
             EventBus<DeathEvent>.Unsubscribe(OnDeath);
             CancelReactions();
@@ -357,7 +361,11 @@ namespace Game.Combat
         private void OnDeath(DeathEvent e)
         {
             if (e.TargetId == _targetId)
+            {
                 CancelReactions();
+                EventBus<WorldActivitySourceEvent>.Publish(new WorldActivitySourceEvent
+                    { Source = transform, Kind = WorldActivitySourceKind.Unit, Enabled = false });
+            }
         }
 
         private void AddIntensityDelta(StatusKind kind, float delta)

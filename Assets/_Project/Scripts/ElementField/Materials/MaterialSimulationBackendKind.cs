@@ -9,5 +9,8 @@ namespace Game.ElementField
         Unsupported = 0,
         ElementCell = 1,
         GpuPbfLiquid = 2,
+        GridLiquid = 3,
+        FixedSolid = 4,
+        GridGas = 5,
     }
 }

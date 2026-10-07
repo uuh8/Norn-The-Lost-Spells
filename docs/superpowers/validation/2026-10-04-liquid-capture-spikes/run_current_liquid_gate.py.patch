@@ -1,0 +1,11 @@
+--- L4.27 before/run_current_liquid_gate.py
++++ L4.27 final/run_current_liquid_gate.py
+@@ -59,7 +59,7 @@
+     time.sleep(.25)
+ shutil.copyfile(result, output)
+ # 重启会删除 Temp；每次完成后立即留下可审计报告，不能等全部验证结束再归档。
+-archive = root / 'docs/superpowers/validation/2026-10-04-liquid-page-cache'
++archive = root / 'docs/superpowers/validation/2026-10-04-liquid-capture-spikes'
+ archive.mkdir(parents=True, exist_ok=True)
+ shutil.copyfile(output, archive / output.name)
+ report = json.loads(output.read_text(encoding='utf-8-sig'))

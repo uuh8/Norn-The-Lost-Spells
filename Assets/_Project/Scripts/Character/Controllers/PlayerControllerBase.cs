@@ -47,11 +47,8 @@ namespace Game.Character
         [SerializeField, Min(0)] private int _airDashesPerAirborne = 1; // 设为 0 可让某个角色保持仅地面 Dash
         [Tooltip("空中 Dash 开始时保留多少进入前垂直速度：0 = 清除，1 = 完整保留。Dash 期间仍暂停重力积分。")]
         [SerializeField, Range(0f, 1f)] private float _airDashVerticalVelocityRetention = 1f; // 共享默认保持旧行为；Wizard Prefab 显式设为 0
-
         [SerializeField] private float _dashMoveDelay = 0.1f; // 冲刺位移启动延迟（秒）：等翻滚动画起势后再位移，避免"先闪后翻"。设 0 = 进入即位移
-
-        [SerializeField] private string
-            _dashStateName = "DashForward_SingleTwohandSword"; // Dash 目标 Animator 状态名（数据驱动，各角色填自己 Controller 的节点名）
+        [SerializeField] private string _dashStateName = "DashForward_SingleTwohandSword"; // Dash 目标 Animator 状态名（数据驱动，各角色填自己 Controller 的节点名）
         [SerializeField] private string _airDashStateName = "AirDash"; // 与地面 Dash 分离，避免共用翻滚动画
 
         // Unity 组件引用：Awake 缓存一次，后续状态对象直接复用，避免在 Update 热路径反复 GetComponent。
@@ -119,10 +116,17 @@ namespace Game.Character
         public PlayerSlidingState SlidingState => _slidingState;
         public PlayerDashState DashState => _dashState;
 
-        /// <summary>通用攻击输入剩余有效时间；由 InputAction 回调写入、Update 递减、具体攻击状态消费。</summary>
+        /// <summary>
+        /// 通用攻击输入剩余有效时间；大于 0 表示玩家已发出一次攻击请求，但当前状态尚未消费。
+        /// 所有角色共用这一份“待处理攻击意图”，避免子类重复维护 bool + timer。
+        /// </summary>
         public float AttackBufferCounter { get; set; }
         public float AttackBufferTime => _attackBufferTime;
-        /// <summary>攻击冷却剩余秒数；大于 0 时不能开始下一次攻击，由 Controller 每帧统一递减。</summary>
+
+        /// <summary>
+        /// 攻击冷却剩余秒数；大于 0 时不能开始下一次攻击，由 Controller 每帧统一递减。
+        /// Buffer 记录“玩家想攻击”，Cooldown 记录“系统暂时不能攻击”，两者职责不同。
+        /// </summary>
         public float AttackCooldownCounter { get; set; } // 时长来自攻击时序配置的 AttackCooldown
 
         public float DashSpeed => _dashSpeed;
@@ -172,8 +176,10 @@ namespace Game.Character
         /// </summary>
         public void ClearPendingJumpAnimation() => _animator.ResetTrigger(JumpHash);
 
-        // IsPressed 查询当前持续按住状态；WasPressedThisFrame 只在“未按 -> 按下”的那一帧为 true。
-        // 法术施放使用后者，把一次物理点击转换成一个离散请求，避免按住鼠标时每帧重复入队。
+        // IsPressed 持续按住为 true，松开为 false。
+        // WasPressedThisFrame用于检测“按下”的上升沿。核心特性：只在按下的那一帧返回 true
+        // WasReleasedThisFrame用于检测“松开”的下降沿。核心特性：只在松开的那个帧返回 true
+        // ReadValue<>()用于读取当前输入的值。例如 moveAction.ReadValue<Vector2>() 读取摇杆偏移。
         public bool IsAttackHeld => _inputActions.Player.Attack.IsPressed();
         public bool AttackPressedThisFrame => _inputActions.Player.Attack.WasPressedThisFrame();
 
@@ -189,13 +195,6 @@ namespace Game.Character
         /// 与 TryStartAttack 平行：地面/空中两条入口，各角色自行决定是否实现空中分支。
         /// </summary>
         public virtual bool TryStartAirAttack() => false;  // 基类：安全的空实现
-
-        /// <summary>
-        /// 每帧攻击输入处理钩子（始终运行，与当前状态无关）。基类空实现；
-        /// 法术角色重写后在按下瞬间锁存准心并缓存一个待施法请求。
-        /// 它在状态机 Update 之前调用，因此同一帧的当前 State 能立即看到新输入；攻击状态期间也不会停止采样。
-        /// </summary>
-        protected virtual void UpdateAttackInput() { }
 
         /// <summary>
         /// 角色专属 Animator 参数同步 seam。共享基类只维护 speed/isGrounded；
@@ -220,7 +219,7 @@ namespace Game.Character
             Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
 
             // RaycastNonAlloc 把命中结果写进调用方提供的数组，不像 RaycastAll 那样返回新数组。
-            // 返回值 count 是本次实际写入数量；若命中数超过 buffer 容量，只能处理数组容纳的部分。
+            // 返回 int count 是为了告诉调用者：数组的前 count 个元素是本次检测的有效结果，请不要越界访问。
             int count = Physics.RaycastNonAlloc(
                 ray,
                 buffer,
@@ -238,6 +237,7 @@ namespace Game.Character
             {
                 // IsChildOf 判断 Collider 是否属于角色层级，防止射线从相机出发后先命中自己的模型/碰撞体。
                 if (buffer[i].collider.transform.IsChildOf(transform)) continue;
+
                 if (buffer[i].distance < nearest)
                 {
                     nearest = buffer[i].distance;
@@ -298,29 +298,31 @@ namespace Game.Character
             // Start 而非 Awake 进入初始状态：保证所有 GameObject 的 Awake 已执行完
             TargetFacing = transform.forward;           // 锁存初值 = 出生朝向，避免开局自转到世界 +Z
             _stateMachine.ChangeState(_groundedState);  // 将初始状态切到 GroundedState。
-            // Cursor 不属于角色 FSM。Gameplay、Guide、Wand Editor 与 Pause Menu 的 Cursor
-            // 状态统一由 RunPauseCoordinator 按 Pause Reason 管理，避免多个 Start 的顺序竞态。
         }
 
         protected virtual void OnEnable()
         {
             EventBus<UserSettingsChangedEvent>.Subscribe(OnUserSettingsChanged);
             ApplyUserSettings(UserSettingsService.Current);
+
             // InputActionMap 只有 Enable 后才会更新动作状态并触发 performed；Disable 时必须解除回调，避免重复订阅。
             _inputActions.Player.Enable();
             _inputActions.Player.Jump.performed += OnJumpPerformed;
             _inputActions.Player.Attack.performed += OnAttackPerformed;
             _inputActions.Player.Dash.performed += OnDashPerformed;
+
             Current = this; // 注册为当前玩家
         }
 
         protected virtual void OnDisable()
         {
             EventBus<UserSettingsChangedEvent>.Unsubscribe(OnUserSettingsChanged);
+
             _inputActions.Player.Jump.performed -= OnJumpPerformed;
             _inputActions.Player.Attack.performed -= OnAttackPerformed;
             _inputActions.Player.Dash.performed -= OnDashPerformed;
             _inputActions.Player.Disable();
+
             if (Current == this) Current = null; // 注销（仅当自己仍是当前者）
         }
 
@@ -349,8 +351,7 @@ namespace Game.Character
                 VerticalVelocity,
                 _inputActions.Player.Jump.IsPressed());
 
-            // 固定顺序：先采样攻击 -> 当前 State 决策/切换 -> 用本帧最终 Gameplay 状态同步 Animator。
-            UpdateAttackInput();
+            // Input System 回调已经写入离散按键意图；当前 State 按优先级消费，再同步最终 Gameplay 状态。
             _stateMachine.Update();
             SyncAnimatorParameters();
         }
@@ -388,10 +389,17 @@ namespace Game.Character
             JumpBufferCounter = _jumpBufferTime;
         }
 
-        private void OnAttackPerformed(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
+        /// <summary>
+        /// Input System 判定 Attack Action 满足触发条件时调用。
+        /// 子类可重写它，在同一个输入时刻补充角色专属快照，例如 Wizard 的点击瞄准点。
+        /// </summary>
+        protected virtual void OnAttackPerformed(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
         {
             // performed 是 Input System 判定该 Action 完成一次交互时触发的回调。
-            // 通用 Buffer 服务于共享攻击入口；法术角色还会在 UpdateAttackInput 中保存更完整的“瞄准点 + 请求有效期”。
+            // 暂停界面也会使用鼠标；UI 点击不能泄漏成恢复游戏后的攻击请求。
+            if (Time.timeScale == 0f)
+                return;
+
             AttackBufferCounter = _attackBufferTime;
         }
 

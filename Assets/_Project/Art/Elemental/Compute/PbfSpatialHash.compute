@@ -7,6 +7,7 @@
 #include "FluidGpuCommon.hlsl"
 
 StructuredBuffer<float4> _PredictedPositions;
+StructuredBuffer<float4> _Velocities;
 StructuredBuffer<uint2> _ParticleMetadata;
 RWStructuredBuffer<uint> _WakeRequests;
 RWStructuredBuffer<int4> _SpatialCells;
@@ -16,6 +17,7 @@ RWStructuredBuffer<uint2> _CellRanges;
 int _ParticleCapacity;
 int _HashTableCapacity;
 float _SmoothingRadius;
+float _WakeVelocityThreshold;
 int _BitonicStage;
 int _BitonicPass;
 
@@ -149,7 +151,10 @@ void MarkNeighborWakeRequests(uint3 dispatchThreadId : SV_DispatchThreadID)
                 continue;
             }
             float3 difference = _PredictedPositions[entry.y].xyz - sourcePosition;
-            if (dot(difference, difference) < radiusSquared)
+            // “仍在累计稳定 Tick 的低速邻居”不应反复唤醒已经休眠的粒子，否则整个堆积区
+            // 永远无法同时收敛。只有产生可见运动的邻居才传播扰动；写入、碰撞与反应另有显式 Wake。
+            if (dot(difference, difference) < radiusSquared
+                && length(_Velocities[entry.y].xyz) > _WakeVelocityThreshold)
             {
                 _WakeRequests[particleIndex] = 1u;
                 return;

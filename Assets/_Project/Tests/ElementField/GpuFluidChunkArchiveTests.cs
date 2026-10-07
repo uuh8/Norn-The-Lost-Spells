@@ -134,6 +134,56 @@ namespace Game.ElementField.Tests
             finally { resources.Dispose(); }
         }
 
+        [Test]
+        public void Archive_ExcludeListUnlocksOnlyMixedChunkParticleBeforeRelease()
+        {
+            if (!SystemInfo.supportsComputeShaders || SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
+                Assert.Ignore("Requires a real graphics device with ComputeShader support.");
+            ComputeShader shader = AssetDatabase.LoadAssetAtPath<ComputeShader>(ShaderPath);
+            var resources = new FluidGpuResourceSet(2, 4, 1);
+            try
+            {
+                Initialize(shader, resources);
+                uint lockedSleeping = FluidGpuLayout.AliveFlag | FluidActivityFlags.InterestActive
+                    | FluidActivityFlags.Sleeping | FluidActivityFlags.ArchiveLocked;
+                resources.Metadata.SetData(new[]
+                {
+                    new FluidGpuUInt2(1u, lockedSleeping),
+                    new FluidGpuUInt2(1u, lockedSleeping)
+                });
+                resources.Counters.SetData(new[] { 0u, 2u, 0u, 0u });
+                resources.ArchiveUnlockIndices.SetData(new[] { 0u, 0u });
+
+                int exclude = shader.FindKernel("ExcludeArchiveParticleIndices");
+                shader.SetInt("_ParticleCapacity", 2);
+                shader.SetInt("_ArchiveUnlockIndexCount", 1);
+                shader.SetBuffer(exclude, "_ParticleMetadata", resources.Metadata);
+                shader.SetBuffer(exclude, "_ArchiveUnlockIndices", resources.ArchiveUnlockIndices);
+                shader.Dispatch(exclude, 1, 1, 1);
+
+                int release = shader.FindKernel("ReleaseArchiveLockedParticles");
+                shader.SetBuffer(release, "_Positions", resources.Positions);
+                shader.SetBuffer(release, "_PredictedPositions", resources.PredictedPositions);
+                shader.SetBuffer(release, "_Velocities", resources.Velocities);
+                shader.SetBuffer(release, "_ParticleMetadata", resources.Metadata);
+                shader.SetBuffer(release, "_FreeIndices", resources.FreeIndices);
+                shader.SetBuffer(release, "_Counters", resources.Counters);
+                shader.Dispatch(release, 1, 1, 1);
+
+                var metadata = new FluidGpuUInt2[2];
+                resources.Metadata.GetData(metadata);
+                Assert.That(metadata[0].Y, Is.EqualTo(
+                    FluidGpuLayout.AliveFlag | FluidActivityFlags.InterestActive
+                    | FluidActivityFlags.Sleeping));
+                Assert.That(metadata[1].Y, Is.Zero);
+                var counters = new uint[FluidGpuLayout.CounterCount];
+                resources.Counters.GetData(counters);
+                Assert.That(counters[FluidGpuLayout.ActiveCountCounterIndex], Is.EqualTo(1u));
+                Assert.That(counters[FluidGpuLayout.FreeCountCounterIndex], Is.EqualTo(1u));
+            }
+            finally { resources.Dispose(); }
+        }
+
         private static void Initialize(ComputeShader shader, FluidGpuResourceSet resources)
         {
             int core = shader.FindKernel("InitializePool");

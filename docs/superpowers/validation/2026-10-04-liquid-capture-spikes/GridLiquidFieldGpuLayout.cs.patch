@@ -1,0 +1,26 @@
+--- L4.27 before/GridLiquidFieldGpuLayout.cs
++++ L4.27 final/GridLiquidFieldGpuLayout.cs
+@@ -9,9 +9,21 @@
+     {
+         public uint QuantityFlags, VelocityXY, VelocityZOffsetX, OffsetYZ;
+         public const int Stride = 16;
++        // Half只有65536种位模式。一次调用Unity转换生成精确表，后续CPU宽核/圆冠
++        // 直接寻址，避免每个湿格六次managed-to-native边界；共享只读表占256KiB。
++        // NaN、Subnormal和负零也来自Unity本身，未替换浮点语义或GPU Packed Layout。
++        private static readonly float[] HalfToFloatValues=BuildHalfToFloatValues();
++        private static float[] BuildHalfToFloatValues()
++        {
++            var values=new float[65536];
++            for(int i=0;i<values.Length;i++)values[i]=Mathf.HalfToFloat((ushort)i);
++            return values;
++        }
++        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
++        internal static void WarmDecodeTable()=>System.GC.KeepAlive(HalfToFloatValues);
+         public static uint HalfPair(float a, float b) => (uint)Mathf.FloatToHalf(a) | ((uint)Mathf.FloatToHalf(b) << 16);
+-        public static float Low(uint p) => Mathf.HalfToFloat((ushort)p);
+-        public static float High(uint p) => Mathf.HalfToFloat((ushort)(p >> 16));
++        public static float Low(uint p) => HalfToFloatValues[(ushort)p];
++        public static float High(uint p) => HalfToFloatValues[(ushort)(p >> 16)];
+         public static GridLiquidPackedCell Pack(LiquidCellPresentationSample sample, uint flags)
+         {
+             // Sparse Chunk绝大部分格为空。空格无需六次FloatToHalf原生调用，直接清零姿态。

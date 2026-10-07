@@ -13,6 +13,7 @@
 #pragma kernel LockArchiveCandidates
 #pragma kernel PackArchiveSamples
 #pragma kernel CancelArchiveLock
+#pragma kernel ExcludeArchiveParticleIndices
 #pragma kernel ReleaseArchiveLockedParticles
 #pragma kernel ClearReleasedArchiveAuxiliary
 #pragma kernel ReserveRestoreSlots
@@ -47,6 +48,7 @@ struct FluidGpuArchiveSample
     uint flags;
 };
 RWStructuredBuffer<FluidGpuArchiveSample> _ArchiveSamples;
+StructuredBuffer<uint> _ArchiveUnlockIndices;
 struct FluidGpuRestoreParticle
 {
     float3 position;
@@ -83,6 +85,9 @@ struct FluidConvertCommand
     uint4 sourceTargetSeedPadding;
 };
 StructuredBuffer<FluidConvertCommand> _ConvertRequests;
+// 每种 MaterialId 一个累计粒子数净变化：Consume -1，Convert source -1 / target +1。
+// CPU 只通过 AsyncGPUReadback 读取，绝不在反应热路径同步 GetData。
+RWStructuredBuffer<int> _ReactionParticleDeltas;
 RWStructuredBuffer<float4> _GameplaySamples;
 RWStructuredBuffer<uint> _StableTickCounters;
 RWStructuredBuffer<uint> _WakeRequests;
@@ -101,6 +106,23 @@ float _CellSize;
 float _SpawnRestSpacing;
 float4 _ActiveBoundsMin;
 float4 _ActiveBoundsMax;
+int _ActivityRegionCount;
+float4 _ActivityRegionMinima[32];
+float4 _ActivityRegionMaxima[32];
+int _ArchiveRegionCount;
+float4 _ArchiveRegionMinima[32];
+float4 _ArchiveRegionMaxima[32];
+
+// 资格是区域的并集。每粒子只进入一次 Solver，重叠来源不会加快物理时间。
+bool InsideActivityRegions(float3 position)
+{
+    if (_ActivityRegionCount == 0)
+        return all(position >= _ActiveBoundsMin.xyz) && all(position < _ActiveBoundsMax.xyz);
+    for (int i = 0; i < _ActivityRegionCount; i++)
+        if (all(position >= _ActivityRegionMinima[i].xyz) && all(position < _ActivityRegionMaxima[i].xyz))
+            return true;
+    return false;
+}
 float4 _ArchiveRetainedBoundsMin;
 float4 _ArchiveRetainedBoundsMax;
 float _SleepVelocityThreshold;
@@ -114,6 +136,7 @@ int _GameplayReserveParticles;
 int _TransferTransactionId;
 int _WakeAllInterestParticles;
 int _ArchiveIncludeSleepingRetained;
+int _ArchiveUnlockIndexCount;
 float _DeltaTime;
 float _MaxSpeed;
 float4 _Gravity;
@@ -382,11 +405,14 @@ void ConsumeParticles(uint3 dispatchThreadId : SV_DispatchThreadID)
         uint ignoredActive;
         InterlockedAdd(_Counters[FLUID_ACTIVE_COUNT_COUNTER], 0xffffffffu, ignoredActive);
 
+        // Dead slot 的其余 SoA 数据不会再被 Solver 读取；Spawn 复用 slot 时会完整覆盖。
+        // 省掉四个 UAV 后，D3D11 的 8-UAV 上限仍能容纳审计账本。
         _Positions[particleIndex] = float4(0, 0, 0, 0);
-        _PredictedPositions[particleIndex] = float4(0, 0, 0, 0);
-        _Velocities[particleIndex] = float4(0, 0, 0, 0);
-        _DensityLambda[particleIndex] = float2(0, 0);
-        _DeltaPositions[particleIndex] = float4(0, 0, 0, 0);
+        int ignoredReactionDelta;
+        InterlockedAdd(
+            _ReactionParticleDeltas[command.materialSeedPadding.x],
+            -1,
+            ignoredReactionDelta);
         consumed++;
     }
 }
@@ -437,6 +463,16 @@ void ConvertParticles(uint3 dispatchThreadId : SV_DispatchThreadID)
             & ~FLUID_SLEEPING_FLAG;
         _ParticleMetadata[particleIndex].y = flags;
         _StableTickCounters[particleIndex] = 0u;
+        int ignoredSourceDelta;
+        int ignoredTargetDelta;
+        InterlockedAdd(
+            _ReactionParticleDeltas[command.sourceTargetSeedPadding.x],
+            -1,
+            ignoredSourceDelta);
+        InterlockedAdd(
+            _ReactionParticleDeltas[command.sourceTargetSeedPadding.y],
+            1,
+            ignoredTargetDelta);
         converted++;
     }
 }
@@ -469,8 +505,7 @@ void UpdateParticleActivity(uint3 dispatchThreadId : SV_DispatchThreadID)
         return;
 
     float3 position = _Positions[index].xyz;
-    bool inside = all(position >= _ActiveBoundsMin.xyz)
-        && all(position < _ActiveBoundsMax.xyz);
+    bool inside = InsideActivityRegions(position);
     if (!inside)
     {
         // Spawn 与本 Activity Pass 发生在同一个 Fixed Tick。若这里无条件降级为 Alive-only，
@@ -534,20 +569,9 @@ void UpdateParticleActivity(uint3 dispatchThreadId : SV_DispatchThreadID)
     else if ((flags & FLUID_SLEEPING_FLAG) == 0u)
     {
         float speed = length(_Velocities[index].xyz);
-        // 自由表面外侧没有邻居，SPH Density 天然低于 Rest Density；把这种欠密度也当成
-        // “不稳定”会让水滩边缘永远 Awake，并把微小 Solver 运动放大成 Marching Cubes 抖动。
-        // Sleep 只阻止仍受压缩的粒子冻结：低速欠密度表面可休眠，过密内部仍继续释放压力。
-        FluidGpuLiquidMaterialParameters material = _LiquidMaterialParameters[metadata.x];
-        float restDensity = material.massDensityViscosityPressure.y > 0.0f
-            ? material.massDensityViscosityPressure.y
-            : _RestDensity;
-        float sleepDensityErrorThreshold = material.massDensityViscosityPressure.y > 0.0f
-            ? material.cohesionAndSleep.w
-            : _SleepDensityErrorThreshold;
-        float relativeCompression = (_DensityLambda[index].x - restDensity)
-            / max(restDensity, 1e-6f);
-        bool stable = speed <= _SleepVelocityThreshold
-            && relativeCompression <= sleepDensityErrorThreshold;
+        // PBF 堆积区会长期保留静态压缩误差；本地 Sleep 改用连续低速判定。
+        // 真实扰动仍通过邻域 Wake、新写入、角色接触与元素反应重新进入 Solver。
+        bool stable = speed <= _SleepVelocityThreshold;
         stableTicks = stable
             ? (stableTicks == 0xffffffffu ? 0xffffffffu : stableTicks + 1u)
             : 0u;
@@ -582,6 +606,13 @@ void LockArchiveCandidates(uint3 dispatchThreadId : SV_DispatchThreadID)
     float3 position = _Positions[index].xyz;
     bool retained = all(position >= _ArchiveRetainedBoundsMin.xyz)
         && all(position < _ArchiveRetainedBoundsMax.xyz);
+    if (_ArchiveRegionCount > 0)
+    {
+        retained = false;
+        for (int region = 0; region < _ArchiveRegionCount; region++)
+            retained = retained || (all(position >= _ArchiveRegionMinima[region].xyz)
+                && all(position < _ArchiveRegionMaxima[region].xyz));
+    }
     bool retainedSleeping = retained
         && _ArchiveIncludeSleepingRetained != 0
         && (metadata.y & FLUID_SLEEPING_FLAG) != 0u;
@@ -623,6 +654,18 @@ void CancelArchiveLock(uint3 dispatchThreadId : SV_DispatchThreadID)
     {
         _ParticleMetadata[index].y = metadata.y & ~FLUID_ARCHIVE_LOCKED_FLAG;
     }
+}
+
+[numthreads(THREADS_PER_GROUP, 1, 1)]
+void ExcludeArchiveParticleIndices(uint3 dispatchThreadId : SV_DispatchThreadID)
+{
+    uint listIndex = dispatchThreadId.x;
+    if (listIndex >= (uint)_ArchiveUnlockIndexCount) return;
+    uint particleIndex = _ArchiveUnlockIndices[listIndex];
+    if (particleIndex >= (uint)_ParticleCapacity) return;
+    uint flags = _ParticleMetadata[particleIndex].y;
+    if ((flags & FLUID_ARCHIVE_LOCKED_FLAG) != 0u)
+        _ParticleMetadata[particleIndex].y = flags & ~FLUID_ARCHIVE_LOCKED_FLAG;
 }
 
 [numthreads(THREADS_PER_GROUP, 1, 1)]
@@ -730,7 +773,7 @@ void ActivateRestoredParticles(uint3 dispatchThreadId : SV_DispatchThreadID)
     if (slot >= (uint)_ParticleCapacity || _ParticleMetadata[slot].y != FLUID_RESTORE_LOADING_FLAG)
         return;
     float3 position = _Positions[slot].xyz;
-    bool inside = all(position >= _ActiveBoundsMin.xyz) && all(position < _ActiveBoundsMax.xyz);
+    bool inside = InsideActivityRegions(position);
     uint flags = inside
         ? FLUID_ALIVE_FLAG | FLUID_INTEREST_ACTIVE_FLAG | FLUID_REQUIRES_SIMULATION_FLAG
         : FLUID_ALIVE_FLAG | FLUID_REMOTE_SPAWN_ACTIVE_FLAG | FLUID_REQUIRES_SIMULATION_FLAG;
@@ -818,6 +861,7 @@ void PackGameplaySamples(uint3 dispatchThreadId : SV_DispatchThreadID)
 
     uint2 metadata = _ParticleMetadata[index];
     bool active = FluidIsAlive(metadata.y);
+    if (_ActivityRegionCount > 0) active = active && InsideActivityRegions(_Positions[index].xyz);
     // tag=0 是 inactive；active 使用 materialId+1，避免 materialId=0 与 inactive 混淆。
     float tag = active ? (float)(metadata.x + 1u) : 0.0f;
     _GameplaySamples[index] = float4(_Positions[index].xyz, tag);

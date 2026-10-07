@@ -231,6 +231,22 @@ namespace Game.Rendering
         private bool _hasBuiltSurface;
         private uint _lastBuiltSimulationVersion;
         private Bounds _lastBuiltBounds;
+        private Camera _viewCamera;
+
+        private Bounds ResolveSurfaceBounds(Bounds simulationBounds)
+        {
+            if (_worldRuntime == null || !_worldRuntime.ActivityExpansionEnabled || _viewCamera == null)
+                return simulationBounds;
+            // 固定尺寸 Surface 跟随相机观察的水平位置，保持 voxel 尺寸；不会将多个远处 AOI 包进同一栅格。
+            Ray ray = _viewCamera.ViewportPointToRay(new Vector3(.5f, .5f, 0));
+            Plane plane = new Plane(Vector3.up, new Vector3(0, simulationBounds.center.y, 0));
+            Vector3 center = plane.Raycast(ray, out float distance) && distance < 64f
+                ? ray.GetPoint(distance) : ray.GetPoint(8f);
+            center.x = Mathf.Round(center.x * 2f) * .5f;
+            center.z = Mathf.Round(center.z * 2f) * .5f;
+            center.y = simulationBounds.center.y;
+            return new Bounds(center, simulationBounds.size);
+        }
 
         [Header("Development Fragment Isolation")]
         [Tooltip("临时跳过复杂 Fragment 光照、深度和波纹，只输出材质浅色且完全不透明；用于定位不可见发生在 Rasterization 前还是 Fragment 内。")]
@@ -265,6 +281,13 @@ namespace Game.Rendering
         [SerializeField] private Vector3 _debugTriangleNormal0;
         [SerializeField] private Vector3 _debugTriangleNormal1;
         [SerializeField] private Vector3 _debugTriangleNormal2;
+        [SerializeField] private uint _debugSurfaceRebuildCount;
+        [SerializeField] private uint _debugDrawCount;
+        [Tooltip("诊断轮询曾观察到的最大三角形数；退出瞬间为0时仍可证明Measure期间是否产出过Surface。")]
+        [SerializeField] private uint _debugMaximumTriangleCount;
+        [SerializeField] private uint _debugPositiveTriangleReadbackCount;
+        [SerializeField] private uint _debugDrawReadyObservationCount;
+        [SerializeField] private uint _debugGeometryReadyObservationCount;
 
         private IFluidGpuSource _fluidSource;
         private LiquidRenderSettings _settings;
@@ -286,6 +309,7 @@ namespace Game.Rendering
         private Action<AsyncGPUReadbackRequest> _debugCounterCallback;
         private float _debugCounterElapsed;
         private bool _debugCounterOutstanding;
+        private bool _developmentDiagnosticsEnabled = true;
         private bool _resourceReleasePending;
         private bool _debugHasTriangleSample;
         private DebugCounterReadbackKind _debugNextReadbackKind;
@@ -297,6 +321,29 @@ namespace Game.Rendering
             IndirectVertexCount,
             TriangleSample,
             TriangleOverflow
+        }
+
+        // 专用性能场景只读这些计数；Production Gameplay 不依赖诊断组件，也不获得写入入口。
+        public MaterialId TargetMaterial => _targetMaterial;
+        public LiquidSurfaceDiagnosticStage DiagnosticStage => _debugStage;
+        public LiquidSurfaceGeometryDiagnosticStage GeometryDiagnosticStage => _debugGeometryStage;
+        public uint DiagnosticTriangleCount => _debugTriangleCount;
+        public uint DiagnosticTriangleOverflow => _debugTriangleOverflow;
+        public uint DiagnosticSurfaceRebuildCount => _debugSurfaceRebuildCount;
+        public uint DiagnosticDrawCount => _debugDrawCount;
+        public uint DiagnosticMaximumTriangleCount => _debugMaximumTriangleCount;
+        public uint DiagnosticPositiveTriangleReadbackCount => _debugPositiveTriangleReadbackCount;
+        public uint DiagnosticDrawReadyObservationCount => _debugDrawReadyObservationCount;
+        public uint DiagnosticGeometryReadyObservationCount => _debugGeometryReadyObservationCount;
+        public Vector3Int DiagnosticGridResolution => _debugGridResolution;
+
+        /// <summary>
+        /// 专用Development性能实验可关闭AsyncGPUReadback，避免观察器改变被测Render Thread。
+        /// 必须在Renderer首次LateUpdate前调用；生产Gameplay不会调用此入口。
+        /// </summary>
+        public void SetDevelopmentDiagnosticsEnabled(bool value)
+        {
+            _developmentDiagnosticsEnabled = value;
         }
 
         private void Awake()
@@ -407,6 +454,7 @@ namespace Game.Rendering
 
         private void Start()
         {
+            _viewCamera = Camera.main;
             _hasStarted = true;
             InitializeSurfaceResources();
         }
@@ -446,7 +494,7 @@ namespace Game.Rendering
             {
                 // LOD 前的单 Surface 语义：调用者给出的完整 Active Bounds 直接进入 Density Grid，
                 // 不再围绕角色裁剪 Near Box，也没有 Mid/Far 表示切换。
-                grid = FluidSurfaceGridPlanner.Plan(snapshot.ActiveBounds, in _settings);
+                grid = FluidSurfaceGridPlanner.Plan(ResolveSurfaceBounds(snapshot.ActiveBounds), in _settings);
                 _debugGridResolution = grid.Resolution;
                 _debugVoxelSize = grid.VoxelSize;
                 _debugDrawBoundsCenter = grid.WorldBounds.center;
@@ -489,10 +537,15 @@ namespace Game.Rendering
                 _hasBuiltSurface = true;
                 _lastBuiltSimulationVersion = snapshot.SimulationVersion;
                 _lastBuiltBounds = grid.WorldBounds;
+                if (_debugSurfaceRebuildCount < uint.MaxValue)
+                    _debugSurfaceRebuildCount++;
             }
             DrawSurface(in grid, _resources);
+            if (_debugDrawCount < uint.MaxValue)
+                _debugDrawCount++;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            ScheduleDebugCounterReadback(Time.unscaledDeltaTime);
+            if (_developmentDiagnosticsEnabled)
+                ScheduleDebugCounterReadback(Time.unscaledDeltaTime);
 #endif
         }
 
@@ -636,6 +689,10 @@ namespace Game.Rendering
                         {
                             case DebugCounterReadbackKind.TriangleCount:
                                 _debugTriangleCount = values[0];
+                                _debugMaximumTriangleCount = Math.Max(
+                                    _debugMaximumTriangleCount, _debugTriangleCount);
+                                if (_debugTriangleCount > 0u)
+                                    IncrementSaturating(ref _debugPositiveTriangleReadbackCount);
                                 break;
                             case DebugCounterReadbackKind.IndirectVertexCount:
                                 _debugIndirectVertexCount = values[0];
@@ -900,6 +957,8 @@ namespace Game.Rendering
                 _debugResourcesReady,
                 _debugTriangleCount,
                 _debugIndirectVertexCount);
+            if (_debugStage == LiquidSurfaceDiagnosticStage.DrawReady)
+                IncrementSaturating(ref _debugDrawReadyObservationCount);
         }
 
         private void RefreshDebugGeometryStage()
@@ -914,6 +973,14 @@ namespace Game.Rendering
                 _debugTriangleNormal0,
                 _debugTriangleNormal1,
                 _debugTriangleNormal2);
+            if (_debugGeometryStage == LiquidSurfaceGeometryDiagnosticStage.GeometryReady)
+                IncrementSaturating(ref _debugGeometryReadyObservationCount);
+        }
+
+        private static void IncrementSaturating(ref uint value)
+        {
+            if (value < uint.MaxValue)
+                value++;
         }
 
         private void DisposeResources()

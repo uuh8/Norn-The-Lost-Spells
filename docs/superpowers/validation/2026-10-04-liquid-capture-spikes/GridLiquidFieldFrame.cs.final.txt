@@ -1,0 +1,792 @@
+using System;
+using System.Collections.Generic;
+using Game.ElementField;
+using Game.Materials;
+using UnityEngine;
+using Unity.Profiling;
+
+namespace Game.Rendering
+{
+    /// <summary>
+    /// 相邻Tick共享的稀疏输入快照。每个Chunk只存一次，GPU查表跨Halo采样，
+    /// Stable数据仅投影到活动表面附近；远处湖底没有输入页也没有逐帧重建。
+    /// </summary>
+    public sealed class GridLiquidFieldFrame : IGridLiquidFieldSamples,IGridLiquidCrownSamples,IGridLiquidShapeSamples
+    {
+        private static readonly ProfilerMarker PackMarker=new ProfilerMarker("GridLiquid.Field.PackCells");
+        private static readonly ProfilerMarker CrownMarker=new ProfilerMarker("GridLiquid.Field.Crown");
+        private static readonly ProfilerMarker BoundsMarker=new ProfilerMarker("GridLiquid.Field.ShapeBounds");
+        private static readonly ProfilerMarker OwnersMarker=new ProfilerMarker("GridLiquid.Field.OutputOwners");
+        private readonly LiquidWorldRuntime _source;
+        private readonly bool _snapshotOnly;
+        private readonly Dictionary<int,LiquidCellPresentationSample> _rowMotion;
+        private readonly int _maximumRowMotion;
+        private readonly int[] _querySlots=new int[12];
+        private ElementChunkKey _queryMinimum;
+        private Vector3Int _querySpan,_lastCell;
+        private int _lastIndex;
+        private bool _queryReady,_lastCellReady;
+        // 同一粗格内的细节点/投影会反复查询同一个175格邻域。只缓存非空候选，
+        // 保持原y/z/x及Previous/Current顺序；跳过空气不会改变浮点累加、密度或混色。
+        private readonly Vector3Int[] _queryCells=new Vector3Int[175];
+        private readonly byte[] _queryPhases=new byte[175];
+        private Vector3Int _queryCenter;
+        private bool _queryCellsReady;
+#if UNITY_EDITOR
+        private bool _validationFullRowScan;
+        // 仅禁用空气遍历优化，仍使用相同Packing/Union/塑形公式作为同输入参考。
+        public void SetValidationFullRowScan(bool value)=>_validationFullRowScan=value;
+#endif
+        internal int QueryCellCount {get;private set;}
+        internal Vector3Int QueryCell(int index)=>_queryCells[index];
+        internal bool QueryHasPhase(int index,bool previous)=>(_queryPhases[index]&(previous?1:2))!=0;
+        internal int InputPage(ElementChunkKey key)=>_pages.TryGetValue(key,out int slot)?slot:-1;
+        private Vector3 _priorityDeposit;
+        private bool _hasPriorityDeposit;
+        private readonly Dictionary<ElementChunkKey, int> _pages;
+        private readonly HashSet<ElementChunkKey> _ownerSet;
+        private readonly Bounds[] _bounds;
+        private readonly bool[] _hasBounds,_inputOwners;
+        private readonly bool[] _gpuInputs,_historyPages;
+        private readonly ulong[] _historyRowMasks;
+        private readonly ElementChunkKey[] _sourceKeys;
+        private readonly Vector3Int[] _changed;
+        private readonly ushort[] _chunkQuantities;
+        private readonly LiquidCellPresentationSample[] _rowCurrent,_rowPrevious;
+        private StableLiquidSurfacePatch[] _previousPatches, _currentPatches;
+        private int _previousPatchCount, _currentPatchCount;
+        public readonly GridLiquidPackedCell[] Previous, Current;
+        public readonly Vector4[] Terrains;
+        public readonly ElementChunkKey[] Keys;
+        public readonly GridLiquidChunkLookup[] Lookup;
+        public readonly GridLiquidChunkLookup[] OwnerLookup;
+        private readonly int[] _patchIndices, _patchCounts;
+        private const int PatchesPerPage=64;
+        // 连通液团只影响Presentation。固定工作数组复用两个Tick，Gameplay数量/密度不被反写。
+        private readonly int[] _parents;
+        private readonly int[] _shapeRows;
+        private readonly int[] _fullScanShapeRows;
+        private int[] _bodyRows;
+        private bool _sparseBodyRows;
+        private bool _sparseShapeRows;
+        private int _wetRowCount;
+        private readonly Body[] _bodies;
+        private readonly float[] _domes;
+        private struct Body
+        {
+            public int Count,Quantity,MaximumFreeQuantity,MaximumQuantity;
+            public Vector2 Moment,Center;
+            public Vector4 Extents;
+            public float Scale,Height,EffectiveCount,HeightWeight,MeanFill;
+            public bool HasStable;
+        }
+        public readonly int[] Groups = new int[8];
+        public readonly MaterialId[] Materials;
+        public readonly ElementChunkKey[] Owners;
+        public int Count { get; private set; }
+        public int OwnerCount { get; private set; }
+        public bool Overflow { get; private set; }
+        public bool Animated { get; private set; }
+        public uint Epoch { get; private set; }
+        public uint SelectionSignature {get;private set;}
+        public int CulledSourcePages {get;private set;}
+        public Vector3 Origin => _source.Origin;
+        public float CellSize => _source.CellSize;
+        public int Capacity => _source.CellCapacityGmu;
+        public int MaterialCount => Materials.Length;
+        public int GroupCount => _source.DensityGroupCount;
+        public float CrownStrength { get; }
+        public float CartoonVolumeScale {get;}
+        public float Interval => Mathf.Max(.001f, _source.TransportInterval);
+        private int K => _source.ChunkSize;
+        public int ChunkEdge=>K;
+        private int Cells => K * K * K;
+        public GridLiquidFieldFrame(LiquidWorldRuntime source, int inputCapacity, int lookupSlots,float crownStrength=.15f,float cartoonVolumeScale=1.8f,bool snapshotOnly=false)
+        {
+            // EditMode没有BeforeSceneLoad；构造快照时也预热，保证Capture热路径不首次分配解码表。
+            GridLiquidPackedCell.WarmDecodeTable();
+            _snapshotOnly=snapshotOnly;
+            CrownStrength=Mathf.Clamp01(crownStrength);
+            CartoonVolumeScale=Mathf.Lerp(1,Mathf.Clamp(cartoonVolumeScale,1,2.5f),Mathf.SmoothStep(0,1,Mathf.InverseLerp(.15f,.8f,CrownStrength)));
+            _source = source; _pages = new Dictionary<ElementChunkKey, int>(inputCapacity);
+            // CPU宽核会反复读取同一湿格；按快照缓存数量加权姿态，避免每节点反复Half解码。
+            // 空行不入表，满表则直接计算；固定容量在初始化预留，不能在回退热路径扩容。
+            _maximumRowMotion=Mathf.Max(128,Mathf.Min(131072,source.MaximumActiveTransportCells*2));
+            _rowMotion=new Dictionary<int,LiquidCellPresentationSample>(_maximumRowMotion);
+            Keys = new ElementChunkKey[inputCapacity]; Owners = new ElementChunkKey[source.MaximumSurfaceCandidateKeys + source.MaximumActiveTransportCells];
+            // Halo输出页多于输入页；按最终Owner上限预分配，不能在流动过程中扩容HashSet。
+            _ownerSet=new HashSet<ElementChunkKey>(Owners.Length);_bounds=new Bounds[inputCapacity];_hasBounds=new bool[inputCapacity];_inputOwners=new bool[inputCapacity];_gpuInputs=new bool[inputCapacity];
+            _sourceKeys = snapshotOnly?Array.Empty<ElementChunkKey>():new ElementChunkKey[source.MaximumSurfaceCandidateKeys]; _changed = snapshotOnly?Array.Empty<Vector3Int>():new Vector3Int[source.MaximumActiveTransportCells];
+            Lookup = new GridLiquidChunkLookup[lookupSlots]; Materials = new MaterialId[source.MaterialCount];
+            _chunkQuantities=new ushort[Cells*source.MaterialCount];_rowCurrent=new LiquidCellPresentationSample[source.MaterialCount];_rowPrevious=new LiquidCellPresentationSample[source.MaterialCount];
+            int ownerSlots=1;while(ownerSlots<Owners.Length*2)ownerSlots<<=1;
+            OwnerLookup=new GridLiquidChunkLookup[ownerSlots];
+            _patchIndices=snapshotOnly?Array.Empty<int>():new int[inputCapacity*2*PatchesPerPage];_patchCounts=snapshotOnly?Array.Empty<int>():new int[inputCapacity*2];
+            for (int i = 0; i < MaterialCount; i++) { Materials[i] = source.GetLiquidMaterial(i); Groups[i] = source.GetDensityGroup(Materials[i]); }
+            Current=new GridLiquidPackedCell[inputCapacity*Cells*MaterialCount];
+            // 远页CPU只读取alpha=1的Current。共享数组且省掉Union-Find工作区，
+            // 不能为了隔离快照把P7的最大容量内存机械翻倍。
+            Previous=snapshotOnly?Current:new GridLiquidPackedCell[Current.Length];
+            Terrains = new Vector4[inputCapacity * Cells];
+            _parents=snapshotOnly?Array.Empty<int>():new int[Terrains.Length];_bodies=snapshotOnly?Array.Empty<Body>():new Body[Terrains.Length];_domes=snapshotOnly?Array.Empty<float>():new float[Terrains.Length];
+            // 多个粗Chunk中通常只有少量湿格。固定索引表让塑形后续遍历避开空气；
+            // 容量受原姿态缓存上限约束，极密输入退回完整遍历，不丢液量或扩大CPU快照内存。
+            _shapeRows=snapshotOnly?Array.Empty<int>():new int[Math.Min(Terrains.Length,_maximumRowMotion)];
+            // 并集表满或显式性能对照时，保留上一版逐相位收集再遍历湿格的完整路径。
+            // 对照不能退化为所有Body阶段都扫空气，否则会夸大本轮优化收益。
+            _fullScanShapeRows=snapshotOnly?Array.Empty<int>():new int[_shapeRows.Length];
+            _historyPages=snapshotOnly?Array.Empty<bool>():new bool[inputCapacity];
+            // History只改写少量行；页级Bool会让同页的511个空气格也查询History。
+            // 每行一个bit，固定容量且不用HashSet；Previous-only行不会被当前数量误裁。
+            _historyRowMasks=snapshotOnly?Array.Empty<ulong>():new ulong[(Terrains.Length+63)/64];
+            _previousPatches = new StableLiquidSurfacePatch[Mathf.Max(1, source.MaximumStableSurfacePatches)];
+            _currentPatches = new StableLiquidSurfacePatch[_previousPatches.Length];
+        }
+        public int GetGroup(int materialSlot) => Groups[materialSlot];
+        public static ElementChunkKey Key(Vector3Int c, int k) => new ElementChunkKey(GridLiquidFieldGpuLayout.FloorDiv(c.x, k),
+            GridLiquidFieldGpuLayout.FloorDiv(c.y, k), GridLiquidFieldGpuLayout.FloorDiv(c.z, k));
+        private int Index(Vector3Int c)
+        {
+            if(_lastCellReady && c==_lastCell)return _lastIndex;
+            ElementChunkKey key = Key(c, K);
+            int slot=-1;
+            int dx=key.X-_queryMinimum.X,dy=key.Y-_queryMinimum.Y,dz=key.Z-_queryMinimum.Z;
+            if(_queryReady && dx>=0 && dy>=0 && dz>=0 && dx<_querySpan.x && dy<_querySpan.y && dz<_querySpan.z)
+                slot=_querySlots[dx+_querySpan.x*(dy+_querySpan.y*dz)];
+            else if(!_pages.TryGetValue(key,out slot))slot=-1;
+            _lastCell=c;_lastCellReady=true;
+            if(slot<0)return _lastIndex=-1;
+            int x = c.x - key.X * K, y = c.y - key.Y * K, z = c.z - key.Z * K;
+            return _lastIndex=slot * Cells + x + K * (y + K * z);
+        }
+        internal void PrepareQuery(Vector3 p)
+        {
+            // 一个场采样点最多涉及12个Chunk，和GPU一样先缓存页槽。
+            // 随后数百次邻格读取只做整数寻址；同格的材料/地形/支撑复用最后一个地址。
+            var c=Vector3Int.FloorToInt((p-Origin)/CellSize);var min=Key(c-new Vector3Int(2,3,2),K);var max=Key(c+new Vector3Int(2,3,2),K);
+            var span=new Vector3Int(max.X-min.X+1,max.Y-min.Y+1,max.Z-min.Z+1);
+            if(span.x*span.y*span.z>_querySlots.Length)_queryReady=false;
+            else if(!_queryReady || !min.Equals(_queryMinimum) || span!=_querySpan)
+            {
+                _queryMinimum=min;_querySpan=span;_queryReady=true;_lastCellReady=false;
+                for(int z=0;z<span.z;z++)for(int y=0;y<span.y;y++)for(int x=0;x<span.x;x++)
+                {_querySlots[x+span.x*(y+span.y*z)]=_pages.TryGetValue(new ElementChunkKey(min.X+x,min.Y+y,min.Z+z),out int slot)?slot:-1;}
+            }
+            if(_queryCellsReady && c==_queryCenter)return;
+            _queryCellsReady=true;_queryCenter=c;QueryCellCount=0;
+            for(int y=c.y-3;y<=c.y+3;y++)for(int z=c.z-2;z<=c.z+2;z++)for(int x=c.x-2;x<=c.x+2;x++)
+            {
+                var cell=new Vector3Int(x,y,z);int index=Index(cell);if(index<0)continue;
+                int row=index*MaterialCount;byte phases=0;
+                for(int m=0;m<MaterialCount;m++)
+                {if((Previous[row+m].QuantityFlags&65535u)!=0)phases|=1;if((Current[row+m].QuantityFlags&65535u)!=0)phases|=2;}
+                if(phases==0)continue;_queryCells[QueryCellCount]=cell;_queryPhases[QueryCellCount++]=phases;
+            }
+        }
+        public LiquidCellPresentationSample Read(Vector3Int c, int m, bool previous)
+        { int i = Index(c); return i >= 0 ? (previous ? Previous : Current)[i * MaterialCount + m].Decode() : default; }
+        internal uint ReadQuantity(Vector3Int c,int material,bool previous)
+        {int i=Index(c);return i<0?0:(previous?Previous:Current)[i*MaterialCount+material].QuantityFlags&65535u;}
+        internal LiquidCellPresentationSample ReadRowMotion(Vector3Int cell,bool previous)
+        {
+            int i=Index(cell);return i<0?default:ReadRowMotionAtIndex(i,previous);
+        }
+        private LiquidCellPresentationSample ReadRowMotionAtIndex(int i,bool previous)
+        {
+            int key=i*2+(previous?0:1);
+            if(_rowMotion.TryGetValue(key,out var cached))return cached;
+            var data=previous?Previous:Current;int row=i*MaterialCount;uint q=0;
+            for(int m=0;m<MaterialCount;m++)q+=data[row+m].QuantityFlags&65535u;
+            if(q==0)return default;
+            Vector3 offset=default,velocity=default;
+            for(int m=0;m<MaterialCount;m++)
+            {var packed=data[row+m];if((packed.QuantityFlags&65535u)==0)continue;var sample=packed.Decode();offset+=sample.OffsetCells*sample.Quantity;velocity+=sample.VelocityWorld*sample.Quantity;}
+            var value=new LiquidCellPresentationSample(q,offset/q,velocity/q);
+            if(_rowMotion.Count<_maximumRowMotion)_rowMotion.Add(key,value);return value;
+        }
+        public Vector4 Terrain(Vector3Int c)
+        { int i = Index(c); return i >= 0 ? Terrains[i] : new Vector4(0, 1, 0, Origin.y + c.y * CellSize); }
+        public bool Supported(Vector3Int c, bool previous)
+        { int i = Index(c); return i >= 0 && (((previous ? Previous : Current)[i * MaterialCount].QuantityFlags >> 16) & 1u) != 0; }
+        public float Crown(Vector3Int c,bool previous)
+        {int i=Index(c);return i<0?0f:((previous?Previous:Current)[i*MaterialCount].QuantityFlags>>24)/255f;}
+        public float ShapeScale(Vector3Int c,bool previous)
+        {int i=Index(c);if(i<0)return 1;uint f=(previous?Previous:Current)[i*MaterialCount].QuantityFlags;return (f&1048576u)!=0?Mathf.Max(.4f,(f>>24)/255f):1;}
+        public bool SolidSupported(Vector3Int c,bool previous)
+        {int i=Index(c);return i>=0 && ((previous?Previous:Current)[i*MaterialCount].QuantityFlags&131072u)!=0;}
+        internal bool UniformHeight(Vector3Int c,bool previous)
+        {int i=Index(c);return i>=0 && ((previous?Previous:Current)[i*MaterialCount].QuantityFlags&2097152u)!=0;}
+        internal bool StableInput(Vector3Int c,bool previous)
+        {int i=Index(c);return i>=0 && ((previous?Previous:Current)[i*MaterialCount].QuantityFlags&4194304u)!=0;}
+        private Vector3Int CellAt(int index)
+        {var key=Keys[index/Cells];int local=index%Cells;return new Vector3Int(key.X*K+local%K,key.Y*K+local/K%K,key.Z*K+local/(K*K));}
+        private int FindBody(int index)
+        {int root=index;while(_parents[root]!=root)root=_parents[root];while(index!=root){int next=_parents[index];_parents[index]=root;index=next;}return root;}
+        private bool SupportsConnect(int a,int b,Vector3Int delta,GridLiquidPackedCell[] data)
+        {
+            if((data[a*MaterialCount].QuantityFlags&65536u)==0 || (data[b*MaterialCount].QuantityFlags&65536u)==0)return true;
+            Vector4 ta=Terrains[a],tb=Terrains[b];
+            // 比较两平面在中点的高度：同一陡坡跨整数Y行可以连接，上下独立平台保持分开。
+            float ha=ta.w-(ta.x*delta.x+ta.z*delta.z)*CellSize*.5f/Mathf.Max(.25f,ta.y);
+            float hb=tb.w+(tb.x*delta.x+tb.z*delta.z)*CellSize*.5f/Mathf.Max(.25f,tb.y);
+            float difference=Mathf.Abs(ha-hb);
+            if(difference<CellSize*.35f)return true;
+            Vector2 slopeDelta=new Vector2(-ta.x,-ta.z)/Mathf.Max(.25f,ta.y)-new Vector2(-tb.x,-tb.z)/Mathf.Max(.25f,tb.y);
+            // 坡脚折点可能落在两个格中心之间，不能只比较中点高度就拆成两个液团。
+            // 允许交点位于这段格间距离内；同向不同高度的平台仍不连接。
+            return slopeDelta.sqrMagnitude>.0625f && difference<CellSize*(.35f+.5f*Mathf.Abs(Vector2.Dot(slopeDelta,new Vector2(delta.x,delta.z))));
+        }
+        private void MergeSupportedColumns(GridLiquidPackedCell[] data)
+        {
+            Array.Fill(_parents,-1,0,Count*Cells);
+            // 叠在满格液体上的行不是新的实体地板。沿满格柱找到真实接地行，
+            // 在只读显示副本合并数量，避免一根液柱生成多个悬浮盖片；世界Store保持原样。
+            for(int work=0;work<ShapeWorkRows;work++)
+            {
+                int i=ShapeRow(work);
+                uint flags=data[i*MaterialCount].QuantityFlags;
+                if((flags&65536u)==0)continue;
+                uint originalQuantity=0;for(int m=0;m<MaterialCount;m++)originalQuantity+=data[i*MaterialCount+m].QuantityFlags&65535u;
+                if((flags&131072u)!=0){if(originalQuantity>=Capacity)_parents[i]=i;continue;}
+                var cell=CellAt(i);int root=i;
+                for(int depth=1;depth<=8;depth++)
+                {
+                    int below=Index(cell+Vector3Int.down*depth);if(below<0)break;
+                    // 先合并的满格行已在显示副本中清空。复用固定根索引记住它原来支撑上层，
+                    // 否则第三层会在空行处停下，再画一个独立浮盖；不查询Current替代Previous。
+                    if(_parents[below]>=0){root=_parents[below];break;}
+                    uint q=0;for(int m=0;m<MaterialCount;m++)q+=data[below*MaterialCount+m].QuantityFlags&65535u;
+                    if(q<Capacity || (data[below*MaterialCount].QuantityFlags&65536u)==0)break;
+                    if((data[below*MaterialCount].QuantityFlags&131072u)!=0){root=below;break;}
+                }
+                if(root==i)continue;
+                uint combined=0;for(int m=0;m<MaterialCount;m++)combined+=(data[root*MaterialCount+m].QuantityFlags&65535u)+(data[i*MaterialCount+m].QuantityFlags&65535u);
+                // 合并仍受175邻格的纵向采样范围限制；深湖继续采用既有分行/Stable表示。
+                if(combined>Capacity*2.5f)continue;
+                bool fits=true;for(int m=0;m<MaterialCount;m++)fits&=(data[root*MaterialCount+m].QuantityFlags&65535u)+(data[i*MaterialCount+m].QuantityFlags&65535u)<=65535u;
+                if(!fits)continue;
+                if(originalQuantity>=Capacity)_parents[i]=root;
+                for(int m=0;m<MaterialCount;m++)
+                {
+                    var a=data[root*MaterialCount+m].Decode();var b=data[i*MaterialCount+m].Decode();uint q=a.Quantity+b.Quantity;
+                    uint stable=(data[root*MaterialCount+m].QuantityFlags|data[i*MaterialCount+m].QuantityFlags)&4194304u;
+                    if(q>0){data[root*MaterialCount+m]=GridLiquidPackedCell.Pack(new LiquidCellPresentationSample(q,
+                        (a.OffsetCells*a.Quantity+b.OffsetCells*b.Quantity)/q,(a.VelocityWorld*a.Quantity+b.VelocityWorld*b.Quantity)/q),7);data[root*MaterialCount+m].QuantityFlags|=stable;}
+                    data[i*MaterialCount+m]=default;
+                }
+            }
+            _lastCellReady=false;
+        }
+        private void ShapeBodies(GridLiquidPackedCell[] data)
+        {
+            int rows=Count*Cells;
+            int k=K,cells=Cells;bool previous=ReferenceEquals(data,Previous);
+            int workRows;
+            // 空气邻格的父索引必须为-1。一次连续填充替代逐空气行的材料求和；
+            // Pack时已收集两帧湿格并集，合柱只删除行，不会向原来全空的行新增数量。
+            if(_sparseShapeRows)
+            {
+                _bodyRows=_shapeRows;_sparseBodyRows=true;workRows=_wetRowCount;
+                Array.Fill(_parents,-1,0,rows);
+                for(int work=0;work<workRows;work++)
+                {
+                    int i=BodyRow(work),q=0;for(int m=0;m<MaterialCount;m++)q+=(int)(data[i*MaterialCount+m].QuantityFlags&65535u);
+                    if(q==0)continue;_parents[i]=i;_bodies[i]=default;
+                }
+            }
+            else
+            {
+                int wetRows=0;
+                for(int i=0;i<rows;i++)
+                {
+                    int q=0;for(int m=0;m<MaterialCount;m++)q+=(int)(data[i*MaterialCount+m].QuantityFlags&65535u);
+                    _parents[i]=q>0?i:-1;if(q==0)continue;_bodies[i]=default;
+                    if(wetRows<_fullScanShapeRows.Length)_fullScanShapeRows[wetRows]=i;wetRows++;
+                }
+                _bodyRows=_fullScanShapeRows;_sparseBodyRows=wetRows<=_bodyRows.Length;workRows=_sparseBodyRows?wetRows:rows;
+            }
+            // 按原线性地址收集索引，保留Union顺序、浮点累加顺序和圆冠的逐位结果。
+            // Body只在湿格/根节点读写，空气中的旧Body不用清零，也不会被下一次塑形读取。
+            // 22个前向邻居覆盖60度坡面相邻格的两行高差；Union-Find避免逐帧创建集合/临时对象。
+            for(int work=0;work<workRows;work++)
+            {
+                int i=BodyRow(work);if(_parents[i]<0)continue;
+                var c=CellAt(i);
+                int local=i%cells,lx=local%k,ly=local/k%k,lz=local/(k*k);
+                for(int x=0;x<=1;x++)for(int z=-1;z<=1;z++)for(int y=-2;y<=2;y++)
+                {
+                    if(x==0 && (z<0 || z==0 && y<=0))continue;
+                    var delta=new Vector3Int(x,y,z);
+                    // 同Chunk邻格只做线性地址加法；跨页才走原FloorDiv/Dictionary。
+                    // 保留22邻居的原遍历/Union顺序，位于负坐标和Chunk边界时仍用同一寻址规则。
+                    int other=(uint)(lx+x)<(uint)k && (uint)(ly+y)<(uint)k && (uint)(lz+z)<(uint)k
+                        ?i+x+k*(y+k*z):Index(c+delta);
+                    if(other<0 || _parents[other]<0 || !SupportsConnect(i,other,delta,data))continue;
+                    int a=FindBody(i),b=FindBody(other);if(a!=b)_parents[b]=a;
+                }
+            }
+            for(int work=0;work<workRows;work++)
+            {
+                int i=BodyRow(work);if(_parents[i]<0)continue;
+                int root=FindBody(i);var motion=ReadRowMotionAtIndex(i,previous);int q=(int)motion.Quantity;
+                var c=CellAt(i);Vector2 p=new Vector2(c.x+.5f,c.z+.5f)+new Vector2(motion.OffsetCells.x,motion.OffsetCells.z);
+                ref var b=ref _bodies[root];b.Moment+=p*q;b.Quantity+=q;
+                b.HasStable|=(data[i*MaterialCount].QuantityFlags&4194304u)!=0;
+                b.MaximumQuantity=Mathf.Max(b.MaximumQuantity,q);
+                if((data[i*MaterialCount].QuantityFlags&65536u)==0)b.MaximumFreeQuantity=Mathf.Max(b.MaximumFreeQuantity,q);
+                if(b.Count++==0)b.Extents=new Vector4(p.x,p.y,p.x,p.y);
+                else b.Extents=new Vector4(Mathf.Min(b.Extents.x,p.x),Mathf.Min(b.Extents.y,p.y),Mathf.Max(b.Extents.z,p.x),Mathf.Max(b.Extents.w,p.y));
+            }
+            for(int work=0;work<workRows;work++)
+            {
+                int i=BodyRow(work);if(_parents[i]<0)continue;
+                ref var b=ref _bodies[FindBody(i)];int q=0;for(int m=0;m<MaterialCount;m++)q+=(int)(data[i*MaterialCount+m].QuantityFlags&65535u);
+                // 1 GMU尾格只占一小份铺展面积，不能把整团的平均厚度摊薄成纸。
+                // 阈值相对于本液团最富的格，均匀少量水的面积/高度校准保持不变。
+                b.EffectiveCount+=Mathf.Min(1,(float)q/Mathf.Max(1,b.MaximumQuantity*.2f));
+            }
+            for(int work=0;work<workRows;work++)
+            {
+                int i=BodyRow(work);if(_parents[i]<0 || _bodies[i].Count==0)continue;
+                ref var b=ref _bodies[i];b.Center=b.Moment/b.Quantity;
+                float fill=(float)b.Quantity/(b.EffectiveCount*Capacity);
+                b.MeanFill=fill;
+                // 天然湖泊由Stable水位控制；动态大水团不能仅因跨度/总量较大就退出塑形。
+                // XY收拢仍限制在1格内，避免用扩大175邻格搜索范围换取厚度。
+                float art=b.HasStable?0:1;
+                float scale=Mathf.Sqrt(fill/Mathf.Max(fill,GridLiquidFieldSampler.MapHeight(fill,CrownStrength)));
+                float reach=Mathf.Max(Mathf.Max(b.Center.x-b.Extents.x,b.Extents.z-b.Center.x),Mathf.Max(b.Center.y-b.Extents.y,b.Extents.w-b.Center.y));
+                scale=Mathf.Max(.4f,Mathf.Max(scale,Mathf.Max(1-1/Mathf.Max(1,reach),Mathf.Sqrt((float)b.MaximumFreeQuantity/(Capacity*1.25f)))));
+                b.Scale=Mathf.RoundToInt(Mathf.Lerp(1,Mathf.Min(1,scale),art)*255)/255f;
+                float physical=fill/(b.Scale*b.Scale)*(1+.15f*Mathf.Clamp01((1-b.Scale)/.6f));
+                // 额外艺术高度最多0.8格。合并深液柱不能机械乘1.8后越过纵向3行查询范围；
+                // 深柱也收回宏观Dome，保留真实主体高度与全部GMU，浅液团共用明确的显示倍率。
+                b.Height=b.HasStable?physical:Mathf.Min(physical*CartoonVolumeScale,physical+Mathf.Min(.8f,CartoonVolumeScale-1));
+            }
+            // 宽水团增加整个主体的圆冠，而不是只卷起最外侧一条边。
+            // 数量加权归一化使鼓起中心和低肩互相补偿，不能让加一个Dome再次增加整团体积。
+            for(int work=0;work<workRows;work++)
+            {int i=BodyRow(work);if(_parents[i]<0)continue;ref var b=ref _bodies[FindBody(i)];var motion=ReadRowMotionAtIndex(i,previous);var c=CellAt(i);
+                _domes[i]=BodyDome(in b,new Vector2(c.x+.5f+motion.OffsetCells.x,c.z+.5f+motion.OffsetCells.z));b.HeightWeight+=motion.Quantity*_domes[i];}
+            for(int work=0;work<workRows;work++)
+            {
+                int i=BodyRow(work);if(_parents[i]<0)continue;
+                ref var b=ref _bodies[FindBody(i)];var c=CellAt(i);var motion=ReadRowMotionAtIndex(i,previous);
+                // 质心与最后偏移都读取同一份原始行姿态，省掉第二遍六次HalfToFloat/材料。
+                // 此缓存仅用于ShapeBodies本批次；形变改写完成后必须失效，不能给Sampler旧姿态。
+                Vector2 shift=(b.Center-new Vector2(c.x+.5f,c.z+.5f)-new Vector2(motion.OffsetCells.x,motion.OffsetCells.z))*(1-b.Scale);
+                uint metadata=(uint)Mathf.RoundToInt(b.Scale*255)<<24|1048576u;
+                for(int m=0;m<MaterialCount;m++)
+                {
+                    var old=data[i*MaterialCount+m];var s=old.Decode();Vector3 pose=s.OffsetCells+new Vector3(shift.x,0,shift.y);
+                    // 已贴地的Y Offset不参与地板移动。小液团用该Half通道保存共同圆冠高度，
+                    // 避免极小尾格与富液格在重分配时把整个圆冠拉成一排起伏台阶。
+                    bool uniform=(old.QuantityFlags&65536u)!=0 && !b.HasStable;
+                    if(uniform)pose.y=b.Height*_domes[i]*b.Quantity/Mathf.Max(1,b.HeightWeight);
+                    data[i*MaterialCount+m]=GridLiquidPackedCell.Pack(new LiquidCellPresentationSample(s.Quantity,offset:pose,velocity:s.VelocityWorld),(old.QuantityFlags>>16)&71u);
+                    data[i*MaterialCount+m].QuantityFlags|=metadata|(uniform?2097152u:0u);
+                }
+            }
+            _lastCellReady=false;
+        }
+        private int BodyRow(int work)=>_sparseBodyRows?_bodyRows[work]:work;
+        private int ShapeRow(int work)=>_sparseShapeRows?_shapeRows[work]:work;
+        private int ShapeWorkRows=>_sparseShapeRows?_wetRowCount:Count*Cells;
+        private static float BodyDome(in Body body,Vector2 position)
+        {
+            if(body.HasStable || body.MeanFill>=1)return 1;
+            Vector2 radius=new Vector2(Mathf.Max(1,Mathf.Max(body.Center.x-body.Extents.x,body.Extents.z-body.Center.x)),Mathf.Max(1,Mathf.Max(body.Center.y-body.Extents.y,body.Extents.w-body.Center.y)));
+            Vector2 d=position-body.Center;float r2=d.x*d.x/(radius.x*radius.x)+d.y*d.y/(radius.y*radius.y);
+            float crown=Mathf.Max(0,1-.5f*r2);
+            float wide=Mathf.SmoothStep(0,1,Mathf.InverseLerp(4,8,Mathf.Max(body.Extents.z-body.Extents.x,body.Extents.w-body.Extents.y)));
+            float shape=Mathf.Lerp(Mathf.Max(.55f,1.3f-.3f*r2),.25f+1.35f*crown*crown,wide);
+            return body.MeanFill<=.5f?shape:Mathf.Lerp(shape,1,Mathf.SmoothStep(0,1,Mathf.InverseLerp(.5f,1,body.MeanFill)));
+        }
+        private void RebuildShapedBounds()
+        {
+            Array.Clear(_hasBounds,0,_hasBounds.Length);
+            for(int work=0;work<ShapeWorkRows;work++)for(int phase=0;phase<2;phase++)
+            {
+                int i=ShapeRow(work);
+                var data=phase==0?Previous:Current;uint amount=0;
+                for(int material=0;material<MaterialCount;material++)amount+=data[i*MaterialCount+material].QuantityFlags&65535u;
+                // 大部分行为空。先读整数数量，避免对空气执行两帧、三材料的Vector乘加。
+                if(amount==0)continue;
+                var motion=ReadRowMotionAtIndex(i,phase==0);amount=motion.Quantity;
+                float q=amount;Vector3 offset=motion.OffsetCells,velocity=motion.VelocityWorld;var c=CellAt(i);uint flags=data[i*MaterialCount].QuantityFlags;
+                bool ground=(flags&65536u)!=0;float scale=(flags&1048576u)!=0?Mathf.Max(.4f,(flags>>24)/255f):1;
+                Vector3 start=(Vector3)c+Vector3.one*.5f+offset,end=start+Vector3.ClampMagnitude(velocity*(Interval*(phase==0?1:-1))/CellSize,3);
+                Vector3 min=Vector3.Min(start,end),max=Vector3.Max(start,end);float radius=GridLiquidFieldSampler.KernelRadius*scale;
+                Vector4 terrain=Terrains[i];Vector2 slope=ground?new Vector2(-terrain.x,-terrain.z)/Mathf.Max(.25f,terrain.y):Vector2.zero;
+                float real=(flags&2097152u)!=0?offset.y:q/Capacity/(scale*scale)*(1+.15f*Mathf.Clamp01((1-scale)/.6f))*((flags&4194304u)!=0?1:CartoonVolumeScale);
+                // Bounds按最终收拢姿态重算；旧的未收拢圆核会多分配许多空页，挤掉r3预算。
+                // 用r2代理作为保守上界，包含两个Warp端点、坡面高差、隐藏底壳和一个细格Halo。
+                float proxy=Mathf.Max(.8f*(1+Mathf.Abs(slope.x)+Mathf.Abs(slope.y)),real);
+                // Bounds须覆盖采样代理，而不只是压回后的真实厚度；陡坡仍使用厚代理。
+                if(ground && slope.sqrMagnitude<.0625f)proxy=Mathf.Max(1.6f,real);
+                if(!ground)proxy=Mathf.Max(1.6f,real);
+                float f0=ground?(terrain.w-Origin.y)/CellSize+Vector2.Dot(slope,new Vector2(start.x-c.x-.5f,start.z-c.z-.5f)):start.y-proxy*.5f;
+                float f1=ground?(terrain.w-Origin.y)/CellSize+Vector2.Dot(slope,new Vector2(end.x-c.x-.5f,end.z-c.z-.5f)):end.y-proxy*.5f;
+                float reach=radius*(Mathf.Abs(slope.x)+Mathf.Abs(slope.y));
+                min.x-=radius+.25f;min.z-=radius+.25f;max.x+=radius+.25f;max.z+=radius+.25f;
+                min.y=Mathf.Min(f0,f1)-reach-.25f-.02f/CellSize;max.y=Mathf.Max(f0,f1)+reach+proxy+.25f;
+                int page=i/Cells;var box=new Bounds((min+max)*.5f,max-min);
+                if(_hasBounds[page])_bounds[page].Encapsulate(box);else{_bounds[page]=box;_hasBounds[page]=true;}
+            }
+        }
+        private bool Add(ElementChunkKey key, bool owner)
+        {
+            if(owner && !_ownerSet.Contains(key))
+            {if(OwnerCount==Owners.Length){Overflow=true;return false;}_ownerSet.Add(key);Owners[OwnerCount++]=key;}
+            if (_pages.ContainsKey(key)) return true;
+            if (Count == Keys.Length) { Overflow = true; return false; }
+            int index = Count++; Keys[index] = key; _pages.Add(key, index);
+            return true;
+        }
+        private uint StableQuantity(Vector3Int c, MaterialId m, bool previous)
+        {
+            if((previous?_previousPatchCount:_currentPatchCount)==0)return 0;
+            StableLiquidSurfacePatch[] patches = previous ? _previousPatches : _currentPatches;
+            if(!_pages.TryGetValue(Key(c,K),out int page))return 0;
+            int list=page*2+(previous?0:1),count=_patchCounts[list];
+            float x = Origin.x + (c.x + .5f) * CellSize, z = Origin.z + (c.z + .5f) * CellSize;
+            for (int i = 0; i < count; i++)
+            {
+                ref readonly StableLiquidSurfacePatch p = ref patches[_patchIndices[list*PatchesPerPage+i]];
+                if (p.Material != m || c.y < p.MinimumYCells || c.y >= p.MaximumYCells
+                    || Mathf.Abs(x - p.Center.x) >= p.SizeXZ.x * .5f || Mathf.Abs(z - p.Center.z) >= p.SizeXZ.y * .5f) continue;
+                return (uint)Mathf.RoundToInt(Mathf.Clamp01((p.Center.y - Origin.y) / CellSize - c.y) * Capacity);
+            }
+            return 0;
+        }
+        private bool StableOverlap(ElementChunkKey key)
+        {
+            float minX = Origin.x + key.X * K * CellSize, minZ = Origin.z + key.Z * K * CellSize;
+            for (int phase = 0; phase < 2; phase++)
+            {
+                var patches = phase == 0 ? _previousPatches : _currentPatches;
+                int count = phase == 0 ? _previousPatchCount : _currentPatchCount;
+                for (int i = 0; i < count; i++)
+                {
+                    var p = patches[i];
+                    if (key.Y * K >= p.MaximumYCells || (key.Y + 1) * K <= p.MinimumYCells) continue;
+                    if (p.Center.x + p.SizeXZ.x * .5f > minX && p.Center.x - p.SizeXZ.x * .5f < minX + K * CellSize
+                        && p.Center.z + p.SizeXZ.y * .5f > minZ && p.Center.z - p.SizeXZ.y * .5f < minZ + K * CellSize) return true;
+                }
+            }
+            return false;
+        }
+        private Bounds WorldChunkBounds(ElementChunkKey key)
+        {float span=K*CellSize;return new Bounds(Origin+new Vector3(key.X+.5f,key.Y+.5f,key.Z+.5f)*span,Vector3.one*span);}
+        private bool Select(ElementChunkKey key,MaterialPresentationView view)=>view==null || view.Intersects(WorldChunkBounds(key),CellSize*3);
+        public uint ViewSignature(MaterialPresentationView view)
+        {
+            // 世界不变时转头也会暴露新页。只检查Chunk包围盒，不打包数量或采样Collider。
+            int live=_source.CopyLiquidChunkKeys(_sourceKeys);uint hash=2166136261u;
+            unchecked{for(int i=0;i<live;i++)if(Select(_sourceKeys[i],view))hash=(hash^GridLiquidFieldGpuLayout.Hash(_sourceKeys[i].X,_sourceKeys[i].Y,_sourceKeys[i].Z))*16777619u;}
+            return hash;
+        }
+        public void Capture(MaterialPresentationView view=null)
+        {
+            if(_snapshotOnly)throw new InvalidOperationException("CPU snapshot must copy a committed shaped frame.");
+            _rowMotion.Clear();
+            _wetRowCount=0;_sparseShapeRows=false;
+            _queryReady=_lastCellReady=_queryCellsReady=false;
+            var swap = _previousPatches; _previousPatches = _currentPatches; _currentPatches = swap;
+            _previousPatchCount = _currentPatchCount; _currentPatchCount = _source.CopyAllStableSurfacePatches(_currentPatches);
+            _pages.Clear();_ownerSet.Clear();Array.Clear(_hasBounds,0,_hasBounds.Length); Count = OwnerCount = 0; Overflow = Animated = false;
+            Epoch = _source.TransportEpoch;
+            int live = _source.CopyLiquidChunkKeys(_sourceKeys);
+            SelectionSignature=ViewSignature(view);CulledSourcePages=0;
+            for (int i = 0; i < live; i++)if(Select(_sourceKeys[i],view))Add(_sourceKeys[i],true);else CulledSourcePages++;
+            int changed = _source.CopyTransportChangedCells(_changed);
+            for (int i = 0; i < changed; i++)
+            {
+                bool existed = false;
+                for (int m = 0; m < MaterialCount; m++)
+                { _source.TryGetPresentationSample(_changed[i], Materials[m], true, out var s); existed |= s.Quantity > 0; }
+                var changedKey=Key(_changed[i],K);
+                if (existed && Select(changedKey,view)) Add(changedKey, true);
+            }
+            // 输出只在可见域产生；数量输入保留一整圈邻页。Frustum边沿的混色、宽核和坡脚
+            // 仍读取真实相邻格，不能把屏幕外液体当作空格切开正在显示的液团。
+            if(view!=null && view.Enabled)for(int i=0;i<live;i++)
+            {
+                var key=_sourceKeys[i];if(_pages.ContainsKey(key))continue;bool adjacent=false;
+                for(int z=-1;z<=1 && !adjacent;z++)for(int y=-1;y<=1 && !adjacent;y++)for(int x=-1;x<=1;x++)
+                    if(_ownerSet.Contains(new ElementChunkKey(key.X+x,key.Y+y,key.Z+z))){adjacent=true;break;}
+                if(adjacent)Add(key,false);
+            }
+            // Static湖泊只复制活动Owner周围相交的稀疏边界，不枚举所有Stable格。
+            for (int i = 0; i < OwnerCount; i++)
+                for (int z = -1; z <= 1; z++) for (int y = -1; y <= 1; y++) for (int x = -1; x <= 1; x++)
+                { var c = new ElementChunkKey(Owners[i].X + x, Owners[i].Y + y, Owners[i].Z + z); if (StableOverlap(c)) Add(c, false); }
+            Array.Clear(Lookup, 0, Lookup.Length);
+            Array.Clear(OwnerLookup,0,OwnerLookup.Length);
+            Array.Clear(_patchCounts,0,_patchCounts.Length);
+            for(int page=0;page<Count;page++)
+                for(int phase=0;phase<2;phase++)
+                {
+                    var ps=phase==0?_previousPatches:_currentPatches;int n=phase==0?_previousPatchCount:_currentPatchCount;
+                    var key=Keys[page];float xmin=Origin.x+key.X*K*CellSize,zmin=Origin.z+key.Z*K*CellSize;
+                    int list=page*2+phase;
+                    for(int j=0;j<n;j++)
+                    {
+                        var p=ps[j];
+                        if(key.Y*K>=p.MaximumYCells || (key.Y+1)*K<=p.MinimumYCells
+                            || p.Center.x+p.SizeXZ.x*.5f<=xmin || p.Center.x-p.SizeXZ.x*.5f>=xmin+K*CellSize
+                            || p.Center.z+p.SizeXZ.y*.5f<=zmin || p.Center.z-p.SizeXZ.y*.5f>=zmin+K*CellSize)continue;
+                        if(_patchCounts[list]==PatchesPerPage){Overflow=true;break;}
+                        _patchIndices[list*PatchesPerPage+_patchCounts[list]++]=j;
+                    }
+                }
+            Array.Clear(_historyPages,0,Count);
+            Array.Clear(_historyRowMasks,0,(Count*Cells+63)/64);
+            // Changed数组能容纳History的全部固定槽；一次定位页，避免每个空气格查History Dictionary。
+            // 当前数量为零仍可能有Previous液体。只有整页没有History且没有Stable边界才走空格快跳。
+            for(int changedIndex=0;changedIndex<changed;changedIndex++)
+            {
+                var cell=_changed[changedIndex];var key=Key(cell,K);
+                if(!_pages.TryGetValue(key,out int historyPage))continue;
+                _historyPages[historyPage]=true;
+                int row=historyPage*Cells+cell.x-key.X*K+K*(cell.y-key.Y*K+K*(cell.z-key.Z*K));
+                _historyRowMasks[row>>6]|=1UL<<(row&63);
+            }
+            using(PackMarker.Auto())for (int page = 0; page < Count; page++)
+            {
+                ElementChunkKey key = Keys[page];
+                _source.CopyPresentationChunkQuantities(key,_chunkQuantities);
+                // 整页清零一次；空行只查数量/History，不做姿态转换、Stable查询或支撑测试。
+                Array.Clear(Current,page*Cells*MaterialCount,Cells*MaterialCount);Array.Clear(Previous,page*Cells*MaterialCount,Cells*MaterialCount);
+                int h = (int)(GridLiquidFieldGpuLayout.Hash(key.X, key.Y, key.Z) & (uint)(Lookup.Length - 1));
+                int probes = 0; while (Lookup[h].Slot != 0 && probes++ < 32) h = (h + 1) & (Lookup.Length - 1);
+                if (probes >= 32) { Overflow = true; continue; }
+                Lookup[h] = new GridLiquidChunkLookup(key.X, key.Y, key.Z, page + 1);
+                for (int z = 0; z < K; z++) for (int y = 0; y < K; y++) for (int x = 0; x < K; x++)
+                {
+                    int row=(x+K*(y+K*z))*MaterialCount;
+                    int index=page*Cells+x+K*(y+K*z);
+                    bool historyRow=(_historyRowMasks[index>>6]&(1UL<<(index&63)))!=0;
+#if UNITY_EDITOR
+                    if(_validationFullRowScan)historyRow=_historyPages[page];
+#endif
+                    if(!historyRow && _patchCounts[page*2]==0 && _patchCounts[page*2+1]==0)
+                    {
+                        bool wet=false;for(int material=0;material<MaterialCount;material++)wet|=_chunkQuantities[row+material]!=0;
+                        if(!wet)continue;
+                    }
+                    Vector3Int c = new Vector3Int(key.X * K + x, key.Y * K + y, key.Z * K + z);
+                    bool hasDynamic=_source.CopyPresentationRow(c,_chunkQuantities,row,_rowCurrent,_rowPrevious);
+                    if(!hasDynamic)
+                    {
+                        if(_patchCounts[page*2]==0 && _patchCounts[page*2+1]==0)continue;
+                        Array.Clear(_rowCurrent,0,MaterialCount);Array.Clear(_rowPrevious,0,MaterialCount);
+                    }
+                    uint total = 0, oldTotal = 0;bool hasCurrentStable=false,hasPreviousStable=false;
+                    for (int m = 0; m < MaterialCount; m++)
+                    {
+                        var current=_rowCurrent[m];var previous=_rowPrevious[m];
+                        if (current.Quantity == 0) current = new LiquidCellPresentationSample(StableQuantity(c, Materials[m], false), Vector3.zero, Vector3.zero);
+                        if (previous.Quantity == 0) previous = new LiquidCellPresentationSample(StableQuantity(c, Materials[m], true), Vector3.zero, Vector3.zero);
+                        bool currentStable=_rowCurrent[m].Quantity==0 && current.Quantity>0,previousStable=_rowPrevious[m].Quantity==0 && previous.Quantity>0;
+                        hasCurrentStable|=currentStable;hasPreviousStable|=previousStable;
+                        total += current.Quantity; oldTotal += previous.Quantity;
+                        Current[index * MaterialCount + m] = GridLiquidPackedCell.Pack(current, 0);
+                        Previous[index * MaterialCount + m] = GridLiquidPackedCell.Pack(previous, 0);
+                        if(currentStable)Current[index*MaterialCount+m].QuantityFlags|=4194304u;
+                        if(previousStable)Previous[index*MaterialCount+m].QuantityFlags|=4194304u;
+                        Animated |= current.Quantity != previous.Quantity || current.OffsetCells != previous.OffsetCells || current.VelocityWorld != previous.VelocityWorld;
+                    }
+                    // 打包已取得两帧数量，顺便记录湿格并集，不再在每个后续阶段扫描512格空气。
+                    // 按原线性顺序收集；Previous-only尾水同样保留。表满时完整遍历，不截液体。
+                    if(CrownStrength>.15f && (total>0 || oldTotal>0))
+                    {
+                        if(_wetRowCount<_shapeRows.Length)_shapeRows[_wetRowCount]=index;
+                        _wetRowCount++;
+                    }
+                    bool supported = total > 0 && (_source.IsSolidForSurface(c + Vector3Int.down) || _source.GetTotalFill(c + Vector3Int.down) >= .999f);
+                    // Stable虚拟边界格也有支撑；其底部由稀疏Patch/固定纵向格定义。
+                    uint stableBelow=0;for(int m=0;m<MaterialCount;m++)stableBelow+=StableQuantity(c+Vector3Int.down,Materials[m],false);
+                    supported |= total > 0 && stableBelow >= Capacity;
+                    bool oldSupported = oldTotal > 0 && (supported || _source.IsSolidForSurface(c + Vector3Int.down));
+                    Vector4 terrain = new Vector4(0, 1, 0, Origin.y + c.y * CellSize);
+                    LiquidTerrainSupport support=default;
+                    bool solidSupport=(supported || oldSupported) && _source.TryGetTerrainSupportForPresentation(c, out support);
+                    if (solidSupport) terrain = new Vector4(support.Normal.x, support.Normal.y, support.Normal.z, support.Height);
+                    else if (supported || oldSupported) terrain.w = _source.GetPresentationBaseHeight(c);
+                    Terrains[index] = terrain;
+                    for (int m = 0; m < MaterialCount; m++)
+                    {
+                        if(hasCurrentStable)Current[index*MaterialCount+m].QuantityFlags|=4194304u;
+                        if(hasPreviousStable)Previous[index*MaterialCount+m].QuantityFlags|=4194304u;
+                        Current[index * MaterialCount + m].QuantityFlags |= supported ? 65536u : 0u;
+                        Previous[index * MaterialCount + m].QuantityFlags |= oldSupported ? 65536u : 0u;
+                        // 满格液体能支撑上层数量，但不属于Collider；压缩外壳时只能约束真实地板。
+                        if(solidSupport){Current[index*MaterialCount+m].QuantityFlags|=131072u;Previous[index*MaterialCount+m].QuantityFlags|=131072u;}
+                        Current[index*MaterialCount+m].QuantityFlags|=262144u;Previous[index*MaterialCount+m].QuantityFlags|=262144u;
+                        // 所有数量都保留在统一场中；自由液体也不分配独立圆球Draw路径。
+                    }
+                    // 圆冠模式会按最终收拢形状重算Bounds；旧姿态Bounds随后被全部清除，无需先做一遍。
+                    if((total>0 || oldTotal>0) && CrownStrength<=.15f)
+                    {
+                        for(int phase=0;phase<2;phase++)
+                        {
+                            float amount=phase==0?oldTotal:total;if(amount<=0)continue;
+                            Vector3 offset=Vector3.zero,velocity=Vector3.zero;
+                            for(int m=0;m<MaterialCount;m++){var sample=(phase==0?Previous:Current)[index*MaterialCount+m].Decode();offset+=sample.OffsetCells*sample.Quantity;velocity+=sample.VelocityWorld*sample.Quantity;}
+                            offset/=amount;velocity/=amount;
+                            Vector3 start=(Vector3)c+Vector3.one*.5f+offset,end=start+Vector3.ClampMagnitude(velocity*(Interval*(phase==0?1:-1))/CellSize,3);
+                            bool ground=phase==0?oldSupported:supported;
+                            float floor=(terrain.w-Origin.y)/CellSize,slope=1.45f*(Mathf.Abs(terrain.x)+Mathf.Abs(terrain.z))/Mathf.Max(.25f,terrain.y);
+                            Vector3 min=Vector3.Min(start,end),max=Vector3.Max(start,end);
+                            if(ground){min.y=floor+Mathf.Min(offset.y,offset.y+end.y-start.y)-slope;max.y=floor+Mathf.Max(offset.y,offset.y+end.y-start.y)+slope+MapHeightForBounds(amount/Capacity);min.x-=1.45f;min.z-=1.45f;max.x+=1.45f;max.z+=1.45f;min.y-=.7f;max.y+=.7f;}
+                            else{min-=Vector3.one*1.3f;max+=Vector3.one*1.3f;}
+                            var box=new Bounds((min+max)*.5f,max-min);if(_hasBounds[page])_bounds[page].Encapsulate(box);else{_bounds[page]=box;_hasBounds[page]=true;}
+                        }
+                    }
+                }
+            }
+            // 低频圆冠支持度每Tick计算一次，编码8位显示系数；不在每个GPU节点再扫描宽核。
+            if(CrownStrength>.15f)
+            {
+                _sparseShapeRows=_wetRowCount<=_shapeRows.Length;
+#if UNITY_EDITOR
+                _sparseShapeRows&=!_validationFullRowScan;
+#endif
+                using(CrownMarker.Auto()){MergeSupportedColumns(Previous);MergeSupportedColumns(Current);ShapeBodies(Previous);ShapeBodies(Current);}
+                // 原始姿态已被共同圆冠改写；清掉该批缓存，再由Bounds预热最终姿态给CPU宽核复用。
+                _rowMotion.Clear();
+                using(BoundsMarker.Auto())RebuildShapedBounds();
+            }
+            else using(CrownMarker.Auto())for(int page=0;page<Count;page++)for(int local=0;local<Cells;local++)
+            {
+                int row=(page*Cells+local)*MaterialCount;var key=Keys[page];var cell=new Vector3Int(key.X*K+local%K,key.Y*K+local/K%K,key.Z*K+local/(K*K));
+                for(int phase=0;phase<2;phase++)
+                {
+                    var data=phase==0?Previous:Current;if((data[row].QuantityFlags&65535u)==0)
+                    {bool exists=false;for(int m=1;m<MaterialCount;m++)exists|=(data[row+m].QuantityFlags&65535u)>0;if(!exists)continue;}
+                    float sum=0,norm=0;
+                    for(int z=-2;z<=2;z++)for(int x=-2;x<=2;x++)
+                    {
+                        float w=Mathf.Max(0f,1f-(x*x+z*z)/6.25f);w=w*w*w;norm+=w;
+                        int index=Index(cell+new Vector3Int(x,0,z));if(index<0)continue;
+                        bool wet=false;for(int m=0;m<MaterialCount;m++)wet|=(data[index*MaterialCount+m].QuantityFlags&65535u)>0;
+                        if(wet)sum+=w;
+                    }
+                    float s=Mathf.Clamp01(sum/Mathf.Max(norm,.001f)*1.08f);uint flags=(uint)Mathf.RoundToInt(s*s*255)<<24|524288u;
+                    for(int m=0;m<MaterialCount;m++)data[row+m].QuantityFlags|=flags;
+                }
+            }
+            // Chunk只划分输出所有权。轮廓可伸到空邻页，所以不能只绘制有Gameplay格的页。
+            // 这些输出页不复制新输入，GPU仍通过共享Lookup访问原始数量。
+            // 所有权来自最终显示Bounds，原来仅含数量的悬高粗格不必再占一个空Draw页。
+            // 先保留源Owner身份，避免把Stable Halo页扩展成整片活动湖面。
+            using var ownerScope=OwnersMarker.Auto();
+            for(int page=0;page<Count;page++)_inputOwners[page]=_ownerSet.Contains(Keys[page]);
+            _ownerSet.Clear();OwnerCount=0;
+            for(int page=0;page<Count;page++)
+            {
+                if(!_inputOwners[page] || !_hasBounds[page])continue;
+                var b=_bounds[page];Vector3Int min=Vector3Int.FloorToInt(b.min/K),max=Vector3Int.FloorToInt(b.max/K);
+                for(int z=min.z;z<=max.z;z++)for(int y=min.y;y<=max.y;y++)for(int x=min.x;x<=max.x;x++)
+                {var owner=new ElementChunkKey(x,y,z);if(!Select(owner,view) || _ownerSet.Contains(owner))continue;if(OwnerCount==Owners.Length){Overflow=true;continue;}_ownerSet.Add(owner);Owners[OwnerCount++]=owner;}
+            }
+            if(view!=null && view.Enabled)SortOwners(view);
+            RebuildOwnerLookup();
+        }
+        private void RebuildOwnerLookup()
+        {
+            Array.Clear(OwnerLookup,0,OwnerLookup.Length);
+            // Bounds扩展产生的空输出页同样拥有表面；必须等最终Owner集合完成后才建立裁剪表。
+            for(int i=0;i<OwnerCount;i++)
+            {
+                var key=Owners[i];int h=(int)(GridLiquidFieldGpuLayout.Hash(key.X,key.Y,key.Z)&(uint)(OwnerLookup.Length-1));
+                int probes=0;while(OwnerLookup[h].Slot!=0 && probes++<32)h=(h+1)&(OwnerLookup.Length-1);
+                if(probes>=32){Overflow=true;continue;}OwnerLookup[h]=new GridLiquidChunkLookup(key.X,key.Y,key.Z,i+1);
+            }
+        }
+        private void SortOwners(MaterialPresentationView view)
+        {
+            _hasPriorityDeposit=_source.TryGetRecentPresentationDeposit(out _priorityDeposit);
+            // 原地Heap Sort：O(n log n)，避免大量物质下Insertion Sort平方增长或Comparer/闭包GC。
+            for(int start=OwnerCount/2-1;start>=0;start--)SiftOwners(start,OwnerCount,view);
+            for(int end=OwnerCount-1;end>0;end--){var swap=Owners[0];Owners[0]=Owners[end];Owners[end]=swap;SiftOwners(0,end,view);}
+        }
+        private void SiftOwners(int root,int count,MaterialPresentationView view)
+        {
+            while(root*2+1<count)
+            {int next=root*2+1;if(next+1<count && CompareOwner(Owners[next],Owners[next+1],view)<0)next++;
+                if(CompareOwner(Owners[root],Owners[next],view)>=0)return;
+                var swap=Owners[root];Owners[root]=Owners[next];Owners[next]=swap;root=next;}
+        }
+        private int CompareOwner(ElementChunkKey a,ElementChunkKey b,MaterialPresentationView view)
+        {
+            Bounds ab=WorldChunkBounds(a),bb=WorldChunkBounds(b);
+            float ad=view.Priority(ab),bd=view.Priority(bb);
+            if(_hasPriorityDeposit)
+            {
+                float ar=(ab.ClosestPoint(_priorityDeposit)-_priorityDeposit).sqrMagnitude,br=(bb.ClosestPoint(_priorityDeposit)-_priorityDeposit).sqrMagnitude;
+                // 最近注入附近4m优先显示，同区仍按距离排序。GPU池不增长，数量/反应不受影响。
+                if(ar<16)ad=-100000+ar;if(br<16)bd=-100000+br;
+            }
+            int distance=ad.CompareTo(bd);
+            if(distance!=0)return distance;int x=a.X.CompareTo(b.X);if(x!=0)return x;int y=a.Y.CompareTo(b.Y);return y!=0?y:a.Z.CompareTo(b.Z);
+        }
+        public void CopyFrom(GridLiquidFieldFrame source)
+        {
+            // CPU构建保有不可变快照；近处GPU下一Tick可以继续读取新世界，互不阻塞。
+            Count=source.Count;OwnerCount=source.OwnerCount;Overflow=source.Overflow;Animated=source.Animated;Epoch=source.Epoch;
+            SelectionSignature=source.SelectionSignature;CulledSourcePages=source.CulledSourcePages;
+            _previousPatchCount=source._previousPatchCount;_currentPatchCount=source._currentPatchCount;
+            Array.Copy(source._previousPatches,_previousPatches,_previousPatchCount);Array.Copy(source._currentPatches,_currentPatches,_currentPatchCount);
+            Array.Copy(source.Keys,Keys,Count);Array.Copy(source.Owners,Owners,OwnerCount);
+            if(!_snapshotOnly)Array.Copy(source.Previous,Previous,Count*Cells*MaterialCount);
+            Array.Copy(source.Current,Current,Count*Cells*MaterialCount);
+            Array.Copy(source.Terrains,Terrains,Count*Cells);Array.Copy(source._bounds,_bounds,Count);Array.Copy(source._hasBounds,_hasBounds,Count);
+            _pages.Clear();for(int i=0;i<Count;i++)_pages.Add(Keys[i],i);
+            _rowMotion.Clear();_queryReady=_lastCellReady=_queryCellsReady=false;_sparseShapeRows=false;_wetRowCount=0;RebuildOwnerLookup();
+        }
+        public void SelectGpuDomain(int inputCapacity,int outputCapacity)
+        {
+            Array.Clear(_gpuInputs,0,Count);int inputs=0,owners=0,halo=Mathf.CeilToInt(5f/K);
+            for(int i=0;i<OwnerCount && owners<outputCapacity;i++)
+            {
+                var key=Owners[i];int added=0;
+                for(int z=-halo;z<=halo;z++)for(int y=-halo;y<=halo;y++)for(int x=-halo;x<=halo;x++)
+                    if(_pages.TryGetValue(new ElementChunkKey(key.X+x,key.Y+y,key.Z+z),out int page) && !_gpuInputs[page])added++;
+                if(inputs+added>inputCapacity)break;
+                for(int z=-halo;z<=halo;z++)for(int y=-halo;y<=halo;y++)for(int x=-halo;x<=halo;x++)
+                    if(_pages.TryGetValue(new ElementChunkKey(key.X+x,key.Y+y,key.Z+z),out int page))_gpuInputs[page]=true;
+                inputs+=added;owners++;
+            }
+            // 从完整可见场塑形后再压紧输入，保持共享边界的Dome/颜色/厚度不受GPU预算分组影响。
+            int copied=0;
+            for(int page=0;page<Count;page++)if(_gpuInputs[page])
+            {
+                if(copied!=page)
+                {Keys[copied]=Keys[page];_bounds[copied]=_bounds[page];_hasBounds[copied]=_hasBounds[page];
+                    Array.Copy(Previous,page*Cells*MaterialCount,Previous,copied*Cells*MaterialCount,Cells*MaterialCount);
+                    Array.Copy(Current,page*Cells*MaterialCount,Current,copied*Cells*MaterialCount,Cells*MaterialCount);
+                    Array.Copy(Terrains,page*Cells,Terrains,copied*Cells,Cells);}
+                copied++;
+            }
+            Count=copied;OwnerCount=owners;_pages.Clear();for(int i=0;i<Count;i++)_pages.Add(Keys[i],i);
+            _rowMotion.Clear();_queryReady=_lastCellReady=_queryCellsReady=false;_sparseShapeRows=false;_wetRowCount=0;RebuildOwnerLookup();
+        }
+        private float MapHeightForBounds(float f)=>Mathf.Max(.5f,GridLiquidFieldSampler.MapHeight(f,CrownStrength));
+        public Bounds OwnerBounds(int owner)
+        {
+            var key=Owners[owner];var domain=new Bounds(new Vector3((key.X+.5f)*K,(key.Y+.5f)*K,(key.Z+.5f)*K),Vector3.one*(K+6));
+            bool any=false;Bounds result=default;
+            for(int i=0;i<Count;i++)if(_hasBounds[i] && domain.Intersects(_bounds[i])){if(any)result.Encapsulate(_bounds[i]);else{result=_bounds[i];any=true;}}
+            return any?result:new Bounds(domain.center,Vector3.zero);
+        }
+        public int CopyStablePatches(MaterialId material, StableLiquidSurfacePatch[] destination)
+        {
+            int n = 0;
+            for (int i = 0; i < _currentPatchCount && n < destination.Length; i++)
+                if (_currentPatches[i].Material == material) destination[n++] = _currentPatches[i];
+            return n;
+        }
+    }
+}

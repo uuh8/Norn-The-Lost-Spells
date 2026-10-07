@@ -43,7 +43,7 @@ namespace Game.Character
 
         [Header("Aim")]
         [Tooltip("屏幕中心瞄准的可命中层（排除 Player 层，免瞄到自己）")]
-        [SerializeField] private LayerMask _fireballAimMask = ~0;
+        [SerializeField] private LayerMask _aimMask = ~0;
         [Tooltip("屏幕中心瞄准的射线最大距离；未命中时取相机朝向该远点")]
         [SerializeField] private float _aimMaxDistance = 100f;
 
@@ -54,12 +54,10 @@ namespace Game.Character
         private HealthComponent _health;
 
         // ── 攻击输入 Runtime State ──
-        // 这不是 Queue<T>，而是“一个待处理标记 + 剩余有效时间 + 瞄准点”的单槽缓存。
-        // 新点击会覆盖旧请求，因此既能宽容冷却期内的提前输入，又不会无限积压连发次数。
-        private bool _castQueued;                // true = 当前存在一次尚未被 FSM 消费的施法请求；false = 表示当前没有等待执行的施法请求
-        private float _castQueueTimer;           // 这次请求的剩余寿命秒数；归零仍未消费则作废，表示“玩家刚才的攻击意图还能保留多久”
-        private Vector3 _clickAimPoint;          // 按下那一刻锁存的准心瞄准点（消除出手时相机/身体已变的方向漂移）
-        private bool _hasClickAim;
+        // 是否有待处理请求以及请求寿命统一由基类 AttackBufferCounter 表示。
+        // 这里仅保存 Wizard 独有的瞄准数据，避免再用“待处理标记 + 独立计时器”重复表达同一状态。
+        private Vector3 _pendingCastAimPoint;     // 下一次待处理施法的点击瞬间瞄准点；新点击可以覆盖它
+        private Vector3 _activeCastAimPoint;      // 本次攻击已消费的瞄准点；动画出手前保持不变
         private readonly RaycastHit[] _aimHits = new RaycastHit[16]; // 点按锁存瞄准用射线缓冲（预分配，零每帧 GC）
 
         private int _airAttackStateHash;
@@ -68,19 +66,17 @@ namespace Game.Character
         public Transform FireballSpawnPoint => _fireballSpawnPoint;
         public HealthComponent Health => _health;
         public SpellCaster SpellCaster => _spellCaster;
-        public Vector3 ClickAimPoint => _clickAimPoint; // 施法态释放时读取：按下那一刻锁存的准心
-        public bool HasClickAim => _hasClickAim;
+        public Vector3 ActiveCastAimPoint => _activeCastAimPoint;
 
         public float AimMaxDistance => _aimMaxDistance;
         public int AirAttackStateHash => _airAttackStateHash;
 
+        # region Unity 周期函数
         protected override void Awake()
         {
-            // override 的 Awake 必须先调用 base.Awake，保证共享组件、Input Actions 和 FSM 已初始化，
-            // 子类随后才能安全创建持有 this 引用的专属攻击 State。
+            // override 的 Awake 必须先调用 base.Awake，保证共享组件、Input Actions 和 FSM 已初始化，子类随后才能安全创建持有 this 引用的专属攻击 State。
             base.Awake();
 
-            // GetComponent 只查询同一 GameObject；这些组件在 Prefab 上与控制器并列挂载。
             _health = GetComponent<HealthComponent>();
             _spellCaster = GetComponent<SpellCaster>();
             _wizardAttackState = new PlayerWizardAttackState(this);
@@ -94,6 +90,7 @@ namespace Game.Character
         protected override void Start()
         {
             base.Start();
+            // 远程角色屏幕中间显示准心
             EventBus<CrosshairVisibilityEvent>.Publish(new CrosshairVisibilityEvent { Visible = true });
         }
 
@@ -108,32 +105,27 @@ namespace Game.Character
             base.OnDisable();
             EventBus<CrosshairVisibilityEvent>.Publish(new CrosshairVisibilityEvent { Visible = false });
         }
-
-        // 请求寿命覆盖一次射速冷却再加通用 Buffer，使冷却期内提前按下的下一发能等到可用时刻。
-        private float CastQueueLifetime =>
-            (_combo != null ? _combo.AttackCooldown : 0f) + AttackBufferTime;
+        # endregion
 
         /// <summary>
-        /// 每帧攻击输入常驻处理（由基类 Update 调用，始终运行，不被攻击状态打断）：
-        /// 上升沿 → 锁存"点按那一刻"的准心瞄准点 + 入队一次施放；入队计时过期 → 作废。
-        /// 这样快速连点即便落在动画/射速冷却内也不丢，冷却一过补发，方向用按下瞬间的准心。
+        /// Attack Action 的 performed 回调：在按键触发的同一刻保存瞄准点，并写入共享攻击缓存。
+        /// AttackBufferCounter 是唯一的请求有效期，不再额外维护待施法 bool 与计时器。
         /// </summary>
-        protected override void UpdateAttackInput()
+        protected override void OnAttackPerformed(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
         {
-            // WasPressedThisFrame 只在按下边沿为 true；持续按住不会每帧重复覆盖请求。
-            if (AttackPressedThisFrame)
-            {
-                _clickAimPoint = ResolveAimTargetPoint(_fireballAimMask, _aimMaxDistance, _aimHits);
-                _hasClickAim = true;
-                _castQueued = true;
-                _castQueueTimer = CastQueueLifetime;
-            }
+            // 暂停时 UI 也会使用鼠标，不能把 UI 点击记录成恢复游戏后的施法。
+            if (Time.timeScale == 0f)
+                return;
 
-            if (_castQueueTimer > 0f)
-            {
-                _castQueueTimer -= Time.deltaTime;
-                if (_castQueueTimer <= 0f) _castQueued = false; // 过期作废
-            }
+            _pendingCastAimPoint = ResolveAimTargetPoint(
+                _aimMask,   // 射线检测的层级遮罩，保证射线只与合法的目标发生碰撞
+                _aimMaxDistance,    // 最大瞄准距离
+                _aimHits);          // 接收射线碰撞结果的缓冲区
+
+            // 保留原有手感：每次点击都获得“一次完整射速冷却 + 普通 Buffer”的有效期，
+            // 因此动画或冷却期间稍早按下的下一发不会丢失。新点击覆盖旧请求，仍不会无限积压次数。
+            float queueLifetime = (_combo != null ? _combo.AttackCooldown : 0f) + AttackBufferTime;
+            AttackBufferCounter = queueLifetime;
         }
 
         /// <summary>
@@ -247,37 +239,34 @@ namespace Game.Character
         /// </summary>
         public override bool TryStartAttack()
         {
-            if (_castQueued && AttackCooldownCounter <= 0f)
-            {
-                FireQueuedCast();
-                return true;
-            }
-            return false;
+            if (AttackBufferCounter <= 0f || AttackCooldownCounter > 0f)
+                return false;
+
+            ConsumeBufferedCast();
+            return true;
         }
 
-        /// <summary>空中状态的平行入口；复用同一个单槽请求与锁存瞄准点，只由攻击 State 选择空中动画。</summary>
+        /// <summary>空中状态的平行入口；复用同一个攻击缓存，只由攻击 State 选择空中动画。</summary>
         public override bool TryStartAirAttack()
         {
-            if (_castQueued && AttackCooldownCounter <= 0f)
-            {
-                FireQueuedCast();
-                return true;
-            }
-            return false;
+            if (AttackBufferCounter <= 0f || AttackCooldownCounter > 0f)
+                return false;
+
+            ConsumeBufferedCast();
+            return true;
         }
 
-        /// <summary>原子地消费单槽请求、启动冷却并进入施法 State；真正出手要等待 Animator 进度阈值。</summary>
-        private void FireQueuedCast()
+        /// <summary>原子地消费攻击意图与瞄准点、启动冷却并进入施法 State；真正出手等待 Animator 进度阈值。</summary>
+        private void ConsumeBufferedCast()
         {
-            // 清除待处理请求，保证一个请求只执行一次
-            _castQueued = false;
-            _castQueueTimer = 0f;
+            // 进入攻击状态前锁定本次瞄准点。攻击动画期间的新点击只会更新 pending，不能污染 active。
+            _activeCastAimPoint = _pendingCastAimPoint;
+
+            // 清除共享缓存，保证一次 performed 只执行一次攻击。
+            AttackBufferCounter = 0f;
 
             // 冷却在批准攻击时开始，而不是命中时开始；射速因此与投射物飞行时间完全解耦。
             AttackCooldownCounter = _combo != null ? _combo.AttackCooldown : 0f; // 射速冷却（与动画长度解耦）
-
-            // 清理通用攻击缓存
-            AttackBufferCounter = 0f;
 
             // 切换到施法状态
             StateMachine.ChangeState(_wizardAttackState);

@@ -27,4 +27,14 @@ namespace Game.ElementField
         bool IsSolid(Vector3Int globalCell);
         uint GetChunkVersion(ElementChunkKey key);
     }
+
+    /// <summary>
+    /// 可选的批量只读能力：把一个 Chunk 的 Current Cell 值复制到消费者复用的数组。
+    /// 顺序为 (z*size+y)*size+x；未知/未初始化 Chunk 返回0，不创建世界数据。
+    /// 不返回内部数组或 ElementWorldChunk，因此 Rendering 仍然没有 Gameplay 写权限。
+    /// </summary>
+    public interface IElementWorldChunkReadOnly
+    {
+        int CopyChunkCells(ElementChunkKey key, ElementCell[] destination);
+    }
 }

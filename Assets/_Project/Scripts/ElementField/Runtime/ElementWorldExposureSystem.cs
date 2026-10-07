@@ -71,6 +71,11 @@ namespace Game.ElementField
         private ElementWorldRuntime _runtime;
         // 时间累加器使 Exposure 使用固定采样间隔，不依赖某一帧的 deltaTime 恰好等于 interval。
         private float _elapsed;
+        // GPU 液体已经发布到 CPU 后应立即参与 Gameplay；记录已消费版本可把两个 4 Hz 时钟同步起来，
+        // 同时防止同一份 Snapshot 在每个 Update 都额外触发 Physics Query。
+        private uint _lastConsumedLiquidSnapshotVersion;
+        private bool _hasConsumedLiquidSnapshotVersion;
+        private bool _hasAppliedExposure;
         // 当前轮已去重并写入工作区的目标数量；ClearPreviousTargets 后才允许从 0 开始复用。
         private int _targetCount;
         // 环境 GameObject 的稳定实例 ID；StatusController 用它区分环境持续接触与其他来源的同类状态。
@@ -106,8 +111,11 @@ namespace Game.ElementField
 
         private void OnEnable()
         {
-            // 启用后由下一次完整 interval 触发采样，避免 Disable/Enable 造成残留时间直接补跑多轮。
+            // 清空旧计时；首份有效液体 Snapshot 可提前触发，缺省路径仍等待完整 interval。
             _elapsed = 0f;
+            _hasAppliedExposure = false;
+            _lastConsumedLiquidSnapshotVersion = 0u;
+            _hasConsumedLiquidSnapshotVersion = false;
         }
 
         private void Start()
@@ -133,6 +141,9 @@ namespace Game.ElementField
             // 只清除本 Adapter 的临时引用与工作区；已提交的持续状态交由 StatusController 的 hold/decay 规则收口。
             ClearPreviousTargets();
             _elapsed = 0f;
+            _hasAppliedExposure = false;
+            _lastConsumedLiquidSnapshotVersion = 0u;
+            _hasConsumedLiquidSnapshotVersion = false;
         }
 
         private void Update()
@@ -160,7 +171,19 @@ namespace Game.ElementField
 
             // OnValidate 只覆盖 Inspector 编辑；这里再次钳制可防御 Runtime 工具或损坏序列化数据。
             float interval = Mathf.Max(0.05f, _exposureInterval);
+
             _elapsed += deltaTime;
+            if (TryConsumeNewLiquidSnapshot() && _elapsed < interval)
+            {
+                // 首次接触保留立即生效的一次剂量；之后提前采样只消费已过去时间对应的份额。
+                // 否则 Snapshot 加快或恰好落在周期采样后，会提高 Burning/Wet 等状态的增长速度。
+                float doseScale = _hasAppliedExposure ? _elapsed / interval : 1f;
+                _elapsed = 0f;
+                using (ExposureMarker.Auto())
+                    ApplyExposureOnce(doseScale);
+                return;
+            }
+
             while (_elapsed >= interval)
             {
                 _elapsed -= interval;
@@ -169,14 +192,32 @@ namespace Game.ElementField
             }
         }
 
+        private bool TryConsumeNewLiquidSnapshot()
+        {
+            if (_liquidOccupancy == null || !_liquidOccupancy.HasValidSnapshot)
+                return false;
+
+            uint currentVersion = _liquidOccupancy.SnapshotVersion;
+            if (_hasConsumedLiquidSnapshotVersion
+                && currentVersion == _lastConsumedLiquidSnapshotVersion)
+            {
+                return false;
+            }
+
+            _lastConsumedLiquidSnapshotVersion = currentVersion;
+            _hasConsumedLiquidSnapshotVersion = true;
+            return true;
+        }
+
         /// <summary>测试入口复用真实时间累加逻辑，避免测试绕开 Update 中最容易出错的 interval 行为。</summary>
         public void TickForTests(float deltaTime)
         {
             TickExposure(deltaTime);
         }
 
-        private void ApplyExposureOnce()
+        private void ApplyExposureOnce(float doseScale = 1f)
         {
+            _hasAppliedExposure = true;
             // 上一轮的去重表和最大值只能服务上一轮；先清空保证离开材料区域的目标不会继续被错误刷新。
             ClearPreviousTargets();
             ResetLastDebugStats();
@@ -196,8 +237,17 @@ namespace Game.ElementField
                 liquidBounds);
 
             // 多个 Broadphase Bounds 可能命中同一个角色，FindOrAddTarget 会将它们归并到同一个 targetIndex。
-            for (int queryIndex = 0; queryIndex < broadphase.QueryCount; queryIndex++)
-                QueryAndSampleTargets(broadphase.GetQueryBounds(queryIndex));
+            if (_runtime.ActivityExpansionEnabled && _runtime.ActivityRegions.Count > 0)
+            {
+                // 每个小区域独立 Broadphase，目标去重缓冲跨区域共享，重叠不会叠加一次状态。
+                for (int queryIndex = 0; queryIndex < _runtime.ActivityRegions.Count; queryIndex++)
+                    QueryAndSampleTargets(_runtime.ActivityRegions.GetBounds(queryIndex));
+            }
+            else
+            {
+                for (int queryIndex = 0; queryIndex < broadphase.QueryCount; queryIndex++)
+                    QueryAndSampleTargets(broadphase.GetQueryBounds(queryIndex));
+            }
 
             // 这一次提交会刷新 StatusController 的“持续接触”时间；hold 略大于采样周期，保障正常帧抖动下连续接触。
             float holdSeconds = Mathf.Max(0.05f, _exposureInterval)
@@ -221,7 +271,7 @@ namespace Game.ElementField
                     // 新材料/新状态只需添加 Projection Binding，不需要在此处添加新的 if 分支。
                     target.ApplySustainedStatus(
                         binding.Status,
-                        binding.MaximumApplyPerExposureTick * (amount / (float)byte.MaxValue),
+                        binding.MaximumApplyPerExposureTick * (amount / (float)byte.MaxValue) * doseScale,
                         _environmentSourceId,
                         EnvironmentTeam,
                         holdSeconds);
@@ -339,6 +389,24 @@ namespace Game.ElementField
             if (!contactBounds.Intersects(activeBounds))
                 return;
 
+            // 气体按胸部／头部吸入采样，不能复用液体的脚底探针。
+            // 多 Collider 仍汇聚到原 target/material 最大值，角色只提交一次状态。
+            for (int bindingIndex = 0; bindingIndex < _statusProjection.Count; bindingIndex++)
+            {
+                var binding = _statusProjection.Get(bindingIndex);
+                if (!_runtime.MaterialRoutes.TryResolve(binding.Material, out var backend)
+                    || backend != MaterialSimulationBackendKind.GridGas) continue;
+                Vector3 chest = targetBounds.center; chest.y = Mathf.Lerp(targetBounds.min.y, targetBounds.max.y, .55f);
+                Vector3 head = chest; head.y = Mathf.Lerp(targetBounds.min.y, targetBounds.max.y, .9f);
+                var chestCell = ElementWorldCoordinates.WorldToGlobalCell(chest, _runtime.Origin, _runtime.CellSize);
+                var headCell = ElementWorldCoordinates.WorldToGlobalCell(head, _runtime.Origin, _runtime.CellSize);
+                byte chestAmount = 0, headAmount = 0;
+                if (activeBounds.Contains(chest)) _runtime.MaterialAmounts.TryGetAmount(chestCell, binding.Material, out chestAmount);
+                if (activeBounds.Contains(head)) _runtime.MaterialAmounts.TryGetAmount(headCell, binding.Material, out headAmount);
+                int workspaceIndex = targetIndex * _statusProjection.Count + bindingIndex;
+                _maximumAmounts[workspaceIndex] = (byte)Mathf.Max(_maximumAmounts[workspaceIndex], Mathf.Max(chestAmount, headAmount));
+            }
+
             // 只采样目标真正落在可查询世界区域的部分；Interest Region 外的保留 Chunk 不应持续施加环境状态。
             Vector3 sampleMin = Vector3.Max(contactBounds.min, activeBounds.min);
             Vector3 sampleMax = Vector3.Min(contactBounds.max, activeBounds.max);
@@ -371,14 +439,13 @@ namespace Game.ElementField
                 for (int bindingIndex = 0; bindingIndex < _statusProjection.Count; bindingIndex++)
                 {
                     MaterialStatusProjection binding = _statusProjection.Get(bindingIndex);
+                    if (_runtime.MaterialRoutes.TryResolve(binding.Material, out var backend)
+                        && backend == MaterialSimulationBackendKind.GridGas) continue;
                     byte amount = 0;
                     query?.TryGetAmount(globalCell, binding.Material, out amount);
-                    if (amount > 0 && _runtime.DormantLiquids is IFluidDormantWakeSink wakeSink)
-                    {
-                        // 角色真正接触 Dormant Cell 时请求恢复，使后续物理扰动重新交给 PBF。
-                        // 当前 Tick 仍使用 Archive Amount，因此 Wet/Poisoned/Sticky 不会出现空窗。
-                        wakeSink.RequestWake(globalCell, FluidDormantWakeReason.Exposure);
-                    }
+                    // 状态接触是只读查询，Archive Amount 已能提供 Wet/Poisoned/Sticky。
+                    // 每次采样都唤醒整页会反复重建 GPU 粒子，使角色脚下水面不断换形。
+                    // 只有真正改变液体的写入、反应或物理交互才应请求恢复。
                     // 每个 target/material 只保留最大量，多个 Collider、多个 Broadphase 或多个格子均会汇聚到同一槽。
                     int workspaceIndex = targetIndex * _statusProjection.Count + bindingIndex;
                     if (amount > _maximumAmounts[workspaceIndex])

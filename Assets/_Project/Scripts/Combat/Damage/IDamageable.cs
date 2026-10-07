@@ -13,9 +13,7 @@ namespace Game.Combat
         /// <summary>是否存活。已死目标不再受理命中。</summary>
         bool IsAlive { get; }
 
-        /// <summary>
-        /// 受理一次命中
-        /// </summary>
+        /// <summary>受理一次命中 </summary>
         void ReceiveHit(in DamageRequest req);
     }
 }

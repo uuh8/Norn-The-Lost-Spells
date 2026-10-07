@@ -6,6 +6,15 @@ namespace Game.ElementField.Tests
 {
     public sealed class FluidChunkStreamingPlannerTests
     {
+        [TestCase(false, .5d)]
+        [TestCase(true, .1d)]
+        public void ArchiveRetryDelay_BackpressureUsesFasterBoundedCadence(
+            bool hasPendingWrites, double expected)
+        {
+            Assert.That(FluidChunkStreamingPlanner.ArchiveRetryDelay(hasPendingWrites),
+                Is.EqualTo(expected));
+        }
+
         [Test]
         public void BuildWarmRegion_ExpandsActiveChunkBoxByPadding()
         {
@@ -53,19 +62,19 @@ namespace Game.ElementField.Tests
         }
 
         [Test]
-        public void LocalDormancy_RequiresPressureAndFullySettledActivitySnapshot()
+        public void LocalDormancy_RequiresPressureAndAtLeastOneSleepingCandidate()
         {
             Assert.That(FluidChunkStreamingPlanner.ShouldIncludeSleepingRetained(
-                true, 511u, 512, true, 0u), Is.True);
+                true, 511u, 512, true, 1u), Is.True);
             Assert.That(FluidChunkStreamingPlanner.ShouldIncludeSleepingRetained(
-                true, 513u, 512, true, 0u), Is.False);
+                true, 513u, 512, true, 1u), Is.False);
             Assert.That(FluidChunkStreamingPlanner.ShouldIncludeSleepingRetained(
-                false, 0u, 512, true, 0u), Is.False);
+                false, 0u, 512, true, 1u), Is.False);
             Assert.That(FluidChunkStreamingPlanner.ShouldIncludeSleepingRetained(
-                true, 0u, 512, false, 0u), Is.False);
+                true, 0u, 512, false, 1u), Is.False);
             Assert.That(FluidChunkStreamingPlanner.ShouldIncludeSleepingRetained(
-                true, 0u, 512, true, 1u), Is.False,
-                "仍有 Awake 粒子时不能让同一 Chunk 出现 GPU/RAM 双重权威。");
+                true, 0u, 512, true, 0u), Is.False,
+                "没有 Sleeping 候选时不应付出整池 Readback 成本。");
         }
     }
 }

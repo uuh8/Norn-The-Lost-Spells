@@ -14,6 +14,33 @@ namespace Game.Rendering.Tests
         private const uint CoreSeed = 0xC8013EA4u;
 
         [Test]
+        public void LowAmountFireRemainsVisibleWithoutChangingGameplayAmount()
+        {
+            const byte amount=77;
+            float heat=FireCellEmissionSampler.VisualHeat(amount,.5f);
+            Assert.That(heat,Is.GreaterThan(.7f));
+            Assert.That(FireCellEmissionSampler.VisualHeat(0,.5f),Is.Zero);
+            int emitted=0;
+            for(uint tick=0;tick<1000;tick++)
+                if(FireCellEmissionSampler.ShouldEmitVisual(Vector3Int.zero,tick,BodySeed,amount,.65f,.5f))emitted++;
+            Assert.That(emitted,Is.InRange(350,650),"低量燃烧不能每秒只偶尔出现一个点。");
+            Assert.That(FireCellEmissionSampler.GroundSourceHeight(.25f,.56f),Is.GreaterThan(.32f*1.65f));
+        }
+
+        [Test]
+        public void LiquidAndFireShadersImportWithoutErrors()
+        {
+            string[] names={"Game/Elemental/Liquid Dormant Cell","Game/Elemental/Fire Parcel Splat",
+                "Game/Elemental/Fire Parcel Surface"};
+            foreach(string name in names)
+            {
+                Shader shader=Shader.Find(name);
+                Assert.That(shader,Is.Not.Null,name);
+                Assert.That(UnityEditor.ShaderUtil.ShaderHasError(shader),Is.False,name);
+            }
+        }
+
+        [Test]
         public void Hash01_SameInputsAreDeterministicAndStayInsideUnitInterval()
         {
             float expected = FireCellEmissionSampler.Hash01(

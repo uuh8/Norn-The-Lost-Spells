@@ -1,0 +1,53 @@
+--- L4.27 before/GridLiquidFieldFrameTests.cs
++++ L4.27 final/GridLiquidFieldFrameTests.cs
+@@ -43,20 +43,36 @@
+                 Assert.That(signature,Is.EqualTo(expected),"同一配置的三材料稀疏场、地形和Owner Bounds必须逐位保持。");
+                 Assert.That(quantity,Is.EqualTo(46080UL));Assert.That(frame.Overflow,Is.EqualTo(maximumActiveCells==16));
+                 for(int i=0;i<4;i++)frame.Capture();
+-                const int rounds=6,captures=8;var times=new double[rounds];
++                const int rounds=6,captures=8;var times=new double[rounds];var fullTimes=new double[rounds];
+                 long allocated=GC.GetAllocatedBytesForCurrentThread();
+                 for(int round=0;round<rounds;round++)
+                 {
+-                    long started=System.Diagnostics.Stopwatch.GetTimestamp();
+-                    for(int i=0;i<captures;i++)frame.Capture();
+-                    times[round]=(System.Diagnostics.Stopwatch.GetTimestamp()-started)*1000.0/System.Diagnostics.Stopwatch.Frequency/captures;
++                    for(int mode=0;mode<2;mode++)
++                    {
++                        bool full=(round+mode)%2==0;frame.SetValidationFullRowScan(full);
++                        long started=System.Diagnostics.Stopwatch.GetTimestamp();
++                        for(int i=0;i<captures;i++)frame.Capture();
++                        double ms=(System.Diagnostics.Stopwatch.GetTimestamp()-started)*1000.0/System.Diagnostics.Stopwatch.Frequency/captures;
++                        if(full)fullTimes[round]=ms;else times[round]=ms;
++                    }
+                 }
+                 allocated=GC.GetAllocatedBytesForCurrentThread()-allocated;
+                 Assert.That(PresentationSignature(frame),Is.EqualTo(signature),"静止输入的再次采集必须保留逐位相同的姿态、数量、地形和输出范围。");
+                 Assert.That(source.TotalQuantity,Is.EqualTo(quantity));Assert.That(allocated,Is.Zero);
+                 string report=maximumActiveCells==4096?"sparse-presentation-capture.json":"sparse-presentation-dense-fallback.json";
+                 File.WriteAllText("Temp/ElementPerformance/"+report,JsonUtility.ToJson(new SparseCaptureReport
+-                {Utc=DateTime.UtcNow.ToString("O"),Signature=signature,Quantity=quantity,Pages=frame.Count,Owners=frame.OwnerCount,Overflow=frame.Overflow,AllocatedBytes=allocated,CaptureMilliseconds=times},true));
++                {Utc=DateTime.UtcNow.ToString("O"),Signature=signature,Quantity=quantity,Pages=frame.Count,Owners=frame.OwnerCount,Overflow=frame.Overflow,AllocatedBytes=allocated,CaptureMilliseconds=times,FullScanMilliseconds=fullTimes},true));
++                Directory.CreateDirectory("Backups/ElementPerformance/L427");
++                File.Copy("Temp/ElementPerformance/"+report,"Backups/ElementPerformance/L427/"+report,true);
++                frame.SetValidationFullRowScan(true);frame.Capture();
++                Assert.That(PresentationSignature(frame),Is.EqualTo(signature),"完整扫描与稀疏扫描必须逐位相同，包括地形与Owner Bounds。");
++                if(maximumActiveCells==4096)
++                {
++                    // 48个稀疏落点是实际累积场景的固定工作量；记录交替原始计时，
++                    // 性能断言只针对空气占多数的配置，固定表已满时允许原完整路径。
++                    Array.Sort(times);Array.Sort(fullTimes);
++                    Assert.That(times[3],Is.LessThan(fullTimes[3]*.8),"空气占多数时应有实际采集收益，不能只增加工作表。");
++                }
+             }
+             finally{UnityEngine.Object.DestroyImmediate(host);UnityEngine.Object.DestroyImmediate(floor);UnityEngine.Object.DestroyImmediate(profile);}
+         }
+@@ -102,7 +118,7 @@
+             }
+             return hash;
+         }
+-        [Serializable]private sealed class SparseCaptureReport{public string Utc;public uint Signature;public ulong Quantity;public int Pages,Owners;public bool Overflow;public long AllocatedBytes;public double[] CaptureMilliseconds;}
++        [Serializable]private sealed class SparseCaptureReport{public string Utc;public uint Signature;public ulong Quantity;public int Pages,Owners;public bool Overflow;public long AllocatedBytes;public double[] CaptureMilliseconds,FullScanMilliseconds;}
+         [Test]
+         public void DeepCartoonColumnStaysWithinFieldReachWithoutLosingQuantity()
+         {

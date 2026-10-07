@@ -2557,6 +2557,12 @@ MonoBehaviour:
   _debugTriangleNormal0: {x: 0, y: 0, z: 0}
   _debugTriangleNormal1: {x: 0, y: 0, z: 0}
   _debugTriangleNormal2: {x: 0, y: 0, z: 0}
+  _debugSurfaceRebuildCount: 0
+  _debugDrawCount: 0
+  _debugMaximumTriangleCount: 0
+  _debugPositiveTriangleReadbackCount: 0
+  _debugDrawReadyObservationCount: 0
+  _debugGeometryReadyObservationCount: 0
 --- !u!114 &421758317
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2691,6 +2697,12 @@ MonoBehaviour:
   _debugTriangleNormal0: {x: 0, y: 0, z: 0}
   _debugTriangleNormal1: {x: 0, y: 0, z: 0}
   _debugTriangleNormal2: {x: 0, y: 0, z: 0}
+  _debugSurfaceRebuildCount: 0
+  _debugDrawCount: 0
+  _debugMaximumTriangleCount: 0
+  _debugPositiveTriangleReadbackCount: 0
+  _debugDrawReadyObservationCount: 0
+  _debugGeometryReadyObservationCount: 0
 --- !u!114 &421758322
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2732,6 +2744,12 @@ MonoBehaviour:
   _debugTriangleNormal0: {x: 0, y: 0, z: 0}
   _debugTriangleNormal1: {x: 0, y: 0, z: 0}
   _debugTriangleNormal2: {x: 0, y: 0, z: 0}
+  _debugSurfaceRebuildCount: 0
+  _debugDrawCount: 0
+  _debugMaximumTriangleCount: 0
+  _debugPositiveTriangleReadbackCount: 0
+  _debugDrawReadyObservationCount: 0
+  _debugGeometryReadyObservationCount: 0
 --- !u!114 &421758323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2803,6 +2821,9 @@ MonoBehaviour:
   _debugRetainedSpeedBelow10: 0
   _debugRetainedSpeedBelow25: 0
   _debugRetainedMaximumSpeed: 0
+  _debugLastArchiveRollbackReason: 0
+  _debugLastArchiveLockedParticleCount: 0
+  _debugLastArchiveRecordCount: 0
 --- !u!114 &421758325
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4201,6 +4222,7 @@ GameObject:
   m_Component:
   - component: {fileID: 703223368}
   - component: {fileID: 703223367}
+  - component: {fileID: 703223369}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -4288,6 +4310,35 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &703223369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 703223366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalLightData
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_CustomShadowLayers: 0
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0
+  m_RenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_ShadowRenderingLayersMask:
+    serializedVersion: 0
+    m_Bits: 1
+  m_Version: 4
+  m_LightLayerMask: 1
+  m_ShadowLayerMask: 1
+  m_RenderingLayers: 1
+  m_ShadowRenderingLayers: 1
 --- !u!1 &727395296
 GameObject:
   m_ObjectHideFlags: 0
@@ -11482,6 +11533,8 @@ GameObject:
   - component: {fileID: 1895423314}
   - component: {fileID: 1895423313}
   - component: {fileID: 1895423315}
+  - component: {fileID: 1895423317}
+  - component: {fileID: 1895423316}
   m_Layer: 0
   m_Name: ElementPerformanceLab
   m_TagString: Untagged
@@ -11622,8 +11675,18 @@ MonoBehaviour:
   - {fileID: 11400000, guid: de629ba3667785b44be149b19c38fd60, type: 2}
   - {fileID: 11400000, guid: 58580aa0da528ac428ef91cf8b37a444, type: 2}
   - {fileID: 11400000, guid: 57f3f4193a32d1c48b23289841a03874, type: 2}
+  - {fileID: 11400000, guid: d9988d6f4ca7dd04981753298b3857eb, type: 2}
+  - {fileID: 11400000, guid: b3930e9635d6d1e449463d6292c1fe46, type: 2}
+  - {fileID: 11400000, guid: e16bc4bb9d21e8d46aeedd5f984a80ad, type: 2}
+  - {fileID: 11400000, guid: 22ac5b00969c828409a7959970226e71, type: 2}
+  - {fileID: 11400000, guid: bddd18c92362dd94284f166f9332e01f, type: 2}
+  - {fileID: 11400000, guid: f8730328dc46b484cb62fc250f034a97, type: 2}
+  - {fileID: 11400000, guid: 991bfa397592a77469e4748d9cbc7502, type: 2}
+  - {fileID: 11400000, guid: 49d3a245cafed7d49abd5ab41b4366e0, type: 2}
+  - {fileID: 11400000, guid: 93876a942e7c73b498f291243a59f4c9, type: 2}
+  - {fileID: 11400000, guid: 3b95ae9b5c2185344985407b427bc27e, type: 2}
   _autoStart: 0
-  _productionConfiguration: '{"world":{"_cellSize":0.25,"_chunkSize":8,"_maximumResidentChunks":512,"_activeRadiusXZChunks":10,"_activeRadiusYChunks":3,"_sleepGraceSeconds":2.0,"_tickRate":10.0,"_maxPendingWrites":256,"_maxCatchUpTicks":3,"_settleAfterUnchangedTicks":2,"_maxDownFlowPerTick":64,"_maxLateralFlowPerTick":16,"_fireDecayPerTick":1,"_waterSimulationMode":1,"_enableFluidChunkStreaming":true,"_fluidWarmPaddingChunks":1,"_fluidArchiveGraceSeconds":2.0,"_maximumArchivedFluidChunks":512,"_maximumArchivedFluidCellRecords":65536,"_maximumPendingFluidWrites":256,"_gameplaySpawnReserveParticles":512,"_enableLocalFluidDormancy":true,"_maximumRestoreParticlesPerFrame":128,"_materialCatalog":{"instanceID":69532},"_materialSimulationRouting":{"instanceID":66842},"_materialStatusProjection":{"instanceID":69542},"_reactionProfile":{"instanceID":68566},"_materialReactionBindings":{"instanceID":68552}},"fluid":{"_materialCatalog":{"instanceID":69532},"_liquidMaterials":[{"instanceID":66374},{"instanceID":67912},{"instanceID":68900}],"_particleCapacity":8192,"_maxSpawnRequests":128,"_maxFluidColliders":128,"_particleRadius":0.10000000149011612,"_smoothingRadius":0.25,"_fixedTickRate":60.0,"_substeps":2,"_solverIterations":4,"_maximumPositionCorrection":0.07999999821186066,"_lambdaEpsilon":0.00009999999747378752,"_vorticity":0.0020000000949949028,"_tensileStrength":0.00009999999747378752,"_maximumTensilePositionCorrection":0.00009999999747378752,"_gravity":{"x":0.0,"y":-9.8100004196167,"z":0.0},"_maxSpeed":10.0,"_collisionFriction":0.10000000149011612,"_collisionRestitution":0.0,"_sleepThreshold":0.009999999776482582,"_sleepAfterStableTicks":30,"_maxCatchUpTicks":3},"materials":[{"_material":1,"_amountUnitsPerParticle":8,"_particleMass":1.0,"_restDensity":1000.0,"_viscosity":0.07999999821186066,"_artificialPressure":0.0010000000474974514,"_cohesionStrength":12.0,"_cohesionRestDistanceRatio":1.0,"_maximumCohesionDeltaSpeed":0.20000000298023225,"_sleepDensityErrorThreshold":0.019999999552965165},{"_material":3,"_amountUnitsPerParticle":8,"_particleMass":1.100000023841858,"_restDensity":1050.0,"_viscosity":0.3199999928474426,"_artificialPressure":0.0006000000284984708,"_cohesionStrength":24.0,"_cohesionRestDistanceRatio":1.0,"_maximumCohesionDeltaSpeed":0.1599999964237213,"_sleepDensityErrorThreshold":0.02500000037252903},{"_material":4,"_amountUnitsPerParticle":8,"_particleMass":1.2000000476837159,"_restDensity":1100.0,"_viscosity":0.6489999890327454,"_artificialPressure":0.00039999998989515007,"_cohesionStrength":36.0,"_cohesionRestDistanceRatio":1.0,"_maximumCohesionDeltaSpeed":0.11999999731779099,"_sleepDensityErrorThreshold":0.029999999329447748}]}'
+  _productionConfiguration: '{"world":{"_cellSize":0.25,"_chunkSize":8,"_maximumResidentChunks":512,"_activeRadiusXZChunks":10,"_activeRadiusYChunks":3,"_sleepGraceSeconds":2.0,"_tickRate":10.0,"_maxPendingWrites":256,"_maxCatchUpTicks":3,"_settleAfterUnchangedTicks":2,"_maxDownFlowPerTick":64,"_maxLateralFlowPerTick":16,"_fireDecayPerTick":1,"_waterSimulationMode":1,"_enableFluidChunkStreaming":true,"_fluidWarmPaddingChunks":1,"_fluidArchiveGraceSeconds":2.0,"_maximumArchivedFluidChunks":512,"_maximumArchivedFluidCellRecords":65536,"_maximumPendingFluidWrites":256,"_gameplaySpawnReserveParticles":512,"_enableLocalFluidDormancy":true,"_maximumRestoreParticlesPerFrame":128,"_materialCatalog":{"instanceID":69814},"_materialSimulationRouting":{"instanceID":67114},"_materialStatusProjection":{"instanceID":69824},"_reactionProfile":{"instanceID":68846},"_materialReactionBindings":{"instanceID":68832},"_enableWorldActivityExpansion":true,"_unitActivityRadius":4.0,"_projectileActivityRadius":2.0},"fluid":{"_materialCatalog":{"instanceID":69814},"_liquidMaterials":[{"instanceID":66644},{"instanceID":68186},{"instanceID":69182}],"_particleCapacity":8192,"_maxSpawnRequests":128,"_maxFluidColliders":128,"_particleRadius":0.10000000149011612,"_smoothingRadius":0.25,"_fixedTickRate":60.0,"_substeps":2,"_solverIterations":4,"_maximumPositionCorrection":0.07999999821186066,"_lambdaEpsilon":0.00009999999747378752,"_vorticity":0.0020000000949949028,"_tensileStrength":0.00009999999747378752,"_maximumTensilePositionCorrection":0.00009999999747378752,"_gravity":{"x":0.0,"y":-9.8100004196167,"z":0.0},"_maxSpeed":10.0,"_collisionFriction":0.10000000149011612,"_collisionRestitution":0.0,"_sleepThreshold":0.10000000149011612,"_sleepAfterStableTicks":30,"_maxCatchUpTicks":3},"materials":[{"_material":1,"_amountUnitsPerParticle":8,"_particleMass":1.0,"_restDensity":1000.0,"_viscosity":0.07999999821186066,"_artificialPressure":0.0010000000474974514,"_cohesionStrength":12.0,"_cohesionRestDistanceRatio":1.0,"_maximumCohesionDeltaSpeed":0.20000000298023225,"_sleepDensityErrorThreshold":0.019999999552965165},{"_material":3,"_amountUnitsPerParticle":8,"_particleMass":1.100000023841858,"_restDensity":1050.0,"_viscosity":0.3199999928474426,"_artificialPressure":0.0006000000284984708,"_cohesionStrength":24.0,"_cohesionRestDistanceRatio":1.0,"_maximumCohesionDeltaSpeed":0.1599999964237213,"_sleepDensityErrorThreshold":0.02500000037252903},{"_material":4,"_amountUnitsPerParticle":8,"_particleMass":1.2000000476837159,"_restDensity":1100.0,"_viscosity":0.6489999890327454,"_artificialPressure":0.00039999998989515007,"_cohesionStrength":36.0,"_cohesionRestDistanceRatio":1.0,"_maximumCohesionDeltaSpeed":0.11999999731779099,"_sleepDensityErrorThreshold":0.029999999329447748}]}'
 --- !u!4 &1895423314
 Transform:
   m_ObjectHideFlags: 0
@@ -11656,6 +11719,37 @@ MonoBehaviour:
   - {fileID: 421758321}
   - {fileID: 421758322}
   _water: {fileID: 421758316}
+--- !u!114 &1895423316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1895423312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36c440ec1950ff1488218c6a6c445eb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Character::Game.Character.PhaseFWaterGameplayBenchmark
+  _waterWand: {fileID: 11400000, guid: 3adc568c118deb84f8fa39fbdca0742c, type: 2}
+  _warmupSeconds: 1
+  _timeoutSeconds: 6
+--- !u!114 &1895423317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1895423312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b71d53b750a96b14d8c0b91369309296, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Character::Game.Character.SpellCaster
+  _runSpellSession: {fileID: 0}
+  _wand: {fileID: 0}
+  _mana: {fileID: 0}
+  _traceLevel: 0
 --- !u!1 &1919283472
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e30bdfc86889fd48bbb800d6d979e37, type: 3}
+  m_Name: E04-sustained-pressure
+  m_EditorClassIdentifier: Game.ElementField::Game.ElementField.ElementWorldPerformanceProfile
+  ScenarioId: E04-sustained-pressure
+  WarmupSeconds: 10
+  SettleSeconds: 15
+  MeasureSeconds: 62
+  DrainTimeoutSeconds: 8
+  PrefillParticleTarget: 8192
+  ParticlesPerWrite: 256
+  WriteInterval: 0.1
+  MeasureWriteCount: 40
+  MeasureWriteInterval: 1.5
+  MeasureWriteDelay: 1
+  MeasureMaterial: 1
+  FireAmountPerWrite: 4096
+  Materials:
+  - {fileID: 11400000, guid: fc6e709523daa6143ac95b78d3dd2ce6, type: 2}
+  DepositPositions:
+  - {x: -6, y: 0, z: -6}
+  - {x: -2, y: 0, z: -6}
+  - {x: 2, y: 0, z: -6}
+  - {x: 6, y: 0, z: -6}
+  - {x: -6, y: 0, z: -2}
+  - {x: -2, y: 0, z: -2}
+  - {x: 2, y: 0, z: -2}
+  - {x: 6, y: 0, z: -2}
+  - {x: -6, y: 0, z: 2}
+  - {x: -2, y: 0, z: 2}
+  - {x: 2, y: 0, z: 2}
+  - {x: 6, y: 0, z: 2}
+  - {x: -6, y: 0, z: 6}
+  - {x: -2, y: 0, z: 6}
+  - {x: 2, y: 0, z: 6}
+  - {x: 6, y: 0, z: 6}
+  MeasurePosition: {x: 0, y: 0, z: 0}
+  Radius: 1
+  InitialVelocity: {x: 0, y: 0, z: 0}
+  SurfaceNormal: {x: 0, y: 1, z: 0}
+  Movement: 0
+  Route: []
+  MoveSpeed: 2
+  RouteDwellSeconds: 0
+  UseProbe: 0
+  ProbeStatus: 0
+  ProbeInitialIntensity: 80
+  ProbeWaterDelaySeconds: 1
+  ProbeObservationSeconds: 10
+  TargetCount: 0
+  FrameRateMode: 1
+  MaxWritesPerFrame: 4
+  CaptureEnabled: 1
+  EnableWorldActivityExpansion: 1
+  ActivitySourcePositions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 64, y: 0, z: 0}
+  RemoveActivitySourcesAtMeasure: 0

@@ -1,0 +1,34 @@
+--- L4.27 before/GpuFireParcelRenderer.cs
++++ L4.27 final/GpuFireParcelRenderer.cs
+@@ -22,6 +22,11 @@
+         private static readonly ProfilerMarker DrawMarker = new ProfilerMarker("GpuFire.Draw");
+         private static readonly ProfilerMarker CollectMarker = new ProfilerMarker("GpuFire.CollectSeeds");
+         private static readonly ProfilerMarker UploadMarker = new ProfilerMarker("GpuFire.UploadSeeds");
++#if UNITY_EDITOR
++        private bool _validationHideDraw;
++        // 固定快照的Draw隔离保留粒子Buffer和生命周期，恢复时不会重新生成火焰。
++        public void SetValidationHideDraw(bool value)=>_validationHideDraw=value;
++#endif
+         private static readonly int StatesId = Shader.PropertyToID("_FireParcelStates");
+         private static readonly int SpawnsId = Shader.PropertyToID("_FireParcelSpawns");
+ 
+@@ -262,12 +267,19 @@
+             // 统一模式没有距离驱动的形态选择；两次Splat Draw仍使用原来的Surface/Gas相位交叉。
+             using (DrawMarker.Auto())
+             {
++#if UNITY_EDITOR
++                if(!_validationHideDraw)
++                {
++#endif
+                 if (_useLocalSurface)
+                     Graphics.RenderPrimitivesIndirect(_surfaceDepthRenderParams, MeshTopology.Triangles, _surfaceResources.DrawArgs, 1, 0);
+                 Graphics.RenderPrimitivesIndirect(_surfaceSplatRenderParams, MeshTopology.Triangles, _drawArgs, 1, 0);
+                 if (_useLocalSurface)
+                     Graphics.RenderPrimitivesIndirect(_surfaceRenderParams, MeshTopology.Triangles, _surfaceResources.DrawArgs, 1, 0);
+                 Graphics.RenderPrimitivesIndirect(_gasRenderParams, MeshTopology.Triangles, _drawArgs, 1, 0);
++#if UNITY_EDITOR
++                }
++#endif
+             }
+             LastGcBytes += GC.GetAllocatedBytesForCurrentThread() - allocated;
+             PeakGcBytes = Math.Max(PeakGcBytes, LastGcBytes);

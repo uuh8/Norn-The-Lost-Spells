@@ -34,6 +34,8 @@ namespace Game.EditorTools
         private static Vector3 _origin;
         private static double _startedAt;
         private static int _phase;
+        private static bool _oldRunInBackground;
+        private static bool _ownsRunInBackground;
         private static ulong _firstArchivedParticles;
         private static ulong _restoredParticleBaseline;
         private static uint _archiveCountBaseline;
@@ -106,7 +108,9 @@ namespace Game.EditorTools
                 }
                 else if (_phase == 4
                     && _streaming.RestoredParticleCount - _restoredParticleBaseline
-                        >= _firstArchivedParticles)
+                        >= _firstArchivedParticles
+                    && _streaming.PendingWriteCount == 0
+                    && _fluid.PendingSpawnRequestCount == 0)
                 {
                     Finish(true, "restore completed");
                 }
@@ -148,6 +152,11 @@ namespace Game.EditorTools
             {
                 EditorApplication.isPaused = false;
                 Time.timeScale = 1f;
+                // Gate 由外部请求启动时 Unity 通常不在前台。若仍使用项目默认的后台暂停，
+                // EditorApplication 时间会前进但 Game Frame 不动，最终制造一次假的 40 秒超时。
+                _oldRunInBackground = Application.runInBackground;
+                Application.runInBackground = true;
+                _ownsRunInBackground = true;
                 _world = Object.FindFirstObjectByType<ElementWorldRuntime>();
                 _fluid = Object.FindFirstObjectByType<GpuPbfFluidRuntime>();
                 _streaming = Object.FindFirstObjectByType<FluidChunkStreamingRuntime>();
@@ -180,6 +189,7 @@ namespace Game.EditorTools
             }
             else if (state == PlayModeStateChange.EnteredEditMode)
             {
+                RestoreRunInBackground();
                 DisposeRecorders();
                 SessionState.SetBool(RunningKey, false);
                 _world = null; _fluid = null; _streaming = null; _interest = null;
@@ -215,18 +225,21 @@ namespace Game.EditorTools
 
         private static void Finish(bool expectedSuccess, string reason)
         {
+            GpuFluidPoolDiagnostics pool = _fluid != null ? _fluid.PoolDiagnostics : default;
             bool countersValid = _streaming != null
                 && _streaming.CompletedArchiveCount > 0u
                 && _streaming.CompletedRestoreCount > 0u
                 && _streaming.ArchiveReadbackErrorCount == 0u
                 && _streaming.RestoreReadbackErrorCount == 0u
-                && _streaming.ArchiveRollbackCount == 0u
-                && _streaming.RestoreRollbackCount == 0u
+                // Phase D 会主动取消“当前没有合格 Sleeping 样本”或“槽位快照已过期”的事务并重试；
+                // Rollback 是安全的竞争结果，Error、最终恢复、待写入清零与 Dropped 才是 Gate 判据。
+                && _streaming.PendingWriteCount == 0
                 && _streaming.RestoredParticleCount - _restoredParticleBaseline
                     >= _firstArchivedParticles
-                && _firstArchivedParticles > 0u;
+                && _firstArchivedParticles > 0u
+                && pool.Valid
+                && pool.Dropped == 0u;
             bool success = expectedSuccess && countersValid;
-            GpuFluidPoolDiagnostics pool = _fluid != null ? _fluid.PoolDiagnostics : default;
             string result = $"Success={success}\nReason={reason}\n"
                 + $"FirstArchivedParticles={_firstArchivedParticles}\n"
                 + $"CurrentArchivedParticles={_streaming?.ArchivedParticleCount ?? 0}\n"
@@ -249,6 +262,13 @@ namespace Game.EditorTools
             else GameLog.Error("[ELEMENT-STREAMING-SANDBOX] " + result, "Editor");
             DisposeRecorders();
             EditorApplication.ExitPlaymode();
+        }
+
+        private static void RestoreRunInBackground()
+        {
+            if (!_ownsRunInBackground) return;
+            Application.runInBackground = _oldRunInBackground;
+            _ownsRunInBackground = false;
         }
 
         private static void DisposeRecorders()

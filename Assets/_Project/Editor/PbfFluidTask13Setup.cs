@@ -222,7 +222,9 @@ namespace Game.EditorTools
             SetFloat(serialized, "_viscosity", 0.08f);
             SetFloat(serialized, "_vorticity", 0.002f);
             SetFloat(serialized, "_maxSpeed", 10f);
-            SetFloat(serialized, "_sleepThreshold", 0.01f);
+            // D00 实测静止 PBF 粒子绝大多数落在 0.05~0.10m/s；0.10 可吸收求解残余抖动，
+            // 同时明显低于可见流动速度，配合连续 30 Tick 防止瞬时慢速误休眠。
+            SetFloat(serialized, "_sleepThreshold", 0.1f);
             SetFloat(serialized, "_sleepDensityErrorThreshold", 0.02f);
             SetInt(serialized, "_sleepAfterStableTicks", 30);
             serialized.ApplyModifiedPropertiesWithoutUndo();

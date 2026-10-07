@@ -12,6 +12,18 @@ namespace Game.ElementField
             IElementWriteSink cellSink,
             IFluidDepositSink fluidSink)
         {
+            return TryRoute(routes, in request, cellSink, fluidSink, null);
+        }
+
+        public static bool TryRoute(
+            IMaterialSimulationRouteReadOnly routes,
+            in ElementWriteRequest request,
+            IElementWriteSink cellSink,
+            IFluidDepositSink fluidSink,
+            IFluidDepositSink gridLiquidSink,
+            IMaterialDepositSink fixedSolidSink = null,
+            IMaterialDepositSink gasSink = null)
+        {
             if (routes == null
                 || !routes.TryResolve(request.MaterialKind, out MaterialSimulationBackendKind backend))
             {
@@ -28,6 +40,18 @@ namespace Game.ElementField
                     return fluidSink != null
                         && fluidSink.IsFluidInitialized
                         && fluidSink.TryEnqueueDeposit(in request);
+
+                case MaterialSimulationBackendKind.GridLiquid:
+                    return gridLiquidSink != null
+                        && gridLiquidSink.IsFluidInitialized
+                        && gridLiquidSink.TryEnqueueDeposit(in request);
+
+                case MaterialSimulationBackendKind.FixedSolid:
+                    return fixedSolidSink != null && fixedSolidSink.IsMaterialInitialized
+                        && fixedSolidSink.TryEnqueueDeposit(in request);
+                case MaterialSimulationBackendKind.GridGas:
+                    return gasSink != null && gasSink.IsMaterialInitialized
+                        && gasSink.TryEnqueueDeposit(in request);
 
                 default:
                     // Unsupported 与未来未知 Backend 都是明确拒绝，不能形成 Silent Failover。

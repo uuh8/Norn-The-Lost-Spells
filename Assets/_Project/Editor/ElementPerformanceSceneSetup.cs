@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Game.Combat;
+using Game.Character;
 using Game.Core;
 using Game.ElementField;
 using Game.Materials;
 using Game.Rendering;
+using Game.Skills;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
@@ -60,6 +62,26 @@ namespace Game.EditorTools
                 {
                     File.WriteAllText("Temp/ElementPerformance/fix-material-catalog-result.txt", exception.ToString());
                     GameLog.Error($"[ELEMENT-MATERIAL-CATALOG] {exception}", "Editor");
+                }
+            }
+            if (Ready("Temp/ElementPerformance/phase-e-profiles.request"))
+            {
+                File.Delete("Temp/ElementPerformance/phase-e-profiles.request");
+                try { CreatePhaseEProfiles(); }
+                catch (Exception exception)
+                {
+                    File.WriteAllText("Temp/ElementPerformance/phase-e-profiles-result.txt", exception.ToString());
+                    GameLog.Error($"[ELEMENT-PHASE-E-PROFILES] {exception}", "Editor");
+                }
+            }
+            if (Ready("Temp/ElementPerformance/phase-f-profiles.request"))
+            {
+                File.Delete("Temp/ElementPerformance/phase-f-profiles.request");
+                try { CreatePhaseFProfiles(); }
+                catch (Exception exception)
+                {
+                    File.WriteAllText("Temp/ElementPerformance/phase-f-profiles-result.txt", exception.ToString());
+                    GameLog.Error($"[ELEMENT-PHASE-F-PROFILES] {exception}", "Editor");
                 }
             }
         }
@@ -241,6 +263,14 @@ namespace Game.EditorTools
                 try
                 {
                     var lab = Find<ElementWorldPerformanceLab>(experiment);
+                    var gameplay = lab.GetComponent<PhaseFWaterGameplayBenchmark>();
+                    if (gameplay == null)
+                        gameplay = lab.gameObject.AddComponent<PhaseFWaterGameplayBenchmark>();
+                    var gameplayData = new SerializedObject(gameplay);
+                    gameplayData.FindProperty("_waterWand").objectReferenceValue =
+                        AssetDatabase.LoadAssetAtPath<WandLoadout>(
+                            "Assets/_Project/ScriptableObjects/ElementField/Fluid/P7_PBF_WaterValidationWand.asset");
+                    gameplayData.ApplyModifiedPropertiesWithoutUndo();
                     var fluid = Find<GpuPbfFluidRuntime>(experiment);
                     var isolation = lab.GetComponent<ElementPerformanceSurfaceIsolation>();
                     if (isolation == null) isolation = lab.gameObject.AddComponent<ElementPerformanceSurfaceIsolation>();
@@ -483,6 +513,227 @@ namespace Game.EditorTools
             profile.ValidateConfiguration();
             EditorUtility.SetDirty(profile);
             return profile;
+        }
+
+        [MenuItem("Tools/Element Performance/Create Phase E Profiles")]
+        private static void CreatePhaseEProfiles()
+        {
+            ElementWorldPerformanceProfile template = AssetDatabase.LoadAssetAtPath<ElementWorldPerformanceProfile>(
+                ProfileFolder + "/D02-local-dormancy-fire-wake.asset");
+            if (template == null) throw new InvalidOperationException("缺少 D02 性能 Profile 模板。");
+            string[] ids = { "E00-overlap-sources", "E01-separated-sources", "E02-offscreen-reaction", "E03-camera-only", "E04-sustained-pressure" };
+            for (int index = 0; index < ids.Length; index++)
+            {
+                string path = ProfileFolder + "/" + ids[index] + ".asset";
+                ElementWorldPerformanceProfile profile = AssetDatabase.LoadAssetAtPath<ElementWorldPerformanceProfile>(path);
+                if (profile == null) { profile = UnityEngine.Object.Instantiate(template); AssetDatabase.CreateAsset(profile, path); }
+                profile.name = ids[index]; profile.ScenarioId = ids[index];
+                profile.EnableWorldActivityExpansion = true;
+                profile.ActivitySourcePositions = index == 0
+                    ? new[] { Vector3.zero, Vector3.right, Vector3.right * 2 }
+                    : new[] { Vector3.zero, Vector3.right * 64 };
+                profile.RemoveActivitySourcesAtMeasure = index == 2;
+                profile.MeasurePosition = index == 2 ? Vector3.right * 64 : Vector3.zero;
+                profile.MeasureMaterial = index == 2 ? MaterialId.Fire : MaterialId.Water;
+                profile.UseProbe = false;
+                profile.MeasureWriteCount = index == 4 ? 40 : 1;
+                profile.MeasureWriteInterval = index == 4 ? 1.5f : .1f;
+                profile.MeasureWriteDelay = 1f;
+                profile.MeasureSeconds = index == 4 ? 62f : 15f;
+                profile.Movement = index == 3 ? ElementPerformanceMovement.CameraOnly : ElementPerformanceMovement.None;
+                profile.Route = index == 3 ? new[] { new Vector3(0, 12, -18), new Vector3(64, 12, -18) } : Array.Empty<Vector3>();
+                profile.TargetCount = 0;
+                profile.ValidateConfiguration();
+                EditorUtility.SetDirty(profile);
+            }
+            Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            SerializedObject lab = new SerializedObject(Find<ElementWorldPerformanceLab>(scene));
+            SerializedProperty profiles = lab.FindProperty("_commandLineProfiles");
+            var references = new List<UnityEngine.Object>(profiles.arraySize + ids.Length);
+            for (int i = 0; i < profiles.arraySize; i++)
+                if (profiles.GetArrayElementAtIndex(i).objectReferenceValue != null)
+                    references.Add(profiles.GetArrayElementAtIndex(i).objectReferenceValue);
+            for (int i = 0; i < ids.Length; i++)
+            {
+                UnityEngine.Object candidate = AssetDatabase.LoadAssetAtPath<ElementWorldPerformanceProfile>(
+                    ProfileFolder + "/" + ids[i] + ".asset");
+                if (!references.Contains(candidate)) references.Add(candidate);
+            }
+            profiles.arraySize = references.Count;
+            for (int i = 0; i < references.Count; i++)
+                profiles.GetArrayElementAtIndex(i).objectReferenceValue = references[i];
+            lab.ApplyModifiedPropertiesWithoutUndo();
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene); AssetDatabase.SaveAssets();
+            File.WriteAllText("Temp/ElementPerformance/phase-e-profiles-result.txt", "Succeeded");
+        }
+
+        [MenuItem("Tools/Element Performance/Create Phase F Profiles")]
+        private static void CreatePhaseFProfiles()
+        {
+            ElementWorldPerformanceProfile template = AssetDatabase.LoadAssetAtPath<ElementWorldPerformanceProfile>(
+                ProfileFolder + "/D01-local-dormancy-sustained.asset");
+            if (template == null) throw new InvalidOperationException("缺少 D01 性能 Profile 模板。");
+            const string id = "F00-audit";
+            string path = ProfileFolder + "/" + id + ".asset";
+            ElementWorldPerformanceProfile profile =
+                AssetDatabase.LoadAssetAtPath<ElementWorldPerformanceProfile>(path);
+            if (profile == null)
+            {
+                profile = UnityEngine.Object.Instantiate(template);
+                AssetDatabase.CreateAsset(profile, path);
+            }
+            profile.name = id;
+            profile.ScenarioId = id;
+            // 守恒基准只使用 Water，隔离 Water+Sticky 合法反应；反应总账要等 GPU
+            // 回传实际命中量后再验，不能用命令上限替代执行结果。
+            profile.Materials = new[] { Load<LiquidMaterialProfile>(
+                FluidFolder + "LiquidMaterialProfile_Water.asset") };
+            profile.MeasureMaterial = MaterialId.Water;
+            profile.UseProbe = false;
+            profile.TargetCount = 0;
+            profile.RequireFreshMaterialAuditAtDrain = true;
+            profile.ValidateConfiguration();
+            EditorUtility.SetDirty(profile);
+
+            const string reactionId = "F01-reaction-audit";
+            string reactionPath = ProfileFolder + "/" + reactionId + ".asset";
+            ElementWorldPerformanceProfile reactionProfile =
+                AssetDatabase.LoadAssetAtPath<ElementWorldPerformanceProfile>(reactionPath);
+            if (reactionProfile == null)
+            {
+                reactionProfile = UnityEngine.Object.Instantiate(template);
+                AssetDatabase.CreateAsset(reactionProfile, reactionPath);
+            }
+            reactionProfile.name = reactionId;
+            reactionProfile.ScenarioId = reactionId;
+            // 保留 D01 的 Water/Poison/Sticky 与 Fire 写入；Drain 必须等 GPU 实际反应账本追平。
+            reactionProfile.Materials = template.Materials;
+            reactionProfile.UseProbe = false;
+            reactionProfile.TargetCount = 0;
+            reactionProfile.RequireFreshMaterialAuditAtDrain = true;
+            reactionProfile.ValidateConfiguration();
+            EditorUtility.SetDirty(reactionProfile);
+
+            ElementWorldPerformanceProfile multiSource = CreatePhaseFProfile(template, "F02-multi-source");
+            CopyReactionLoad(reactionProfile, multiSource);
+            multiSource.EnableWorldActivityExpansion = true;
+            // 保留最初失败的重叠负载；移动来源和落点的隔离实验不能代替原场景回归。
+            multiSource.ActivitySourcePositions = CreateSourceGrid(12, 4, 16f, Vector3.zero);
+            multiSource.ProjectileActivitySourcePositions = CreateSourceGrid(6, 3, 16f, new Vector3(8f, 0f, 8f));
+            multiSource.MeasurePosition = new Vector3(8f, 0f, 0f);
+            multiSource.Movement = ElementPerformanceMovement.TravelReturn;
+            multiSource.Route = new[]
+            {
+                new Vector3(-48f, 12f, -48f), new Vector3(48f, 12f, -48f),
+                new Vector3(48f, 12f, 48f), new Vector3(-48f, 12f, 48f),
+                new Vector3(-48f, 12f, -48f)
+            };
+            multiSource.MoveSpeed = 8f;
+            multiSource.DrainTimeoutSeconds = 15f;
+            multiSource.RequireFreshMaterialAuditAtDrain = true;
+            multiSource.ValidateConfiguration();
+            EditorUtility.SetDirty(multiSource);
+
+            ElementWorldPerformanceProfile soak = CreatePhaseFProfile(template, "F03-soak");
+            CopyReactionLoad(reactionProfile, soak);
+            soak.WarmupSeconds = 10f;
+            soak.SettleSeconds = 15f;
+            soak.MeasureSeconds = 1800f;
+            soak.DrainTimeoutSeconds = 30f;
+            soak.MeasureWriteCount = 400;
+            soak.MeasureWriteInterval = 1.5f;
+            soak.EnableWorldActivityExpansion = true;
+            soak.ActivitySourcePositions = CreateSourceGrid(12, 4, 16f, Vector3.zero);
+            soak.ProjectileActivitySourcePositions = CreateSourceGrid(6, 3, 16f, new Vector3(8f, 0f, 8f));
+            soak.MeasurePosition = new Vector3(8f, 0f, 0f);
+            soak.Movement = ElementPerformanceMovement.TravelReturn;
+            soak.Route = CreateSoakRoute(120, 64f);
+            soak.MoveSpeed = 8f;
+            soak.RequireFreshMaterialAuditAtDrain = true;
+            soak.ValidateConfiguration();
+            EditorUtility.SetDirty(soak);
+
+            ElementWorldPerformanceProfile overBudget = CreatePhaseFProfile(template, "F04-over-budget");
+            CopyReactionLoad(reactionProfile, overBudget);
+            overBudget.MeasureSeconds = 30f;
+            overBudget.DrainTimeoutSeconds = 20f;
+            overBudget.MeasureWriteCount = 64;
+            overBudget.MeasureWriteInterval = .1f;
+            overBudget.EnableWorldActivityExpansion = true;
+            overBudget.ActivitySourcePositions = CreateSourceGrid(24, 6, 16f, Vector3.zero);
+            overBudget.ProjectileActivitySourcePositions = CreateSourceGrid(12, 4, 16f, new Vector3(8f, 0f, 8f));
+            overBudget.Movement = ElementPerformanceMovement.None;
+            overBudget.Route = Array.Empty<Vector3>();
+            overBudget.RequireFreshMaterialAuditAtDrain = true;
+            overBudget.ValidateConfiguration();
+            EditorUtility.SetDirty(overBudget);
+
+            Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            SerializedObject lab = new SerializedObject(Find<ElementWorldPerformanceLab>(scene));
+            AddUniqueReference(lab.FindProperty("_commandLineProfiles"), profile);
+            AddUniqueReference(lab.FindProperty("_commandLineProfiles"), reactionProfile);
+            AddUniqueReference(lab.FindProperty("_commandLineProfiles"), multiSource);
+            AddUniqueReference(lab.FindProperty("_commandLineProfiles"), soak);
+            AddUniqueReference(lab.FindProperty("_commandLineProfiles"), overBudget);
+            lab.ApplyModifiedPropertiesWithoutUndo();
+            EditorSceneManager.MarkSceneDirty(scene);
+            if (!EditorSceneManager.SaveScene(scene))
+                throw new IOException("保存 Phase F Profile 引用失败。");
+            AssetDatabase.SaveAssets();
+            File.WriteAllText("Temp/ElementPerformance/phase-f-profiles-result.txt", "Succeeded");
+        }
+
+        private static ElementWorldPerformanceProfile CreatePhaseFProfile(
+            ElementWorldPerformanceProfile template, string id)
+        {
+            string path = ProfileFolder + "/" + id + ".asset";
+            ElementWorldPerformanceProfile profile =
+                AssetDatabase.LoadAssetAtPath<ElementWorldPerformanceProfile>(path);
+            if (profile == null)
+            {
+                profile = UnityEngine.Object.Instantiate(template);
+                AssetDatabase.CreateAsset(profile, path);
+            }
+            profile.name = id;
+            profile.ScenarioId = id;
+            return profile;
+        }
+
+        private static void CopyReactionLoad(
+            ElementWorldPerformanceProfile source, ElementWorldPerformanceProfile target)
+        {
+            target.Materials = source.Materials;
+            target.MeasureMaterial = source.MeasureMaterial;
+            target.UseProbe = false;
+            target.TargetCount = 0;
+            target.FrameRateMode = ElementPerformanceFrameRate.Target60;
+        }
+
+        private static Vector3[] CreateSourceGrid(int count, int columns, float spacing, Vector3 offset)
+        {
+            var points = new Vector3[count];
+            float centerX = (columns - 1) * spacing * .5f;
+            int rows = Mathf.CeilToInt(count / (float)columns);
+            float centerZ = (rows - 1) * spacing * .5f;
+            for (int i = 0; i < count; i++)
+                points[i] = offset + new Vector3((i % columns) * spacing - centerX, 0f,
+                    (i / columns) * spacing - centerZ);
+            return points;
+        }
+
+        private static Vector3[] CreateSoakRoute(int pointCount, float extent)
+        {
+            var points = new Vector3[pointCount];
+            for (int i = 0; i < pointCount; i++)
+            {
+                int corner = i & 3;
+                points[i] = corner == 0 ? new Vector3(-extent, 12f, -extent)
+                    : corner == 1 ? new Vector3(extent, 12f, -extent)
+                    : corner == 2 ? new Vector3(extent, 12f, extent)
+                    : new Vector3(-extent, 12f, extent);
+            }
+            return points;
         }
 
         private static void WireScene(

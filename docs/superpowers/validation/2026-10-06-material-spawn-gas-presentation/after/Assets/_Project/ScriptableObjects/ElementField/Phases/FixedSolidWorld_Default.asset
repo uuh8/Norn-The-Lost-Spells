@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04ec9d9f655f9f642a24c04e8e0e9846, type: 3}
+  m_Name: FixedSolidWorld_Default
+  m_EditorClassIdentifier: Game.ElementField::Game.ElementField.FixedSolidWorldProfile
+  _maximumChunks: 32
+  _cellCapacityGmu: 64
+  _maximumPendingDeposits: 128
+  _maximumCellsPerTick: 32
+  _maximumColliderChunksPerTick: 8
+  _maximumNavigationBoxesPerChunk: 16
+  _materials:
+  - Material: 5
+    BlocksMovement: 1
+    UsesPartialVolume: 0
+  - Material: 6
+    BlocksMovement: 1
+    UsesPartialVolume: 1

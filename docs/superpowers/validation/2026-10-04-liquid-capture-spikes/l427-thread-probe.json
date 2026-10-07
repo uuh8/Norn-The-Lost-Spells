@@ -1,0 +1,63 @@
+{
+    "Kind": "Direct NUnit method invocation; not Unity TestRunner XML",
+    "StartUtc": "2026-10-04T12:12:24.8762170Z",
+    "EndUtc": "2026-10-04T12:13:31.7087711Z",
+    "Reason": "",
+    "Passed": 3,
+    "Failed": 3,
+    "Skipped": 0,
+    "Planned": 6,
+    "Completed": 6,
+    "Aborted": false,
+    "SceneRestored": true,
+    "Cases": [
+        {
+            "Name": "Game.Rendering.Tests.GridLiquidFieldPerformanceTests.ComputeThreadGroupsRetainExactGeometryWithMeasuredSchedulingCost",
+            "Arguments": "",
+            "Error": "System.TimeoutException: Coroutine exceeded 60 seconds.\r\n  at Game.EditorTools.ElementLoadedSceneGate.Poll () [0x000fc] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Editor\\ElementLoadedSceneGate.cs:84 ",
+            "Passed": false,
+            "Skipped": false,
+            "DurationSeconds": 62.27990350000073
+        },
+        {
+            "Name": "Game.Rendering.Tests.GridLiquidFieldPerformanceTests.MotionInOneRegionRetainsDistantStaticGpuGeometry",
+            "Arguments": "",
+            "Error": "",
+            "Passed": true,
+            "Skipped": false,
+            "DurationSeconds": 1.140576300000248
+        },
+        {
+            "Name": "Game.Rendering.Tests.GridLiquidFieldPerformanceTests.MaterialChangeRemovalAndSlotMovementMatchFullGpuRebuild",
+            "Arguments": "",
+            "Error": "NUnit.Framework.AssertionException: GPU缓存混色不同：Slot=4822 Byte=28\r\n  at NUnit.Framework.Assert.Fail (System.String message, System.Object[] args) [0x00022] in <f577cd9686154d6ab10efd7e65e64366>:0 \r\n  at NUnit.Framework.Assert.Fail (System.String message) [0x00000] in <f577cd9686154d6ab10efd7e65e64366>:0 \r\n  at Game.Rendering.Tests.GridLiquidFieldPerformanceTests.SameVertices (Game.Rendering.Tests.GridLiquidFieldPerformanceTests+VertexReadback a, Game.Rendering.Tests.GridLiquidFieldPerformanceTests+VertexReadback b) [0x00188] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\GridLiquidFieldPerformanceTests.cs:196 \r\n  at Game.Rendering.Tests.GridLiquidFieldPerformanceTests+<MaterialChangeRemovalAndSlotMovementMatchFullGpuRebuild>d__8.MoveNext () [0x0034e] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\GridLiquidFieldPerformanceTests.cs:141 \r\n  at Game.EditorTools.ElementLoadedSceneGate.Poll () [0x0014d] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Editor\\ElementLoadedSceneGate.cs:91 ",
+            "Passed": false,
+            "Skipped": false,
+            "DurationSeconds": 0.17434610000054819
+        },
+        {
+            "Name": "Game.Rendering.Tests.GridLiquidFieldPerformanceTests.EqualPackedEndpointsWithVelocityStillAnimateAndMatchFullGpuWork",
+            "Arguments": "",
+            "Error": "NUnit.Framework.AssertionException: GPU缓存混色不同：Slot=4803 Byte=28\r\n  at NUnit.Framework.Assert.Fail (System.String message, System.Object[] args) [0x00022] in <f577cd9686154d6ab10efd7e65e64366>:0 \r\n  at NUnit.Framework.Assert.Fail (System.String message) [0x00000] in <f577cd9686154d6ab10efd7e65e64366>:0 \r\n  at Game.Rendering.Tests.GridLiquidFieldPerformanceTests.SameVertices (Game.Rendering.Tests.GridLiquidFieldPerformanceTests+VertexReadback a, Game.Rendering.Tests.GridLiquidFieldPerformanceTests+VertexReadback b) [0x00188] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\GridLiquidFieldPerformanceTests.cs:196 \r\n  at Game.Rendering.Tests.GridLiquidFieldPerformanceTests+<EqualPackedEndpointsWithVelocityStillAnimateAndMatchFullGpuWork>d__9.MoveNext () [0x004b3] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\GridLiquidFieldPerformanceTests.cs:169 \r\n  at Game.EditorTools.ElementLoadedSceneGate.Poll () [0x0014d] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Editor\\ElementLoadedSceneGate.cs:91 ",
+            "Passed": false,
+            "Skipped": false,
+            "DurationSeconds": 0.18464570000105597
+        },
+        {
+            "Name": "Game.Rendering.Tests.GridLiquidFieldPerformanceTests.SparseCpuSnapshotBuildKeepsQuantityAndProducesCompleteMeshes",
+            "Arguments": "",
+            "Error": "",
+            "Passed": true,
+            "Skipped": false,
+            "DurationSeconds": 1.5276309000000766
+        },
+        {
+            "Name": "Game.Rendering.Tests.GridLiquidFieldPerformanceTests.SparseCpuQueriesMatchFullScanIncludingPreviousOnlyWaterAndNegativeCoordinates",
+            "Arguments": "",
+            "Error": "",
+            "Passed": true,
+            "Skipped": false,
+            "DurationSeconds": 0.44312640000134709
+        }
+    ]
+}

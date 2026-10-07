@@ -14,7 +14,8 @@ namespace Game.ElementField
     /// </summary>
     [DefaultExecutionOrder(-200)]
     public sealed class GpuPbfFluidRuntime : MonoBehaviour, IFluidGpuSource, IFluidDepositSink,
-        IFluidSpawnSink, IFluidGameplayReadbackSource, IFluidChunkTransferBackend
+        IFluidSpawnSink, IFluidGameplayReadbackSource, IFluidChunkTransferBackend,
+        IFluidMaterialAuditPreparation
     {
         private const int ThreadsPerGroup = 64;
         private const string SpatialHashBuildSampleName = "GpuFluid.SpatialHash.Build";
@@ -49,6 +50,8 @@ namespace Game.ElementField
         private static readonly int SpawnRequestsId = Shader.PropertyToID("_SpawnRequests");
         private static readonly int ConsumeRequestsId = Shader.PropertyToID("_ConsumeRequests");
         private static readonly int ConvertRequestsId = Shader.PropertyToID("_ConvertRequests");
+        private static readonly int ReactionParticleDeltasId =
+            Shader.PropertyToID("_ReactionParticleDeltas");
         private static readonly int ReactionCommandCountId = Shader.PropertyToID("_ReactionCommandCount");
         private static readonly int WorldOriginId = Shader.PropertyToID("_WorldOrigin");
         private static readonly int CellSizeId = Shader.PropertyToID("_CellSize");
@@ -60,6 +63,7 @@ namespace Game.ElementField
         private static readonly int ActiveBoundsMinId = Shader.PropertyToID("_ActiveBoundsMin");
         private static readonly int ActiveBoundsMaxId = Shader.PropertyToID("_ActiveBoundsMax");
         private static readonly int SleepVelocityThresholdId = Shader.PropertyToID("_SleepVelocityThreshold");
+        private static readonly int WakeVelocityThresholdId = Shader.PropertyToID("_WakeVelocityThreshold");
         private static readonly int SleepDensityErrorThresholdId = Shader.PropertyToID("_SleepDensityErrorThreshold");
         private static readonly int SleepAfterStableTicksId = Shader.PropertyToID("_SleepAfterStableTicks");
         private static readonly int ParticleGroupCountId = Shader.PropertyToID("_ParticleGroupCount");
@@ -92,6 +96,10 @@ namespace Game.ElementField
         private static readonly int ArchiveRetainedBoundsMaxId = Shader.PropertyToID("_ArchiveRetainedBoundsMax");
         private static readonly int ArchiveIncludeSleepingRetainedId =
             Shader.PropertyToID("_ArchiveIncludeSleepingRetained");
+        private static readonly int ArchiveUnlockIndicesId =
+            Shader.PropertyToID("_ArchiveUnlockIndices");
+        private static readonly int ArchiveUnlockIndexCountId =
+            Shader.PropertyToID("_ArchiveUnlockIndexCount");
         private static readonly int RestoreParticlesId = Shader.PropertyToID("_RestoreParticles");
         private static readonly int RestoreReservedIndicesId = Shader.PropertyToID("_RestoreReservedIndices");
         private static readonly int TransferStatusId = Shader.PropertyToID("_TransferStatus");
@@ -108,6 +116,10 @@ namespace Game.ElementField
             new ProfilerMarker(SpatialHashPublishSampleName);
         private static readonly ProfilerMarker SubmitTickMarker =
             new ProfilerMarker("GpuFluid.SubmitTick");
+        private static readonly ProfilerMarker ArchiveUnlockUploadMarker =
+            new ProfilerMarker("GpuFluid.Streaming.ArchiveUnlockUpload");
+        private static readonly ProfilerMarker ArchiveUnlockDispatchMarker =
+            new ProfilerMarker("GpuFluid.Streaming.ArchiveUnlockDispatch");
 
         [Header("GPU PBF Phase A")]
         [SerializeField] private LiquidSimulationProfile _profile;
@@ -125,7 +137,7 @@ namespace Game.ElementField
         [SerializeField] private Transform _simulationBoundsCenter;
         [SerializeField] private Vector3 _simulationBoundsSize = new Vector3(12f, 8f, 12f);
 
-        [Header("Development Counters (Async <= 2Hz)")]
+        [Header("Streaming Control Counters (Async <= 2Hz)")]
         [SerializeField] private uint _debugAliveParticleCount;
         [SerializeField] private uint _debugFreeParticleCount;
         [SerializeField] private uint _debugAwakeParticleCount;
@@ -140,6 +152,7 @@ namespace Game.ElementField
         private FluidSimulationClock _clock;
         private LiquidSimulationSettings _settings;
         private FluidSpawnQueue _spawnQueue;
+        private FluidSpawnCapacityBudget _spawnCapacityBudget;
         private FluidColliderProxyCollector _colliderCollector;
         private FluidSpawnRequest[] _spawnRequestUploadBuffer;
         private FluidGpuSpawnRequest[] _spawnUploadBuffer;
@@ -151,6 +164,33 @@ namespace Game.ElementField
         private Vector3 _reactionWorldOrigin;
         private float _reactionCellSize;
         private Bounds _activeBounds;
+        private readonly ElementWorldActivityRegions _worldActivityRegions = new ElementWorldActivityRegions();
+        private readonly Vector4[] _regionMinima = new Vector4[ElementWorldActivityRegions.MaximumGpuRegions];
+        private readonly Vector4[] _regionMaxima = new Vector4[ElementWorldActivityRegions.MaximumGpuRegions];
+        private ElementWorldActivityRegions _worldActivitySource;
+
+        internal void SetWorldActivityRegions(ElementWorldActivityRegions source) => _worldActivitySource = source;
+
+        internal void SetArchiveActivityRegions(ElementWorldActivityRegions regions)
+        {
+            UploadRegionUniforms(regions, "_ArchiveRegionCount", "_ArchiveRegionMinima", "_ArchiveRegionMaxima");
+        }
+
+        private void UploadRegionUniforms(ElementWorldActivityRegions regions, string countName, string minName, string maxName)
+        {
+            int count = regions != null ? regions.Count : 0;
+            _particleLifecycleShader.SetInt(countName, count);
+            if (count == 0) return;
+            for (int i = 0; i < count; i++)
+            {
+                Bounds bounds = regions.GetBounds(i);
+                _regionMinima[i] = bounds.min;
+                _regionMaxima[i] = bounds.max;
+            }
+            // 常量数组不占 UAV，保持 D3D11 每 Kernel 最多 8 个可写 Buffer 的兼容边界。
+            _particleLifecycleShader.SetVectorArray(minName, _regionMinima);
+            _particleLifecycleShader.SetVectorArray(maxName, _regionMaxima);
+        }
         private FluidResidentBoundsTracker _residentBoundsTracker;
         private Bounds _lastActivityBounds;
         private bool _hasActivityBounds;
@@ -167,6 +207,7 @@ namespace Game.ElementField
         private int _lockArchiveCandidatesKernel;
         private int _packArchiveSamplesKernel;
         private int _cancelArchiveLockKernel;
+        private int _excludeArchiveParticleIndicesKernel;
         private int _releaseArchiveLockedParticlesKernel;
         private int _clearReleasedArchiveAuxiliaryKernel;
         private int _reserveRestoreSlotsKernel;
@@ -218,6 +259,21 @@ namespace Game.ElementField
         private uint _activityDiagnosticsVersion;
         private bool _debugReleasePending;
         private ulong _submittedParticleCount;
+        private readonly ulong[] _submittedGmuByMaterial = new ulong[byte.MaxValue + 1];
+        private readonly ulong[] _archiveAuditExpectedGmu = new ulong[byte.MaxValue + 1];
+        private ulong _archiveAuditEpoch;
+        private bool _materialAuditAccountingValid = true;
+        private NativeArray<int> _reactionAuditParticleDeltas;
+        private AsyncGPUReadbackRequest _reactionAuditReadbackRequest;
+        private Action<AsyncGPUReadbackRequest> _reactionAuditReadbackCallback;
+        private bool _reactionAuditReadbackOutstanding;
+        private bool _reactionAuditLedgerValid = true;
+        private uint _reactionAuditCommandVersion;
+        private uint _reactionAuditRequestedVersion;
+        private uint _reactionAuditCompletedVersion;
+        private ulong _poolReadbackSubmittedParticleWatermark;
+        private uint _spawnBudgetMutationVersion;
+        private uint _poolReadbackSpawnBudgetMutationVersion;
         private ulong _droppedDebtFrameCount;
         private bool _archiveReadbackLeaseHeld;
         private uint _archiveTransactionId;
@@ -229,6 +285,7 @@ namespace Game.ElementField
         public int LastFrameTickCount { get; private set; }
         public ulong DroppedDebtFrameCount => _droppedDebtFrameCount;
         public ulong SubmittedParticleCount => _submittedParticleCount;
+        public uint PoolMutationVersion => _spawnBudgetMutationVersion;
         public int PendingSpawnRequestCount => _spawnQueue != null ? _spawnQueue.Count : 0;
         public uint CounterReadbackErrorCount { get; private set; }
 
@@ -269,6 +326,7 @@ namespace Game.ElementField
         private void Awake()
         {
             _debugReadbackCallback = OnDebugReadbackCompleted;
+            _reactionAuditReadbackCallback = OnReactionAuditReadbackCompleted;
             TryInitialize();
         }
 
@@ -304,9 +362,7 @@ namespace Game.ElementField
                     RunFixedTick();
             }
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            ScheduleDevelopmentCounterReadback(Time.unscaledDeltaTime);
-#endif
+            ScheduleCounterReadback(Time.unscaledDeltaTime);
         }
 
         private void OnDisable()
@@ -316,13 +372,16 @@ namespace Game.ElementField
 
         private void OnDestroy()
         {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (_reactionAuditReadbackOutstanding)
+            {
+                _reactionAuditReadbackRequest.WaitForCompletion();
+                OnReactionAuditReadbackCompleted(_reactionAuditReadbackRequest);
+            }
             if (_debugReadbackOutstanding)
             {
                 _debugReadbackRequest.WaitForCompletion();
                 OnDebugReadbackCompleted(_debugReadbackRequest);
             }
-#endif
             RequestResourceRelease();
         }
 
@@ -340,9 +399,16 @@ namespace Game.ElementField
                 return false;
             }
 
+            // Free Counter 是异步快照；CPU Budget 继续扣除快照之后已接受、尚未反映在 Counter
+            // 中的粒子。容量不足时返回 false，让 Streaming Queue 保留原始 Gameplay 写入。
+            if (!_spawnCapacityBudget.TryReserve(request.ParticleCount))
+                return false;
             // Enqueue 只表示未来 Tick 的工作；GPU topology 尚未改变，不能提前发布新版本。
             if (!_spawnQueue.TryEnqueue(in request))
+            {
+                _spawnCapacityBudget.Refund(request.ParticleCount);
                 return false;
+            }
 
             // Queue 接受后即扩张 Presentation Coverage。即使粒子随后因 Pool 满而被 GPU 拒绝，
             // 这里只会留下少量空的 Far Voxel，不会复制或改变 Simulation Truth。
@@ -420,7 +486,7 @@ namespace Game.ElementField
             }
 
             var metadata = new FluidGameplayReadbackMetadata(
-                _activeBounds,
+                _worldActivityRegions.Count > 0 ? _worldActivityRegions.Envelope : _activeBounds,
                 worldOrigin,
                 cellSize,
                 _settings.ParticleCapacity,
@@ -446,10 +512,10 @@ namespace Game.ElementField
 
         bool IFluidChunkTransferBackend.TryGetFreeParticleCount(out uint freeParticleCount)
         {
-            freeParticleCount = PoolDiagnostics.Valid
-                ? PoolDiagnostics.Free
-                : (uint)_settings.ParticleCapacity;
-            return _resources != null && PoolDiagnostics.Valid;
+            freeParticleCount = _spawnCapacityBudget != null
+                ? _spawnCapacityBudget.AvailableParticles
+                : 0u;
+            return _resources != null && _spawnCapacityBudget != null;
         }
 
         bool IFluidChunkTransferBackend.TryGetActivityCounts(
@@ -458,6 +524,18 @@ namespace Game.ElementField
             awakeParticleCount = ActivityDiagnostics.Valid ? ActivityDiagnostics.Awake : 0u;
             sleepingParticleCount = ActivityDiagnostics.Valid ? ActivityDiagnostics.Sleeping : 0u;
             return _resources != null && ActivityDiagnostics.Valid;
+        }
+
+        bool IFluidMaterialAuditPreparation.TryPrepareMaterialAudit()
+        {
+            if (_resources == null) return false;
+            if (_reactionAuditCommandVersion == 0u) return true;
+            if (_reactionAuditLedgerValid
+                && _reactionAuditCompletedVersion == _reactionAuditCommandVersion)
+                return true;
+
+            ScheduleReactionAuditReadback();
+            return false;
         }
 
         bool IFluidChunkTransferBackend.TryAcquireArchiveReadbackLease(
@@ -471,6 +549,8 @@ namespace Game.ElementField
                 return false;
             }
 
+            // Archive 事务会重写 Free List；冻结 Spawn 预算，待下一份 Counter Readback 重新校准。
+            InvalidateSpawnBudget();
             _archiveReadbackLeaseHeld = true;
             _archiveTransactionId = transactionId;
             _particleLifecycleShader.SetInt(ParticleCapacityId, _settings.ParticleCapacity);
@@ -480,10 +560,15 @@ namespace Game.ElementField
                 ArchiveIncludeSleepingRetainedId, includeSleepingRetained ? 1 : 0);
             _particleLifecycleShader.Dispatch(_lockArchiveCandidatesKernel, _particleGroupCount, 1, 1);
             _particleLifecycleShader.Dispatch(_packArchiveSamplesKernel, _particleGroupCount, 1, 1);
+            unchecked { _archiveAuditEpoch++; }
+            if (_archiveAuditEpoch == 0u) _archiveAuditEpoch = 1u;
+            bool auditEligible = TryBuildReactionAdjustedAuditExpected();
             lease = new FluidArchiveReadbackLease(_resources.ArchiveSamples, _settings.ParticleCapacity,
                 retainedBounds, worldOrigin, cellSize, chunkSize, transactionId,
                 FluidGpuLayout.LayoutVersion, _topologyVersionTracker.PublishedVersion,
-                _gameplayAmountScales);
+                _gameplayAmountScales, _archiveAuditEpoch, _spawnBudgetMutationVersion,
+                _archiveAuditExpectedGmu, auditEligible,
+                _submittedParticleCount, Time.realtimeSinceStartupAsDouble);
             return true;
         }
 
@@ -494,6 +579,34 @@ namespace Game.ElementField
             _particleLifecycleShader.Dispatch(_releaseArchiveLockedParticlesKernel, _particleGroupCount, 1, 1);
             _particleLifecycleShader.Dispatch(_clearReleasedArchiveAuxiliaryKernel, _particleGroupCount, 1, 1);
             _topologyVersionTracker.PublishAfterConsumeDispatch(1);
+            // Release 改写 Alive/Free；使事务开始后、Commit 前请求的 Counter 样本立即过期。
+            InvalidateSpawnBudget();
+        }
+
+        bool IFluidChunkTransferBackend.TryExcludeArchiveParticleIndices(
+            uint[] particleIndices, int count)
+        {
+            if (!_archiveReadbackLeaseHeld || particleIndices == null
+                || count < 0 || count > particleIndices.Length
+                || count > _settings.ParticleCapacity)
+                return false;
+            if (count == 0) return true;
+            using (ArchiveUnlockUploadMarker.Auto())
+            {
+                NativeArray<uint> mapped =
+                    _resources.ArchiveUnlockIndices.LockBufferForWrite<uint>(0, count);
+                // 这里只复制有效前缀，固定容量的复用数组不会产生临时托管分配。
+                NativeArray<uint>.Copy(particleIndices, 0, mapped, 0, count);
+                _resources.ArchiveUnlockIndices.UnlockBufferAfterWrite<uint>(count);
+            }
+            using (ArchiveUnlockDispatchMarker.Auto())
+            {
+                _particleLifecycleShader.SetInt(ParticleCapacityId, _settings.ParticleCapacity);
+                _particleLifecycleShader.SetInt(ArchiveUnlockIndexCountId, count);
+                _particleLifecycleShader.Dispatch(
+                    _excludeArchiveParticleIndicesKernel, DivideRoundUp(count), 1, 1);
+            }
+            return true;
         }
 
         void IFluidChunkTransferBackend.CancelArchive(uint transactionId)
@@ -519,6 +632,8 @@ namespace Game.ElementField
                 return false;
             }
 
+            // Restore 直接占用 GPU Free List；冻结 Spawn 预算，待下一份 Counter Readback 重新校准。
+            InvalidateSpawnBudget();
             _archiveReadbackLeaseHeld = true;
             _archiveTransactionId = transactionId;
             _resources.RestoreParticles.SetData(particles, 0, 0, particleCount);
@@ -548,6 +663,7 @@ namespace Game.ElementField
             _particleLifecycleShader.Dispatch(
                 _activateRestoredParticlesKernel, DivideRoundUp(particleCount), 1, 1);
             _topologyVersionTracker.PublishAfterSpawnDispatch(1);
+            InvalidateSpawnBudget();
             publishedTopologyVersion = _topologyVersionTracker.PublishedVersion;
         }
 
@@ -560,6 +676,7 @@ namespace Game.ElementField
             _particleLifecycleShader.SetInt(TransferTransactionIdId, unchecked((int)transactionId));
             _particleLifecycleShader.Dispatch(
                 _rollbackRestoredParticlesKernel, DivideRoundUp(particleCount), 1, 1);
+            InvalidateSpawnBudget();
         }
 
         void IFluidChunkTransferBackend.ReleaseTransferReadbackLease()
@@ -575,7 +692,7 @@ namespace Game.ElementField
                 throw new InvalidOperationException("Fluid archive transaction does not own the active GPU lease.");
         }
 
-        private void ScheduleDevelopmentCounterReadback(float deltaTime)
+        private void ScheduleCounterReadback(float deltaTime)
         {
             if (_resources == null || _debugReadbackOutstanding)
                 return;
@@ -589,6 +706,11 @@ namespace Game.ElementField
             GraphicsBuffer source = _debugReadbackIsActivity
                 ? _resources.ActivityCounters
                 : _resources.Counters;
+            if (!_debugReadbackIsActivity)
+            {
+                _poolReadbackSubmittedParticleWatermark = _submittedParticleCount;
+                _poolReadbackSpawnBudgetMutationVersion = _spawnBudgetMutationVersion;
+            }
             try
             {
                 _debugReadbackOutstanding = true;
@@ -599,6 +721,14 @@ namespace Game.ElementField
                 _debugReadbackOutstanding = false;
                 if (CounterReadbackErrorCount < uint.MaxValue) CounterReadbackErrorCount++;
             }
+        }
+
+        private void InvalidateSpawnBudget()
+        {
+            _spawnCapacityBudget.InvalidateUntilNextReadback();
+            PoolDiagnostics = default;
+            unchecked { _spawnBudgetMutationVersion++; }
+            if (_spawnBudgetMutationVersion == 0u) _spawnBudgetMutationVersion = 1u;
         }
 
         private void OnDebugReadbackCompleted(AsyncGPUReadbackRequest request)
@@ -626,9 +756,15 @@ namespace Game.ElementField
                     _debugAliveParticleCount = values[FluidGpuLayout.ActiveCountCounterIndex];
                     _debugFreeParticleCount = values[FluidGpuLayout.FreeCountCounterIndex];
                     _debugRejectedParticleCount = values[FluidGpuLayout.DroppedParticleCountCounterIndex];
+                    // Archive/Restore 若在 Request 之后改写 Free List，这份旧快照不能重新开放预算。
+                    if (_poolReadbackSpawnBudgetMutationVersion == _spawnBudgetMutationVersion)
+                        _spawnCapacityBudget.ApplyPoolReadback(
+                            _debugFreeParticleCount,
+                            _poolReadbackSubmittedParticleWatermark);
                     PoolDiagnostics = new GpuFluidPoolDiagnostics(true, ++_poolDiagnosticsVersion,
                         _debugAliveParticleCount, _debugFreeParticleCount, _debugRejectedParticleCount,
-                        _debugReadbackRequestedAt, completedAt);
+                        _debugReadbackRequestedAt, completedAt,
+                        _poolReadbackSpawnBudgetMutationVersion);
                 }
             }
 
@@ -670,6 +806,8 @@ namespace Game.ElementField
 
                 _clock = new FluidSimulationClock(_settings.FixedTickRate, _settings.MaxCatchUpTicks);
                 _spawnQueue = new FluidSpawnQueue(_settings.MaxSpawnRequests);
+                _spawnCapacityBudget = new FluidSpawnCapacityBudget(
+                    (uint)_settings.ParticleCapacity);
                 _depositAdapter = new FluidDepositQueueAdapter(
                     this,
                     _settings.LiquidMaterials,
@@ -683,6 +821,10 @@ namespace Game.ElementField
                     _settings.MaxSpawnRequests,
                     _settings.MaxFluidColliders,
                     _settings.LiquidMaterials.CreateGpuRows());
+                _reactionAuditParticleDeltas = new NativeArray<int>(
+                    FluidGpuLayout.MaterialAuditSlotCount,
+                    Allocator.Persistent,
+                    NativeArrayOptions.ClearMemory);
                 _colliderCollector = new FluidColliderProxyCollector(
                     _fluidColliderRoot,
                     _settings.MaxFluidColliders);
@@ -734,6 +876,11 @@ namespace Game.ElementField
                 RecordSpatialHashCommandBuffers();
                 _lastActivityBounds = _activeBounds;
                 _hasActivityBounds = true;
+                // 第一次 AsyncGPUReadback 会初始化 Unity 内部托管状态。用零账本在 Warmup 前
+                // 做且只做一次预热，避免首次 Archive 把这笔一次性分配带入测量窗口。
+                if (_reactionAuditReadbackCallback == null)
+                    _reactionAuditReadbackCallback = OnReactionAuditReadbackCompleted;
+                ScheduleReactionAuditReadback(true);
             }
             catch (System.Exception exception)
             {
@@ -793,6 +940,7 @@ namespace Game.ElementField
                 || !_particleLifecycleShader.HasKernel("LockArchiveCandidates")
                 || !_particleLifecycleShader.HasKernel("PackArchiveSamples")
                 || !_particleLifecycleShader.HasKernel("CancelArchiveLock")
+                || !_particleLifecycleShader.HasKernel("ExcludeArchiveParticleIndices")
                 || !_particleLifecycleShader.HasKernel("ReleaseArchiveLockedParticles")
                 || !_particleLifecycleShader.HasKernel("ClearReleasedArchiveAuxiliary")
                 || !_particleLifecycleShader.HasKernel("ReserveRestoreSlots")
@@ -817,6 +965,8 @@ namespace Game.ElementField
             _lockArchiveCandidatesKernel = _particleLifecycleShader.FindKernel("LockArchiveCandidates");
             _packArchiveSamplesKernel = _particleLifecycleShader.FindKernel("PackArchiveSamples");
             _cancelArchiveLockKernel = _particleLifecycleShader.FindKernel("CancelArchiveLock");
+            _excludeArchiveParticleIndicesKernel =
+                _particleLifecycleShader.FindKernel("ExcludeArchiveParticleIndices");
             _releaseArchiveLockedParticlesKernel = _particleLifecycleShader.FindKernel("ReleaseArchiveLockedParticles");
             _clearReleasedArchiveAuxiliaryKernel = _particleLifecycleShader.FindKernel("ClearReleasedArchiveAuxiliary");
             _reserveRestoreSlotsKernel = _particleLifecycleShader.FindKernel("ReserveRestoreSlots");
@@ -893,11 +1043,17 @@ namespace Game.ElementField
             UploadQueuedSpawns();
             int consumeCommandCount = UploadQueuedConsumes();
             int convertCommandCount = UploadQueuedConversions();
+            if (consumeCommandCount > 0 || convertCommandCount > 0)
+            {
+                unchecked { _reactionAuditCommandVersion++; }
+                if (_reactionAuditCommandVersion == 0u)
+                    _materialAuditAccountingValid = false;
+            }
             bool boundsChanged = !_hasActivityBounds || _activeBounds != _lastActivityBounds;
             bool wakeAll = colliderChanged
                 || consumeCommandCount > 0
                 || convertCommandCount > 0
-                || boundsChanged;
+                || (boundsChanged && _worldActivitySource == null);
             MarkNeighborWakeRequests();
             UpdateParticleActivity(wakeAll);
             _lastActivityBounds = _activeBounds;
@@ -982,6 +1138,7 @@ namespace Game.ElementField
             _spatialHashShader.SetInt(ParticleCapacityId, _settings.ParticleCapacity);
             _spatialHashShader.SetInt(HashTableCapacityId, _settings.HashTableCapacity);
             _spatialHashShader.SetFloat(SmoothingRadiusId, _settings.SmoothingRadius);
+            _spatialHashShader.SetFloat(WakeVelocityThresholdId, _settings.SleepThreshold);
             _spatialHashShader.Dispatch(
                 _markNeighborWakeRequestsKernel,
                 _particleGroupCount,
@@ -1107,9 +1264,22 @@ namespace Game.ElementField
             // 累计的是 CPU 已提交的需求，满池时实际 Alive 增量仍可能更小；用 Pool 同时刻样本核实。
             for (int i = 0; i < requestCount; i++)
             {
-                _submittedParticleCount += _spawnRequestUploadBuffer[i].ParticleCount;
+                FluidSpawnRequest request = _spawnRequestUploadBuffer[i];
+                _submittedParticleCount += request.ParticleCount;
+                MaterialId material = (MaterialId)(byte)request.MaterialId;
+                if (!_gameplayAmountScales.TryGet(material, out uint scale)
+                    || request.ParticleCount > ulong.MaxValue / scale
+                    || ulong.MaxValue - _submittedGmuByMaterial[(byte)material]
+                        < request.ParticleCount * (ulong)scale)
+                {
+                    _materialAuditAccountingValid = false;
+                }
+                else
+                {
+                    _submittedGmuByMaterial[(byte)material] += request.ParticleCount * (ulong)scale;
+                }
                 _knownMaterialPresenceMask = FluidMaterialPresenceMask.Include(
-                    _knownMaterialPresenceMask, _spawnRequestUploadBuffer[i].MaterialId);
+                    _knownMaterialPresenceMask, request.MaterialId);
             }
             // Dispatch 调用已把 Spawn 写入同一 Graphics Queue；之后的 Renderer LateUpdate
             // 看到新版本时，其 Anisotropy Dispatch 会按 Queue 顺序消费 Spawn 后的粒子拓扑。
@@ -1132,14 +1302,12 @@ namespace Game.ElementField
             _particleLifecycleShader.SetVector(WorldOriginId, _reactionWorldOrigin);
             _particleLifecycleShader.SetFloat(CellSizeId, _reactionCellSize);
             _particleLifecycleShader.SetBuffer(_consumeParticlesKernel, PositionsId, _resources.Positions);
-            _particleLifecycleShader.SetBuffer(_consumeParticlesKernel, PredictedPositionsId, _resources.PredictedPositions);
-            _particleLifecycleShader.SetBuffer(_consumeParticlesKernel, VelocitiesId, _resources.Velocities);
-            _particleLifecycleShader.SetBuffer(_consumeParticlesKernel, DensityLambdaId, _resources.DensityLambda);
             _particleLifecycleShader.SetBuffer(_consumeParticlesKernel, MetadataId, _resources.Metadata);
-            _particleLifecycleShader.SetBuffer(_consumeParticlesKernel, DeltaPositionsId, _resources.DeltaPositions);
             _particleLifecycleShader.SetBuffer(_consumeParticlesKernel, FreeIndicesId, _resources.FreeIndices);
             _particleLifecycleShader.SetBuffer(_consumeParticlesKernel, CountersId, _resources.Counters);
             _particleLifecycleShader.SetBuffer(_consumeParticlesKernel, ConsumeRequestsId, _resources.ConsumeRequests);
+            _particleLifecycleShader.SetBuffer(
+                _consumeParticlesKernel, ReactionParticleDeltasId, _resources.ReactionParticleDeltas);
             // numthreads(1,1,1)：一个 Group 对应一个低频反应 Command。
             _particleLifecycleShader.Dispatch(_consumeParticlesKernel, commandCount, 1, 1);
             _topologyVersionTracker.PublishAfterConsumeDispatch(commandCount);
@@ -1154,7 +1322,6 @@ namespace Game.ElementField
             int commandCount = _reactionQueue.CopyConvertCommandsAndClear(_convertUploadBuffer);
             if (commandCount <= 0)
                 return 0;
-
             // Convert 的实际命中数由 GPU 决定；将目标加入“可能存在”只会造成保守的额外渲染，
             // 不会把真实新材质误判为空。该 Mask 只增不减，因此无需异步 readback。
             for (int i = 0; i < commandCount; i++)
@@ -1174,11 +1341,84 @@ namespace Game.ElementField
                 _convertParticlesKernel, StableTickCountersId, _resources.StableTickCounters);
             _particleLifecycleShader.SetBuffer(
                 _convertParticlesKernel, ConvertRequestsId, _resources.ConvertRequests);
+            _particleLifecycleShader.SetBuffer(
+                _convertParticlesKernel, ReactionParticleDeltasId, _resources.ReactionParticleDeltas);
             // 一个 Group 对应一条 Command；Kernel 内用 CAS 抢占 Source Material，
             // 即使相邻命令 AABB 重叠，同一粒子也只会成功 Retag 一次。
             _particleLifecycleShader.Dispatch(_convertParticlesKernel, commandCount, 1, 1);
             _topologyVersionTracker.PublishAfterConvertDispatch(commandCount);
             return commandCount;
+        }
+
+        private void ScheduleReactionAuditReadback(bool force = false)
+        {
+            if (_reactionAuditReadbackOutstanding
+                || !force && _reactionAuditLedgerValid
+                && _reactionAuditCompletedVersion == _reactionAuditCommandVersion)
+                return;
+
+            if (!SystemInfo.supportsAsyncGPUReadback || !_reactionAuditParticleDeltas.IsCreated)
+            {
+                _reactionAuditLedgerValid = false;
+                return;
+            }
+
+            _reactionAuditRequestedVersion = _reactionAuditCommandVersion;
+            try
+            {
+                _reactionAuditReadbackOutstanding = true;
+                _reactionAuditReadbackRequest = AsyncGPUReadback.RequestIntoNativeArray(
+                    ref _reactionAuditParticleDeltas,
+                    _resources.ReactionParticleDeltas,
+                    _reactionAuditReadbackCallback);
+            }
+            catch (Exception)
+            {
+                _reactionAuditReadbackOutstanding = false;
+                _reactionAuditLedgerValid = false;
+            }
+        }
+
+        private void OnReactionAuditReadbackCompleted(AsyncGPUReadbackRequest request)
+        {
+            if (!_reactionAuditReadbackOutstanding) return;
+            _reactionAuditReadbackOutstanding = false;
+            if (request.hasError || !_reactionAuditParticleDeltas.IsCreated
+                || _reactionAuditParticleDeltas.Length < FluidGpuLayout.MaterialAuditSlotCount)
+            {
+                _reactionAuditLedgerValid = false;
+            }
+            else
+            {
+                _reactionAuditCompletedVersion = _reactionAuditRequestedVersion;
+                _reactionAuditLedgerValid = true;
+            }
+            if (_debugReleasePending && _gameplayReadbackLeaseTracker.RequestRelease())
+                TryFinishDeferredRelease();
+        }
+
+        private bool TryBuildReactionAdjustedAuditExpected()
+        {
+            Array.Copy(_submittedGmuByMaterial, _archiveAuditExpectedGmu,
+                _submittedGmuByMaterial.Length);
+            if (!_materialAuditAccountingValid) return false;
+            if (_reactionAuditCommandVersion == 0u) return true;
+            if (!_reactionAuditLedgerValid
+                || _reactionAuditCompletedVersion != _reactionAuditCommandVersion
+                || !_reactionAuditParticleDeltas.IsCreated)
+                return false;
+
+            for (int index = 0; index < FluidGpuLayout.MaterialAuditSlotCount; index++)
+            {
+                int particleDelta = _reactionAuditParticleDeltas[index];
+                if (particleDelta == 0) continue;
+                if (!_gameplayAmountScales.TryGet((MaterialId)(byte)index, out uint scale)
+                    || !FluidReactionAuditLedger.TryApplyParticleDelta(
+                        _submittedGmuByMaterial[index], particleDelta, scale,
+                        out _archiveAuditExpectedGmu[index]))
+                    return false;
+            }
+            return true;
         }
 
         private void BindInitializePoolBuffers()
@@ -1324,6 +1564,10 @@ namespace Game.ElementField
                 _resources.PredictedPositions);
             _spatialHashShader.SetBuffer(
                 _markNeighborWakeRequestsKernel,
+                VelocitiesId,
+                _resources.Velocities);
+            _spatialHashShader.SetBuffer(
+                _markNeighborWakeRequestsKernel,
                 MetadataId,
                 _resources.Metadata);
             _spatialHashShader.SetBuffer(
@@ -1412,6 +1656,12 @@ namespace Game.ElementField
             _particleLifecycleShader.SetBuffer(_packArchiveSamplesKernel, MetadataId, _resources.Metadata);
             _particleLifecycleShader.SetBuffer(_packArchiveSamplesKernel, ArchiveSamplesId, _resources.ArchiveSamples);
             _particleLifecycleShader.SetBuffer(_cancelArchiveLockKernel, MetadataId, _resources.Metadata);
+            _particleLifecycleShader.SetBuffer(
+                _excludeArchiveParticleIndicesKernel, MetadataId, _resources.Metadata);
+            _particleLifecycleShader.SetBuffer(
+                _excludeArchiveParticleIndicesKernel,
+                ArchiveUnlockIndicesId,
+                _resources.ArchiveUnlockIndices);
             _particleLifecycleShader.SetBuffer(_releaseArchiveLockedParticlesKernel, PositionsId, _resources.Positions);
             _particleLifecycleShader.SetBuffer(_releaseArchiveLockedParticlesKernel, PredictedPositionsId, _resources.PredictedPositions);
             _particleLifecycleShader.SetBuffer(_releaseArchiveLockedParticlesKernel, VelocitiesId, _resources.Velocities);
@@ -1784,6 +2034,15 @@ namespace Game.ElementField
         private void RefreshActiveBounds()
         {
             _activeBounds = new Bounds(_simulationBoundsCenter.position, _simulationBoundsSize);
+            _worldActivityRegions.Clear();
+            if (_worldActivitySource != null)
+            {
+                // 主 GPU Surface 的栅格尺寸保持原值；额外区域只拓展模拟资格，不拉伸液面采样格。
+                _worldActivityRegions.TryAdd(_activeBounds);
+                for (int i = 1; i < _worldActivitySource.Count; i++)
+                    _worldActivityRegions.TryAdd(_worldActivitySource.GetBounds(i));
+            }
+            UploadRegionUniforms(_worldActivityRegions, "_ActivityRegionCount", "_ActivityRegionMinima", "_ActivityRegionMaxima");
             // 玩家移动只会扩大 Resident Coverage，不会把已经冻结在身后的液体裁掉。
             _residentBoundsTracker.Include(_activeBounds);
         }
@@ -1811,7 +2070,8 @@ namespace Game.ElementField
 
         private void TryFinishDeferredRelease()
         {
-            if (_debugReadbackOutstanding || _archiveReadbackLeaseHeld)
+            if (_debugReadbackOutstanding || _reactionAuditReadbackOutstanding
+                || _archiveReadbackLeaseHeld)
                 return;
             _debugReleasePending = false;
             ReleaseResourcesImmediately();
@@ -1832,6 +2092,7 @@ namespace Game.ElementField
 
             _clock = null;
             _spawnQueue = null;
+            _spawnCapacityBudget = null;
             _spawnRequestUploadBuffer = null;
             _spawnUploadBuffer = null;
             _consumeUploadBuffer = null;
@@ -1839,12 +2100,27 @@ namespace Game.ElementField
             _reactionQueue = null;
             _colliderCollector = null;
             _debugReadbackOutstanding = false;
+            _reactionAuditReadbackOutstanding = false;
+            if (_reactionAuditParticleDeltas.IsCreated)
+                _reactionAuditParticleDeltas.Dispose();
             // Buffer 已释放后，旧 Counter 即使数值正确也不再描述当前资源，必须显式变为无效样本。
             PoolDiagnostics = default;
             ActivityDiagnostics = default;
             _gameplayReadbackLeaseTracker.Reset();
             _archiveReadbackLeaseHeld = false;
             _archiveTransactionId = 0u;
+            _submittedParticleCount = 0u;
+            Array.Clear(_submittedGmuByMaterial, 0, _submittedGmuByMaterial.Length);
+            Array.Clear(_archiveAuditExpectedGmu, 0, _archiveAuditExpectedGmu.Length);
+            _archiveAuditEpoch = 0u;
+            _materialAuditAccountingValid = true;
+            _reactionAuditLedgerValid = true;
+            _reactionAuditCommandVersion = 0u;
+            _reactionAuditRequestedVersion = 0u;
+            _reactionAuditCompletedVersion = 0u;
+            _poolReadbackSubmittedParticleWatermark = 0u;
+            _spawnBudgetMutationVersion = 0u;
+            _poolReadbackSpawnBudgetMutationVersion = 0u;
         }
 
         private static CommandBuffer ReleaseCommandBuffer(CommandBuffer commandBuffer)

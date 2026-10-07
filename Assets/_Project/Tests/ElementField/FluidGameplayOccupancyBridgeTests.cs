@@ -1,4 +1,5 @@
 using Game.Materials;
+using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -123,6 +124,84 @@ namespace Game.ElementField.Tests
             Assert.That(
                 FluidReadbackIntervalPolicy.Sanitize(configured),
                 Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void TemporaryLeaseContentionKeepsElapsedReadbackDebtForNextFrame()
+        {
+            const float interval = 0.25f;
+            var root = new GameObject("FluidGameplayOccupancyBridgeTests.Retry");
+            root.SetActive(false);
+            try
+            {
+                ElementWorldRuntime world = root.AddComponent<ElementWorldRuntime>();
+                FluidGameplayOccupancyBridge bridge = root.AddComponent<FluidGameplayOccupancyBridge>();
+                SetPrivateField(world, "<IsInitialized>k__BackingField", true);
+                SetPrivateField(bridge, "_elementWorldRuntime", world);
+                SetPrivateField(bridge, "_source", new AlwaysBusyReadbackSource());
+                SetPrivateField(bridge, "_supported", true);
+                SetPrivateField(bridge, "_readbackInterval", interval);
+                SetPrivateField(bridge, "_elapsed", interval);
+
+                InvokePrivateVoid(bridge, "LateUpdate");
+
+                Assert.That(GetPrivateField<float>(bridge, "_elapsed"), Is.GreaterThanOrEqualTo(interval),
+                    "临时拿不到 Source Lease 时必须保留已到期状态，下一帧立即重试，不能再等待完整周期。");
+            }
+            finally
+            {
+                Object.DestroyImmediate(root);
+            }
+        }
+
+        private static void SetPrivateField<TTarget, TValue>(
+            TTarget target,
+            string fieldName,
+            TValue value)
+        {
+            FieldInfo field = typeof(TTarget).GetField(
+                fieldName,
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.That(field, Is.Not.Null, $"缺少预期字段 {typeof(TTarget).Name}.{fieldName}。");
+            field.SetValue(target, value);
+        }
+
+        private static TValue GetPrivateField<TValue>(object target, string fieldName)
+        {
+            FieldInfo field = target.GetType().GetField(
+                fieldName,
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.That(field, Is.Not.Null, $"缺少预期字段 {target.GetType().Name}.{fieldName}。");
+            return (TValue)field.GetValue(target);
+        }
+
+        private static void InvokePrivateVoid(object target, string methodName)
+        {
+            MethodInfo method = target.GetType().GetMethod(
+                methodName,
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.That(method, Is.Not.Null, $"缺少预期方法 {target.GetType().Name}.{methodName}。");
+            method.Invoke(target, null);
+        }
+
+        private sealed class AlwaysBusyReadbackSource : IFluidGameplayReadbackSource
+        {
+            public bool TryGetGameplayParticleCapacity(out int particleCapacity)
+            {
+                particleCapacity = 1;
+                return true;
+            }
+
+            public bool TryAcquireGameplayReadbackLease(
+                Vector3 worldOrigin,
+                float cellSize,
+                out FluidGameplayReadbackLease lease)
+            {
+                lease = default;
+                return false;
+            }
+
+            public void ReleaseGameplayReadbackLease() { }
         }
     }
 }

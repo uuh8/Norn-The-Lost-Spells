@@ -4,6 +4,7 @@ using Game.Combat;
 using Game.Core;
 using Game.Materials;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace Game.ElementField
 {
@@ -35,6 +36,9 @@ namespace Game.ElementField
         private Vector3 _oldInterestPosition, _oldCameraPosition;
         private string _configuration, _hardware;
         private string _surfaceMode = "all";
+        private string _surfaceDiagnosticsMode = "on";
+        private bool _forceUncapped;
+        private int _targetFpsOverride;
         public ElementPerformancePhase Phase { get; private set; }
         public string LastResultDirectory { get; private set; }
 
@@ -44,6 +48,17 @@ namespace Game.ElementField
             for (int i = 0; i < args.Length; i++)
             {
                 if (args[i] == "-ewperfSurface" && i + 1 < args.Length) _surfaceMode = args[++i];
+                if (args[i] == "-ewperfSurfaceDiagnostics" && i + 1 < args.Length)
+                    _surfaceDiagnosticsMode = args[++i];
+                if (args[i] == "-ewperfUncapped") _forceUncapped = true;
+                if (args[i] == "-ewperfTargetFps" && i + 1 < args.Length)
+                {
+                    if (!int.TryParse(args[++i], out _targetFpsOverride)
+                        || _targetFpsOverride < 30 || _targetFpsOverride > 1000)
+                    {
+                        _targetFpsOverride = int.MinValue;
+                    }
+                }
                 if (args[i] == "-ewperfQuit") _quitOnComplete = true;
                 if (args[i] != "-ewperfScenario" || i + 1 >= args.Length) continue;
                 string id = args[++i];
@@ -66,20 +81,33 @@ namespace Game.ElementField
                 if (_profile == null || _world == null || !_world.IsInitialized || _fluid == null
                     || !_fluid.IsFluidInitialized || _gameplay == null || _exposure == null)
                     throw new InvalidOperationException("实验引用未配置或世界未初始化。");
+                if (_targetFpsOverride == int.MinValue)
+                    throw new ArgumentException("-ewperfTargetFps 必须在30到1000之间。");
                 if (_fluid.SubmittedParticleCount != 0 || _world.WorldTick < 0)
                     throw new InvalidOperationException("实验需要没有历史写入的干净世界。");
                 _frozen = Instantiate(_profile);
+                if (_forceUncapped) _frozen.FrameRateMode = ElementPerformanceFrameRate.Uncapped;
                 _streaming = _world.GetComponent<FluidChunkStreamingRuntime>();
                 if (_surfaceMode != "all" && _surfaceMode != "water" && _surfaceMode != "off")
                     throw new ArgumentException("非法的实验 SurfaceMode。");
+                if (_surfaceDiagnosticsMode != "on" && _surfaceDiagnosticsMode != "off")
+                    throw new ArgumentException("非法的实验 SurfaceDiagnosticsMode。");
                 _frozen.ValidateConfiguration();
+                _world.ConfigureActivityForPerformance(_frozen.EnableWorldActivityExpansion);
+                CreateActivitySources();
                 if (_frozen.Movement != ElementPerformanceMovement.None && (_interest == null || _camera == null))
                     throw new InvalidOperationException("需要专用 Interest 和 Camera 引用。");
                 if (_frozen.UseProbe && _probe == null) throw new InvalidOperationException("需要状态探针。");
                 _prefill = _frozen.CreateSchedule(true);
                 _measure = _frozen.CreateSchedule(false);
                 _capture = new ElementWorldPerformanceCapture();
-                _configuration = "{\"surfaceMode\":\"" + _surfaceMode + "\",\"scenario\":" + JsonUtility.ToJson(_frozen, true)
+                int targetFps = _frozen.FrameRateMode == ElementPerformanceFrameRate.Target60
+                    ? (_targetFpsOverride > 0 ? _targetFpsOverride : 60)
+                    : -1;
+                _configuration = "{\"surfaceMode\":\"" + _surfaceMode
+                    + "\",\"surfaceDiagnosticsMode\":\"" + _surfaceDiagnosticsMode
+                    + "\",\"targetFpsApplied\":" + targetFps
+                    + ",\"scenario\":" + JsonUtility.ToJson(_frozen, true)
                     + ",\"production\":" + (string.IsNullOrEmpty(_productionConfiguration) ? "null" : _productionConfiguration) + "}";
                 _hardware = $"Unity={Application.unityVersion}; GPU={SystemInfo.graphicsDeviceName}; "
                     + $"API={SystemInfo.graphicsDeviceType}; Driver={SystemInfo.graphicsDeviceVersion}; "
@@ -93,7 +121,8 @@ namespace Game.ElementField
                 // 专用实验 Player 明确固定窗口；初始化后由 Warmup 吸收分辨率切换开销。
                 if (!Application.isEditor) Screen.SetResolution(1920, 1080, FullScreenMode.Windowed);
                 QualitySettings.vSyncCount = 0;
-                Application.targetFrameRate = _frozen.FrameRateMode == ElementPerformanceFrameRate.Target60 ? 60 : -1;
+                // 可选Override只服务帧节拍归因实验，并写入configuration；正式60 FPS样本默认仍为60。
+                Application.targetFrameRate = targetFps;
                 _settingsOwned = true;
                 if (_interest != null) _oldInterestPosition = _interest.position;
                 if (_camera != null) _oldCameraPosition = _camera.position;
@@ -152,9 +181,29 @@ namespace Game.ElementField
                     }
                     break;
                 case ElementPerformancePhase.Drain:
-                    bool fresh = _fluid.PendingSpawnRequestCount == 0 && _world.PendingWriteCount == 0
-                        && _fluid.PoolDiagnostics.Valid && _fluid.PoolDiagnostics.RequestedAt > _lastWriteAt
-                        && _gameplay.Diagnostics.Valid && _gameplay.Diagnostics.RequestedAt > _lastWriteAt;
+                    bool writesDrained = _fluid.PendingSpawnRequestCount == 0
+                        && _world.PendingWriteCount == 0
+                        && (_streaming == null || _streaming.PendingWriteCount == 0);
+                    // 最终审计会启动一次只读 Archive 事务。必须先让普通 Archive 释放容量并
+                    // 重放全部 Backpressure 写入，否则诊断事务会持续抢占队首并制造伪超时。
+                    if (_frozen.RequireFreshMaterialAuditAtDrain && _streaming != null
+                        && writesDrained)
+                        _streaming.RequestMaterialAudit(
+                            _frozen.MeasureMaterial, _fluid.SubmittedParticleCount, _lastWriteAt);
+                    bool auditFresh = !_frozen.RequireFreshMaterialAuditAtDrain
+                        || (_streaming != null
+                            && _streaming.TryGetMaterialAudit(
+                                _frozen.MeasureMaterial, out FluidMaterialAuditSnapshot audit)
+                            && audit.IsFreshFor(_fluid.SubmittedParticleCount, _lastWriteAt));
+                    bool fresh = writesDrained
+                        // Streaming Backpressure 会保留尚未获得 GPU 槽位的原始写入；只有它也清空，
+                        // “全部写入已处理”的性能结论才成立，不能被下游 Spawn Queue 的空状态提前掩盖。
+                        && (_streaming == null || (_streaming.CurrentTransactionId == 0u
+                            && _streaming.PendingWakeCount == 0))
+                        && _fluid.PoolDiagnostics.IsFreshFor(_fluid.PoolMutationVersion)
+                        && _fluid.PoolDiagnostics.RequestedAt > _lastWriteAt
+                        && _gameplay.Diagnostics.Valid && _gameplay.Diagnostics.RequestedAt > _lastWriteAt
+                        && auditFresh;
                     if (fresh || elapsed >= _frozen.DrainTimeoutSeconds)
                     {
                         if (!fresh) _capture.MarkIncomplete();
@@ -170,6 +219,7 @@ namespace Game.ElementField
             Phase = phase;
             _phaseStarted = now;
             if (phase != ElementPerformancePhase.Measure) return;
+            if (_frozen.RemoveActivitySourcesAtMeasure) ReleaseActivitySources();
             _routeIndex = 1;
             _routeDwellUntil = 0d;
             if (_frozen.Movement != ElementPerformanceMovement.None)
@@ -251,8 +301,15 @@ namespace Game.ElementField
                 frame.CapacityPressure = _streaming.CapacityPressureCount;
                 frame.LastArchiveBytes = _streaming.LastArchiveReadbackBytes;
                 frame.LastArchiveMs = _streaming.LastArchiveDurationMilliseconds;
+                frame.LastArchiveLockedParticles = _streaming.LastArchiveLockedParticleCount;
+                frame.LastArchiveRecords = _streaming.LastArchiveRecordCount;
+                frame.LastArchiveRollbackReason = _streaming.LastArchiveRollbackReason;
+                frame.LastArchiveStoreRejectionReason = _streaming.LastArchiveStoreRejectionReason;
                 frame.LastRestoreParticles = _streaming.LastRestoreParticleCount;
                 frame.LastRestoreMs = _streaming.LastRestoreDurationMilliseconds;
+                _streaming.TryGetMaterialAudit(MaterialId.Water, out frame.WaterAudit);
+                _streaming.TryGetMaterialAudit(MaterialId.Poison, out frame.PoisonAudit);
+                _streaming.TryGetMaterialAudit(MaterialId.Sticky, out frame.StickyAudit);
             }
             if (_probe != null && _probe.isActiveAndEnabled)
             {
@@ -261,6 +318,22 @@ namespace Game.ElementField
                 Vector3Int cell = ElementWorldCoordinates.WorldToGlobalCell(_probe.transform.position, _world.Origin, _world.CellSize);
                 _world.MaterialAmounts.TryGetAmount(cell, MaterialId.Water, out frame.ProbeWater);
             }
+            frame.ActivityRegions = _world.ActivityRegions != null ? _world.ActivityRegions.Count : 1;
+            frame.ActivitySources = _world.ActivitySourceCount;
+            frame.RejectedRegions = _world.ActivityRegions != null ? _world.ActivityRegions.RejectedCount : 0;
+            frame.UnitSourcesSkippedByBudget = _world.UnitActivitySourcesSkippedByBudget;
+            frame.ProjectileSourcesSkippedByBudget = _world.ProjectileActivitySourcesSkippedByBudget;
+            frame.PendingWakes = _streaming != null ? _streaming.PendingWakeCount : 0;
+            Vector3Int measureCell = ElementWorldCoordinates.WorldToGlobalCell(_frozen.MeasurePosition, _world.Origin, _world.CellSize);
+            if (_world.TryGetCell(measureCell, out ElementCell measuredFire) && measuredFire.MaterialKind == MaterialId.Fire)
+                frame.MeasureFire = measuredFire.Amount;
+            _world.MaterialAmounts?.TryGetAmount(measureCell, MaterialId.Water, out frame.MeasureWater);
+            // Unity 原生计数器不创建托管对象；Soak 可按分钟从 CSV 抽样，检查平台而非只看终点。
+            frame.TotalAllocatedMemory = Profiler.GetTotalAllocatedMemoryLong();
+            frame.TotalReservedMemory = Profiler.GetTotalReservedMemoryLong();
+            frame.MonoHeapMemory = Profiler.GetMonoHeapSizeLong();
+            frame.MonoUsedMemory = Profiler.GetMonoUsedSizeLong();
+            frame.GraphicsDriverMemory = Profiler.GetAllocatedMemoryForGraphicsDriver();
             _capture.RecordFrame(ref frame);
         }
 
@@ -286,6 +359,9 @@ namespace Game.ElementField
             else GameLog.Error($"[ELEMENT-PERF] Export failed: {error}", "ElementPerformance");
             if (_quitOnComplete && !Application.isEditor)
             {
+                // Restore 会恢复原 runInBackground。自动基准窗口失焦时，若这里恢复成 false，
+                // 后续 LateUpdate 的退出倒计时便不再推进；保持后台运行直至 Quit。
+                Application.runInBackground = true;
                 if (_probe != null) _probe.gameObject.SetActive(false);
                 _quitExitCode = exported && !_capture.Incomplete ? 0 : 2;
                 _quitCountdown = 3;
@@ -294,6 +370,7 @@ namespace Game.ElementField
 
         private void Restore()
         {
+            ReleaseActivitySources();
             if (!_settingsOwned) return;
             QualitySettings.vSyncCount = _oldVsync; Application.targetFrameRate = _oldTargetFps;
             Application.runInBackground = _oldRunInBackground;
@@ -303,5 +380,44 @@ namespace Game.ElementField
         }
         private void OnDisable() { StopRun(); Restore(); _capture?.Dispose(); }
         private void OnDestroy() { if (_frozen != null) Destroy(_frozen); }
+
+        private GameObject[] _activitySourceObjects;
+        private WorldActivitySourceKind[] _activitySourceKinds;
+        private void CreateActivitySources()
+        {
+            Vector3[] units = _frozen.ActivitySourcePositions;
+            Vector3[] projectiles = _frozen.ProjectileActivitySourcePositions;
+            int unitCount = units != null ? units.Length : 0;
+            int projectileCount = projectiles != null ? projectiles.Length : 0;
+            int count = unitCount + projectileCount;
+            _activitySourceObjects = new GameObject[count];
+            _activitySourceKinds = new WorldActivitySourceKind[count];
+            for (int i = 0; i < count; i++)
+            {
+                bool unit = i < unitCount;
+                WorldActivitySourceKind kind = unit
+                    ? WorldActivitySourceKind.Unit : WorldActivitySourceKind.Projectile;
+                int sourceIndex = unit ? i : i - unitCount;
+                GameObject source = new GameObject(unit
+                    ? "PerformanceUnitActivitySource" : "PerformanceProjectileActivitySource");
+                source.transform.position = unit ? units[sourceIndex] : projectiles[sourceIndex];
+                _activitySourceObjects[i] = source;
+                _activitySourceKinds[i] = kind;
+                EventBus<WorldActivitySourceEvent>.Publish(new WorldActivitySourceEvent
+                    { Source = source.transform, Kind = kind, Enabled = true });
+            }
+        }
+        private void ReleaseActivitySources()
+        {
+            if (_activitySourceObjects == null) return;
+            for (int i = 0; i < _activitySourceObjects.Length; i++)
+            {
+                if (_activitySourceObjects[i] == null) continue;
+                EventBus<WorldActivitySourceEvent>.Publish(new WorldActivitySourceEvent
+                    { Source = _activitySourceObjects[i].transform, Kind = _activitySourceKinds[i], Enabled = false });
+                Destroy(_activitySourceObjects[i]);
+                _activitySourceObjects[i] = null;
+            }
+        }
     }
 }

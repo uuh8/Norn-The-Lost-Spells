@@ -39,6 +39,29 @@ float ElementWaterValueNoise(float2 position)
     return lerp(bottom, top, smooth.y);
 }
 
+// 与Value Noise完全相同的高度，同时直接求World波纹所需偏导数。
+// Hermite插值导数为6*f*(1-f)，不依赖屏幕2×2像素的ddx/ddy或三角形的投影面积。
+float ElementWaterValueNoiseGradient(float2 position,out float2 gradient)
+{
+    float2 cell=floor(position),f=frac(position),s=f*f*(3-2*f),ds=6*f*(1-f);
+    float a=ElementWaterHash21(cell),b=ElementWaterHash21(cell+float2(1,0));
+    float c=ElementWaterHash21(cell+float2(0,1)),d=ElementWaterHash21(cell+1);
+    gradient=float2(lerp(b-a,d-c,s.y)*ds.x,lerp(c-a,d-b,s.x)*ds.y);
+    return lerp(lerp(a,b,s.x),lerp(c,d,s.x),s.y);
+}
+
+float ElementWaterTriplanarNoiseGradient(float3 p,float3 n,float worldScale,float noiseScale,
+    float2 offset,float sharpness,out float3 gradient)
+{
+    float3 weights=pow(abs(SafeNormalize(n)),max(sharpness,1));weights/=max(1e-5,weights.x+weights.y+weights.z);
+    float scale=max(.0001,worldScale)*max(.0001,noiseScale);p*=scale;offset*=scale;
+    float2 gx,gy,gz;
+    float x=ElementWaterValueNoiseGradient(p.zy+offset,gx),y=ElementWaterValueNoiseGradient(p.xz+offset,gy),z=ElementWaterValueNoiseGradient(p.xy+offset,gz);
+    // 投影权重只负责采样方向混合。它不是水波高度，不能把几何Normal变化当成额外波纹斜率。
+    gradient=(float3(0,gx.y,gx.x)*weights.x+float3(gy.x,0,gy.y)*weights.y+float3(gz.x,gz.y,0)*weights.z)*scale;
+    return x*weights.x+y*weights.y+z*weights.z;
+}
+
 // World-space Triplanar Mapping：
 // - 法线朝 X 的表面看 ZY 平面；
 // - 法线朝 Y 的表面看 XZ 平面；

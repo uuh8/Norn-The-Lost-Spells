@@ -281,6 +281,7 @@ namespace Game.ElementField
         public const int CollisionContactManifoldStride = 64;
         public const int CounterCount = 4;
         public const int ActivityCounterCount = 3;
+        public const int MaterialAuditSlotCount = byte.MaxValue + 1;
         public const int AwakeActivityCounterIndex = 0;
         public const int SleepingActivityCounterIndex = 1;
         public const int InterestActivityCounterIndex = 2;

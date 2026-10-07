@@ -15,7 +15,7 @@ namespace Game.ElementField
     /// </summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(ElementFieldSolidBaker))]
-    public sealed class ElementWorldRuntime : MonoBehaviour, IElementWriteSink, IElementWorldReadOnly, IMaterialAmountReadOnly
+    public sealed partial class ElementWorldRuntime : MonoBehaviour, IElementWriteSink, IElementWorldReadOnly, IElementWorldChunkReadOnly, IMaterialAmountReadOnly, IMaterialQuantityReadOnly
     {
         private const float TransformTolerance = 0.0001f;
 
@@ -29,6 +29,12 @@ namespace Game.ElementField
             new ProfilerMarker("ElementWorld.BakeChunkSolid");
         private static readonly ProfilerMarker LiquidReactionMarker =
             new ProfilerMarker("ElementWorld.LiquidReaction");
+        private static readonly ProfilerMarker GridFireReactionMarker =
+            new ProfilerMarker("GridLiquid.FireReaction");
+        private static readonly ProfilerMarker GridFireCollectMarker =
+            new ProfilerMarker("GridLiquid.FireReaction.CollectFire");
+        private static readonly ProfilerMarker GridFireContactsMarker =
+            new ProfilerMarker("GridLiquid.FireReaction.ProcessContacts");
 
         [Header("Gameplay Data")]
         [SerializeField] private ElementWorldProfile _profile;
@@ -42,6 +48,13 @@ namespace Game.ElementField
         [Header("Fluid Chunk Streaming (Optional)")]
         [Tooltip("仅当 Profile 开启 Fluid Chunk Streaming 且有效后端为 GpuPbf 时接管流体写入。")]
         [SerializeField] private FluidChunkStreamingRuntime _fluidChunkStreamingRuntime;
+
+        [Header("Grid Liquid (Optional)")]
+        [SerializeField] private LiquidWorldRuntime _gridLiquidRuntime;
+
+        [Header("Fixed Solids / Real Gases (Optional)")]
+        [SerializeField] private FixedSolidWorldRuntime _fixedSolidRuntime;
+        [SerializeField] private GasWorldRuntime _gasRuntime;
 
         [Header("Streaming Interest Point")]
         [Tooltip("只决定附近哪些 Chunk 工作，不会成为世界 Origin，也不会让 ElementWorldRoot 跟随玩家移动。")]
@@ -59,6 +72,8 @@ namespace Game.ElementField
         [SerializeField] private int _bakedChunkCount;
         [SerializeField] private int _lastBakedSolidCellCount;
         [SerializeField] private ElementFieldSimulationStats _lastStats;
+        [SerializeField] private int _lastGridFireChunks;
+        [SerializeField] private int _lastGridFireSamples;
 
         private ElementWorldStore _store;
         private ElementWriteQueue _writeQueue;
@@ -67,12 +82,17 @@ namespace Game.ElementField
         private ElementFieldTickAccumulator _tickAccumulator;
         private ElementFieldSolidBaker _solidBaker;
         private ElementWorldChunk[] _activeChunks;
+        private ElementWorldChunk[] _gridFireChunks;
+        private int _gridFireChunkCount;
+        private int _gridFireCursorChunk;
+        private int _gridFireCursorCell;
         private ElementChunkKey[] _reclaimKeys;
         private Vector3 _origin;
         private float _tickInterval;
         private ElementChunkKey _interestChunk;
         private bool _hasInterestChunk;
         private bool _fluidStreamingEnabled;
+        private bool _hasGridLiquidRoute;
         private WaterSimulationMode _effectiveWaterSimulationMode;
         private MaterialSimulationRouteSnapshot _materialRoutes;
         private MaterialReactionCatalogSnapshot _materialReactions;
@@ -83,6 +103,7 @@ namespace Game.ElementField
         private ILiquidOccupancyReadOnly _liquidReactionOccupancy;
         private FluidReactionCommandQueue _fluidReactionQueue;
         private LiquidCellReactionSystem _liquidCellReactionSystem;
+        private LiquidReactionAdapter _gridLiquidReactions;
         private LiquidCellFireSample[] _fireReactionSamples;
         private bool _hasReportedUnsupportedPbfFallback;
         private ulong _droppedDebtFrameCount;
@@ -91,6 +112,10 @@ namespace Game.ElementField
         private ulong _reactionPairCount;
         private readonly Collider[] _reactionDamageColliders = new Collider[64];
         private readonly int[] _reactionDamageTargetIds = new int[64];
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        private int _gcSampledWorldTicks, _gcAllocationWorldTicks;
+        private long _gcWorldTickBytes, _gcMaximumWorldTickBytes;
+#endif
 
         public bool IsInitialized { get; private set; }
         public Vector3 Origin => _origin;
@@ -99,6 +124,7 @@ namespace Game.ElementField
         public int MaximumResidentChunkCount => IsInitialized ? _profile.MaximumResidentChunks : 0;
         public long WorldTick => _worldTick;
         public ElementChunkKey InterestChunk => _interestChunk;
+        public Vector3 InterestPosition=>_interestPoint!=null?_interestPoint.position:transform.position;
         public int ResidentChunkCount => _residentChunkCount;
         public int ActiveChunkCount => _activeChunkCount;
         public int SleepingChunkCount => _sleepingChunkCount;
@@ -108,12 +134,20 @@ namespace Game.ElementField
         public IMaterialSimulationRouteReadOnly MaterialRoutes => _materialRoutes;
         public IMaterialAmountReadOnly MaterialAmounts => _materialQuery;
         public IFluidDormantReadOnly DormantLiquids => _fluidChunkStreamingRuntime;
+        public ILiquidSurfaceReadOnly GridLiquids => _gridLiquidRuntime;
+        public FixedSolidWorldRuntime FixedSolids => _fixedSolidRuntime;
+        public GasWorldRuntime Gases => _gasRuntime;
+        public IFixedSolidSurfaceReadOnly SolidSurfaces => _fixedSolidRuntime;
+        public IGasVolumeReadOnly GasVolumes => _gasRuntime;
+        public IMaterialQuantityReadOnly MaterialQuantities => this;
         public MaterialStatusProjectionSnapshot MaterialStatusProjection => _materialStatusProjection;
         public int LastFrameTickCount { get; private set; }
         public ulong DroppedDebtFrameCount => _droppedDebtFrameCount;
         public ulong ProcessedWriteCount => _processedWriteCount;
         public ulong RejectedWriteCount => _rejectedWriteCount;
         public ulong ReactionPairCount => _reactionPairCount;
+        public int LastGridFireChunkCount => _lastGridFireChunks;
+        public int LastGridFireSampleCount => _lastGridFireSamples;
 
         private void Awake()
         {
@@ -136,10 +170,12 @@ namespace Game.ElementField
                     "ElementField");
                 enabled = false;
             }
+            EnableActivitySources();
         }
 
         private void OnDisable()
         {
+            DisableActivitySources();
             ElementRuntimeRegistry.Unregister(this);
         }
 
@@ -150,6 +186,8 @@ namespace Game.ElementField
                 return;
 
             RefreshInterestChunk();
+
+            RefreshWorldActivity();
 
             int ticks = _tickAccumulator.Consume(Time.deltaTime);
             LastFrameTickCount = ticks;
@@ -169,6 +207,7 @@ namespace Game.ElementField
                 return 0;
 
             RefreshInterestChunk();
+            RefreshWorldActivity();
             int ticks = _tickAccumulator.Consume(deltaTime);
             LastFrameTickCount = ticks;
             if (_tickAccumulator.DroppedDebtLastConsume)
@@ -181,11 +220,12 @@ namespace Game.ElementField
 
         public bool TryEnqueueWrite(in ElementWriteRequest request)
         {
-            return IsInitialized && ElementWorldWriteRouter.TryRoute(
+            return IsInitialized && RetainWriteActivity(in request) && ElementWorldWriteRouter.TryRoute(
                 _materialRoutes,
                 in request,
                 _writeQueue,
-                _fluidDepositSink);
+                _fluidDepositSink,
+                _gridLiquidRuntime, _fixedSolidRuntime, _gasRuntime);
         }
 
         /// <summary>
@@ -210,11 +250,7 @@ namespace Game.ElementField
                 // 稳定水虽然 Solver-Sleeping，但 HasAnyElement 仍为 true，因此不会被这条规则误隐藏。
                 if (!pair.Value.HasAnyElement)
                     continue;
-                if (!ElementChunkActivityPlanner.IsInsideActiveRegion(
-                        key,
-                        _interestChunk,
-                        _profile.ActiveRadiusXZChunks,
-                        _profile.ActiveRadiusYChunks))
+                if (!IsVisibleChunk(key))
                 {
                     continue;
                 }
@@ -256,6 +292,18 @@ namespace Game.ElementField
             return true;
         }
 
+        public int CopyChunkCells(ElementChunkKey key, ElementCell[] destination)
+        {
+            if (destination == null) throw new ArgumentNullException(nameof(destination));
+            if (!IsInitialized || _store == null || !_store.TryGetChunk(key, out ElementWorldChunk chunk)) return 0;
+            if (destination.Length < chunk.CellCount)
+                throw new ArgumentException("Chunk Snapshot Buffer 必须容纳整个 Chunk。", nameof(destination));
+            // MonoBehaviour 的 World Tick 与 Presentation 读取都在 Main Thread 顺序执行；
+            // 一次值拷贝消除逐格 Global→Chunk 换算和 Dictionary 查找，不跨帧缓存旧 Gameplay 状态。
+            Array.Copy(chunk.CurrentCells, 0, destination, 0, chunk.CellCount);
+            return chunk.CellCount;
+        }
+
         public bool IsSolid(Vector3Int globalCell)
         {
             return TryResolveResidentCell(globalCell, out ElementWorldChunk chunk, out Vector3Int localCell)
@@ -288,11 +336,7 @@ namespace Game.ElementField
                 out ElementChunkKey key,
                 out Vector3Int localCell);
             if (!_hasInterestChunk
-                || !ElementChunkActivityPlanner.IsInsideActiveRegion(
-                    key,
-                    _interestChunk,
-                    _profile.ActiveRadiusXZChunks,
-                    _profile.ActiveRadiusYChunks)
+                || !IsGameplayChunk(key)
                 || !_store.TryGetChunk(key, out ElementWorldChunk chunk))
             {
                 cell = default;
@@ -394,6 +438,12 @@ namespace Game.ElementField
                     WaterSimulationCompatibilityPolicy.Resolve(_profile.WaterSimulationMode, supportsPbf);
                 ReportHardwareFallbackOnce(in waterDecision);
 
+                if (waterDecision.WaterBackend == MaterialSimulationBackendKind.GridLiquid
+                    && (_gridLiquidRuntime == null
+                        || !_gridLiquidRuntime.TryInitialize(_origin, _profile.CellSize,
+                            _profile.ChunkSize, _solidBaker)))
+                    throw new InvalidOperationException("GridLiquid Route 缺少已配置的 LiquidWorldRuntime。");
+
                 // 硬件支持时，PBF Component/Compute/Profile 错误属于配置失败，不能静默写回 Cell。
                 if (waterDecision.WaterBackend == MaterialSimulationBackendKind.GpuPbfLiquid
                     && (_gpuPbfFluidRuntime == null
@@ -407,6 +457,28 @@ namespace Game.ElementField
                     catalog,
                     _profile.MaterialSimulationRouting,
                     in waterDecision);
+                InitializeMaterialPhases(finalRoutes);
+                // Poison/Sticky 也可以单独选择 Grid；一次初始化只能指向同一个数量权威。
+                bool hasGridRoute = false;
+                for (int materialId = 1; materialId <= byte.MaxValue; materialId++)
+                    if (finalRoutes.TryResolve((MaterialId)materialId, out var backend)
+                        && backend == MaterialSimulationBackendKind.GridLiquid)
+                    {
+                        hasGridRoute = true;
+                        break;
+                    }
+                if (hasGridRoute && (_gridLiquidRuntime == null
+                    || !_gridLiquidRuntime.TryInitialize(_origin, _profile.CellSize,
+                        _profile.ChunkSize, _solidBaker)))
+                    throw new InvalidOperationException("GridLiquid Route 缺少已配置的 LiquidWorldRuntime。");
+                if (hasGridRoute)
+                    for (int materialId = 1; materialId <= byte.MaxValue; materialId++)
+                        if (finalRoutes.TryResolve((MaterialId)materialId, out var backend)
+                            && backend == MaterialSimulationBackendKind.GridLiquid
+                            && !_gridLiquidRuntime.Supports((MaterialId)materialId))
+                            throw new InvalidOperationException(
+                                $"GridLiquid 配置缺少材料 {(MaterialId)materialId} 的行为 Profile。");
+                _hasGridLiquidRoute = hasGridRoute;
                 _effectiveWaterSimulationMode = waterDecision.EffectiveMode;
                 _settings = _profile.CreateSimulationSettings();
                 if (_settings.SimulateCellWater
@@ -489,15 +561,31 @@ namespace Game.ElementField
                     _profile.TickRate,
                     _profile.MaxCatchUpTicks);
                 _tickInterval = 1f / _profile.TickRate;
+                if (_hasGridLiquidRoute)
+                {
+                    var gridTuning = new ElementReactionTuningSnapshot(
+                        _settings.Extinguish, default, _profile.ToxicCombustion,
+                        _profile.IgniteGoo, _profile.AbsorbWater, 0f, 0f);
+                    _gridLiquidReactions = new LiquidReactionAdapter(
+                        _gridLiquidRuntime, this, reactions, in gridTuning,
+                        _profile.MaxPendingWrites,
+                        TryApplyGridFireDelta, TryApplyGridFireAdd, ApplyWorldReactionDamage);
+                    if (_fireReactionSamples == null)
+                        _fireReactionSamples = new LiquidCellFireSample[_profile.MaxPendingWrites];
+                }
 
                 // 两个工作数组按 Resident 上限一次性分配；后续 Tick 只覆盖内容，不 new List/Array。
                 _activeChunks = new ElementWorldChunk[_profile.MaximumResidentChunks];
+                if (_hasGridLiquidRoute)
+                    _gridFireChunks = new ElementWorldChunk[_profile.MaximumResidentChunks];
                 _reclaimKeys = new ElementChunkKey[_profile.MaximumResidentChunks];
                 // 只有 Catalog、Compatibility、PBF 配置和其余 Runtime 资源全部成功后才发布最终路由。
                 _materialRoutes = finalRoutes;
                 _materialReactions = reactions;
                 _materialStatusProjection = statusProjection;
-                _materialQuery = new MaterialStateQueryRouter(finalRoutes, this, _liquidOccupancy);
+                _materialQuery = new MaterialStateQueryRouter(finalRoutes, this,
+                    _liquidOccupancy, _gridLiquidRuntime, _fixedSolidRuntime, _gasRuntime);
+                InitializeMaterialConversions();
                 IsInitialized = true;
 
                 RefreshInterestChunk();
@@ -540,6 +628,11 @@ namespace Game.ElementField
 
         private void SimulateOneTick()
         {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            // 包住写入、Grid Tick、材料反应及旧 Cell 模拟；与 Grid 自己的计量做差，
+            // 可判断全局 GC 是否发生在液体路由上游，而不靠一次帧级曲线猜测。
+            long gcBefore = GC.GetAllocatedBytesForCurrentThread();
+#endif
             _worldTick++;
 
             var writeStats = new ElementFieldSimulationStats
@@ -566,6 +659,31 @@ namespace Game.ElementField
 
             // 新写入会创建/续租 Chunk，因此必须在模拟前重建一次 Active Snapshot。
             RebuildActivitySets();
+            // 固体只处理待写／拓扑变化，气体与液体共享固定时钟和活动范围。
+            _conversionScheduler?.BeginTick(_tickInterval,LiquidActivityDomain());
+            _fixedSolidRuntime?.Step();
+            if (_gasRuntime != null && _gasRuntime.IsMaterialInitialized)
+            { _gasRuntime.SetActivityDomain(LiquidActivityDomain()); _gasRuntime.Step(_tickInterval); }
+            if (_hasGridLiquidRoute)
+            {
+                // 沿用Gameplay活动域；镜头外的角色／投射物／反应仍可唤醒液体。
+                _gridLiquidRuntime.SetActivityDomain(LiquidActivityDomain());
+                _gridLiquidRuntime.Step(_tickInterval);
+                using (GridFireReactionMarker.Auto())
+                {
+                    int gridFireCount;
+                    using (GridFireCollectMarker.Auto())
+                    {
+                        CollectAndSortGridFireChunks();
+                        gridFireCount = CollectGridFireReactionSamples();
+                    }
+                    _lastGridFireChunks = _gridFireChunkCount;
+                    _lastGridFireSamples = gridFireCount;
+                    _conversionScheduler?.ObserveFire(_fireReactionSamples,gridFireCount);
+                    using (GridFireContactsMarker.Auto())
+                        _gridLiquidReactions.Process(_fireReactionSamples, gridFireCount, _tickInterval);
+                }
+            }
             PlanAndApplyGpuWaterFireReactions();
             ElementFieldSimulationStats simulationStats;
             using (SimulateMarker.Auto())
@@ -579,6 +697,7 @@ namespace Game.ElementField
                     in _settings);
             }
             simulationStats.ProcessedWrites = writeStats.ProcessedWrites;
+            _conversionScheduler?.Step(_tickInterval);
             simulationStats.RejectedWrites = writeStats.RejectedWrites;
             _lastStats = simulationStats;
             _processedWriteCount += (uint)simulationStats.ProcessedWrites;
@@ -587,6 +706,27 @@ namespace Game.ElementField
 
             // Solver 可能按需创建边界接收 Chunk；再次分类使 Inspector 与下一 Tick 立即看到真实生命周期。
             RebuildActivitySets();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            long allocated = GC.GetAllocatedBytesForCurrentThread() - gcBefore;
+            _gcSampledWorldTicks++;
+            if (allocated > 0)
+            {
+                _gcAllocationWorldTicks++;
+                _gcWorldTickBytes += allocated;
+                if (allocated > _gcMaximumWorldTickBytes)
+                    _gcMaximumWorldTickBytes = allocated;
+            }
+#endif
+        }
+
+        private void OnDestroy()
+        {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (_gcSampledWorldTicks > 0)
+                GameLog.Info($"Element World: GC {_gcAllocationWorldTicks}/{_gcSampledWorldTicks} ticks, "
+                    + $"total {_gcWorldTickBytes} B, max {_gcMaximumWorldTickBytes} B/tick.",
+                    "ElementField");
+#endif
         }
 
         private void PlanAndApplyGpuWaterFireReactions()
@@ -605,6 +745,17 @@ namespace Game.ElementField
             int fireCount = CollectFireReactionSamples();
             if (_fluidChunkStreamingRuntime != null)
             {
+                // 接触唤醒服从当前材料反应数据；水和黏液任何一侧归档时都需覆盖。
+                // 这里只恢复表示，后面的 GPU-only 规划仍是实际反应命令的唯一入口。
+                if (_materialReactions.TryResolve(MaterialId.Water, MaterialId.Sticky,
+                        out ElementReactionId liquidReaction)
+                    && liquidReaction == ElementReactionId.AbsorbWater)
+                {
+                    _fluidChunkStreamingRuntime.RequestLiquidReactionContactWakes(
+                        MaterialId.Water, MaterialId.Sticky);
+                    _fluidChunkStreamingRuntime.RequestLiquidReactionContactWakes(
+                        MaterialId.Sticky, MaterialId.Water);
+                }
                 for (int i = 0; i < fireCount; i++)
                 {
                     Vector3Int cell = _fireReactionSamples[i].GlobalCell;
@@ -710,6 +861,72 @@ namespace Game.ElementField
             return count;
         }
 
+        private void CollectAndSortGridFireChunks()
+        {
+            _gridFireChunkCount = 0;
+            // Grid 只需要含 Fire 的 Chunk；对整个活动世界做插入排序会随湖泊规模白白增长。
+            for (int i = 0; i < _activeChunkCount; i++)
+            {
+                ElementWorldChunk chunk = _activeChunks[i];
+                if (!chunk.HasFire) continue;
+                int insert = _gridFireChunkCount++;
+                while (insert > 0
+                    && CompareReactionKeys(_gridFireChunks[insert - 1].Key, chunk.Key) > 0)
+                {
+                    _gridFireChunks[insert] = _gridFireChunks[insert - 1];
+                    insert--;
+                }
+                _gridFireChunks[insert] = chunk;
+            }
+        }
+
+        private int CollectGridFireReactionSamples()
+        {
+            if (_gridFireChunkCount == 0)
+            {
+                _gridFireCursorChunk = 0;
+                _gridFireCursorCell = 0;
+                return 0;
+            }
+
+            int count = 0;
+            int size = _profile.ChunkSize;
+            int cellsPerChunk = size * size * size;
+            int startChunk = _gridFireCursorChunk % _gridFireChunkCount;
+            for (int visited = 0; visited < _gridFireChunkCount; visited++)
+            {
+                int chunkIndex = (startChunk + visited) % _gridFireChunkCount;
+                ElementWorldChunk chunk = _gridFireChunks[chunkIndex];
+                ElementCell[] current = chunk.CurrentCells;
+                int firstCell = visited == 0 ? _gridFireCursorCell : 0;
+                for (int index = firstCell; index < cellsPerChunk; index++)
+                {
+                    // 循环本身已提供合法线性索引。空格只读同一Current Buffer，
+                    // 确认是Fire后才还原三维坐标，省掉稀疏Chunk的除法/ToIndex往返。
+                    // 每次采集重新取数组引用，不能跨Tick保留Double Buffer交换前的旧数组。
+                    ElementCell cell = current[index];
+                    if (cell.MaterialKind != MaterialId.Fire || cell.Amount == 0) continue;
+                    int x = index % size;
+                    int y = index / size % size;
+                    int z = index / (size * size);
+                    var local = new Vector3Int(x, y, z);
+                    _fireReactionSamples[count++] = new LiquidCellFireSample(
+                        ElementWorldCoordinates.ComposeGlobalCell(chunk.Key, local, size),
+                        cell.Amount);
+                    if (count < _fireReactionSamples.Length) continue;
+
+                    // 超过固定采样容量时保存下一格；下一 Tick 继续走，而不是让前 256 格独占反应。
+                    _gridFireCursorChunk = index + 1 < cellsPerChunk
+                        ? chunkIndex : (chunkIndex + 1) % _gridFireChunkCount;
+                    _gridFireCursorCell = index + 1 < cellsPerChunk ? index + 1 : 0;
+                    return count;
+                }
+            }
+            _gridFireCursorChunk = 0;
+            _gridFireCursorCell = 0;
+            return count;
+        }
+
         private bool TryApplyInternalFireDelta(in ElementCellDeltaRequest request)
         {
             if (request.ExpectedMaterial != MaterialId.Fire
@@ -749,6 +966,36 @@ namespace Game.ElementField
             chunk.Grid.MarkCellDirty(local);
             chunk.WakeForSimulation(_worldTick);
             return true;
+        }
+
+        private bool TryApplyGridFireAdd(in ElementCellAddRequest request)
+        {
+            if (request.Material != MaterialId.Fire || request.AmountToAdd == 0 || _store == null)
+                return false;
+            ElementWorldCoordinates.GlobalCellToChunkAndLocal(request.GlobalCell,
+                _profile.ChunkSize, out ElementChunkKey key, out Vector3Int local);
+            if (!_store.TryGetOrCreateChunk(key, out ElementWorldChunk chunk)
+                || chunk.Grid.IsSolid(local)) return false;
+            ElementCell current = chunk.GetCell(local);
+            if (!current.IsEmpty && current.MaterialKind != MaterialId.Fire) return false;
+            if (current.Amount + request.AmountToAdd > byte.MaxValue) return false;
+            int amount = current.Amount + request.AmountToAdd;
+            chunk.SetCell(local, new ElementCell(MaterialId.Fire, (byte)amount));
+            chunk.Grid.MarkCellDirty(local);
+            chunk.WakeForSimulation(_worldTick);
+            return true;
+        }
+
+        private bool TryApplyGridFireDelta(in ElementCellDeltaRequest request)
+        {
+            if (request.ExpectedMaterial != MaterialId.Fire
+                || !TryResolveResidentCell(request.GlobalCell, out ElementWorldChunk chunk,
+                    out Vector3Int local)) return false;
+            ElementCell current = chunk.GetCell(local);
+            // Grid 反应先预留完整数量，再执行副作用；不足时整笔拒绝，不能部分灭火却扣足水。
+            return current.MaterialKind == MaterialId.Fire
+                && current.Amount >= request.AmountToRemove
+                && TryApplyInternalFireDelta(in request);
         }
 
         private void SortActiveChunksForReaction()
@@ -822,14 +1069,12 @@ namespace Game.ElementField
             {
                 KeyValuePair<ElementChunkKey, ElementWorldChunk> pair = enumerator.Current;
                 ElementWorldChunk chunk = pair.Value;
-                bool insidePlayerRegion = ElementChunkActivityPlanner.IsInsideActiveRegion(
-                    pair.Key,
-                    _interestChunk,
-                    _profile.ActiveRadiusXZChunks,
-                    _profile.ActiveRadiusYChunks);
+                bool insidePlayerRegion = IsGameplayChunk(pair.Key);
+                // 未结束的 Fire 是世界自身的活动需求，离屏后仍推进到反应/衰减结束。
+                bool reactionFront = ActivityExpansionEnabled && chunk.HasFire;
                 ElementChunkActivityState state = ElementChunkActivityPlanner.Evaluate(
                     pair.Key,
-                    _interestChunk,
+                    insidePlayerRegion || reactionFront ? pair.Key : _interestChunk,
                     chunk.HasAnyElement,
                     chunk.RequiresSimulation,
                     chunk.LastRelevantTick,

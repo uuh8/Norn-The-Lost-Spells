@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17794d6e560907b4d8f41c6a320d9e33, type: 3}
+  m_Name: MaterialConversions_Default
+  m_EditorClassIdentifier: Game.ElementField::Game.ElementField.MaterialConversionProfile
+  _maximumCandidates: 2048
+  _candidatesPerTick: 64
+  _commitsPerTick: 8
+  _ambientTemperature: 20
+  _ambientDryness: 0.4
+  _rules:
+  - Source: 1
+    FirstProduct: 7
+    SecondProduct: 0
+    InputUnits: 1
+    FirstUnits: 1
+    SecondUnits: 0
+    Condition: 0
+    Threshold: 70
+    InputGmuPerSecond: 24
+    CooldownSeconds: 3
+  - Source: 7
+    FirstProduct: 1
+    SecondProduct: 0
+    InputUnits: 1
+    FirstUnits: 1
+    SecondUnits: 0
+    Condition: 1
+    Threshold: 35
+    InputGmuPerSecond: 12
+    InputFractionPerSecond: 0.4
+    MinimumInputGmu: 32
+    CooldownSeconds: 3
+  - Source: 1
+    FirstProduct: 5
+    SecondProduct: 0
+    InputUnits: 1
+    FirstUnits: 1
+    SecondUnits: 0
+    Condition: 2
+    Threshold: -5
+    InputGmuPerSecond: 64
+    CooldownSeconds: 3
+  - Source: 5
+    FirstProduct: 1
+    SecondProduct: 0
+    InputUnits: 1
+    FirstUnits: 1
+    SecondUnits: 0
+    Condition: 3
+    Threshold: 5
+    InputGmuPerSecond: 32
+    CooldownSeconds: 3
+  - Source: 4
+    FirstProduct: 6
+    SecondProduct: 7
+    InputUnits: 4
+    FirstUnits: 3
+    SecondUnits: 1
+    Condition: 4
+    Threshold: 0.65
+    InputGmuPerSecond: 16
+    CooldownSeconds: 3
+  - Source: 3
+    FirstProduct: 8
+    SecondProduct: 0
+    InputUnits: 1
+    FirstUnits: 1
+    SecondUnits: 0
+    Condition: 5
+    Threshold: 0
+    InputGmuPerSecond: 8
+    CooldownSeconds: 3

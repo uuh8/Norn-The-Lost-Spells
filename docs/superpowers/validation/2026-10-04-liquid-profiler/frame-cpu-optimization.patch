@@ -1,0 +1,159 @@
+--- Measured original GridLiquidFieldFrame.cs
++++ Measured optimized GridLiquidFieldFrame.cs
+@@ -32,7 +32,7 @@
+         private readonly HashSet<ElementChunkKey> _ownerSet;
+         private readonly Bounds[] _bounds;
+         private readonly bool[] _hasBounds,_inputOwners;
+-        private readonly bool[] _gpuInputs;
++        private readonly bool[] _gpuInputs,_historyPages;
+         private readonly ElementChunkKey[] _sourceKeys;
+         private readonly Vector3Int[] _changed;
+         private readonly ushort[] _chunkQuantities;
+@@ -48,6 +48,8 @@
+         private const int PatchesPerPage=64;
+         // 连通液团只影响Presentation。固定工作数组复用两个Tick，Gameplay数量/密度不被反写。
+         private readonly int[] _parents;
++        private readonly int[] _shapeRows;
++        private bool _sparseShapeRows;
+         private readonly Body[] _bodies;
+         private readonly float[] _domes;
+         private struct Body
+@@ -105,6 +107,10 @@
+             Previous=snapshotOnly?Current:new GridLiquidPackedCell[Current.Length];
+             Terrains = new Vector4[inputCapacity * Cells];
+             _parents=snapshotOnly?Array.Empty<int>():new int[Terrains.Length];_bodies=snapshotOnly?Array.Empty<Body>():new Body[Terrains.Length];_domes=snapshotOnly?Array.Empty<float>():new float[Terrains.Length];
++            // 多个粗Chunk中通常只有少量湿格。固定索引表让塑形后续遍历避开空气；
++            // 容量受原姿态缓存上限约束，极密输入退回完整遍历，不丢液量或扩大CPU快照内存。
++            _shapeRows=snapshotOnly?Array.Empty<int>():new int[Math.Min(Terrains.Length,_maximumRowMotion)];
++            _historyPages=snapshotOnly?Array.Empty<bool>():new bool[inputCapacity];
+             _previousPatches = new StableLiquidSurfacePatch[Mathf.Max(1, source.MaximumStableSurfacePatches)];
+             _currentPatches = new StableLiquidSurfacePatch[_previousPatches.Length];
+         }
+@@ -233,11 +239,23 @@
+         {
+             int rows=Count*Cells;
+             int k=K,cells=Cells;bool previous=ReferenceEquals(data,Previous);
++            int wetRows=0;
+             for(int i=0;i<rows;i++)
+-            {int q=0;for(int m=0;m<MaterialCount;m++)q+=(int)(data[i*MaterialCount+m].QuantityFlags&65535u);_parents[i]=q>0?i:-1;_bodies[i]=default;}
++            {
++                int q=0;for(int m=0;m<MaterialCount;m++)q+=(int)(data[i*MaterialCount+m].QuantityFlags&65535u);
++                _parents[i]=q>0?i:-1;
++                if(q==0)continue;
++                _bodies[i]=default;
++                if(wetRows<_shapeRows.Length)_shapeRows[wetRows]=i;
++                wetRows++;
++            }
++            _sparseShapeRows=wetRows<=_shapeRows.Length;int workRows=_sparseShapeRows?wetRows:rows;
++            // 按原线性地址收集索引，保留Union顺序、浮点累加顺序和圆冠的逐位结果。
++            // Body只在湿格/根节点读写，空气中的旧Body不用清零，也不会被下一次塑形读取。
+             // 22个前向邻居覆盖60度坡面相邻格的两行高差；Union-Find避免逐帧创建集合/临时对象。
+-            for(int i=0;i<rows;i++)if(_parents[i]>=0)
+-            {
++            for(int work=0;work<workRows;work++)
++            {
++                int i=ShapeRow(work);if(_parents[i]<0)continue;
+                 var c=CellAt(i);
+                 int local=i%cells,lx=local%k,ly=local/k%k,lz=local/(k*k);
+                 for(int x=0;x<=1;x++)for(int z=-1;z<=1;z++)for(int y=-2;y<=2;y++)
+@@ -252,8 +270,9 @@
+                     int a=FindBody(i),b=FindBody(other);if(a!=b)_parents[b]=a;
+                 }
+             }
+-            for(int i=0;i<rows;i++)if(_parents[i]>=0)
+-            {
++            for(int work=0;work<workRows;work++)
++            {
++                int i=ShapeRow(work);if(_parents[i]<0)continue;
+                 int root=FindBody(i);var motion=ReadRowMotionAtIndex(i,previous);int q=(int)motion.Quantity;
+                 var c=CellAt(i);Vector2 p=new Vector2(c.x+.5f,c.z+.5f)+new Vector2(motion.OffsetCells.x,motion.OffsetCells.z);
+                 ref var b=ref _bodies[root];b.Moment+=p*q;b.Quantity+=q;
+@@ -263,15 +282,17 @@
+                 if(b.Count++==0)b.Extents=new Vector4(p.x,p.y,p.x,p.y);
+                 else b.Extents=new Vector4(Mathf.Min(b.Extents.x,p.x),Mathf.Min(b.Extents.y,p.y),Mathf.Max(b.Extents.z,p.x),Mathf.Max(b.Extents.w,p.y));
+             }
+-            for(int i=0;i<rows;i++)if(_parents[i]>=0)
+-            {
++            for(int work=0;work<workRows;work++)
++            {
++                int i=ShapeRow(work);if(_parents[i]<0)continue;
+                 ref var b=ref _bodies[FindBody(i)];int q=0;for(int m=0;m<MaterialCount;m++)q+=(int)(data[i*MaterialCount+m].QuantityFlags&65535u);
+                 // 1 GMU尾格只占一小份铺展面积，不能把整团的平均厚度摊薄成纸。
+                 // 阈值相对于本液团最富的格，均匀少量水的面积/高度校准保持不变。
+                 b.EffectiveCount+=Mathf.Min(1,(float)q/Mathf.Max(1,b.MaximumQuantity*.2f));
+             }
+-            for(int i=0;i<rows;i++)if(_bodies[i].Count>0)
+-            {
++            for(int work=0;work<workRows;work++)
++            {
++                int i=ShapeRow(work);if(_parents[i]<0 || _bodies[i].Count==0)continue;
+                 ref var b=ref _bodies[i];b.Center=b.Moment/b.Quantity;
+                 float fill=(float)b.Quantity/(b.EffectiveCount*Capacity);
+                 b.MeanFill=fill;
+@@ -289,11 +310,12 @@
+             }
+             // 宽水团增加整个主体的圆冠，而不是只卷起最外侧一条边。
+             // 数量加权归一化使鼓起中心和低肩互相补偿，不能让加一个Dome再次增加整团体积。
+-            for(int i=0;i<rows;i++)if(_parents[i]>=0)
+-            {ref var b=ref _bodies[FindBody(i)];var motion=ReadRowMotionAtIndex(i,previous);var c=CellAt(i);
++            for(int work=0;work<workRows;work++)
++            {int i=ShapeRow(work);if(_parents[i]<0)continue;ref var b=ref _bodies[FindBody(i)];var motion=ReadRowMotionAtIndex(i,previous);var c=CellAt(i);
+                 _domes[i]=BodyDome(in b,new Vector2(c.x+.5f+motion.OffsetCells.x,c.z+.5f+motion.OffsetCells.z));b.HeightWeight+=motion.Quantity*_domes[i];}
+-            for(int i=0;i<rows;i++)if(_parents[i]>=0)
+-            {
++            for(int work=0;work<workRows;work++)
++            {
++                int i=ShapeRow(work);if(_parents[i]<0)continue;
+                 ref var b=ref _bodies[FindBody(i)];var c=CellAt(i);var motion=ReadRowMotionAtIndex(i,previous);
+                 // 质心与最后偏移都读取同一份原始行姿态，省掉第二遍六次HalfToFloat/材料。
+                 // 此缓存仅用于ShapeBodies本批次；形变改写完成后必须失效，不能给Sampler旧姿态。
+@@ -312,6 +334,7 @@
+             }
+             _lastCellReady=false;
+         }
++        private int ShapeRow(int work)=>_sparseShapeRows?_shapeRows[work]:work;
+         private static float BodyDome(in Body body,Vector2 position)
+         {
+             if(body.HasStable || body.MeanFill>=1)return 1;
+@@ -327,9 +350,11 @@
+             Array.Clear(_hasBounds,0,_hasBounds.Length);
+             for(int i=0;i<Count*Cells;i++)for(int phase=0;phase<2;phase++)
+             {
+-                var data=phase==0?Previous:Current;var motion=ReadRowMotionAtIndex(i,phase==0);uint amount=motion.Quantity;
++                var data=phase==0?Previous:Current;uint amount=0;
++                for(int material=0;material<MaterialCount;material++)amount+=data[i*MaterialCount+material].QuantityFlags&65535u;
+                 // 大部分行为空。先读整数数量，避免对空气执行两帧、三材料的Vector乘加。
+                 if(amount==0)continue;
++                var motion=ReadRowMotionAtIndex(i,phase==0);amount=motion.Quantity;
+                 float q=amount;Vector3 offset=motion.OffsetCells,velocity=motion.VelocityWorld;var c=CellAt(i);uint flags=data[i*MaterialCount].QuantityFlags;
+                 bool ground=(flags&65536u)!=0;float scale=(flags&1048576u)!=0?Mathf.Max(.4f,(flags>>24)/255f):1;
+                 Vector3 start=(Vector3)c+Vector3.one*.5f+offset,end=start+Vector3.ClampMagnitude(velocity*(Interval*(phase==0?1:-1))/CellSize,3);
+@@ -455,6 +480,11 @@
+                         _patchIndices[list*PatchesPerPage+_patchCounts[list]++]=j;
+                     }
+                 }
++            Array.Clear(_historyPages,0,Count);
++            // Changed数组能容纳History的全部固定槽；一次定位页，避免每个空气格查History Dictionary。
++            // 当前数量为零仍可能有Previous液体。只有整页没有History且没有Stable边界才走空格快跳。
++            for(int changedIndex=0;changedIndex<changed;changedIndex++)
++                if(_pages.TryGetValue(Key(_changed[changedIndex],K),out int historyPage))_historyPages[historyPage]=true;
+             using(PackMarker.Auto())for (int page = 0; page < Count; page++)
+             {
+                 ElementChunkKey key = Keys[page];
+@@ -467,9 +497,15 @@
+                 Lookup[h] = new GridLiquidChunkLookup(key.X, key.Y, key.Z, page + 1);
+                 for (int z = 0; z < K; z++) for (int y = 0; y < K; y++) for (int x = 0; x < K; x++)
+                 {
++                    int row=(x+K*(y+K*z))*MaterialCount;
++                    if(!_historyPages[page] && _patchCounts[page*2]==0 && _patchCounts[page*2+1]==0)
++                    {
++                        bool wet=false;for(int material=0;material<MaterialCount;material++)wet|=_chunkQuantities[row+material]!=0;
++                        if(!wet)continue;
++                    }
+                     Vector3Int c = new Vector3Int(key.X * K + x, key.Y * K + y, key.Z * K + z);
+                     int index = page * Cells + x + K * (y + K * z);
+-                    bool hasDynamic=_source.CopyPresentationRow(c,_chunkQuantities,(x+K*(y+K*z))*MaterialCount,_rowCurrent,_rowPrevious);
++                    bool hasDynamic=_source.CopyPresentationRow(c,_chunkQuantities,row,_rowCurrent,_rowPrevious);
+                     if(!hasDynamic)
+                     {
+                         if(_patchCounts[page*2]==0 && _patchCounts[page*2+1]==0)continue;
