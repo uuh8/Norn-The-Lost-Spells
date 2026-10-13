@@ -38,9 +38,9 @@ namespace Game.ElementField
     }
     public readonly struct MaterialQuantityFamilySnapshot
     {
-        public readonly ulong Injected, Resident, Pending, Vented, RuleConsumed;
-        public bool IsBalanced => Injected==Resident+Pending+Vented+RuleConsumed;
-        public MaterialQuantityFamilySnapshot(ulong injected,ulong resident,ulong pending,ulong vented,ulong consumed)
-        { Injected=injected; Resident=resident; Pending=pending; Vented=vented; RuleConsumed=consumed; }
+        public readonly ulong Injected, Resident, Pending, Vented, RuleConsumed, Exported, Imported;
+        public bool IsBalanced => Injected+Imported==Resident+Pending+Vented+RuleConsumed+Exported;
+        public MaterialQuantityFamilySnapshot(ulong injected,ulong resident,ulong pending,ulong vented,ulong consumed, ulong exported = 0, ulong imported = 0)
+        { Injected=injected; Resident=resident; Pending=pending; Vented=vented; RuleConsumed=consumed; Exported=exported; Imported=imported; }
     }
 }

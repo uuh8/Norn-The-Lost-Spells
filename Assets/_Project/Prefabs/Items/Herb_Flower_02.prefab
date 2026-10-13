@@ -1,0 +1,115 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &9216708856300377328
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4019309494164143472}
+  - component: {fileID: 3407520967334571977}
+  m_Layer: 0
+  m_Name: Herb_Flower_02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4019309494164143472
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9216708856300377328}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 5480749976348943732}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3407520967334571977
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9216708856300377328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c2646756106f5e4e9466e31115240a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Run::Game.Run.WorldItemSpawnPoint
+  _session: {fileID: 0}
+  _definition: {fileID: 11400000, guid: 4d01fbb51b867ea4ca5f5f78d665ffe6, type: 2}
+  _sceneKey: hub.map1
+  _spawnId: 
+  _initialCharges: 8
+  _unlimited: 0
+--- !u!1001 &7027497213087009351
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4019309494164143472}
+    m_Modifications:
+    - target: {fileID: 2793066054818690441, guid: ad567aeeccab02f4d8b82014cad07665, type: 3}
+      propertyPath: m_Name
+      value: Herb_Flower_02
+      objectReference: {fileID: 0}
+    - target: {fileID: 3281196048094801715, guid: ad567aeeccab02f4d8b82014cad07665, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3281196048094801715, guid: ad567aeeccab02f4d8b82014cad07665, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3281196048094801715, guid: ad567aeeccab02f4d8b82014cad07665, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3281196048094801715, guid: ad567aeeccab02f4d8b82014cad07665, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3281196048094801715, guid: ad567aeeccab02f4d8b82014cad07665, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3281196048094801715, guid: ad567aeeccab02f4d8b82014cad07665, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3281196048094801715, guid: ad567aeeccab02f4d8b82014cad07665, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3281196048094801715, guid: ad567aeeccab02f4d8b82014cad07665, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3281196048094801715, guid: ad567aeeccab02f4d8b82014cad07665, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3281196048094801715, guid: ad567aeeccab02f4d8b82014cad07665, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ad567aeeccab02f4d8b82014cad07665, type: 3}
+--- !u!4 &5480749976348943732 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3281196048094801715, guid: ad567aeeccab02f4d8b82014cad07665, type: 3}
+  m_PrefabInstance: {fileID: 7027497213087009351}
+  m_PrefabAsset: {fileID: 0}

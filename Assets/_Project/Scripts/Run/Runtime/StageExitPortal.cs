@@ -10,7 +10,7 @@ namespace Game.Run
     /// 有效进入时先补齐法术、再更新跨 Scene Session，最后才请求表现层 Fade/Load。
     /// </summary>
     [RequireComponent(typeof(Collider))]
-    public sealed class StageExitPortal : MonoBehaviour
+    public sealed class StageExitPortal : MonoBehaviour, IPortalInteractionTarget
     {
         [SerializeField] private RunSpellSession _session;
         [SerializeField] private RunSessionCoordinator _sessionCoordinator;
@@ -38,6 +38,10 @@ namespace Game.Run
 
         public int PortalId => gameObject.GetInstanceID();
         public bool IsAvailable => _available;
+        public Transform PortalTransform => transform;
+        public string InteractionLabel => "F 返回据点";
+        public bool CanInteract(Collider actor) => _available && !_transitionRequested && IsPlayerCollider(actor) && PortalInteractionRegistry.Contains(_trigger, actor);
+        public bool Interact(Collider actor) => CanInteract(actor) && TryEnter(actor);
         public bool IsTransitionRequested => _transitionRequested;
         public Transform TravelerAnchor
         {
@@ -64,15 +68,18 @@ namespace Game.Run
             }
 
             SetTriggerEnabled(false);
+            PortalTransitionCoordinator.EnsureVisual(transform);
         }
 
         private void OnEnable()
         {
+            PortalInteractionRegistry.Register(this);
             EventBus<EncounterCompletedEvent>.Subscribe(OnEncounterCompleted);
         }
 
         private void OnDisable()
         {
+            PortalInteractionRegistry.Unregister(this);
             EventBus<EncounterCompletedEvent>.Unsubscribe(OnEncounterCompleted);
             if (_transitionRequested && !_transitionEventPublished)
             {
@@ -98,6 +105,15 @@ namespace Game.Run
             if (!_available || _transitionRequested || !IsPlayerCollider(other))
             {
                 return false;
+            }
+
+            // 新版出口只提交回程，不把“收下全集”当成离开条件。
+            // 满背包/法术位时奖励适配器会要求整理；若先领奖，就会弹出背包并阻断真实F回程。
+            if (HubPracticeSession.Current != null && HubPracticeSession.Current.OwnsScene(gameObject.scene))
+            {
+                bool accepted = HubPracticeSession.Current.ReturnToHub(other.GetComponentInParent<CharacterController>()?.transform, transform, PortalId);
+                if (accepted) { _transitionRequested = true; _available = false; _transitionEventPublished = true; SetTriggerEnabled(false); }
+                return accepted;
             }
 
             RunSpellSession session = ResolveSession();
@@ -152,7 +168,7 @@ namespace Game.Run
 
         private void TryBeginTravelerTransit(Collider other)
         {
-            if (_travelerAnchor == null)
+            if (_travelerAnchor == null && transform.Find("UnifiedPortalVisual") == null)
             {
                 GameLog.Warn(
                     "StageExitPortal 缺少 Traveler Anchor；将跳过角色吸入表现并继续 Close/Fade。",
@@ -170,7 +186,7 @@ namespace Game.Run
             }
 
             if (!traveler.BeginPortalTransit(
-                    _travelerAnchor,
+                    PortalTransitionCoordinator.TransitDestination(transform, _travelerAnchor),
                     _travelerTransitDuration))
             {
                 GameLog.Warn(
@@ -196,11 +212,6 @@ namespace Game.Run
                 {
                     SceneName = _targetSceneName
                 });
-        }
-
-        private void OnTriggerEnter(Collider other)
-        {
-            TryEnter(other);
         }
 
         private void OnEncounterCompleted(EncounterCompletedEvent e)

@@ -15,6 +15,7 @@ namespace Game.UI
         [SerializeField] private Transform _visualRoot;
         [SerializeField] private GameObject _openPrefab;
         [SerializeField] private GameObject _idlePrefab;
+        [SerializeField] private GameObject _idleVisual;
         [SerializeField] private GameObject _closePrefab;
         [SerializeField, Min(0f)]
         [Tooltip("略早于 Open 粒子的终止帧切到循环 Idle，可避免终止 Burst 与 Idle Prewarm 叠成亮度闪变。")]
@@ -24,12 +25,16 @@ namespace Game.UI
         private GameObject _idleInstance;
         private GameObject _closeInstance;
         private Coroutine _openRoutine;
+        private IPortalVisualSource _genericPortal;
+        private int PortalId => _portal != null ? _portal.PortalId : _genericPortal?.PortalId ?? 0;
 
         private void Awake()
         {
+            _genericPortal = GetComponentInParent<IPortalVisualSource>();
+            if (_portal == null) _portal = GetComponentInParent<StageExitPortal>();
             Transform parent = _visualRoot != null ? _visualRoot : transform;
             _openInstance = CreateVisual(_openPrefab, parent);
-            _idleInstance = CreateVisual(_idlePrefab, parent);
+            _idleInstance = _idleVisual != null ? _idleVisual : CreateVisual(_idlePrefab, parent);
             _closeInstance = CreateVisual(_closePrefab, parent);
             ConfigureUnscaledParticleTime(_closeInstance);
             HideAll();
@@ -38,12 +43,13 @@ namespace Game.UI
         private void OnEnable()
         {
             EventBus<PortalStateChangedEvent>.Subscribe(OnPortalStateChanged);
+            if (_genericPortal != null && _portal == null) BeginOpening();
         }
 
         private void Start()
         {
             // 表现组件可能晚于 Gameplay Portal 启用；Start 时读取只读状态可补回错过的 Opening Event。
-            if (_portal != null && _portal.IsAvailable)
+            if (_portal != null && _portal.IsAvailable || _portal == null && _genericPortal != null)
             {
                 BeginOpening();
             }
@@ -57,7 +63,7 @@ namespace Game.UI
 
         private void OnPortalStateChanged(PortalStateChangedEvent portalEvent)
         {
-            if (_portal == null || portalEvent.PortalId != _portal.PortalId)
+            if (PortalId == 0 || portalEvent.PortalId != PortalId)
             {
                 return;
             }

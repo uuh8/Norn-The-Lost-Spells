@@ -70,6 +70,8 @@ namespace Game.Rendering
         private long _gcAllocatedBytes, _gcMaximumFrameBytes;
 #endif
 
+        private GraphicsBuffer _emptyDomainLookup;
+
         private void Start()
         {
             _source = _world != null ? _world.GridLiquids : null;
@@ -107,6 +109,7 @@ namespace Game.Rendering
             _materialInstance = new Material(_liquidShader);
             _materialInstance.CopyPropertiesFromMaterial(_sourceMaterial);
             _materialInstance.enableInstancing = true;
+            _emptyDomainLookup = LiquidSurfaceDomainBindings.CreateEmpty(_materialInstance);
             _quantityProperties=new MaterialPropertyBlock();
             _renderParams = new RenderParams(_materialInstance)
             {
@@ -324,6 +327,8 @@ namespace Game.Rendering
                 for (int i = 0; i < _views.Length; i++)
                     if (_views[i].Mesh != null) Destroy(_views[i].Mesh);
             if (_materialInstance != null) Destroy(_materialInstance);
+            _emptyDomainLookup?.Dispose();
+            _emptyDomainLookup = null;
         }
     }
 }

@@ -73,6 +73,7 @@ namespace Game.Rendering
         }
 
         private ILiquidSurfaceReadOnly _source;
+        private GraphicsBuffer _emptyDomainLookup;
         private LiquidSurfaceFrameSnapshot _snapshot;
         private bool _batchActive;
         private int _processedFrame=-1;
@@ -149,6 +150,7 @@ namespace Game.Rendering
             _materialInstance = new Material(_liquidShader);
             _materialInstance.CopyPropertiesFromMaterial(_sourceMaterial);
             _materialInstance.enableInstancing = true;
+            _emptyDomainLookup = LiquidSurfaceDomainBindings.CreateEmpty(_materialInstance);
             _renderParams = new RenderParams(_materialInstance)
             {
                 layer = gameObject.layer,
@@ -597,6 +599,8 @@ namespace Game.Rendering
                     if (_views[i].PendingMesh != null) Destroy(_views[i].PendingMesh);
                 }
             if (_materialInstance != null) Destroy(_materialInstance);
+            _emptyDomainLookup?.Dispose();
+            _emptyDomainLookup = null;
         }
     }
 }

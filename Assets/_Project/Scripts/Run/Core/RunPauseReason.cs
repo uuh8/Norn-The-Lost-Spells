@@ -14,6 +14,9 @@ namespace Game.Run
         PauseMenu = 1 << 1,
         TerminalResult = 1 << 2,
         SceneTransition = 1 << 3,
-        GameplayGuide = 1 << 4
+        GameplayGuide = 1 << 4,
+        Inventory = 1 << 5,
+        Shop = 1 << 6,
+        HubConfirmation = 1 << 7
     }
 }

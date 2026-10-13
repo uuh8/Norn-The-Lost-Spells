@@ -1,8 +1,10 @@
 using Game.UI;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Game.Run.Tests
 {
@@ -37,10 +39,37 @@ namespace Game.Run.Tests
                     controller.gameObject.activeInHierarchy,
                     Is.True,
                     "Fade Root 的父层级也必须保持 active。");
-                Assert.That(
-                    controller.transform.localScale.sqrMagnitude,
-                    Is.GreaterThan(0f),
-                    "Fade Canvas 的 Transform Scale 不能为零；隐藏应使用 CanvasGroup.alpha。");
+                Assert.That(controller.enabled, Is.True);
+                Canvas canvas = controller.GetComponent<Canvas>();
+                Assert.That(canvas, Is.Not.Null);
+                Assert.That(canvas.enabled, Is.True);
+                Assert.That(canvas.isRootCanvas, Is.True);
+                Assert.That(canvas.renderMode, Is.EqualTo(RenderMode.ScreenSpaceOverlay));
+                Assert.That(canvas.sortingOrder, Is.GreaterThan(0));
+                CanvasScaler scaler = controller.GetComponent<CanvasScaler>();
+                Assert.That(scaler, Is.Not.Null);
+                Assert.That(scaler.enabled, Is.True);
+                Assert.That(scaler.scaleFactor, Is.GreaterThan(0f));
+
+                // Preview Scene没有GameView布局，Screen Space Canvas的驱动scale可以为0。
+                // 静态合同检查独立于最终布局的黑幕接线；实际屏幕覆盖由PlayMode测试验证。
+                var data = new SerializedObject(controller);
+                var group = data.FindProperty("_fadeCanvasGroup").objectReferenceValue as CanvasGroup;
+                Assert.That(group, Is.Not.Null);
+                Assert.That(group.transform.IsChildOf(controller.transform), Is.True);
+                Assert.That(group.gameObject.activeInHierarchy, Is.True);
+                Assert.That(group.enabled, Is.True);
+                Image blocker = group.GetComponent<Image>();
+                Assert.That(blocker, Is.Not.Null);
+                Assert.That(blocker.enabled, Is.True);
+                Assert.That(blocker.raycastTarget, Is.True);
+                Assert.That(blocker.color, Is.EqualTo(Color.black));
+                RectTransform rect = blocker.rectTransform;
+                Assert.That(rect.anchorMin, Is.EqualTo(Vector2.zero));
+                Assert.That(rect.anchorMax, Is.EqualTo(Vector2.one));
+                Assert.That(rect.offsetMin, Is.EqualTo(Vector2.zero));
+                Assert.That(rect.offsetMax, Is.EqualTo(Vector2.zero));
+                Assert.That(rect.localScale, Is.EqualTo(Vector3.one));
             }
             finally
             {

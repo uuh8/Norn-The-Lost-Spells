@@ -84,6 +84,8 @@ namespace Game.Combat
         /// 提前命中/销毁不会触发该事件。
         /// </summary>
         public event System.Action<Vector3, Vector3> TimedTriggerElapsed;
+        // 通用生命周期通知；Combat 不依赖预算、库存或法术程序。
+        public event System.Action Finished;
 
         // 在场投射物注册表：新生成的投射物与所有"同阵营"已存在投射物互相 IgnoreCollision，
         // 避免同队火球互撞（连发自撞偏移 / 同队两球相撞误爆炸）。异队不忽略 → 仍碰撞 → 各自爆炸。
@@ -105,6 +107,7 @@ namespace Game.Combat
 
         protected virtual void OnDestroy()
         {
+            Finished?.Invoke();
             Unregister(); // 从在场表注销（命中销毁 / 超时自毁 / 场景卸载）
         }
 

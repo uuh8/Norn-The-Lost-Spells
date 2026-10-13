@@ -104,6 +104,12 @@ namespace Game.Run
                 return;
             }
 
+            var modern=PracticeSpellRewardAdapter.FindInScene(gameObject.scene);
+            if(modern!=null)
+            {
+                if(!modern.TryGrant("encounter."+_encounterIndex,_rewardSpell))return;
+                _consumed=true;_available=false;SetPresentationActive(false);return;
+            }
             if (_session == null || _rewardSpell == null)
             {
                 GameLog.Warn("SpellRewardPickup 缺少 RunSpellSession 或 Reward Spell。", "Run");

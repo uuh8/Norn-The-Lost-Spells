@@ -81,7 +81,9 @@ namespace Game.Run
                 return false;
             }
 
-            // 即使 Library 已经完整，世界奖励也只消费一次；Portal 再次调用仍保持幂等。
+            var modern=PracticeSpellRewardAdapter.FindInScene(gameObject.scene);
+            if(modern!=null && !modern.TryGrantLibrary("all."+_encounterIndex,fullLibrary))return false;
+            // 旧Library仅保留其他教学场景的兼容；新工作区已提交真实实例才消费世界入口。
             session.EnsureAllSpellsUnlocked(fullLibrary);
             _consumed = true;
             _available = false;

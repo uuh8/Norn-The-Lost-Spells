@@ -68,6 +68,12 @@ namespace Game.Character
             if (_mana == null)
                 _mana = GetComponent<ManaComponent>();
         }
+        private void OnDestroy()
+        {
+            // 组件单独销毁也会停止其 Coroutine；必须主动取消仍在 Session 中的未来预算。
+            OwnedWandCastAdapter adapter = GetComponent<OwnedWandCastAdapter>();
+            if (adapter != null) adapter.CancelOutstanding();
+        }
 
         /// <summary>
         /// 运行当前有序法术序列：从 spawnPos 朝 aimPoint 施放，返回解释器产出的命令数量。
@@ -126,8 +132,11 @@ namespace Game.Character
             Collider casterCollider,
             int castId,
             int depth,
-            SpellManaPolicy manaPolicy)
+            SpellManaPolicy manaPolicy,
+            OwnedWandCastContext ownedSource = default)
         {
+            if (ownedSource.Enabled)
+                return RunOwnedCast(ownedSource, spawnPos, aimPoint, baseDir, aimMode, team, attackerId, casterCollider, castId, depth, manaPolicy);
             if (depth >= MaxRuntimeTriggerDepth)
             {
                 // 每层 Payload 都是父序列后面的一个更短 Action 切片，但运行时仍设置硬上限：
@@ -145,7 +154,7 @@ namespace Game.Character
             float requiredMana = CastEvaluator.EstimateManaCost(spells, baseDraws, incomingMods);
 
             float availableMana = _mana != null ? _mana.CurrentMana : float.PositiveInfinity;
-            if (!TrySpendMana(requiredMana, manaPolicy))
+            if (!ownedSource.Enabled && !TrySpendMana(requiredMana, manaPolicy))
             {
                 // 负责法力预检失败时记录原因（调试函数）
                 _diagnostics.LogManaPreflightFailure(
@@ -205,7 +214,7 @@ namespace Game.Character
                         case SpellSpawnMode.SkyfallAtPoint:
                             SpawnSkyfallProjectile(
                                 cmd, spawnPos, baseDir, i, count, team, attackerId,
-                                casterCollider, castId, depth, manaPolicy);
+                                casterCollider, castId, depth, manaPolicy, ownedSource);
                             break;
 
                         case SpellSpawnMode.StaticAtPoint:
@@ -215,7 +224,7 @@ namespace Game.Character
                         default:
                             SpawnForwardProjectile(
                                 cmd, spawnPos, aimPoint, baseDir, aimMode, i, count, team, attackerId,
-                                casterCollider, castId, depth, manaPolicy);
+                                casterCollider, castId, depth, manaPolicy, ownedSource);
                             break;
                     }
                 }
@@ -223,6 +232,48 @@ namespace Game.Character
 
             // 返回的是求值命令数。若某条命令 Prefab 缺失或组件不合法，实际生成数可能更少。
             return count;
+        }
+
+        private int RunOwnedCast(in OwnedWandCastContext source, Vector3 spawn, Vector3 aim, Vector3 direction,
+            SpellAimMode aimMode, byte team, int attacker, Collider collider, int castId, int depth, SpellManaPolicy policy)
+        {
+            if (depth >= MaxRuntimeTriggerDepth || !source.TryPrepare(out OwnedWandCastContext prepared)) return 0;
+            CastExecutionLayer layer = prepared.Layer;
+            try
+            {
+                prepared = prepared.PrepareMaterials(this, spawn);
+                using (s_runtimeSpawnMarker.Auto())
+                    for (int i = 0; i < layer.CommandCount; i++)
+                    {
+                        EmitCommand cmd = layer.GetCommand(i);
+                        switch (cmd.SpawnMode)
+                        {
+                            case SpellSpawnMode.SkyfallAtPoint:
+                                SpawnSkyfallProjectile(cmd, spawn, direction, i, layer.CommandCount, team, attacker, collider, castId, depth, policy, prepared); break;
+                            case SpellSpawnMode.StaticAtPoint:
+                                SpawnStaticProjectileAtPoint(cmd, spawn, direction, team, attacker, collider, prepared);
+                                prepared.ReleaseMaterial(i, spawn + Vector3.up * .25f); break;
+                            default:
+                                SpawnForwardProjectile(cmd, spawn, aim, direction, aimMode, i, layer.CommandCount, team, attacker, collider, castId, depth, policy, prepared); break;
+                        }
+                    }
+                if (!prepared.Finish(true))
+                { prepared.SpawnTransaction.Rollback(this); prepared.Finish(false); return 0; }
+                prepared.SpawnTransaction.Complete();
+            }
+            catch (System.Exception exception)
+            {
+                prepared.SpawnTransaction.Rollback(this); prepared.Finish(false);
+                if (prepared.Adapter != null) prepared.Adapter.ReportSpawnFailure(prepared);
+                GameLog.Warn("施法生成失败，未提交本层资源：" + exception.Message, "Skills"); return 0;
+            }
+            // 提交后才播放音效，失败事务不留下 AudioSource。
+            // 材料代理在资源提交后激活，接触/失败重试不能绕过根施法的回滚边界。
+            prepared.ActivateMaterials();
+            _playedSfx.Clear();
+            for (int i = 0; i < layer.CommandCount; i++)
+            { AudioClip clip = layer.GetCommand(i).CastSfx; if (clip != null && _playedSfx.Add(clip)) AudioSource.PlayClipAtPoint(clip, spawn); }
+            return layer.CommandCount;
         }
 
         /// <summary>
@@ -273,6 +324,16 @@ namespace Game.Character
                 castId,
                 0,
                 manaPolicy);
+        }
+        public int CastOwnedProgram(in WandProgramSnapshot program, in OwnedWandCastContext source,
+            Vector3 spawn, Vector3 aim, byte team, int attacker, Collider collider)
+        {
+            if (!source.Enabled || program.Program == null || source.SourceWandId != program.SourceWandId
+                || source.ProgramRevision != program.ProgramRevision) return 0;
+            Vector3 direction = aim - spawn; if (direction.sqrMagnitude < 1e-6f) direction = transform.forward;
+            direction.Normalize();
+            return RunCast(program.Program, program.BaseDraws, CastModifierState.Default, spawn, aim, direction,
+                SpellAimMode.Direct, team, attacker, collider, _diagnostics.AllocateCastId(), 0, SpellManaPolicy.SpendCasterMana, source);
         }
 
         # region 内部功能函数
@@ -359,7 +420,8 @@ namespace Game.Character
             Collider casterCollider,
             int castId,
             int depth,
-            SpellManaPolicy manaPolicy)
+            SpellManaPolicy manaPolicy,
+            OwnedWandCastContext ownedSource = default)
         {
             // 计算散射角和最终发射方向
             float yaw = SpellAiming.SpreadOffsetDegrees(index, count, cmd.SpreadDegrees);
@@ -395,9 +457,11 @@ namespace Game.Character
 
             // Instantiate 根据 Prefab 在运行时创建一个独立 GameObject；LookRotation 让其 forward 朝向发射方向。
             GameObject go = Object.Instantiate(cmd.ProjectilePrefab, spawnPos, Quaternion.LookRotation(launchForward));
+            ownedSource.Track(go);
             ProjectileBase proj = go.GetComponent<ProjectileBase>();
             if (proj == null)
             {
+                if (ownedSource.Enabled) throw new System.InvalidOperationException("生成的 Prefab 缺少 ProjectileBase。");
                 GameLog.Warn($"法术预制体 {cmd.ProjectilePrefab.name} 上没有 ProjectileBase 组件", "Skills");
                 Object.Destroy(go);
                 return;
@@ -412,7 +476,7 @@ namespace Game.Character
                 casterCollider,
                 castId,
                 depth,
-                manaPolicy);
+                manaPolicy, ownedSource.Enabled ? ownedSource.Child(index) : default);
 
             ConfigureCompositeDamage(proj, in cmd);
             ConfigureProjectileMotion(proj, cmd, index, count);
@@ -423,6 +487,7 @@ namespace Game.Character
             // Init 是投射物生命周期的统一启动点：保存伤害/阵营，忽略施法者碰撞，并写入 Rigidbody.linearVelocity。
             // BallisticToPoint 已把目标点与重力换算成 launchVelocity；Direct 仍是 dir * cmd.Speed。
             proj.Init(team, attackerId, cmd.Damage, cmd.DamageType, launchVelocity, casterCollider, useGravity: cmd.UseGravity);
+            ownedSource.LinkMaterial(index, proj);
         }
 
         /// <summary>
@@ -434,7 +499,7 @@ namespace Game.Character
             Vector3 baseDir,
             byte team,
             int attackerId,
-            Collider casterCollider)
+            Collider casterCollider, OwnedWandCastContext ownedSource = default)
         {
             // 先保留 Prefab 作者设置的基础旋转，再把它组合到瞄准方向旋转后，避免模型本地前轴补偿丢失。
             Quaternion rotation = cmd.ProjectilePrefab.transform.rotation;
@@ -443,10 +508,11 @@ namespace Game.Character
 
             // 静态对象依然通过 Instantiate 创建独立场景实例，但不会调用 ProjectileBase.Init。
             GameObject go = Object.Instantiate(cmd.ProjectilePrefab, spawnPos, rotation);
+            ownedSource.Track(go);
             ProjectileShield shield = go.GetComponent<ProjectileShield>();
             if (shield == null)
                 // GetComponentInChildren 会继续检查子节点，兼容碰撞/表现组件不在 Prefab 根节点的静态对象。
-                shield = go.GetComponentInChildren<ProjectileShield>();
+                shield = go.GetComponentInChildren<ProjectileShield>(true);
             if (shield != null)
             {
                 // 静态护盾自己持有阵营、归属、剩余反射次数与 Collider 忽略规则，因此走专用 Init。
@@ -455,6 +521,7 @@ namespace Game.Character
             }
 
             // 只报告 Authoring 错误；这里不猜测未知 StaticAtPoint Prefab 应该由哪个组件接管。
+            if (ownedSource.Enabled) throw new System.InvalidOperationException("生成的静态对象缺少 ProjectileShield。");
             GameLog.Warn($"StaticAtPoint prefab {cmd.ProjectilePrefab.name} has no ProjectileShield component", "Skills");
         }
 
@@ -473,16 +540,19 @@ namespace Game.Character
             Collider casterCollider,
             int castId,
             int depth,
-            SpellManaPolicy manaPolicy)
+            SpellManaPolicy manaPolicy,
+            OwnedWandCastContext ownedSource = default)
         {
             // 屏幕瞄准点可能位于空中，先向下做 Physics 查询，把它吸附到最近的真实碰撞表面。
             landingPoint = ResolveSkyfallLandingPoint(landingPoint, casterCollider);
+            ownedSource.DelayMaterial(index, landingPoint + Vector3.up * .25f, cmd.LandingSiteDuration);
 
             if (cmd.LandingSitePrefab != null)
             {
                 // 预警 Prefab 使用作者保存的旋转，不强行朝向施法方向，避免地面贴花被竖起来。
                 Quaternion markerRotation = cmd.LandingSitePrefab.transform.rotation;
                 GameObject marker = Object.Instantiate(cmd.LandingSitePrefab, landingPoint, markerRotation);
+                ownedSource.Track(marker);
                 // Destroy(Object, delay) 延迟销毁落点提示；额外 0.5 秒给结束动画留出时间。
                 Object.Destroy(marker, Mathf.Max(0.05f, cmd.LandingSiteDuration + 0.5f));
             }
@@ -490,15 +560,15 @@ namespace Game.Character
             if (cmd.LandingSiteDuration > 0f)
             {
                 // Coroutine 可跨多帧暂停并恢复该流程，不会阻塞主线程；StartCoroutine 负责交给 Unity 调度。
-                StartCoroutine(SpawnSkyfallProjectileAfterDelay(
+                ownedSource.Track(StartCoroutine(SpawnSkyfallProjectileAfterDelay(
                     cmd, landingPoint, baseDir, index, count, team, attackerId,
-                    casterCollider, castId, depth, manaPolicy));
+                    casterCollider, castId, depth, manaPolicy, ownedSource)));
             }
             else
             {
                 SpawnSkyfallProjectileNow(
                     cmd, landingPoint, baseDir, index, count, team, attackerId,
-                    casterCollider, castId, depth, manaPolicy);
+                    casterCollider, castId, depth, manaPolicy, ownedSource);
             }
         }
 
@@ -516,11 +586,14 @@ namespace Game.Character
             Collider casterCollider,
             int castId,
             int depth,
-            SpellManaPolicy manaPolicy)
+            SpellManaPolicy manaPolicy,
+            OwnedWandCastContext ownedSource = default)
         {
             // 如果这枚投射物根本没有携带后续法术，那么什么都不用绑定
             if (!cmd.HasPayload)
                 return;
+            // Combat 只通知生命周期；Character 再通过 Core 命令释放未触发子树。
+            if (ownedSource.Enabled) proj.Finished += ownedSource.Abandon;
 
             // 把当前命令捕获的“后续一个完整 Action”与 Modifier 快照保存到闭包中。
             // 投射物未来命中或计时结束时，回调仍能用本次施法的上下文运行下一层，而不再读取已变化的序列。
@@ -547,7 +620,7 @@ namespace Game.Character
                             casterCollider,
                             castId,
                             depth + 1,
-                            manaPolicy);
+                            manaPolicy, ownedSource);
                     break;
 
                 case PayloadTriggerMode.AfterDelay:
@@ -567,7 +640,7 @@ namespace Game.Character
                             casterCollider,
                             castId,
                             depth + 1,
-                            manaPolicy);
+                            manaPolicy, ownedSource);
                     proj.ArmTimedTrigger(cmd.PayloadDelaySeconds);
                     break;
             }
@@ -632,13 +705,14 @@ namespace Game.Character
                                                              int index, int count,
                                                              byte team, int attackerId, Collider casterCollider,
                                                              int castId, int depth,
-                                                             SpellManaPolicy manaPolicy)
+                                                             SpellManaPolicy manaPolicy,
+                                                             OwnedWandCastContext ownedSource = default)
         {
             // WaitForSeconds 使用受 Time.timeScale 影响的游戏时间；yield 时当前方法暂停，但其他 Update/渲染继续运行。
             yield return new WaitForSeconds(cmd.LandingSiteDuration);
             SpawnSkyfallProjectileNow(
                 cmd, landingPoint, baseDir, index, count, team, attackerId,
-                casterCollider, castId, depth, manaPolicy);
+                casterCollider, castId, depth, manaPolicy, ownedSource);
         }
 
         /// <summary>
@@ -646,7 +720,8 @@ namespace Game.Character
         /// </summary>
         private void SpawnSkyfallProjectileNow(EmitCommand cmd, Vector3 landingPoint, Vector3 baseDir, int index, int count,
                                                byte team, int attackerId, Collider casterCollider, int castId, int depth,
-                                               SpellManaPolicy manaPolicy)
+                                               SpellManaPolicy manaPolicy,
+                                               OwnedWandCastContext ownedSource = default)
         {
             // 去掉 Y 分量得到地面平面上的瞄准方向，用它把天空生成点向后偏移。
             Vector3 horizontalDir = baseDir;
@@ -665,9 +740,11 @@ namespace Game.Character
 
             // LookRotation 让 Prefab 的 forward 指向“出生点 → 落点”，后续 Rigidbody 初速度沿同一方向。
             GameObject go = Object.Instantiate(cmd.ProjectilePrefab, spawnPos, Quaternion.LookRotation(fallDir));
+            ownedSource.Track(go);
             ProjectileBase proj = go.GetComponent<ProjectileBase>();
             if (proj == null)
             {
+                if (ownedSource.Enabled) throw new System.InvalidOperationException("生成的 Skyfall Prefab 缺少 ProjectileBase。");
                 GameLog.Warn($"静态投射物预制体 {cmd.ProjectilePrefab.name} 上没有 ProjectileBase 组件", "Skills");
                 Object.Destroy(go);
                 return;
@@ -681,10 +758,11 @@ namespace Game.Character
                 casterCollider,
                 castId,
                 depth,
-                manaPolicy);
+                manaPolicy, ownedSource.Enabled ? ownedSource.Child(index) : default);
             ConfigureCompositeDamage(proj, in cmd);
             ConfigureProjectileMotion(proj, cmd, index, count);
             proj.Init(team, attackerId, cmd.Damage, cmd.DamageType, fallDir * cmd.Speed, casterCollider, useGravity: cmd.UseGravity);
+            ownedSource.LinkMaterial(index, proj);
         }
 
         /// <summary>

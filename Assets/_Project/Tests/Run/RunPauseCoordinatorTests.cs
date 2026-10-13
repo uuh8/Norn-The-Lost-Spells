@@ -31,7 +31,10 @@ namespace Game.Run.Tests
 
             // EditMode [Test] 创建组件后不会自动推进 MonoBehaviour 生命周期。
             // 这里显式执行生产 Awake，验证的仍是正式 Cursor 初始化路径，而不是在测试里复制实现。
-            _coordinatorObject.SendMessage("Awake", SendMessageOptions.RequireReceiver);
+            // Unity 6.3 的普通 EditMode Behaviour 通过 SendMessage 会触发 ShouldRunBehaviour Assert。
+            // 只驱动正式 C# 边界；真实自动生命周期另由 PlayMode 验证。
+            typeof(RunPauseCoordinator).GetMethod("Awake", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .Invoke(_coordinator, null);
         }
 
         [TearDown]
@@ -126,6 +129,18 @@ namespace Game.Run.Tests
             Assert.That(_coordinator.ReleasePause(RunPauseReason.None), Is.False);
             Assert.That(_coordinator.IsPaused, Is.False);
             Assert.That(Time.timeScale, Is.EqualTo(1f));
+        }
+
+        [Test]
+        public void InventoryRelease_DoesNotReleasePauseMenuOrWandEditor()
+        {
+            _coordinator.RequestPause(RunPauseReason.Inventory);
+            _coordinator.RequestPause(RunPauseReason.PauseMenu);
+            _coordinator.RequestPause(RunPauseReason.WandEditor);
+            _coordinator.ReleasePause(RunPauseReason.Inventory);
+            Assert.That(Time.timeScale, Is.Zero);
+            Assert.That(_coordinator.HasReason(RunPauseReason.PauseMenu), Is.True);
+            Assert.That(_coordinator.HasReason(RunPauseReason.WandEditor), Is.True);
         }
 
         [Test]

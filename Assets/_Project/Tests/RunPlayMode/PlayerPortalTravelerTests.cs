@@ -100,6 +100,29 @@ namespace Game.Run.Tests
             return gameObject;
         }
 
+        [UnityTest]
+        public IEnumerator CommonPortalTransitUsesVisibleCenterWithoutMovingGameplayRoot()
+        {
+            var legacy=CreateGameObject("Legacy portal without shared visual");var legacyAnchor=CreateGameObject("Explicit legacy anchor");
+            Assert.That(PortalTransitionCoordinator.TransitDestination(legacy.transform,legacyAnchor.transform),Is.SameAs(legacyAnchor.transform));
+            var player = CreateGameObject("Player"); player.SetActive(false);
+            var model = CreateGameObject("Visual"); model.transform.SetParent(player.transform, false);
+            var traveler = player.AddComponent<PlayerPortalTraveler>();
+            SetPrivateField(traveler, "_visualRoot", model.transform); player.SetActive(true);
+            var portal = CreateGameObject("Logical portal at ground"); portal.transform.position = new Vector3(4, 0, 3);
+            var center = CreateGameObject("UnifiedPortalVisual"); center.transform.SetParent(portal.transform, false);
+            center.transform.localPosition = Vector3.up * 2.5f;
+            Vector3 root = player.transform.position;
+            Time.timeScale = 0;
+            var transition = PortalTransitionCoordinator.CloseAndFade(player.transform, portal.transform, 0);
+            Assert.That(transition.MoveNext(), Is.True);
+            yield return new WaitForSecondsRealtime(.7f);
+            Assert.That(Vector3.Distance(model.transform.position, center.transform.position), Is.LessThan(.001f), "吸入目的必须是可见门中心，不是地面逻辑根。");
+            Assert.That(player.transform.position, Is.EqualTo(root));
+            traveler.RestorePortalVisual();
+            Assert.That(model.activeSelf, Is.True); Assert.That(model.transform.localPosition, Is.EqualTo(Vector3.zero));
+        }
+
         private static void SetPrivateField<T>(
             object target,
             string fieldName,

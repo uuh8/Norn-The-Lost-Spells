@@ -130,7 +130,14 @@ namespace Game.UI
             GameLog.Info(
                 $"Scene Transition Controller starting LoadSceneAsync('{sceneName}').",
                 "UI");
-            AsyncOperation loadOperation = SceneManager.LoadSceneAsync(sceneName);
+            AsyncOperation loadOperation;
+#if UNITY_EDITOR
+            // 隔离Review地图无需加入正式Build Settings；Editor官方API支持完整Scene路径，Build仍按构建列表加载。
+            if(System.IO.File.Exists(sceneName))loadOperation=UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(sceneName,new LoadSceneParameters(LoadSceneMode.Single));
+            else loadOperation=SceneManager.LoadSceneAsync(sceneName);
+#else
+            loadOperation=SceneManager.LoadSceneAsync(sceneName);
+#endif
             if (loadOperation == null)
             {
                 GameLog.Error($"Failed to begin loading Scene '{sceneName}'.", "UI");

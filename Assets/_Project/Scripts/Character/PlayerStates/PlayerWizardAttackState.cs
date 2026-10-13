@@ -136,7 +136,7 @@ namespace Game.Character
             // GetInstanceID 返回当前 Unity Object 在本次运行期间的实例标识，用于伤害来源和事件过滤，不是跨存档稳定 ID。
             int attackerId = _player.gameObject.GetInstanceID();
 
-            _wizard.SpellCaster.CastWand(
+            _wizard.ReleaseActiveCast(
                 spawnPos,       // 攻击对象从哪里生成
                 aimPoint,       // 玩家按键时瞄准的世界坐标
                 team,           // 攻击者阵营，用于过滤友军

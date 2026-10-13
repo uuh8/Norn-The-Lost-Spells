@@ -219,7 +219,8 @@ namespace Game.Rendering
         private void Update()
         {
             LastGcBytes = 0;
-            if (!_initialized || Time.timeScale <= 0f)
+            // Scene卸载/死亡可先销毁兴趣中心，再销毁Renderer；Unity的假null必须用==检查，不能读已销毁Transform。
+            if (!_initialized || _interestCenter == null || Time.timeScale <= 0f)
                 return;
             long allocated = GC.GetAllocatedBytesForCurrentThread();
             float dt = Mathf.Min(Time.deltaTime, _profile.MaximumVisualDeltaTime);
@@ -236,7 +237,7 @@ namespace Game.Rendering
 
         private void LateUpdate()
         {
-            if (!_initialized)
+            if (!_initialized || _interestCenter == null)
                 return;
             long allocated = GC.GetAllocatedBytesForCurrentThread();
             Bounds bounds = new Bounds(_interestCenter.position,

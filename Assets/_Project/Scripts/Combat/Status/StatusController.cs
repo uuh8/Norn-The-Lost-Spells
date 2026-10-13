@@ -367,6 +367,19 @@ namespace Game.Combat
                     { Source = transform, Kind = WorldActivitySourceKind.Unit, Enabled = false });
             }
         }
+        /// <summary>复用同一角色开始新生命时，旧局DoT/反应/状态呈现不能跨入据点；仍由Status Owner清理。</summary>
+        public void ResetForNewLife()
+        {
+            CancelReactions();
+            for(int i=0;i<StatusCount;i++)
+            {
+                _instances[i]=default;DestroyVfx((StatusKind)i);PublishStatusChanged((StatusKind)i);
+            }
+            RecalculateMoveSpeedMultiplier();
+            // 死亡曾注销活动源；新生命重新注册，后续箱庭才能围绕真实玩家唤醒材料。
+            if(isActiveAndEnabled)EventBus<WorldActivitySourceEvent>.Publish(new WorldActivitySourceEvent
+                {Source=transform,Kind=WorldActivitySourceKind.Unit,Enabled=true});
+        }
 
         private void AddIntensityDelta(StatusKind kind, float delta)
         {

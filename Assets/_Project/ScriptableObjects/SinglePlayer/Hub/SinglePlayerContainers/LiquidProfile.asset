@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b88bc5ee3219264b8076c5186c06750, type: 3}
+  m_Name: LiquidProfile
+  m_EditorClassIdentifier: Game.ElementField::Game.ElementField.LiquidWorldProfile
+  _maximumChunks: 16
+  _maximumActiveCells: 2048
+  _maximumPendingDeposits: 256
+  _maximumCellsPerTick: 1024
+  _cellCapacityGmu: 255
+  _resolutionScale: 1
+  _unitVolumeMultiplier: 1
+  _fallGravity: 9.81
+  _fallTerminalVelocity: 12
+  _maximumStableRegions: 128
+  _maximumStableOutlets: 128
+  _maximumStableRegionCells: 256
+  _maximumStableSurfacePatches: 2048
+  _maximumImmediateExpansionCells: 1024
+  _maximumImmediateExpansionSurfaceChunks: 4
+  _enableAutoStableDetection: 1
+  _maximumAutoCandidateCells: 256
+  _autoValidationCellsPerTick: 512
+  _autoQuietTicks: 10
+  _materials:
+  - {fileID: 11400000, guid: 5276caefc3625b146aa77e7af61c0b9f, type: 2}
+  - {fileID: 11400000, guid: 7c96dc2dcea84864692a88f70e02b91b, type: 2}
+  - {fileID: 11400000, guid: 18715412beb5d6549887ccc5272afdd3, type: 2}
+  _sleepDistantLiquids: 1

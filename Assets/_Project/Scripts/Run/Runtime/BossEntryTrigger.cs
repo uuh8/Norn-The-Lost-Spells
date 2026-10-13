@@ -68,7 +68,10 @@ namespace Game.Run
                 _sessionCoordinator != null
                     ? _sessionCoordinator
                     : RunSessionCoordinator.Current;
-            if (coordinator == null || !coordinator.CaptureBossCheckpoint())
+            // 新版法杖权威属于Practice库存，不能临时创建一根旧RuntimeWand来骗过Checkpoint保护。
+            var practice = HubPracticeSession.Current;
+            bool captured = practice != null ? practice.CaptureBossCheckpoint(other) : coordinator != null && coordinator.CaptureBossCheckpoint();
+            if (!captured)
             {
                 GameLog.Warn(
                     "Boss Entry 未能捕获 Run Checkpoint，已拒绝启动 Encounter。",

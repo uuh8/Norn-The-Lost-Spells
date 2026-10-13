@@ -9,7 +9,7 @@ namespace Game.Character
     /// Player 的 Portal Transit 表现实现。
     /// 只移动 Visual Root，刻意不移动承载 CharacterController 与 CameraRoot 的 Gameplay Root。
     /// </summary>
-    public sealed class PlayerPortalTraveler : MonoBehaviour, IPortalTraveler
+    public sealed class PlayerPortalTraveler : MonoBehaviour, IPortalTraveler, IPortalTransitRestorer
     {
         [SerializeField]
         [Tooltip("只参与吸入表现的角色模型根；不要绑定 WizardPlayer 或 CameraRoot。")]
@@ -20,6 +20,12 @@ namespace Game.Character
 
         private Coroutine _transitRoutine;
         private bool _isTransiting;
+        private Vector3 _originalLocalPosition, _originalScale;
+        private bool _hasOriginal;
+        private void Awake()
+        {
+            if (_visualRoot == null) _visualRoot = GetComponentInChildren<Animator>(true)?.transform;
+        }
 
         public bool IsTransiting => _isTransiting;
 
@@ -39,6 +45,7 @@ namespace Game.Character
             }
 
             _isTransiting = true;
+            _originalLocalPosition = _visualRoot.localPosition; _originalScale = _visualRoot.localScale; _hasOriginal = true;
             Vector3 startPosition = _visualRoot.position;
             Vector3 startScale = _visualRoot.localScale;
             Vector3 targetScale =
@@ -109,6 +116,15 @@ namespace Game.Character
             }
 
             _isTransiting = false;
+            RestorePortalVisual();
+        }
+        public void RestorePortalVisual()
+        {
+            if (!_hasOriginal || _visualRoot == null) return;
+            if (_transitRoutine != null) StopCoroutine(_transitRoutine);
+            _transitRoutine = null; _isTransiting = false;
+            _visualRoot.localPosition = _originalLocalPosition; _visualRoot.localScale = _originalScale;
+            _visualRoot.gameObject.SetActive(true); _hasOriginal = false;
         }
     }
 }

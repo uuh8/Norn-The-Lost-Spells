@@ -1,6 +1,7 @@
 using UnityEngine;
 using Game.Combat;
 using Game.Core;
+using Game.Run;
 
 namespace Game.Character
 {
@@ -52,6 +53,10 @@ namespace Game.Character
         private SpellCaster _spellCaster;             // 同物体上的法术施放器（运行法杖 → 生成投射物）
         private int[] _comboStateHashes;
         private HealthComponent _health;
+        private OwnedWandCastAdapter _ownedWands;
+        private bool _usesOwnedWands;
+        private WandProgramSnapshot _pendingProgram, _activeProgram;
+        private OwnedWandCastContext _pendingSource, _activeSource;
 
         // ── 攻击输入 Runtime State ──
         // 是否有待处理请求以及请求寿命统一由基类 AttackBufferCounter 表示。
@@ -71,6 +76,17 @@ namespace Game.Character
         public float AimMaxDistance => _aimMaxDistance;
         public int AirAttackStateHash => _airAttackStateHash;
 
+        /// <summary>Scene-local工作区在角色Awake后就绪，显式更新缓存，避免新背包仍走旧Library施法。</summary>
+        public void BindOwnedInventory(OwnedWandCastAdapter adapter)
+        {
+            _ownedWands?.CancelOutstanding();
+            AttackBufferCounter=0;_pendingProgram=_activeProgram=default;_pendingSource=_activeSource=default;
+            _ownedWands=adapter;_usesOwnedWands=true;
+            // 来源随后失效也保持owned语义，不能退回无限资源旧路径。
+            if(StateMachine!=null)StateMachine.ChangeState(GroundedState);
+            EventBus<CrosshairVisibilityEvent>.Publish(new CrosshairVisibilityEvent{Visible=true});
+        }
+
         # region Unity 周期函数
         protected override void Awake()
         {
@@ -79,6 +95,8 @@ namespace Game.Character
 
             _health = GetComponent<HealthComponent>();
             _spellCaster = GetComponent<SpellCaster>();
+            _ownedWands = GetComponent<OwnedWandCastAdapter>();
+            _usesOwnedWands = _ownedWands != null;
             _wizardAttackState = new PlayerWizardAttackState(this);
             BuildComboStateHashes();
 
@@ -97,13 +115,31 @@ namespace Game.Character
         protected override void OnEnable()
         {
             base.OnEnable();
+            EventBus<RaidStateChangedEvent>.Subscribe(OnRaidStateChanged);
+            EventBus<HeldItemUseResetEvent>.Subscribe(OnHeldUseReset);
             EventBus<CrosshairVisibilityEvent>.Publish(new CrosshairVisibilityEvent { Visible = true });
         }
 
         protected override void OnDisable()
         {
+            EventBus<RaidStateChangedEvent>.Unsubscribe(OnRaidStateChanged);
+            EventBus<HeldItemUseResetEvent>.Unsubscribe(OnHeldUseReset);
             base.OnDisable();
             EventBus<CrosshairVisibilityEvent>.Publish(new CrosshairVisibilityEvent { Visible = false });
+        }
+        private void OnRaidStateChanged(RaidStateChangedEvent change)
+        {
+            if (!_usesOwnedWands || _ownedWands?.ReadOnly == null || change.InventoryId != _ownedWands.ReadOnly.InventoryId
+                || (change.Phase != RaidPhase.Departing && change.Phase != RaidPhase.Settling)) return;
+            // 跨局资源/场景切换不能让旧动画稍后释放排队施法；只清本角色攻击，不削弱其它角色控制能力。
+            AttackBufferCounter = 0; _pendingProgram = _activeProgram = default; _pendingSource = _activeSource = default;
+            if (StateMachine != null) StateMachine.ChangeState(GroundedState);
+        }
+        private void OnHeldUseReset(HeldItemUseResetEvent change)
+        {
+            if (!_usesOwnedWands || _ownedWands?.ReadOnly == null || change.InventoryId != _ownedWands.ReadOnly.InventoryId) return;
+            // 只取消尚未进入攻击的缓存；已开始的动画/可靠资源提交继续，不退费或吞掉已发Trigger。
+            AttackBufferCounter = 0; _pendingProgram = default; _pendingSource = default;
         }
         # endregion
 
@@ -116,6 +152,7 @@ namespace Game.Character
             // 暂停时 UI 也会使用鼠标，不能把 UI 点击记录成恢复游戏后的施法。
             if (Time.timeScale == 0f)
                 return;
+            if (_usesOwnedWands && (_ownedWands == null || !_ownedWands.TryCapture(out _pendingProgram, out _pendingSource))) return;
 
             _pendingCastAimPoint = ResolveAimTargetPoint(
                 _aimMask,   // 射线检测的层级遮罩，保证射线只与合法的目标发生碰撞
@@ -125,6 +162,8 @@ namespace Game.Character
             // 保留原有手感：每次点击都获得“一次完整射速冷却 + 普通 Buffer”的有效期，
             // 因此动画或冷却期间稍早按下的下一发不会丢失。新点击覆盖旧请求，仍不会无限积压次数。
             float queueLifetime = (_combo != null ? _combo.AttackCooldown : 0f) + AttackBufferTime;
+            if (_usesOwnedWands && _ownedWands.ReadOnly.TryGetState(_pendingProgram.SourceWandId, out WandStateSnapshot state))
+                queueLifetime = state.CastCooldown + AttackBufferTime;
             AttackBufferCounter = queueLifetime;
         }
 
@@ -239,7 +278,7 @@ namespace Game.Character
         /// </summary>
         public override bool TryStartAttack()
         {
-            if (AttackBufferCounter <= 0f || AttackCooldownCounter > 0f)
+            if (AttackBufferCounter <= 0f || (_usesOwnedWands ? _ownedWands == null || !_ownedWands.CanStart(_pendingProgram) : AttackCooldownCounter > 0f))
                 return false;
 
             ConsumeBufferedCast();
@@ -249,7 +288,7 @@ namespace Game.Character
         /// <summary>空中状态的平行入口；复用同一个攻击缓存，只由攻击 State 选择空中动画。</summary>
         public override bool TryStartAirAttack()
         {
-            if (AttackBufferCounter <= 0f || AttackCooldownCounter > 0f)
+            if (AttackBufferCounter <= 0f || (_usesOwnedWands ? _ownedWands == null || !_ownedWands.CanStart(_pendingProgram) : AttackCooldownCounter > 0f))
                 return false;
 
             ConsumeBufferedCast();
@@ -261,15 +300,24 @@ namespace Game.Character
         {
             // 进入攻击状态前锁定本次瞄准点。攻击动画期间的新点击只会更新 pending，不能污染 active。
             _activeCastAimPoint = _pendingCastAimPoint;
+            _activeProgram = _pendingProgram; _activeSource = _pendingSource;
 
             // 清除共享缓存，保证一次 performed 只执行一次攻击。
             AttackBufferCounter = 0f;
 
             // 冷却在批准攻击时开始，而不是命中时开始；射速因此与投射物飞行时间完全解耦。
-            AttackCooldownCounter = _combo != null ? _combo.AttackCooldown : 0f; // 射速冷却（与动画长度解耦）
+            // Owned 模式实际出手提交源杖冷却；旧角色路径保留已有起手时序。
+            AttackCooldownCounter = !_usesOwnedWands && _combo != null ? _combo.AttackCooldown : 0f;
 
             // 切换到施法状态
             StateMachine.ChangeState(_wizardAttackState);
+        }
+        public int ReleaseActiveCast(Vector3 spawn, Vector3 aim, byte team, int attacker, Collider collider)
+        {
+            if (_spellCaster == null) return 0;
+            return _usesOwnedWands
+                ? _spellCaster.CastOwnedProgram(_activeProgram, _activeSource, spawn, aim, team, attacker, collider)
+                : _spellCaster.CastWand(spawn, aim, team, attacker, collider);
         }
 
         /// <summary>取第 index 段的 Animator 状态 hash；越界或未配置返回 0。</summary>

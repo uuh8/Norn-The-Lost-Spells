@@ -17,6 +17,8 @@ namespace Game.UI
         [Header("References")]
         [SerializeField] private RunPauseCoordinator _pauseCoordinator;
         [SerializeField] private WandEditorController _wandEditor;
+        private SinglePlayerInventoryController _inventory;
+        public void ConfigurePracticeInventory(SinglePlayerInventoryController inventory)=>_inventory=inventory;
         [SerializeField] private InputActionReference _pauseAction;
         [SerializeField] private DemoSceneTransitionController _sceneTransition;
         [SerializeField] private RunSessionCoordinator _sessionCoordinator;
@@ -123,6 +125,7 @@ namespace Game.UI
             }
 
             // Escape 从 Wand Editor 切换到 Pause Menu，而不是让两个全屏交互层同时争抢 Cursor。
+            _inventory?.Close();
             if (_wandEditor != null)
             {
                 _wandEditor.ForceClose();
@@ -193,6 +196,13 @@ namespace Game.UI
                 return;
             }
 
+            // 新版Practice从真实背包快照重试，旧独立教学仍使用原Run Session。
+            if (HubPracticeSession.Current != null)
+            {
+                if (HubPracticeSession.Current.RetryBoss()) _isLoadingScene = true;
+                return;
+            }
+
             RunSessionCoordinator coordinator = ResolveSessionCoordinator();
             if (coordinator == null || !coordinator.RestoreBossCheckpoint())
             {
@@ -223,6 +233,8 @@ namespace Game.UI
 
         private void OnPausePerformed(InputAction.CallbackContext context)
         {
+            // InputAction回调早于MonoBehaviour.Update。此Esc由背包Update消费关闭，不再同时打开暂停菜单。
+            if(_pauseCoordinator!=null && _pauseCoordinator.HasReason(RunPauseReason.Inventory))return;
             TogglePauseMenu();
         }
 
@@ -240,6 +252,8 @@ namespace Game.UI
                 return;
             }
 
+            _inventory?.Close();
+
             if (_wandEditor != null)
             {
                 _wandEditor.ForceClose();
@@ -255,6 +269,8 @@ namespace Game.UI
             bool isVictory = runEvent.CurrentState == RunState.Completed;
             SetPanelActive(_victoryPanel, false);
             SetPanelActive(_defeatPanel, false);
+            // 现代练习由Run工作区决定自动死亡返回/胜利开门；UI只关闭旧框，不申请TerminalResult硬暂停。
+            if(HubPracticeSession.Current?.OwnsScene(gameObject.scene)==true)return;
 
             if (isVictory && _victoryTimeText != null)
             {

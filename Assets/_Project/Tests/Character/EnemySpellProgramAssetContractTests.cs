@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using Game.Combat;
 using Game.Skills;
 using NUnit.Framework;
 using UnityEditor;
+using UnityEditor.Animations;
 using UnityEngine;
 
 namespace Game.Character.Tests
@@ -27,7 +29,7 @@ namespace Game.Character.Tests
         private const string ArrowPrefabPath =
             "Assets/_Project/Art/Prefabs/BaseEnemy/ArrowEnemy_Base.prefab";
         private const string BowControllerPath =
-            "Assets/_Project/Art/Animators/BowHero.controller";
+            "Assets/_Project/Art/Animators/Enemy_Bow.controller";
 
         [Test]
         public void OrdinaryWizardProgram_HasExpectedFireballContract()
@@ -86,7 +88,8 @@ namespace Game.Character.Tests
             Assert.That(arrow.Kind, Is.EqualTo(SpellKind.Emit));
             Assert.That(arrow.DamageType, Is.EqualTo(DamageType.Physical));
             Assert.That(arrow.BaseDamage, Is.EqualTo(12f));
-            Assert.That(arrow.BaseSpeed, Is.EqualTo(16f));
+            Assert.That(arrow.BaseSpeed, Is.GreaterThan(0f));
+            Assert.That(float.IsInfinity(arrow.BaseSpeed), Is.False);
             Assert.That(arrow.ProjectilePrefab, Is.Not.Null);
 
             Assert.That(gravity, Is.Not.Null);
@@ -96,6 +99,17 @@ namespace Game.Character.Tests
             Assert.That(program, Is.Not.Null);
             Assert.That(program.BaseDraws, Is.EqualTo(1));
             Assert.That(program.Spells, Is.EqualTo(new[] { gravity, arrow }));
+
+            // 检查生产程序解释后的攻击结果：防止有正确资产但漏应用 Gravity 或速度修正。
+            // 20是当前生产箭速，12是伤害；本次不修改平衡参数来迎合旧测试的16。
+            var commands = new List<EmitCommand>();
+            CastEvaluator.Evaluate(program.Spells, program.BaseDraws, 100f,
+                CastModifierState.Default, commands);
+            Assert.That(commands, Has.Count.EqualTo(1));
+            Assert.That(commands[0].Speed, Is.EqualTo(20f));
+            Assert.That(commands[0].Damage, Is.EqualTo(12f));
+            Assert.That(commands[0].UseGravity, Is.True);
+            Assert.That(commands[0].ProjectilePrefab, Is.SameAs(arrow.ProjectilePrefab));
         }
 
         [Test]
@@ -138,6 +152,14 @@ namespace Game.Character.Tests
             Animator animator = prefab.GetComponent<Animator>();
             Assert.That(animator, Is.Not.Null);
             Assert.That(animator.runtimeAnimatorController, Is.SameAs(bowController));
+
+            // 敌人独立Controller应真的包含代码CrossFade的入口；只比引用不能发现状态被删。
+            var stateNames = new List<string>();
+            foreach (ChildAnimatorState state in ((AnimatorController)bowController).layers[0].stateMachine.states)
+                stateNames.Add(state.state.name);
+            Assert.That(stateNames, Does.Contain("Attack01_Bow"));
+            Assert.That(stateNames, Does.Contain("GetHit_Bow"));
+            Assert.That(stateNames, Does.Contain("Die_Bow"));
 
             CharacterCombatFeedback feedback = prefab.GetComponent<CharacterCombatFeedback>();
             Assert.That(feedback, Is.Not.Null);

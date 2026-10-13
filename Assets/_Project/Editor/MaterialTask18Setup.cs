@@ -20,8 +20,14 @@ namespace Game.EditorTools
             if (!SessionState.GetBool(SessionKey, false))
             {
                 SessionState.SetBool(SessionKey, true);
-                EditorApplication.delayCall += Setup;
+                EditorApplication.delayCall += EnsureInitialCatalog;
             }
+        }
+
+        private static void EnsureInitialCatalog()
+        {
+            // 自动入口只负责首次缺失资产。重启Editor不能用历史Task覆盖已有三相材料配置。
+            if (AssetDatabase.LoadAssetAtPath<MaterialCatalog>(CatalogPath) == null) Setup();
         }
 
         [MenuItem("Tools/Material World/Setup Task 18 Catalog")]
@@ -53,21 +59,31 @@ namespace Game.EditorTools
                 AssetDatabase.CreateAsset(catalog, CatalogPath);
             }
 
-            var serialized = new SerializedObject(catalog);
-            SerializedProperty definitions = serialized.FindProperty("_definitions");
-            // 该迁移器会在每个 Editor Session 自动执行，因此必须覆盖当前完整 Catalog。
-            // 若仍停留在 Task 18 的三项版本，重启 Unity 会悄悄删除后续 Task 加入的 Sticky。
-            definitions.arraySize = 4;
-            definitions.GetArrayElementAtIndex(0).objectReferenceValue = water;
-            definitions.GetArrayElementAtIndex(1).objectReferenceValue = fire;
-            definitions.GetArrayElementAtIndex(2).objectReferenceValue = poison;
-            definitions.GetArrayElementAtIndex(3).objectReferenceValue = sticky;
-            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EnsureCatalogEntries(catalog,new[]{water,fire,poison,sticky});
 
             EditorUtility.SetDirty(catalog);
-            AssetDatabase.SaveAssets();
+            // 只保存本工具的明确目标，避免保存用户正在编辑的无关SO/材质。
+            AssetDatabase.SaveAssetIfDirty(water);AssetDatabase.SaveAssetIfDirty(fire);
+            AssetDatabase.SaveAssetIfDirty(poison);AssetDatabase.SaveAssetIfDirty(sticky);AssetDatabase.SaveAssetIfDirty(catalog);
             AssetDatabase.Refresh();
             GameLog.Info("Task 18 Material Catalog assets are ready.", "Editor");
+        }
+
+        internal static void EnsureCatalogEntries(MaterialCatalog catalog,MaterialDefinition[] required)
+        {
+            var serialized=new SerializedObject(catalog);var definitions=serialized.FindProperty("_definitions");
+            foreach(var entry in required)
+            {
+                bool found=false;
+                for(int i=0;i<definitions.arraySize;i++)
+                {
+                    var existing=definitions.GetArrayElementAtIndex(i).objectReferenceValue as MaterialDefinition;
+                    if(existing!=null && existing.Id==entry.Id){found=true;break;}
+                }
+                // MaterialId是持久化身份；保留已有身份的用户配置及后续扩展，重复安装仅补缺。
+                if(!found)definitions.GetArrayElementAtIndex(definitions.arraySize++).objectReferenceValue=entry;
+            }
+            serialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
         private static MaterialDefinition CreateOrUpdateDefinition(

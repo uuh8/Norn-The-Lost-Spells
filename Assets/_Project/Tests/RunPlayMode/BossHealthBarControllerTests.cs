@@ -37,7 +37,8 @@ namespace Game.Run.Tests
             _createdObjects.Add(controllerObject);
             _controller = controllerObject.AddComponent<BossHealthBarController>();
 
-            _hudRoot = new GameObject("Boss HUD Root");
+            // 阈值位置在共同UI父坐标系内计算，Fixture必须提供与生产HUD一致的RectTransform。
+            _hudRoot = new GameObject("Boss HUD Root", typeof(RectTransform));
             _hudRoot.transform.SetParent(controllerObject.transform, false);
             _nameText = CreateUiComponent<Text>("Boss Name", _hudRoot.transform);
             _phaseText = CreateUiComponent<Text>("Phase", _hudRoot.transform);
@@ -390,8 +391,8 @@ namespace Game.Run.Tests
                 Is.EqualTo(new Vector2(0.5f, 1f)));
             Assert.That(
                 markerLabel.anchoredPosition.y,
-                Is.EqualTo(-44f).Within(0.001f),
-                "MarkerLine 显示高度为 80 * 0.5 = 40，文字应位于其下沿再留 4 px 间距。");
+                Is.EqualTo(-24f).Within(0.001f),
+                "MarkerLine显示高度80*0.5=40，中心到下沿为半高20，再留4px间距。");
         }
 
         private GameObject CreateRectObject(

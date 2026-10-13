@@ -108,15 +108,23 @@ namespace Game.Skills
             return EvaluateCore(spells, baseDraws, availableMana, incomingMods, output, trace);
         }
 
+        public static CastSummary EvaluateRecorded(IReadOnlyList<SpellDefinition> spells, int baseDraws,
+            float availableMana, CastModifierState incomingMods, List<EmitCommand> output, CastExecutionRecorder recorder)
+        {
+            if (recorder == null) throw new ArgumentNullException(nameof(recorder));
+            recorder.Clear();
+            return EvaluateCore(spells, baseDraws, availableMana, incomingMods, output, null, recorder);
+        }
+
         private static CastSummary EvaluateCore(
             IReadOnlyList<SpellDefinition> spells,
             int baseDraws,
             float availableMana,
             CastModifierState incomingMods,
             List<EmitCommand> output,
-            CastTraceCollector trace)
+            CastTraceCollector trace, CastExecutionRecorder recorder = null)
         {
-            // ProfilerMarker 只测量纯求值阶段；Prefab 创建、Physics 和 Projectile 初始化属于 SpellCaster/Combat 的样本。
+            // 正式资源记录与诊断收集共用解释器，避免两套语义分叉。
             using (s_evaluateMarker.Auto())
             {
                 // Clear 只把 Count 归零，List 的内部数组容量会保留，下一次施法可复用已分配内存。
@@ -181,6 +189,7 @@ namespace Game.Skills
                                 break;
                             }
 
+                            recorder?.Record(new CastExecutionUse(i, spell.Kind));
                             mods = mods.Apply(spell);           // 更新当前修正快照
                             trace?.Record(new CastTraceStep(
                                 CastTraceStepKind.ModifyApplied, i, spell,
@@ -200,6 +209,7 @@ namespace Game.Skills
                                 break;
                             }
 
+                            recorder?.Record(new CastExecutionUse(i, spell.Kind));
                             drawBudget += spell.ExtraDraws;     // 增加产出预算
                             trace?.Record(new CastTraceStep(
                                 CastTraceStepKind.MulticastApplied, i, spell,
@@ -256,6 +266,7 @@ namespace Game.Skills
                             // Bake 表示把 Authoring Data + 当前 Runtime 修正合成为独立输出快照。
                             EmitCommand command = BakeEmit(spell, mods, payload);
                             int emitIndex = output.Count;
+                            recorder?.Record(new CastExecutionUse(i, spell.Kind, emitIndex, payloadStart, payloadEnd));
                             output.Add(command);
                             drawBudget--;
 

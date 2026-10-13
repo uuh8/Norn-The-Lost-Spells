@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8742d949d6e77b4dad45de25269f547, type: 3}
+  m_Name: PickupHighlight
+  m_EditorClassIdentifier: Game.Rendering::Game.Rendering.WorldItemHighlightProfile
+  Color: {r: 0.65, g: 0.95, b: 1, a: 1}
+  Strength: 0.2
+  HaloStrength: 0.8
+  HaloColor: {r: 0.12, g: 0.65, b: 1, a: 1}
+  HaloRadiusPixels: 12
+  FallbackShader: {fileID: 4800000, guid: 124366ae8d6a1bc4a9d3c81d34a15da8, type: 3}
+  MaskShader: {fileID: 4800000, guid: 5f98c5aff56a0e349a3ce7be3c6a6d83, type: 3}
+  OutlinePixels: 2.5
+  OutlineMeshes:
+  - Source: {fileID: 4300000, guid: 4050c52620640c147b858f844944b481, type: 3}
+    Shell: {fileID: 4300000, guid: e01d65bec742db4488007221f703b26e, type: 2}
+  - Source: {fileID: 4300000, guid: ee49b6aa405c40243947ed54d4af2e59, type: 3}
+    Shell: {fileID: 4300000, guid: ab06ed65916e14943aa21d5d7992d0db, type: 2}
+  - Source: {fileID: 4300000, guid: 4eda6e896abe3b44a87b0d356ade7fa5, type: 3}
+    Shell: {fileID: 4300000, guid: 9f6a026d8eeefca4dab6695a7fdc2223, type: 2}
+  - Source: {fileID: 4300004, guid: c4174293e14cae547b149ba4c52ca933, type: 3}
+    Shell: {fileID: 4300000, guid: 8bb60ced231a6574bbf277db9cced5a0, type: 2}
+  - Source: {fileID: 4300006, guid: c4174293e14cae547b149ba4c52ca933, type: 3}
+    Shell: {fileID: 4300000, guid: 46a88c34a8e130b40ac6a50da49647e7, type: 2}
+  - Source: {fileID: 4300008, guid: c4174293e14cae547b149ba4c52ca933, type: 3}
+    Shell: {fileID: 4300000, guid: fcfc3b553e5874d46a96d7898b9fbd48, type: 2}
+  - Source: {fileID: 4300004, guid: b9b0b4e8570a10f4681e44793347cbbd, type: 3}
+    Shell: {fileID: 4300000, guid: 2826bc37ae2c73246952399e411b9cde, type: 2}
+  - Source: {fileID: 4300006, guid: b9b0b4e8570a10f4681e44793347cbbd, type: 3}
+    Shell: {fileID: 4300000, guid: c11b805260774944988292f3676cda6a, type: 2}
+  - Source: {fileID: 4300008, guid: b9b0b4e8570a10f4681e44793347cbbd, type: 3}
+    Shell: {fileID: 4300000, guid: 35b0d2136f2cb3c4f882e82f61bc58ff, type: 2}
+  - Source: {fileID: 4300004, guid: c603aa79a6a09154a83ddde74db0c0f3, type: 3}
+    Shell: {fileID: 4300000, guid: 8fc42eb9e89016e42bf6031e9e575f47, type: 2}
+  - Source: {fileID: 4300006, guid: c603aa79a6a09154a83ddde74db0c0f3, type: 3}
+    Shell: {fileID: 4300000, guid: 814c1d752cf16fb49b793039840be343, type: 2}
+  - Source: {fileID: 4300008, guid: c603aa79a6a09154a83ddde74db0c0f3, type: 3}
+    Shell: {fileID: 4300000, guid: 92a29c74145ac214fb7a4d6504932f75, type: 2}
+  - Source: {fileID: 4300002, guid: 7fb4b2f06baa6a642ae844c0886ded57, type: 3}
+    Shell: {fileID: 4300000, guid: 1cbc878a980f8254cbcea54b0de1cff5, type: 2}
+  - Source: {fileID: 4300004, guid: 7fb4b2f06baa6a642ae844c0886ded57, type: 3}
+    Shell: {fileID: 4300000, guid: 1baa6e08b7be3b7438a5ce5de0b2a025, type: 2}
+  - Source: {fileID: 4300006, guid: 7fb4b2f06baa6a642ae844c0886ded57, type: 3}
+    Shell: {fileID: 4300000, guid: 67bcfa2b6cb30b445b953e538995499d, type: 2}
+  - Source: {fileID: 4300002, guid: 81b5aaffddcf048479526a08e9b7fad1, type: 3}
+    Shell: {fileID: 4300000, guid: 6eb250a744d78d44f8b52e077ae831d6, type: 2}
+  - Source: {fileID: 4300004, guid: 81b5aaffddcf048479526a08e9b7fad1, type: 3}
+    Shell: {fileID: 4300000, guid: 18ddd262efa1ab545aa8b9648a87b885, type: 2}
+  - Source: {fileID: 4300006, guid: 81b5aaffddcf048479526a08e9b7fad1, type: 3}
+    Shell: {fileID: 4300000, guid: b3be3123a1c069145aacac990b1678e3, type: 2}
+  - Source: {fileID: 4300004, guid: 4af85895742aeef479bac59da653fd08, type: 3}
+    Shell: {fileID: 4300000, guid: c11247f780d83a849825e93310de8972, type: 2}
+  - Source: {fileID: 4300006, guid: 4af85895742aeef479bac59da653fd08, type: 3}
+    Shell: {fileID: 4300000, guid: 4b6bbf9d8c47e424f85dd4e0c7dfd714, type: 2}
+  - Source: {fileID: 4300008, guid: 4af85895742aeef479bac59da653fd08, type: 3}
+    Shell: {fileID: 4300000, guid: 76bc44216745a8b4f9dcd202a13a273e, type: 2}
+  - Source: {fileID: 4300004, guid: 73a546543dd9a2941a387937dd4ff082, type: 3}
+    Shell: {fileID: 4300000, guid: 752a92df86588434c9b2a94288881508, type: 2}
+  - Source: {fileID: 4300006, guid: 73a546543dd9a2941a387937dd4ff082, type: 3}
+    Shell: {fileID: 4300000, guid: 7b13b7d6c9b24aa46a0598a2a2ae1aed, type: 2}
+  - Source: {fileID: 4300008, guid: 73a546543dd9a2941a387937dd4ff082, type: 3}
+    Shell: {fileID: 4300000, guid: a970fb8b19c68954b92a7e689f0a5219, type: 2}
+  - Source: {fileID: 4300008, guid: 1371be1a47cf6334eb347843f0742121, type: 3}
+    Shell: {fileID: 4300000, guid: 756af39bb38bf1f4989830ab2094e743, type: 2}
+  - Source: {fileID: 4300006, guid: 1371be1a47cf6334eb347843f0742121, type: 3}
+    Shell: {fileID: 4300000, guid: af9315209f5a38b4981858cc400f89fd, type: 2}
+  - Source: {fileID: 4300004, guid: 1371be1a47cf6334eb347843f0742121, type: 3}
+    Shell: {fileID: 4300000, guid: 3148917173391ed49b0800519324f055, type: 2}
+  - Source: {fileID: 4300008, guid: 02919ca1ddd7f35459ad417358b93b73, type: 3}
+    Shell: {fileID: 4300000, guid: 55e25bdf13ac1734a9bf6d460989b814, type: 2}
+  - Source: {fileID: 4300006, guid: 02919ca1ddd7f35459ad417358b93b73, type: 3}
+    Shell: {fileID: 4300000, guid: 9cd0b64cc1a22304e9f67d447737c6fa, type: 2}
+  - Source: {fileID: 4300004, guid: 02919ca1ddd7f35459ad417358b93b73, type: 3}
+    Shell: {fileID: 4300000, guid: 81490664ca31ce44fabb93f974586bae, type: 2}
+  - Source: {fileID: 4300008, guid: bb75d13aa9007434694da9ff57802d5d, type: 3}
+    Shell: {fileID: 4300000, guid: a3b9e70cd3e88204abca5018eb45c500, type: 2}
+  - Source: {fileID: 4300006, guid: bb75d13aa9007434694da9ff57802d5d, type: 3}
+    Shell: {fileID: 4300000, guid: 0de94bd6d4b5157448949663aab4f977, type: 2}
+  - Source: {fileID: 4300004, guid: bb75d13aa9007434694da9ff57802d5d, type: 3}
+    Shell: {fileID: 4300000, guid: 0f7b3055596d431448c91210058529a7, type: 2}
+  - Source: {fileID: -8224041885493147751, guid: a16eadfc6325359438997f48e6a2b33f, type: 3}
+    Shell: {fileID: 4300000, guid: 1f9bd336735220b49854cbd9a0fc35fc, type: 2}
+  - Source: {fileID: -2772286455444293352, guid: a16eadfc6325359438997f48e6a2b33f, type: 3}
+    Shell: {fileID: 4300000, guid: 29d3db6e6f5243848897939c4bce5918, type: 2}
+  - Source: {fileID: 7015913962198615767, guid: a16eadfc6325359438997f48e6a2b33f, type: 3}
+    Shell: {fileID: 4300000, guid: b4cd6c3f802a443478515cf9a5abcc6f, type: 2}
+  - Source: {fileID: -8501550080060462349, guid: 4d94a941731bce84e9289398f6dbcc62, type: 3}
+    Shell: {fileID: 4300000, guid: 2e0ca3e6755027c40a7871cf79eb0d5f, type: 2}
+  - Source: {fileID: -6654640748391352321, guid: 4d94a941731bce84e9289398f6dbcc62, type: 3}
+    Shell: {fileID: 4300000, guid: f2b6cbdf328accc46bef49d8b4fbb536, type: 2}
+  - Source: {fileID: 3711865447041039807, guid: 4d94a941731bce84e9289398f6dbcc62, type: 3}
+    Shell: {fileID: 4300000, guid: 3095bcd3b06f95e4badee8a6cba1cdf7, type: 2}
+  - Source: {fileID: 456666442163887874, guid: 92dbca256fb5f194bad74964fd6f9709, type: 3}
+    Shell: {fileID: 4300000, guid: d46e7b75db169374e8054e5dfac7a295, type: 2}
+  - Source: {fileID: -1549940691268039551, guid: 92dbca256fb5f194bad74964fd6f9709, type: 3}
+    Shell: {fileID: 4300000, guid: 9dd424ef0f4061843a1ff53cf19329f9, type: 2}
+  - Source: {fileID: 7297192210762784160, guid: 92dbca256fb5f194bad74964fd6f9709, type: 3}
+    Shell: {fileID: 4300000, guid: cb674c84f7099344ea58e86732ac9c92, type: 2}
+  - Source: {fileID: 8926459838522625850, guid: 91e73e44b4b0ef7469f4a8e94c053774, type: 3}
+    Shell: {fileID: 4300000, guid: 98f10fc0e1f65b047be619095020effe, type: 2}
+  - Source: {fileID: 7647945329132732719, guid: 91e73e44b4b0ef7469f4a8e94c053774, type: 3}
+    Shell: {fileID: 4300000, guid: 46f04c77129a0bf4d922c3710708d06b, type: 2}
+  - Source: {fileID: -8808996656363190555, guid: 91e73e44b4b0ef7469f4a8e94c053774, type: 3}
+    Shell: {fileID: 4300000, guid: dcac14a73df4abd48a30668ce26520c1, type: 2}
+  - Source: {fileID: 6085528870179643311, guid: 70eeda61f29d163448a8c6869d937afa, type: 3}
+    Shell: {fileID: 4300000, guid: 4df324acefa02e442998f3b6511b3b33, type: 2}
+  - Source: {fileID: -7138385405516305127, guid: 70eeda61f29d163448a8c6869d937afa, type: 3}
+    Shell: {fileID: 4300000, guid: 9f398eb20363b71439e80dae9492c015, type: 2}
+  - Source: {fileID: 6770021990899179677, guid: 70eeda61f29d163448a8c6869d937afa, type: 3}
+    Shell: {fileID: 4300000, guid: 9f71db78773130644b2ffa7aab788332, type: 2}

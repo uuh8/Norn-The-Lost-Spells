@@ -48,6 +48,9 @@ namespace Game.UI
         private bool _dropHandled;
 
         public bool IsOpen => _open;
+        /// <summary>从据点进入练习时Tab交给携带背包；保留旧教学数据/战斗，只暂停旧编辑器的输入与面板。</summary>
+        public void SuspendForInventoryWorkspace()
+        {ForceClose();if(_panelRoot!=null)_panelRoot.SetActive(false);enabled=false;}
 
         private void OnEnable()
         {

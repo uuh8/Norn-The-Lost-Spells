@@ -42,7 +42,7 @@ namespace Game.ElementField
         {
             snapshot=default; if(_conversionScheduler==null || family==MaterialQuantityFamily.None) return false;
             // 显式诊断调用才做库存求和；Sparse Gas 的逐槽合并不在每帧或每 Tick 执行。
-            ulong injected=0,resident=0,pending=0,vented=0,consumed=0;
+            ulong injected=0,resident=0,pending=0,vented=0,consumed=0,exported=0,imported=0;
             for(int i=1;i<=8;i++)
             {
                 var material=(MaterialId)i; if(MaterialWorldQuantityLedger.Family(material)!=family) continue;
@@ -50,8 +50,10 @@ namespace Game.ElementField
                 resident+=_gridLiquidRuntime.MaterialQuantity(material)+_fixedSolidRuntime.MaterialQuantity(material)+_gasRuntime.MaterialQuantity(material);
                 pending+=_gridLiquidRuntime.PendingMaterialQuantity(material)+_fixedSolidRuntime.PendingMaterialQuantity(material)+_gasRuntime.PendingMaterialQuantity(material);
                 vented+=_gasRuntime.VentedMaterialQuantity(material);
+                exported+=ExportedMaterialQuantity(material);
+                imported+=ImportedMaterialQuantity(material);
             }
-            snapshot=new MaterialQuantityFamilySnapshot(injected,resident,pending,vented,consumed); return true;
+            snapshot=new MaterialQuantityFamilySnapshot(injected,resident,pending,vented,consumed,exported,imported); return true;
         }
     }
 }

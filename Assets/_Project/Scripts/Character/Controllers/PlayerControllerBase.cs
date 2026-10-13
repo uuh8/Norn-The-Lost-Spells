@@ -253,6 +253,9 @@ namespace Game.Character
 
         protected virtual void Awake()
         {
+            // 所有玩家共享同一过门视觉接口；仅移动Animator模型，不移动CharacterController物理根。
+            if (GetComponent<PlayerPortalTraveler>() == null) gameObject.AddComponent<PlayerPortalTraveler>();
+            if (GetComponent<PortalInteractInput>() == null) gameObject.AddComponent<PortalInteractInput>();
             // GetComponent 在当前 GameObject 上查组件；GetComponentInChildren 还会搜索子层级，
             // Animator 通常挂在角色模型子物体上，所以两者不能混用。
             _characterController = GetComponent<CharacterController>();

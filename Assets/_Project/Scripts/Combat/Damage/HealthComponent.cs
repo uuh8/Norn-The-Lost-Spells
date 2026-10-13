@@ -93,5 +93,20 @@ namespace Game.Combat
         {
             _isInvulnerable = value;
         }
+        /// <summary>新生命的离散入口：M4复用玩家对象回据点，需要由HP Owner重置并通知现有HUD。</summary>
+        public void ResetForNewLife()
+        {
+            _currentHp = _maxHp; _isInvulnerable = false;
+            GetComponent<StatusController>()?.ResetForNewLife();
+            EventBus<DamageReceivedEvent>.Publish(new DamageReceivedEvent { TargetId = _id, RemainingHp = _currentHp });
+        }
+#if UNITY_EDITOR
+        [ContextMenu("Debug/Receive Lethal Hit")]
+        private void DebugReceiveLethalHit()
+        {
+            // 独立灰盒无攻击AI；Editor试玩沿真实伤害入口触发死亡，不直接改HP或伪造DeathEvent。
+            if(Application.isPlaying)ReceiveHit(new DamageRequest(0,TeamId==1?(byte)2:(byte)1,_maxHp*10,DamageType.True,transform.position,Vector3.forward));
+        }
+#endif
     }
 }

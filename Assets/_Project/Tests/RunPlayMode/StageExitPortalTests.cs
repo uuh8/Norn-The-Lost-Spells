@@ -127,7 +127,9 @@ namespace Game.Run.Tests
 
             Assert.That(portal.TryEnter(playerCollider), Is.True);
             Assert.That(traveler.BeginCount, Is.EqualTo(1));
-            Assert.That(traveler.Destination, Is.SameAs(travelerAnchorObject.transform));
+            var center=portal.transform.Find("UnifiedPortalVisual");
+            Assert.That(center,Is.Not.Null);
+            Assert.That(traveler.Destination, Is.SameAs(center),"公共蓝门的视觉中心应优先于旧Anchor；解锁/暂停/单次加载语义保持。");
             Assert.That(traveler.Duration, Is.EqualTo(0.03f));
             Assert.That(session.RuntimeLibrary.Available, Is.EqualTo(new[] { fire, water }));
             Assert.That(coordinator.Stage, Is.EqualTo(RunStage.BossField));

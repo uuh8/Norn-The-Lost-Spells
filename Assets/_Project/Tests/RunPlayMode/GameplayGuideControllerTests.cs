@@ -26,6 +26,9 @@ namespace Game.Run.Tests
             scrollRect.transform.SetParent(root.transform, false);
             content.SetParent(scrollRect.transform, false);
             scrollRect.content = content;
+            // 没有溢出范围时ScrollRect的normalizedPosition不能证明翻页滚动；构造实际可滚动内容。
+            ((RectTransform)scrollRect.transform).sizeDelta = new Vector2(100f,100f);
+            content.sizeDelta = new Vector2(100f,400f);
 
             GameplayGuideDefinition definition =
                 ScriptableObject.CreateInstance<GameplayGuideDefinition>();
@@ -42,15 +45,19 @@ namespace Game.Run.Tests
             SetPrivateField(controller, "_bodyScrollRect", scrollRect);
             SetPrivateField(controller, "_isOpen", true);
 
-            scrollRect.verticalNormalizedPosition = 0f;
-            controller.NextPageOrClose();
-
-            Assert.That(body.text, Is.EqualTo("第二页正文"));
-            Assert.That(scrollRect.verticalNormalizedPosition, Is.EqualTo(1f));
-
-            Object.DestroyImmediate(definition);
-            Object.DestroyImmediate(panel);
-            Object.DestroyImmediate(root);
+            try
+            {
+                scrollRect.verticalNormalizedPosition = 0f;
+                Assert.That(scrollRect.verticalNormalizedPosition,Is.EqualTo(0f),"先确认确实位于可滚动内容底部。");
+                controller.NextPageOrClose();
+                Assert.That(body.text, Is.EqualTo("第二页正文"));
+                Assert.That(scrollRect.verticalNormalizedPosition, Is.EqualTo(1f));
+            }
+            finally
+            {
+                Object.DestroyImmediate(definition);
+                Object.DestroyImmediate(root);
+            }
         }
 
         private static void SetPrivateField<TValue>(

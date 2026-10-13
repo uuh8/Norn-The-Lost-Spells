@@ -1,0 +1,94 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39fa3d8997a24136984ca6e2c99902bc, type: 3}
+  m_Name: InventoryActions
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionAsset
+  m_ActionMaps:
+  - m_Name: Inventory
+    m_Id: d80ca48a-78b3-4507-b9ff-72a69aeae15c
+    m_Asset: {fileID: 11400000}
+    m_Actions:
+    - m_Name: Toggle
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: c3d63db0-b95c-4598-bd1e-521f4d0b9043
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    - m_Name: Rotate
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: b4c3644a-cbd8-4afe-b153-41914a101c85
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    - m_Name: Cancel
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: 56374ff2-a619-4c74-81de-0b360176ed3d
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    - m_Name: Split
+      m_Type: 1
+      m_ExpectedControlType: 
+      m_Id: 61eaa921-88df-4201-9f69-5cd312a7356b
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Bindings:
+    - m_Name: 
+      m_Id: d233eedb-1a6b-464a-b039-248cb849d015
+      m_Path: <Keyboard>/tab
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Toggle
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 27a095e8-f242-4e5f-ad93-da4354fc522d
+      m_Path: <Keyboard>/r
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Rotate
+      m_Flags: 0
+    - m_Name: 
+      m_Id: f88f60e1-3267-4f14-8195-c88c57295e60
+      m_Path: <Keyboard>/escape
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Cancel
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 4f9ad4a9-df21-41f6-88db-f0dc019e8d8a
+      m_Path: <Keyboard>/leftShift
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Split
+      m_Flags: 0
+    - m_Name: 
+      m_Id: 2ef01152-ba26-45d3-89c8-e1774d7f690e
+      m_Path: <Keyboard>/rightShift
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Split
+      m_Flags: 0
+  m_ControlSchemes: []
+  m_IsProjectWide: 0

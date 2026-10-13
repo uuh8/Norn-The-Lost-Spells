@@ -108,7 +108,7 @@ namespace Game.UI
                 ? spell.DisplayName
                 : "新法术";
             Sprite icon = spell != null ? spell.Icon : null;
-            ShowNotification($"获得 {displayName}\n已加入本局法术库", icon);
+            ShowNotification($"获得 {displayName}\nTab 打开背包配置法杖", icon);
         }
 
         private void OnRunStateChanged(RunStateChangedEvent runEvent)

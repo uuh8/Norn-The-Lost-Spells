@@ -189,6 +189,8 @@ namespace Game.ElementField
 
             RefreshWorldActivity();
 
+            if (SimulationPausedForDebug || SimulationSuspended) return;
+
             int ticks = _tickAccumulator.Consume(Time.deltaTime);
             LastFrameTickCount = ticks;
             if (_tickAccumulator.DroppedDebtLastConsume)
@@ -1024,6 +1026,8 @@ namespace Game.ElementField
 
         private void RefreshInterestChunk()
         {
+            // 死亡或Single Scene卸载可先销毁玩家。保留最后的Interest坐标，世界仍能结算在途材料，不能读假null Transform。
+            if(_interestPoint==null)return;
             _interestGlobalCell = ElementWorldCoordinates.WorldToGlobalCell(
                 _interestPoint.position,
                 _origin,
