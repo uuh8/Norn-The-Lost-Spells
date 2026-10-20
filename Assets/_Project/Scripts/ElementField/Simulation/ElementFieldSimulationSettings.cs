@@ -13,6 +13,7 @@ namespace Game.ElementField
         public readonly byte MaxDownFlowPerTick;
         public readonly byte MaxLateralFlowPerTick;
         public readonly byte FireDecayPerTick;
+        public readonly byte MaxFireDownFlowPerTick;
         public readonly int ChunkSize;
         public readonly bool SimulateCellWater;
         public readonly ExtinguishTuning Extinguish;
@@ -42,7 +43,8 @@ namespace Game.ElementField
             byte fireDecayPerTick,
             int chunkSize,
             bool simulateCellWater,
-            ExtinguishTuning extinguish)
+            ExtinguishTuning extinguish,
+            byte maxFireDownFlowPerTick=0)
         {
             if (cellSize <= 0f || float.IsNaN(cellSize) || float.IsInfinity(cellSize))
                 throw new ArgumentOutOfRangeException(nameof(cellSize));
@@ -53,6 +55,7 @@ namespace Game.ElementField
             MaxDownFlowPerTick = maxDownFlowPerTick;
             MaxLateralFlowPerTick = maxLateralFlowPerTick;
             FireDecayPerTick = fireDecayPerTick;
+            MaxFireDownFlowPerTick=maxFireDownFlowPerTick;
             ChunkSize = chunkSize;
             SimulateCellWater = simulateCellWater;
             Extinguish = extinguish;

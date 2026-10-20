@@ -96,6 +96,16 @@ namespace Game.ElementField.Tests
             _worldRoot.SetActive(true);
         }
 
+        [Test] public void ExposureAwakeBeforeWorldProjectionRecoversAtStart()
+        {
+            var field=typeof(ElementWorldRuntime).GetField("_materialStatusProjection",BindingFlags.Instance|BindingFlags.NonPublic);
+            var snapshot=field.GetValue(_runtime);field.SetValue(_runtime,null);
+            InvokePrivateVoid(_exposure,"Awake");field.SetValue(_runtime,snapshot);
+            Assert.DoesNotThrow(()=>InvokePrivateVoid(_exposure,"Start"));
+            var projection=typeof(ElementWorldExposureSystem).GetField("_statusProjection",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(_exposure);
+            Assert.That(projection,Is.SameAs(snapshot));
+            Assert.DoesNotThrow(()=>_exposure.TickForTests(1));
+        }
         [TearDown]
         public void TearDown()
         {

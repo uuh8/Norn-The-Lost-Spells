@@ -17,7 +17,7 @@ namespace Game.Rendering.Tests
         private const string P7 = "Assets/_Project/Scenes/P7_DemoRun.unity";
         private const string P8 = "Assets/_Project/Scenes/P8_BossField.unity";
         private const string Canonical = "Assets/_Project/ScriptableObjects/ElementField/Liquids/ElementWorldProfile_P7_DemoRun_Grid.asset";
-        private const string P8Profile = "Assets/_Project/ScriptableObjects/P8/ElementField/ElementWorldProfile_P8BossField.asset";
+        private const string P8Profile = "Assets/_Project/ScriptableObjects/World/Boss/ElementField/ElementWorldProfile_P8BossField.asset";
 
         [TestCase(P7, Canonical)]
         [TestCase(P8, P8Profile)]

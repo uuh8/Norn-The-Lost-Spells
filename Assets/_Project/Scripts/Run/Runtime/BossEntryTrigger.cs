@@ -12,7 +12,6 @@ namespace Game.Run
     public sealed class BossEntryTrigger : MonoBehaviour
     {
         [SerializeField] private BossEncounterController _encounter;
-        [SerializeField] private RunSessionCoordinator _sessionCoordinator;
         [SerializeField] private LayerMask _playerLayers;
         [SerializeField] private Transform _safeZoneVisualRoot;
 
@@ -64,13 +63,9 @@ namespace Game.Run
                 return false;
             }
 
-            RunSessionCoordinator coordinator =
-                _sessionCoordinator != null
-                    ? _sessionCoordinator
-                    : RunSessionCoordinator.Current;
-            // 新版法杖权威属于Practice库存，不能临时创建一根旧RuntimeWand来骗过Checkpoint保护。
+            // Checkpoint 必须包含当前真实物品实例，不能用另克隆的开场法杖代替。
             var practice = HubPracticeSession.Current;
-            bool captured = practice != null ? practice.CaptureBossCheckpoint(other) : coordinator != null && coordinator.CaptureBossCheckpoint();
+            bool captured = practice != null && practice.CaptureBossCheckpoint(other);
             if (!captured)
             {
                 GameLog.Warn(

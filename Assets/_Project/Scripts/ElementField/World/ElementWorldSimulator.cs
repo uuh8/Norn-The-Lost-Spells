@@ -22,6 +22,7 @@ namespace Game.ElementField
             new ProfilerMarker("ElementWorld.Simulate.HorizontalFlow");
         private static readonly ProfilerMarker FireDecayMarker =
             new ProfilerMarker("ElementWorld.Simulate.FireDecay");
+        private static readonly ProfilerMarker FireFallMarker=new ProfilerMarker("ElementWorld.Simulate.FireFall");
         private static readonly ProfilerMarker CommitMarker =
             new ProfilerMarker("ElementWorld.Simulate.Commit");
 
@@ -80,9 +81,8 @@ namespace Game.ElementField
                 in settings);
 
             _simulationChunkCount = CopyUniqueActiveChunks(activeChunks, activeChunkCount);
-            // PBF 模式保留旧 Cell 数据但不再让它生成接收 Chunk；模式切换只在 Play 初始化生效，
-            // 因此这里必须跳过 Prepare，而不是扫描后再清理残留 Water。
-            if (settings.SimulateCellWater)
+            // PBF/GridLiquid 不准备旧 Water 接收 Chunk；真实 Fire 仍独立准备向下接收端，规则不依赖液体后端。
+            if (settings.SimulateCellWater||settings.MaxFireDownFlowPerTick>0)
             {
                 using (PrepareNeighborsMarker.Auto())
                 {
@@ -91,8 +91,9 @@ namespace Game.ElementField
                         _simulationChunks,
                         _simulationChunkCount,
                         worldTick,
-                        settings.MaxDownFlowPerTick,
-                        settings.MaxLateralFlowPerTick);
+                        settings.SimulateCellWater?settings.MaxDownFlowPerTick:(byte)0,
+                        settings.SimulateCellWater?settings.MaxLateralFlowPerTick:(byte)0,
+                        settings.MaxFireDownFlowPerTick,settings.SimulateCellWater);
                 }
             }
             SortSimulationChunks();
@@ -107,8 +108,15 @@ namespace Game.ElementField
                 using (HorizontalFlowMarker.Auto())
                     RunHorizontalFlowStage(settings.MaxLateralFlowPerTick, worldTick, ref stats);
             }
-            using (FireDecayMarker.Auto())
-                RunFireDecayStage(settings.FireDecayPerTick, ref stats);
+            // HasFire由离散写入/上次Tick提交维护。无火时整段复制/清Delta/扫描/交换都是空工作。
+            // 用本Tick开始的保守快照：有火时即使下落到新Chunk，也不能漏掉接收端的衰减。
+            bool hasFire=false;
+            for(int i=0;i<_simulationChunkCount;i++)hasFire|=_simulationChunks[i].HasFire;
+            if(hasFire && settings.MaxFireDownFlowPerTick>0)
+                using(FireFallMarker.Auto())RunFireFallStage(settings.MaxFireDownFlowPerTick);
+            if(hasFire)
+                using (FireDecayMarker.Auto())
+                    RunFireDecayStage(settings.FireDecayPerTick, ref stats);
 
             using (CommitMarker.Auto())
             {
@@ -508,6 +516,36 @@ namespace Game.ElementField
                         : default;
                 }
             }
+        }
+
+        private void RunFireFallStage(byte maximum)
+        {
+            PrepareStage();
+            // Current只读、Delta预约、Next统一提交，落入接收格的火本Tick不会再次下落。
+            // 空格与同类火可接收；水/其他材料先保留原位，由现有接触反应处理，不能直接覆盖。
+            for(int c=0;c<_simulationChunkCount;c++)
+            {
+                var source=_simulationChunks[c];
+                if(!source.HasFire)continue;
+                for(int index=0;index<source.CellCount;index++)
+                {
+                    var current=source.CurrentCells[index];if(current.MaterialKind!=MaterialId.Fire||current.Amount==0)continue;
+                    // 大部分Cell并非Fire；先线性检查，只有真实火才做坐标变换与邻居查询。
+                    var local=ElementFieldCoordinates.FromIndex(index,source.Grid.Dimensions);
+                    if(!TryResolveNeighbor(source,local,Vector3Int.down,out var target,out var below))continue;
+                    int ti=ElementFieldCoordinates.ToIndex(below,target.Grid.Dimensions);var other=target.CurrentCells[ti];
+                    if(target.SolidMask[ti]||!other.IsEmpty&&other.MaterialKind!=MaterialId.Fire)continue;
+                    int available=Mathf.Min(current.Amount,current.Amount+source.AmountDelta[index]);
+                    int projected=(other.MaterialKind==MaterialId.Fire?other.Amount:0)+target.AmountDelta[ti];
+                    int amount=Mathf.Min(maximum,Mathf.Min(available,byte.MaxValue-projected));if(amount<=0)continue;
+                    source.AmountDelta[index]-=amount;target.AmountDelta[ti]+=amount;
+                }
+            }
+            for(int c=0;c<_simulationChunkCount;c++)
+            {var chunk=_simulationChunks[c];for(int i=0;i<chunk.CellCount;i++)if(chunk.AmountDelta[i]!=0)
+                {int original=chunk.CurrentCells[i].MaterialKind==MaterialId.Fire?chunk.CurrentCells[i].Amount:0;
+                    int amount=original+chunk.AmountDelta[i];chunk.NextCells[i]=amount>0?new ElementCell(MaterialId.Fire,(byte)amount):default;}}
+            CommitPreparedStage();
         }
 
         private void RunFireDecayStage(

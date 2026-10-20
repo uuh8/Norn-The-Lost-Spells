@@ -59,6 +59,11 @@ namespace Game.ElementField
         private readonly uint[] _materialSurfaceVersions;
         private readonly int[] _reactionScanPositions;
         private readonly int _chunkSize, _cellCount, _capacity, _materialCount;
+        // 静态拓扑原先是离散编辑；固体重力会在Tick调用它，工作区必须初始化预留。
+        private readonly uint[] _terrainMoveRemaining;
+        private readonly List<PlannedTerrainMove> _terrainMovePlan;
+        private readonly HashSet<Vector3Int> _terrainMoveVisited=new HashSet<Vector3Int>(512);
+        private readonly Queue<Vector3Int> _terrainMoveFrontier=new Queue<Vector3Int>(512);
         private readonly Func<Vector3Int, bool> _solidSampler;
         private readonly int _solidCacheCapacity;
         private Func<Vector3Int, uint> _externalOccupancy;
@@ -82,6 +87,8 @@ namespace Game.ElementField
             _cellCount = checked(chunkSize * chunkSize * chunkSize);
             _capacity = capacityGmu;
             _materialCount = materials.Length;
+            _terrainMoveRemaining=new uint[_materialCount];
+            _terrainMovePlan=new List<PlannedTerrainMove>(Math.Min(capacityGmu,512*_materialCount));
             _materials = (MaterialId[])materials.Clone();
             _relativeDensities = new float[materials.Length];
             for(int i=0;i<materials.Length;i++)
@@ -162,7 +169,8 @@ namespace Game.ElementField
             movedTargets.Clear();
             // 地形编辑是离散事件：先按材料规划整格数量，再沿可通行的相邻格
             // 寻找容量。满湖的一格可拆到多个自由面格，不能只尝试一个邻格。
-            var remaining = new uint[_materialCount];
+            maxVisitedCells=Math.Min(maxVisitedCells,512);
+            var remaining = _terrainMoveRemaining;
             uint left = 0;
             for (int i = 0; i < _materialCount; i++)
             {
@@ -170,9 +178,9 @@ namespace Game.ElementField
                 left += remaining[i];
             }
             if (left == 0) return true;
-            var plan = new List<PlannedTerrainMove>(_capacity);
-            var visited = new HashSet<Vector3Int>(maxVisitedCells) { source };
-            var frontier = new Queue<Vector3Int>(maxVisitedCells);
+            var plan = _terrainMovePlan;plan.Clear();
+            var visited = _terrainMoveVisited;visited.Clear();visited.Add(source);
+            var frontier = _terrainMoveFrontier;frontier.Clear();
             frontier.Enqueue(source);
             while (frontier.Count > 0 && visited.Count <= maxVisitedCells && left > 0)
             {

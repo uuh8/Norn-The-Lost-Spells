@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Passed" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-18 17:53:59Z" end-time="2026-10-18 17:54:18Z" duration="19.319673">
+  <test-suite type="TestSuite" id="1896" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="813" result="Passed" start-time="2026-10-18 17:53:59Z" end-time="2026-10-18 17:54:18Z" duration="19.319673" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1889" name="Game.Run.PlayMode.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.PlayMode.Tests.dll" runstate="Runnable" testcasecount="795" result="Passed" start-time="2026-10-18 17:53:59Z" end-time="2026-10-18 17:54:18Z" duration="19.197562" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26084" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1890" name="Game" fullname="Game" runstate="Runnable" testcasecount="795" result="Passed" start-time="2026-10-18 17:53:59Z" end-time="2026-10-18 17:54:18Z" duration="19.185368" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1891" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="795" result="Passed" start-time="2026-10-18 17:53:59Z" end-time="2026-10-18 17:54:18Z" duration="19.174522" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1892" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="795" result="Passed" start-time="2026-10-18 17:53:59Z" end-time="2026-10-18 17:54:18Z" duration="19.155189" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1297" name="HubSpellResearchPlayModeTests" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" testcasecount="11" result="Passed" start-time="2026-10-18 17:53:59Z" end-time="2026-10-18 17:54:18Z" duration="19.134326" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1308" name="HomeResearchAreaOpensWithFAndKeepsDungeonEntryClosed" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.HomeResearchAreaOpensWithFAndKeepsDungeonEntryClosed" methodname="HomeResearchAreaOpensWithFAndKeepsDungeonEntryClosed" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="2031010745" result="Passed" start-time="2026-10-18 17:53:59Z" end-time="2026-10-18 17:54:09Z" duration="9.394338" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[ElementField] Fluid Collider Root 与 Simulation Bounds Center 必须赋值，且 Bounds Size 三轴大于 0，GPU PBF 已禁用。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[ElementField] Element World: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/5 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/5 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/5 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1307" name="ResearchComplexHomeFiniteMulticastMatchesActualGraphAndImpacts" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.ResearchComplexHomeFiniteMulticastMatchesActualGraphAndImpacts" methodname="ResearchComplexHomeFiniteMulticastMatchesActualGraphAndImpacts" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="797421605" result="Passed" start-time="2026-10-18 17:54:09Z" end-time="2026-10-18 17:54:18Z" duration="9.564377" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Account API did not become accessible within 30 seconds. This may be due to network issues or editor focus.
+[ElementField] Fluid Collider Root 与 Simulation Bounds Center 必须赋值，且 Bounds Size 三轴大于 0，GPU PBF 已禁用。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[ElementField] Element World: GC 0/11 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/11 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/61 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/61 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/61 frames, total 0 B, max 0 B/frame.
+Saving results to: Temp/SinglePlayer/playmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

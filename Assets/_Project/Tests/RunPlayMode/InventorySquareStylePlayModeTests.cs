@@ -17,7 +17,7 @@ namespace Game.Run.Tests
         private static T Ref<T>(Object target,string field) where T:Object
         { var value=new SerializedObject(target).FindProperty(field); return value==null?null:(T)value.objectReferenceValue; }
 
-        [UnityTest] public IEnumerator SpellCardsShowOnlyLargeTopLeftFiniteCountAndUnlimitedIsBlank()
+        [UnityTest] public IEnumerator SpellCardsShowOnlyLargeBottomCenterFiniteCountAndZeroIsBlank()
         {
             Backpack.OpenBackpack();yield return null;
             Assert.That(Session.Profile.Items.TryMove("fire",new ItemLocation(ItemLocationKind.WandSlot,"w0",0,0,0,0)).Success,Is.True);
@@ -35,9 +35,10 @@ namespace Game.Run.Tests
             {
                 if(card.Snapshot.Kind!=ItemKind.Spell || string.IsNullOrEmpty(card.Snapshot.InstanceId))continue;
                 seen++;var count=Ref<Text>(card,"_spellCount");Assert.That(count,Is.Not.Null,"次数必须有可独立编辑的Text");
-                string expected=card.Snapshot.HasUnlimitedCharges?"":card.Snapshot.RemainingCharges.ToString();
+                string expected=card.Snapshot.HasUnlimitedCharges || card.Snapshot.RemainingCharges<=0?"":card.Snapshot.RemainingCharges.ToString();
                 Assert.That(count.text,Is.EqualTo(expected));Assert.That(Ref<Text>(card,"_label").text,Is.Empty);
-                Assert.That(count.alignment,Is.EqualTo(TextAnchor.UpperLeft));Assert.That(count.fontSize,Is.GreaterThanOrEqualTo(24));
+                Assert.That(count.alignment,Is.EqualTo(TextAnchor.LowerCenter));Assert.That(count.fontSize,Is.GreaterThanOrEqualTo(24));
+                Assert.That(count.rectTransform.anchorMax.y,Is.LessThanOrEqualTo(.55f));
                 Assert.That(count.resizeTextForBestFit,Is.False,"不能将次数缩成不可读小字");
                 if(expected.Length>0)
                 {Assert.That(count.cachedTextGenerator.vertexCount,Is.GreaterThanOrEqualTo(expected.Length*4));Assert.That(count.cachedTextGenerator.characterCountVisible,Is.EqualTo(expected.Length));}

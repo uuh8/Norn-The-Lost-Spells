@@ -26,7 +26,7 @@ namespace Game.Run.Tests
             if (!large && !big) return catalog;
             var clone = UnityEngine.Object.Instantiate(catalog); TemporaryAssets.Add(clone);
             var data = new SerializedObject(clone); var list = data.FindProperty("_definitions"); int original = list.arraySize, additions = large ? 120 : 1;
-            var template = AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Hub/SinglePlayerWands/fire.asset");
+            var template = AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Spell/Items/Item_Spell_Emit_Fireball.asset");
             list.arraySize += additions;
             for (int i = 0; i < additions; i++)
             {
@@ -46,7 +46,7 @@ namespace Game.Run.Tests
         {
             if(TestContext.CurrentContext.Test.Name=="InitialGoldSynchronizesAllThreeWindowsAfterBuyAndSell")
             {
-                var seeds=UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<SinglePlayerStartingInventory>("Assets/_Project/ScriptableObjects/SinglePlayer/Hub/SinglePlayerRaids/StartingInventory.asset"));TemporaryAssets.Add(seeds);
+                var seeds=UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<SinglePlayerStartingInventory>("Assets/_Project/ScriptableObjects/World/Hub/Inventory/StartingInventory.asset"));TemporaryAssets.Add(seeds);
                 var data=new SerializedObject(seeds);data.FindProperty("_initialCurrency").longValue=5000;data.ApplyModifiedPropertiesWithoutUndo();
                 Assert.That(seeds.TryCreate(index,out var seeded,out _),Is.True);profile.Currency=seeded.Currency;
             }

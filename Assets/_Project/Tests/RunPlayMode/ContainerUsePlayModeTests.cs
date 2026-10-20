@@ -23,7 +23,7 @@ namespace Game.Run.Tests
     {
         private InputTestFixture _input;
         private const string ScenePath = "Assets/_Project/Scenes/Tests/ContainerSandbox.unity";
-        private const string Root = "Assets/_Project/ScriptableObjects/Tests/SinglePlayerContainers/";
+        private const string Root = "Assets/_Project/Tests/Fixtures/Run/SinglePlayerContainers/";
         private Scene _scene;
         private SinglePlayerInventorySession _session;
         private MaterialCollectionController _collection;
@@ -59,9 +59,9 @@ namespace Game.Run.Tests
             _session = Find<SinglePlayerInventorySession>(); _collection = Find<MaterialCollectionController>(); _use = Find<ContainerUseController>();
             _world = Find<ElementWorldRuntime>(); _supply = Find<ContainerSandboxMaterialAuthoring>();
             // 小型Sandbox验证守恒/碰撞，不是力度验收。补真实模型并限制测试投程，生产24m/s由UnifiedItems测试独立证明。
-            var catalog = UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<ItemCatalog>(Root + "Catalog.asset")); _temporary.Add(catalog);
+            var catalog = UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<ItemCatalog>("Assets/_Project/Tests/Fixtures/Run/SinglePlayerContainers/Catalog.asset")); _temporary.Add(catalog);
             var catalogData = new SerializedObject(catalog); var definitions = catalogData.FindProperty("_definitions");
-            var bottleModel = AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Items/Container/Container_01.asset").WorldModel;
+            var bottleModel = AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/Containers/Item_Container_01.asset").WorldModel;
             for (int i = 0; i < definitions.arraySize; i++)
             {
                 var source = (ItemDefinition)definitions.GetArrayElementAtIndex(i).objectReferenceValue; if (source.Kind != ItemKind.Container) continue;
@@ -73,7 +73,7 @@ namespace Game.Run.Tests
             var parameters = new SerializedObject(configuration); parameters.FindProperty("_throwSpeed").floatValue = 1.5f; parameters.FindProperty("_throwLift").floatValue = 0; parameters.ApplyModifiedPropertiesWithoutUndo();
             useData.FindProperty("_definition").objectReferenceValue = configuration; useData.ApplyModifiedPropertiesWithoutUndo();
             Assert.That(_session.ConfigureAndInitialize(catalog,
-                AssetDatabase.LoadAssetAtPath<SinglePlayerStartingInventory>(Root + "StartingInventory.asset"), _directory), Is.True);
+                AssetDatabase.LoadAssetAtPath<SinglePlayerStartingInventory>("Assets/_Project/Tests/Fixtures/Run/SinglePlayerContainers/StartingInventory.asset"), _directory), Is.True);
         }
         private void Fill(ulong budget = 30)
         {

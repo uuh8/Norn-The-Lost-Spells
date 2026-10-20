@@ -11,13 +11,11 @@ namespace Game.Skills.Tests
     public sealed class PoisonSpellContentTests
     {
         private const string PoisonSpellPath =
-            "Assets/_Project/ScriptableObjects/Spell/Spell_Emit_PoisonProjectile.asset";
+            "Assets/_Project/ScriptableObjects/Spell/Definitions/Spell_Emit_PoisonProjectile.asset";
         private const string PoisonIconPath =
             "Assets/_Project/Art/UI/Skill_Icon/Spell_Emit_Poisonball.png";
         private const string FullLibraryPath =
-            "Assets/_Project/ScriptableObjects/SpellLibrary.asset";
-        private const string StartingLibraryPath =
-            "Assets/_Project/ScriptableObjects/P7/P7_StartingSpellLibrary.asset";
+            "Assets/_Project/ScriptableObjects/Spell/Libraries/SpellLibrary_Player.asset";
         private const string WaterProjectilePath =
             "Assets/_Project/Art/Elemental/Prefabs/PF_ElementWaterProjectile.prefab";
         private const string PoisonProjectileMaterialPath =
@@ -108,8 +106,7 @@ namespace Game.Skills.Tests
         }
 
         [TestCase(FullLibraryPath)]
-        [TestCase(StartingLibraryPath)]
-        public void PoisonSpellIsAvailableFromFullAndP7StartingLibraries(string libraryPath)
+        public void PoisonSpellIsAvailableFromPlayerLibrary(string libraryPath)
         {
             SpellDefinition poison = AssetDatabase.LoadAssetAtPath<SpellDefinition>(PoisonSpellPath);
             SpellLibrary library = AssetDatabase.LoadAssetAtPath<SpellLibrary>(libraryPath);

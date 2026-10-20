@@ -1,0 +1,30 @@
+{
+    "Utc": "2026-10-19T15:22:47.1991155Z",
+    "Scope": "Home production world; actual Fire cells fall and renderer simulates/draws after 12 warmup frames; test injections and whole-frame allocations reported separately",
+    "Trace": "",
+    "First": 732,
+    "Last": 796,
+    "Frames": 65,
+    "MainThreadMs": 16.623763040395884,
+    "MainThreadGcBytes": 17682,
+    "Markers": [
+        {
+            "Name": "ElementWorld.Simulate.FireFall",
+            "Samples": 75,
+            "MaxMs": 0.3991999924182892,
+            "GcBytes": 0
+        },
+        {
+            "Name": "GpuFire.ParcelLifecycle",
+            "Samples": 65,
+            "MaxMs": 0.06419999897480011,
+            "GcBytes": 0
+        },
+        {
+            "Name": "GpuFire.Draw",
+            "Samples": 65,
+            "MaxMs": 0.016999999061226846,
+            "GcBytes": 0
+        }
+    ]
+}

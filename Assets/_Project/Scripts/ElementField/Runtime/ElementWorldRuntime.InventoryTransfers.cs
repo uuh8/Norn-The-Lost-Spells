@@ -1,4 +1,5 @@
 using Game.Materials;
+using UnityEngine;
 
 namespace Game.ElementField
 {
@@ -11,6 +12,12 @@ namespace Game.ElementField
         internal void RecordInventoryExport(MaterialId material, ulong quantity) => _inventoryExports[(byte)material] += quantity;
         public ulong ExportedMaterialQuantity(MaterialId material) => _inventoryExports[(byte)material];
         internal void RecordInventoryImport(MaterialId material, ulong quantity) => _inventoryImports[(byte)material] += quantity;
+        internal void RetainInventoryDepositActivity(Vector3 point,float radius)
+        {
+            // 真实投掷命中可远离玩家活动圈，沿用法术写入租约；圈只调度模拟，不能拒绝合法投放。
+            var request=new ElementWriteRequest(point,MaterialId.Water,0,radius,false);
+            RetainWriteActivity(in request);
+        }
         public ulong ImportedMaterialQuantity(MaterialId material) => _inventoryImports[(byte)material];
         // 独立数量验收只暂停 Solver，仍维护活动圈和 Registry；禁用组件会触发 OnDisable 清空活动域。
         public bool SimulationPausedForDebug { get; private set; }

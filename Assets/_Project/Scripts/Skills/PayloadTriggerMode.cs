@@ -9,6 +9,7 @@ namespace Game.Skills
     {
         None = 0,       // 普通产出，不保存也不运行后续 Action。
         OnImpact = 1,   // 命中敌方或环境后，以命中点和命中方向运行 Payload；同阵营穿过不触发。
-        AfterDelay = 2  // 投射物存活到指定秒数后，以当前位置和当前方向运行；提前碰撞/销毁则不会到点触发。
+        AfterDelay = 2, // 投射物存活到指定秒数后，以当前位置和当前方向运行；提前碰撞/销毁则不会到点触发。
+        OnTermination = 3 // 只响应真实命中或正常寿命结束；Cancel/卸载不释放攻击。
     }
 }

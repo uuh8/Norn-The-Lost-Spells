@@ -1,0 +1,683 @@
+{
+  "Mode": "EditMode",
+  "Editor": "6000.3.16f1",
+  "Passed": 135,
+  "Failed": 0,
+  "Cases": [
+    {
+      "Name": "Game.Run.Tests.WandProgramWorkbenchViewTests.CollapsingScope_IsAViewChoiceThatPreservesGraph",
+      "Result": "Passed",
+      "Duration": "0.027865"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramWorkbenchViewTests.InspectAndSeek_LeaveSimulationSourceSnapshotUnchanged",
+      "Result": "Passed",
+      "Duration": "0.020479"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramWorkbenchViewTests.InvalidSampleSelection_DoesNotReuseLastValidProgram",
+      "Result": "Passed",
+      "Duration": "0.015364"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramWorkbenchViewTests.ModifierSelection_LinksOnlySameScopeOutputs",
+      "Result": "Passed",
+      "Duration": "0.014639"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramWorkbenchViewTests.MulticastSelection_FollowsActualDrawRequestsIncludingTriggerChild",
+      "Result": "Passed",
+      "Duration": "0.016878"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramWorkbenchViewTests.SevenCardExample_ShowsAllFourOutputsInGraphViewport",
+      "Result": "Passed",
+      "Duration": "0.050900"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramWorkbenchViewTests.StepCursor_HidesFinalValuesBeforeScopeCloses",
+      "Result": "Passed",
+      "Duration": "0.018644"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramWorkbenchViewTests.WorkbenchContract_IsAnIndependentUguiPresenter",
+      "Result": "Passed",
+      "Duration": "0.000680"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.AfterDelayTrigger_AtSequenceEnd_HasNoPayloadAndNoRuntimeTrigger",
+      "Result": "Passed",
+      "Duration": "0.005669"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.AfterDelayTrigger_CapturesOneActionAndDelay",
+      "Result": "Passed",
+      "Duration": "0.000935"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.BaseDraws_LimitsEmits",
+      "Result": "Passed",
+      "Duration": "0.000453"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.BounceModifier_BakesBounceCount_IntoEmit",
+      "Result": "Passed",
+      "Duration": "0.000612"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.BounceModifier_StacksAdditively",
+      "Result": "Passed",
+      "Duration": "0.000319"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.DamageMod_AfterEmit_DoesNotBoostIt",
+      "Result": "Passed",
+      "Duration": "0.000380"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.DamageMod_BeforeEmit_BoostsIt",
+      "Result": "Passed",
+      "Duration": "0.000277"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.DamageMultiplier_ScalesEveryMeteorDamageChannel",
+      "Result": "Passed",
+      "Duration": "0.000375"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.EmitShield_BakesForwardProjectileAndReflectCount",
+      "Result": "Passed",
+      "Duration": "0.000399"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.EmitShield_BakesMotionModifiers",
+      "Result": "Passed",
+      "Duration": "0.000549"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.EmptyWand_EmitsNothing",
+      "Result": "Passed",
+      "Duration": "0.000476"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.EnoughMana_EmitsAll_ReportsSpent",
+      "Result": "Passed",
+      "Duration": "0.000598"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.EstimateManaCost_IncludesCurrentLayerOnly_AndDoesNotPrepayTriggerPayload",
+      "Result": "Passed",
+      "Duration": "0.001115"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.FlatDamageBonus_DoesNotRepeatOnExplosionOrEveryFireFieldTick",
+      "Result": "Passed",
+      "Duration": "0.000621"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.GravityModifier_BakesUseGravity_IntoEmit",
+      "Result": "Passed",
+      "Duration": "0.000403"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.HomingModifier_BakesHomingConfig_IntoEmit",
+      "Result": "Passed",
+      "Duration": "0.000349"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.HomingModifier_OnlyAffectsFollowingEmit",
+      "Result": "Passed",
+      "Duration": "0.000373"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.InsufficientMana_FizzlesMidCast",
+      "Result": "Passed",
+      "Duration": "0.000350"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.InsufficientMana_OnModify_FizzlesBeforeFollowingEmit",
+      "Result": "Passed",
+      "Duration": "0.000283"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.LaterHomingMotionModifier_OverridesEarlierOrbitForEmit",
+      "Result": "Passed",
+      "Duration": "0.000609"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.LaterOrbitMotionModifier_OverridesEarlierHomingForEmit",
+      "Result": "Passed",
+      "Duration": "0.000646"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.ManaCost_IncludesModifyAndMulticast_WhenTheyAreRead",
+      "Result": "Passed",
+      "Duration": "0.000587"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.Modifiers_BakeSpeedSpreadAndFlatDamage_IntoEmit",
+      "Result": "Passed",
+      "Duration": "0.000390"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.Modify_AffectsFollowingStaticProjectile",
+      "Result": "Passed",
+      "Duration": "0.000330"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.Multicast_AfterEmit_ReopensBudget",
+      "Result": "Passed",
+      "Duration": "0.000331"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.Multicast_BudgetUnfilled_IsDiscarded_NoWrap",
+      "Result": "Passed",
+      "Duration": "0.000328"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.Multicast_CountsStaticProjectileAsProjectileOutput",
+      "Result": "Passed",
+      "Duration": "0.000710"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.NestedTrigger_ActionCaptureRemainsStrictlyShorter",
+      "Result": "Passed",
+      "Duration": "0.000931"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.NonTrigger_HasNoPayload",
+      "Result": "Passed",
+      "Duration": "0.000402"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.NullSpellEntry_IsSkipped",
+      "Result": "Passed",
+      "Duration": "0.000346"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.OnImpactTrigger_AtSequenceEnd_HasNoPayloadAndNoRuntimeTrigger",
+      "Result": "Passed",
+      "Duration": "0.000482"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.OnImpactTrigger_CapturesOneActionAsPayload_AndEndsWhenOuterBudgetIsSpent",
+      "Result": "Passed",
+      "Duration": "0.000550"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.OnImpactTrigger_IgnoresPayloadDelaySeconds",
+      "Result": "Passed",
+      "Duration": "0.000541"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.OnImpactTrigger_PayloadExcludesTriggerItself",
+      "Result": "Passed",
+      "Duration": "0.000390"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.OrbitModifier_BakesOrbitConfig_IntoEmit",
+      "Result": "Passed",
+      "Duration": "0.000325"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.PayloadTrigger_PayloadModsPreserveBounceCount",
+      "Result": "Passed",
+      "Duration": "0.000340"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.PayloadTrigger_PayloadModsPreserveHomingConfig",
+      "Result": "Passed",
+      "Duration": "0.000408"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.PayloadTrigger_PayloadModsPreserveOrbitConfig",
+      "Result": "Passed",
+      "Duration": "0.000474"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.PayloadTrigger_PayloadModsPreserveUseGravity",
+      "Result": "Passed",
+      "Duration": "0.000346"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.PayloadTrigger_PayloadModsSnapshotIsPreserved",
+      "Result": "Passed",
+      "Duration": "0.000355"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.Preview_FireballThenMulticast_ReportsImmediateCostAndRemainingBudget",
+      "Result": "Passed",
+      "Duration": "0.000349"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.RepeatedDamageMultipliers_ProduceLinearFinalDamage",
+      "Result": "Passed",
+      "Duration": "0.000345"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.ShieldStaticProjectile_ConsumesDrawBudgetLikeOtherStaticProjectiles",
+      "Result": "Passed",
+      "Duration": "0.000421"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.SingleFireball_EmitsOne_WithBaseValues",
+      "Result": "Passed",
+      "Duration": "0.000353"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.SpellKind_StaticProjectile_AppendsAfterExistingKinds",
+      "Result": "Passed",
+      "Duration": "0.000204"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.SpellSpawnMode_StaticAtPoint_AppendsAfterExistingModes",
+      "Result": "Passed",
+      "Duration": "0.000165"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.StaticProjectile_BakesThreeStageDamageSnapshot",
+      "Result": "Passed",
+      "Duration": "0.000309"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.StaticProjectile_ConsumesDrawBudget",
+      "Result": "Passed",
+      "Duration": "0.000340"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.StaticProjectile_EmitsOneCommand_WithSkyfallSpawnMode",
+      "Result": "Passed",
+      "Duration": "0.000550"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.StaticProjectile_Shield_BakesOrbitModifier",
+      "Result": "Passed",
+      "Duration": "0.000492"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.StaticProjectile_Shield_BakesStaticAtPointAndReflectCount",
+      "Result": "Passed",
+      "Duration": "0.000284"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.TriggerPayload_ActionIncludesInnerMulticastAndAllOfItsDraws",
+      "Result": "Passed",
+      "Duration": "0.000435"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.TriggerPayload_CanCaptureShieldStaticProjectile",
+      "Result": "Passed",
+      "Duration": "0.000448"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.TriggerPayload_CanCaptureStaticProjectile",
+      "Result": "Passed",
+      "Duration": "0.000331"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.TriggerPayload_ShieldPreservesIncomingModifierSnapshot",
+      "Result": "Passed",
+      "Duration": "0.000417"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.Triple_DamageMod_AppliesToAllEmits",
+      "Result": "Passed",
+      "Duration": "0.001028"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.Triple_WithThreeProjectiles_EmitsThree",
+      "Result": "Passed",
+      "Duration": "0.000318"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.TripleMulticast_DrawsThreeIndependentTriggerActions",
+      "Result": "Passed",
+      "Duration": "0.000450"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.ZeroCostSpells_NeverFizzle",
+      "Result": "Passed",
+      "Duration": "0.000258"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastModifierStateTests.Apply_Bounce_IsAdditive",
+      "Result": "Passed",
+      "Duration": "0.000741"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastModifierStateTests.Apply_DamageMul_Multiplies_LeavesSpeedUnchanged",
+      "Result": "Passed",
+      "Duration": "0.000350"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastModifierStateTests.Apply_Gravity_IsEnabledByAnyModifier",
+      "Result": "Passed",
+      "Duration": "0.000458"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastModifierStateTests.Apply_Homing_UsesMaxRadiusAndAddsDurationAndTurnRate",
+      "Result": "Passed",
+      "Duration": "0.000281"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastModifierStateTests.Apply_MotionControl_LaterHomingOverridesEarlierOrbit",
+      "Result": "Passed",
+      "Duration": "0.000472"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastModifierStateTests.Apply_MotionControl_LaterOrbitOverridesEarlierHoming",
+      "Result": "Passed",
+      "Duration": "0.000306"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastModifierStateTests.Apply_Orbit_UsesMaxRadiusAddsAngularSpeedAndPhaseOffsetAndUsesMaxAbsPlaneTilt",
+      "Result": "Passed",
+      "Duration": "0.000306"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastModifierStateTests.Apply_RepeatedDamageMultipliers_StackTheirBonusAdditively",
+      "Result": "Passed",
+      "Duration": "0.000250"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastModifierStateTests.Apply_SpreadAndFlat_AreAdditive",
+      "Result": "Passed",
+      "Duration": "0.000294"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastModifierStateTests.Default_IsIdentity",
+      "Result": "Passed",
+      "Duration": "0.000293"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellExecutionTraceContractTests.CandidateMana_ChangesAtPaymentEventRatherThanAnUnrelatedMovement",
+      "Result": "Passed",
+      "Duration": "0.002541"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellExecutionTraceContractTests.DrawRequest_IdentifiesTheInstructionThatRequestedIt",
+      "Result": "Passed",
+      "Duration": "0.002836"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellExecutionTraceContractTests.EveryEventHasMonotonicIdentity_AndScopeClosureFollowsItsOutputs",
+      "Result": "Passed",
+      "Duration": "0.002126"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellExecutionTraceContractTests.ManaPaid_RecordsFiniteUseBeforeAndAfterForUi",
+      "Result": "Passed",
+      "Duration": "0.001520"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellExecutionTraceContractTests.ReusingBuffer_DoesNotMutateEarlierGraphOrTrace",
+      "Result": "Passed",
+      "Duration": "0.000713"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.AuthoringChangesAfterCompile_DoNotChangeFrozenRules",
+      "Result": "Passed",
+      "Duration": "0.004917"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.DuplicateOwnedId_IsRejected",
+      "Result": "Passed",
+      "Duration": "0.000618"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.EmptyProgram_CompilesForAnExplicitEmptyState",
+      "Result": "Passed",
+      "Duration": "0.000243"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.EveryFloatAuthoringField_RejectsNaNAndInfinity",
+      "Result": "Passed",
+      "Duration": "0.001853"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.ExistingDoubleExtraDrawsOne_BecomesTwoDrawRequests",
+      "Result": "Passed",
+      "Duration": "0.000407"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.FiniteNegativeMana_IsAllowedOnlyInV2Compilation",
+      "Result": "Passed",
+      "Duration": "0.000405"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.InvalidBaseDraws_IsRejected(0)",
+      "Result": "Passed",
+      "Duration": "0.001045"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.InvalidBaseDraws_IsRejected(-1)",
+      "Result": "Passed",
+      "Duration": "0.000150"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.InvalidBaseDraws_IsRejected(1025)",
+      "Result": "Passed",
+      "Duration": "0.000133"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.InvalidTimingAndEnums_AreRejected",
+      "Result": "Passed",
+      "Duration": "0.000489"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.ModifiersAndTimeAreFrozen_NotReadFromDefinitionDuringBuild",
+      "Result": "Passed",
+      "Duration": "0.000464"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.NullSlotsAreSkipped_OriginalSlotAndDistinctInstanceIdsRemain",
+      "Result": "Passed",
+      "Duration": "0.000759"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.UnimplementedOpcode_IsRejectedWithSourceSlot(4)",
+      "Result": "Passed",
+      "Duration": "0.001024"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.UnimplementedOpcode_IsRejectedWithSourceSlot(255)",
+      "Result": "Passed",
+      "Duration": "0.000209"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.V2CompilerContract_IsAvailableWithoutReplacingLegacy",
+      "Result": "Passed",
+      "Duration": "0.000410"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramGraphTests.FrozenGraph_IgnoresDefinitionAndSourceOrderEdits",
+      "Result": "Passed",
+      "Duration": "0.001150"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramGraphTests.NoitaEightCardGolden_ReadOrderAndIndependentScopes",
+      "Result": "Passed",
+      "Duration": "0.003022"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.ChildCastDelay_DoesNotChangeRootInterval_ButReloadIsShared",
+      "Result": "Passed",
+      "Duration": "0.001014"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.CurrentHand_IsNotRecycledToSatisfyMulticast",
+      "Result": "Passed",
+      "Duration": "0.000513"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.DrawMachineContract_IsAvailableAsAnIndependentInterpreter",
+      "Result": "Passed",
+      "Duration": "0.000285"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.EndingRootDraw_DoesNotScanLaterMulticast",
+      "Result": "Passed",
+      "Duration": "0.000521"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.IneligibleCard_DoesNotPayManaOrUses",
+      "Result": "Passed",
+      "Duration": "0.002928"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.InvalidSnapshot_DoesNotPublishCandidate",
+      "Result": "Passed",
+      "Duration": "0.000948"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.LastUse_IsRemovedFromNextDeck_WhileFrozenOutputRemains",
+      "Result": "Passed",
+      "Duration": "0.000467"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.LateDamageModifier_AffectsEarlierOutputInSameScope",
+      "Result": "Passed",
+      "Duration": "0.000632"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.ModifierOnly_IsALegalZeroOutputAdvance",
+      "Result": "Passed",
+      "Duration": "0.000401"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.MotionOverrideAndDamageFormula_MatchLegacyMath",
+      "Result": "Passed",
+      "Duration": "0.000810"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.NegativeMana_IsAppliedInOrderAndClamped(0,25)",
+      "Result": "Passed",
+      "Duration": "0.001309"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.NegativeMana_IsAppliedInOrderAndClamped(90,95)",
+      "Result": "Passed",
+      "Duration": "0.000362"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.NestedMulticast_DrawCallsProduceThreeOutputs",
+      "Result": "Passed",
+      "Duration": "0.000578"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.NonFiniteComputedResult_IsRejected",
+      "Result": "Passed",
+      "Duration": "0.000609"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.OutputLimit_IsAtomic(128,True)",
+      "Result": "Passed",
+      "Duration": "0.010325"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.OutputLimit_IsAtomic(129,False)",
+      "Result": "Passed",
+      "Duration": "0.005922"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.ReloadDelta_AccumulatesAcrossRootsAndResetsAtReload",
+      "Result": "Passed",
+      "Duration": "0.001757"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.SevenCardExample_ExplainsTwoRootAndTwoChildOutputs",
+      "Result": "Passed",
+      "Duration": "0.001284"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.TechnicalStepLimit_RejectsEntireCandidateWithoutChangingBefore",
+      "Result": "Passed",
+      "Duration": "0.036652"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.TraceOnOffAndTruncation_DoNotChangeCandidateResults",
+      "Result": "Passed",
+      "Duration": "0.003470"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.TrailingModifier_WrapsPreviousDiscardAndTriggersReload",
+      "Result": "Passed",
+      "Duration": "0.001493"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.TriggerDepth_IsBounded(16,True)",
+      "Result": "Passed",
+      "Duration": "0.001984"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.TriggerDepth_IsBounded(17,False)",
+      "Result": "Passed",
+      "Duration": "0.001133"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.TriggerPayloadMana_IsPaidDuringRootBuild",
+      "Result": "Passed",
+      "Duration": "0.001016"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.TriggerScopes_HaveIndependentModifiers(True)",
+      "Result": "Passed",
+      "Duration": "0.002128"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.TriggerScopes_HaveIndependentModifiers(False)",
+      "Result": "Passed",
+      "Duration": "0.000585"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.TwoClicks_ContinueDeckInsteadOfRestartingFirstCard",
+      "Result": "Passed",
+      "Duration": "0.001476"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.UnaffordableCard_IsSkippedAndLaterAffordableCardRuns",
+      "Result": "Passed",
+      "Duration": "0.000939"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramPreviewTests.ExhaustedFiniteUses_StopWithoutLoopingEmptyState",
+      "Result": "Passed",
+      "Duration": "0.001202"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramPreviewTests.FromBeginning_IsExplicitlyDifferentFromActualNextRoot",
+      "Result": "Passed",
+      "Duration": "0.001493"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramPreviewTests.InvalidPreviewBudget_IsRejected(0)",
+      "Result": "Passed",
+      "Duration": "0.001589"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramPreviewTests.InvalidPreviewBudget_IsRejected(33)",
+      "Result": "Passed",
+      "Duration": "0.000314"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramPreviewTests.PreviewContract_UsesAnIndependentReadonlySimulation",
+      "Result": "Passed",
+      "Duration": "0.000631"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramPreviewTests.RepeatedPreview_NeverAdvancesOriginalDeckOrRandom",
+      "Result": "Passed",
+      "Duration": "0.005032"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramPreviewTests.RootBudget_IsVisibleTruncationAndNeverChangesMachineBudget",
+      "Result": "Passed",
+      "Duration": "0.001415"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramPreviewTests.VirtualClock_RecoversManaOnlyBetweenRoots",
+      "Result": "Passed",
+      "Duration": "0.001209"
+    }
+  ]
+}

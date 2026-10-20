@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-18 14:35:24Z" end-time="2026-10-18 14:35:26Z" duration="2.0943853">
+  <test-suite type="TestSuite" id="1891" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="808" result="Failed" site="Child" start-time="2026-10-18 14:35:24Z" end-time="2026-10-18 14:35:26Z" duration="2.094385" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1884" name="Game.Run.PlayMode.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.PlayMode.Tests.dll" runstate="Runnable" testcasecount="790" result="Failed" site="Child" start-time="2026-10-18 14:35:24Z" end-time="2026-10-18 14:35:26Z" duration="1.989572" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26084" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1885" name="Game" fullname="Game" runstate="Runnable" testcasecount="790" result="Failed" site="Child" start-time="2026-10-18 14:35:24Z" end-time="2026-10-18 14:35:26Z" duration="1.979374" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1886" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="790" result="Failed" site="Child" start-time="2026-10-18 14:35:24Z" end-time="2026-10-18 14:35:26Z" duration="1.963873" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1887" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="790" result="Failed" site="Child" start-time="2026-10-18 14:35:24Z" end-time="2026-10-18 14:35:26Z" duration="1.946208" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1515" name="OwnedWandV2PlayModeTests" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-10-18 14:35:24Z" end-time="2026-10-18 14:35:26Z" duration="1.927538" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1524" name="MouseHeldFromPausedUiNeedsReleaseBeforeV2ContinuousFire" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.MouseHeldFromPausedUiNeedsReleaseBeforeV2ContinuousFire" methodname="MouseHeldFromPausedUiNeedsReleaseBeforeV2ContinuousFire" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="1661000114" result="Failed" start-time="2026-10-18 14:35:24Z" end-time="2026-10-18 14:35:26Z" duration="1.862896" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  UI中的按住不能在关闭后变成连续射击。
+  Expected: 0
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OwnedWandV2PlayModeTests+<MouseHeldFromPausedUiNeedsReleaseBeforeV2ContinuousFire>d__28.MoveNext () [0x000fe] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\RunPlayMode\OwnedWandV2PlayModeTests.cs:155
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in .\Library\PackageCache\com.unity.test-framework@aebcb98460c6\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/playmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

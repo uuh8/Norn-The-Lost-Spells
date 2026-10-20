@@ -35,6 +35,26 @@ namespace Game.Run.Tests
             yield return null;
         }
 
+        [UnityTest] public IEnumerator ThreeHalfLifeCardsUsePrefabLifetimeAtRuntime(){return CheckHalfLife(-1);}
+        [UnityTest] public IEnumerator ThreeHalfLifeCardsUseExplicitLifetimeAtRuntime(){return CheckHalfLife(5);}
+        private IEnumerator CheckHalfLife(float lifetime)
+        {
+            var prefab=CreateProjectilePrefab();
+            SetPrivateField(prefab,"_maxLifetime",5f);
+            var emit=CreateEmit("Lifetime",0,prefab.gameObject);emit.LifetimeSeconds=lifetime;
+            var modifier=CreateEmit("Half",0,null);modifier.Kind=SpellKind.Modify;modifier.ModLifetimeMul=.5f;
+            var wand=CreateWand(modifier,modifier,modifier,emit);var caster=CreateZeroManaCaster(wand);
+            Assert.That(caster.CastProgram(wand,new Vector3(200,100,200),Vector3.forward,2,100,null,SpellManaPolicy.IgnoreMana),Is.EqualTo(1));
+            var projectile=FindRuntimeProjectile(prefab);Assert.That(projectile,Is.Not.Null);_createdObjects.Add(projectile.gameObject);
+            // 测试模板刻意inactive以免自身参与场景；克隆需激活才会收到Unity的Update生命周期。
+            projectile.gameObject.SetActive(true);
+            var remaining=typeof(ProjectileBase).GetField("_lifetimeRemaining",BindingFlags.Instance|BindingFlags.NonPublic);
+            Assert.That((float)remaining.GetValue(projectile),Is.EqualTo(.625f).Within(.0001f));
+            bool expired=false;projectile.Terminated+=(reason,point,direction)=>expired=reason==ProjectileTerminationReason.LifetimeExpired;
+            yield return new WaitForSeconds(.3f);Assert.That(projectile!=null,Is.True);
+            yield return new WaitForSeconds(.5f);Assert.That(expired,Is.True);Assert.That(projectile==null,Is.True);
+        }
+
         [UnityTest]
         public IEnumerator CastProgram_IgnoreManaPropagatesIntoImpactPayload()
         {

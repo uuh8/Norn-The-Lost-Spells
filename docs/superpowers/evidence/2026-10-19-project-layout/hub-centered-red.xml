@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-19 06:25:03Z" end-time="2026-10-19 06:25:10Z" duration="7.2739565">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2127" result="Failed" site="Child" start-time="2026-10-19 06:25:03Z" end-time="2026-10-19 06:25:10Z" duration="7.273957" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3388" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="659" result="Failed" site="Child" start-time="2026-10-19 06:25:03Z" end-time="2026-10-19 06:25:10Z" duration="7.172780" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22796" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3389" name="Game" fullname="Game" runstate="Runnable" testcasecount="659" result="Failed" site="Child" start-time="2026-10-19 06:25:03Z" end-time="2026-10-19 06:25:10Z" duration="7.084285" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3390" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="659" result="Failed" site="Child" start-time="2026-10-19 06:25:03Z" end-time="2026-10-19 06:25:10Z" duration="6.985756" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3391" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="659" result="Failed" site="Child" start-time="2026-10-19 06:25:04Z" end-time="2026-10-19 06:25:10Z" duration="6.885112" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2705" name="HubCenteredArchitectureTests" fullname="Game.Run.Tests.HubCenteredArchitectureTests" classname="Game.Run.Tests.HubCenteredArchitectureTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-19 06:25:04Z" end-time="2026-10-19 06:25:10Z" duration="6.784260" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="2709" name="DungeonUsesCarriedInventoryWithoutLegacyStarterSession" fullname="Game.Run.Tests.HubCenteredArchitectureTests.DungeonUsesCarriedInventoryWithoutLegacyStarterSession" classname="Game.Run.Tests.HubCenteredArchitectureTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-19 06:25:04Z" end-time="2026-10-19 06:25:10Z" duration="6.576763" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2707" name="DungeonUsesCarriedInventoryWithoutLegacyStarterSession(&quot;Assets/_Project/Scenes/P7_DemoRun.unity&quot;)" fullname="Game.Run.Tests.HubCenteredArchitectureTests.DungeonUsesCarriedInventoryWithoutLegacyStarterSession(&quot;Assets/_Project/Scenes/P7_DemoRun.unity&quot;)" methodname="DungeonUsesCarriedInventoryWithoutLegacyStarterSession" classname="Game.Run.Tests.HubCenteredArchitectureTests" runstate="Runnable" seed="701294587" result="Failed" start-time="2026-10-19 06:25:04Z" end-time="2026-10-19 06:25:06Z" duration="2.234294" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Assets/_Project/Scenes/P7_DemoRun.unity
+  Expected: not collection containing "RunSpellSession"
+  But was:  < "RunSpellSession", "RunSessionCoordinator", "WandEditorController" >
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.HubCenteredArchitectureTests.DungeonUsesCarriedInventoryWithoutLegacyStarterSession (System.String path) [0x00057] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\HubCenteredArchitectureTests.cs:35
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2708" name="DungeonUsesCarriedInventoryWithoutLegacyStarterSession(&quot;Assets/_Project/Scenes/P8_BossField.unity&quot;)" fullname="Game.Run.Tests.HubCenteredArchitectureTests.DungeonUsesCarriedInventoryWithoutLegacyStarterSession(&quot;Assets/_Project/Scenes/P8_BossField.unity&quot;)" methodname="DungeonUsesCarriedInventoryWithoutLegacyStarterSession" classname="Game.Run.Tests.HubCenteredArchitectureTests" runstate="Runnable" seed="1044233471" result="Passed" start-time="2026-10-19 06:25:06Z" end-time="2026-10-19 06:25:10Z" duration="4.235293" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="2710" name="MainMenuStartsAtHub" fullname="Game.Run.Tests.HubCenteredArchitectureTests.MainMenuStartsAtHub" methodname="MainMenuStartsAtHub" classname="Game.Run.Tests.HubCenteredArchitectureTests" runstate="Runnable" seed="1451209650" result="Passed" start-time="2026-10-19 06:25:10Z" end-time="2026-10-19 06:25:10Z" duration="0.095127" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2706" name="RuntimeAssetFilesUseUnderscoresInsteadOfDottedIdentifiers" fullname="Game.Run.Tests.HubCenteredArchitectureTests.RuntimeAssetFilesUseUnderscoresInsteadOfDottedIdentifiers" methodname="RuntimeAssetFilesUseUnderscoresInsteadOfDottedIdentifiers" classname="Game.Run.Tests.HubCenteredArchitectureTests" runstate="Runnable" seed="1754086222" result="Failed" start-time="2026-10-19 06:25:10Z" end-time="2026-10-19 06:25:10Z" duration="0.010924" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Assets/_Project/ScriptableObjects\Spell\Compatibility\spell.damage.asset
+  Expected: not String containing "."
+  But was:  "spell.damage"
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.HubCenteredArchitectureTests.RuntimeAssetFilesUseUnderscoresInsteadOfDottedIdentifiers () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\HubCenteredArchitectureTests.cs:19
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

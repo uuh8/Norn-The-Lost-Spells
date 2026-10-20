@@ -34,9 +34,9 @@ namespace Game.UI
                 _panel.SetActive(false);
             }
 
-            RunSessionCoordinator session = RunSessionCoordinator.Current;
+            HubPracticeSession session = HubPracticeSession.Current;
             if (session != null &&
-                session.Stage == RunStage.MapOne &&
+                session.OwnsScene(gameObject.scene) &&
                 session.TryMarkGameplayGuideShown())
             {
                 Open();

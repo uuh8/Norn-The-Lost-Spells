@@ -31,5 +31,8 @@ namespace Game.Run
             CurrentMana = Math.Min(MaxMana, CurrentMana + ManaRegenPerSecond * dt);
             CooldownRemaining = Math.Max(0, CooldownRemaining - dt);
         }
+        // 只能由已校验的根事务调用；支持负成本恢复Mana，不经过Legacy非负cost接口。
+        internal void CommitExecution(float mana, float ready)
+        { CurrentMana = mana; CooldownRemaining = ready; }
     }
 }

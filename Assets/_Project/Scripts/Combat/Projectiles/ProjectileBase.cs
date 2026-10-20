@@ -5,6 +5,7 @@ using Unity.Profiling;
 
 namespace Game.Combat
 {
+    public enum ProjectileTerminationReason : byte { Impact, LifetimeExpired, Cancelled, TimedTrigger }
     /// <summary>
     /// 投射物基类。抽象所有飞行投射物的公共骨架：Init 注入伤害快照、初速度、碰撞规则与生命周期；
     /// Rigidbody/Physics 负责运动和接触检测，OnCollisionEnter 再统一处理同阵营穿过、敌方伤害与命中销毁。
@@ -36,6 +37,9 @@ namespace Game.Combat
         protected DamageType _type;
 
         private bool _consumed; // 防同一物理步多次碰撞重复结算/销毁
+        private bool _terminated;
+        private float _lifetimeRemaining, _lifetimeOverride=-1, _lifetimeDelta, _lifetimeMultiplier=1;
+        public event System.Action<ProjectileTerminationReason,Vector3,Vector3> Terminated;
         private Vector3 _launchVelocity; // Init 注入的初速度快照：同队穿过时据此恢复被弹偏的直线投射物速度
         private int _bounceRemaining;
         private float _currentSpeed;
@@ -107,6 +111,7 @@ namespace Game.Combat
 
         protected virtual void OnDestroy()
         {
+            NotifyTermination(ProjectileTerminationReason.Cancelled,transform.position,ResolveCurrentDirection());
             Finished?.Invoke();
             Unregister(); // 从在场表注销（命中销毁 / 超时自毁 / 场景卸载）
         }
@@ -124,6 +129,8 @@ namespace Game.Combat
 
         protected virtual void OnDisable()
         {
+            // 禁用/回滚/Scene清理都属于Cancel，不能借OnDestroy伪装正常寿命到点。
+            if(_initialized)NotifyTermination(ProjectileTerminationReason.Cancelled,transform.position,ResolveCurrentDirection());
             EventBus<WorldActivitySourceEvent>.Publish(new WorldActivitySourceEvent
                 { Source = transform, Kind = WorldActivitySourceKind.Projectile, Enabled = false });
             Unregister();
@@ -131,6 +138,12 @@ namespace Game.Combat
 
         private void Update()
         {
+            if(_initialized && !_consumed && !_terminated)
+            {
+                _lifetimeRemaining-=Time.deltaTime;
+                if(_lifetimeRemaining<=0)
+                {_consumed=true;NotifyTermination(ProjectileTerminationReason.LifetimeExpired,transform.position,ResolveCurrentDirection());Destroy(gameObject);return;}
+            }
             // 定时触发使用渲染帧时间，适合“经过若干游戏秒触发”的玩法计时；实际物理运动仍在 FixedUpdate。
             TickTimedTrigger();
             OnProjectileUpdate();
@@ -172,6 +185,7 @@ namespace Game.Combat
             _consumed = true;
             // ?.Invoke 表示有订阅者才调用；没有 Payload 监听时不会产生 NullReferenceException。
             TimedTriggerElapsed?.Invoke(transform.position, ResolveCurrentDirection());
+            NotifyTermination(ProjectileTerminationReason.TimedTrigger,transform.position,ResolveCurrentDirection());
             Destroy(gameObject);
         }
 
@@ -215,9 +229,16 @@ namespace Game.Combat
             if (velocity.sqrMagnitude > 1e-6f)
                 transform.rotation = Quaternion.LookRotation(velocity) * Quaternion.Euler(_modelForwardOffsetEuler);
 
-            // 延迟销毁是漏网保护：即使投射物一直没碰到任何对象，也不会无限留在场景中。
-            Destroy(gameObject, _maxLifetime);
+            // 明确倒计时才能区分正常寿命和取消；不再安排无法撤回/辨识原因的延迟Destroy。
+            _consumed=false;_terminated=false;ResetLifetime();
         }
+        public void ConfigureLifetime(float seconds,float additive=0,float multiplier=1)
+        { _lifetimeOverride=seconds;_lifetimeDelta=additive;_lifetimeMultiplier=multiplier;if(_initialized)ResetLifetime(); }
+        private void ResetLifetime()
+        { // 先以真实Prefab/覆盖值为基数加秒，再乘倍率；仅最终结果钳制，保持叠加可预测。
+            _lifetimeRemaining=(float)System.Math.Clamp(((double)(_lifetimeOverride<0?_maxLifetime:_lifetimeOverride)+_lifetimeDelta)*_lifetimeMultiplier,.01,600); }
+        private void NotifyTermination(ProjectileTerminationReason reason,Vector3 point,Vector3 direction)
+        { if(_terminated)return;_terminated=true;Terminated?.Invoke(reason,point,direction); }
 
         /// <summary>配置本次投射物可用的环境弹跳次数。由 SpellCaster 从 EmitCommand 注入。</summary>
         public void ConfigureBounce(int bounceCount)
@@ -382,6 +403,7 @@ namespace Game.Combat
                 _attackerTeam));
             // SpellCaster 若为该投射物绑定了 Payload，会在这个同步回调里以命中点运行下一层法术序列。
             Impacted?.Invoke(hitPoint, hitDir);
+            NotifyTermination(ProjectileTerminationReason.Impact,hitPoint,hitDir);
 
             // impactLingerTime 允许箭矢等命中后短暂停留；Destroy 的实际移除发生在当前帧稍后阶段。
             Destroy(gameObject, _impactLingerTime);

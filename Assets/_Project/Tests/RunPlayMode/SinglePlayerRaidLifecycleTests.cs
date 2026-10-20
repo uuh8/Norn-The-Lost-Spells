@@ -24,7 +24,7 @@ namespace Game.Run.Tests
 {
     public sealed class SinglePlayerRaidLifecycleTests
     {
-        private const string HubPath="Assets/_Project/Scenes/Tests/DepartureSandbox.unity",Root="Assets/_Project/ScriptableObjects/Tests/SinglePlayerRaids/";
+        private const string HubPath="Assets/_Project/Scenes/Tests/DepartureSandbox.unity",Root="Assets/_Project/Tests/Fixtures/Run/SinglePlayerRaids/";
         private Scene _hub;
         private SinglePlayerInventorySession _session;
         private SinglePlayerRunCoordinator _run;
@@ -64,7 +64,7 @@ namespace Game.Run.Tests
                 foreach(var copy in copies)if(copy.Kind==ItemKind.Backpack)
                 {var data=new SerializedObject(copy);data.FindProperty("_backpackWidth").intValue=8;data.FindProperty("_backpackHeight").intValue=8;data.ApplyModifiedPropertiesWithoutUndo();}
                 foreach(string key in new[]{"Food/Pumpkin","Herb/Herb_Flower_01","Container/Container_02"})
-                    expanded.Add(AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Items/"+key+".asset"));
+                    expanded.Add(AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/"+key+".asset"));
                 Field(typeof(ItemCatalog),"_definitions").SetValue(_catalog,expanded.ToArray());
             }
             _definition=Object.Instantiate(AssetDatabase.LoadAssetAtPath<RaidDefinition>(Root+"Raid.asset"));_temporary.Add(_definition);_definition.ExtractionSeconds=.25f;

@@ -1,0 +1,1172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="36" result="Passed" total="36" passed="36" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-19 08:06:41Z" end-time="2026-10-19 08:11:41Z" duration="299.6315266">
+  <test-suite type="TestSuite" id="1886" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="808" result="Passed" start-time="2026-10-19 08:06:41Z" end-time="2026-10-19 08:11:41Z" duration="299.631527" total="36" passed="36" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1879" name="Game.Run.PlayMode.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.PlayMode.Tests.dll" runstate="Runnable" testcasecount="790" result="Passed" start-time="2026-10-19 08:06:41Z" end-time="2026-10-19 08:11:41Z" duration="299.593406" total="36" passed="36" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22796" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1880" name="Game" fullname="Game" runstate="Runnable" testcasecount="790" result="Passed" start-time="2026-10-19 08:06:41Z" end-time="2026-10-19 08:11:41Z" duration="299.587084" total="36" passed="36" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1881" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="790" result="Passed" start-time="2026-10-19 08:06:41Z" end-time="2026-10-19 08:11:41Z" duration="299.569168" total="36" passed="36" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1882" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="790" result="Passed" start-time="2026-10-19 08:06:41Z" end-time="2026-10-19 08:11:41Z" duration="299.555951" total="36" passed="36" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1149" name="DungeonEconomyPlayModeTests" fullname="Game.Run.Tests.DungeonEconomyPlayModeTests" classname="Game.Run.Tests.DungeonEconomyPlayModeTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-19 08:06:41Z" end-time="2026-10-19 08:07:04Z" duration="22.990868" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1154" name="BusyLootRetriesSameRollAndStableRetryHasNoGcAlloc" fullname="Game.Run.Tests.DungeonEconomyPlayModeTests.BusyLootRetriesSameRollAndStableRetryHasNoGcAlloc" methodname="BusyLootRetriesSameRollAndStableRetryHasNoGcAlloc" classname="Game.Run.Tests.DungeonEconomyPlayModeTests" runstate="Runnable" seed="773126276" result="Passed" start-time="2026-10-19 08:06:42Z" end-time="2026-10-19 08:06:48Z" duration="6.773776" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[ElementField] Element World: GC 0/29 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/29 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/95 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/95 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/95 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1153" name="CoinOverflowAndWrongActorKeepWorldReward" fullname="Game.Run.Tests.DungeonEconomyPlayModeTests.CoinOverflowAndWrongActorKeepWorldReward" methodname="CoinOverflowAndWrongActorKeepWorldReward" classname="Game.Run.Tests.DungeonEconomyPlayModeTests" runstate="Runnable" seed="2062635766" result="Passed" start-time="2026-10-19 08:06:48Z" end-time="2026-10-19 08:06:51Z" duration="2.559182" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[ElementField] Element World: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/13 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/13 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/13 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1150" name="FixedMazeAndMaterialPointsHaveConnectedNavigation" fullname="Game.Run.Tests.DungeonEconomyPlayModeTests.FixedMazeAndMaterialPointsHaveConnectedNavigation" methodname="FixedMazeAndMaterialPointsHaveConnectedNavigation" classname="Game.Run.Tests.DungeonEconomyPlayModeTests" runstate="Runnable" seed="536180675" result="Passed" start-time="2026-10-19 08:06:51Z" end-time="2026-10-19 08:06:54Z" duration="2.760626" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[ElementField] Element World: GC 0/5 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/5 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/10 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/10 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/10 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1152" name="FourStagesClearAndCollectedLootAndWalletSurviveReturnSnapshot" fullname="Game.Run.Tests.DungeonEconomyPlayModeTests.FourStagesClearAndCollectedLootAndWalletSurviveReturnSnapshot" methodname="FourStagesClearAndCollectedLootAndWalletSurviveReturnSnapshot" classname="Game.Run.Tests.DungeonEconomyPlayModeTests" runstate="Runnable" seed="193029466" result="Passed" start-time="2026-10-19 08:06:54Z" end-time="2026-10-19 08:07:02Z" duration="8.261731" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[ElementField] Element World: GC 0/4 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/4 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/151 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/151 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/151 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1151" name="RealEnemyDeathDropsAllConfiguredKindsAndCoinsCollectOnceByContact" fullname="Game.Run.Tests.DungeonEconomyPlayModeTests.RealEnemyDeathDropsAllConfiguredKindsAndCoinsCollectOnceByContact" methodname="RealEnemyDeathDropsAllConfiguredKindsAndCoinsCollectOnceByContact" classname="Game.Run.Tests.DungeonEconomyPlayModeTests" runstate="Runnable" seed="56184989" result="Passed" start-time="2026-10-19 08:07:02Z" end-time="2026-10-19 08:07:04Z" duration="2.599530" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[ElementField] Element World: GC 0/4 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/4 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/16 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/16 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/16 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1264" name="HubPracticePortalTests" fullname="Game.Run.Tests.HubPracticePortalTests" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" testcasecount="22" result="Passed" start-time="2026-10-19 08:07:04Z" end-time="2026-10-19 08:10:58Z" duration="233.845701" total="22" passed="22" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1283" name="ActualStagePortalReturnsP7LootToHubOutsideOriginalEntrance" fullname="Game.Run.Tests.HubPracticePortalTests.ActualStagePortalReturnsP7LootToHubOutsideOriginalEntrance" methodname="ActualStagePortalReturnsP7LootToHubOutsideOriginalEntrance" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="1153815271" result="Passed" start-time="2026-10-19 08:07:05Z" end-time="2026-10-19 08:07:17Z" duration="12.341971" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[Rendering] Grid Stable Surface Water: GC 0/143 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/143 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/143 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1265" name="ContactP7AndReturnPreservesHubAssets" fullname="Game.Run.Tests.HubPracticePortalTests.ContactP7AndReturnPreservesHubAssets" methodname="ContactP7AndReturnPreservesHubAssets" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="1885625402" result="Passed" start-time="2026-10-19 08:07:17Z" end-time="2026-10-19 08:07:29Z" duration="11.732927" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+[Rendering] Grid Stable Surface Water: GC 0/140 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/140 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/140 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1266" name="ContactP8AndReturnPreservesHubAssets" fullname="Game.Run.Tests.HubPracticePortalTests.ContactP8AndReturnPreservesHubAssets" methodname="ContactP8AndReturnPreservesHubAssets" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="1806609716" result="Passed" start-time="2026-10-19 08:07:29Z" end-time="2026-10-19 08:07:42Z" duration="13.775529" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Error after 5 attempt(s): Unknown -  -- Result type: SettingsResult -- Url: https://generators.ai.unity.com -- Trace Id 3d321dcd-ccc4-4cd8-a841-b3d1dd47fffa => 
+Error after 5 attempt(s): Unknown -  -- Result type: PointsBalanceResult -- Url: https://generators.ai.unity.com -- Trace Id 3d321dcd-ccc4-4cd8-a841-b3d1dd47fffa => 
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[ElementField] Element World: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/142 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/142 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/142 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1275" name="ContactWaitsForFBeforeLoadingPractice" fullname="Game.Run.Tests.HubPracticePortalTests.ContactWaitsForFBeforeLoadingPractice" methodname="ContactWaitsForFBeforeLoadingPractice" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="1623856080" result="Passed" start-time="2026-10-19 08:07:42Z" end-time="2026-10-19 08:07:45Z" duration="2.951461" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1268" name="FailedMenuSaveKeepsCurrentMapAndAllowsRetry" fullname="Game.Run.Tests.HubPracticePortalTests.FailedMenuSaveKeepsCurrentMapAndAllowsRetry" methodname="FailedMenuSaveKeepsCurrentMapAndAllowsRetry" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="1283063523" result="Passed" start-time="2026-10-19 08:07:45Z" end-time="2026-10-19 08:07:55Z" duration="9.594791" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[Practice] 返回主菜单保存失败：Injected practice save failure
+[Rendering] Grid Stable Surface Water: GC 0/131 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/131 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/131 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1280" name="FailedReturnSaveKeepsOriginalGroundStateAndCanRetry" fullname="Game.Run.Tests.HubPracticePortalTests.FailedReturnSaveKeepsOriginalGroundStateAndCanRetry" methodname="FailedReturnSaveKeepsOriginalGroundStateAndCanRetry" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="2046740551" result="Passed" start-time="2026-10-19 08:07:55Z" end-time="2026-10-19 08:08:07Z" duration="11.823470" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[Practice] 回据点保存失败，留在练习地图：Injected practice save failure
+[Items] 场景物品注册被拒绝，作者模型保留：324fdebd4d50428f81cdaf40ca02b277
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+[Rendering] Grid Stable Surface Water: GC 0/140 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/140 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/140 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1286" name="FailedSaveRejectsPracticeContactAndPublishesReadableFailure" fullname="Game.Run.Tests.HubPracticePortalTests.FailedSaveRejectsPracticeContactAndPublishesReadableFailure" methodname="FailedSaveRejectsPracticeContactAndPublishesReadableFailure" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="1824399399" result="Passed" start-time="2026-10-19 08:08:07Z" end-time="2026-10-19 08:08:09Z" duration="2.655614" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Practice] 练习入口保存失败：Injected practice save failure
+]]></output>
+              </test-case>
+              <test-case id="1284" name="FullInventoryStillReturnsThroughP7FinalPortalWithFWithoutOpeningBackpack" fullname="Game.Run.Tests.HubPracticePortalTests.FullInventoryStillReturnsThroughP7FinalPortalWithFWithoutOpeningBackpack" methodname="FullInventoryStillReturnsThroughP7FinalPortalWithFWithoutOpeningBackpack" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="844515689" result="Passed" start-time="2026-10-19 08:08:09Z" end-time="2026-10-19 08:08:22Z" duration="12.812841" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[ElementField] Element World: GC 0/3 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/3 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/143 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/143 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/143 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1278" name="FullPracticeBackpackOpensArrangementAndKeepsGroundSource" fullname="Game.Run.Tests.HubPracticePortalTests.FullPracticeBackpackOpensArrangementAndKeepsGroundSource" methodname="FullPracticeBackpackOpensArrangementAndKeepsGroundSource" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="884556858" result="Passed" start-time="2026-10-19 08:08:22Z" end-time="2026-10-19 08:08:35Z" duration="12.831016" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+[ElementField] Element World: GC 0/6 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/6 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/155 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/155 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/155 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1281" name="HubMaterialThrowPreservesBottleWhenWorldExperimentsAreDisabled" fullname="Game.Run.Tests.HubPracticePortalTests.HubMaterialThrowPreservesBottleWhenWorldExperimentsAreDisabled" methodname="HubMaterialThrowPreservesBottleWhenWorldExperimentsAreDisabled" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="1896243246" result="Passed" start-time="2026-10-19 08:08:35Z" end-time="2026-10-19 08:08:38Z" duration="2.638079" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1285" name="LoadingPracticeRejectsHubAssetChangesAfterReliableSave" fullname="Game.Run.Tests.HubPracticePortalTests.LoadingPracticeRejectsHubAssetChangesAfterReliableSave" methodname="LoadingPracticeRejectsHubAssetChangesAfterReliableSave" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="1071700521" result="Passed" start-time="2026-10-19 08:08:38Z" end-time="2026-10-19 08:08:45Z" duration="7.067389" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[Rendering] Grid Stable Surface Water: GC 0/2 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/2 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/2 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1274" name="MainMenuPlayLoadsHubInsteadOfP7" fullname="Game.Run.Tests.HubPracticePortalTests.MainMenuPlayLoadsHubInsteadOfP7" methodname="MainMenuPlayLoadsHubInsteadOfP7" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="1065911310" result="Passed" start-time="2026-10-19 08:08:45Z" end-time="2026-10-19 08:08:51Z" duration="6.693647" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[UI] Scene Transition Controller starting LoadSceneAsync('SinglePlayer_Hub').
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=True.
+]]></output>
+              </test-case>
+              <test-case id="1269" name="P7DeathKeepsBackpackWarehouseAndCurrencyButLosesOtherCarriedGear" fullname="Game.Run.Tests.HubPracticePortalTests.P7DeathKeepsBackpackWarehouseAndCurrencyButLosesOtherCarriedGear" methodname="P7DeathKeepsBackpackWarehouseAndCurrencyButLosesOtherCarriedGear" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="951506607" result="Passed" start-time="2026-10-19 08:08:51Z" end-time="2026-10-19 08:09:05Z" duration="13.133197" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+[ElementField] Element World: GC 0/9 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/9 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/166 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/166 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/166 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1282" name="P7DepartureShrinksAndClosesBeforeOpaqueLoadThenReveals" fullname="Game.Run.Tests.HubPracticePortalTests.P7DepartureShrinksAndClosesBeforeOpaqueLoadThenReveals" methodname="P7DepartureShrinksAndClosesBeforeOpaqueLoadThenReveals" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="227333309" result="Passed" start-time="2026-10-19 08:09:05Z" end-time="2026-10-19 08:09:12Z" duration="7.494749" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[ElementField] Element World: GC 0/6 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/6 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/20 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/20 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/20 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1276" name="P7FCollectsFourKindsAndReturnsOriginalIdentities" fullname="Game.Run.Tests.HubPracticePortalTests.P7FCollectsFourKindsAndReturnsOriginalIdentities" methodname="P7FCollectsFourKindsAndReturnsOriginalIdentities" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="676113183" result="Passed" start-time="2026-10-19 08:09:12Z" end-time="2026-10-19 08:09:27Z" duration="14.514011" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[ElementField] Element World: GC 0/27 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/27 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/225 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/225 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/225 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1271" name="P8BossBattleDeathKeepsBackpackAndReturnsWithOtherCarriedLost" fullname="Game.Run.Tests.HubPracticePortalTests.P8BossBattleDeathKeepsBackpackAndReturnsWithOtherCarriedLost" methodname="P8BossBattleDeathKeepsBackpackAndReturnsWithOtherCarriedLost" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="1747875429" result="Passed" start-time="2026-10-19 08:09:27Z" end-time="2026-10-19 08:09:41Z" duration="14.867542" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+[ElementField] Element World: GC 0/9 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/9 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/178 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/178 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/178 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1279" name="P8BossCheckpointAndRetrySaveFailureKeepActualInventory" fullname="Game.Run.Tests.HubPracticePortalTests.P8BossCheckpointAndRetrySaveFailureKeepActualInventory" methodname="P8BossCheckpointAndRetrySaveFailureKeepActualInventory" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="97634160" result="Passed" start-time="2026-10-19 08:09:41Z" end-time="2026-10-19 08:09:50Z" duration="9.047388" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[Practice] Boss入场快照保存失败，保留现场并等待再次出圈：Injected practice save failure
+[Run] Boss Entry 未能捕获 Run Checkpoint，已拒绝启动 Encounter。
+[Boss] Boss Encounter 已启动，但没有找到匹配的当前 Player。
+[Practice] Boss重试快照保存失败，当前资产未改变：Injected practice save failure
+[Rendering] Grid Stable Surface Water: GC 0/3 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/3 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/3 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1272" name="P8DeathAfterVictoryKeepsBackpackAndReturnsWithOtherCarriedLost" fullname="Game.Run.Tests.HubPracticePortalTests.P8DeathAfterVictoryKeepsBackpackAndReturnsWithOtherCarriedLost" methodname="P8DeathAfterVictoryKeepsBackpackAndReturnsWithOtherCarriedLost" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="1828674393" result="Passed" start-time="2026-10-19 08:09:50Z" end-time="2026-10-19 08:10:05Z" duration="14.548002" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+[ElementField] Element World: GC 0/9 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/9 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/183 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/183 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/183 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1270" name="P8DeathRetriesFailedCommitThenReturnsWithoutLegacyPanel" fullname="Game.Run.Tests.HubPracticePortalTests.P8DeathRetriesFailedCommitThenReturnsWithoutLegacyPanel" methodname="P8DeathRetriesFailedCommitThenReturnsWithoutLegacyPanel" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="1608635847" result="Passed" start-time="2026-10-19 08:10:05Z" end-time="2026-10-19 08:10:21Z" duration="16.186014" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[Practice] 死亡返回暂未提交，将自动重试：Injected practice save failure
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+[ElementField] Element World: GC 0/24 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/24 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/273 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/273 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/273 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1277" name="P8FCollectsFourKindsAndReturnsOriginalIdentities" fullname="Game.Run.Tests.HubPracticePortalTests.P8FCollectsFourKindsAndReturnsOriginalIdentities" methodname="P8FCollectsFourKindsAndReturnsOriginalIdentities" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="2141170886" result="Passed" start-time="2026-10-19 08:10:21Z" end-time="2026-10-19 08:10:35Z" duration="13.689981" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+[ElementField] Element World: GC 0/5 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/5 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/152 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/152 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/152 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1273" name="P8VictoryCreatesOneReachableFPortalWithoutResultPanel" fullname="Game.Run.Tests.HubPracticePortalTests.P8VictoryCreatesOneReachableFPortalWithoutResultPanel" methodname="P8VictoryCreatesOneReachableFPortalWithoutResultPanel" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="1680133712" result="Passed" start-time="2026-10-19 08:10:35Z" end-time="2026-10-19 08:10:49Z" duration="13.664885" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[ElementField] Element World: GC 0/4 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/4 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/149 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/149 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/149 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1267" name="ReturnToMainMenuSavesCarriedInventoryAndReleasesContext" fullname="Game.Run.Tests.HubPracticePortalTests.ReturnToMainMenuSavesCarriedInventoryAndReleasesContext" methodname="ReturnToMainMenuSavesCarriedInventoryAndReleasesContext" classname="Game.Run.Tests.HubPracticePortalTests" runstate="Runnable" seed="1526222859" result="Passed" start-time="2026-10-19 08:10:49Z" end-time="2026-10-19 08:10:58Z" duration="9.759384" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[Rendering] Grid Stable Surface Water: GC 0/131 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/131 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/131 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1531" name="PracticeModernUiPlayModeTests" fullname="Game.Run.Tests.PracticeModernUiPlayModeTests" classname="Game.Run.Tests.PracticeModernUiPlayModeTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-19 08:10:58Z" end-time="2026-10-19 08:11:41Z" duration="42.696135" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1536" name="ActualKeyboardSelectionAndMouseCastConsumeOwnedMana" fullname="Game.Run.Tests.PracticeModernUiPlayModeTests.ActualKeyboardSelectionAndMouseCastConsumeOwnedMana" methodname="ActualKeyboardSelectionAndMouseCastConsumeOwnedMana" classname="Game.Run.Tests.PracticeModernUiPlayModeTests" runstate="Runnable" seed="1574631610" result="Passed" start-time="2026-10-19 08:10:58Z" end-time="2026-10-19 08:11:01Z" duration="2.713978" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[ElementField] Element World: GC 0/4 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/4 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/17 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/17 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/17 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+              </test-case>
+              <test-case id="1532" name="DirectP7UsesOneModernWorkspaceAndTab" fullname="Game.Run.Tests.PracticeModernUiPlayModeTests.DirectP7UsesOneModernWorkspaceAndTab" methodname="DirectP7UsesOneModernWorkspaceAndTab" classname="Game.Run.Tests.PracticeModernUiPlayModeTests" runstate="Runnable" seed="1695889377" result="Passed" start-time="2026-10-19 08:11:01Z" end-time="2026-10-19 08:11:04Z" duration="2.862275" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[ElementField] Element World: GC 0/2 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/2 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/11 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/11 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/11 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1533" name="DirectP8UsesOneModernWorkspaceAndTab" fullname="Game.Run.Tests.PracticeModernUiPlayModeTests.DirectP8UsesOneModernWorkspaceAndTab" methodname="DirectP8UsesOneModernWorkspaceAndTab" classname="Game.Run.Tests.PracticeModernUiPlayModeTests" runstate="Runnable" seed="1365424388" result="Passed" start-time="2026-10-19 08:11:04Z" end-time="2026-10-19 08:11:08Z" duration="4.160338" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[ElementField] Element World: GC 0/9 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/9 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/11 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/11 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/11 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1539" name="EditedFiniteProgramAndCurrencySurviveP7AndReturnToHub" fullname="Game.Run.Tests.PracticeModernUiPlayModeTests.EditedFiniteProgramAndCurrencySurviveP7AndReturnToHub" methodname="EditedFiniteProgramAndCurrencySurviveP7AndReturnToHub" classname="Game.Run.Tests.PracticeModernUiPlayModeTests" runstate="Runnable" seed="541336724" result="Passed" start-time="2026-10-19 08:11:08Z" end-time="2026-10-19 08:11:15Z" duration="7.102708" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+[Rendering] Grid Stable Surface Water: GC 0/141 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/141 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/141 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1537" name="EscapeClosesBackpackBeforeOpeningPauseMenu" fullname="Game.Run.Tests.PracticeModernUiPlayModeTests.EscapeClosesBackpackBeforeOpeningPauseMenu" methodname="EscapeClosesBackpackBeforeOpeningPauseMenu" classname="Game.Run.Tests.PracticeModernUiPlayModeTests" runstate="Runnable" seed="1683997298" result="Passed" start-time="2026-10-19 08:11:15Z" end-time="2026-10-19 08:11:18Z" duration="2.473769" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[Rendering] Grid Stable Surface Water: GC 0/14 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/14 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/14 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1535" name="ModernP8ActualBoundaryExitAndRetryRestoreOwnedCheckpoint" fullname="Game.Run.Tests.PracticeModernUiPlayModeTests.ModernP8ActualBoundaryExitAndRetryRestoreOwnedCheckpoint" methodname="ModernP8ActualBoundaryExitAndRetryRestoreOwnedCheckpoint" classname="Game.Run.Tests.PracticeModernUiPlayModeTests" runstate="Runnable" seed="1984334449" result="Passed" start-time="2026-10-19 08:11:18Z" end-time="2026-10-19 08:11:28Z" duration="10.017140" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[Boss] Boss Encounter 已启动，但没有找到匹配的当前 Player。
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+[ElementField] Element World: GC 0/11 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/11 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/158 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/158 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/158 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[ElementField] Element World: GC 0/9 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/9 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/38 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/38 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/38 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1534" name="ModernP8LeavingSafeZoneStartsActualBossEncounter" fullname="Game.Run.Tests.PracticeModernUiPlayModeTests.ModernP8LeavingSafeZoneStartsActualBossEncounter" methodname="ModernP8LeavingSafeZoneStartsActualBossEncounter" classname="Game.Run.Tests.PracticeModernUiPlayModeTests" runstate="Runnable" seed="1013142834" result="Passed" start-time="2026-10-19 08:11:28Z" end-time="2026-10-19 08:11:31Z" duration="3.516393" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[ElementField] Element World: GC 0/8 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/8 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/7 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/7 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/7 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1538" name="RewardIsOwnedAndIdempotentAndFullInventoryCanRetry" fullname="Game.Run.Tests.PracticeModernUiPlayModeTests.RewardIsOwnedAndIdempotentAndFullInventoryCanRetry" methodname="RewardIsOwnedAndIdempotentAndFullInventoryCanRetry" classname="Game.Run.Tests.PracticeModernUiPlayModeTests" runstate="Runnable" seed="585281544" result="Passed" start-time="2026-10-19 08:11:31Z" end-time="2026-10-19 08:11:34Z" duration="3.095095" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[ElementField] Element World: GC 0/3 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/3 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/7 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/7 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/7 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1540" name="StablePracticeHudAndPickupHaveNoScopedGc" fullname="Game.Run.Tests.PracticeModernUiPlayModeTests.StablePracticeHudAndPickupHaveNoScopedGc" methodname="StablePracticeHudAndPickupHaveNoScopedGc" classname="Game.Run.Tests.PracticeModernUiPlayModeTests" runstate="Runnable" seed="1124451596" result="Passed" start-time="2026-10-19 08:11:34Z" end-time="2026-10-19 08:11:41Z" duration="6.740802" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[ElementField] Element World: GC 0/27 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/27 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/97 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/97 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/97 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+Saving results to: Temp/SinglePlayer/playmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

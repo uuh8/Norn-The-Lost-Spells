@@ -18,6 +18,16 @@ namespace Game.Run.Tests
         { Build();var config=Configure();Profile.Shop.Stocks[0].Remaining=0;Profile.Shop.RemainingBudget=1;
             Assert.That(Repository.TrySave(Profile).Success,Is.True);Assert.That(Repository.TryLoad(out Profile).Success,Is.True);
             Assert.That(ShopProgressTracker.TryPrepare(Profile,config,out var next,out var changed),Is.True);Assert.That(changed,Is.False);Assert.That(next.Shop.Stocks[0].Remaining,Is.Zero);Assert.That(next.Shop.RemainingBudget,Is.EqualTo(1)); }
+        [Test]public void AddedV2OffersPreserveOldStockBudgetAndProgress()
+        {
+            Build();Configure();Profile.Shop.Stocks[0].Remaining=0;Profile.Shop.RemainingBudget=1;
+            var definition=Track(ScriptableObject.CreateInstance<ShopDefinition>());definition.PurchaseBudget=40;
+            definition.Offers=new[]{new ShopOffer{OfferId="card",ContentId="spell",Stock=2},new ShopOffer{OfferId="new-water",MaterialKey=1,Stock=5}};
+            Assert.That(definition.TryFreeze(Profile.Items.Catalog,out var config),Is.True);
+            Assert.That(ShopProgressTracker.TryPrepare(Profile,config,out var next,out var changed),Is.True);Assert.That(changed,Is.True);
+            Assert.That(next.Shop.Find("card").Remaining,Is.Zero);Assert.That(next.Shop.RemainingBudget,Is.EqualTo(1));Assert.That(next.Shop.Find("new-water").Remaining,Is.EqualTo(5));
+            Assert.That(next.AdventureProgress,Is.EqualTo(Profile.AdventureProgress));Assert.That(ShopProgressTracker.TryPrepare(next,config,out _,out changed),Is.True);Assert.That(changed,Is.False);
+        }
         [Test]public void ProgressThresholdRefreshesOnceAndPreservesRemainder()
         { Build();var config=Configure(2);Profile.AdventureProgress=3;Profile.Shop.Stocks[0].Remaining=0;
             Assert.That(ShopProgressTracker.TryPrepare(Profile,config,out var next,out var changed),Is.True);Assert.That(changed,Is.True);

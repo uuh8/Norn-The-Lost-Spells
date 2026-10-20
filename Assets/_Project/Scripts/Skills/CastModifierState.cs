@@ -33,12 +33,14 @@ namespace Game.Skills
         public readonly float OrbitPhaseOffsetDegrees;
         public readonly float OrbitPlaneTiltDegrees;
         public readonly ProjectileMotionMode MotionMode;
+        public readonly float LifetimeAddSeconds;
+        public readonly float LifetimeMul;
 
         public CastModifierState(float damageAddFlat, float damageMul, float speedMul, float spreadDegrees,
                                  int bounceCount, bool useGravity,
                                  float homingRadius, float homingDuration, float homingTurnRateDegrees,
                                  float orbitRadius, float orbitAngularSpeedDegrees, float orbitPhaseOffsetDegrees,
-                                 float orbitPlaneTiltDegrees, ProjectileMotionMode motionMode)
+                                 float orbitPlaneTiltDegrees, ProjectileMotionMode motionMode, float lifetimeAddSeconds=0, float lifetimeMul=1)
         {
             DamageAddFlat = damageAddFlat;
             DamageMul = damageMul;
@@ -54,6 +56,8 @@ namespace Game.Skills
             OrbitPhaseOffsetDegrees = orbitPhaseOffsetDegrees;
             OrbitPlaneTiltDegrees = orbitPlaneTiltDegrees;
             MotionMode = motionMode;
+            LifetimeAddSeconds=lifetimeAddSeconds;
+            LifetimeMul=lifetimeMul;
         }
 
         // 恒等状态：加法项为 0、乘法项为 1、能力开关关闭，应用后不会改变基础投射物。
@@ -81,24 +85,36 @@ namespace Game.Skills
         /// </summary>
         public CastModifierState Apply(SpellDefinition modify)
         {
-            ProjectileMotionMode motionMode = ResolveMotionMode(modify);
+            // Legacy与V2共用值合并公式；区别由解释器决定何时Bake，而非复制一套数学。
+            return Apply(new CastModifierState(modify.ModDamageAddFlat, modify.ModDamageMul, modify.ModSpeedMul,
+                modify.ModSpreadAddDegrees, modify.ModBounceAdd, modify.ModUseGravity,
+                modify.ModHomingRadius, modify.ModHomingDuration, modify.ModHomingTurnRateDegrees,
+                modify.ModOrbitRadius, modify.ModOrbitAngularSpeedDegrees, modify.ModOrbitPhaseOffsetDegrees,
+                modify.ModOrbitPlaneTiltDegrees, ResolveMotionMode(modify), modify.ModLifetimeAddSeconds,modify.ModLifetimeMul));
+        }
+
+        /// <summary>V2使用冻结的操作值，不在运行时回读ScriptableObject。</summary>
+        public CastModifierState Apply(in CastModifierState modify)
+        {
+            ProjectileMotionMode motionMode = modify.MotionMode == ProjectileMotionMode.None ? MotionMode : modify.MotionMode;
             return new CastModifierState(
-                DamageAddFlat + modify.ModDamageAddFlat,
-                DamageMul + (modify.ModDamageMul - 1f),
-                SpeedMul * modify.ModSpeedMul,
-                SpreadDegrees + modify.ModSpreadAddDegrees,
-                BounceCount + modify.ModBounceAdd,
-                UseGravity || modify.ModUseGravity,
-                Mathf.Max(HomingRadius, modify.ModHomingRadius),
-                HomingDuration + modify.ModHomingDuration,
-                HomingTurnRateDegrees + modify.ModHomingTurnRateDegrees,
-                Mathf.Max(OrbitRadius, modify.ModOrbitRadius),
-                OrbitAngularSpeedDegrees + modify.ModOrbitAngularSpeedDegrees,
-                OrbitPhaseOffsetDegrees + modify.ModOrbitPhaseOffsetDegrees,
-                Mathf.Abs(modify.ModOrbitPlaneTiltDegrees) > Mathf.Abs(OrbitPlaneTiltDegrees)
-                    ? modify.ModOrbitPlaneTiltDegrees
+                DamageAddFlat + modify.DamageAddFlat,
+                DamageMul + (modify.DamageMul - 1f),
+                SpeedMul * modify.SpeedMul,
+                SpreadDegrees + modify.SpreadDegrees,
+                BounceCount + modify.BounceCount,
+                UseGravity || modify.UseGravity,
+                Mathf.Max(HomingRadius, modify.HomingRadius),
+                HomingDuration + modify.HomingDuration,
+                HomingTurnRateDegrees + modify.HomingTurnRateDegrees,
+                Mathf.Max(OrbitRadius, modify.OrbitRadius),
+                OrbitAngularSpeedDegrees + modify.OrbitAngularSpeedDegrees,
+                OrbitPhaseOffsetDegrees + modify.OrbitPhaseOffsetDegrees,
+                Mathf.Abs(modify.OrbitPlaneTiltDegrees) > Mathf.Abs(OrbitPlaneTiltDegrees)
+                    ? modify.OrbitPlaneTiltDegrees
                     : OrbitPlaneTiltDegrees,
-                motionMode);
+                // 寿命倍率叠乘，让连续短寿命卡逐级缩短，不在某一张突然减到零。
+                motionMode,LifetimeAddSeconds+modify.LifetimeAddSeconds,LifetimeMul*modify.LifetimeMul);
         }
 
         private ProjectileMotionMode ResolveMotionMode(SpellDefinition modify)

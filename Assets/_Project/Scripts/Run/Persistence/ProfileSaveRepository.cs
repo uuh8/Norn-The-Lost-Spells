@@ -37,7 +37,7 @@ namespace Game.Run
         private readonly string _temporaryPath;
         private bool _authorized, _blocked, _recovered;
         private long _generation;
-        private string _rejectedPrimary;
+        private string _rejectedPrimary, _recoveredSource;
         public ProfileSaveRepository(string directory, ItemCatalogIndex catalog, IProfileFileSystem files = null)
         {
             MainPath = Path.Combine(Path.GetFullPath(directory), "profile.json");
@@ -64,9 +64,10 @@ namespace Game.Run
                     if (main.Status != ProfilePersistenceStatus.InvalidData) return main;
                 }
                 if (!_files.Exists(BackupPath)) return main;
-                ProfilePersistenceResult backup = Decode(_files.Read(BackupPath), out profile);
+                string backupSource=_files.Read(BackupPath);
+                ProfilePersistenceResult backup = Decode(backupSource, out profile);
                 if (!backup.Success) return backup;
-                Authorize(profile); _recovered = true;
+                Authorize(profile); _recovered = true;_recoveredSource=backupSource;
                 return new ProfilePersistenceResult(ProfilePersistenceStatus.RecoveredBackup, "主档不可用，已读取合法备份；原文件保留。");
             }
             catch (Exception exception) when (exception is IOException || exception is UnauthorizedAccessException)
@@ -98,8 +99,11 @@ namespace Game.Run
                         ProfilePersistenceResult check = Decode(current, out SinglePlayerProfile committed);
                         if (!check.Success || committed.SaveGeneration != _generation)
                         { _blocked = true; return new ProfilePersistenceResult(ProfilePersistenceStatus.WriteBlocked, "磁盘提交已变化或无法识别，拒绝覆盖。"); }
+                        PreserveSchemaOriginal(current);
                     }
                 }
+                // 恢复自旧Schema的backup也是迁移原件；第二次滚动保存前必须另存，不能只保护好主档。
+                if(_recovered)PreserveSchemaOriginal(_recoveredSource);
                 long nextGeneration = checked(_generation + 1);
                 SinglePlayerSaveDto dto = ProfileSaveMapper.ToDto(profile, nextGeneration);
                 ProfilePersistenceResult valid = ProfileSaveMapper.TryRestore(dto, _catalog, out _);
@@ -123,6 +127,13 @@ namespace Game.Run
         }
 
         private void Authorize(SinglePlayerProfile profile) { _authorized = true; _blocked = false; _generation = profile.SaveGeneration; }
+        private void PreserveSchemaOriginal(string source)
+        {
+            var dto=JsonUtility.FromJson<SinglePlayerSaveDto>(source);
+            if(dto.SchemaVersion>=ProfileSaveMapper.CurrentSchema)return;
+            string path=Path.Combine(Path.GetDirectoryName(MainPath),"profile.schema"+dto.SchemaVersion+".original.json");
+            if(!_files.Exists(path))_files.WriteFlushed(path,source);
+        }
         private ProfilePersistenceResult Decode(string text, out SinglePlayerProfile profile)
         {
             profile = null;

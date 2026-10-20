@@ -17,6 +17,8 @@ namespace Game.Run
             public uint Revision;
             public int Slot = -1;
             public bool Carried;
+            public WandExecutionState Execution;
+            public string ExecutionReservation;
         }
         private readonly SinglePlayerProfile _profile;
         private readonly Dictionary<string, Entry> _entries = new Dictionary<string, Entry>(StringComparer.Ordinal);
@@ -33,16 +35,17 @@ namespace Game.Run
         public WandLoadoutService(SinglePlayerProfile profile, string inventoryId)
         { _profile = profile ?? throw new ArgumentNullException(nameof(profile)); _inventoryId = inventoryId;
             ReadOnly = new View(this); Synchronize(); }
-        public void Synchronize()
+        public void Synchronize(bool force = false)
         {
             ItemOwnershipStore store = _profile.Items;
-            if (_inventoryVersion == store.Version) return;
+            // Adopt会更换Store；两个独立Store可能恰好同Version，不能据此跳过新资产投影。
+            if (!force && _inventoryVersion == store.Version) return;
             _inventoryVersion = store.Version; _carried.Clear();
             Array.Clear(_slots, 0, 3);
             foreach (Entry e in _entries.Values) { e.Carried = false; e.Slot = -1; }
             foreach (InventoryEntry item in store)
             {
-                if (!store.Catalog.TryGetWandStats(item.Item.ContentId, out WandStats stats)) continue;
+                if (!store.Catalog.TryGetWandStats(item.Item, out WandStats stats)) continue;
                 string id = item.Item.InstanceId;
                 if (!_entries.TryGetValue(id, out Entry e))
                 {
@@ -69,7 +72,15 @@ namespace Game.Run
                     { int slot = card.Location.SlotIndex; store.Catalog.TryGet(card.Item.ContentId, out ItemDefinition definition);
                         spells[slot] = definition.SpellDefinition; ids[slot] = card.Item.InstanceId; }
                 var next = new WandProgramProjection(spells, ids);
-                if (e.Program == null || !e.Program.Matches(next)) { e.Program = next; e.Revision++; }
+                if (e.Program == null || !e.Program.Matches(next))
+                {
+                    e.Program = next; e.Revision++;
+                    if (e.Execution != null && TryCompile(e, out var compiled))
+                    {
+                        e.Execution.Reprogram(compiled);
+                        e.State.CommitExecution(e.State.CurrentMana, Math.Max(e.State.CooldownRemaining, e.Execution.ReloadRemaining));
+                    }
+                }
             }
             if (_selected == null || !_entries.TryGetValue(_selected, out Entry selected) || selected.Slot < 0)
             { _selected = null; for (int i = 0; i < 3; i++) if (_slots[i] != null) { _selected = _slots[i].State.InstanceId; break; } }
@@ -85,7 +96,8 @@ namespace Game.Run
             // 库存版本变化由离散事件同步；热路径按索引遍历已建缓存，不扩容，仓库资源冻结。
             bool changed = false;
             for (int i = 0; i < _carried.Count; i++)
-            { WandRuntimeState s = _carried[i].State; float mana = s.CurrentMana, cd = s.CooldownRemaining; s.Tick(dt);
+            { Entry entry = _carried[i]; if (entry.ExecutionReservation != null) continue;
+                WandRuntimeState s = entry.State; float mana = s.CurrentMana, cd = s.CooldownRemaining; s.Tick(dt); entry.Execution?.Tick(dt);
                 changed |= mana != s.CurrentMana || cd != s.CooldownRemaining; }
             if (changed) _version++;
         }
@@ -106,7 +118,8 @@ namespace Game.Run
             if (request.SourceWandId == null || !_entries.TryGetValue(request.SourceWandId, out Entry e)) result.Reason = OwnedWandFailureReason.UnknownSource;
             else
             {
-                if (!WandRuntimeState.IsFinite(request.ManaCost) || request.ManaCost < 0) result.Reason = OwnedWandFailureReason.InvalidRequest;
+                if (e.ExecutionReservation != null) result.Reason = OwnedWandFailureReason.ResourceBusy;
+                else if (!WandRuntimeState.IsFinite(request.ManaCost) || request.ManaCost < 0) result.Reason = OwnedWandFailureReason.InvalidRequest;
                 else if (request.IsRootCast && !e.Carried) result.Reason = OwnedWandFailureReason.NotCarried;
                 else if (request.IsRootCast && request.ProgramRevision != e.Revision) result.Reason = OwnedWandFailureReason.StaleProgram;
                 else if (request.IsRootCast && e.State.CooldownRemaining > 0) result.Reason = OwnedWandFailureReason.Cooldown;
@@ -115,6 +128,85 @@ namespace Game.Run
                 result.CurrentMana = e.State.CurrentMana; result.CooldownRemaining = e.State.CooldownRemaining;
             }
             _receipts[request.CallerId] = new Receipt { Request = request, Result = result }; return result;
+        }
+        private bool TryCompile(Entry entry, out SpellProgram program)
+        {
+            var ids = new string[entry.Program.Count];
+            for (int i = 0; i < ids.Length; i++) ids[i] = entry.Program.GetInstanceId(i);
+            program=null;var fixedCards=new SpellDefinition[entry.Stats.AlwaysCastContentIds.Count];
+            for(int i=0;i<fixedCards.Length;i++)
+            {if(!_profile.Items.Catalog.TryGet(entry.Stats.AlwaysCastContentIds[i],out var definition)||definition.Kind!=ItemKind.Spell)return false;fixedCards[i]=definition.SpellDefinition;}
+            // 编译入口统一传播实例固定属性；UI和世界运行时不另拼时间/散射规则。
+            return SpellProgramCompiler.TryCompile(entry.Program, new SpellProgramCompileInputs(entry.Stats.BaseDraws, ids,
+                entry.Revision, entry.Stats.BaseCastDelay, entry.Stats.BaseReloadTime, entry.Stats.BaseSpreadDegrees,
+                entry.Stats.Shuffle, entry.Stats.ManaRegenPerSecond,fixedCards), out program, out _);
+        }
+        internal bool TryGetExecution(string id, out WandExecutionSnapshot snapshot)
+        {
+            Synchronize(); snapshot = default;
+            if (id == null || !_profile.Items.TryGet(id, out _) || !_entries.TryGetValue(id, out var entry)) return false;
+            if (entry.Execution == null)
+            { if (!TryCompile(entry, out var program)) return false; entry.Execution = new WandExecutionState(program, id); }
+            if (entry.Execution.Program.Revision != entry.Revision) return false;
+            var execution = entry.Execution;
+            snapshot = new WandExecutionSnapshot(execution.Program, execution.Draw, entry.State.CurrentMana,
+                execution.CastRemaining, execution.ReloadRemaining, _version); return true;
+        }
+        internal bool ReserveExecution(string id, string ticket)
+        {
+            if (!_entries.TryGetValue(id, out var entry) || entry.ExecutionReservation != null) return false;
+            entry.ExecutionReservation = ticket; return true;
+        }
+        internal bool OwnsExecutionReservation(string id, string ticket) => _entries.TryGetValue(id, out var entry) && entry.ExecutionReservation == ticket;
+        internal void ReleaseExecution(string id, string ticket)
+        { if (OwnsExecutionReservation(id, ticket)) _entries[id].ExecutionReservation = null; }
+        internal void CommitExecution(string id, string ticket, SpellBuildBuffer candidate, in SpellBuildSummary summary)
+        {
+            if (!OwnsExecutionReservation(id, ticket)) throw new InvalidOperationException("根执行失去法杖预约。");
+            Entry entry = _entries[id];
+            var spells = new SpellDefinition[entry.Program.Count]; var ids = new string[spells.Length];
+            foreach (InventoryEntry card in _profile.Items)
+                if (card.Location.Kind == ItemLocationKind.WandSlot && card.Location.OwnerId == id)
+                { int slot = card.Location.SlotIndex; _profile.Items.Catalog.TryGet(card.Item.ContentId, out var definition);
+                    spells[slot] = definition.SpellDefinition; ids[slot] = card.Item.InstanceId; }
+            var projection = new WandProgramProjection(spells, ids); SpellProgram program = candidate.Graph.Program;
+            if (!entry.Program.Matches(projection))
+            { entry.Program = projection; entry.Revision++; program = SpellProgramCompiler.RetainInstances(program, ids, entry.Revision); }
+            entry.Execution.Commit(program, candidate.NextState, summary);
+            entry.State.CommitExecution(summary.ManaAfter, Math.Max(entry.Execution.CastRemaining, entry.Execution.ReloadRemaining));
+            entry.ExecutionReservation = null; _version++;
+        }
+        internal WandSessionContinuity CaptureContinuity()
+        {
+            Synchronize(); var result = new WandSessionContinuity { Selected = _selected };
+            foreach (var pair in _entries)
+            {
+                if (!_profile.Items.TryGet(pair.Key, out _)) continue;
+                Entry entry = pair.Value; var ids = new string[entry.Program.Count];
+                for (int i = 0; i < ids.Length; i++) ids[i] = entry.Program.GetInstanceId(i);
+                result.Entries.Add(new WandSessionContinuity.Entry { Id = pair.Key, Stats = entry.Stats, Mana = entry.State.CurrentMana,
+                    Ready = entry.State.CooldownRemaining, Revision = entry.Revision, Program = entry.Execution?.Program,
+                    Draw = entry.Execution?.Draw, Cast = entry.Execution?.CastRemaining ?? 0, Reload = entry.Execution?.ReloadRemaining ?? 0, InstalledIds = ids });
+            }
+            return result;
+        }
+        internal void RestoreContinuity(WandSessionContinuity source)
+        {
+            if (source == null) return; Synchronize();
+            foreach (var snapshot in source.Entries)
+            {
+                if (!_entries.TryGetValue(snapshot.Id, out var entry) || !entry.Stats.SameAs(snapshot.Stats)
+                    || entry.Program.Count != snapshot.InstalledIds.Length) continue;
+                bool same = true;
+                for (int i = 0; i < entry.Program.Count; i++) same &= entry.Program.GetInstanceId(i) == snapshot.InstalledIds[i];
+                if (!same) continue; // 只有同实例、同固定属性和同安装序列才能接续，不能把历史覆盖到新程序。
+                entry.Revision = snapshot.Revision; entry.State.CommitExecution(snapshot.Mana, snapshot.Ready);
+                if (snapshot.Program != null && snapshot.Draw != null)
+                    entry.Execution = new WandExecutionState(snapshot.Program, snapshot.Id)
+                    { Draw = snapshot.Draw, CastRemaining = snapshot.Cast, ReloadRemaining = snapshot.Reload };
+            }
+            if (source.Selected != null && _entries.TryGetValue(source.Selected, out var selected) && selected.Slot >= 0) _selected = source.Selected;
+            _version++;
         }
         // 私有包装对象防止只读接口被向下转换成带写方法的服务。
         private sealed class View : IWandLoadoutReadOnly

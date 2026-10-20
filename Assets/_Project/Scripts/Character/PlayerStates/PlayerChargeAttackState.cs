@@ -148,7 +148,7 @@ namespace Game.Character
         private void HandleMovement()
         {
             Vector3 velocity = Vector3.up * _player.VerticalVelocity;
-            _player.CharacterController.Move(velocity * Time.deltaTime);
+            _player.MoveCharacter(velocity * Time.deltaTime);
         }
 
         private void TransitionToMovement()

@@ -20,7 +20,12 @@ namespace Game.Run.Tests
             Backpack.OpenBackpack();yield return null;Canvas.ForceUpdateCanvases();
             var grid=Backpack.GetComponentInChildren<InventoryGridView>();var scroll=grid.GetComponentInParent<ScrollRect>();
             scroll.normalizedPosition=new Vector2(0,1);Canvas.ForceUpdateCanvases();
-            var item=grid.GetComponentInChildren<InventoryItemView>();Assert.That(item,Is.Not.Null);
+            // 放大格子后第一个池对象可能在第5行而被裁剪；从真正可见的物品上启动中键捕获。
+            InventoryItemView item=null;
+            foreach(var candidate in grid.GetComponentsInChildren<InventoryItemView>())
+                if(RectTransformUtility.RectangleContainsScreenPoint(scroll.viewport,RectTransformUtility.WorldToScreenPoint(null,candidate.Rect.TransformPoint(candidate.Rect.rect.center)),null))
+                {item=candidate;break;}
+            Assert.That(item,Is.Not.Null);
             var pointer=(Vector2)RectTransformUtility.WorldToScreenPoint(null,item.Rect.TransformPoint(item.Rect.rect.center));
             uint version=Session.ReadOnly.Version;var before=scroll.normalizedPosition;
             InputSystem.QueueStateEvent(Mouse,new MouseState{position=pointer,buttons=4});InputSystem.Update();yield return null;

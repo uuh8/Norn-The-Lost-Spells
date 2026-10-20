@@ -22,8 +22,8 @@ namespace Game.Run.Tests
         {
             _previous=SceneManager.GetActiveScene();_scene=SceneManager.CreateScene("PreviewLifecycle_"+Guid.NewGuid().ToString("N"));SceneManager.SetActiveScene(_scene);
             _key="PreviewTest_"+Guid.NewGuid().ToString("N");
-            _catalog=AssetDatabase.LoadAssetAtPath<ItemCatalog>("Assets/_Project/ScriptableObjects/SinglePlayer/Hub/SinglePlayerRaids/Catalog.asset");
-            _seeds=AssetDatabase.LoadAssetAtPath<SinglePlayerStartingInventory>("Assets/_Project/ScriptableObjects/SinglePlayer/Hub/SinglePlayerRaids/StartingInventory.asset");
+            _catalog=AssetDatabase.LoadAssetAtPath<ItemCatalog>("Assets/_Project/ScriptableObjects/World/Hub/Inventory/Catalog.asset");
+            _seeds=AssetDatabase.LoadAssetAtPath<SinglePlayerStartingInventory>("Assets/_Project/ScriptableObjects/World/Hub/Inventory/StartingInventory.asset");
             _session=MakeSession();yield return null;yield return null;Assert.That(_session.ReadOnly,Is.Not.Null,_session.InitializationMessage);
         }
         private SinglePlayerInventorySession MakeSession()

@@ -21,7 +21,7 @@ namespace Game.UI
         private int _stationKind=-1;
         private Collider _portalActor;
         private IPortalInteractionTarget _portalTarget;
-        private static readonly string[] StationNames={"F 仓库","F 商店"};
+        private static readonly string[] StationNames={"F 仓库","F 商店","传送门","F 法术研究台"};
         private bool _dirty=true;private uint _revision;private Font _font;
         public int VisibleCount{get;private set;}public int FirstIndex{get;private set;}
         public RectTransform Panel=>_visual!=null?(RectTransform)_visual.transform:null;
@@ -54,7 +54,7 @@ namespace Game.UI
             IPortalInteractionTarget portal = null;
             if (_portalActor == null && _session?.ActorTransform != null) _portalActor = _session.ActorTransform.GetComponent<CharacterController>();
             if(Time.timeScale>0 && _hub!=null && _hub.isActiveAndEnabled && _hub.TryGetStation(out var point)
-                && (point.Kind==HubStationKind.Shop || point.Kind==HubStationKind.Warehouse))station=(int)point.Kind;
+                && (point.Kind==HubStationKind.Shop || point.Kind==HubStationKind.Warehouse || point.Kind==HubStationKind.SpellResearch))station=(int)point.Kind;
             if(station < 0 && Time.timeScale > 0 && PortalInteractionRegistry.TryGetNearest(_portalActor, out portal)) station = 2;
             if(station!=_stationKind || !ReferenceEquals(portal,_portalTarget)){_stationKind=station;_portalTarget=portal;_dirty=true;}
             bool hasItems=_nearby!=null && _nearby.isActiveAndEnabled && _nearby.Count>0;

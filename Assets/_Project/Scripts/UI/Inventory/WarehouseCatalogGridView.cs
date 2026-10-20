@@ -36,7 +36,6 @@ namespace Game.UI
         private bool _resizePending;
         private string _query = "";
         private int _category;
-        private InventoryDragAutoScroll _autoScroll;
         private InventoryViewportPan _pan;
         private static readonly ProfilerMarker RenderMarker = new ProfilerMarker("Norn.Warehouse.CatalogRender");
         public int GroupCount => _groups.Count;
@@ -61,7 +60,6 @@ namespace Game.UI
                 if (_scroll == null) return;
                 _viewport = _scroll.viewport != null ? _scroll.viewport : (RectTransform)_scroll.transform;
                 _scroll.onValueChanged.AddListener(OnScroll);
-                _autoScroll = _scroll.GetComponent<InventoryDragAutoScroll>();
                 _pan = InventoryViewportPan.Ensure(_scroll);
             }
             Rebuild();
@@ -110,7 +108,7 @@ namespace Game.UI
             {
                 var group = _groups[i]; var item = group.Item;
                 string state = item.Kind == ItemKind.Spell ? (_controller != null ? _controller.SpellCountCaption(item) : item.HasUnlimitedCharges ? "" : item.RemainingCharges.ToString())
-                    : item.Kind == ItemKind.Material ? item.MaterialQuantity + " GMU" : "";
+                    : item.Kind == ItemKind.Material ? item.MaterialQuantity.ToString() : "";
                 // 容器逐份展示，储量由同 Sprite 底部填充表达，不产生溢出的长容量文字。
                 group.Caption = item.Kind==ItemKind.Spell?state:item.DisplayName + (item.Kind == ItemKind.Container ? "" : "\n×" + group.Count + (group.Count > 1 ? " · " + group.MemberIndex + "/" + group.Count : ""))
                     + (state.Length > 0 ? "\n" + state : ""); _groups[i] = group;
@@ -164,7 +162,7 @@ namespace Game.UI
             }
         }
         public void TickInteraction(bool open, bool dragging, Vector2 pointer, Camera camera, float delta)
-        { _pan?.Tick(open && !dragging); if (open && dragging) _autoScroll?.Tick(pointer, camera, true, delta); }
+        { _pan?.Tick(open && !dragging); }
         public void OnDrop(PointerEventData data) => _controller?.SubmitToTarget(InventoryDropKind.Warehouse);
     }
 }

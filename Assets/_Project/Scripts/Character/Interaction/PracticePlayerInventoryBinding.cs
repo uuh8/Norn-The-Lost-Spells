@@ -17,8 +17,8 @@ namespace Game.Character
         {
             var player=_workspace.Player; if(player==null)return;
             var held=GetOrAdd<HeldItemInputController>(player);held.ConfigurePractice(_workspace.Session);
-            var collection=GetOrAdd<MaterialCollectionController>(player);collection.ConfigurePractice(_workspace.Session,_solidContentId,_containerDefinition!=null?_containerDefinition.CollectionRate:0);
             GetOrAdd<ContainerUseController>(player).ConfigurePractice(_workspace.Session,_containerDefinition);
+            var collection=GetOrAdd<MaterialCollectionController>(player);collection.ConfigurePractice(_workspace.Session,_solidContentId,_containerDefinition!=null?_containerDefinition.CollectionRate:0);
             var owned=GetOrAdd<OwnedWandCastAdapter>(player);
             owned.ConfigurePractice(_workspace.Session,_select1,_select2,_select3,_materialWaitingMaterial);
             player.GetComponent<WizardController>()?.BindOwnedInventory(owned);

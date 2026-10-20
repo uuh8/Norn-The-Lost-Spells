@@ -20,7 +20,7 @@ namespace Game.Run.Tests
     public sealed class SpellUseSandboxPlayModeTests
     {
         private const string ScenePath = "Assets/_Project/Scenes/Tests/SpellUseSandbox.unity";
-        private const string AssetsRoot = "Assets/_Project/ScriptableObjects/Tests/SinglePlayerSpells/";
+        private const string AssetsRoot = "Assets/_Project/Tests/Fixtures/Run/SinglePlayerSpells/";
         private Scene _scene;
         private SinglePlayerInventorySession _session;
         private OwnedWandCastAdapter _adapter;
@@ -45,8 +45,8 @@ namespace Game.Run.Tests
         {
             if (scene.path != ScenePath) return; _scene = scene; _session = Find<SinglePlayerInventorySession>();
             _adapter = Find<OwnedWandCastAdapter>(); _caster = Find<SpellCaster>(); _hud = Find<SpellUseHud>(); _ui = Find<SinglePlayerInventoryController>();
-            Assert.That(_session.ConfigureAndInitialize(AssetDatabase.LoadAssetAtPath<ItemCatalog>(AssetsRoot + "Catalog.asset"),
-                AssetDatabase.LoadAssetAtPath<SinglePlayerStartingInventory>(AssetsRoot + "StartingInventory.asset"), _directory), Is.True);
+            Assert.That(_session.ConfigureAndInitialize(AssetDatabase.LoadAssetAtPath<ItemCatalog>("Assets/_Project/Tests/Fixtures/Run/SinglePlayerSpells/Catalog.asset"),
+                AssetDatabase.LoadAssetAtPath<SinglePlayerStartingInventory>("Assets/_Project/Tests/Fixtures/Run/SinglePlayerSpells/StartingInventory.asset"), _directory), Is.True);
         }
         private T Find<T>() where T : Component
         { foreach (var root in _scene.GetRootGameObjects()) { var value = root.GetComponentInChildren<T>(true); if (value != null) return value; } return null; }

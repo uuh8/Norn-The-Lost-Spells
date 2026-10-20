@@ -16,7 +16,7 @@ namespace Game.Run
     }
 
     // 类别回答“是什么”，使用能力回答“能执行什么”。后续道具增加行为时扩展此能力，不改快捷位逻辑。
-    public enum ItemUseKind : byte { None = 0, Container = 1 }
+    public enum ItemUseKind : byte { None = 0, Container = 1, Throw = 2 }
     public enum ItemCategory : byte { General=0,Herb=1,Food=2,Container=3 }
 
     /// <summary>
@@ -70,7 +70,8 @@ namespace Game.Run
         internal bool TryCreateRules(out InventoryItemRules rules, out string error)
         {
             rules = default; error = null;
-            if (UseKind > ItemUseKind.Container || UseKind == ItemUseKind.Container && _kind != ItemKind.Container)
+            if (UseKind > ItemUseKind.Throw || UseKind == ItemUseKind.Container && _kind != ItemKind.Container
+                || UseKind == ItemUseKind.Throw && _kind != ItemKind.Consumable && _kind != ItemKind.Alchemy && _kind != ItemKind.Material)
             { error = "使用能力与物品数据不兼容；未实现的道具不能借用容器行为。"; return false; }
             int capacity = 1;
             if (_kind == ItemKind.Wand)

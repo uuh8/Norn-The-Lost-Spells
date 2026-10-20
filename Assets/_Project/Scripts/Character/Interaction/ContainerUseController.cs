@@ -28,6 +28,13 @@ namespace Game.Character
         private PlayerControllerBase _player;
         private readonly CollectionRateAccumulator _rate = new CollectionRateAccumulator();
         private readonly InventoryItemSnapshot[] _items = new InventoryItemSnapshot[256];
+        private readonly MaterialAmount[] _composition = new MaterialAmount[8];
+        public ContainerUseDefinition Definition=>_definition;
+        private bool ContainsGas(string id)
+        {
+            if(_session==null||!_session.TryCopyContainer(id,_composition,out int count,out _,out _))return false;
+            for(int i=0;i<count;i++)if(_composition[i].MaterialKey>=7&&_composition[i].Quantity>0)return true;return false;
+        }
         private LineRenderer _trajectory;
         private Material _trajectoryMaterial;
         private readonly RaycastHit[] _trajectoryHits = new RaycastHit[16];
@@ -69,10 +76,13 @@ namespace Game.Character
         { _throw.performed -= OnAimStarted; _throw.canceled -= OnAimReleased; _solid.performed -= OnSolid; _pour.Dispose(); _throw.Dispose(); _solid.Dispose(); if (_trajectoryMaterial != null) Destroy(_trajectoryMaterial); }
         private bool CanInput => _focused && Time.timeScale > 0 && _session?.ReadOnly != null && _definition != null
             && (_heldInput == null || _heldInput.CanUseWorld);
+        // 实际手持的普通Items也能G投掷；旧独立容器测试/场景仍可使用原Collection选择入口。
+        private string SelectedThrowableId => _session?.ToolbeltReadOnly!=null && _session.ToolbeltReadOnly.SelectedSlot>=3
+            ?_session.ToolbeltReadOnly.SelectedItemId:_collection?.SelectedContainerId;
         private void OnApplicationFocus(bool focused) { _focused = focused; CancelAim(); _waitPourRelease = true; }
         private void OnAimStarted(InputAction.CallbackContext _)
         {
-            string selected = _collection?.SelectedContainerId;
+            string selected = SelectedThrowableId;
             if (CanInput && !_waitThrowRelease && selected != null && _session.ReadOnly.TryGetView(selected, out var item) && item.WorldModel != null) _aiming = true;
         }
         private void OnAimReleased(InputAction.CallbackContext _) { if (_aiming && CanInput) _throwQueued = true; }
@@ -86,13 +96,14 @@ namespace Game.Character
             // Player的轨道相机及Cinemachine在LateUpdate更新；晚执行后再采样，避免轨迹落后视野一帧。
             if (!CanInput)
             { Reset(); CancelAim(); _solidQueued = false; if (_trajectory != null) _trajectory.enabled = false; return; }
-            string selected = _collection != null ? _collection.SelectedContainerId : null;
+            string selected = SelectedThrowableId;
             if (selected != _lastContainerId) { _lastContainerId = selected; Reset(); CancelAim(); }
             if (!_throw.IsPressed()) _waitThrowRelease = false;
             Vector3 target = transform.position + transform.forward * _definition.ForwardDistance + Vector3.up * .25f;
             if (_solidQueued) { _solidQueued = false; SubmitUse(ContainerUseKind.ReleaseSolid, 100, target); }
             if (!_pour.IsPressed()) _waitPourRelease=false;
             bool pouring = (_pour.IsPressed() && !_waitPourRelease) || (_heldInput != null && _heldInput.CanPour);
+            pouring=pouring && selected!=null && _session.ReadOnly.TryGetView(selected,out var held) && held.Kind==ItemKind.Container;
             if (_aiming)
             {
                 AlignWithCamera(); UpdateTrajectory(selected, ThrowVelocity(), true);
@@ -103,14 +114,16 @@ namespace Game.Character
             if (pouring) AlignWithCamera();
             target = UpdateTrajectory(selected, PourVelocity(), pouring);
             if (!pouring) { Reset(); return; }
-            _budget += _rate.Advance(_definition.PourRate, Time.deltaTime); _interval += Time.deltaTime;
+            // 气体共享真实组分账本，倍率改变实际转移量；长帧只保留有界批次，不积压无限失败预算。
+            float pourRate=_definition.PourRate*(ContainsGas(selected)?_definition.GasPourMultiplier:1);
+            _budget = System.Math.Min(_definition.MaximumPourBatchGmu,_budget+_rate.Advance(pourRate, Time.deltaTime)); _interval += Time.deltaTime;
             if (_interval < .1f || _budget == 0) return;
             ulong budget = _budget; _budget = 0; _interval = 0; SubmitUse(ContainerUseKind.Pour, budget, target);
         }
         public void SubmitUse(ContainerUseKind kind, ulong budget, Vector3 target)
         {
             if (_session?.ReadOnly == null || _definition == null || Time.timeScale <= 0) return;
-            string itemId = _collection != null ? _collection.SelectedContainerId : null;
+            string itemId = SelectedThrowableId;
             if (kind == ContainerUseKind.ReleaseSolid)
             {
                 var read = _session.ReadOnly; if (read.Count > _items.Length) return;
@@ -124,7 +137,7 @@ namespace Game.Character
             EventBus<ContainerUseRequestedEvent>.Publish(new ContainerUseRequestedEvent
             { InventoryId = _session.ReadOnly.InventoryId, WorldId = _worldId, SourceId = _sourceId, ItemId = itemId,
                 Kind = kind, RequestId = ++_sequence, Budget = budget, ExpectedVersion = _session.ReadOnly.Version,
-                ActorPosition = transform.position, TargetPosition = target, Radius = _definition.DepositRadius,
+                ActorPosition = transform.position, TargetPosition = target, Radius = kind==ContainerUseKind.Pour&&ContainsGas(itemId)?_definition.GasDepositRadius:_definition.DepositRadius,
                 ThrowVelocity = ThrowVelocity() });
         }
         private void OnPrepareThrow(ContainerThrownEvent command)

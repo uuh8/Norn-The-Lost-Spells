@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-19 02:52:18Z" end-time="2026-10-19 02:52:18Z" duration="0.7089493">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2123" result="Failed" site="Child" start-time="2026-10-19 02:52:18Z" end-time="2026-10-19 02:52:18Z" duration="0.708949" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3382" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="655" result="Failed" site="Child" start-time="2026-10-19 02:52:18Z" end-time="2026-10-19 02:52:18Z" duration="0.611747" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22796" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3383" name="Game" fullname="Game" runstate="Runnable" testcasecount="655" result="Failed" site="Child" start-time="2026-10-19 02:52:18Z" end-time="2026-10-19 02:52:18Z" duration="0.515236" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3384" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="655" result="Failed" site="Child" start-time="2026-10-19 02:52:18Z" end-time="2026-10-19 02:52:18Z" duration="0.416855" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3385" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="655" result="Failed" site="Child" start-time="2026-10-19 02:52:18Z" end-time="2026-10-19 02:52:18Z" duration="0.317369" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3140" name="SpellProgramContentContractTests" fullname="Game.Run.Tests.SpellProgramContentContractTests" classname="Game.Run.Tests.SpellProgramContentContractTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-19 02:52:18Z" end-time="2026-10-19 02:52:18Z" duration="0.217829" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3141" name="EveryDungeonRewardResolvesToOneCanonicalInventoryItem" fullname="Game.Run.Tests.SpellProgramContentContractTests.EveryDungeonRewardResolvesToOneCanonicalInventoryItem" methodname="EveryDungeonRewardResolvesToOneCanonicalInventoryItem" classname="Game.Run.Tests.SpellProgramContentContractTests" runstate="Runnable" seed="1609523384" result="Failed" start-time="2026-10-19 02:52:18Z" end-time="2026-10-19 02:52:18Z" duration="0.108225" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Spell_Mdy_DmgUp 缺少可确定的奖励物品映射
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.SpellProgramContentContractTests.EveryDungeonRewardResolvesToOneCanonicalInventoryItem () [0x00047] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\SpellProgramContentContractTests.cs:13
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

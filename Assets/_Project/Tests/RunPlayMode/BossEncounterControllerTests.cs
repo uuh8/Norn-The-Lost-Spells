@@ -136,7 +136,7 @@ namespace Game.Run.Tests
         }
 
         [UnityTest]
-        public IEnumerator SafeZoneExit_StartsOnceThenLetsParticlesExpire()
+        public IEnumerator SafeZoneExitWithoutInventoryCheckpointKeepsGateClosed()
         {
             BossEntryTrigger entryTrigger = CreateEntryTrigger(
                 out BossEncounterController encounter,
@@ -146,33 +146,12 @@ namespace Game.Run.Tests
                 out ParticleSystem particles);
             yield return null;
             particles.Emit(1);
-
-            entryTrigger.SendMessage(
-                "OnTriggerEnter",
-                playerCollider,
-                SendMessageOptions.RequireReceiver);
-            entryTrigger.SendMessage(
-                "OnTriggerExit",
-                playerCollider,
-                SendMessageOptions.RequireReceiver);
-
-            Assert.That(encounter.State, Is.EqualTo(BossEncounterState.Running));
-            Assert.That(boundary.enabled, Is.False,
-                "成功出圈后应立即关闭 Trigger，避免多个 Player Collider 重复启动。");
-            Assert.That(particles.isEmitting, Is.False,
-                "出圈后只停止发射新粒子，不能立即 Clear 已有粒子。");
-            Assert.That(visualRoot.activeSelf, Is.True,
-                "已有粒子尚未结束时，视觉根节点必须保持 active。");
-
-            entryTrigger.SendMessage(
-                "OnTriggerExit",
-                playerCollider,
-                SendMessageOptions.RequireReceiver);
-            yield return new WaitForSeconds(0.15f);
-
-            Assert.That(encounter.State, Is.EqualTo(BossEncounterState.Running));
-            Assert.That(visualRoot.activeSelf, Is.False,
-                "全部粒子自然死亡后才隐藏 Safe Zone 视觉。");
+            Assert.That(entryTrigger.TryArm(playerCollider), Is.True);
+            LogAssert.Expect(LogType.Warning, "[Run] Boss Entry 未能捕获 Run Checkpoint，已拒绝启动 Encounter。");
+            Assert.That(entryTrigger.TryActivate(playerCollider), Is.False);
+            Assert.That(encounter.State, Is.EqualTo(BossEncounterState.Inactive));
+            Assert.That(boundary.enabled, Is.True, "没有真实库存快照时不放行；成功出圈由 HubPracticePortalTests 覆盖。");
+            Assert.That(visualRoot.activeSelf, Is.True);
         }
 
         private BossEncounterController CreateController(
@@ -209,30 +188,6 @@ namespace Game.Run.Tests
             HealthComponent playerHealth = CreateHealth("Player Health");
             encounter = CreateController(bossHealth, playerHealth);
 
-            SpellDefinition spell =
-                ScriptableObject.CreateInstance<SpellDefinition>();
-            spell.DisplayName = "Safe Zone Test Spell";
-            _createdObjects.Add(spell);
-            SpellLibrary library =
-                ScriptableObject.CreateInstance<SpellLibrary>();
-            library.Available = new[] { spell };
-            _createdObjects.Add(library);
-            WandLoadout wand =
-                ScriptableObject.CreateInstance<WandLoadout>();
-            wand.Spells = new[] { spell };
-            wand.BaseDraws = 1;
-            _createdObjects.Add(wand);
-
-            GameObject sessionObject = new GameObject("P8 Run Session Root");
-            sessionObject.SetActive(false);
-            _createdObjects.Add(sessionObject);
-            RunSpellSession session =
-                sessionObject.AddComponent<RunSpellSession>();
-            session.ConfigureAndInitialize(library, wand);
-            RunSessionCoordinator coordinator =
-                sessionObject.AddComponent<RunSessionCoordinator>();
-            sessionObject.SetActive(true);
-
             GameObject playerObject = new GameObject("Player");
             playerObject.layer = 8;
             _createdObjects.Add(playerObject);
@@ -255,7 +210,6 @@ namespace Game.Run.Tests
             main.startSpeed = 0f;
 
             SetPrivateField(entryTrigger, "_encounter", encounter);
-            SetPrivateField(entryTrigger, "_sessionCoordinator", coordinator);
             SetPrivateField(entryTrigger, "_playerLayers", (LayerMask)(1 << 8));
             SetPrivateField(
                 entryTrigger,

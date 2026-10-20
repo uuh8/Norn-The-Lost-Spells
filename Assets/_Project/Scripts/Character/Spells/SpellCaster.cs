@@ -25,13 +25,7 @@ namespace Game.Character
         // 这里与纯解释器使用同一深度上限，形成第二道防线，防止错误数据或未来规则扩展造成无界递归。
         private const int MaxRuntimeTriggerDepth = CastEvaluator.MaxActionDepth;
 
-        [Header("Run Data Source")]
-        [SerializeField]
-        [Tooltip("P7 单局模式的数据源；配置后优先使用它的 Runtime Wand，旧场景仍可回退到下方 Wand。")]
-        // 单局 Session 持有玩家本局可编辑的 Runtime 配置，避免直接修改 Project 中的模板资产。
-        private RunSpellSession _runSpellSession;
-
-        // Inspector 模板/旧实验场景的回退数据源。正式单局中优先读取 _runSpellSession.RuntimeWand。
+        // NPC/独立程序使用只读模板；玩家程序只从 OwnedWandCastAdapter 的真实库存取得。
         [SerializeField] private WandLoadout _wand;
         [Tooltip("可用法力值")]
         // ManaComponent 持有当前角色独立的可变法力值；SpellDefinition/WandLoadout 不保存本次运行资源。
@@ -50,7 +44,7 @@ namespace Game.Character
         // RaycastNonAlloc 由调用方提供数组接收结果，避免每次落点检测创建新数组。
         private readonly RaycastHit[] _landingHits = new RaycastHit[8];
         /// <summary>
-        /// 返回当前真正参与求值的法杖。P7 使用 Runtime Clone，旧实验场景仍兼容 Inspector 中的模板 Wand。
+        /// 返回 NPC/独立程序的只读模板；玩家由 OwnedWandCastAdapter 运行携带配置。
         /// 这里按需解析而不在 Awake 缓存，避免依赖不同 GameObject 之间不可保证的 Awake 执行顺序。
         /// 表达式体属性只把读取转发给 ResolveWand；外部不能通过该属性替换内部数据源。
         /// </summary>
@@ -237,7 +231,8 @@ namespace Game.Character
         private int RunOwnedCast(in OwnedWandCastContext source, Vector3 spawn, Vector3 aim, Vector3 direction,
             SpellAimMode aimMode, byte team, int attacker, Collider collider, int castId, int depth, SpellManaPolicy policy)
         {
-            if (depth >= MaxRuntimeTriggerDepth || !source.TryPrepare(out OwnedWandCastContext prepared)) return 0;
+            if ((source.V2 ? depth > SpellProgramLimits.MaxScopeDepth : depth >= MaxRuntimeTriggerDepth)
+                || !source.TryPrepare(out OwnedWandCastContext prepared)) return 0;
             CastExecutionLayer layer = prepared.Layer;
             try
             {
@@ -252,6 +247,7 @@ namespace Game.Character
                                 SpawnSkyfallProjectile(cmd, spawn, direction, i, layer.CommandCount, team, attacker, collider, castId, depth, policy, prepared); break;
                             case SpellSpawnMode.StaticAtPoint:
                                 SpawnStaticProjectileAtPoint(cmd, spawn, direction, team, attacker, collider, prepared);
+                                prepared.ObserveOutput(i);
                                 prepared.ReleaseMaterial(i, spawn + Vector3.up * .25f); break;
                             default:
                                 SpawnForwardProjectile(cmd, spawn, aim, direction, aimMode, i, layer.CommandCount, team, attacker, collider, castId, depth, policy, prepared); break;
@@ -338,46 +334,10 @@ namespace Game.Character
 
         # region 内部功能函数
         /// <summary>
-        /// 解析当前权威的有序法术配置：优先使用单局 Runtime Clone，无法绑定时才回退到 Inspector 模板。
+        /// 解析 NPC/独立程序的只读模板，玩家不再绑定另一套开场 Session。
         /// 返回的是 ScriptableObject 引用，不会在这里复制数组或重新创建资产。
         /// </summary>
-        private WandLoadout ResolveWand()
-        {
-            if (TryBindCurrentRunSession())
-                return _runSpellSession.RuntimeWand;
-
-            return _wand;
-        }
-
-        /// <summary>
-        /// 跨 Scene 后重新绑定由 DontDestroyOnLoad 保留的单局数据。
-        /// Scene Asset 不能序列化指向运行时对象的引用，因此后续关卡必须通过 Current 找回同一局 Session。
-        /// </summary>
-        /// <returns>找到且已初始化、同时拥有 RuntimeWand 的 Session 时返回 true。</returns>
-        public bool TryBindCurrentRunSession()
-        {
-            // 已持有可用引用时直接复用，避免每次 Cast 都重新访问静态 Current。
-            if (IsUsableRunSession(_runSpellSession))
-                return true;
-
-            // Current 是跨 Scene 的 Runtime 入口；它不是 Project Asset 中可序列化的对象引用。
-            RunSpellSession current = RunSpellSession.Current;
-            if (!IsUsableRunSession(current))
-                return false;
-
-            _runSpellSession = current;
-            return true;
-        }
-
-        /// <summary>
-        /// 集中定义 Session 可用条件，避免 Resolve、重绑和将来的调用方分别维护不一致的 null/初始化判断。
-        /// </summary>
-        private static bool IsUsableRunSession(RunSpellSession session)
-        {
-            return session != null &&
-                   session.IsInitialized &&
-                   session.RuntimeWand != null;
-        }
+        private WandLoadout ResolveWand() => _wand;
 
         private bool TrySpendMana(
             float requiredMana,
@@ -488,6 +448,7 @@ namespace Game.Character
             // BallisticToPoint 已把目标点与重力换算成 launchVelocity；Direct 仍是 dir * cmd.Speed。
             proj.Init(team, attackerId, cmd.Damage, cmd.DamageType, launchVelocity, casterCollider, useGravity: cmd.UseGravity);
             ownedSource.LinkMaterial(index, proj);
+            ownedSource.ObserveOutput(index);
         }
 
         /// <summary>
@@ -590,7 +551,7 @@ namespace Game.Character
             OwnedWandCastContext ownedSource = default)
         {
             // 如果这枚投射物根本没有携带后续法术，那么什么都不用绑定
-            if (!cmd.HasPayload)
+            if (!cmd.HasPayload && !(ownedSource.Enabled && ownedSource.V2 && ownedSource.LayerIndex >= 0))
                 return;
             // Combat 只通知生命周期；Character 再通过 Core 命令释放未触发子树。
             if (ownedSource.Enabled) proj.Finished += ownedSource.Abandon;
@@ -603,6 +564,14 @@ namespace Game.Character
 
             switch (cmd.PayloadTrigger)
             {
+                case PayloadTriggerMode.OnTermination:
+                    proj.Terminated += (reason,position,direction) =>
+                    {
+                        if(reason!=ProjectileTerminationReason.Impact && reason!=ProjectileTerminationReason.LifetimeExpired)return;
+                        RunCast(payload,1,payloadMods,position,position+direction,direction,SpellAimMode.Direct,
+                            team,attackerId,casterCollider,castId,depth+1,manaPolicy,ownedSource);
+                    };
+                    break;
                 case PayloadTriggerMode.OnImpact:
                     // += 向 C# event 订阅回调；ProjectileBase 在完成碰撞处理后 Invoke，命中点成为下一层发射点。
                     // Payload 表示一个 Action，因此新层的基础 Draw Budget 重置为 1；depth + 1 记录递归层级。
@@ -654,6 +623,7 @@ namespace Game.Character
         {
             // 所有运动参数都是 CastEvaluator 已经烘焙好的快照；投射物不再回查 SpellDefinition。
             proj.ConfigureBounce(cmd.BounceCount);
+            proj.ConfigureLifetime(cmd.LifetimeSeconds,cmd.LifetimeAddSeconds,cmd.LifetimeMul);
 
             switch (cmd.MotionMode)
             {
@@ -763,6 +733,8 @@ namespace Game.Character
             ConfigureProjectileMotion(proj, cmd, index, count);
             proj.Init(team, attackerId, cmd.Damage, cmd.DamageType, fallDir * cmd.Speed, casterCollider, useGravity: cmd.UseGravity);
             ownedSource.LinkMaterial(index, proj);
+            // Skyfall 在预警结束后才出生；资源预付不等于世界已经释放。
+            ownedSource.ObserveOutput(index);
         }
 
         /// <summary>

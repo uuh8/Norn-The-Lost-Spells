@@ -55,9 +55,9 @@ namespace Game.ElementField
             {
                 RaycastHit hit = _supportHits[i]; Collider collider = hit.collider;
                 if (collider == null || collider.attachedRigidbody != null || collider is CharacterController
-                    || collider.GetComponentInParent<Game.Combat.StatusController>() != null
+                    || HasStatusOwner(collider)
                     || hit.normal.y < .25f || hit.point.y <= height) continue;
-                if (collider.GetComponent<GeneratedMaterialSolidCollider>() != null && _materialSolids != null)
+                if (collider.TryGetComponent<GeneratedMaterialSolidCollider>(out _) && _materialSolids != null)
                 {
                     // 部分残留的底面抬升已由 Liquid 的 GMU 占据计算。Raycast 再取它的 Collider
                     // 会把相同高度算两次；冰仍作为整格支撑，所以保留冰的真实接触平面。
@@ -95,10 +95,17 @@ namespace Game.ElementField
                 _environmentHits[i] = null;
                 solid |= hit != null && hit.attachedRigidbody == null
                     && !(hit is CharacterController)
-                    && hit.GetComponent<GeneratedMaterialSolidCollider>() == null
-                    && hit.GetComponentInParent<Game.Combat.StatusController>() == null;
+                    && !hit.TryGetComponent<GeneratedMaterialSolidCollider>(out _)
+                    && !HasStatusOwner(hit);
             }
             return solid;
+        }
+        internal static bool HasStatusOwner(Collider collider)
+        {
+            // Editor的GetComponent缺失查询会创建NullErrorWrapper；逐层TryGetComponent保持同样父级语义且零GC。
+            for(Transform current=collider.transform;current!=null;current=current.parent)
+                if(current.TryGetComponent<Game.Combat.StatusController>(out _))return true;
+            return false;
         }
 
         public int Bake(ElementGrid grid, Vector3 origin, float cellSize)

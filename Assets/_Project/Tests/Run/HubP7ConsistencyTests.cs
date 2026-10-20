@@ -18,7 +18,8 @@ namespace Game.Run.Tests
         [SetUp] public void Load()
         {
             _p7 = EditorSceneManager.OpenPreviewScene("Assets/_Project/Scenes/P7_DemoRun.unity");
-            _hub = EditorSceneManager.OpenPreviewScene(SessionState.GetString("Norn.HubAlignment.ReviewPath", Formal));
+            // 正式一致性不能受上一次工具窗口留下的SessionState审阅路径影响。
+            _hub = EditorSceneManager.OpenPreviewScene(Formal);
         }
         [TearDown] public void Cleanup()
         {
@@ -79,16 +80,26 @@ namespace Game.Run.Tests
         }
         [Test] public void WarehouseAndShopMatchUserBuildingsWithSeparateInteractionRanges()
         {
-            var definition=Find<HubInteractionController>(_hub).Definition;
+            var hub=Find<HubInteractionController>(_hub);var definition=hub.Definition;
+            var areas=new System.Collections.Generic.HashSet<HubAreaVolume>();
             foreach(var station in definition.Stations)
             {
                 if(station.Kind==HubStationKind.Shop) { Assert.That(station.Position.z,Is.GreaterThan(10),"商店移到上方Building_1门前。");Assert.That(station.Position.z,Is.LessThan(24.2f)); }
                 if(station.Kind==HubStationKind.Warehouse) { Assert.That(station.Position.z,Is.LessThan(0),"仓库移到下方Building_3木棚。");Assert.That(station.Position.z,Is.GreaterThan(-12.54f)); }
-                int markers=0;
-                foreach(var root in _hub.GetRootGameObjects())foreach(var node in root.GetComponentsInChildren<Transform>(true)) if(node.name==station.DisplayName+" · E")
-                {Assert.That(Vector3.Distance(node.position,station.Position),Is.LessThan(.0001f),"父层级转换存在float舍入，标牌仍须位于真实交互点。");markers++;}
-                Assert.That(markers,Is.EqualTo(1),"分组后也必须找到唯一真实站点，不能零匹配假通过。");
+                // 远征由实际Portal用例覆盖；这三项设施按已保存Box检验，不能恢复作者删去的E悬浮牌。
+                if(station.Kind==HubStationKind.Expedition)continue;
+                string field=station.Kind==HubStationKind.Shop?"_shopArea":station.Kind==HubStationKind.Warehouse?"_warehouseArea":"_researchArea";
+                var area=(HubAreaVolume)new SerializedObject(hub).FindProperty(field).objectReferenceValue;
+                Assert.That(area,Is.Not.Null,station.DisplayName);Assert.That(area.Volume.isTrigger,Is.True);Assert.That(area.gameObject.scene,Is.EqualTo(_hub));
+                Assert.That(areas.Add(area),Is.True,"设施不能共用同一Box。");
+                // 作者已调整Box中心/尺寸；Runtime以实际Box为准，旧Station点不是区域中心约束。
+                if(station.Kind==HubStationKind.Shop){Assert.That(area.Center.z,Is.GreaterThan(10));Assert.That(area.Center.z,Is.LessThan(24.2f));}
+                if(station.Kind==HubStationKind.Warehouse){Assert.That(area.Center.z,Is.LessThan(0));Assert.That(area.Center.z,Is.GreaterThan(-12.54f));}
+                Assert.That(area.Volume.size.x,Is.GreaterThan(0));Assert.That(area.Volume.size.y,Is.GreaterThan(0));Assert.That(area.Volume.size.z,Is.GreaterThan(0));
+                int matches=0;foreach(var root in _hub.GetRootGameObjects())foreach(var volume in root.GetComponentsInChildren<HubAreaVolume>(true))if(volume==area)matches++;
+                Assert.That(matches,Is.EqualTo(1),"必须找到唯一真实区域，不能零匹配假通过。");
             }
+            Assert.That(areas.Count,Is.EqualTo(3));
             for(int i=0;i<definition.Stations.Length;i++) for(int j=i+1;j<definition.Stations.Length;j++)
                 Assert.That(Vector3.Distance(definition.Stations[i].Position,definition.Stations[j].Position),Is.GreaterThan(definition.InteractionRadius*2),"站点范围不可重叠，否则同一个E位置可能被最近点规则抢占。");
         }

@@ -2,7 +2,7 @@ namespace Game.Core
 {
     public enum InventoryCommandKind : byte
     {
-        Place = 0, MoveStack = 1, Split = 2, Drop = 3, Pickup = 4, EquipWand = 5, ReplaceBackpack = 6
+        Place = 0, MoveStack = 1, Split = 2, Drop = 3, Pickup = 4, EquipWand = 5, ReplaceBackpack = 6, OrganizeBackpack = 7
     }
     public enum InventoryPickupDestination : byte { Backpack = 0, EquippedWand = 1, EquippedBackpack = 2, WandSlot = 3, SpellStorage = 4 }
     public enum InventoryDestination : byte { Backpack = 0, Warehouse = 1, WandSlot = 2, SpellStorage = 3 }

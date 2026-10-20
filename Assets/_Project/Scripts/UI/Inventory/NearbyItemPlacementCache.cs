@@ -18,7 +18,8 @@ namespace Game.UI
             if(TryGet(id,out var existing))return existing;
             var placement=FindFree(id,shape,0,columns);_entries.Add(id,new Entry{Shape=shape,Placement=placement});return placement;
         }
-        private bool Fits(string id,InventoryShape shape,in GridPlacement placement)
+        // Preview只读既有展示占位，不能Move后再撤销，否则会改变整理草稿。
+        public bool Fits(string id,InventoryShape shape,in GridPlacement placement)
         {
             if(placement.X<0 || placement.Y<0)return false;
             foreach(var pair in _entries)

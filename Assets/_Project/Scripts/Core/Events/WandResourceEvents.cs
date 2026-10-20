@@ -2,7 +2,8 @@ namespace Game.Core
 {
     public enum OwnedWandFailureReason : byte
     { None, InvalidRequest, UnknownSource, NotCarried, StaleProgram, Cooldown, InsufficientMana, NoReceiver,
-        InsufficientUses, MissingEligibility, InvalidProgram, BudgetConsumed, ResourceBusy, SpawnFailed }
+        InsufficientUses, MissingEligibility, InvalidProgram, BudgetConsumed, ResourceBusy, SpawnFailed,
+        StaleExecution, StaleResources, TooComplex, EmptyProgram }
     // Core 仅传原始字段，不引用 Run/Skills；支付结果同步匹配调用者和请求，防止串会话或重复扣费。
     public struct WandSelectionRequestedEvent : IGameEvent { public string InventoryId; public int SlotIndex; }
     public struct WandResourceRequestedEvent : IGameEvent

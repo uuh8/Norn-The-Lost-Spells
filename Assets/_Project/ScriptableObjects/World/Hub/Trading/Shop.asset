@@ -1,0 +1,326 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99589c4bd8b43ae41a3c3df9478ff659, type: 3}
+  m_Name: Shop
+  m_EditorClassIdentifier: Game.Run::Game.Run.ShopDefinition
+  ShopId: sandbox.shop
+  PurchaseBudget: 100
+  RefreshEveryProgress: 1
+  Offers:
+  - OfferId: wandtest.wand.a
+    ContentId: wandtest.wand.a
+    DisplayName: 
+    Icon: {fileID: 0}
+    MaterialKey: 0
+    BuyPrice: 40
+    SellPrice: 12
+    Stock: 2
+    InitialCharges: 12
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: wandtest.wand.b
+    ContentId: wandtest.wand.b
+    DisplayName: 
+    Icon: {fileID: 0}
+    MaterialKey: 0
+    BuyPrice: 40
+    SellPrice: 12
+    Stock: 2
+    InitialCharges: 12
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: wandtest.wand.c
+    ContentId: wandtest.wand.c
+    DisplayName: 
+    Icon: {fileID: 0}
+    MaterialKey: 0
+    BuyPrice: 40
+    SellPrice: 12
+    Stock: 2
+    InitialCharges: 12
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: wandtest.fire
+    ContentId: wandtest.fire
+    DisplayName: 
+    Icon: {fileID: 0}
+    MaterialKey: 0
+    BuyPrice: 20
+    SellPrice: 6
+    Stock: 5
+    InitialCharges: 12
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: wandtest.ice
+    ContentId: wandtest.ice
+    DisplayName: 
+    Icon: {fileID: 0}
+    MaterialKey: 0
+    BuyPrice: 20
+    SellPrice: 6
+    Stock: 5
+    InitialCharges: 12
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: wandtest.trigger
+    ContentId: wandtest.trigger
+    DisplayName: 
+    Icon: {fileID: 0}
+    MaterialKey: 0
+    BuyPrice: 20
+    SellPrice: 6
+    Stock: 5
+    InitialCharges: 12
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: containertest.bottle
+    ContentId: containertest.bottle
+    DisplayName: 
+    Icon: {fileID: 0}
+    MaterialKey: 0
+    BuyPrice: 20
+    SellPrice: 6
+    Stock: 5
+    InitialCharges: 12
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: containertest.ice
+    ContentId: containertest.ice
+    DisplayName: 
+    Icon: {fileID: 0}
+    MaterialKey: 0
+    BuyPrice: 20
+    SellPrice: 6
+    Stock: 5
+    InitialCharges: 12
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: material.1
+    ContentId: 
+    DisplayName: "\u6C34"
+    Icon: {fileID: 21300000, guid: 743867ccc824c224a8ea293aa24b46d4, type: 3}
+    MaterialKey: 1
+    BuyPrice: 2
+    SellPrice: 1
+    Stock: 60000
+    InitialCharges: 12
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: material.2
+    ContentId: 
+    DisplayName: "\u706B"
+    Icon: {fileID: 21300000, guid: b131f0689c8c0404da6002ad8182e577, type: 3}
+    MaterialKey: 2
+    BuyPrice: 4
+    SellPrice: 2
+    Stock: 60000
+    InitialCharges: 12
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: material.3
+    ContentId: 
+    DisplayName: "\u6BD2\u6DB2"
+    Icon: {fileID: 21300000, guid: a2eedaaadd73913429115a78b0be9700, type: 3}
+    MaterialKey: 3
+    BuyPrice: 4
+    SellPrice: 2
+    Stock: 60000
+    InitialCharges: 12
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: material.4
+    ContentId: 
+    DisplayName: "\u9ECF\u6DB2"
+    Icon: {fileID: 21300000, guid: 1ddadd9486228264ea7596d5fcc60646, type: 3}
+    MaterialKey: 4
+    BuyPrice: 4
+    SellPrice: 2
+    Stock: 60000
+    InitialCharges: 12
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: material.5
+    ContentId: 
+    DisplayName: "\u51B0"
+    Icon: {fileID: 21300000, guid: 968784d343690fc41b59309754649f64, type: 3}
+    MaterialKey: 5
+    BuyPrice: 4
+    SellPrice: 2
+    Stock: 60000
+    InitialCharges: 12
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: material.6
+    ContentId: 
+    DisplayName: "\u5E72\u9ECF\u6DB2"
+    Icon: {fileID: 21300000, guid: 0b7f82da777244545be24181db355ffe, type: 3}
+    MaterialKey: 6
+    BuyPrice: 4
+    SellPrice: 2
+    Stock: 60000
+    InitialCharges: 12
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: material.7
+    ContentId: 
+    DisplayName: "\u84B8\u6C7D"
+    Icon: {fileID: 21300000, guid: 26d2091306cb7c446ab63a4b203c9218, type: 3}
+    MaterialKey: 7
+    BuyPrice: 4
+    SellPrice: 2
+    Stock: 60000
+    InitialCharges: 12
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: material.8
+    ContentId: 
+    DisplayName: "\u6BD2\u6C14"
+    Icon: {fileID: 21300000, guid: 14bd2b9cdff02ce48abb03bde7741116, type: 3}
+    MaterialKey: 8
+    BuyPrice: 4
+    SellPrice: 2
+    Stock: 60000
+    InitialCharges: 12
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: norn.v2.add_mana
+    ContentId: norn.v2.add_mana
+    DisplayName: "\u6CD5\u529B\u56DE\u6D41"
+    Icon: {fileID: 21300000, guid: cc834869ca6b1ac44bfec4d247e5a4b5, type: 3}
+    MaterialKey: 0
+    BuyPrice: 35
+    SellPrice: 11
+    Stock: 4
+    InitialCharges: 8
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: norn.v2.cast_faster
+    ContentId: norn.v2.cast_faster
+    DisplayName: "\u5FEB\u901F\u65BD\u653E"
+    Icon: {fileID: 21300000, guid: e1a97a0b083b46c45bab70ea5a120f14, type: 3}
+    MaterialKey: 0
+    BuyPrice: 35
+    SellPrice: 11
+    Stock: 4
+    InitialCharges: 8
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: norn.v2.reload_faster
+    ContentId: norn.v2.reload_faster
+    DisplayName: "\u5FEB\u901F\u5468\u8F6C"
+    Icon: {fileID: 21300000, guid: 793b6795829e4024d92d6d55aaac3c97, type: 3}
+    MaterialKey: 0
+    BuyPrice: 35
+    SellPrice: 11
+    Stock: 4
+    InitialCharges: 8
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: norn.v2.alpha
+    ContentId: norn.v2.alpha
+    DisplayName: "\u03B1 \u501F\u7528"
+    Icon: {fileID: 21300000, guid: 929882fffc9d1ff49b1c63452d219b9f, type: 3}
+    MaterialKey: 0
+    BuyPrice: 35
+    SellPrice: 11
+    Stock: 4
+    InitialCharges: 8
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: norn.v2.gamma
+    ContentId: norn.v2.gamma
+    DisplayName: "\u03B3 \u501F\u7528"
+    Icon: {fileID: 21300000, guid: ed56f2c4f7f6d8f4eb53c72dca377f05, type: 3}
+    MaterialKey: 0
+    BuyPrice: 35
+    SellPrice: 11
+    Stock: 4
+    InitialCharges: 8
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: norn.v2.short_life
+    ContentId: norn.v2.short_life
+    DisplayName: "\u77ED\u5BFF\u547D"
+    Icon: {fileID: 21300000, guid: 674bf21e17e13cd4e920a0677cccf38f, type: 3}
+    MaterialKey: 0
+    BuyPrice: 35
+    SellPrice: 11
+    Stock: 4
+    InitialCharges: 8
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: norn.v2.termination
+    ContentId: norn.v2.termination
+    DisplayName: "\u7EC8\u6B62\u89E6\u53D1\u5F39"
+    Icon: {fileID: 21300000, guid: 2b1cd72f19f0cb94e98c196144bdd7eb, type: 3}
+    MaterialKey: 0
+    BuyPrice: 35
+    SellPrice: 11
+    Stock: 4
+    InitialCharges: 8
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: norn.v2.wand.0
+    ContentId: norn.v2.wand.0
+    DisplayName: "\u8FC5\u6377\u7814\u4E60\u6756"
+    Icon: {fileID: 21300000, guid: d57a0be4dd400494a8e5ba7640459d3d, type: 3}
+    MaterialKey: 0
+    BuyPrice: 180
+    SellPrice: 60
+    Stock: 4
+    InitialCharges: 0
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: norn.v2.wand.1
+    ContentId: norn.v2.wand.1
+    DisplayName: "\u91CD\u8F7D\u7814\u4E60\u6756"
+    Icon: {fileID: 21300000, guid: d57a0be4dd400494a8e5ba7640459d3d, type: 3}
+    MaterialKey: 0
+    BuyPrice: 180
+    SellPrice: 60
+    Stock: 4
+    InitialCharges: 0
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: norn.v2.wand.2
+    ContentId: norn.v2.wand.2
+    DisplayName: "\u4E71\u5E8F\u7814\u4E60\u6756"
+    Icon: {fileID: 21300000, guid: d57a0be4dd400494a8e5ba7640459d3d, type: 3}
+    MaterialKey: 0
+    BuyPrice: 180
+    SellPrice: 60
+    Stock: 4
+    InitialCharges: 0
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: norn.v2.double
+    ContentId: norn.v2.double
+    DisplayName: "\u53CC\u91CD\u5C04\u51FB"
+    Icon: {fileID: 21300000, guid: ec75057ee77b0bc41bd68cd3506caec5, type: 3}
+    MaterialKey: 0
+    BuyPrice: 35
+    SellPrice: 11
+    Stock: 4
+    InitialCharges: 8
+    Unlimited: 0
+    InitialMaterialQuantity: 1
+  - OfferId: norn.v2.damage
+    ContentId: norn.v2.damage
+    DisplayName: "\u6CD5\u672F\u589E\u5E45_\u4FEE\u6B63"
+    Icon: {fileID: 21300000, guid: d8ac44d9012569b4f92bafb16a549967, type: 3}
+    MaterialKey: 0
+    BuyPrice: 35
+    SellPrice: 11
+    Stock: 4
+    InitialCharges: 8
+    Unlimited: 0
+    InitialMaterialQuantity: 1

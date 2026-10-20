@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94d61b16a547af8489085c114b9b77e8, type: 3}
+  m_Name: DungeonWandRolls
+  m_EditorClassIdentifier: Game.Run::Game.Run.DungeonWandRollProfile
+  Mana: {x: 80, y: 240}
+  Regen: {x: 8, y: 30}
+  Cooldown: {x: 0.05, y: 0.3}
+  Capacity: {x: 3, y: 32}
+  Draws: {x: 1, y: 3}
+  Reload: {x: 0.2, y: 1.2}
+  Spread: {x: 0, y: 8}
+  ShuffleProbability: 0.25
+  AlwaysCastCandidates:
+  - norn.v2.cast_faster
+  - norn.v2.reload_faster
+  AlwaysCastProbability: 0.12

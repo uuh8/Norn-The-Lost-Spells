@@ -6,7 +6,7 @@ namespace Game.Run
     /// <summary>磁盘普通字段与权威库存之间的边界；完整验证成功才发布 Profile。</summary>
     public static class ProfileSaveMapper
     {
-        public const int CurrentSchema = 12;
+        public const int CurrentSchema = 14;
         public static SinglePlayerSaveDto ToDto(SinglePlayerProfile profile, long generation)
         {
             if (profile == null || generation < 0) throw new ArgumentException("不能保存非法 Profile。");
@@ -44,6 +44,11 @@ namespace Game.Run
                 if (item.Material != null) { saved.MaterialKey = item.Material.MaterialKey; saved.MaterialQuantity = item.Material.Quantity; }
                 if (item.Attachment != null)
                 { saved.AttachmentContainerId = item.Attachment.ContainerId; saved.AttachmentDose = item.Attachment.Dose; saved.AttachmentEnabled = item.Attachment.Enabled; }
+                if(item.RolledWandStats.HasValue)
+                {var stats=item.RolledWandStats.Value;saved.HasRolledWandStats=true;saved.WandMaxMana=stats.MaxMana;saved.WandManaRegen=stats.ManaRegenPerSecond;
+                    saved.WandCooldown=stats.CastCooldown;saved.WandCapacity=stats.ProgramCapacity;saved.WandBaseDraws=stats.BaseDraws;
+                    saved.WandReloadTime=stats.BaseReloadTime;saved.WandSpreadDegrees=stats.BaseSpreadDegrees;saved.WandShuffle=stats.Shuffle;
+                    saved.WandAlwaysCastContentIds=new string[stats.AlwaysCastContentIds.Count];for(int t=0;t<saved.WandAlwaysCastContentIds.Length;t++)saved.WandAlwaysCastContentIds[t]=stats.AlwaysCastContentIds[t];}
                 savedItems.Add(saved);
             }
             dto.Items = savedItems.ToArray();
@@ -115,8 +120,22 @@ namespace Game.Run
                         return new ProfilePersistenceResult(ProfilePersistenceStatus.InvalidData, "附着配置/schema非法，原档保留。");
                     attachment = new SpellAttachmentState(item.AttachmentContainerId, item.AttachmentDose, item.AttachmentEnabled);
                 }
+                WandStats? rolled=null;
+                if(!item.HasRolledWandStats&&(item.WandMaxMana!=0||item.WandManaRegen!=0||item.WandCooldown!=0||item.WandCapacity!=0||item.WandBaseDraws!=0
+                    ||item.WandReloadTime!=0||item.WandSpreadDegrees!=0||item.WandShuffle||item.WandAlwaysCastContentIds!=null&&item.WandAlwaysCastContentIds.Length>0))
+                    return new ProfilePersistenceResult(ProfilePersistenceStatus.InvalidData,"法杖属性缺少存在标记，原档保留。");
+                if(item.HasRolledWandStats)
+                {
+                    // Schema13及以前没有独立Reload，按旧Cooldown补默认值；不重抽五项原属性。
+                    var stats=dto.SchemaVersion<14
+                        ?new WandStats(item.WandMaxMana,item.WandManaRegen,item.WandCooldown,item.WandCapacity,item.WandBaseDraws)
+                        :new WandStats(item.WandMaxMana,item.WandManaRegen,item.WandCooldown,item.WandCapacity,item.WandBaseDraws,item.WandReloadTime,item.WandSpreadDegrees,item.WandShuffle,item.WandAlwaysCastContentIds);
+                    if(dto.SchemaVersion<13||rules.Kind!=ItemKind.Wand||!stats.IsValid||!catalog.ValidateWandTraits(stats))
+                        return new ProfilePersistenceResult(ProfilePersistenceStatus.InvalidData,"随机法杖属性/schema非法，原档保留。");
+                    rolled=stats;
+                }
                 entries[i] = new InventoryEntry(new RuntimeItemState(item.InstanceId, item.ContentId,
-                    item.RemainingCharges, item.HasUnlimitedCharges, item.StackStateKey, composition, material, attachment),
+                    item.RemainingCharges, item.HasUnlimitedCharges, item.StackStateKey, composition, material, attachment,rolled),
                     new ItemLocation(item.LocationKind, item.OwnerId, item.X, item.Y, item.QuarterTurns, item.SlotIndex));
             }
             if (!ItemOwnershipStore.TryRestore(catalog, entries, dto.InventoryVersion, out ItemOwnershipStore items, out InventoryFailureReason reason)

@@ -22,6 +22,7 @@ namespace Game.Run
         public uint Revision{get;private set;}
         public string GetItemId(int index)=>index>=0 && index<Count?_items[index]?.ItemId:null;
         private bool _focusVisible;
+        private bool _collectingAll;
         private static readonly Unity.Profiling.ProfilerMarker Marker=new Unity.Profiling.ProfilerMarker("Norn.Items.NearbyQuery");
         private void Update()
         {
@@ -93,6 +94,11 @@ namespace Game.Run
                 {bagId=e.Item.InstanceId;read.TryGetView(bagId,out bag);break;}
             if(!read.TryGetView(itemId,out var item))return false;
             var result=new InventoryOperationResult(false,InventoryFailureReason.Capacity,read.Version);
+            // 先补同类材料堆再找空格，避免旧堆在包底而顶部空位被另一小份GMU抢占。
+            if(item.Kind==ItemKind.Material&&_session.Profile.Items.TryGet(itemId,out var source)&&source.Material!=null)
+                foreach(var entry in _session.Profile.Items)
+                    if(entry.Location.Kind==ItemLocationKind.Backpack&&entry.Location.OwnerId==bagId&&MaterialStackOps.Compatible(source,entry.Item))
+                    {result=proxy.TryCollect(entry.Location,read.Version);if(result.Success)break;}
             // 离散拾取逐槽尝试真实归属事务；失败不占位，满专区才继续普通背包。
             if(item.Kind==ItemKind.Spell)
                 for(int slot=0;slot<_session.Profile.Items.Catalog.SpellStorageCapacity && !result.Success;slot++)
@@ -108,9 +114,30 @@ namespace Game.Run
                             result=proxy.TryCollect(bagId,new GridPlacement(x,y,rotation),read.Version);
             }
             if(result.Success)EventBus<InventoryChangedEvent>.Publish(new InventoryChangedEvent{InventoryId=read.InventoryId,Version=read.Version});
-            EventBus<NearbyPickupResultEvent>.Publish(new NearbyPickupResultEvent{InventoryId=read.InventoryId,ItemId=itemId,Success=result.Success,
+            if(!_collectingAll)EventBus<NearbyPickupResultEvent>.Publish(new NearbyPickupResultEvent{InventoryId=read.InventoryId,ItemId=itemId,Success=result.Success,
                 Reason=result.Reason,RequiresArrangement=!result.Success && (result.Reason==InventoryFailureReason.Capacity
                     || result.Reason==InventoryFailureReason.Occupied || result.Reason==InventoryFailureReason.OutOfBounds)});return result.Success;
+        }
+        public int CollectAll(out int remaining)
+        {
+            remaining=Count;if(_session?.ReadOnly==null||_session.RaidWriteLocked||_collectingAll)return 0;
+            RefreshCandidates();int original=Count,success=0;
+            // 单击的稳定身份快照：同步库存事件会刷新候选数组，不能一边遍历一边用新的索引。
+            var ids=new string[original];for(int i=0;i<original;i++)ids[i]=_items[i].ItemId;
+            _collectingAll=true;
+            try{for(int i=0;i<ids.Length;i++)
+            {
+                int attempts=_session.Profile.Items.Count+1;bool changed=false;
+                while(attempts-->0)
+                {
+                    uint before=_session.ReadOnly.Version;
+                    if(!TryCollect(ids[i])||_session.ReadOnly.Version==before)break;
+                    changed=true;
+                    if(!_session.ReadOnly.TryGetView(ids[i],out var item)||item.Location.Kind!=ItemLocationKind.WorldItem)break;
+                }
+                if(changed)success++;
+            }}finally{_collectingAll=false;}
+            RefreshCandidates();remaining=Count;return success;
         }
     }
 }

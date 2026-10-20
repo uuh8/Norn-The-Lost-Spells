@@ -25,9 +25,16 @@ namespace Game.Run
                 {point.enabled=false;if(Application.isPlaying)Object.Destroy(point);else Object.DestroyImmediate(point);}
                 foreach(var pickup in visual.GetComponentsInChildren<WorldItemPickup>(true))
                 {pickup.enabled=false;if(Application.isPlaying)Object.Destroy(pickup);else Object.DestroyImmediate(pickup);}
+                // Rewards/Spell原包装携带旧自动发奖脚本，纯视觉复制体必须剥离，防止一份地面物重复授予。
+                foreach(var reward in visual.GetComponentsInChildren<SpellRewardPickup>(true))
+                {reward.enabled=false;if(Application.isPlaying)Object.Destroy(reward);else Object.DestroyImmediate(reward);}
+                foreach(var reward in visual.GetComponentsInChildren<DungeonFinalRewardPickup>(true))
+                {reward.enabled=false;if(Application.isPlaying)Object.Destroy(reward);else Object.DestroyImmediate(reward);}
                 // 静态拾取展示不增加飞行；容器G投掷仍由原模块处理。
                 foreach(var body in visual.GetComponentsInChildren<Rigidbody>(true)){body.isKinematic=true;body.useGravity=false;}
                 foreach(var collider in visual.GetComponentsInChildren<Collider>(true))collider.enabled=false;
+                if(definition.Kind==ItemKind.Spell)
+                    WorldSpellIconPresentation.Apply(visual,definition.Icon!=null?definition.Icon:definition.SpellDefinition?.Icon);
             }
             else
             {

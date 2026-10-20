@@ -41,9 +41,9 @@ namespace Game.Run.Tests
         }
         [Test]public void ProductionWandsHaveThreeHorizontalCells()
         {
-            foreach(var name in new[]{"wand.a","wand.b","wand.c"})
+            foreach(var name in new[]{"Item_Wand_StarterA","Item_Wand_StarterB","Item_Wand_StarterC"})
             {
-                var wand=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Hub/SinglePlayerWands/"+name+".asset");
+                var wand=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Spell/Wands/Items/"+name+".asset");
                 Assert.That(wand.TryCreateRules(out var rules,out var error),Is.True,error);
                 Assert.That(rules.Shape.Width,Is.EqualTo(3));Assert.That(rules.Shape.Height,Is.EqualTo(1));Assert.That(rules.Shape.CellCount,Is.EqualTo(3));
             }

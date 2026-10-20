@@ -19,10 +19,12 @@ namespace Game.Run
         public ContainerComposition Composition { get; }
         public MaterialItemState Material { get; }
         public SpellAttachmentState Attachment { get; }
+        // 模型ContentId只决定外观/模板；随机固定属性随实例保存，不能放进共享SO或UI缓存。
+        public WandStats? RolledWandStats { get; }
 
         public RuntimeItemState(string instanceId, string contentId, int remainingCharges,
             bool hasUnlimitedCharges = false, string stackStateKey = "", ContainerComposition composition = null, MaterialItemState material = null,
-            SpellAttachmentState attachment = null)
+            SpellAttachmentState attachment = null, WandStats? rolledWandStats = null)
         {
             InstanceId = instanceId;
             ContentId = contentId;
@@ -30,6 +32,7 @@ namespace Game.Run
             HasUnlimitedCharges = hasUnlimitedCharges;
             StackStateKey = stackStateKey;
             Composition = composition; Material = material; Attachment = attachment;
+            RolledWandStats=rolledWandStats;
         }
 
         public static RuntimeItemState Create(string contentId, int remainingCharges = 0,

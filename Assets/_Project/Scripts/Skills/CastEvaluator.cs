@@ -293,6 +293,8 @@ namespace Game.Skills
                             break;
                     }
 
+                    // Legacy不执行V2 Copy；未知Opcode必须推进，否则旧预览会卡在同一槽。
+                    if (spell.Kind > SpellKind.StaticProjectile) { i++; fizzled = true; }
                     // switch 中的 break 只离开 switch，不会自动离开 while；用统一检查结束整层解释。
                     // 因此 Fizzle 之后既不会继续读取剩余指令，也不会部分支付失败指令的 Mana。
                     if (fizzled)
@@ -347,6 +349,8 @@ namespace Game.Skills
             while (i < spells.Count && emittedCount < MaxEmitCommands)
             {
                 SpellDefinition spell = spells[i];
+                // 新Opcode的费用由V2推演给出；Legacy估算安全停止，不能原地死循环。
+                if (spell != null && spell.Kind > SpellKind.StaticProjectile) break;
                 if (spell == null)
                 {
                     i++;
@@ -427,43 +431,8 @@ namespace Game.Skills
         /// </summary>
         private static EmitCommand BakeEmit(SpellDefinition spell, CastModifierState mods, IReadOnlyList<SpellDefinition> payload)
         {
-            // Max(0, value) 把非法负倍率/伤害钳到零，防止配置错误把伤害变成治疗或反向数值。
-            float damageMultiplier = Mathf.Max(0f, mods.DamageMul);
-            float damage = Mathf.Max(
-                0f,
-                (spell.BaseDamage + mods.DamageAddFlat) * damageMultiplier);
-
-            // Flat Bonus 只增加一次性直击；否则同一个 Flat 值会被爆炸和每一次 DoT Tick 重复结算。
-            // Multiplier 表示整颗复合法术的强度缩放，因此同时作用于直击、爆炸和火场每跳。
-            float explosionDamage = Mathf.Max(0f, spell.ExplosionDamage * damageMultiplier);
-            float fireFieldDamagePerTick = Mathf.Max(
-                0f,
-                spell.FireFieldDamagePerTick * damageMultiplier);
-            float fireFieldTickInterval = Mathf.Max(0.05f, spell.FireFieldTickInterval);
-            float fireFieldDuration = Mathf.Max(0f, spell.FireFieldDuration);
-            // SpeedMul 在 CastModifierState 中以乘法累计；这里才与 Authoring Data 的 BaseSpeed 合成最终速度。
-            float speed = spell.BaseSpeed * mods.SpeedMul;
-            // 没有实际 Payload 时主动退化为 None，Runtime 就不会订阅一个永远没有内容的触发回调。
-            PayloadTriggerMode trigger = payload != null && payload.Count > 0
-                ? spell.PayloadTrigger
-                : PayloadTriggerMode.None;
-            // 非定时触发不携带有效 delay，避免 Runtime 误读 Authoring Data 中残留的数值。
-            float delay = trigger == PayloadTriggerMode.AfterDelay ? spell.PayloadDelaySeconds : 0f;
-
-            // 构造函数接收的是最终值快照。最后传入的 mods 同时作为 PayloadMods 保存，
-            // 所以后续 Action 会继承 Trigger Emit 生成时已经累积完成的修正状态。
-            return new EmitCommand(spell.ProjectilePrefab, spell.SpawnMode, spell.LandingSitePrefab,
-                                   spell.SkyfallHeight, spell.SkyfallBackOffset, spell.LandingSiteDuration,
-                                   spell.ShieldReflectCount,
-                                   damage, explosionDamage,
-                                   fireFieldDamagePerTick, fireFieldTickInterval, fireFieldDuration,
-                                   speed, spell.DamageType,
-                                   mods.SpreadDegrees, mods.BounceCount, mods.UseGravity,
-                                   mods.HomingRadius, mods.HomingDuration, mods.HomingTurnRateDegrees,
-                                   mods.OrbitRadius, mods.OrbitAngularSpeedDegrees, mods.OrbitPhaseOffsetDegrees,
-                                   mods.OrbitPlaneTiltDegrees,
-                                   mods.MotionMode,
-                                   spell.CastSfx, payload, mods, trigger, delay);
+            // 只共享数学；Legacy仍在读到Emit时立即Bake，并保留旧Payload继承语义。
+            return SpellCommandBaker.Bake(new SpellEmissionData(spell), mods, payload);
         }
 
         /// <summary>

@@ -16,20 +16,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Core Principles
 
 1. **Data-driven**: Game data lives in ScriptableObjects, not hardcoded in MonoBehaviours.
-2. **Module isolation**: Each domain is a separate asmdef. Modules must not reference each other directly — they communicate via the EventBus in `Game.Core`.
+2. **Module isolation**: Each domain is a separate asmdef. Respect the explicit dependency table below; use read-only contracts/services across allowed dependencies and the EventBus in `Game.Core` for global notifications. Never bypass another module's authoritative state.
 3. **Unidirectional dependencies**: Core never depends on upper layers.
 
 ### Assembly Hierarchy
 
-```
-Game.Core          (foundation — no game dependencies)
-├── Game.Combat    (depends on Core)
-│   ├── Game.Skills    (depends on Core + Combat — spell data/evaluator, pure helpers)
-│   └── Game.Character (depends on Core + Combat + Skills)
-├── Game.ElementField (depends on Core + Combat — owns compact environment gameplay data)
-├── Game.Rendering (depends on Core + Combat; may read ElementField only through IElementFieldReadOnly)
-└── Game.UI        (depends on Core + Combat + Skills + UnityEngine.UI + Unity.InputSystem)
-```
+| Assembly | First-party dependencies |
+|---|---|
+| Game.Core | None |
+| Game.Materials | None |
+| Game.Combat | Core, Materials |
+| Game.Skills | Core, Combat |
+| Game.Run | Core, Combat, Skills |
+| Game.Character | Core, Combat, Skills, Run |
+| Game.ElementField | Core, Combat, Materials |
+| Game.Rendering | Core, Combat, ElementField (read-only), Materials |
+| Game.UI | Core, Combat, Skills, Run (requests/read-only services) |
+
+Editor tooling belongs to **Game.Project.Editor**, never a development-task-named Assembly. The current navigation and full player flow are documented in `Assets/_Project/Docs/项目架构与目录导览.md`.
 
 New code goes in the lowest assembly that satisfies its dependencies. Cross-module communication goes through EventBus events in `Game.Core`. `Game.ElementField` may depend on Combat status/projectile contracts, but `Game.Combat` never depends back on ElementField. Presentation (e.g. UI or `Game.Rendering`) reacts to gameplay through events or read-only interfaces — gameplay never references presentation.
 
@@ -45,6 +49,8 @@ New code goes in the lowest assembly that satisfies its dependencies. Cross-modu
 | `Assets/ThirdParty/` | Third-party packages not via Package Manager |
 | `docs/superpowers/specs/` & `docs/superpowers/plans/` | Feature design specs and implementation plans |
 | `Assets/_Project/Docs/` | In-depth design analyses (e.g. `M3_Combat_Design.md`, `Dash_System_Design.md`) |
+
+Production assets are grouped by responsibility, never by development phase/version. Spells, spell items, wand stats/items and programs live under `ScriptableObjects/Spell/{Definitions,Items,Wands,Programs,Libraries}`; only old GUID compatibility copies live in `Spell/Compatibility`. Other items use `ScriptableObjects/Items`, world/station/raid configuration uses `ScriptableObjects/World`, input uses `ScriptableObjects/Input`. Test-only content lives in `Tests/Fixtures`; Review scenes belong in `Scenes/Tests`, never beside the formal Hub/Home. Materials belong under `Art/Materials`, not ScriptableObjects. Preserve ContentIds, serialized field names and scene-load paths when reorganizing; existing `norn.v2.*` IDs remain save contracts, not a reason to recreate version directories.
 
 ## Code Conventions
 
@@ -275,67 +281,27 @@ EditMode tests live in `Assets/_Project/Tests/Combat/` (asmdef `Game.Combat.Test
 
 ---
 
-## Spell Programming System (`Game.Skills` + `SpellCaster` + `Game.UI`)
+## Current Spell Programming System
 
-The spell system is the Noita-like core feature. The mental model is: **a wand is a program, spells are instructions, and casting runs a left-to-right interpreter**. Do not implement spell combinations as lookup tables or bespoke skills.
+The formal player uses one integrated chain: `WizardController` input → `PlayerWizardAttackState` at `AttackDefinition.ArrowSpawnTime` → owned wand execution in `Game.Run` → `SpellProgramCompiler` / `SpellProgramMachine` → frozen graph/commands → `SpellCaster` → projectile lifecycle → normal combat damage funnel. `Game.Run` owns real inventory, mana, eligibility, versions, reservations and layer commits; the pure Skills interpreter does not grant resources. Research UI predicts/replays this same chain and edits authoritative item instances through requests; the backpack remains the compact editor. The research UI is available only inside allowed Hub/Home areas.
 
-### Runtime/Data Flow
+`SpellProgramMachine` maintains Deck/Hand/Discard, bounded Draw/Copy execution and independent trigger scopes. Final modifiers affect every output in their own scope, including earlier output cards. Trigger payloads are frozen when building the root and released at the declared lifecycle event; do not reinterpret a mutated SO at impact. Retain NPC/independent program semantics and all Warrior/Archer paths. See the current architecture guide before changing the interpreter.
 
-```
-WizardController press edge
-  → lock ClickAimPoint + queue one cast
-  → PlayerWizardAttackState waits for animation release timing
-  → SpellCaster.CastWand(spawn, clickAim, team, attackerId, casterCollider)
-  → CastEvaluator.Evaluate(WandLoadout.Spells, BaseDraws, mana, incomingMods, output)
-  → List<EmitCommand> pure data
-  → SpellCaster instantiates ProjectileBase prefabs, applies damage/speed/spread snapshots
-  → ProjectileBase hit → existing IDamageable/HealthComponent combat funnel
-```
+## NPC / Independent Spell Programs (`CastEvaluator`)
 
-`CastEvaluator` is the pure core. It never instantiates Unity objects. `SpellCaster` is the only bridge from `EmitCommand` data to scene objects.
+`CastEvaluator` is retained for NPC/Boss and explicitly authored read-only `WandLoadout` programs. `SpellCaster.CastWand` reads its Inspector template for this path. It does not create player ownership, starting cards, or another editable player session. The stateful player execution remains the chain above.
 
-### Semantics
+The pure evaluator emits `EmitCommand` snapshots; `SpellCaster` is the Unity bridge, and `ProjectileBase` owns the projectile lifecycle. Preserve the existing bounded trigger semantics, mana policy and enemy/Boss behavior when maintaining this path. Tests remain in `Tests/Skills` and `Tests/Character`.
 
-- `SpellKind.Emit`: consumes draw budget and outputs an `EmitCommand` with prefab, final damage, speed, type, spread, cast SFX, and optional trigger payload.
-- `SpellKind.Modify`: updates the current immutable `CastModifierState`; it affects only later emits in the same cast or trigger payload.
-- `SpellKind.Multicast`: increases draw budget (`ExtraDraws`); MVP is single-pass, no shuffle, no wraparound.
-- `SpellDefinition.IsTrigger`: an emit can capture the suffix after itself as a payload, end the current evaluation layer, and run that payload at impact through `ProjectileBase.Impacted`.
-- Trigger recursion is intentionally bounded by the invariant "payload is a strictly shorter suffix." Do not change payload capture into "whole wand" without adding recursion/output guards.
-- Mana/fizzle is present in `CastEvaluator` and `CastSummary`; runtime currently passes a large `_availableMana` placeholder. Real mana pool/recovery/UI are still future work.
-- `SpellAiming.SpreadOffsetDegrees` is pure deterministic fan geometry; `SpellCaster` applies it as yaw offsets when emitting multiple projectiles.
+### Hub-centered player ownership
 
-### Files (`Game.Skills` / spell runtime)
+Main menu starts at `SinglePlayer_Hub`. `SinglePlayerInventorySession` / `ItemOwnershipStore` own actual item instances. `HubPracticeSession` transfers this inventory to P7/P8, returns it to Hub, and captures the real Boss retry checkpoint. The Editor-only direct-scene preview uses an in-memory repository and the same inventory path, never a production save.
 
-| File | Purpose |
-|------|---------|
-| `SpellKind.cs` | `enum : byte` — `Emit`, `Modify`, `Multicast` |
-| `SpellDefinition.cs` | ScriptableObject data for one spell: display/icon/mana, emit prefab/damage/speed/type/SFX/trigger flag, modifier fields, multicast draws |
-| `WandLoadout.cs` | ScriptableObject sequence of spells plus `BaseDraws`; shared by `SpellCaster` and the editor UI |
-| `SpellLibrary.cs` | ScriptableObject palette source for the wand editor UI |
-| `CastModifierState.cs` | Immutable value snapshot of accumulated modifiers |
-| `EmitCommand.cs` | Pure output command consumed by `SpellCaster`, including optional trigger payload and payload modifier snapshot |
-| `CastEvaluator.cs` | Pure interpreter: left-to-right evaluation, budget, modifiers, mana/fizzle, trigger suffix capture |
-| `SpellAiming.cs` | Pure spread/fan angle helper |
-| `WandEditOps.cs` | Pure insert/remove/move operations for editing wand sequences |
-| `Character/Spells/SpellCaster.cs` | Runtime bridge in `Game.Character`: evaluates wand/payloads, instantiates projectiles, plays per-cast de-duplicated SFX |
+The obsolete `RunSpellSession`, `RunSessionCoordinator`, P7 starting library/wand, Palette/Frame editor, duplicate unreferenced compatibility spell assets, and the exit branch that auto-unlocked all spells have been retired. The ordinary NPC evaluator is not part of that retirement. `DungeonFinalRewardPickup` grants finite random rewards into real inventory; a full inventory retains pending rewards. Exits return to Hub without granting the full library.
 
-### Wand Editor UI (`Game.UI`)
+`Game.UI` has a compact inventory editor and a separate `WandResearchController` / `WandProgramWorkbenchPresenter` for allowed Hub/Home regions. The workbench renders the same execution graph as rows of spell cells, with highlighting, pan and zoom; do not reintroduce the old Palette/Frame editor. Navigation out of a carried-inventory scene must save first; on failure keep the scene and assets intact.
 
-The spell editor is UGUI-based. `WandEditorController` toggles a panel via an `InputActionReference` (usually Tab), sets `Time.timeScale = 0`, unlocks the cursor, and restores state on close/disable. It owns the drag ghost and centralizes drop decisions.
-
-| File | Purpose |
-|------|---------|
-| `SlotKind.cs` / `IWandDragHandler.cs` | Drag source enum + interface contract between slot views and controller |
-| `SpellSlotView.cs` | Slot display and UGUI drag/drop callbacks; view is intentionally dumb |
-| `SpellPaletteView.cs` | Builds palette slots from `SpellLibrary` |
-| `WandFrameView.cs` | Renders/edit current `WandLoadout`; writes edits back via `WandEditOps` |
-| `WandEditorController.cs` | Toggle/pause/cursor/ghost/drop arbitration: palette→frame insert, frame→frame move, frame→outside remove |
-
-Editor-time caveat: editing a `WandLoadout` ScriptableObject in Play mode mutates the asset. This is accepted for MVP; future save/run isolation should clone or reset runtime state.
-
-### Tests
-
-EditMode tests live in `Assets/_Project/Tests/Skills/`: `CastModifierStateTests`, `CastEvaluatorTests` (including trigger payload capture), `SpellAimingTests`, and `WandEditOpsTests`.
+Resource filenames use underscores and PascalCase: `Spell_Emit_Fireball`, `Spell_Modify_DamageUp`, `Spell_Multicast_DoubleShot`, `Spell_Copy_Alpha`, `Item_Spell_Emit_Fireball`, `Wand_ResearchRapid`. Stable ContentIds such as `norn.v2.*` remain unchanged for save compatibility. Do not use them as filenames or create version/stage directories.
 
 ---
 
@@ -344,7 +310,7 @@ EditMode tests live in `Assets/_Project/Tests/Skills/`: `CastModifierStateTests`
 Presentation is **read-only on gameplay**: it never references `Game.Character`; its only `Game.Combat` dependency is gameplay data/events consumed for presentation. It reacts through EventBus and never modifies gameplay state.
 
 - **`Game.Rendering`**: `CrosshairUI` (shows/positions the aim reticle), `AimFramingController` (camera framing), and `StatusMaterialController` (subscribes `StatusChangedEvent`, normalizes/smooths status intensity, then writes per-renderer Shader values through `MaterialPropertyBlock`). Rendering reads Combat state but never changes it.
-- **`Game.UI`**: `EnemyHealthBar` (world-space, billboards to camera, one per enemy) and `PlayerHealthBar` (screen-space HUD, smoothed via `Mathf.MoveTowards`). Both consume `DamageReceivedEvent` / `DeathEvent` and filter by `e.TargetId == HealthComponent.Id` (`Id == gameObject.GetInstanceID()`). `Image.fillAmount` requires the UGUI Image be **`Type = Filled`** (a common "bar doesn't move" gotcha). `Game.UI` also owns the wand editor (`WandEditorController`, palette/frame/slot views) and is allowed to reference `Game.Skills` for spell data and pure editing helpers.
+- **`Game.UI`**: `EnemyHealthBar` (world-space, billboards to camera, one per enemy) and `PlayerHealthBar` (screen-space HUD, smoothed via `Mathf.MoveTowards`). Both consume `DamageReceivedEvent` / `DeathEvent` and filter by `e.TargetId == HealthComponent.Id` (`Id == gameObject.GetInstanceID()`). `Image.fillAmount` requires the UGUI Image be **`Type = Filled`** (a common "bar doesn't move" gotcha). `Game.UI` owns the compact inventory editor and regional spell research workbench, reading spell data from `Game.Skills` and sending ownership requests to `Game.Run`.
 
 ---
 

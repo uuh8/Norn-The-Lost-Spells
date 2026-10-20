@@ -8,11 +8,28 @@ namespace Game.Run
     {
         private readonly RaycastHit[] _hits = new RaycastHit[64];
         internal bool TryPlace(GameObject model, Scene scene, Transform actor, LayerMask mask,
-            float above, float below, float minNormalY, float clearance)
+            float above, float below, float minNormalY, float clearance, float searchRadius = 0f)
         {
             if(model==null || !scene.IsValid() || !scene.isLoaded || above<=0 || below<=0)return false;
             var physics=scene.GetPhysicsScene();if(!physics.IsValid())return false;
             if(!TryBounds(model,out var bounds))return false;
+            if(TryPlaceBounds(model,scene,physics,actor,mask,above,below,minNormalY,clearance,in bounds))return true;
+            if(searchRadius<=0 || !float.IsFinite(searchRadius))return false;
+            // 飞行体先撞到墙面时，中心/角落可能跨出地板。只在碰撞点附近两圈找完整支撑，不传回角色或无限搜空地。
+            // Bounds只提取一次，后续用值类型平移，避免每个候选重新分配Renderer数组。
+            Vector3 original=model.transform.position;
+            for(int ring=1;ring<=2;ring++)for(int z=-1;z<=1;z++)for(int x=-1;x<=1;x++)
+            {
+                if(x==0&&z==0)continue;
+                Vector3 offset=new Vector3(x,0,z).normalized*(searchRadius*ring*.5f);
+                model.transform.position=original+offset;var candidate=bounds;candidate.center+=offset;
+                if(TryPlaceBounds(model,scene,physics,actor,mask,above,below,minNormalY,clearance,in candidate))return true;
+            }
+            model.transform.position=original;return false;
+        }
+        private bool TryPlaceBounds(GameObject model,Scene scene,PhysicsScene physics,Transform actor,LayerMask mask,
+            float above,float below,float minNormalY,float clearance,in Bounds bounds)
+        {
             float highest=float.NegativeInfinity;
             // 世界AABB的底面覆盖模型实际尺寸。中心及四角都要有支撑，防止大物件一半悬在台面外。
             for(int i=0;i<5;i++)

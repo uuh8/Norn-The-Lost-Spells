@@ -330,10 +330,8 @@ namespace Game.UI
                 return;
             }
 
-            // P8 Scene 里 DemoRunUIRoot 可能为了隐藏 P7 占位 UI 而整体关闭。
-            // 但 WandEditorRoot 也是它的子节点：父物体 inactive 时，
-            // WandEditorController.OnEnable 不会运行，Tab InputAction 也不会订阅。
-            // 因此先启用共享容器，再只关闭 P7 专属展示节点。
+            // 共享容器还持有暂停/通知等组件；只隐藏当前 Boss 不使用的遭遇 HUD，
+            // 不整体停用容器，以免 Unity 停止其余子节点的生命周期回调。
             demoRunUiRoot.gameObject.SetActive(true);
             SetChildActive(demoRunUiRoot, "GameplayHUD", false);
             SetChildActive(demoRunUiRoot, "NotificationRoot", false);

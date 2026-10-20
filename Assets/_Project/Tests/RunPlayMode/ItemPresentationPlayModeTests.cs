@@ -14,7 +14,7 @@ namespace Game.Run.Tests
 {
     public sealed class ItemPresentationPlayModeTests:BackpackWorkspacePlayModeTests
     {
-        protected override string ReviewPath=>"Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub_ItemPresentationReview.unity";
+        protected override string ReviewPath=>"Assets/_Project/Scenes/Tests/Hub/SinglePlayer_Hub_ItemPresentationReview.unity";
         protected override string EvidencePath=>"TestResults/SinglePlayer/M6-T1-ItemPresentation";
         [UnitySetUp]public IEnumerator IsolateExistingAuthoringItems()
         {
@@ -23,7 +23,7 @@ namespace Game.Run.Tests
         }
         private WorldItemPickup Spawn(string name,int index)
         {
-            var definition=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Items/Food/"+name+".asset");
+            var definition=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/Food/"+name+".asset");
             Assert.That(Session.TryRegisterWorldItem(definition,Session.WorldSceneKey,"presentation."+index,Player.transform.position+Vector3.right*(.6f+.2f*index),Quaternion.identity),Is.True);
             foreach(var root in Scene.GetRootGameObjects())foreach(var proxy in root.GetComponentsInChildren<WorldItemPickup>(true))
             {bool testItem=false;foreach(var record in Session.Profile.HubWorldItems)if(record.InstanceId==proxy.ItemId && record.SpawnId!=null && record.SpawnId.StartsWith("presentation.",StringComparison.Ordinal)){testItem=true;break;}if(!testItem)proxy.gameObject.SetActive(false);}
@@ -32,7 +32,7 @@ namespace Game.Run.Tests
         }
         [UnityTest]public IEnumerator WheelSelectsSpecificItemAndFCollectsIt()
         {
-            Spawn("Apple",0);Spawn("Beetroot",1);var nearby=Find<NearbyPickupController>();nearby.RefreshCandidates();int count=nearby.Count;
+            Spawn("Item_Food_Apple",0);Spawn("Item_Food_Beetroot",1);var nearby=Find<NearbyPickupController>();nearby.RefreshCandidates();int count=nearby.Count;
             Assert.That(count,Is.GreaterThanOrEqualTo(2));
             InputSystem.QueueStateEvent(Mouse,new MouseState{scroll=new Vector2(0,-120)});InputSystem.Update();yield return null;
             string selected=nearby.FocusedPickup.ItemId;Assert.That(nearby.SelectedIndex,Is.EqualTo(1));
@@ -41,7 +41,7 @@ namespace Game.Run.Tests
         }
         [UnityTest]public IEnumerator MoreThanFiveEntriesRemainSelectableAtFixedScreenPosition()
         {
-            for(int i=0;i<7;i++)Spawn("Apple",i);var nearby=Find<NearbyPickupController>();nearby.RefreshCandidates();var view=Find<NearbyPickupListView>();yield return null;
+            for(int i=0;i<7;i++)Spawn("Item_Food_Apple",i);var nearby=Find<NearbyPickupController>();nearby.RefreshCandidates();var view=Find<NearbyPickupListView>();yield return null;
             Assert.That(view.GetComponent<Canvas>().renderMode,Is.EqualTo(RenderMode.ScreenSpaceOverlay));var position=view.Panel.anchoredPosition;
             for(int i=0;i<6;i++)nearby.SelectRelative(1);yield return null;Assert.That(view.VisibleCount,Is.EqualTo(5));Assert.That(view.FirstIndex,Is.GreaterThan(0));
             yield return new WaitForEndOfFrame();Capture("five-row-pickup-list.png");
@@ -49,13 +49,13 @@ namespace Game.Run.Tests
         }
         [UnityTest]public IEnumerator SelectedIdentitySurvivesDistanceReorderingAndOutOfRangeIsRejected()
         {
-            Spawn("Apple",0);Spawn("Beetroot",1);var nearby=Find<NearbyPickupController>();nearby.RefreshCandidates();nearby.SelectRelative(1);string id=nearby.FocusedPickup.ItemId;
+            Spawn("Item_Food_Apple",0);Spawn("Item_Food_Beetroot",1);var nearby=Find<NearbyPickupController>();nearby.RefreshCandidates();nearby.SelectRelative(1);string id=nearby.FocusedPickup.ItemId;
             Player.transform.position+=Vector3.right*.7f;nearby.RefreshCandidates();Assert.That(nearby.FocusedPickup.ItemId,Is.EqualTo(id));
             Player.transform.position+=Vector3.right*20;Assert.That(nearby.TryCollectFocused(),Is.False);Session.ReadOnly.TryGetView(id,out var item);Assert.That(item.Location.Kind,Is.EqualTo(ItemLocationKind.WorldItem));yield return null;
         }
         [UnityTest]public IEnumerator NearbyGridShowsActualFootprintsWhilePausedWithoutMovingAssets()
         {
-            Spawn("Apple",0);Spawn("Pumpkin",1);Find<NearbyPickupController>().RefreshCandidates();Backpack.OpenBackpack();yield return null;Canvas.ForceUpdateCanvases();
+            Spawn("Item_Food_Apple",0);Spawn("Item_Food_Pumpkin",1);Find<NearbyPickupController>().RefreshCandidates();Backpack.OpenBackpack();yield return null;Canvas.ForceUpdateCanvases();
             var grid=(NearbyItemGridView)new SerializedObject(Backpack).FindProperty("_nearbyGrid").objectReferenceValue;
             Assert.That(grid.Rows,Is.GreaterThanOrEqualTo(3));int shown=0;
             foreach(var view in grid.GetComponentsInChildren<InventoryItemView>())
@@ -65,9 +65,9 @@ namespace Game.Run.Tests
         }
         [UnityTest]public IEnumerator HighlightUsesOwnedMaterialsAndLeavesSourceUntouched()
         {
-            var definition=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Items/Food/Apple.asset");
+            var definition=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/Food/Item_Food_Apple.asset");
             var original=definition.WorldModel.GetComponentInChildren<Renderer>().sharedMaterial;string before=EditorJsonUtility.ToJson(original);
-            var proxy=Spawn("Apple",0);yield return null;
+            var proxy=Spawn("Item_Food_Apple",0);yield return null;
             Assert.That(proxy.GetComponent("WorldItemHighlight"),Is.Not.Null);
             Assert.That(proxy.GetComponentInChildren<Renderer>().sharedMaterial,Is.SameAs(original));Assert.That(EditorJsonUtility.ToJson(original),Is.EqualTo(before));
             if(original.HasProperty("_EmissionColor") && !original.IsKeywordEnabled("_EMISSION"))
@@ -75,7 +75,7 @@ namespace Game.Run.Tests
         }
         [UnityTest]public IEnumerator ScrollCaptureReleasesOnPauseAndDisable()
         {
-            Spawn("Apple",0);Find<NearbyPickupController>().RefreshCandidates();yield return null;Assert.That(GameplayScrollCapture.IsCaptured,Is.True);
+            Spawn("Item_Food_Apple",0);Find<NearbyPickupController>().RefreshCandidates();yield return null;Assert.That(GameplayScrollCapture.IsCaptured,Is.True);
             Backpack.OpenBackpack();yield return null;Assert.That(GameplayScrollCapture.IsCaptured,Is.False);Backpack.Close();yield return null;
             Find<Game.Character.NearbyPickupInput>().enabled=false;Assert.That(GameplayScrollCapture.IsCaptured,Is.False);
         }
@@ -83,7 +83,7 @@ namespace Game.Run.Tests
         {
             bool recording=UnityEditorInternal.ProfilerDriver.enabled;bool cpu=UnityEditorInternal.ProfilerDriver.IsAreaEnabled(UnityEngine.Profiling.ProfilerArea.CPU);
             try{UnityEditorInternal.ProfilerDriver.SetAreaEnabled(UnityEngine.Profiling.ProfilerArea.CPU,true);UnityEditorInternal.ProfilerDriver.enabled=true;
-                Spawn("Apple",0);for(int i=0;i<20;i++)yield return null;int first=UnityEditorInternal.ProfilerDriver.lastFrameIndex+1;for(int i=0;i<60;i++)yield return null;
+                Spawn("Item_Food_Apple",0);for(int i=0;i<20;i++)yield return null;int first=UnityEditorInternal.ProfilerDriver.lastFrameIndex+1;for(int i=0;i<60;i++)yield return null;
                 WriteProfile("fixed-list-profiler",first,UnityEditorInternal.ProfilerDriver.lastFrameIndex,new[]{"Norn.Items.NearbyQuery","Norn.Items.PickupList"},"Stable query/list; registration and text change excluded");yield return new WaitForEndOfFrame();Capture("fixed-pickup-list.png");}
             finally{UnityEditorInternal.ProfilerDriver.enabled=recording;UnityEditorInternal.ProfilerDriver.SetAreaEnabled(UnityEngine.Profiling.ProfilerArea.CPU,cpu);}
         }

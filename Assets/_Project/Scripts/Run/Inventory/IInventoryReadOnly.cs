@@ -30,6 +30,7 @@ namespace Game.Run
         public readonly GameObject WorldModel;
         public readonly int RemainingCharges;
         public readonly bool HasUnlimitedCharges;
+        public readonly bool IsQualificationSpell;
         public readonly bool IsStarterEquipment;
         public readonly byte MaterialKey;
         public readonly ulong MaterialQuantity, ContainerTotal, ContainerCapacity;
@@ -45,6 +46,7 @@ namespace Game.Run
             Icon = definition.Icon!=null ? definition.Icon : definition.SpellDefinition!=null ? definition.SpellDefinition.Icon : null;
             WorldModel = definition.WorldModel;
             RemainingCharges = item.RemainingCharges; HasUnlimitedCharges = item.HasUnlimitedCharges; Rules = rules;
+            IsQualificationSpell = rules.Kind == ItemKind.Spell && RaidSpellEligibility.IsQualification(definition.SpellDefinition);
             IsStarterEquipment = item.IsStarterEquipment;
             MaterialKey = item.Material?.MaterialKey ?? 0; MaterialQuantity = item.Material?.Quantity ?? 0;
             ContainerTotal = item.Composition?.Total ?? 0; ContainerCapacity = item.Composition?.Capacity ?? 0;
@@ -105,6 +107,9 @@ namespace Game.Run
                     || other.Location.Kind!=ItemLocationKind.Backpack || other.Location.OwnerId!=bagId) continue;
                 store.Catalog.TryGetRules(other.Item.ContentId,out var otherRules);
                 if (!InventoryGrid.Overlaps(rules.Shape,destination,otherRules.Shape,other.Location)) continue;
+                // 材料堆按GMU补量，不适用普通实例MaxStack；预览必须与实际TryMove合并裁决一致。
+                if(other.Location==destination&&MaterialStackOps.Compatible(source,other.Item))
+                {if(other.Item.Material.Quantity>=otherRules.MaterialItemCapacity)return InventoryFailureReason.Capacity;continue;}
                 if (other.Location!=destination || !ItemStackOps.AreCompatible(source,other.Item)) return InventoryFailureReason.Occupied;
                 if (++members>rules.MaxStack) return InventoryFailureReason.Capacity;
             }
@@ -113,7 +118,7 @@ namespace Game.Run
         private InventoryItemSnapshot Snapshot(RuntimeItemState item, in ItemLocation location)
         {
             _profile.Items.Catalog.TryGet(item.ContentId, out ItemDefinition definition);
-            _profile.Items.Catalog.TryGetRules(item.ContentId, out InventoryItemRules rules);
+            _profile.Items.Catalog.TryGetRules(item, out InventoryItemRules rules);
             return new InventoryItemSnapshot(item, location, definition, rules);
         }
     }

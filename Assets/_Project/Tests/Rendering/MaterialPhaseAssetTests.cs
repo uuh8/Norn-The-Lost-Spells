@@ -43,7 +43,7 @@ namespace Game.Rendering.Tests
             }
         }
         [TestCase("Assets/_Project/ScriptableObjects/ElementField/Liquids/ElementWorldProfile_P7_DemoRun_Grid.asset")]
-        [TestCase("Assets/_Project/ScriptableObjects/P8/ElementField/ElementWorldProfile_P8BossField.asset")]
+        [TestCase("Assets/_Project/ScriptableObjects/World/Boss/ElementField/ElementWorldProfile_P8BossField.asset")]
         public void BothPlayableWorldsUseShorterResidualFire(string path)
         {
             var profile=new SerializedObject(AssetDatabase.LoadAssetAtPath<ElementWorldProfile>(path));

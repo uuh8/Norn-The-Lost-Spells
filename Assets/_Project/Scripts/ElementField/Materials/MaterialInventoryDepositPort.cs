@@ -20,7 +20,7 @@ namespace Game.ElementField
             using var marker = Marker.Auto(); transferred = 0; _count = _visited = 0;
             if (exchange.Source == null || exchange.Amounts == null || exchange.Count <= 0 || exchange.Count > 8
                 || exchange.Count > exchange.Amounts.Length || !Finite(exchange.Position) || !float.IsFinite(exchange.Radius)
-                || exchange.Radius <= 0 || exchange.Radius > 1) return MaterialTransferFailure.InvalidRequest;
+                || exchange.Radius <= 0 || exchange.Radius > 2) return MaterialTransferFailure.InvalidRequest;
             ushort seen = 0; ulong total = 0;
             for (int i = 0; i < exchange.Count; i++)
             {
@@ -38,6 +38,7 @@ namespace Game.ElementField
             }
             if (total == 0) return MaterialTransferFailure.NoMaterial;
             if (!exchange.Source.TryReserve(exchange.Amounts, exchange.Count, out var failure)) return failure;
+            _world.RetainInventoryDepositActivity(exchange.Position,exchange.Radius);
             _world.FixedSolids?.BeginConversionGeometry();
             for (int i = 0; i < exchange.Count; i++)
             {

@@ -22,9 +22,10 @@ namespace Game.Run.Tests
     /// <summary>只进入独立Review并注入内存档，验证用户新布局与真实资产/输入接线。</summary>
     public class BackpackWorkspacePlayModeTests
     {
-        protected const string Review="Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub_UnifiedItemsReview.unity";
+        protected const string Review="Assets/_Project/Scenes/Tests/Hub/SinglePlayer_Hub_UnifiedItemsReview.unity";
         protected virtual string ReviewPath => Review;
         protected virtual string EvidencePath => "TestResults/SinglePlayer/M6-T1-Backpack";
+        protected virtual bool UseSingleScene => false;
         protected Scene Scene;
         protected SinglePlayerInventorySession Session;
         protected SinglePlayerInventoryController Backpack,Warehouse;
@@ -40,7 +41,7 @@ namespace Game.Run.Tests
             _input=new InputTestFixture();_input.Setup();Keyboard=InputSystem.AddDevice<Keyboard>();Mouse=InputSystem.AddDevice<Mouse>();
             EditorWindow.GetWindow(Type.GetType("UnityEditor.GameView,UnityEditor")).Focus();
             SceneManager.sceneLoaded+=Loaded;
-            Scene=EditorSceneManager.LoadSceneInPlayMode(ReviewPath,new LoadSceneParameters(LoadSceneMode.Additive));
+            Scene=EditorSceneManager.LoadSceneInPlayMode(ReviewPath,new LoadSceneParameters(UseSingleScene?LoadSceneMode.Single:LoadSceneMode.Additive));
             yield return null;yield return null;yield return null;SceneManager.sceneLoaded-=Loaded;
             Assert.That(Session.ReadOnly,Is.Not.Null);Assert.That(Backpack,Is.Not.Null);
         }
@@ -58,9 +59,11 @@ namespace Game.Run.Tests
             {
                 catalog=UnityEngine.Object.Instantiate(catalog);TemporaryAssets.Add(catalog);
                 var data=new SerializedObject(catalog);var definitions=data.FindProperty("_definitions");
+                Assert.That(catalog.TryCreateIndex(out var previewIndex,out var previewError),Is.True,previewError);
                 foreach(var name in new[]{"fire","ice","trigger"})
                 {
-                    var original=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Hub/SinglePlayerWands/"+name+".asset");
+                    // 这里的 name 是测试逻辑键；通过稳定 ContentId 找定义，不把它误当新文件名。
+                    Assert.That(previewIndex.TryGet("wandtest."+name,out var original),Is.True,name);
                     for(int i=0;i<definitions.arraySize;i++)if(definitions.GetArrayElementAtIndex(i).objectReferenceValue==original)
                     {
                         var item=UnityEngine.Object.Instantiate(original);TemporaryAssets.Add(item);
@@ -78,7 +81,7 @@ namespace Game.Run.Tests
                 // 仅克隆内存定义，验证超过12槽的UI，不改变正式SO或用户存档。
                 catalog=UnityEngine.Object.Instantiate(catalog);TemporaryAssets.Add(catalog);
                 var data=new SerializedObject(catalog);var definitions=data.FindProperty("_definitions");
-                var original=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Hub/SinglePlayerWands/wand.a.asset");
+                var original=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Spell/Wands/Items/Item_Wand_StarterA.asset");
                 for(int i=0;i<definitions.arraySize;i++)if(definitions.GetArrayElementAtIndex(i).objectReferenceValue==original)
                 {
                     var item=UnityEngine.Object.Instantiate(original);TemporaryAssets.Add(item);
@@ -96,14 +99,14 @@ namespace Game.Run.Tests
             {
                 Assert.That(Session.Initialize(new SinglePlayerProfile("player",store),new ProfileSaveRepository("Temp/SinglePlayer/BackpackEmpty",index,new MemoryFiles())),Is.True);return;
             }
-            Add(store,"bag","SinglePlayerWands/bag.asset",new ItemLocation(ItemLocationKind.EquippedBackpack,"player",0,0,0,0));
-            for(int i=0;i<3;i++)Add(store,"w"+i,"SinglePlayerWands/wand."+(char)('a'+i)+".asset",new ItemLocation(ItemLocationKind.EquippedWand,"player",0,0,0,i));
-            Add(store,"fire","SinglePlayerWands/fire.asset",new ItemLocation(ItemLocationKind.Backpack,"bag",0,4,0,-1),8);
-            Add(store,"ice","SinglePlayerWands/ice.asset",new ItemLocation(ItemLocationKind.Backpack,"bag",1,4,0,-1),8);
-            if(TestContext.CurrentContext.Test.Name.StartsWith("PreviewMana"))Add(store,"trigger","SinglePlayerWands/trigger.asset",new ItemLocation(ItemLocationKind.Backpack,"bag",2,4,0,-1),8);
+            Add(store,"bag","Items/Backpacks/Item_Backpack_Bag.asset",new ItemLocation(ItemLocationKind.EquippedBackpack,"player",0,0,0,0));
+            for(int i=0;i<3;i++)Add(store,"w"+i,"Spell/Wands/Items/Item_Wand_Starter"+(char)('A'+i)+".asset",new ItemLocation(ItemLocationKind.EquippedWand,"player",0,0,0,i));
+            Add(store,"fire","Spell/Items/Item_Spell_Emit_Fireball.asset",new ItemLocation(ItemLocationKind.Backpack,"bag",0,4,0,-1),8);
+            Add(store,"ice","Spell/Items/Item_Spell_Emit_Iceball.asset",new ItemLocation(ItemLocationKind.Backpack,"bag",1,4,0,-1),8);
+            if(TestContext.CurrentContext.Test.Name.StartsWith("PreviewMana"))Add(store,"trigger","Spell/Items/Item_Spell_Emit_TriggerFireball.asset",new ItemLocation(ItemLocationKind.Backpack,"bag",2,4,0,-1),8);
             for(int i=0;i<2;i++)
             {
-                var bottle=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Hub/SinglePlayerContainers/bottle.asset");
+                var bottle=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/Containers/Definitions/Item_Container_Bottle.asset");
                 index.TryGetRules(bottle.ContentId,out var rules);var mix=new ContainerComposition(rules.ContainerCapacity,rules.ContainerMaterials);
                 mix.AddReserved(new[]{new MaterialAmount(1,60),new MaterialAmount(3,40)},2);
                 Assert.That(store.TryAdd(new RuntimeItemState("b"+i,bottle.ContentId,0,composition:mix),new ItemLocation(ItemLocationKind.Backpack,"bag",i*3,0,0,-1)),Is.True);
@@ -116,7 +119,8 @@ namespace Game.Run.Tests
         protected virtual SinglePlayerProfile CustomizeProfile(SinglePlayerProfile profile,ItemCatalogIndex index)=>profile;
         private static void Add(ItemOwnershipStore store,string id,string asset,ItemLocation location,int charges=0)
         {
-            var definition=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Hub/"+asset);
+            var definition=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/"+asset);
+            Assert.That(definition,Is.Not.Null,"测试资源路径不存在："+asset);
             Assert.That(store.TryAdd(new RuntimeItemState(id,definition.ContentId,charges),location),Is.True,id);
         }
         protected T Find<T>() where T:Component
@@ -254,7 +258,11 @@ namespace Game.Run.Tests
             InventoryItemView nearby=null;foreach(var view in Backpack.GetComponentsInChildren<InventoryItemView>())if(view.Snapshot.InstanceId=="near")nearby=view;
             Assert.That(nearby,Is.Not.Null);
             // 新附近区是真实格子图，抓取首格内部，避免边界浮点误差被Floor到相邻的负格。
-            var grid=Backpack.GetComponentInChildren<InventoryGridView>();var data=new PointerEventData(EventSystem.current){position=RectTransformUtility.WorldToScreenPoint(null,nearby.Rect.TransformPoint(new Vector3(16,-16,0))),button=PointerEventData.InputButton.Left};
+            InventoryGridView grid=null;foreach(var candidate in Backpack.GetComponentsInChildren<InventoryGridView>())if(candidate.BackpackId==Session.EquippedBackpackId)grid=candidate;
+            Assert.That(grid,Is.Not.Null);
+            // 仓库工作区的Viewport比普通背包矮；先把腾出的第5行滚到可见区，再投递真实鼠标坐标。
+            var scroll=grid.GetComponentInParent<UnityEngine.UI.ScrollRect>();scroll.verticalNormalizedPosition=0;Canvas.ForceUpdateCanvases();
+            var data=new PointerEventData(EventSystem.current){position=RectTransformUtility.WorldToScreenPoint(null,nearby.Rect.TransformPoint(new Vector3(16,-16,0))),button=PointerEventData.InputButton.Left};
             ExecuteEvents.Execute(nearby.gameObject,data,ExecuteEvents.beginDragHandler);
             Assert.That(Backpack.IsDragging,Is.True);
             data.position=RectTransformUtility.WorldToScreenPoint(null,grid.transform.TransformPoint(new Vector3(grid.CellSize*.5f,-grid.CellSize*4.5f,0)));
@@ -283,8 +291,10 @@ namespace Game.Run.Tests
             try { System.IO.Directory.CreateDirectory(EvidencePath); pixels.ReadPixels(new Rect(0,0,Screen.width,Screen.height),0,0);pixels.Apply();System.IO.File.WriteAllBytes(EvidencePath+"/"+name,pixels.EncodeToPNG()); }
             finally { UnityEngine.Object.Destroy(pixels); }
         }
+        protected virtual IEnumerator PrepareExperimentForProfiling(){MoveToExperiment();yield return null;}
         [UnityTest] public IEnumerator StableBackpackHudDragAndPourScopesHaveNoGcAlloc()
         {
+            yield return PrepareExperimentForProfiling();
             Session.Profile.Items.TryGet("w0",out var template);
             Assert.That(Session.Profile.Items.TryAdd(new RuntimeItemState("profiler.spare",template.ContentId,0),new GridPlacement(4,0,0).InBackpack("bag")),Is.True);
             bool callstacks=UnityEngine.Profiling.Profiler.enableAllocationCallstacks;UnityEngine.Profiling.Profiler.enableAllocationCallstacks=true;
@@ -292,7 +302,7 @@ namespace Game.Run.Tests
             try
             {
                 UnityEditorInternal.ProfilerDriver.SetAreaEnabled(UnityEngine.Profiling.ProfilerArea.CPU,true);UnityEditorInternal.ProfilerDriver.enabled=true;
-                MoveToExperiment();Bind(0,"b0");Backpack.OpenBackpack();yield return null;Session.ReadOnly.TryGetView("ice",out var spell);Backpack.BeginDrag(spell,Vector2.zero,null,true);
+                Bind(0,"b0");Backpack.OpenBackpack();yield return null;Session.ReadOnly.TryGetView("ice",out var spell);Backpack.BeginDrag(spell,Vector2.zero,null,true);
                 var grid=Backpack.GetComponentInChildren<InventoryGridView>();Vector2 pointer=RectTransformUtility.WorldToScreenPoint(null,grid.transform.TransformPoint(new Vector3(grid.CellSize*6.5f,-grid.CellSize*6.5f,0)));
                 Backpack.MoveGhost(pointer,null);for(int i=0;i<10;i++)yield return null;int first=UnityEditorInternal.ProfilerDriver.lastFrameIndex+1;
                 for(int i=0;i<60;i++){Backpack.MoveGhost(pointer,null);yield return null;}int last=UnityEditorInternal.ProfilerDriver.lastFrameIndex;
@@ -352,8 +362,13 @@ namespace Game.Run.Tests
         {
             try
             {
-                SceneManager.sceneLoaded-=Loaded;Backpack?.Close();Warehouse?.Close();Time.timeScale=1;
-                if(Scene.IsValid() && Scene.isLoaded)yield return SceneManager.UnloadSceneAsync(Scene);
+                SceneManager.sceneLoaded-=Loaded;if(Backpack!=null)Backpack.Close();if(Warehouse!=null)Warehouse.Close();Time.timeScale=1;
+                if(Scene.IsValid() && Scene.isLoaded)
+                {
+                    // Single旅程会卸载TestRunner初始Scene；不能让“卸载最后一张Scene失败”把真实Hub残留给下个物理测试。
+                    if(SceneManager.sceneCount==1)SceneManager.CreateScene("BackpackTestCleanup");
+                    yield return SceneManager.UnloadSceneAsync(Scene);
+                }
             }
             finally { try{_input?.TearDown();}finally{_input=null;Application.runInBackground=_background;Time.timeScale=1;
                 foreach(var asset in TemporaryAssets)UnityEngine.Object.Destroy(asset);TemporaryAssets.Clear();} }

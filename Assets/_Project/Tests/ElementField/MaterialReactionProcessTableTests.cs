@@ -143,7 +143,7 @@ namespace Game.ElementField.Tests
                 var bindings=AssetDatabase.LoadAssetAtPath<MaterialReactionBindingProfile>(
                     "Assets/_Project/ScriptableObjects/Combat/Reactions/MaterialReactionBindings_Default.asset");
                 var profile=AssetDatabase.LoadAssetAtPath<ElementReactionProfile>(
-                    "Assets/_Project/ScriptableObjects/Status/ElementReactionProfile_Default.asset");
+                    "Assets/_Project/ScriptableObjects/Combat/Status/ElementReactionProfile_Default.asset");
                 ElementReactionTuningSnapshot tuning=profile.CreateSnapshot(1f,1f);
                 int blasts=0;WorldReactionDamageCommand last=default;
                 var adapter=new LiquidReactionAdapter(runtime,new WeakFire(),

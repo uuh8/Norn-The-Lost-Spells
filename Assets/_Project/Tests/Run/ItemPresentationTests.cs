@@ -12,7 +12,7 @@ namespace Game.Run.Tests
     {
         [Test] public void AllEighteenModelDefinitionsHavePersistentIcons()
         {
-            foreach(var guid in AssetDatabase.FindAssets("t:ItemDefinition",new[]{"Assets/_Project/ScriptableObjects/SinglePlayer/Items"}))
+            foreach(var guid in ItemPickupAuthoringTests.ModelDefinitionGuids())
             {
                 var item=AssetDatabase.LoadAssetAtPath<ItemDefinition>(AssetDatabase.GUIDToAssetPath(guid));
                 Assert.That(item.Icon,Is.Not.Null,item.name);Assert.That(item.Icon.texture.width,Is.EqualTo(512));
@@ -36,20 +36,20 @@ namespace Game.Run.Tests
         }
         [Test] public void MissingOnlyBakeKeepsExistingIconsAndSceneClean()
         {
-            var type=Type.GetType("Game.EditorTools.ItemIconBaker, Game.PbfTask13.Editor");
+            var type=Type.GetType("Game.EditorTools.ItemIconBaker, Game.Project.Editor");
             var scene=UnityEngine.SceneManagement.SceneManager.GetActiveScene();bool before=scene.isDirty;
             Assert.That((int)type.GetMethod("BakeAll").Invoke(null,new object[]{false,null,1.22f}),Is.Zero);
             Assert.That(scene.isDirty,Is.EqualTo(before));
         }
         [Test] public void IconBakerSupportsExplicitAndMissingOnlyGeneration()
-        {Assert.That(Type.GetType("Game.EditorTools.ItemIconBaker, Game.PbfTask13.Editor"),Is.Not.Null);}
+        {Assert.That(Type.GetType("Game.EditorTools.ItemIconBaker, Game.Project.Editor"),Is.Not.Null);}
         [Test] public void LegacyTemplateCreatesMissingIconImage()
         {
             var go=new GameObject("Legacy item",typeof(RectTransform),typeof(UnityEngine.UI.Image));
             try
             {
                 var view=go.AddComponent<InventoryItemView>();
-                var item=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Items/Food/Apple.asset");
+                var item=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/Food/Item_Food_Apple.asset");
                 var shape=new InventoryShape(1,1,new[]{Vector2Int.zero});
                 var rules=new InventoryItemRules(ItemKind.Consumable,shape,1,1,1,1);
                 var snapshot=new InventoryItemSnapshot(new RuntimeItemState("test",item.ContentId,1),new ItemLocation(ItemLocationKind.WorldItem,"test",0,0,0,-1),item,rules);

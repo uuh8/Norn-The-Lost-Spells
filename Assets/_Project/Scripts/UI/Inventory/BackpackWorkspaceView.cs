@@ -10,6 +10,16 @@ namespace Game.UI
     {
         [SerializeField] private Text _capacity,_wallet;
         [SerializeField] private ToolbeltView _tools;
+        [SerializeField] private Button _organize,_pickupAll;
+        private void OnEnable(){_organize?.onClick.AddListener(Organize);_pickupAll?.onClick.AddListener(PickupAll);ButtonText(_organize,"整理背包");ButtonText(_pickupAll,"全部拾取");}
+        private void OnDisable(){_organize?.onClick.RemoveListener(Organize);_pickupAll?.onClick.RemoveListener(PickupAll);}
+        private void Organize()=>_controller?.OrganizeBackpack();
+        private void PickupAll()=>_controller?.PickupAllNearby();
+        // 旧详情区已删除，反馈直接显示在刚点击的按钮内；只在离散结果时改字，不另占网格空间。
+        public void ShowOrganizeResult(bool success)=>ButtonText(_organize,success?"整理完成":"整理失败");
+        public void ShowPickupResult(int collected,int remaining)=>ButtonText(_pickupAll,"拾取 "+collected+" · 剩余 "+remaining);
+        private static void ButtonText(Button button,string text)
+        {if(button!=null){var label=button.GetComponentInChildren<Text>(true);if(label!=null)label.text=text;}}
         private SinglePlayerInventoryController _controller;
         private long _lastCurrency=long.MinValue;
         private uint _toolVersion;

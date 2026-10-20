@@ -25,7 +25,7 @@ namespace Game.Run.Tests
     /// <summary>直接进入交付场景，验证真实库存、输入、Wizard Animator、支付与未来 Projectile 回调。</summary>
     public sealed class OwnedWandCastPlayModeTests
     {
-        private const string PathRoot = "Assets/_Project/ScriptableObjects/Tests/SinglePlayerWands/";
+        private const string PathRoot = "Assets/_Project/Tests/Fixtures/Run/SinglePlayerWands/";
         private const string ScenePath = "Assets/_Project/Scenes/Tests/WandSandbox.unity";
         private Scene _scene;
         private SinglePlayerInventorySession _session;
@@ -53,7 +53,7 @@ namespace Game.Run.Tests
             EditorWindow.GetWindow(Type.GetType("UnityEditor.GameView,UnityEditor")).Focus();
             _time = Time.timeScale; _lock = Cursor.lockState; _cursor = Cursor.visible; Time.timeScale = 1;
             _directory = System.IO.Path.GetFullPath(System.IO.Path.Combine("Temp/SinglePlayer/WandTests", Guid.NewGuid().ToString("N")));
-            _catalog = Object.Instantiate(AssetDatabase.LoadAssetAtPath<ItemCatalog>(PathRoot + "Catalog.asset")); _temporary.Add(_catalog);
+            _catalog = Object.Instantiate(AssetDatabase.LoadAssetAtPath<ItemCatalog>("Assets/_Project/Tests/Fixtures/Run/SinglePlayerWands/Catalog.asset")); _temporary.Add(_catalog);
             // 测试定时/非法输出只修改临时 SO 克隆，绝不改 Project 中的法术或目录。
             var entries = (ItemDefinition[])Field(typeof(ItemCatalog), "_definitions").GetValue(_catalog);
             var copies = new ItemDefinition[entries.Length];
@@ -80,7 +80,7 @@ namespace Game.Run.Tests
             if (scene.path != ScenePath) return; _scene = scene;
             _session = Find<SinglePlayerInventorySession>(); _adapter = Find<OwnedWandCastAdapter>(); _caster = Find<SpellCaster>();
             _wizard = Find<WizardController>(); _ui = Find<SinglePlayerInventoryController>();
-            Assert.That(_session.ConfigureAndInitialize(_catalog, AssetDatabase.LoadAssetAtPath<SinglePlayerStartingInventory>(PathRoot + "StartingInventory.asset"), _directory), Is.True);
+            Assert.That(_session.ConfigureAndInitialize(_catalog, AssetDatabase.LoadAssetAtPath<SinglePlayerStartingInventory>("Assets/_Project/Tests/Fixtures/Run/SinglePlayerWands/StartingInventory.asset"), _directory), Is.True);
         }
         [UnityTearDown] public IEnumerator Cleanup()
         {
@@ -234,6 +234,18 @@ namespace Game.Run.Tests
             EventBus<InventoryChangedEvent>.Publish(new InventoryChangedEvent { InventoryId = _session.ReadOnly.InventoryId, Version = profile.Items.Version });
         }
         private int Remaining(string id) { Assert.That(_session.ReadOnly.TryGetView(id, out var item), Is.True); return item.RemainingCharges; }
+        [UnityTest] public IEnumerator LastFiniteRootAndPayloadDisappearWhileActualImpactStillExecutes()
+        {
+            Capture(2,out var program,out var source);string root=program.Program.GetInstanceId(0),child=program.Program.GetInstanceId(1);
+            MakeFinite(root,1);MakeFinite(child,1);
+            Assert.That(Cast(program,source),Is.EqualTo(1));
+            Assert.That(_session.ReadOnly.TryGetView(root,out _),Is.False);
+            Assert.That(_session.ReadOnly.TryGetView(child,out _),Is.False);
+            var projectile=RuntimeProjectile();Invoke(projectile,"Impacted");
+            Assert.That(State(2).CurrentMana,Is.EqualTo(135));
+            Assert.That(Object.FindObjectsByType<ProjectileBase>(FindObjectsSortMode.None),Has.Length.EqualTo(2));
+            yield return null;
+        }
         [UnityTest] public IEnumerator FiniteTriggerPrepaysBothInstancesAndRepeatedImpactCannotDuplicate()
         {
             Capture(2, out var program, out var source); string root = program.Program.GetInstanceId(0), child = program.Program.GetInstanceId(1);

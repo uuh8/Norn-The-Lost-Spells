@@ -107,6 +107,8 @@ namespace Game.Run
             InventoryOperationResult result = _store.TryMove(ItemId, destination, expectedVersion);
             if (result.Success)
             {
+                // 部分材料已补入旧堆时，地面余量仍属于原实例，不能提前销毁代理。
+                if(_store.TryGetLocation(ItemId,out var remaining)&&remaining.Kind==ItemLocationKind.WorldItem)return result;
                 // EventBus 是同步派发；先标记和停用，阻止重复拾取，OnDisable 同时解除订阅。
                 _collected = true; ReleaseIdentity(); gameObject.SetActive(false);
                 if (Application.isPlaying) Destroy(gameObject);

@@ -1,0 +1,1007 @@
+{
+  "Source": "t4-final-editmode.xml",
+  "Passed": 250,
+  "Failed": 0,
+  "Cases": [
+    {
+      "Name": "Game.Run.Tests.CastResourceServiceTests.AbandonUnusedPayloadNeverRefundsPrepaidCharges",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.CastResourceServiceTests.CancelPayloadDoesNotSpendManaOrRefundRootUses",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.CastResourceServiceTests.CancelRootLeavesChargesManaCooldownAndVersionUntouched",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.CastResourceServiceTests.DifferentScopeAndStaleProgramCannotPrepareResources",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.CastResourceServiceTests.FutureLayerChargesOriginalManaOnceAndDoesNotChargeUsesAgain",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.CastResourceServiceTests.IdenticalRequestRetriesReturnSameReservation",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.CastResourceServiceTests.InsufficientFutureUsesRejectsEntireRoot",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.CastResourceServiceTests.InvalidPrefabFailsWithoutResourceMutation",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.CastResourceServiceTests.LastPayloadUseRemovesCardButStillExecutesPrepaidLayer",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.CastResourceServiceTests.LastRootUseIsRemovedOnlyAfterSuccessfulCommit",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.CastResourceServiceTests.NonFiniteVelocityConfigurationRejectsCast(float.NaN)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.CastResourceServiceTests.NonFiniteVelocityConfigurationRejectsCast(float.PositiveInfinity)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.CastResourceServiceTests.NoPayloadReservationIsCollectedAfterSuccess",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.CastResourceServiceTests.ReservationLocksInventoryUntilCancel",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.CastResourceServiceTests.RootManaFailureDoesNotChargeFiniteUses",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.CastResourceServiceTests.RootSuccessPrepaysAllFutureUsesButOnlyImmediateMana",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.CastResourceServiceTests.SessionCancellationInvalidatesOutstandingFutureBudgets",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SinglePlayerInventorySessionTests.ConfiguredHubWithoutValidStationCannotMoveWarehouseAsset",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SinglePlayerInventorySessionTests.MoveWholeStackToWarehouse_PreservesBothIdsAndCommitsOnce",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SinglePlayerInventorySessionTests.ReadModel_ExposesAllInstances_AndRejectsTruncatedBuffer",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SinglePlayerInventorySessionTests.SplitIntoStoredBackpackCannotBypassWarehouseAccess",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SinglePlayerInventorySessionTests.SuccessfulCommand_EmitsOneResultAndOneVersionChange_FailureOnlyResult",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SinglePlayerInventorySessionTests.WandProgramCapacity_IsIndependentOfBackpackSpace",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SinglePlayerInventorySessionTests.WrongInventoryScope_DoesNotMutateThisSession",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SpellAttachmentServiceTests.AbandonedTriggerDoesNotTakeItsMaterials",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SpellAttachmentServiceTests.ActiveOutputBlocksMapperAndEndsWithoutRefund",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SpellAttachmentServiceTests.CancelPreservesMaterialsManaAndCharges",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SpellAttachmentServiceTests.ConfigurationPersistsAsSchemaThreeAndOldSchemaTwoStillLoads",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SpellAttachmentServiceTests.DoseTenSourceThreeProducesThreeOnlyOnCommit",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SpellAttachmentServiceTests.EmptyOrNoLongerCarriedSourceKeepsBaseCast(True)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SpellAttachmentServiceTests.EmptyOrNoLongerCarriedSourceKeepsBaseCast(False)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SpellAttachmentServiceTests.EndedOutputCanResolveWhileAnotherCastOwnsInventoryLock",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SpellAttachmentServiceTests.FutureTriggerTakesCurrentMaterialsAtExecutionAndUsesFrozenSetting",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SpellAttachmentServiceTests.RejectedDepositKeepsOwnerThenSuccessfulRetryResolvesOnlyOnce",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SpellAttachmentServiceTests.SameNamedCopiesMoveAndChargeWithoutLosingIndividualConfiguration",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SpellAttachmentServiceTests.SplitThreeKeepsTotalThreeAndEveryComponent",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SpellAttachmentServiceTests.TwoIndependentOutputsShareAvailableSourceWithoutDuplicatingIt",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SpellAttachmentServiceTests.UnexecutedSameNameCopyDoesNotTakeMaterials",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SpellAttachmentServiceTests.UnlimitedCardMaterialCommitStillChangesInventoryVersion",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SpellMaterialOutputServiceTests.CancelledRootAndAbandonedChildNeverTakeMaterials",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SpellMaterialOutputServiceTests.FutureMaterialsAreNotTakenUntilLayerAndMovingContainerDoesNotUndoPaidSpell",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.SpellMaterialOutputServiceTests.IndependentOutputsShareActualSupplyAndHaveDistinctOwnership",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionContractTests.ResourceRequestCanRejectStaleExecutionAndInventoryIndependently",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionContractTests.SessionArchiveCanOutliveReplaceableResourceServices",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionContractTests.V2TransactionIsExplicitInsteadOfChangingLegacyChildPayment",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionReplayArchiveTests.ArchiveIsAbsentFromProfileDtoAndWrongWandHasNoHistory",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionReplayArchiveTests.DifferentWandsShareCapacityButLatestLookupRemainsPerInstance",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionReplayArchiveTests.ReplacingResourceServiceKeepsFrozenHistoryAndCancelledLayerStatus",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionReplayArchiveTests.SessionKeepsArchiveWhenAdoptingCommittedProfile",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionReplayArchiveTests.SharedThreeRootLimitDoesNotCancelEvictedGameplayTicket",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionServiceSandboxTests.EditorSandboxUsesOwnedInventoryWithoutChangingCurrentSceneOrSourceAssets",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.CancellingOneCallerDoesNotRemoveAnotherCallersFutureGraph",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.CancelRestoresManaUsesDeckRandomAndTime",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.ChangedInventoryVersionRejectsBeforeReservation",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.ChildUsesPrepaidGraphAfterSourceManaIsSpentElsewhere",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.CompleteRetryAfterAnotherRequestStillReturnsOriginalReceipt",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.DepletionRebindKeepsFrozenValuesInsteadOfRereadingEditedAsset",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.DuplicateCompleteReturnsReceiptWithoutAdvancingTwice",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.EmptyProgramRejectsWithoutCreatingTickets",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.InvalidPrefabRejectsBeforeReserving",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.InventoryAndOtherManaEntrypointsStayLockedAcrossPrepare",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.LastUseRemovesInstanceWithoutResettingRemainingDeck",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.LostInventoryReservationRejectsBeforeCommittingManaOrMaterials",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.LostWandReservationRejectsCompleteWithoutAnyPayment",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.MissingQualificationSkipsCardWithoutPayingItsNegativeMana",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.NoAffordableOutputCanLegallyAdvanceWithoutFakeSpawn",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.OldTicketCanReleaseAfterManualEditButCannotAdvanceNewProgram",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.QualificationIsPaidOnRaidEntryAndNegativeManaClampsAtMax",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.RootPrepaysChildManaButPrepareDoesNotChangeAnyResource",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.SixteenNestedTriggersRemainWithinCurrentOwnedCapacity",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.StaleProgramExecutionOrResourcesCannotReserve(0)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.StaleProgramExecutionOrResourcesCannotReserve(1)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandExecutionTransactionTests.StaleProgramExecutionOrResourcesCannotReserve(2)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandLoadoutServiceTests.AllCarriedWandsRecoverBeyondThreeAndWarehouseTransferPreservesStateAndProgram",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandLoadoutServiceTests.BackpackWand_StillRecovers",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandLoadoutServiceTests.DuplicateReceipt_DoesNotSpendAgain",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandLoadoutServiceTests.FixedStats_AreFrozenAtCatalogCreation",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandLoadoutServiceTests.InvalidOrEmptySlot_DoesNotChangeSelection(-1)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandLoadoutServiceTests.InvalidOrEmptySlot_DoesNotChangeSelection(2)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandLoadoutServiceTests.InvalidOrEmptySlot_DoesNotChangeSelection(3)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandLoadoutServiceTests.OlderRequest_IsRejected",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandLoadoutServiceTests.OldProjection_RemainsImmutableAndStaleRootIsRejected",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandLoadoutServiceTests.Payload_UsesExplicitSourceAfterSwitch",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandLoadoutServiceTests.ReadOnlyView_CannotBeCastToWritableService",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandLoadoutServiceTests.Switching_ChangesOnlySelection",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandLoadoutServiceTests.UnheldCarriedWand_RecoversWhileSelectedWandIsDifferent",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandLoadoutServiceTests.UnrelatedInventoryMove_PreservesProgramRevision",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandLoadoutServiceTests.Warehouse_FreezesAndReequipDoesNotReset",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandLoadoutServiceTests.WrongScope_DoesNotSpend",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramGridTests.FitAll_MakesWholeLargeGraphVisibleUsingBothAxes",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramGridTests.LongRow_ExpandsCanvasAndPreservesEveryInstruction",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramGridTests.ResizingViewport_RecalculatesFitAndKeepsTheFullGraph",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramGridTests.SevenCards_AreGroupedByActualScopeAndKeepModifiersAndMulticast",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramGridTests.ShrinkingContent_AfterFitDoesNotDesyncSliderAndVisualScale",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramGridTests.SixteenNestedTriggers_ExpandVerticallyAndRemainLinkedToTheirOwner",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramGridTests.SkippedUnaffordableCard_IsVisibleButNeverBecomesAnOutput",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramGridTests.Zoom_PreservesTheVisibleCenterWhenThereIsRoomToPan",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramGridTests.ZoomSlider_ChangesVisualScaleAndScrollExtentTogether",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramWorkbenchViewTests.CollapsingScope_IsAViewChoiceThatPreservesGraph",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramWorkbenchViewTests.EmptyTimedPayload_StillUsesTheTimersRowLabel",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramWorkbenchViewTests.ExecutionCanvas_HasIndependentZoomAndPanController",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramWorkbenchViewTests.ExecutionGrid_HasTraceProjectionInsteadOfOnlyOutputTextRows",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramWorkbenchViewTests.InspectAndSeek_LeaveSimulationSourceSnapshotUnchanged",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramWorkbenchViewTests.InvalidSampleSelection_DoesNotReuseLastValidProgram",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramWorkbenchViewTests.ModifierSelection_LinksOnlySameScopeOutputs",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramWorkbenchViewTests.MulticastSelection_FollowsActualDrawRequestsIncludingTriggerChild",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramWorkbenchViewTests.PlayerCanvas_DoesNotAttachCalculationSidebar",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramWorkbenchViewTests.SevenCardExample_ShowsAllFourOutputsInGraphViewport",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramWorkbenchViewTests.SourceSequence_HasSixteenVisibleSlotsAndLibraryHasOnlyCards",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramWorkbenchViewTests.StepCursor_HidesFinalValuesBeforeScopeCloses",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandProgramWorkbenchViewTests.WorkbenchContract_IsAnIndependentUguiPresenter",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandRuntimeStateTests.Cooldown_RejectsSecondRootWithoutDoubleCharge",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandRuntimeStateTests.InsufficientMana_ChangesNeitherResource",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandRuntimeStateTests.InvalidCost_IsRejected(-1.0f)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandRuntimeStateTests.InvalidCost_IsRejected(float.NaN)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandRuntimeStateTests.InvalidCost_IsRejected(float.PositiveInfinity)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandRuntimeStateTests.InvalidOrPausedTick_IsIgnored(0.0f)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandRuntimeStateTests.InvalidOrPausedTick_IsIgnored(-1.0f)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandRuntimeStateTests.InvalidOrPausedTick_IsIgnored(float.NaN)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandRuntimeStateTests.InvalidOrPausedTick_IsIgnored(float.PositiveInfinity)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandRuntimeStateTests.Payload_PaysManaWithoutRestartingRootCooldown",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandRuntimeStateTests.Recovery_ClampsBothResources",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Run.Tests.WandRuntimeStateTests.RootPayment_CommitsManaAndCooldownTogether",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.AfterDelayTrigger_AtSequenceEnd_HasNoPayloadAndNoRuntimeTrigger",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.AfterDelayTrigger_CapturesOneActionAndDelay",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.BaseDraws_LimitsEmits",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.BounceModifier_BakesBounceCount_IntoEmit",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.BounceModifier_StacksAdditively",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.DamageMod_AfterEmit_DoesNotBoostIt",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.DamageMod_BeforeEmit_BoostsIt",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.DamageMultiplier_ScalesEveryMeteorDamageChannel",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.EmitShield_BakesForwardProjectileAndReflectCount",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.EmitShield_BakesMotionModifiers",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.EmptyWand_EmitsNothing",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.EnoughMana_EmitsAll_ReportsSpent",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.EstimateManaCost_IncludesCurrentLayerOnly_AndDoesNotPrepayTriggerPayload",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.FlatDamageBonus_DoesNotRepeatOnExplosionOrEveryFireFieldTick",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.GravityModifier_BakesUseGravity_IntoEmit",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.HomingModifier_BakesHomingConfig_IntoEmit",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.HomingModifier_OnlyAffectsFollowingEmit",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.InsufficientMana_FizzlesMidCast",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.InsufficientMana_OnModify_FizzlesBeforeFollowingEmit",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.LaterHomingMotionModifier_OverridesEarlierOrbitForEmit",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.LaterOrbitMotionModifier_OverridesEarlierHomingForEmit",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.ManaCost_IncludesModifyAndMulticast_WhenTheyAreRead",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.Modifiers_BakeSpeedSpreadAndFlatDamage_IntoEmit",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.Modify_AffectsFollowingStaticProjectile",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.Multicast_AfterEmit_ReopensBudget",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.Multicast_BudgetUnfilled_IsDiscarded_NoWrap",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.Multicast_CountsStaticProjectileAsProjectileOutput",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.NestedTrigger_ActionCaptureRemainsStrictlyShorter",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.NonTrigger_HasNoPayload",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.NullSpellEntry_IsSkipped",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.OnImpactTrigger_AtSequenceEnd_HasNoPayloadAndNoRuntimeTrigger",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.OnImpactTrigger_CapturesOneActionAsPayload_AndEndsWhenOuterBudgetIsSpent",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.OnImpactTrigger_IgnoresPayloadDelaySeconds",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.OnImpactTrigger_PayloadExcludesTriggerItself",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.OrbitModifier_BakesOrbitConfig_IntoEmit",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.PayloadTrigger_PayloadModsPreserveBounceCount",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.PayloadTrigger_PayloadModsPreserveHomingConfig",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.PayloadTrigger_PayloadModsPreserveOrbitConfig",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.PayloadTrigger_PayloadModsPreserveUseGravity",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.PayloadTrigger_PayloadModsSnapshotIsPreserved",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.Preview_FireballThenMulticast_ReportsImmediateCostAndRemainingBudget",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.RepeatedDamageMultipliers_ProduceLinearFinalDamage",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.ShieldStaticProjectile_ConsumesDrawBudgetLikeOtherStaticProjectiles",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.SingleFireball_EmitsOne_WithBaseValues",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.SpellKind_StaticProjectile_AppendsAfterExistingKinds",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.SpellSpawnMode_StaticAtPoint_AppendsAfterExistingModes",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.StaticProjectile_BakesThreeStageDamageSnapshot",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.StaticProjectile_ConsumesDrawBudget",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.StaticProjectile_EmitsOneCommand_WithSkyfallSpawnMode",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.StaticProjectile_Shield_BakesOrbitModifier",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.StaticProjectile_Shield_BakesStaticAtPointAndReflectCount",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.TriggerPayload_ActionIncludesInnerMulticastAndAllOfItsDraws",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.TriggerPayload_CanCaptureShieldStaticProjectile",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.TriggerPayload_CanCaptureStaticProjectile",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.TriggerPayload_ShieldPreservesIncomingModifierSnapshot",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.Triple_DamageMod_AppliesToAllEmits",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.Triple_WithThreeProjectiles_EmitsThree",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.TripleMulticast_DrawsThreeIndependentTriggerActions",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastEvaluatorTests.ZeroCostSpells_NeverFizzle",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastModifierStateTests.Apply_Bounce_IsAdditive",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastModifierStateTests.Apply_DamageMul_Multiplies_LeavesSpeedUnchanged",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastModifierStateTests.Apply_Gravity_IsEnabledByAnyModifier",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastModifierStateTests.Apply_Homing_UsesMaxRadiusAndAddsDurationAndTurnRate",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastModifierStateTests.Apply_MotionControl_LaterHomingOverridesEarlierOrbit",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastModifierStateTests.Apply_MotionControl_LaterOrbitOverridesEarlierHoming",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastModifierStateTests.Apply_Orbit_UsesMaxRadiusAddsAngularSpeedAndPhaseOffsetAndUsesMaxAbsPlaneTilt",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastModifierStateTests.Apply_RepeatedDamageMultipliers_StackTheirBonusAdditively",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastModifierStateTests.Apply_SpreadAndFlat_AreAdditive",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.CastModifierStateTests.Default_IsIdentity",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellExecutionTraceContractTests.CandidateMana_ChangesAtPaymentEventRatherThanAnUnrelatedMovement",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellExecutionTraceContractTests.DrawRequest_IdentifiesTheInstructionThatRequestedIt",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellExecutionTraceContractTests.EveryEventHasMonotonicIdentity_AndScopeClosureFollowsItsOutputs",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellExecutionTraceContractTests.ManaPaid_RecordsFiniteUseBeforeAndAfterForUi",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellExecutionTraceContractTests.ReusingBuffer_DoesNotMutateEarlierGraphOrTrace",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.AuthoringChangesAfterCompile_DoNotChangeFrozenRules",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.DuplicateOwnedId_IsRejected",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.EmptyProgram_CompilesForAnExplicitEmptyState",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.EveryFloatAuthoringField_RejectsNaNAndInfinity",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.ExistingDoubleExtraDrawsOne_BecomesTwoDrawRequests",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.FiniteNegativeMana_IsAllowedOnlyInV2Compilation",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.InvalidBaseDraws_IsRejected(0)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.InvalidBaseDraws_IsRejected(-1)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.InvalidBaseDraws_IsRejected(1025)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.InvalidTimingAndEnums_AreRejected",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.ModifiersAndTimeAreFrozen_NotReadFromDefinitionDuringBuild",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.NullSlotsAreSkipped_OriginalSlotAndDistinctInstanceIdsRemain",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.UnimplementedOpcode_IsRejectedWithSourceSlot(4)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.UnimplementedOpcode_IsRejectedWithSourceSlot(255)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramCompilerTests.V2CompilerContract_IsAvailableWithoutReplacingLegacy",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramGraphTests.FrozenGraph_IgnoresDefinitionAndSourceOrderEdits",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramGraphTests.NoitaEightCardGolden_ReadOrderAndIndependentScopes",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.ChildCastDelay_DoesNotChangeRootInterval_ButReloadIsShared",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.CurrentHand_IsNotRecycledToSatisfyMulticast",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.DrawMachineContract_IsAvailableAsAnIndependentInterpreter",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.EndingRootDraw_DoesNotScanLaterMulticast",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.IneligibleCard_DoesNotPayManaOrUses",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.InvalidSnapshot_DoesNotPublishCandidate",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.LastUse_IsRemovedFromNextDeck_WhileFrozenOutputRemains",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.LateDamageModifier_AffectsEarlierOutputInSameScope",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.ModifierOnly_IsALegalZeroOutputAdvance",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.MotionOverrideAndDamageFormula_MatchLegacyMath",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.NegativeMana_IsAppliedInOrderAndClamped(0,25)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.NegativeMana_IsAppliedInOrderAndClamped(90,95)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.NestedMulticast_DrawCallsProduceThreeOutputs",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.NonFiniteComputedResult_IsRejected",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.OutputLimit_IsAtomic(128,True)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.OutputLimit_IsAtomic(129,False)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.ReloadDelta_AccumulatesAcrossRootsAndResetsAtReload",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.SevenCardExample_ExplainsTwoRootAndTwoChildOutputs",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.TechnicalStepLimit_RejectsEntireCandidateWithoutChangingBefore",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.TraceOnOffAndTruncation_DoNotChangeCandidateResults",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.TrailingModifier_WrapsPreviousDiscardAndTriggersReload",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.TriggerDepth_IsBounded(16,True)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.TriggerDepth_IsBounded(17,False)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.TriggerPayloadMana_IsPaidDuringRootBuild",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.TriggerScopes_HaveIndependentModifiers(True)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.TriggerScopes_HaveIndependentModifiers(False)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.TwoClicks_ContinueDeckInsteadOfRestartingFirstCard",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramMachineTests.UnaffordableCard_IsSkippedAndLaterAffordableCardRuns",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramPreviewTests.ExhaustedFiniteUses_StopWithoutLoopingEmptyState",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramPreviewTests.FromBeginning_IsExplicitlyDifferentFromActualNextRoot",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramPreviewTests.InvalidPreviewBudget_IsRejected(0)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramPreviewTests.InvalidPreviewBudget_IsRejected(33)",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramPreviewTests.PreviewContract_UsesAnIndependentReadonlySimulation",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramPreviewTests.RepeatedPreview_NeverAdvancesOriginalDeckOrRandom",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramPreviewTests.RootBudget_IsVisibleTruncationAndNeverChangesMachineBudget",
+      "Result": "Passed"
+    },
+    {
+      "Name": "Game.Skills.Tests.SpellProgramPreviewTests.VirtualClock_RecoversManaOnlyBetweenRoots",
+      "Result": "Passed"
+    }
+  ]
+}

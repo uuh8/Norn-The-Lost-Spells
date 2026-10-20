@@ -130,7 +130,9 @@ namespace Game.ElementField
         internal void PublishConversionGeometry()
         {
             // 一个粗液体格可能转换成多个细冰格；每个 Dirty Chunk 只 Cooking 一次。
-            for(int i=0;i<_conversionDirtyCount;i++) _physics.Publish(_conversionDirty[i]);
+            // 跨页移动先释放空旧页的Collider槽，再发布新页；否则满池会误报容量不足。
+            _physics.ReleaseUnused(_store);
+            for(int i=0;i<_conversionDirtyCount;i++)if(_store.GetChunkVersion(_conversionDirty[i])!=0) _physics.Publish(_conversionDirty[i]);
             _store.ReclaimEmptyChunks(); _physics.ReleaseUnused(_store);
         }
         internal void CancelConversionGeometry() => _store.ReclaimEmptyChunks();

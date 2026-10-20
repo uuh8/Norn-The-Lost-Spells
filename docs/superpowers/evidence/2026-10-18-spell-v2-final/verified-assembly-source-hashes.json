@@ -1,0 +1,1830 @@
+[
+  {
+    "Sha256": "33BBE3EC4AB67FCD2D7D0801A4084BF110751C2BA542FCF9DC13AE94E3921D2E",
+    "Path": "Assets/_Project/Scripts/Core/EventBus.cs"
+  },
+  {
+    "Sha256": "CCE2547F468CDD5E6F004818A542145D9A0F8B84940FC310752353D91AC7CC0B",
+    "Path": "Assets/_Project/Scripts/Core/GameLog.cs"
+  },
+  {
+    "Sha256": "2FD0586D85CB5797D74B3125811D0EA8F4CF6A31022E666ED0BAB4A5A4377CA9",
+    "Path": "Assets/_Project/Scripts/Core/IGameEvent.cs"
+  },
+  {
+    "Sha256": "6A9D719D01C29E7C87E152EA59996E1840E2B5EBDA4D94E623A4C3AC8AA88FC2",
+    "Path": "Assets/_Project/Scripts/Core/Contracts/INearbyPickupReadOnly.cs"
+  },
+  {
+    "Sha256": "1FD75A79BDAEBA416A372CD44434AB819198F17B68B8702C396CC1B83538F69A",
+    "Path": "Assets/_Project/Scripts/Core/Events/AimStateChangedEvent.cs"
+  },
+  {
+    "Sha256": "4537F619AF9E1F33263780E847CCE0B6264165831B174CF3D418E2608A09B1F0",
+    "Path": "Assets/_Project/Scripts/Core/Events/CastResourceEvents.cs"
+  },
+  {
+    "Sha256": "D743BF46F3FCAA39565E02ABA56F23228C61E07649CFB3E05DB4F89A06528E07",
+    "Path": "Assets/_Project/Scripts/Core/Events/ContainerImpactEvent.cs"
+  },
+  {
+    "Sha256": "0552BB8EBD5C1F5CCD97D8A44B61353C8E20521FBD0AC39869918E7ED2DEA72D",
+    "Path": "Assets/_Project/Scripts/Core/Events/ContainerSelectionRequestedEvent.cs"
+  },
+  {
+    "Sha256": "F152642CB8143EE46E313E2B81D353B76E05246E190FAD1B25D9DB2DF3B43DE3",
+    "Path": "Assets/_Project/Scripts/Core/Events/ContainerThrownEvent.cs"
+  },
+  {
+    "Sha256": "07ACED2E34485380BA00A44C5DEC940769425DA3E1254604353F5F47EF7DA34C",
+    "Path": "Assets/_Project/Scripts/Core/Events/ContainerUseRequestedEvent.cs"
+  },
+  {
+    "Sha256": "1667513C4C0BA5164C140FFC56353D3C67E658B2203129DA57D4AB423E5527C0",
+    "Path": "Assets/_Project/Scripts/Core/Events/CrosshairVisibilityEvent.cs"
+  },
+  {
+    "Sha256": "1A37E8A6863B99F1E551574C0D752947D3DB575925803CD6FE476C41A334C49A",
+    "Path": "Assets/_Project/Scripts/Core/Events/ExtractionProgressChangedEvent.cs"
+  },
+  {
+    "Sha256": "5941631E234389F66073EB9D83A720217434D165804D622706DFD55F453BCB4B",
+    "Path": "Assets/_Project/Scripts/Core/Events/ExtractionRequestedEvent.cs"
+  },
+  {
+    "Sha256": "7146D1716B5DCE099A1D3F961F2273F19B8B1AE0CB145555ACA8036AE788EF29",
+    "Path": "Assets/_Project/Scripts/Core/Events/HubInteractionEvents.cs"
+  },
+  {
+    "Sha256": "F1E6ACFC443B6883B4CB7B6F455766AC88ABEB1C986D85948EBB1538E0C27349",
+    "Path": "Assets/_Project/Scripts/Core/Events/InventoryChangedEvent.cs"
+  },
+  {
+    "Sha256": "B8D792226D482E60FF4C11B6F02486F0D02C74FF417879D3830F9F64E3A55B2C",
+    "Path": "Assets/_Project/Scripts/Core/Events/InventoryCommandEvent.cs"
+  },
+  {
+    "Sha256": "9004313F69C18B663D87886E6314B72C53F5B4B1EB2FDC750003EC45613EB357",
+    "Path": "Assets/_Project/Scripts/Core/Events/InventoryCommandResultEvent.cs"
+  },
+  {
+    "Sha256": "6BEADC1270AF23BAE972B269724FB1BAB91212ABC990700265E3BE9EAE84E680",
+    "Path": "Assets/_Project/Scripts/Core/Events/InventoryFailureReason.cs"
+  },
+  {
+    "Sha256": "D8878368FEA54625CF58A9598B3D2B7BC9649702CF00AEB9BABF62AC8DA50571",
+    "Path": "Assets/_Project/Scripts/Core/Events/InventorySaveRequestedEvent.cs"
+  },
+  {
+    "Sha256": "E00018D5F83294BCA1215BF0990224E547B2277FDD6987A85117857B91FE87B4",
+    "Path": "Assets/_Project/Scripts/Core/Events/InventorySaveResultEvent.cs"
+  },
+  {
+    "Sha256": "9E299FF1A6BEDBAD9119F0DE8916F9686B403885A052569EEC737CBA28F09FC5",
+    "Path": "Assets/_Project/Scripts/Core/Events/MaterialCollectionAimRequestedEvent.cs"
+  },
+  {
+    "Sha256": "D3354E8525A63828BB499F49A413F4EDD94A64B631B0E14E7EC683198BAB3B37",
+    "Path": "Assets/_Project/Scripts/Core/Events/MaterialTransferRequestedEvent.cs"
+  },
+  {
+    "Sha256": "96060BA68EC2DBA168F0A3F2388AA325FAFF833F7837C62261D2B00BD5F86AEA",
+    "Path": "Assets/_Project/Scripts/Core/Events/MaterialTransferResultEvent.cs"
+  },
+  {
+    "Sha256": "1F47BCB366E3F70C18404DAB153D08B605AC2C22273F38AF305408F21CCAFC6E",
+    "Path": "Assets/_Project/Scripts/Core/Events/NearbyPickupFocusChangedEvent.cs"
+  },
+  {
+    "Sha256": "E13515E72D3A08EB1C0ECEF062390BB7465B993A115599F13D7133CCCA8F0069",
+    "Path": "Assets/_Project/Scripts/Core/Events/NearbyPickupListChangedEvent.cs"
+  },
+  {
+    "Sha256": "BB32F88448DECA82389B342351491943F619E3E35665A73AF8D72623FCE422DD",
+    "Path": "Assets/_Project/Scripts/Core/Events/NearbyPickupResultEvent.cs"
+  },
+  {
+    "Sha256": "1100E664E7A8676695CEF547FC92E840237ED853042F30685500D974DC2A20B0",
+    "Path": "Assets/_Project/Scripts/Core/Events/PortalFadeRequestedEvent.cs"
+  },
+  {
+    "Sha256": "747B18F51A2D074A34365CB9A92DC64961CA698528512BC956EB1EDD6D58C44B",
+    "Path": "Assets/_Project/Scripts/Core/Events/PortalInteractionRequestedEvent.cs"
+  },
+  {
+    "Sha256": "164639C53B406FB9948D22F9ADFC19EB4CD2F9366C25D8F16CA2808442E38B52",
+    "Path": "Assets/_Project/Scripts/Core/Events/RaidDepartureRequestedEvent.cs"
+  },
+  {
+    "Sha256": "5F2878A50EA9886FCE21C96EC6B3838A48F3DB345F9F1CEC48547089CFAC7894",
+    "Path": "Assets/_Project/Scripts/Core/Events/RaidStateChangedEvent.cs"
+  },
+  {
+    "Sha256": "691FBCF1B70AC44955931C0F85BBF7FEAE4040FAA9CB34ABCDDCDDD2E1123276",
+    "Path": "Assets/_Project/Scripts/Core/Events/ShopTradeRequestedEvent.cs"
+  },
+  {
+    "Sha256": "B0C3B666343BF070E2FFF78F3797DA38DB3B857474320FA7DF0BF883348569EF",
+    "Path": "Assets/_Project/Scripts/Core/Events/ShopTradeResultEvent.cs"
+  },
+  {
+    "Sha256": "2077B94C0A74553C507856313C06C960153AB75CCF1165CBD597ECA444B49786",
+    "Path": "Assets/_Project/Scripts/Core/Events/SpellAttachmentRequestedEvent.cs"
+  },
+  {
+    "Sha256": "713F7F832ADE4CE8C8C65822FFBA56750FD5D31B3B460F9AC458CF798B6130F6",
+    "Path": "Assets/_Project/Scripts/Core/Events/SpellExecutionObservedEvent.cs"
+  },
+  {
+    "Sha256": "1799906DCCE5389E5D1B19A5DA7C73450134344EC8D0D293D5D935BCC2665DBE",
+    "Path": "Assets/_Project/Scripts/Core/Events/SpellMaterialOutputEvent.cs"
+  },
+  {
+    "Sha256": "5A315944E7F90592A9BAB2E6D9D348540537E18227C0C94576DD6C8E160C811A",
+    "Path": "Assets/_Project/Scripts/Core/Events/ToolbeltEvents.cs"
+  },
+  {
+    "Sha256": "94AAE06021272F42193E2D3CCA36AB714969C4D5E1B436FBA2AF9280BF6FC379",
+    "Path": "Assets/_Project/Scripts/Core/Events/UserSettingsChangedEvent.cs"
+  },
+  {
+    "Sha256": "6B7697C739012EA1F7CF9A3E3470BE7D6B117063337108BEEE96099D81F1A13E",
+    "Path": "Assets/_Project/Scripts/Core/Events/WandResourceEvents.cs"
+  },
+  {
+    "Sha256": "C83D8F7B36994696698CAE85E7FEB25184072D1F2D8D657F9C73FAC919B5DE03",
+    "Path": "Assets/_Project/Scripts/Core/Events/WorldActivitySourceEvent.cs"
+  },
+  {
+    "Sha256": "BD4EA18DD448F312601DCCDEF2592D2705E2D570FB03D4DB6F1E5AF3ABBE55AB",
+    "Path": "Assets/_Project/Scripts/Core/Events/WorldItemVisualBoundEvent.cs"
+  },
+  {
+    "Sha256": "6AE4EBADF013821A8EB15F53315DD53852393A4F21CDA843F645774E6E721ECE",
+    "Path": "Assets/_Project/Scripts/Core/Input/GameplayScrollCapture.cs"
+  },
+  {
+    "Sha256": "0D4CF3C76FCEC7CF2D982ED68875EA6AEAC4F04EB9B43F5EE7576043911027E2",
+    "Path": "Assets/_Project/Scripts/Core/Materials/MaterialAmount.cs"
+  },
+  {
+    "Sha256": "9F927E45A00B7D7F4E842457D7770725BF4B6D0E011D97A89E4CDF7A3BC7C4BB",
+    "Path": "Assets/_Project/Scripts/Core/Materials/SpellMaterialBudget.cs"
+  },
+  {
+    "Sha256": "699A0E7B1B481B0B004CB1663602B966FB321244578EDAA854DBC049961C45B9",
+    "Path": "Assets/_Project/Scripts/Core/Settings/UserSettingsService.cs"
+  },
+  {
+    "Sha256": "B65D81553DE2D5925D45365EF4F6EE48455B746F462E99382076C87F6B3AD296",
+    "Path": "Assets/_Project/Scripts/Core/Settings/UserSettingsValues.cs"
+  },
+  {
+    "Sha256": "B2CD658C632B5D8746B000FA3AB190072E1E86F0E0448BAF21D26A836D499B30",
+    "Path": "Assets/_Project/Scripts/Combat/Combo/ComboDecision.cs"
+  },
+  {
+    "Sha256": "C46302AB879A24657EF9F4FF8FB2E02EAD16EBFD77F68DA16ED624719FF6D330",
+    "Path": "Assets/_Project/Scripts/Combat/Combo/ComboResolver.cs"
+  },
+  {
+    "Sha256": "0E41F21033750AFF9D38113A64BDB399D37A75C31DDDE78784DD963F35F304AF",
+    "Path": "Assets/_Project/Scripts/Combat/Damage/CombatDamage.cs"
+  },
+  {
+    "Sha256": "4333B7544A0257D91E220FC4D4FF1077A0F3F098A756D620533F33E4443CD3D6",
+    "Path": "Assets/_Project/Scripts/Combat/Damage/DamagePipeline.cs"
+  },
+  {
+    "Sha256": "66150603945EA0DC34D7BA787EAC0B1574D3DDE9DF9107EB25A864B6559A401B",
+    "Path": "Assets/_Project/Scripts/Combat/Damage/DamageRequest.cs"
+  },
+  {
+    "Sha256": "86D13D7F6A02409338D09BD7C9F4E77E2CB697EA84F6792A8991A312F983020B",
+    "Path": "Assets/_Project/Scripts/Combat/Damage/DamageResult.cs"
+  },
+  {
+    "Sha256": "969E4D4309A8348911E95BE2463919BFE7A2DD3A8DA9ECB4C12EBA07D820D73F",
+    "Path": "Assets/_Project/Scripts/Combat/Damage/DamageType.cs"
+  },
+  {
+    "Sha256": "E3FEA3DAAC5F1EFA68647CB9FA2A9F5FD32185C6FE35858FE7909F428E04432B",
+    "Path": "Assets/_Project/Scripts/Combat/Damage/DefenseProfile.cs"
+  },
+  {
+    "Sha256": "AFA4B4843C1BDB94E37D86E393370C5F4AD9A0B058FC844D95F3CB0D63C1E22A",
+    "Path": "Assets/_Project/Scripts/Combat/Damage/HealthComponent.cs"
+  },
+  {
+    "Sha256": "30BFE348EF76BD0FEF81CA92C4CF3E8F05A1182DB9FC14ABE9CB0B398B09F7E9",
+    "Path": "Assets/_Project/Scripts/Combat/Damage/IDamageable.cs"
+  },
+  {
+    "Sha256": "0357097D1AE8C372E72A2F39BE5FBCD9B28E22EA143D867E87016EF848612E67",
+    "Path": "Assets/_Project/Scripts/Combat/Definitions/AttackDefinition.cs"
+  },
+  {
+    "Sha256": "326D7AE10AF6FB11C4EE9627D4FB0FA8945908AEC5C9F4EC1C0741498B198661",
+    "Path": "Assets/_Project/Scripts/Combat/Definitions/ChargeAttackDefinition.cs"
+  },
+  {
+    "Sha256": "0FA8B8C7A150EEB8DC5B1AC46A8A7E0BE0E3458410304A784A3FD720311C1F43",
+    "Path": "Assets/_Project/Scripts/Combat/Definitions/ComboDefinition.cs"
+  },
+  {
+    "Sha256": "C12FC8011FF6B8BF020936477C92ED2EAA93E2C8A89997B2CCFDC2E0471AC695",
+    "Path": "Assets/_Project/Scripts/Combat/Definitions/EnemyDefinition.cs"
+  },
+  {
+    "Sha256": "1DDD8E762AD24DC269898A0D9FA8CF8CB21B73177F1F06A589C0B67EC846EA79",
+    "Path": "Assets/_Project/Scripts/Combat/Events/DamageReceivedEvent.cs"
+  },
+  {
+    "Sha256": "BABC6237AF8835B42832A88C0C861295A990AD19A95BEA7305382BC0E9D2B60A",
+    "Path": "Assets/_Project/Scripts/Combat/Events/DeathEvent.cs"
+  },
+  {
+    "Sha256": "62C9B233AB722EF5C89E87A2ECB7BB7E65120BE9B7C54BD7347EFB166BAC9667",
+    "Path": "Assets/_Project/Scripts/Combat/Events/StatusChangedEvent.cs"
+  },
+  {
+    "Sha256": "778A30DCA96214AD32FD4EB0D746B85A095F1881255D34D2E3FCCA4BB743354C",
+    "Path": "Assets/_Project/Scripts/Combat/Melee/MeleeHitDetector.cs"
+  },
+  {
+    "Sha256": "02E85E61C34CAD99DCF4137882FC4D353EF75F9EAACD1F77A8E2D4BF2B9D5287",
+    "Path": "Assets/_Project/Scripts/Combat/Projectiles/Arrow.cs"
+  },
+  {
+    "Sha256": "2F87A9EDA1C6A13CA85F1F7460BDFF14B01AD99C4C8D8F42F73620754F0BCAF8",
+    "Path": "Assets/_Project/Scripts/Combat/Projectiles/ArrowVisibility.cs"
+  },
+  {
+    "Sha256": "9A78F75B395669E3E13FFEB0C1BFA75C25E1A89819B06C4AF9FB874550F7B341",
+    "Path": "Assets/_Project/Scripts/Combat/Projectiles/Fireball.cs"
+  },
+  {
+    "Sha256": "7C4337EFF70776C929374E46C25454DE144D11DAC9B922B32A37EE173A97C7D9",
+    "Path": "Assets/_Project/Scripts/Combat/Projectiles/NovaFireball.cs"
+  },
+  {
+    "Sha256": "B486C5680F961C2A7DF9E929D74F0EB25B827BF23A9112599163B07CE5869CBA",
+    "Path": "Assets/_Project/Scripts/Combat/Projectiles/ProjectileBase.cs"
+  },
+  {
+    "Sha256": "F76AF12F37CF06A5006FEF816BD2EE8078DC517BF9586F4259B857E41618FB79",
+    "Path": "Assets/_Project/Scripts/Combat/Projectiles/ProjectileImpactContext.cs"
+  },
+  {
+    "Sha256": "4DF8A5C561E5BF7EEC8DACB22708FE6FA77D6A279CE82F59F85F6CBEC0758306",
+    "Path": "Assets/_Project/Scripts/Combat/Projectiles/ProjectileShield.cs"
+  },
+  {
+    "Sha256": "9A03E2F1CF78F00665A4E259C6A3BDEE0210553F636FDAC8D7BF90C93D299006",
+    "Path": "Assets/_Project/Scripts/Combat/Projectiles/ProjectileStatusOnImpact.cs"
+  },
+  {
+    "Sha256": "4D7A5FE2B502AD06B1FE56E2FC1CF73472638875EBBFBE9346FB6713AEB293AF",
+    "Path": "Assets/_Project/Scripts/Combat/Projectiles/ShieldProjectile.cs"
+  },
+  {
+    "Sha256": "CFC22F2E86C12F17B4EB3F1440AE64F2473451A38A840EA86455D67261D44076",
+    "Path": "Assets/_Project/Scripts/Combat/Projectiles/ThrownContainerProjectile.cs"
+  },
+  {
+    "Sha256": "6F917A92BF10595D18F5543162EAA87525598830CC6B24ECBDC97ACF7047D77D",
+    "Path": "Assets/_Project/Scripts/Combat/Resources/ManaComponent.cs"
+  },
+  {
+    "Sha256": "5C589FAE40593FA9E09BACC4FCB1EF1F9D20A27DC34BA92E6E36F41CC7A46343",
+    "Path": "Assets/_Project/Scripts/Combat/Status/AreaDamage.cs"
+  },
+  {
+    "Sha256": "76D8C4955277A3B8E56A7F1BA913F753D7D5F8190BE4EE2C3D5CD21BAC9DA0B8",
+    "Path": "Assets/_Project/Scripts/Combat/Status/CharacterCombatFeedback.cs"
+  },
+  {
+    "Sha256": "17B03D99B73CEEC728D1B82A244FD76C32F02B3FE0953465D8F1E1349519DC32",
+    "Path": "Assets/_Project/Scripts/Combat/Status/StatusController.cs"
+  },
+  {
+    "Sha256": "BC80290E5DB6CBD8A5A9CA9C8D5ED05266743950D58C6EA6734F591B1569A577",
+    "Path": "Assets/_Project/Scripts/Combat/Status/StatusDatabase.cs"
+  },
+  {
+    "Sha256": "D4898DF2A86E6DC7F4C1343DBE0C4BC555782173425E1B1C9E6E45B8D763ABCA",
+    "Path": "Assets/_Project/Scripts/Combat/Status/StatusDefinition.cs"
+  },
+  {
+    "Sha256": "0902809B0EB13B4E5F63F1C9772C2993537CBCE2314BF188C0BE456617915CD2",
+    "Path": "Assets/_Project/Scripts/Combat/Status/StatusInstance.cs"
+  },
+  {
+    "Sha256": "2C0FF12FCF086329A0086735EBAFEBD23A0D102546A509EBCCF77ADD80FFBF4E",
+    "Path": "Assets/_Project/Scripts/Combat/Status/StatusKind.cs"
+  },
+  {
+    "Sha256": "48C48FC149D8B063902F29DEB81C6670A442CAB408F31186DC2CD83118F819CD",
+    "Path": "Assets/_Project/Scripts/Combat/Status/Environment/StatusVolume.cs"
+  },
+  {
+    "Sha256": "6F90BD9B921631217B4214FC4414EC0C60F90194C713A47FABF3FCE6B4CC97A1",
+    "Path": "Assets/_Project/Scripts/Combat/Status/Reactions/AreaReactionDamageResolver.cs"
+  },
+  {
+    "Sha256": "F2116BA8083FA76EE999B0D85DFFA2DC1141E220A02F0F6F12D5B2016430081F",
+    "Path": "Assets/_Project/Scripts/Combat/Status/Reactions/ElementChannel.cs"
+  },
+  {
+    "Sha256": "32E16601398396346D4873E833DC153704530681B7E98C6FCE39ABA79D48F3F0",
+    "Path": "Assets/_Project/Scripts/Combat/Status/Reactions/ElementReactionEvaluator.cs"
+  },
+  {
+    "Sha256": "6D2070EA3F71ADF8F9D04F948BA7A5D8D2143B773DC0E1980A3F7A4ED8229ED5",
+    "Path": "Assets/_Project/Scripts/Combat/Status/Reactions/ElementReactionEvent.cs"
+  },
+  {
+    "Sha256": "EBD63641FAF19695A1AE6A744DB2275E83687DC5DC8F88FC664CFBB945D21D72",
+    "Path": "Assets/_Project/Scripts/Combat/Status/Reactions/ElementReactionFrame.cs"
+  },
+  {
+    "Sha256": "22BA0214DD175F0145CF755E6CA6985577308590D749657322BD2E94EE362703",
+    "Path": "Assets/_Project/Scripts/Combat/Status/Reactions/ElementReactionId.cs"
+  },
+  {
+    "Sha256": "AACF1E8D2E5591EF8AA430F1BA69F43EFA2869FC842A1E00AF00FC0603BB6D61",
+    "Path": "Assets/_Project/Scripts/Combat/Status/Reactions/ElementReactionPhase.cs"
+  },
+  {
+    "Sha256": "1DE3449F4C59C2C14404DA0C7363D20B35435C66A8BA389C9CD21F64159910AB",
+    "Path": "Assets/_Project/Scripts/Combat/Status/Reactions/ElementReactionProfile.cs"
+  },
+  {
+    "Sha256": "B61146F54FEDA8DF3FD8BEA66D7F993CCFEB2E51CF2FE777239D238E60B77D06",
+    "Path": "Assets/_Project/Scripts/Combat/Status/Reactions/ElementReactionRuntime.cs"
+  },
+  {
+    "Sha256": "2533B2A6D66053D5D4CB773B53F31A8A47ECA092176AA1C22CDA0BDA2BA2D98C",
+    "Path": "Assets/_Project/Scripts/Combat/Status/Reactions/ElementReactionTunings.cs"
+  },
+  {
+    "Sha256": "8C1824E7935425F260F593DD0EEB5C1DA4E8FC99A5578AC038F30E49B1E67121",
+    "Path": "Assets/_Project/Scripts/Combat/Status/Reactions/ElementStateSnapshot.cs"
+  },
+  {
+    "Sha256": "2865BDCE654CBFB1BAE30A199B479C5AE5BBCEA57598FAFDB1202B418D9954F5",
+    "Path": "Assets/_Project/Scripts/Combat/Status/Reactions/MaterialContactSnapshot.cs"
+  },
+  {
+    "Sha256": "E0C62B9DC216872130BCD12850CAA3906DF5BE241271F594BF4476D1A830B1B8",
+    "Path": "Assets/_Project/Scripts/Combat/Status/Reactions/MaterialReactionBinding.cs"
+  },
+  {
+    "Sha256": "BC0342B5D2366C320BEBF3D5DDD38196CFEF090E1ED829B1D83694D8BFF02A9D",
+    "Path": "Assets/_Project/Scripts/Combat/Status/Reactions/MaterialReactionBindingProfile.cs"
+  },
+  {
+    "Sha256": "8CA60B5953F7A4F1B918F14F185F9403AD7E649658CE1E53FA0C98CC8642BE88",
+    "Path": "Assets/_Project/Scripts/Combat/Status/Reactions/MaterialReactionCatalogSnapshot.cs"
+  },
+  {
+    "Sha256": "F56D4DDDECE6B2690669053D17AE3E92790EC936BE316390AB666EE3BF749546",
+    "Path": "Assets/_Project/Scripts/Combat/Status/Reactions/MaterialReactionResult.cs"
+  },
+  {
+    "Sha256": "8491BA4CF6A73AB898A65AC6A1CB69014BDBE37F3889AA846273E7AB38A40099",
+    "Path": "Assets/_Project/Scripts/Combat/Status/Reactions/StatusSource.cs"
+  },
+  {
+    "Sha256": "39A7AA4CD28881AED85A08B98626F1FB4267FA7836A49751143685C771664B7C",
+    "Path": "Assets/_Project/Scripts/Combat/Status/Reactions/ToxicCombustionProcess.cs"
+  },
+  {
+    "Sha256": "8F6CF78E7EE68525037C175EEC5456239A6EAEA21CAAA2DE125F35BF54A5607A",
+    "Path": "Assets/_Project/Scripts/Combat/_Debug/CombatDebugLogger.cs"
+  },
+  {
+    "Sha256": "67BC277B7FF75D73C09C7528FE8305377D426FA89255155197E9A85A3F92EFA4",
+    "Path": "Assets/_Project/Scripts/Combat/_Debug/ProjectileDebugGizmoDrawer.cs"
+  },
+  {
+    "Sha256": "265EF200C24E42CAAEB2E102A489EB14240B34E80FB728D23828A75148A653DD",
+    "Path": "Assets/_Project/Scripts/Combat/_Debug/ProjectileDebugSnapshot.cs"
+  },
+  {
+    "Sha256": "1B8B8CD7FBDF23A5D29BDE1AA51B9A21DC34EAC6C75E3C131C8B898B58F6DF76",
+    "Path": "Assets/_Project/Scripts/Skills/CastEvaluator.cs"
+  },
+  {
+    "Sha256": "37ED3B5EB7975AC1B896B246CBFDF8F0BA3E992857EE2A4574A069610EAEE803",
+    "Path": "Assets/_Project/Scripts/Skills/CastExecutionPlan.cs"
+  },
+  {
+    "Sha256": "3FEC45F7F8EEC4E9FFCF67B23D8900070C1B0398505AE1CC8887F355E11ADEE7",
+    "Path": "Assets/_Project/Scripts/Skills/CastExecutionRecorder.cs"
+  },
+  {
+    "Sha256": "B0BBE529A32C3431BCF7D9F670B87971A27FCB339EC8326C0D2081865AB89071",
+    "Path": "Assets/_Project/Scripts/Skills/CastExecutionUse.cs"
+  },
+  {
+    "Sha256": "1EEA397B7998FE3A0D1B9954009EBE4AEA0288997AAD968ADA1CEF801567ED79",
+    "Path": "Assets/_Project/Scripts/Skills/CastModifierState.cs"
+  },
+  {
+    "Sha256": "04876D87C3EFAD1E3310B2AA6EC3E2FAAFB4FCD4C56F666DD09AE3E57C1E0F9C",
+    "Path": "Assets/_Project/Scripts/Skills/EmitCommand.cs"
+  },
+  {
+    "Sha256": "2205E1F6A5422036FCFA62B5EC5556E96529EA13E1285D0DF82DC62FBF81FA54",
+    "Path": "Assets/_Project/Scripts/Skills/PayloadTriggerMode.cs"
+  },
+  {
+    "Sha256": "85DFC6BC6F2AFA3707FC7317D2551041A7DD944EB6854DEBF17EF756057D9309",
+    "Path": "Assets/_Project/Scripts/Skills/SpellAiming.cs"
+  },
+  {
+    "Sha256": "08B5550EB73CF8F5683D5ED412C25585F3148DF1494DBD7AC6218601B09D1587",
+    "Path": "Assets/_Project/Scripts/Skills/SpellDefinition.cs"
+  },
+  {
+    "Sha256": "4E3515BBC9BB71AAB3002551B4DBE75BA2A3ACDD3FA78F7CF34DA21EB2F22B93",
+    "Path": "Assets/_Project/Scripts/Skills/SpellElement.cs"
+  },
+  {
+    "Sha256": "1C9D69A4F59903AC01C403FD4183C2693BD65A1F1C072C2F125E55E782B95198",
+    "Path": "Assets/_Project/Scripts/Skills/SpellKind.cs"
+  },
+  {
+    "Sha256": "561B131C7E632E912B590D145D22F3E187889F33ACD47A77A513BC202569D83D",
+    "Path": "Assets/_Project/Scripts/Skills/SpellLibrary.cs"
+  },
+  {
+    "Sha256": "97488A2175DAFE60F34C3AEE3E200628C3C432D463A8B76E30CD318B044D7FD4",
+    "Path": "Assets/_Project/Scripts/Skills/SpellTraitFlags.cs"
+  },
+  {
+    "Sha256": "18B5ED0594EF33F7AD4911FD8D8FC32E704923DEC6198F1B9D549551536A5A28",
+    "Path": "Assets/_Project/Scripts/Skills/WandEditOps.cs"
+  },
+  {
+    "Sha256": "75CE6115649953DEE20D8F304CE30BB88DFEA738727C8FE444DF677B64ADB50E",
+    "Path": "Assets/_Project/Scripts/Skills/WandLoadout.cs"
+  },
+  {
+    "Sha256": "7C9AEC48045F398BA6903A91345255C6F2CB806CDF02D19C7468B1BA3836EF86",
+    "Path": "Assets/_Project/Scripts/Skills/Diagnostics/CastTraceCollector.cs"
+  },
+  {
+    "Sha256": "437BC3F54A150999902750D59B18EF32FE734AFEEF47F7112EF703943260ABBE",
+    "Path": "Assets/_Project/Scripts/Skills/Diagnostics/CastTraceStep.cs"
+  },
+  {
+    "Sha256": "3758BE07FAC7B00A3362458B8A7BD817CE98458F3D12CA3E48C667764474319D",
+    "Path": "Assets/_Project/Scripts/Skills/Diagnostics/CastTraceStepKind.cs"
+  },
+  {
+    "Sha256": "B61842849661E10FB53F4B9EE9EA174506419D7415BF34AB46993B31328FE195",
+    "Path": "Assets/_Project/Scripts/Skills/Programming/ShotExecutionGraph.cs"
+  },
+  {
+    "Sha256": "255312352CB91D6648BCD5862C6BA0935F13CCBC2C4FA49659A8749938E5E8D9",
+    "Path": "Assets/_Project/Scripts/Skills/Programming/ShotScopeBuffer.cs"
+  },
+  {
+    "Sha256": "B1FF4CC50B23C909EDCB968F74779827423FBB9FF7D02FAC0B05777B5F44196C",
+    "Path": "Assets/_Project/Scripts/Skills/Programming/SpellBuildBuffer.cs"
+  },
+  {
+    "Sha256": "9D4E13CC91F53A7926F51F5502C8800A2946C044C155349D91F45C6A33AD5C77",
+    "Path": "Assets/_Project/Scripts/Skills/Programming/SpellCommandBaker.cs"
+  },
+  {
+    "Sha256": "91CE990CDFDEE1F52112D778AFC8D939963AA4782B76A1727EFA31E80FAF17CC",
+    "Path": "Assets/_Project/Scripts/Skills/Programming/SpellExecutionTrace.cs"
+  },
+  {
+    "Sha256": "1EA2FA061F060B8CC758EFCDC18CC01C02995BD0B1B6DAB4A1683BF7739EEAC0",
+    "Path": "Assets/_Project/Scripts/Skills/Programming/SpellParameterProvenance.cs"
+  },
+  {
+    "Sha256": "922C56E92619B62B8A96A7B64395319AD09710BE1617F785A7E78053FFC7AB24",
+    "Path": "Assets/_Project/Scripts/Skills/Programming/SpellProgram.cs"
+  },
+  {
+    "Sha256": "F27EEC4DCC7ADFAFBA5BD6629858857F20928AA0015F60DEFE2F2F281009F36C",
+    "Path": "Assets/_Project/Scripts/Skills/Programming/SpellProgramCompiler.cs"
+  },
+  {
+    "Sha256": "E3B736988FD38297C3FC389DBCBC233FDEEF603848B8DB185E94F95EF5B5FF57",
+    "Path": "Assets/_Project/Scripts/Skills/Programming/SpellProgramLimits.cs"
+  },
+  {
+    "Sha256": "381420EDA8761A831313053B9A00ED8AD26DA3C065242DA040E90DB7EE38B9BD",
+    "Path": "Assets/_Project/Scripts/Skills/Programming/SpellProgramMachine.cs"
+  },
+  {
+    "Sha256": "5C8186ABB931670FF97D13220729BC47FF9684D67147CCEAAD46C3AA92C53AB1",
+    "Path": "Assets/_Project/Scripts/Skills/Programming/SpellProgramPreview.cs"
+  },
+  {
+    "Sha256": "F078223D94FA3EB0B6838A8BE0879E5A7A75CD3517A55226836187EB6C469395",
+    "Path": "Assets/_Project/Scripts/Skills/Programming/SpellProgramSandboxDefinition.cs"
+  },
+  {
+    "Sha256": "B45FCC31BA6B91AABE22CBF6EEA3BE93977C8591BAC11BF5D2DC762057B4DFFE",
+    "Path": "Assets/_Project/Scripts/Skills/Programming/WandDrawSnapshot.cs"
+  },
+  {
+    "Sha256": "263CE96AA68D19E4E9EFC9D16B6563C3BAC6F8BB02EB78B96DD5C0EC98E1E669",
+    "Path": "Assets/_Project/Scripts/Run/Containers/ContainerComposition.cs"
+  },
+  {
+    "Sha256": "078FF37F2E7CEA34C46E1207FDF0803C3B13C7B4C200A457270D7B58A45A15FE",
+    "Path": "Assets/_Project/Scripts/Run/Containers/ContainerReservation.cs"
+  },
+  {
+    "Sha256": "ABB77F99A3B8C34A5ECA46F8A834AD8DD52B067EA44C77CA062A3D6455733503",
+    "Path": "Assets/_Project/Scripts/Run/Containers/ContainerSourceReservation.cs"
+  },
+  {
+    "Sha256": "F915CCBF1319FE7191B563E825ED528FFB9D2928DC612E8A5B896F4FEB27FED9",
+    "Path": "Assets/_Project/Scripts/Run/Containers/ContainerTransferOps.cs"
+  },
+  {
+    "Sha256": "5EA8EF8ECB6B0D9B64D668210B8A22E94F48E0D6CBE98CE1B7E8A34AA9AC5C55",
+    "Path": "Assets/_Project/Scripts/Run/Containers/ContainerUseDefinition.cs"
+  },
+  {
+    "Sha256": "0E994C7CC4236753F41A51D11ECEEA31C766239A4EC50C0F2853B4274E6897B1",
+    "Path": "Assets/_Project/Scripts/Run/Containers/ContainerUseService.cs"
+  },
+  {
+    "Sha256": "373E49D325FB03EE26926A0F231C726A233362D45B5AC726C6AC4D472129CE7B",
+    "Path": "Assets/_Project/Scripts/Run/Core/BossCheckpointSnapshot.cs"
+  },
+  {
+    "Sha256": "536628600A8F92C2129FA473D35FB2B4671251CAA3FA27253A99DFD4E98DD20D",
+    "Path": "Assets/_Project/Scripts/Run/Core/BossEncounterState.cs"
+  },
+  {
+    "Sha256": "D2CFD5970B2D9A07C91F68F96B59413D414244C69043C14829B465819617CB78",
+    "Path": "Assets/_Project/Scripts/Run/Core/EncounterProgressTracker.cs"
+  },
+  {
+    "Sha256": "4BAE5812CF6AF06A4A0EECE46E85D259C425E0D8E04FAEC22936344A7F2AC676",
+    "Path": "Assets/_Project/Scripts/Run/Core/EncounterState.cs"
+  },
+  {
+    "Sha256": "3D59A6DACB3351365733A5DA5D8E56B60448778CCD5CD394D4A091DB74314466",
+    "Path": "Assets/_Project/Scripts/Run/Core/RunCompletionMode.cs"
+  },
+  {
+    "Sha256": "D4D2CBF3FCD1F295C5D5172CB39B877F52DE151F6A02B13E2907728A3ADFF15D",
+    "Path": "Assets/_Project/Scripts/Run/Core/RunEntryMode.cs"
+  },
+  {
+    "Sha256": "CD402E3D1B5E527979BCC0605890A83B6DC8701A05F4D780D5AB9391D624870A",
+    "Path": "Assets/_Project/Scripts/Run/Core/RunPauseReason.cs"
+  },
+  {
+    "Sha256": "9D4A0C6EAB0081371537783E8EE63D2481E380292E40C984EF3517B054039050",
+    "Path": "Assets/_Project/Scripts/Run/Core/RunProgressTracker.cs"
+  },
+  {
+    "Sha256": "B71C9CB41030C8CF3D22943823168CF3E2D87C12919F42000F116A4ACDA17717",
+    "Path": "Assets/_Project/Scripts/Run/Core/RunSpellInventoryOps.cs"
+  },
+  {
+    "Sha256": "0CAECBCE2C7D25B0FBD33E9F448267A34951AF4DFAB439FD16E1EE3B41F2CF90",
+    "Path": "Assets/_Project/Scripts/Run/Core/RunStage.cs"
+  },
+  {
+    "Sha256": "402EAB52BC0EBA46E8EE78D7D0E6467D02CB289A3663DC80A3F8DF7146FE618A",
+    "Path": "Assets/_Project/Scripts/Run/Core/RunState.cs"
+  },
+  {
+    "Sha256": "26F98DC55B0F1E8E5C2D293306FBEBE906643E84356E11DCCDB9A23AF4508270",
+    "Path": "Assets/_Project/Scripts/Run/Data/DemoRunDefinition.cs"
+  },
+  {
+    "Sha256": "05CEE8506282EDCCE3589EAA6C1CA3564C4869E758FB1BCA4FF6D1182122D76E",
+    "Path": "Assets/_Project/Scripts/Run/Events/BossEncounterStartedEvent.cs"
+  },
+  {
+    "Sha256": "54E28C09E60F49382C3328592EB4DA883A6A609979C6ECEB35A3869D8E5DB04D",
+    "Path": "Assets/_Project/Scripts/Run/Events/BossHudInitializedEvent.cs"
+  },
+  {
+    "Sha256": "DC149D34DC4CA7C90C2A8E4ADF800AD70A8E4AF89F48686C581BB44A984EBC16",
+    "Path": "Assets/_Project/Scripts/Run/Events/BossPhaseChangedEvent.cs"
+  },
+  {
+    "Sha256": "32C9FE8C2FBB022B24B0EC71AFDE8BD3F57637C06FFB8D65973AD63324B4F6FD",
+    "Path": "Assets/_Project/Scripts/Run/Events/BossTeleportEvent.cs"
+  },
+  {
+    "Sha256": "EDE192A4130C4C175E4ED6A3AF0E898DACC66B5DF56EA816B99F0ABAB28D1AD1",
+    "Path": "Assets/_Project/Scripts/Run/Events/EncounterCompletedEvent.cs"
+  },
+  {
+    "Sha256": "11F22194228DABFADEA4550E10973E32DD6E03F2C4C860761E7F62F4579F27BB",
+    "Path": "Assets/_Project/Scripts/Run/Events/EncounterProgressChangedEvent.cs"
+  },
+  {
+    "Sha256": "7988786815147287C643E13901D7AF24DF0F6137C2BF7DBE1A26D2C188078B94",
+    "Path": "Assets/_Project/Scripts/Run/Events/EncounterStartedEvent.cs"
+  },
+  {
+    "Sha256": "34B57182102205A9D34F6E90BBA8BE3332B5FE3DD4ACBDFDB42FD2140E085F89",
+    "Path": "Assets/_Project/Scripts/Run/Events/PortalStateChangedEvent.cs"
+  },
+  {
+    "Sha256": "475B764D9436CC3DDCF8A1F17141E0C6CF4F470D511932650D37D1562F31DE2A",
+    "Path": "Assets/_Project/Scripts/Run/Events/RunStateChangedEvent.cs"
+  },
+  {
+    "Sha256": "0BB338A9B9FFD9756AFA0356B22595C867E399FEAADAFED0A80809C444772239",
+    "Path": "Assets/_Project/Scripts/Run/Events/SceneTransitionRequestedEvent.cs"
+  },
+  {
+    "Sha256": "1B399F9E62E1A7CCDCD564C5470D50E87DF5416C2FAF531E4EC29416E1F671D2",
+    "Path": "Assets/_Project/Scripts/Run/Events/SpellRewardGrantedEvent.cs"
+  },
+  {
+    "Sha256": "FCAEA6B91645DB5C3CF47F53CF8AE6A92C05B0026E72756D356ABB2F9342FE92",
+    "Path": "Assets/_Project/Scripts/Run/Extraction/ExtractionConditionDefinition.cs"
+  },
+  {
+    "Sha256": "7AEF8BC8B3FC17A0DEF1DE30DD4683984B503B41BE959F311A33604E4B90F1F9",
+    "Path": "Assets/_Project/Scripts/Run/Extraction/ExtractionConditionTracker.cs"
+  },
+  {
+    "Sha256": "356510E21FFA135B4FA24258962CA75ACF8C634A8F8B6EB195D8C683C9F840E1",
+    "Path": "Assets/_Project/Scripts/Run/Extraction/ExtractionProgress.cs"
+  },
+  {
+    "Sha256": "5358CBFFF312188B664CB0E2D9FD523E8946FC93AA1A055B72103B1A6FCEA8AA",
+    "Path": "Assets/_Project/Scripts/Run/Extraction/ExtractionZone.cs"
+  },
+  {
+    "Sha256": "B7F688549C6FAF58EEA5639FBC6D6A0B8276BF9933DEC83399B77F06944E11DE",
+    "Path": "Assets/_Project/Scripts/Run/Hub/ExperimentAreaController.cs"
+  },
+  {
+    "Sha256": "C5EE8FD442663A0EF55EACFFBB2B9FA2CF99D151F5593A83CBB7789BFF3172E2",
+    "Path": "Assets/_Project/Scripts/Run/Hub/HomePortal.cs"
+  },
+  {
+    "Sha256": "E1D93E03D7DD96A92598F5BB5057603FA3E23DF141C34245DFDE04408960C91B",
+    "Path": "Assets/_Project/Scripts/Run/Hub/HomeSceneTransfer.cs"
+  },
+  {
+    "Sha256": "D49BC439547FDCE935D922BA3F4B3B94C0DD713AF75024432E5A525E85E89A66",
+    "Path": "Assets/_Project/Scripts/Run/Hub/HubAreaVolume.cs"
+  },
+  {
+    "Sha256": "E1F04A7E084F36D519A4EC22102F82DB5A0DF16D00708E968249DF04F7896FA9",
+    "Path": "Assets/_Project/Scripts/Run/Hub/HubDefinition.cs"
+  },
+  {
+    "Sha256": "1E6C995E617BD9C4479E828F717B61FD6B7EA8EF7B827E981A2F7923F1598C9F",
+    "Path": "Assets/_Project/Scripts/Run/Hub/HubExpeditionPortal.cs"
+  },
+  {
+    "Sha256": "EDB9E3282A3A817DED1B31697458AC879CE287D84611866BD87A8477E9C990C8",
+    "Path": "Assets/_Project/Scripts/Run/Hub/HubExperimentWorldLifetime.cs"
+  },
+  {
+    "Sha256": "1171B94F09D591DFC4234D105914862A25A04ECBA488D1F58CCFA4405858F03F",
+    "Path": "Assets/_Project/Scripts/Run/Hub/HubInteractionController.cs"
+  },
+  {
+    "Sha256": "AC2003ABC7A1FC835683A0C2C2392B559D56E288F09EF3EA91D49A1D9AF9D524",
+    "Path": "Assets/_Project/Scripts/Run/Hub/HubPracticePortal.cs"
+  },
+  {
+    "Sha256": "DCA73321DFDA8807F5751B2CDE2BC4339A3442DF12AECDE51771232BA43D9D10",
+    "Path": "Assets/_Project/Scripts/Run/Hub/HubPracticeSession.cs"
+  },
+  {
+    "Sha256": "6A499964AA16D6EF1A40F3368056304BAF3AF0D63CE6CDB4DF55A0DA0A5D65BB",
+    "Path": "Assets/_Project/Scripts/Run/Hub/NearbyPickupController.cs"
+  },
+  {
+    "Sha256": "DE97B1668287613B1545E28B4670C0BEAE9EE22325F81A029519AF9CF5D3F2F0",
+    "Path": "Assets/_Project/Scripts/Run/Hub/PracticeDeathSettlement.cs"
+  },
+  {
+    "Sha256": "1FD28B198C178F579C47970D3318EDBD4F912E2E025825FB8646BA8ADE96E2BB",
+    "Path": "Assets/_Project/Scripts/Run/Hub/PracticeInventorySceneBootstrap.cs"
+  },
+  {
+    "Sha256": "3E583647EE814B2E40954E1769A87FAB5530DB3D9B5672105605F9714BD03A47",
+    "Path": "Assets/_Project/Scripts/Run/Hub/PracticeInventoryWorkspace.cs"
+  },
+  {
+    "Sha256": "F88143C06132ECD3AF83588677BBAEC05D7036E107F4ADCFD91ADF16E4E9EE1B",
+    "Path": "Assets/_Project/Scripts/Run/Hub/PracticeSpellRewardAdapter.cs"
+  },
+  {
+    "Sha256": "DE8C6A8F0FA1B66F4C0AE2B5E6366D415AA71DCB99764E0480222B92E05FDCD6",
+    "Path": "Assets/_Project/Scripts/Run/Hub/PracticeSpellRewardOps.cs"
+  },
+  {
+    "Sha256": "75ACE6346EF9DC2227D3820F3BB7CB3087E66F2C86FD8557A2F89EF371F87EEC",
+    "Path": "Assets/_Project/Scripts/Run/Inventory/BackpackOrganizeOps.cs"
+  },
+  {
+    "Sha256": "0EB7C0896BFD4CC082AF821753C8DDF623D71EF681A8F2488C9AD7D96B5D7731",
+    "Path": "Assets/_Project/Scripts/Run/Inventory/IInventoryReadOnly.cs"
+  },
+  {
+    "Sha256": "9088F1B82A8881245878A95788669144625735CC9B39795F1DDE1660CB92935F",
+    "Path": "Assets/_Project/Scripts/Run/Inventory/InventoryGrid.cs"
+  },
+  {
+    "Sha256": "B676D74EA37A9FD3308A08CB458E137A1FB0495966DDBC9E5260A0EDA94FDB6C",
+    "Path": "Assets/_Project/Scripts/Run/Inventory/InventoryMaterialTransferService.cs"
+  },
+  {
+    "Sha256": "41E8F96ABDF0E36FAE2DD8B9936ABB1857A07D39E19A9B24286E3A609410C5CC",
+    "Path": "Assets/_Project/Scripts/Run/Inventory/InventoryMoveOps.cs"
+  },
+  {
+    "Sha256": "F3620ADA047DE6AC6D5B1CA9F09E59E04D4768C9CF2C442F0C42E4D70EA79D5B",
+    "Path": "Assets/_Project/Scripts/Run/Inventory/InventoryOperationResult.cs"
+  },
+  {
+    "Sha256": "DD7B0969214B500D1FFC097839E4962AB10722242B0738AEBAE07108083D093D",
+    "Path": "Assets/_Project/Scripts/Run/Inventory/InventoryShape.cs"
+  },
+  {
+    "Sha256": "8F5015A7F19AB858E01F2AAF64A9D1B4FE217B1538F9F34F123F920C2A33DFA8",
+    "Path": "Assets/_Project/Scripts/Run/Inventory/ItemCatalog.cs"
+  },
+  {
+    "Sha256": "899DAD1395FAA2C8EDFE77A4402AC969E6D1192A41BC74AAFC5E171DFCAF1963",
+    "Path": "Assets/_Project/Scripts/Run/Inventory/ItemDefinition.cs"
+  },
+  {
+    "Sha256": "033B8B6CFF8E56E9F32A9856A128C93FFFB123E3E487046E9A29017B236E23AA",
+    "Path": "Assets/_Project/Scripts/Run/Inventory/ItemInventoryClassification.cs"
+  },
+  {
+    "Sha256": "0219C774464A7FB16A5574286DE7838C2C97A7527A81C9EFF003829971E3BCF0",
+    "Path": "Assets/_Project/Scripts/Run/Inventory/ItemLocation.cs"
+  },
+  {
+    "Sha256": "38EED7F0A42CBB4459F14BFF4171D342AA0F0EB953D26FE56454228743409DEC",
+    "Path": "Assets/_Project/Scripts/Run/Inventory/ItemOwnershipStore.cs"
+  },
+  {
+    "Sha256": "967354DBDEDCD7C77B5E0B0B6AB20ACB265EF1196CBC674DBDACBF4FFDF3CA2E",
+    "Path": "Assets/_Project/Scripts/Run/Inventory/ItemStackOps.cs"
+  },
+  {
+    "Sha256": "B897FE41A5A4729794A6BCC45D476DD68A3ACA3AE740062DF77F4DC2A4C18C57",
+    "Path": "Assets/_Project/Scripts/Run/Inventory/IWalletReadOnly.cs"
+  },
+  {
+    "Sha256": "9BB7757BEDB74A6BBE4D32BFC9254107A520328C7AA2F90DE184DEEF3B693D35",
+    "Path": "Assets/_Project/Scripts/Run/Inventory/LoadoutOps.cs"
+  },
+  {
+    "Sha256": "9DF3BA6DB926099195CD19C048189988ED6CA6AD077CF587EB44F1ACDE34F8FF",
+    "Path": "Assets/_Project/Scripts/Run/Inventory/MaterialItemState.cs"
+  },
+  {
+    "Sha256": "7F96D6750095D62E7EF41F7619A87200A3F27A7E4C675B96FC48EF9751339581",
+    "Path": "Assets/_Project/Scripts/Run/Inventory/MaterialStackOps.cs"
+  },
+  {
+    "Sha256": "AB773488DF09AE6422296C8A79354EA39BD41DFD52D78477FF854D0F9D013AB2",
+    "Path": "Assets/_Project/Scripts/Run/Inventory/RuntimeItemState.cs"
+  },
+  {
+    "Sha256": "7FD1B1D987B968D25637ABE6F569D33EADCBA35174BC8C292BEA78C3BC79B90A",
+    "Path": "Assets/_Project/Scripts/Run/Loot/DungeonLootDropAdapter.cs"
+  },
+  {
+    "Sha256": "D9037DEEC0A42D399C5F5A1272053348522CA79BA4FA5270DA78AA19DF02291E",
+    "Path": "Assets/_Project/Scripts/Run/Loot/DungeonLootRoller.cs"
+  },
+  {
+    "Sha256": "77BEDCBCAC49D58EDB1A323ACF4DF6EF7A90F24462141F6B562FAF6B38856083",
+    "Path": "Assets/_Project/Scripts/Run/Loot/DungeonLootTable.cs"
+  },
+  {
+    "Sha256": "F80587DC3DF2384CC168EEFC2D8366010A06A6DF692141F4BC6D7CA99C209172",
+    "Path": "Assets/_Project/Scripts/Run/Loot/DungeonRewardProfile.cs"
+  },
+  {
+    "Sha256": "73481FE8914D3A70EB46AE0E86A7239872D3524A07BF5F24E9233AD48FB9CF9A",
+    "Path": "Assets/_Project/Scripts/Run/Loot/DungeonRunContent.cs"
+  },
+  {
+    "Sha256": "EDAD88462C9A621499B67CF14B3FB9D52E837628EEA552D86EE2C72C0B187D9A",
+    "Path": "Assets/_Project/Scripts/Run/Loot/DungeonWandRollProfile.cs"
+  },
+  {
+    "Sha256": "003783F00DA99F2DC295859901E6CFD5D051941E4A41FAE0E322793DC295B552",
+    "Path": "Assets/_Project/Scripts/Run/Loot/SpellLootDropAdapter.cs"
+  },
+  {
+    "Sha256": "0ECE77962B035ADBDC411EDCF0DC1A353DA297F03037FA3DF67C2F0F4D3DC8ED",
+    "Path": "Assets/_Project/Scripts/Run/Loot/SpellLootRoller.cs"
+  },
+  {
+    "Sha256": "7B36783142CB2DE701D883065DEDEDC006979503EFF7606934FC6B10F05FB702",
+    "Path": "Assets/_Project/Scripts/Run/Loot/SpellLootTable.cs"
+  },
+  {
+    "Sha256": "9A5240EAAD0E0CEEA531376DDBAE8472799312FA24138648DD8E35EF47CAB994",
+    "Path": "Assets/_Project/Scripts/Run/Persistence/HubWorldItemRecord.cs"
+  },
+  {
+    "Sha256": "410575469059F762137ABD7C01F49EDDA1A563FF7D034F37B1AE7199BD554AAB",
+    "Path": "Assets/_Project/Scripts/Run/Persistence/LegacyContainerLayoutMigration.cs"
+  },
+  {
+    "Sha256": "33C3F316797B1D01062BB7884A3F16CFB803B78741307CBD80270D236BA24418",
+    "Path": "Assets/_Project/Scripts/Run/Persistence/LegacyWandLayoutMigration.cs"
+  },
+  {
+    "Sha256": "893E38780E8FBBDFEF18F21F858C3EAFA9C602C36FC205826226C6D0A70DFE4C",
+    "Path": "Assets/_Project/Scripts/Run/Persistence/ProfileAssetSnapshot.cs"
+  },
+  {
+    "Sha256": "81233EE682A7A037A42FF211FA1ADB52123736656EA3D301A5A873132E319D46",
+    "Path": "Assets/_Project/Scripts/Run/Persistence/ProfileSaveMapper.cs"
+  },
+  {
+    "Sha256": "A74BC71619983E52527C81791A898C4531B85B63F361727D751A656E4517ACBF",
+    "Path": "Assets/_Project/Scripts/Run/Persistence/ProfileSaveRepository.cs"
+  },
+  {
+    "Sha256": "F5E0D674F02F8CD9015344C87D608EA71DB8DE6C0A8DF67110D252A01ECE407F",
+    "Path": "Assets/_Project/Scripts/Run/Persistence/ProfileTransactionJournal.cs"
+  },
+  {
+    "Sha256": "E4CD1C5D68EE1423D58AF31119AAB6F7DEE1D33E1307873C7D7ADB208E4EA352",
+    "Path": "Assets/_Project/Scripts/Run/Persistence/SinglePlayerProfile.cs"
+  },
+  {
+    "Sha256": "ACE73E13F3E947CA3F68CF7D61D98B95AAD6B3647F6CAFF870E322811F13EABB",
+    "Path": "Assets/_Project/Scripts/Run/Persistence/SinglePlayerSaveDto.cs"
+  },
+  {
+    "Sha256": "8A41E7B36A78F0B237629F78A1C0EE2FC71A08457C96040F482A23BDA9C05DDD",
+    "Path": "Assets/_Project/Scripts/Run/Properties/AssemblyInfo.cs"
+  },
+  {
+    "Sha256": "E86A2CCC4B80196797D7B715DB7C41E12A97957DEF9EA3DC7732A68C8D8B1EA2",
+    "Path": "Assets/_Project/Scripts/Run/Raids/PendingRaidRecord.cs"
+  },
+  {
+    "Sha256": "C60E2334BC78DDD8769410D5B90759C3F10B840269570B5191C7A9AFD52A87C5",
+    "Path": "Assets/_Project/Scripts/Run/Raids/ProtectedSpellSelection.cs"
+  },
+  {
+    "Sha256": "3531D1E0D12F7B5814E07A5D94DC2C41B68062E437D232E4F82AE0144F74ECFE",
+    "Path": "Assets/_Project/Scripts/Run/Raids/RaidDefinition.cs"
+  },
+  {
+    "Sha256": "22022031D3CF51A4F2557843838A6E554FCB69226DBAE08F8FD10F1A5A010C62",
+    "Path": "Assets/_Project/Scripts/Run/Raids/RaidPreparationService.cs"
+  },
+  {
+    "Sha256": "B72B3869E184850D947871B5C860059A710A78AF182C21C635B40A7D2D74998B",
+    "Path": "Assets/_Project/Scripts/Run/Raids/RaidProfileOps.cs"
+  },
+  {
+    "Sha256": "2996BB0B9E0C33256D48136D9327A6AE216EF01E2953D8A4D0C9A4D461224084",
+    "Path": "Assets/_Project/Scripts/Run/Raids/RaidSettlementReceipt.cs"
+  },
+  {
+    "Sha256": "EA2F661F78A326F828337F636651A6153ECFA6A2856A05BC520AB8C481FED3D3",
+    "Path": "Assets/_Project/Scripts/Run/Raids/RaidSettlementRequest.cs"
+  },
+  {
+    "Sha256": "41EF5DF788B3D9AF5F35B0531BF41648391A266DB1BA7D56FFF2924D632CED99",
+    "Path": "Assets/_Project/Scripts/Run/Raids/RaidSettlementService.cs"
+  },
+  {
+    "Sha256": "07DFCAB027B0F0A396477EC38BD7FFF84E1DA8D4511D15F5175424B9101693E0",
+    "Path": "Assets/_Project/Scripts/Run/Raids/RaidState.cs"
+  },
+  {
+    "Sha256": "A3DD71098531D912279D73DD03BB30DA308A713965084B976875DD396386637B",
+    "Path": "Assets/_Project/Scripts/Run/Raids/StarterKitDefinition.cs"
+  },
+  {
+    "Sha256": "CF6947001A0358D219A1BEE8EC0F49AB553BC6534652BE492FE820C1BE368BD6",
+    "Path": "Assets/_Project/Scripts/Run/Raids/StarterKitService.cs"
+  },
+  {
+    "Sha256": "CBD3B581AD9D30103853CF595795FFCAEC22557F9E16BFF3A99ED6DC288F74A6",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/AllSpellsRewardPickup.cs"
+  },
+  {
+    "Sha256": "BEB7DA47B0A612806ABA838621A67A50D6543F4204552DA9B80E2EAECBD89DA2",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/ArenaGate.cs"
+  },
+  {
+    "Sha256": "F934FAD6D47E64FDE7A29EC70131EA3A4FDF7F4B0C0FCF2EA1DBBC91EFA9B54E",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/BossEncounterController.cs"
+  },
+  {
+    "Sha256": "B0A60828F3AD7F9DFC909CBEB448A3DE6C295C2D33C1AB005929C55499F5E3F2",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/BossEntryTrigger.cs"
+  },
+  {
+    "Sha256": "2A81062D7250FB04305A8A4F7564D2276E557422E298C41CB3AFF875CCA587F3",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/ContainerSandboxInventoryBootstrap.cs"
+  },
+  {
+    "Sha256": "AA3AD644E38930B3E23C2ABAFD00759165C91958BAA03BD678ED75BC72291AB7",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/DemoEncounterController.cs"
+  },
+  {
+    "Sha256": "2F515240A359525475237221BD67BEF4A24F1FF2DA09F3E666C694A24D028D98",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/DemoRunController.cs"
+  },
+  {
+    "Sha256": "061563F1B35B8E300E13FD22DFB453191F0CD216139583AA362E51A7E7DBD1A7",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/EditorScenePreviewFileSystem.cs"
+  },
+  {
+    "Sha256": "85B2437754432695BD52EEA70F104C8E1075672A2E9861FACF7A63F772031AFA",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/EncounterEntryTrigger.cs"
+  },
+  {
+    "Sha256": "AC27192B836AB6B4FD02B90CA9D8A7D2D4CB35CB346F77E0441FA9862A3756CB",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/InventoryGridSandbox.cs"
+  },
+  {
+    "Sha256": "B7B932C4256395A01788CA82DB8AF9850F24CC5CB9C569501170D239539BF673",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/IPortalTraveler.cs"
+  },
+  {
+    "Sha256": "CD54FF13595CEBDE9D1BF8EB79B8ADDD312E6AFCE4C2B011C62A93E096EA3E55",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/PortalInteractionRegistry.cs"
+  },
+  {
+    "Sha256": "36075D80F2DDE57A00498577F104B81850C9CD24529EAC64FF95B3AB114F2BAF",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/PortalTransitionCoordinator.cs"
+  },
+  {
+    "Sha256": "F4BAC7261FD3B299135649C36E4BFBD06FFEF814F3CC5CB689643ED1C29B159A",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/PortalVisualPlacement.cs"
+  },
+  {
+    "Sha256": "6CE55A9CE5B6565F75E402281F645CF66CE6CE747B13B7BE4CEF4237C80FD542",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/RaidInterestAnchor.cs"
+  },
+  {
+    "Sha256": "17BAF974641EBDAFB948292CF8E883FF9F741C30E175C194C29BDD7F29738372",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/RunPauseCoordinator.cs"
+  },
+  {
+    "Sha256": "BCBA5DD822E9EABCDFF5B4D378E73BFEE467BE0218AC8EB285B5C98C76C2B4D2",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/RunSessionCoordinator.cs"
+  },
+  {
+    "Sha256": "9CA07E44CBC887F37A9E033E5DE33C75E908CD52EAD4CE06DA5401EAFF7ED425",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/RunSpellSession.cs"
+  },
+  {
+    "Sha256": "E894AE6A9127728B15E8AD7224C454F2EFE803EE0223B0F152508961135B97EF",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/SinglePlayerInventorySession.cs"
+  },
+  {
+    "Sha256": "90E2255CFEA5BF4EFA2E1A157FE96F90A2FDD0F11B4D5EA531AAF92E294C4B84",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/SinglePlayerRunCoordinator.cs"
+  },
+  {
+    "Sha256": "003D88209581AA412F5C520FDF7CCEA479CBF85052E6E097C160691D15FE399A",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/SinglePlayerShopSession.cs"
+  },
+  {
+    "Sha256": "0C01C6B039617699A18DCB264E7B1DF329CB988DB89E79010D05E6EFFB8D7E81",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/SinglePlayerStartingInventory.cs"
+  },
+  {
+    "Sha256": "7BD2DC60AB3245F200CF36F899CDA4218B06D4F9579DE5CC7D4E81E2F48BC5E2",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/SpellRewardPickup.cs"
+  },
+  {
+    "Sha256": "29FF064000CA1072804C58646487E3E8F9CD89601D38D04C1806A50803809111",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/StageExitPortal.cs"
+  },
+  {
+    "Sha256": "35FC37FDB51A4ED70D9D3C9CFD5F268011970ED33FBC6909F634545DAA98E00D",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/WorldCurrencyPickup.cs"
+  },
+  {
+    "Sha256": "C652E520E26205093873A1CDA9BF779731EF0A44F359D4C325D05D10E0D36F5E",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/WorldItemGroundPlacement.cs"
+  },
+  {
+    "Sha256": "E6DC95316C56D7B312843A9B674EE7DC706C8BD037BF0E3873EBE29E9F070B94",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/WorldItemPickup.cs"
+  },
+  {
+    "Sha256": "4FDD0BF6590A714B22DB9FFD5E1B0049F198751D897B842F721931215F6CD259",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/WorldItemSpawnPoint.cs"
+  },
+  {
+    "Sha256": "9DC16B732C6E4451682F5E46E2A0228471A821A119D0DFADE4397ECCC49CCE84",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/WorldItemVisualFactory.cs"
+  },
+  {
+    "Sha256": "9A852D632EC98303E72994E94A39940C8D0A00E32CFE2229B1319F0940AEB90C",
+    "Path": "Assets/_Project/Scripts/Run/Runtime/WorldSpellIconPresentation.cs"
+  },
+  {
+    "Sha256": "8897B018DC2F728F60DD32FA2623E1A6EF83CE6745D1398148EC212E9855BC13",
+    "Path": "Assets/_Project/Scripts/Run/Spells/CastResourceReservation.cs"
+  },
+  {
+    "Sha256": "68617EC39684BFB0B635774B16E3D5F43FC267A50A78F70FA1658B67B41267CD",
+    "Path": "Assets/_Project/Scripts/Run/Spells/CastResourceService.cs"
+  },
+  {
+    "Sha256": "5753A2EDBA629FDDB8E7DAB98FD25AF5A5D2005DEB2B03327114045F664F2820",
+    "Path": "Assets/_Project/Scripts/Run/Spells/RaidSpellEligibility.cs"
+  },
+  {
+    "Sha256": "54F0AB3DC9FC442886DFE67186B891C83D7385CE0C21D8F1E8DF88ACADF3F3BE",
+    "Path": "Assets/_Project/Scripts/Run/Spells/SpellAttachmentService.cs"
+  },
+  {
+    "Sha256": "E67EC74FEDF0CA010FABDB0447071329C7AF22617BE27630693EAFF70F6CF083",
+    "Path": "Assets/_Project/Scripts/Run/Spells/SpellAttachmentState.cs"
+  },
+  {
+    "Sha256": "BC1240D5CD3790BDA08867B2FFBAB97D31146649C0E9A91A83F35023E164393C",
+    "Path": "Assets/_Project/Scripts/Run/Spells/SpellMaterialOutputService.cs"
+  },
+  {
+    "Sha256": "052FD39D6202563A20CC9F4AF230F7C6D5FEC91F7124D58251B26E678BC91D38",
+    "Path": "Assets/_Project/Scripts/Run/Spells/SpellUseState.cs"
+  },
+  {
+    "Sha256": "25DA30E733E81379F4E11FB481277996715A08C9745B5396B40EDA14F878D3B9",
+    "Path": "Assets/_Project/Scripts/Run/Spells/WandExecutionTransactionService.cs"
+  },
+  {
+    "Sha256": "ECF2B417436ED42AFCAEABD2C08EBD97E52E94B7CBE42E583078C5B375280A0A",
+    "Path": "Assets/_Project/Scripts/Run/Tools/IToolbeltReadOnly.cs"
+  },
+  {
+    "Sha256": "6EA89EDA92571C565FC175751C9FF5C5E395F40DC84E5C722A5314A6F590CD2E",
+    "Path": "Assets/_Project/Scripts/Run/Tools/ToolbeltService.cs"
+  },
+  {
+    "Sha256": "9842E735C96136D2F8B05EBCB732CAFCBAA5D940FBFDC8394CD5D384DB1A3FC7",
+    "Path": "Assets/_Project/Scripts/Run/Trading/ShopDefinition.cs"
+  },
+  {
+    "Sha256": "AE11BEE1796A3498CBE0D46889713DE43FE26E61FD288CBB10C02B5921C5147D",
+    "Path": "Assets/_Project/Scripts/Run/Trading/ShopProgressTracker.cs"
+  },
+  {
+    "Sha256": "9A02D839F32792D1600E2963F1BDE00C9784905491893425534C2EA8EBCCF05A",
+    "Path": "Assets/_Project/Scripts/Run/Trading/ShopReadModel.cs"
+  },
+  {
+    "Sha256": "E1900C219116C8CB572ACFDA46331FDAE725DA7DCE9B304555856BD1702253E6",
+    "Path": "Assets/_Project/Scripts/Run/Trading/ShopRuntimeState.cs"
+  },
+  {
+    "Sha256": "F8C714A3B0FBFB3275773B0315662CFAE9C57AD7AE1FC106F453961712BE2CCB",
+    "Path": "Assets/_Project/Scripts/Run/Trading/ShopTradeReceipt.cs"
+  },
+  {
+    "Sha256": "EF0E7E2FDC6C2FE0A2F986379C32C67501EAE7A136D30FC64098B6B3FB3355CF",
+    "Path": "Assets/_Project/Scripts/Run/Trading/ShopTradeService.cs"
+  },
+  {
+    "Sha256": "CAC3F28F55ACEC63440FBAB6641EC464C84F00F5C85285C08DD899126D2A0265",
+    "Path": "Assets/_Project/Scripts/Run/Wands/IWandLoadoutReadOnly.cs"
+  },
+  {
+    "Sha256": "A5FBA56761FF61E3F5376F67BA3AFD46809CA8DD23D28F41C7FF9AB743352AC4",
+    "Path": "Assets/_Project/Scripts/Run/Wands/WandDefinition.cs"
+  },
+  {
+    "Sha256": "74475293A0F2D80A5AA6911983492E5B7166D60C8F38313D7CF3A1FCEAAD9897",
+    "Path": "Assets/_Project/Scripts/Run/Wands/WandExecutionReplay.cs"
+  },
+  {
+    "Sha256": "0E7CD4CFDEDF5DBB4A31399510C1D2B0C4D7CF9183E10AF536152F2A43928E05",
+    "Path": "Assets/_Project/Scripts/Run/Wands/WandExecutionReplayArchive.cs"
+  },
+  {
+    "Sha256": "CFD3DFEB085805C762F4FEC96A17586FD2DD5CB2F793CEBEB30584710F5F3426",
+    "Path": "Assets/_Project/Scripts/Run/Wands/WandExecutionState.cs"
+  },
+  {
+    "Sha256": "A1735465CFCDC7DEAE7CCC21A3235461C64BA2A8455B80174AA155D91C46E16D",
+    "Path": "Assets/_Project/Scripts/Run/Wands/WandLoadoutService.cs"
+  },
+  {
+    "Sha256": "FC1EE4A0214F9315670907A86AE63EBA615524DD3D956F84E5FB64802F99DF05",
+    "Path": "Assets/_Project/Scripts/Run/Wands/WandProgramProjection.cs"
+  },
+  {
+    "Sha256": "97746140052F9FAC5FD5481A12BC1DA204CA2BAC97F86613B2C82ECB70B5E2D6",
+    "Path": "Assets/_Project/Scripts/Run/Wands/WandResearchSnapshot.cs"
+  },
+  {
+    "Sha256": "715B4FA00BA64FF29183D2D0D1D280519DED19AA5DEA178562C25F917C191F54",
+    "Path": "Assets/_Project/Scripts/Run/Wands/WandRuntimeState.cs"
+  },
+  {
+    "Sha256": "8EB6F24D708798AA51BB9BC6587DF69DD719144F94B12933F25228744D741267",
+    "Path": "Assets/_Project/Scripts/Run/Wands/WandSessionContinuity.cs"
+  },
+  {
+    "Sha256": "729B5D35A97AA6C1A481F39A706C62E02AA27458B7A12EF68B2715011F56C0E3",
+    "Path": "Assets/_Project/Scripts/Character/JumpAnimationPhaseResolver.cs"
+  },
+  {
+    "Sha256": "480F9FEBC5E8D4BE2BE7CE186D168D6D3F5030E7EBF79D5945080985661EAD66",
+    "Path": "Assets/_Project/Scripts/Character/JumpCutRuntime.cs"
+  },
+  {
+    "Sha256": "7E8C7D11522A5CA39D167B8613CCFC7E0078CFE8DE6889DDF77906ED778F2767",
+    "Path": "Assets/_Project/Scripts/Character/PlayerAirActionBudget.cs"
+  },
+  {
+    "Sha256": "6B9053F220E5FC6650A20F06D2DD34497EF2F3206A50AA29D53BD12189013A86",
+    "Path": "Assets/_Project/Scripts/Character/Controllers/ArcherController.cs"
+  },
+  {
+    "Sha256": "1E1AAC0606EA3F8C21FFDED2D3C45CD39E3A28C43B60D88AA57A790A199944C5",
+    "Path": "Assets/_Project/Scripts/Character/Controllers/EnemyControllerBase.cs"
+  },
+  {
+    "Sha256": "0BAC3308C692CAED30ECD0DE8AD06759E955C0B187810E89432C9CF08965727D",
+    "Path": "Assets/_Project/Scripts/Character/Controllers/MeleeEnemyController.cs"
+  },
+  {
+    "Sha256": "36538B10A620F4BA4B70612390CBE339A72678B7B3487883FD4F0F97515533BE",
+    "Path": "Assets/_Project/Scripts/Character/Controllers/PlayerControllerBase.cs"
+  },
+  {
+    "Sha256": "37C1536C982E1AB2BE8C9F3993D5BA43195FE2CAE9E654DA6DB0A9051429C07A",
+    "Path": "Assets/_Project/Scripts/Character/Controllers/RangedEnemyController.cs"
+  },
+  {
+    "Sha256": "63AC65FA5E05D89839E759D617C8343314AD51B68AF130E90E4A3FCAF6698E82",
+    "Path": "Assets/_Project/Scripts/Character/Controllers/WarriorController.cs"
+  },
+  {
+    "Sha256": "42A2BFB611C3A0F49F265E9C53629A16F818E82F85A2DA71F0A2D47BA5355E3E",
+    "Path": "Assets/_Project/Scripts/Character/Controllers/WizardController.cs"
+  },
+  {
+    "Sha256": "DE2F1016AB39012E0344C944461693EFB2FD8A9911DA9795425A73DA37A19D7F",
+    "Path": "Assets/_Project/Scripts/Character/Core/GroundChecker.cs"
+  },
+  {
+    "Sha256": "6430C83253E372AAAEEC76D4472BAABE55D521C72C9D4C54569D34CB5B78B91D",
+    "Path": "Assets/_Project/Scripts/Character/Core/PlayerStateMachine.cs"
+  },
+  {
+    "Sha256": "0CB67D84FD026E0F5E31631154EA3DA6853204AB3592CFB4735654F4B243536D",
+    "Path": "Assets/_Project/Scripts/Character/Diagnostics/PhaseFWaterGameplayBenchmark.cs"
+  },
+  {
+    "Sha256": "AF826F15FC1BBFB5C920CF84ACEA6C019E398D3FA5B14AA8679326315C5B7B89",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/EnemyPerception.cs"
+  },
+  {
+    "Sha256": "04D9EC7FCBF4DCB40600A790E1340391F2551CF6886BEC08DAA2E7FE28A004F9",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/EnemySpellProgramSelector.cs"
+  },
+  {
+    "Sha256": "235D863432E29BD817A8BF9622073FDB6A5B10DF549625FB36617B2E88BD0E2B",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/EnemyStateBase.cs"
+  },
+  {
+    "Sha256": "2B67F023D54FFACAF14012F069EAA370D90F9F1E1DD59C2EB54662FA268149DB",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/EnemyStateMachine.cs"
+  },
+  {
+    "Sha256": "621EE9999109D1EBD25D030D8D9CCB5D57315B407F3EFBD5192812BF38692EFD",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Core/BossActionUtilityEvaluator.cs"
+  },
+  {
+    "Sha256": "9480A525B53E8ECED64D0E124A26710C19803C8D9D72074FD81BB826D53D7039",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Core/BossDecisionContext.cs"
+  },
+  {
+    "Sha256": "30CB3BCAAD34FCA3F1269D11DBBCA860C5BFEBF36FD994FEE69E560C27D9C198",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Core/BossPhaseResolver.cs"
+  },
+  {
+    "Sha256": "F6A31B332F2DEFDE8188B6126BE1A99037B813FE4D97E26EAA224E7B41B5DA42",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Core/BossProgramRuntimeState.cs"
+  },
+  {
+    "Sha256": "39A8768AC6400FFD6101E7C28D01B734622A8A1DC2CD92AAB32F085F27FBBDBC",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Core/BossSpellUtilityEvaluator.cs"
+  },
+  {
+    "Sha256": "590AE80A2BE0BBF3E9B6E1A923CF0CFBE100A85EA323B8B9E15512710DF0C9D7",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Core/BossTeleportCandidateGenerator.cs"
+  },
+  {
+    "Sha256": "C131C32E56CE98841C1D56D4D79907956C104E5A22C3CF52E32AA91A3DD92424",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Core/BossTeleportCapsuleShape.cs"
+  },
+  {
+    "Sha256": "142759621A4F2BD31004166BE94BFA26C097F2EABD7431A4718500F5865D08F8",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Core/BossTeleportRuntimeState.cs"
+  },
+  {
+    "Sha256": "022B99BD94C783110593BCC0E815D6947856E3BA8C0B9ECDA5DFBA47FD9D24D9",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Core/BossTeleportSamplingRequest.cs"
+  },
+  {
+    "Sha256": "4A663CD4AF6C9B44860893DE92B55536409493BDF55444B6F2805FD50581EE61",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Data/BossDefinition.cs"
+  },
+  {
+    "Sha256": "E98ED6EE561C9E4432ABA4B8DFF438E1F2A4233F972A8D9C45021674E9738D4B",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Data/BossPhase.cs"
+  },
+  {
+    "Sha256": "D27344387AAB27078B2BFE4A3C533FEBA0470C0335F92AFB3EB8CCACC18F1B35",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Data/BossPhaseDefinition.cs"
+  },
+  {
+    "Sha256": "5D35477304965CF3B21C5598DDB69476F5112D2CEC8B4C219B8E5B44789237B5",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Data/BossSpellProgramDefinition.cs"
+  },
+  {
+    "Sha256": "69EA5888C24DC213C1DA03B998D5369BF308B7A6C94E052EBE9B84804674D4CB",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Runtime/BossApproachState.cs"
+  },
+  {
+    "Sha256": "B954C33BA46FE7C727BE93023A9ACBDEAF8C0123B14C20EA89DE7E95FB623641",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Runtime/BossCastState.cs"
+  },
+  {
+    "Sha256": "E2EBE5691D7686F993B3C0AFBA06568B465E41D0CAD38311F9B70B0019C7F37C",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Runtime/BossDecisionState.cs"
+  },
+  {
+    "Sha256": "2D2E1A20D33C605D77DBC09CC74DD006C6737ECE5884D8679BA31ED6A9713C9E",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Runtime/BossInactiveState.cs"
+  },
+  {
+    "Sha256": "B40825704166D3B2BEBEA848C788A8A070BE405A3679A096F2CBCA3E47CC1CC5",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Runtime/BossPhaseTransitionState.cs"
+  },
+  {
+    "Sha256": "AE63F6C610A849D24C6A84806258B62E25F19621A13A2CB2ED23BAE7997F21E0",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Runtime/BossRuntimeStateKind.cs"
+  },
+  {
+    "Sha256": "DF3A44D329F7C727C15337178FB8806BBAB701549485D2BAFEB315F21074DD13",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Runtime/BossStateBase.cs"
+  },
+  {
+    "Sha256": "CBB1F306778A5635327C5BB83562FDFB5DD01E5682BA7F6CE233970DD1687FF9",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Runtime/BossStateMachine.cs"
+  },
+  {
+    "Sha256": "E3ADAF31B290D3DF386BE0BFECFAEDCB8AAD95519D48476FCBE837B4EB02CCC3",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Runtime/BossTeleportSampler.cs"
+  },
+  {
+    "Sha256": "5A2676DBCB907EBF4CE65A65F52C79AAA05540D594A178DF54ECF247135C2859",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Runtime/BossTeleportState.cs"
+  },
+  {
+    "Sha256": "CEBF6BBA41C4D5664C7E50422F72BF33A8ED3E9149DC4AF9155B30581DAC73E7",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Runtime/IBossTeleportWorldQuery.cs"
+  },
+  {
+    "Sha256": "B1DAB70DCE417E9AACF31B67F2441DE506913ADEDBD0E18960F70724DC4BBAFA",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Runtime/UnityBossTeleportWorldQuery.cs"
+  },
+  {
+    "Sha256": "A46C74EABD9F5F9E5AE9420AFD2ECA338ED9F88DE16BE32368F999E085FC2D3B",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Boss/Runtime/WizardBossController.cs"
+  },
+  {
+    "Sha256": "198820C51DBFC812507E76C6B4484E60845B4889201A7D6CA9E4CC17C79F58B9",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Navigation/EnemyNavigationFailureTracker.cs"
+  },
+  {
+    "Sha256": "8439DCA694ACFA13260988230E34B311A8203CD5E3E89CB57B796316240CA805",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Navigation/EnemyNavigationMath.cs"
+  },
+  {
+    "Sha256": "51E6C762CC8B91C4823EBB841854E75B0BECBFD8ADF0F271059A530752460D74",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/Navigation/EnemyNavigationMotor.cs"
+  },
+  {
+    "Sha256": "13AB2DB74033949091FEDDFAB194FB65BAC60E77D4115FB6A3C7C60257502686",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/States/EnemyAttackState.cs"
+  },
+  {
+    "Sha256": "7843479752568C8F48012B7B0EA7F50F0BC105D098BE5DACBAA5855E87FA6CAF",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/States/EnemyChaseState.cs"
+  },
+  {
+    "Sha256": "5FEB13EF8A8EF6A5C7BB5E9CAA98B6DD4CA66A86FF54C9865A9E9270023D7663",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/States/EnemyHurtState.cs"
+  },
+  {
+    "Sha256": "830770A9ECCE0EE9F12EF26B931F6D1A61DB255109C8E0AC94CD2C2176C708FE",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/States/EnemyIdleState.cs"
+  },
+  {
+    "Sha256": "17B9C926D11EA102CCCD1C2BBC0AF6404435A2A0C5DE35C2A438A9BECA5AB3A2",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/States/EnemyKiteState.cs"
+  },
+  {
+    "Sha256": "B6321DF1ADE0594D7784CEAB6AB9DE6DFF04CEF9BA3C5380940E70D7318B2084",
+    "Path": "Assets/_Project/Scripts/Character/Enemy/States/EnemyRangedAttackState.cs"
+  },
+  {
+    "Sha256": "F1B6ED7FD60D9A2BB404EEB290A5E630D7FFC2284828F8437912E809053495EB",
+    "Path": "Assets/_Project/Scripts/Character/Interaction/ContainerUseController.cs"
+  },
+  {
+    "Sha256": "D56E8FF59E85B00F61B510A2005BB8BBE78343E220554878AF317D8FBAF4CB33",
+    "Path": "Assets/_Project/Scripts/Character/Interaction/HeldItemInputController.cs"
+  },
+  {
+    "Sha256": "A1942FB38D60A8B82F6444A872860A49F82CF98870461EA55814EA666B6D4F80",
+    "Path": "Assets/_Project/Scripts/Character/Interaction/HubInteractInput.cs"
+  },
+  {
+    "Sha256": "56F7653B98C685996E3B05F536DE79939EB23B874999F9EB5E2D8756DF9F860C",
+    "Path": "Assets/_Project/Scripts/Character/Interaction/MaterialCollectionController.cs"
+  },
+  {
+    "Sha256": "3C7BED7F9278567428D1F05AF16BB0D7A075ABC3D298054B54EF3537D8AFC42E",
+    "Path": "Assets/_Project/Scripts/Character/Interaction/NearbyPickupInput.cs"
+  },
+  {
+    "Sha256": "1532417A2822EEAA01B23642FC8A3334C83F88B8C9FEE42F33B624C03B25074E",
+    "Path": "Assets/_Project/Scripts/Character/Interaction/PortalInteractInput.cs"
+  },
+  {
+    "Sha256": "D5435C02594D83471432ED509664A2408361CFEA3D2FD3FEECEC4926B651E219",
+    "Path": "Assets/_Project/Scripts/Character/Interaction/PracticePlayerInventoryBinding.cs"
+  },
+  {
+    "Sha256": "C7FC795BA8F0FF095E1B367399864F097669B342F924BA3464FA313044579F27",
+    "Path": "Assets/_Project/Scripts/Character/PlayerStates/PlayerAirborneState.cs"
+  },
+  {
+    "Sha256": "340D9F24F8CB523B41D0DCB4D0146A740F46C5AF63B522285D8C87D0782BDEEE",
+    "Path": "Assets/_Project/Scripts/Character/PlayerStates/PlayerAttackState.cs"
+  },
+  {
+    "Sha256": "EC80BB2AF5D8FF7AA066C0D24E5799089C492ADD49419ADD2AB061299363BFFC",
+    "Path": "Assets/_Project/Scripts/Character/PlayerStates/PlayerBowAttackState.cs"
+  },
+  {
+    "Sha256": "81CF77B166C0A2B1C47076658B5452A867124BBD4974BC23F6723E39D5A6CA22",
+    "Path": "Assets/_Project/Scripts/Character/PlayerStates/PlayerChargeAttackState.cs"
+  },
+  {
+    "Sha256": "71ECFA0184F34E5B2EC7E0D929C5523EAF4B3CD16EE17B14E2DEF95B30B2AFD7",
+    "Path": "Assets/_Project/Scripts/Character/PlayerStates/PlayerDashState.cs"
+  },
+  {
+    "Sha256": "792027931B7D58DE1DB6CBD0056F31021338827D2C84A50E965D340E63795D53",
+    "Path": "Assets/_Project/Scripts/Character/PlayerStates/PlayerGroundedState.cs"
+  },
+  {
+    "Sha256": "41A514BED4E5D953126A4A62EAB83BC68EAF29F1C49A596A9F1153CD9C5E5F49",
+    "Path": "Assets/_Project/Scripts/Character/PlayerStates/PlayerSlidingState.cs"
+  },
+  {
+    "Sha256": "93F761DE487F9E782D6132E27B9CC9364BAE17623A6FB7E509FE744394932FAA",
+    "Path": "Assets/_Project/Scripts/Character/PlayerStates/PlayerStateBase.cs"
+  },
+  {
+    "Sha256": "19E35719A3EBE7DE36C449EC13C013A22CB7F462754B0220E07A32611CE56D7D",
+    "Path": "Assets/_Project/Scripts/Character/PlayerStates/PlayerWizardAttackState.cs"
+  },
+  {
+    "Sha256": "E89CC8A6C014866662A1959DE3C28C2276E2D65CBB185D89AE8AF1E480676985",
+    "Path": "Assets/_Project/Scripts/Character/Portal/PlayerPortalTraveler.cs"
+  },
+  {
+    "Sha256": "42500CD8F4BF3A637634597FF7AA346D6950D6D7980C6BDDBE5AD996F505C14A",
+    "Path": "Assets/_Project/Scripts/Character/Spells/BallisticTrajectory.cs"
+  },
+  {
+    "Sha256": "5A0EB7C8406A5067B974B79CEB00C4BB2EC9FE4555096B0E86A7DCB78068FA59",
+    "Path": "Assets/_Project/Scripts/Character/Spells/CastSpawnTransaction.cs"
+  },
+  {
+    "Sha256": "CE39ED1F33BCF4EC169B567A09F6757DDB518371C1B3E6B3472DA4E2A60154A1",
+    "Path": "Assets/_Project/Scripts/Character/Spells/CastTraceLevel.cs"
+  },
+  {
+    "Sha256": "5977B4BC6E04B2A10829F942710DA89DBA67D53713EF79C92CB01E8DFE7CE548",
+    "Path": "Assets/_Project/Scripts/Character/Spells/MaterialPayloadRuntimeAdapter.cs"
+  },
+  {
+    "Sha256": "813E73AAED2C01BDB631EF1AA43F2C1BDF8DDCD0E68C18E3B286BA8CD5365BBE",
+    "Path": "Assets/_Project/Scripts/Character/Spells/OwnedWandCastAdapter.cs"
+  },
+  {
+    "Sha256": "A2BC715147758FD82E59FFB0123105E0D371FDF7FB89A52A73C20C32C6347213",
+    "Path": "Assets/_Project/Scripts/Character/Spells/OwnedWandFireScheduler.cs"
+  },
+  {
+    "Sha256": "183410673180AC87D9523EE015BBA7230F976B0328E0CDB13BDDB5F230CA19B2",
+    "Path": "Assets/_Project/Scripts/Character/Spells/SpellAimMode.cs"
+  },
+  {
+    "Sha256": "65B994B0580B7562031AA969DCFBF307B3093C455CC7FF525BF3DEC5B7F63E6B",
+    "Path": "Assets/_Project/Scripts/Character/Spells/SpellCaster.cs"
+  },
+  {
+    "Sha256": "65CB02637831318014CF1AD22F537D591636637D97FE9191A71D95D4B4E10C0B",
+    "Path": "Assets/_Project/Scripts/Character/Spells/SpellCastRuntimeDiagnostics.cs"
+  },
+  {
+    "Sha256": "512A4F44D0FB7AF9062A9F4D246A3D6F60D605DEB35BF4E8495DB21F5812F12A",
+    "Path": "Assets/_Project/Scripts/Character/Spells/SpellManaPolicy.cs"
+  },
+  {
+    "Sha256": "3D526407F8DF11C4654210C8764A4FE2245D3273A0738B9CCBC63AEB813AA965",
+    "Path": "Assets/_Project/Scripts/Character/_Debug/SpellPerformanceLabController.cs"
+  },
+  {
+    "Sha256": "EAE57B65485BB9025A49B8BFF8683791BE37D02D5691B1E2AC4368DB4E757CEB",
+    "Path": "Assets/_Project/Scripts/UI/BossHealthBarController.cs"
+  },
+  {
+    "Sha256": "11EBCB16CA02498EE12B873F0DE82D468EB08CCEFBB424A2138676C781B3DAE0",
+    "Path": "Assets/_Project/Scripts/UI/BossPhaseVfxController.cs"
+  },
+  {
+    "Sha256": "F104AA0F5FE3F1812983D805041B863457B262B0487626081B3D099978E8BB47",
+    "Path": "Assets/_Project/Scripts/UI/DemoMainMenuController.cs"
+  },
+  {
+    "Sha256": "8C52F77230D8239FFF8FBD96B7EBC8260C3353A596F4B324FCD8B5A810FDDE42",
+    "Path": "Assets/_Project/Scripts/UI/DemoPauseMenuController.cs"
+  },
+  {
+    "Sha256": "21569BCDEEBD19BAA99F28BFBD374D503D2CB24541693DE9CA29F9C4557D87E2",
+    "Path": "Assets/_Project/Scripts/UI/DemoRunHudController.cs"
+  },
+  {
+    "Sha256": "ED70355017E48A18FF77C215927B7D5477AFCB4B6E9B6F785D2539C8B3F54E16",
+    "Path": "Assets/_Project/Scripts/UI/DemoSceneTransitionController.cs"
+  },
+  {
+    "Sha256": "50B3FC4913F9AA1782D6EED33932421209D3B4160EC7FE8AD72E98F83BEC76D0",
+    "Path": "Assets/_Project/Scripts/UI/DemoSettingsController.cs"
+  },
+  {
+    "Sha256": "F2AA06AEA74CC51FC7834A109470059B26E9EAE70B1A0C8CB8C9B9CDAD4346D9",
+    "Path": "Assets/_Project/Scripts/UI/EnemyHealthBar.cs"
+  },
+  {
+    "Sha256": "B711A3F690571D0CF5F141D1E3318B622BBA092EF209E05785E1DA8945836C63",
+    "Path": "Assets/_Project/Scripts/UI/GameplayGuideController.cs"
+  },
+  {
+    "Sha256": "7776C4CAC1BC221F159891D4C1AF0D7EF102FEED672A8324EB393D7646A24C0F",
+    "Path": "Assets/_Project/Scripts/UI/GameplayGuideDefinition.cs"
+  },
+  {
+    "Sha256": "986682C2898F5309F84F1076507E5097D1D18FF0337865A41A9AE40C2FDE8A65",
+    "Path": "Assets/_Project/Scripts/UI/ISpellTooltipHandler.cs"
+  },
+  {
+    "Sha256": "15FE541DD0768A2C8619AEC369E7DE8123CD625CEFAEF2AC872FB110ADD16D67",
+    "Path": "Assets/_Project/Scripts/UI/IWandDragHandler.cs"
+  },
+  {
+    "Sha256": "BD957B83054DAB9A6AB79D02867EDB8571C8EF36CCE0A53D61204F49124DDBAB",
+    "Path": "Assets/_Project/Scripts/UI/PlayerHealthBar.cs"
+  },
+  {
+    "Sha256": "0549E680F794BFC9BC64FC21917DED62691A7F3FC94665F18F132B3A231DDCE4",
+    "Path": "Assets/_Project/Scripts/UI/PlayerManaBar.cs"
+  },
+  {
+    "Sha256": "B211A4B00ED29002D428B408A9F340E970264D813E7512B99E40F068220CD5A2",
+    "Path": "Assets/_Project/Scripts/UI/PlayerStatusBar.cs"
+  },
+  {
+    "Sha256": "D401078CDAC931FC1153A08DAB18FE7D4489D3B8BBB90FC03DDB5FEE8A92FC9A",
+    "Path": "Assets/_Project/Scripts/UI/SceneMusicController.cs"
+  },
+  {
+    "Sha256": "04C43D98238E5C77B4CC9FBAED07E75AC9F4BD6694163123CEAB174B189A1186",
+    "Path": "Assets/_Project/Scripts/UI/SlotKind.cs"
+  },
+  {
+    "Sha256": "202CF3CBCBE51AB790D0D722AE7AED99316F94122ADB1747682626BCD98E0C0D",
+    "Path": "Assets/_Project/Scripts/UI/SpellPaletteView.cs"
+  },
+  {
+    "Sha256": "E2E037C0A3D90CB43EB698BE984965304EF58F407F7D8BCC578501112CD8BD9B",
+    "Path": "Assets/_Project/Scripts/UI/SpellSlotView.cs"
+  },
+  {
+    "Sha256": "0F1D5DFF147BE3CBB31511C3B4BE4BDD4265C5AA48FA55856C5AF4ED95CC284E",
+    "Path": "Assets/_Project/Scripts/UI/SpellTooltipPresenter.cs"
+  },
+  {
+    "Sha256": "A4CA9C6603D518FFC89C54D168F84A973D9C883ADDB462BE2D987720D85C81C4",
+    "Path": "Assets/_Project/Scripts/UI/StatusIconAcquisitionOrder.cs"
+  },
+  {
+    "Sha256": "B345500A62617CA59039E628C3378883C0F13D4681303E60532C98C503FFD877",
+    "Path": "Assets/_Project/Scripts/UI/StatusIconView.cs"
+  },
+  {
+    "Sha256": "EA02131ECEB880A847D0D78DE6BC82D8189F710F2410070398805CBB792045E5",
+    "Path": "Assets/_Project/Scripts/UI/WandEditorController.cs"
+  },
+  {
+    "Sha256": "E32B17787CBA65365B1BC96BF7BE82523DA7CEA375832ABA59EA6B511C42E4D5",
+    "Path": "Assets/_Project/Scripts/UI/WandFrameView.cs"
+  },
+  {
+    "Sha256": "7F7C292377602E514B02EE2B8CFD1ED1E30363E5AB4FC7B7D1D201BD457D3A2F",
+    "Path": "Assets/_Project/Scripts/UI/Containers/ContainerCompositionView.cs"
+  },
+  {
+    "Sha256": "2EC1890A50AB24D7277A9DEAEDBD36848D6E7400436B122777077F7D852192BB",
+    "Path": "Assets/_Project/Scripts/UI/Containers/SpellAttachmentView.cs"
+  },
+  {
+    "Sha256": "DBF26D066062DD273B64243239FB7B79EE2908663CEFA3DDCD4083F1F0DE74DA",
+    "Path": "Assets/_Project/Scripts/UI/Hub/HubNavigationView.cs"
+  },
+  {
+    "Sha256": "9395DF8C76D6ADF1813FC81965CC70ECDA3F699DF48F4963AF5A6D986CC36927",
+    "Path": "Assets/_Project/Scripts/UI/Hub/WorldSpaceLabelBillboard.cs"
+  },
+  {
+    "Sha256": "D91F35E851802398CF734006732AEC7407CC15FE87EB2253DDC214E8FB2420D2",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/BackpackWorkspaceView.cs"
+  },
+  {
+    "Sha256": "554E0BCA66A1EF866840F7E189AFF5CA0499FAD500D75D6C3B6AE3D421BAB66C",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/ContainerIconFill.cs"
+  },
+  {
+    "Sha256": "6559B61F461167ABF03363A723D0F5CE416918078E74CEFEF510E9C03BDBDF8E",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/EquippedWandDragView.cs"
+  },
+  {
+    "Sha256": "4E0002B9A19B0E3A4FBE878038AB6476EF06DA5E9E43EA1D7FA0D3CCB3DA0C13",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/InventoryArrangementDraft.cs"
+  },
+  {
+    "Sha256": "CDCC3929ADF9C5D9D0A6192B5DEAABCDF0EEB96CD940F49D3A2DB16915F32CCF",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/InventoryDragAutoScroll.cs"
+  },
+  {
+    "Sha256": "07B29C89B997661322D7CDB399A13DFD7D36383A794846A279E878C3719CA7B8",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/InventoryDragGeometry.cs"
+  },
+  {
+    "Sha256": "996B60A5C7128F9C543ABE22A790220531FE4624ECD7AD9DA1D175F5BE63ACDD",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/InventoryDropTarget.cs"
+  },
+  {
+    "Sha256": "D821F47AFD5568DA080C89CB6FED152F4E26945B68F9428A3F731084342511C3",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/InventoryGridLinesGraphic.cs"
+  },
+  {
+    "Sha256": "5AE61B063C335047B4DCBA664FDF6B0C2D4FC291482B71E955D17D6CA2C645A6",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/InventoryGridView.cs"
+  },
+  {
+    "Sha256": "D837290D82D53CCE57F94ED6DC6F3A59ECDF4B320D9A472013C306B24DDF4197",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/InventoryInfoPopup.cs"
+  },
+  {
+    "Sha256": "21CD10D7E73C42785E7B0AC6ACF0BB72F65508B620BC42DC63369E7F0B4E936F",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/InventoryItemView.cs"
+  },
+  {
+    "Sha256": "8B0D0CAB3112AF3A203123479F20B97DEDD0C77D3F41AA08C7CB9295F6AED1F5",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/InventoryShapeOutlineGraphic.cs"
+  },
+  {
+    "Sha256": "A1A201DF077BCDF45E866669CEE0E6A0971CFE5FB91E601797540DDB07AEB807",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/InventorySlotPrefabs.cs"
+  },
+  {
+    "Sha256": "DBEEA5F829E72CE78E7C39206D5B695A43909250317DDDB22BA27857C4F6F944",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/InventorySlotView.cs"
+  },
+  {
+    "Sha256": "2C458E976A7E666A3E2D5F9F804FBAA5DFFB07EA843AA05B006317251A07C132",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/InventoryViewportPan.cs"
+  },
+  {
+    "Sha256": "C97A80163F495B6EB0E0F43619B3FA4224A394F0C81A2F18EB2242CA3B009779",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/InventoryWorkspaceView.cs"
+  },
+  {
+    "Sha256": "BB925A5DD0D3310D415EDCD6E62A6F82F18D32F6743FB13159178029F0587088",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/NearbyItemGridLayout.cs"
+  },
+  {
+    "Sha256": "7B6D492B6C94E83B5277EEBE13555C4E2B3C69F90B763E478E747196C8116C23",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/NearbyItemGridView.cs"
+  },
+  {
+    "Sha256": "5E70F8A44D875829B7E42E79344571F256AD5B0F03155BA511D069F0C5F58FBE",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/NearbyItemPlacementCache.cs"
+  },
+  {
+    "Sha256": "6735F2A23F432CCCBA5FF370FA3D0889878E10553CDAA9EDCF11AC968D763C0A",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/NearbyPickupListView.cs"
+  },
+  {
+    "Sha256": "3D63364D86EBEA0A8676168CA782A5399E0590ABD73DE7D0D3C21E7424A4C9EA",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/PracticeInventoryWorkspaceBinding.cs"
+  },
+  {
+    "Sha256": "A668FD3C5287DE3F8CEF77F2B92B74FFE91D45BB426298B1ACFBB597F5B4F899",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/SinglePlayerInventoryController.cs"
+  },
+  {
+    "Sha256": "F8C84C94009171E65B2CAB864FA26A6FBE1396D31F50AA7E91306014EE877054",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/SpellStorageView.cs"
+  },
+  {
+    "Sha256": "35F665193FA13B14072994D1780AAE0653066B7DE3903BD0E6DA92E728EF6520",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/ToolbeltSlotView.cs"
+  },
+  {
+    "Sha256": "E006416016F6FEDDF9FBE7ABFBA34401D18337132A4FA6EA501AA7BF009EABF1",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/ToolbeltView.cs"
+  },
+  {
+    "Sha256": "4D498B23BF86ABFE532D340E42EE1F74EA34D80605F24A185ED9701069F3940C",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/WalletView.cs"
+  },
+  {
+    "Sha256": "AE664FA201BBF9AAC2ECF0395DFF3095A9221499D60A53D39EB2687132EB3D1B",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/WandInventoryView.cs"
+  },
+  {
+    "Sha256": "E2D60B6A3086E2E670485EB278AA04B2383FA06FD26CE25ECD1F72AFA06C97AD",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/WandProgramPanelView.cs"
+  },
+  {
+    "Sha256": "30702EDFAD99DAC7A9239A72AD7EA6E1027E72597A03676DC57D1A6ECFD49168",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/WarehouseCatalogGridView.cs"
+  },
+  {
+    "Sha256": "ABE260EF7E6D075AAE8EFC3346C28F591EC6FDA1EF10F85FEE7BB33BBF563576",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/WarehouseWorkspaceView.cs"
+  },
+  {
+    "Sha256": "11755A03DF2078EBB04FC9AC004CA8FBBFADF0AA9339AC03E32C382EECD8BEE4",
+    "Path": "Assets/_Project/Scripts/UI/Inventory/WorldPickupPromptView.cs"
+  },
+  {
+    "Sha256": "1AA0AC7B438C5E4DE688C1A80DF7E2986BC126F938D54CFABA4C88EBB2D31AF0",
+    "Path": "Assets/_Project/Scripts/UI/Run/ExtractionHud.cs"
+  },
+  {
+    "Sha256": "29E2D48F64D3D58EDD461AF738AC26B2C92F2E42265B9A61D3EB9A1FAD354417",
+    "Path": "Assets/_Project/Scripts/UI/Run/RaidPreparationView.cs"
+  },
+  {
+    "Sha256": "ADFAAEDCB8E26139DE406B4748B6D810F9B40BE3E4DE57D5505D47D28D6F8B79",
+    "Path": "Assets/_Project/Scripts/UI/Run/RaidResultView.cs"
+  },
+  {
+    "Sha256": "CF8E6738F22BFD03493B4E73DC668997A805A94DFF8081C0FE5BFE617A0F8BCA",
+    "Path": "Assets/_Project/Scripts/UI/Trading/ShopBackpackView.cs"
+  },
+  {
+    "Sha256": "9ECF399F107A3199A38C9CF16DDFFBE6DDA8BF1BF439A6871A93093764A321CD",
+    "Path": "Assets/_Project/Scripts/UI/Trading/ShopController.cs"
+  },
+  {
+    "Sha256": "720455008D6DAB86DA8FEB5C7B220E55739FAAE241AD935B5264E7AC96A5792D",
+    "Path": "Assets/_Project/Scripts/UI/Trading/ShopEntryView.cs"
+  },
+  {
+    "Sha256": "89AF28CBAD72EE09E921F230A22212FF442B4C30815B23A26E50DD941F285FBC",
+    "Path": "Assets/_Project/Scripts/UI/Trading/ShopInventorySelection.cs"
+  },
+  {
+    "Sha256": "A79B3381BCF08416358F7320CEC43C888D18D7A95CE617EE9D15B36BDE249675",
+    "Path": "Assets/_Project/Scripts/UI/Trading/ShopPurchaseDialog.cs"
+  },
+  {
+    "Sha256": "F346A9FC2250686570A4B97BD1AC96C59F664736FF5ADCAC0DF442E6AAA2B393",
+    "Path": "Assets/_Project/Scripts/UI/Trading/ShopPurchaseQuantity.cs"
+  },
+  {
+    "Sha256": "702F5384E2919DA1AC9A366A8320E4A4BF72928D8BABDF662BD5325C639D9D5E",
+    "Path": "Assets/_Project/Scripts/UI/Trading/ShopQuickPurchasePopup.cs"
+  },
+  {
+    "Sha256": "D43D18F5D1F35220068A838AF6173D13F1D6108BE0CB1B6BEABDA19133C6EC26",
+    "Path": "Assets/_Project/Scripts/UI/Wands/HeldItemHud.cs"
+  },
+  {
+    "Sha256": "DE30AB75277CCD5D0B8E45128A4F9F9CDE46E4127FB994EB54D7D0149A516F99",
+    "Path": "Assets/_Project/Scripts/UI/Wands/HeldItemHudValues.cs"
+  },
+  {
+    "Sha256": "C7C1671BF4AE22236D9B067E94A6DC72F3F5C38315F275102038B10C9525E372",
+    "Path": "Assets/_Project/Scripts/UI/Wands/SpellUseHud.cs"
+  },
+  {
+    "Sha256": "F906AF3CFD2FB849722C2706ED8E0E0C9D81F8DF3891E4183D0C702B9A37EE44",
+    "Path": "Assets/_Project/Scripts/UI/Wands/WandParameterSourceView.cs"
+  },
+  {
+    "Sha256": "3E32D02F2600CA0CF034373726F3C0B671575661356AFE8DA6DD444870AAAAD9",
+    "Path": "Assets/_Project/Scripts/UI/Wands/WandProgramCanvasViewport.cs"
+  },
+  {
+    "Sha256": "18929512707EA91817745B85932CF9E159A789B4C297409CECC8C18EB467AD02",
+    "Path": "Assets/_Project/Scripts/UI/Wands/WandProgramGridProjection.cs"
+  },
+  {
+    "Sha256": "0B8593B3DB7BA89FDBBDDFD09891C9461619EA429968B308467CD9060F96B0D9",
+    "Path": "Assets/_Project/Scripts/UI/Wands/WandProgramLinkGraphic.cs"
+  },
+  {
+    "Sha256": "3BCC0873EA5926287F66BDE83AF965D0050BEE6E91E4332FB59A6ACF8BE0D0FB",
+    "Path": "Assets/_Project/Scripts/UI/Wands/WandProgramSequenceView.cs"
+  },
+  {
+    "Sha256": "2EE1B084DE225AAEC44A68BBE98B9F95AB6DF8A8D5918F07D288591D83BEE3B7",
+    "Path": "Assets/_Project/Scripts/UI/Wands/WandProgramTraceView.cs"
+  },
+  {
+    "Sha256": "CCAA880958B727F343BA44943B21688247620F5E3B05895BDCC395B09FE7CF71",
+    "Path": "Assets/_Project/Scripts/UI/Wands/WandProgramWorkbenchLayout.cs"
+  },
+  {
+    "Sha256": "9521CCD51F0493D15AB1F402347C541C136F0DF831E823FD3E19C62236D6DB2A",
+    "Path": "Assets/_Project/Scripts/UI/Wands/WandProgramWorkbenchPresenter.cs"
+  },
+  {
+    "Sha256": "282EB5B40B17C1C90CB5FA9109241DBC720BB7B003DAF352D60CBCF4C7153ABF",
+    "Path": "Assets/_Project/Scripts/UI/Wands/WandResearchCellInteraction.cs"
+  },
+  {
+    "Sha256": "2ECF35943D8EF9F4A1FA3662D6EE24F3245C3D4287F4D3D51D3A8E39D983FCF6",
+    "Path": "Assets/_Project/Scripts/UI/Wands/WandResearchController.cs"
+  },
+  {
+    "Sha256": "738895389BE66E1787CE07BD43247C4FEA75617C0731A213F65AD6B044C4140D",
+    "Path": "Assets/_Project/Scripts/UI/Wands/WandResourceHud.cs"
+  },
+  {
+    "Sha256": "71759AD5426A9CF5D8F9918363BC1EBFE28ECDBE455B7C9006716C01EF1CA83A",
+    "Path": "Assets/_Project/Scripts/UI/Wands/WandScopeGraphView.cs"
+  },
+  {
+    "Sha256": "76A5B8244FF65E492F5C91F2CBB25A48D0C032351D6735A1993132F6077DC33E",
+    "Path": "Assets/_Project/Scripts/UI/Wands/WandSpellCellView.cs"
+  },
+  {
+    "Sha256": "325AD0C7F52F17747A5C3402DAA6A7908A68B3A3DBAB14DD820A1039B7404660",
+    "Path": "Assets/_Project/Scripts/UI/Wands/WandWorkbenchWidgets.cs"
+  },
+  {
+    "Sha256": "EB7202D8EA09A4B4AF931D18083986FDB6650F7C49D3B984F23B1297BC0168E0",
+    "Path": "Assets/_Project/Scripts/UI/World/BossTeleportVfxController.cs"
+  },
+  {
+    "Sha256": "78642DA6A772233048056340D4047D72B9CEC112F5E674D188ED132050CD9992",
+    "Path": "Assets/_Project/Scripts/UI/World/HomePortalPresentation.cs"
+  },
+  {
+    "Sha256": "07A84B3E26D59C0DEA0453434FBF14006EEB98672958D3B2B19EBBF83C50724A",
+    "Path": "Assets/_Project/Scripts/UI/World/PortalTransitionFade.cs"
+  },
+  {
+    "Sha256": "4C022AC98A6F712F68D75017B1A4722495F0DF78049444AD24A33738085977B5",
+    "Path": "Assets/_Project/Scripts/UI/World/PortalVfxController.cs"
+  }
+]

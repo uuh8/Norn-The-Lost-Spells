@@ -16,13 +16,13 @@ namespace Game.Run.Tests
     /// <summary>Authoring契约先证明旧工作区缺少HUD与直接试玩入口；不加载大地图。</summary>
     public sealed class PracticeModernUiContractTests
     {
-        private static Type SetupType => Type.GetType("Game.EditorTools.SinglePlayerPracticeUiSetup,Game.PbfTask13.Editor",true);
+        private static Type SetupType => Type.GetType("Game.EditorTools.SinglePlayerPracticeUiSetup,Game.Project.Editor",true);
         [TestCase("Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub.unity", "", false)]
         [TestCase("Assets/_Project/Scenes/P7_DemoRun.unity", "", false)]
         [TestCase("Assets/_Project/Scenes/P8_BossField.unity", "", false)]
         [TestCase("Assets/_Project/Scenes/P7_DemoRun.unity", "Assets/_Project/Scenes/P8_BossField.unity", true)]
         [TestCase("Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub.unity", "Assets/_Project/Scenes/P7_DemoRun.unity", true)]
-        [TestCase("Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub.unity", "Assets/_Project/Scenes/SinglePlayer/P8_BossField_ModernUiReview.unity", true)]
+        [TestCase("Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub.unity", "Assets/_Project/Scenes/Tests/Hub/P8_BossField_ModernUiReview.unity", true)]
         public void IndependentMapPlayRejectsOnlyMultipleGameplayScenes(string first,string second,bool expected)
         {
             // Editor 工具不能成为 Run 的运行时依赖；反射只在测试端检查正式地图与 Review 的同一边界。
@@ -70,17 +70,24 @@ namespace Game.Run.Tests
             Assert.That(typeof(PracticeInventoryWorkspace).Assembly.GetType("Game.Run.PracticeInventorySceneBootstrap"),Is.Not.Null);
             Assert.That(typeof(PracticeInventoryWorkspace).Assembly.GetType("Game.Run.PracticeSpellRewardAdapter"),Is.Not.Null);
         }
-        [Test] public void EveryFullLibrarySpellHasExactlyOneInventoryDefinition()
+        [Test] public void EveryFullLibrarySpellHasOneCanonicalDefinitionAndKnownSaveAliases()
         {
-            var catalog=AssetDatabase.LoadAssetAtPath<ItemCatalog>("Assets/_Project/ScriptableObjects/SinglePlayer/Hub/SinglePlayerRaids/Catalog.asset");
-            var library=AssetDatabase.LoadAssetAtPath<Game.Skills.SpellLibrary>("Assets/_Project/ScriptableObjects/SpellLibrary.asset");
+            var catalog=AssetDatabase.LoadAssetAtPath<ItemCatalog>("Assets/_Project/ScriptableObjects/World/Hub/Inventory/Catalog.asset");
+            var library=AssetDatabase.LoadAssetAtPath<Game.Skills.SpellLibrary>("Assets/_Project/ScriptableObjects/Spell/Libraries/SpellLibrary_Player.asset");
             Assert.That(library,Is.Not.Null);Assert.That(catalog,Is.Not.Null);
             var entries=new SerializedObject(catalog).FindProperty("_definitions");
             foreach(var spell in library.Available)
             {
                 int count=0;
                 for(int i=0;i<entries.arraySize;i++)
-                    if(((ItemDefinition)entries.GetArrayElementAtIndex(i).objectReferenceValue).SpellDefinition==spell)count++;
+                {
+                    var item=(ItemDefinition)entries.GetArrayElementAtIndex(i).objectReferenceValue;
+                    if(item.SpellDefinition!=spell)continue;
+                    // 去重不能让已经发放的物品ID失效；仅这两个明确旧ID允许作为兼容别名。
+                    if(item.ContentId=="norn.v2.double"||item.ContentId=="norn.v2.damage")
+                    {Assert.That(item.Icon,Is.SameAs(spell.Icon));Assert.That(item.DisplayName,Is.EqualTo(spell.DisplayName));continue;}
+                    count++;
+                }
                 Assert.That(count,Is.EqualTo(1),spell.name+" 需要可持有的物品映射");
             }
         }

@@ -40,6 +40,6 @@ namespace Game.UI
         public void OnDrag(PointerEventData e)=>_controller?.MoveGhost(e.position,e.pressEventCamera);
         public void OnEndDrag(PointerEventData e)=>_controller?.CancelDrag();
         public void OnPointerClick(PointerEventData e)
-        { if (e.button==PointerEventData.InputButton.Right) _controller?.ClearShortcut(_toolSlot); else if (_itemId!=null) _controller?.SelectItem(_itemId); }
+        { if (e.button==PointerEventData.InputButton.Right && _itemId!=null) _controller?.ShowItemInfo(_itemId,e.position,e.pressEventCamera); else if (_itemId!=null) _controller?.SelectItem(_itemId); }
     }
 }

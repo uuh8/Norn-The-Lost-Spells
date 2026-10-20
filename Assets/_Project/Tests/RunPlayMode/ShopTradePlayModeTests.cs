@@ -49,6 +49,10 @@ namespace Game.Run.Tests
             if(scene.path!=ScenePath)return;_scene=scene;
             _inventory=Find<SinglePlayerInventorySession>(scene);_shop=Find<SinglePlayerShopSession>(scene);_ui=Find<ShopController>(scene);
             _pause=Find<RunPauseCoordinator>(scene);_run=Find<SinglePlayerRunCoordinator>(scene);
+            // 旧TradeSandbox早于购买确认层；仅给测试Scene补当前接线，不保存或改正式据点。
+            var builder=Type.GetType("Game.EditorTools.SinglePlayerShopPurchaseDialogSetup, Game.Project.Editor");
+            Assert.That(builder,Is.Not.Null);
+            builder.GetMethod("Apply",BindingFlags.NonPublic|BindingFlags.Static).Invoke(null,new object[]{scene});
             var serialized=new SerializedObject(_inventory);var catalog=(ItemCatalog)serialized.FindProperty("_catalog").objectReferenceValue;
             var seeds=(SinglePlayerStartingInventory)serialized.FindProperty("_startingInventory").objectReferenceValue;
             Assert.That(catalog.TryCreateIndex(out var index,out _),Is.True);Assert.That(seeds.TryCreate(index,out var initial,out _),Is.True);
@@ -63,13 +67,20 @@ namespace Game.Run.Tests
         private static T Find<T>(Scene scene)where T:Component
         {foreach(var root in scene.GetRootGameObjects()){var c=root.GetComponentInChildren<T>(true);if(c!=null)return c;}return null;}
         private T Field<T>(string name)=> (T)typeof(ShopController).GetField(name,BindingFlags.Instance|BindingFlags.NonPublic).GetValue(_ui);
-        private void Click(string name)=>Field<Button>(name).onClick.Invoke();
+        private void Click(string name)
+        {
+            Field<Button>(name).onClick.Invoke();if(name!="_buyButton")return;
+            var dialog=Field<ShopPurchaseDialog>("_purchaseDialog");Assert.That(dialog.IsOpen,Is.True);
+            if(ulong.TryParse(Field<InputField>("_quantity").text,out var quantity))dialog.SetQuantity(quantity);
+            var confirm=(Button)new SerializedObject(dialog).FindProperty("_confirm").objectReferenceValue;
+            if(confirm.interactable)confirm.onClick.Invoke();
+        }
         [UnityTest]public IEnumerator BuyButtonCommitsActualWalletStockAndDisk()
         {
             _ui.SelectOffer("wandtest.fire");Field<InputField>("_quantity").text="1";int before=_inventory.Profile.Items.Count;
             Click("_buyButton");yield return null;
             Assert.That(_shop.ReadOnly.Currency,Is.EqualTo(80));Assert.That(_inventory.Profile.Items.Count,Is.EqualTo(before+1));
-            Assert.That(_repository.TryLoad(out var persisted).Success,Is.True);Assert.That(persisted.Currency,Is.EqualTo(80));Assert.That(_ui.Status,Does.Contain("已保存"));
+            Assert.That(_repository.TryLoad(out var persisted).Success,Is.True);Assert.That(persisted.Currency,Is.EqualTo(80));Assert.That(_ui.Status,Does.Contain("成交"));
         }
         [UnityTest]public IEnumerator SellMaterialsButtonPreservesShellAndMixture()
         {
@@ -78,8 +89,10 @@ namespace Game.Run.Tests
         }
         [UnityTest]public IEnumerator InsufficientMoneyShowsFailureAndLeavesInventory()
         {
-            _ui.SelectOffer("material.1");Field<InputField>("_quantity").text="100";int count=_inventory.Profile.Items.Count;
-            Click("_buyButton");yield return null;Assert.That(_ui.Status,Does.Contain("余额不足"));Assert.That(_shop.ReadOnly.Currency,Is.EqualTo(100));Assert.That(_inventory.Profile.Items.Count,Is.EqualTo(count));
+            _inventory.Profile.Currency=0;_ui.SelectOffer("wandtest.fire");int count=_inventory.Profile.Items.Count;
+            Click("_buyButton");yield return null;
+            var feedback=(Text)new SerializedObject(Field<ShopPurchaseDialog>("_purchaseDialog")).FindProperty("_feedback").objectReferenceValue;
+            Assert.That(feedback.text,Does.Contain("金币不足"));Assert.That(_shop.ReadOnly.Currency,Is.Zero);Assert.That(_inventory.Profile.Items.Count,Is.EqualTo(count));
         }
         [UnityTest]public IEnumerator ClosingShopDoesNotReleaseAnotherPauseReason()
         {
@@ -105,10 +118,10 @@ namespace Game.Run.Tests
         [UnityTest]public IEnumerator StockAndWalletSurviveDepartureAndFailure()
         {
             _ui.SelectOffer("wandtest.fire");Click("_buyButton");yield return null;long budget=_shop.ReadOnly.RemainingBudget;
-            _ui.Close();Assert.That(_run.Depart(),Is.True);for(int i=0;i<120 && _run.State.Phase!=RaidPhase.Exploring;i++)yield return null;
+            _ui.Close();Assert.That(_run.Depart(),Is.True);float deadline=Time.realtimeSinceStartup+10;while(Time.realtimeSinceStartup<deadline && _run.State.Phase!=RaidPhase.Exploring)yield return null;
             Assert.That(_run.State.Phase,Is.EqualTo(RaidPhase.Exploring));
             EventBus<RaidDepartureRequestedEvent>.Publish(new RaidDepartureRequestedEvent{InventoryId=_inventory.ReadOnly.InventoryId,Command=RaidCommand.Abandon});
-            for(int i=0;i<120 && _run.State.Phase!=RaidPhase.HubReady;i++)yield return null;
+            deadline=Time.realtimeSinceStartup+10;while(Time.realtimeSinceStartup<deadline && _run.State.Phase!=RaidPhase.HubReady)yield return null;
             Assert.That(_run.State.Phase,Is.EqualTo(RaidPhase.HubReady));Assert.That(_shop.ReadOnly.Currency,Is.EqualTo(80));Assert.That(_shop.ReadOnly.RemainingBudget,Is.EqualTo(budget));Assert.That(_inventory.Profile.AdventureProgress,Is.Zero);
         }
         [UnityTest]public IEnumerator ShopLayoutContainsActionsWithinScreenAndCapturesActualUi()

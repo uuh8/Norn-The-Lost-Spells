@@ -31,6 +31,8 @@ namespace Game.Run
         public int RemainingEnemyCount => _tracker.RemainingEnemyCount;
 
         public int EncounterIndex => _encounterIndex;
+        public int EnemyCount=>_enemyMembers.Length;
+        public HealthComponent GetEnemy(int index)=>_enemyMembers[index];
 
         private void OnEnable()
         {
@@ -109,8 +111,8 @@ namespace Game.Run
                 rewardPickups[i].BindEncounter(_encounterIndex);
             }
 
-            AllSpellsRewardPickup[] allSpellsRewards =
-                GetComponentsInChildren<AllSpellsRewardPickup>(true);
+            DungeonFinalRewardPickup[] allSpellsRewards =
+                GetComponentsInChildren<DungeonFinalRewardPickup>(true);
             for (int i = 0; i < allSpellsRewards.Length; i++)
             {
                 allSpellsRewards[i].BindEncounter(_encounterIndex);

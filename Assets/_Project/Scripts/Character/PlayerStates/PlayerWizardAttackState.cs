@@ -19,6 +19,7 @@ namespace Game.Character
         private int _comboIndex;                        // 当前固定为 0；保留索引是为了复用 AttackDefinition 时序数据
         private bool _castReleased;                    // 单次播放去重位：越过阈值后的后续帧不能重复创建攻击对象
         private bool _airborne;                        // 进入 State 时锁存；决定本次动画以及是否继续积分重力
+        private int _animationHash;
 
         public PlayerWizardAttackState(WizardController player) : base(player)
         {
@@ -68,13 +69,13 @@ namespace Game.Character
             _castReleased = false;
 
             //  决定播放哪个动画 (空中与地面的分支)
-            int hash = _airborne && _wizard.AirAttackStateHash != 0
+            _animationHash = _airborne && _wizard.AirAttackStateHash != 0
                 ? _wizard.AirAttackStateHash        // 使用空中攻击的 Hash
                 : _wizard.GetComboStateHash(index); // 获取对应的地面连招动画 Hash
 
             // CrossFadeInFixedTime：让角色的 Animator 立刻平滑过渡到上一步计算出的目标动画
             // 代码直接指定目标状态进行跳转，进入不需要 Animator 中连接 Transition，但目标 State 仍需配置正常的退出过渡。
-            _player.Animator.CrossFadeInFixedTime(hash, CrossFadeDuration, 0);
+            _player.Animator.CrossFadeInFixedTime(_animationHash, CrossFadeDuration, 0, 0f);
         }
 
         private void HandleGravity()
@@ -97,7 +98,7 @@ namespace Game.Character
             Vector3 velocity = _player.MoveDirection * _player.MoveSpeed * _player.StatusMoveSpeedMultiplier;
             velocity.y = _player.VerticalVelocity;
             // 攻击状态仍主动调用 Move，因此施法期间保留水平移动；传入的是本帧位移而不是“速度属性”。
-            _player.CharacterController.Move(velocity * Time.deltaTime);
+            _player.MoveCharacter(velocity * Time.deltaTime);
         }
 
         private void HandleCastRelease()
@@ -111,7 +112,10 @@ namespace Game.Character
             if (seg == null) return;
 
             // normalizedTime 的整数部分表示循环次数，小数部分表示当前循环的 0~1 进度；表示当前动画的归一化进度。
-            float t = _player.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1f;
+            var state = _player.Animator.GetCurrentAnimatorStateInfo(0);
+            if (state.shortNameHash != _animationHash) return;
+            // 不取%1：卡顿跨过一个Clip时仍需释放一次，不能把1.05误读成0.05而吞掉攻击。
+            float t = state.normalizedTime;
             if (t >= seg.ArrowSpawnTime)
             {
                 ReleaseCast();
@@ -147,8 +151,7 @@ namespace Game.Character
         /// <summary>释放即结束回到移动态；兜底：动画接近播完(EndThreshold)也强制结束，避免卡死。</summary>
         private void CheckEnd()
         {
-            // 1. 主动取消
-            // 如果玩家松开了按键，或者主动取消了施法，这时候变量 _castReleased 就变成了 true
+            // 松开按钮不取消已经开始的单击；只有实际越过释放阈值才完成本次攻击。
             if (_castReleased)
             {
                 TransitionToMovement();
@@ -160,8 +163,11 @@ namespace Game.Character
             if (_player.Animator.IsInTransition(0)) return;
 
             // 如果发现这一遍拉弓动作已经快播完了（到达门限值了），就强行断掉回到移动
-            float t = _player.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1f;
-            if (t >= EndThreshold)
+            var state = _player.Animator.GetCurrentAnimatorStateInfo(0);
+            if(state.shortNameHash!=_animationHash){TransitionToMovement();return;}
+            float t = state.normalizedTime;
+            float release = _wizard.Combo.Segments[_comboIndex]?.ArrowSpawnTime ?? 0f;
+            if (t >= Mathf.Max(EndThreshold, release + .01f))
                 TransitionToMovement();
         }
 

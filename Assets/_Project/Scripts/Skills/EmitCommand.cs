@@ -14,6 +14,7 @@ namespace Game.Skills
         // EmitCommand 具体是怎样设计的
         // ── 第一组：应该生成什么数据：Runtime 应创建哪个 Prefab、采用哪种空间生成策略 ──
         public readonly GameObject ProjectilePrefab;        // 投射物 Prefab 引用
+        public readonly float LifetimeSeconds, LifetimeAddSeconds, LifetimeMul;
         public readonly SpellSpawnMode SpawnMode;           // 普通向前发射、定点生成还是天空坠落
         public readonly GameObject LandingSitePrefab;       // 落地点提示特效
         public readonly float SkyfallHeight;                // 天空生成高度
@@ -67,9 +68,11 @@ namespace Game.Skills
                            ProjectileMotionMode motionMode,
                            AudioClip castSfx,
                            IReadOnlyList<SpellDefinition> payload, CastModifierState payloadMods,
-                           PayloadTriggerMode payloadTrigger, float payloadDelaySeconds)
+                           PayloadTriggerMode payloadTrigger, float payloadDelaySeconds, float lifetimeSeconds=-1, float lifetimeAddSeconds=0, float lifetimeMul=1)
         {
             ProjectilePrefab = projectilePrefab;
+            LifetimeSeconds=lifetimeSeconds;LifetimeAddSeconds=lifetimeAddSeconds;
+            LifetimeMul=lifetimeMul;
             SpawnMode = spawnMode;
             LandingSitePrefab = landingSitePrefab;
             SkyfallHeight = skyfallHeight;

@@ -26,7 +26,7 @@ namespace Game.Run.Tests
     public sealed class SpellAttachmentPlayModeTests
     {
         private const string ScenePath = "Assets/_Project/Scenes/Tests/AttachmentSandbox.unity";
-        private const string Root = "Assets/_Project/ScriptableObjects/Tests/SinglePlayerContainers/";
+        private const string Root = "Assets/_Project/Tests/Fixtures/Run/SinglePlayerContainers/";
         private Scene _scene;
         private SinglePlayerInventorySession _session;
         private OwnedWandCastAdapter _adapter;
@@ -50,11 +50,18 @@ namespace Game.Run.Tests
         {
             _time = Time.timeScale; _lock = Cursor.lockState; _cursor = Cursor.visible; Time.timeScale = 1;
             _directory = Path.GetFullPath(Path.Combine("Temp/SinglePlayer/AttachmentTests", Guid.NewGuid().ToString("N")));
-            _catalog = Object.Instantiate(AssetDatabase.LoadAssetAtPath<ItemCatalog>(Root + "Catalog.asset")); _temporary.Add(_catalog);
+            _catalog = Object.Instantiate(AssetDatabase.LoadAssetAtPath<ItemCatalog>("Assets/_Project/Tests/Fixtures/Run/SinglePlayerContainers/Catalog.asset")); _temporary.Add(_catalog);
             var originals = (ItemDefinition[])Field(typeof(ItemCatalog), "_definitions").GetValue(_catalog); var copies = new ItemDefinition[originals.Length];
             for (int i = 0; i < copies.Length; i++)
             {
                 copies[i] = Object.Instantiate(originals[i]); _temporary.Add(copies[i]);
+                if (copies[i].Kind == ItemKind.Container && copies[i].WorldModel == null)
+                {
+                    // 当前投掷链必须有可见WorldModel；旧测试目录缺这一字段。
+                    // 只给本次克隆提供临时几何，不修改正式SO，也不绕过运行时的资源校验。
+                    var model = GameObject.CreatePrimitive(PrimitiveType.Capsule); model.name = "Attachment test bottle model";
+                    model.SetActive(false); _temporary.Add(model); Field(typeof(ItemDefinition), "_worldModel").SetValue(copies[i], model);
+                }
                 if (copies[i].SpellDefinition == null) continue;
                 var spell = Object.Instantiate(copies[i].SpellDefinition); _temporary.Add(spell); spell.CastSfx = null;
                 Field(typeof(ItemDefinition), "_spellDefinition").SetValue(copies[i], spell);
@@ -74,7 +81,7 @@ namespace Game.Run.Tests
             _session = Find<SinglePlayerInventorySession>(); _adapter = Find<OwnedWandCastAdapter>(); _caster = Find<SpellCaster>(); _wizard = Find<WizardController>();
             _collection = Find<MaterialCollectionController>(); _use = Find<ContainerUseController>(); _world = Find<ElementWorldRuntime>(); _supply = Find<ContainerSandboxMaterialAuthoring>();
             _ui = Find<SinglePlayerInventoryController>(); _view = Find<SpellAttachmentView>();
-            Assert.That(_session.ConfigureAndInitialize(_catalog, AssetDatabase.LoadAssetAtPath<SinglePlayerStartingInventory>("Assets/_Project/ScriptableObjects/Tests/SinglePlayerAttachments/StartingInventory.asset"), _directory), Is.True);
+            Assert.That(_session.ConfigureAndInitialize(_catalog, AssetDatabase.LoadAssetAtPath<SinglePlayerStartingInventory>("Assets/_Project/Tests/Fixtures/Run/SinglePlayerAttachments/StartingInventory.asset"), _directory), Is.True);
         }
         private void Fill(ulong quantity = 3)
         {
@@ -108,7 +115,7 @@ namespace Game.Run.Tests
             Fill(30); string bottle = _collection.SelectedContainerId; Set(Card(2, 1), bottle);
             Assert.That(Cast(), Is.EqualTo(1)); Assert.That(Bottle(bottle), Is.EqualTo(30)); Assert.That(_session.PendingMaterialOutputs, Is.Zero);
             Set(Card(), bottle); _use.SubmitUse(ContainerUseKind.Throw, 0, _collection.transform.position + Vector3.forward);
-            Assert.That(_use.LastResult.Success, Is.True); yield return new WaitForSeconds(.9f);
+            Assert.That(_use.LastResult.Success, Is.True, _use.LastResult.Transfer.Failure.ToString()); yield return new WaitForSeconds(.9f);
             Assert.That(Cast(), Is.EqualTo(1)); Assert.That(_view.Feedback, Does.Contain("供料失效"));
         }
         [UnityTest] public IEnumerator EmptySourceKeepsOrdinaryOutputAndManaCharge()

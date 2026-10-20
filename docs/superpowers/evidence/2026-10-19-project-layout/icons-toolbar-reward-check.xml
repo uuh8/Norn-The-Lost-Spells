@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="9" result="Failed(Child)" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-19 12:28:19Z" end-time="2026-10-19 12:28:20Z" duration="0.9006003">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2111" result="Failed" site="Child" start-time="2026-10-19 12:28:19Z" end-time="2026-10-19 12:28:20Z" duration="0.900600" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3378" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="650" result="Failed" site="Child" start-time="2026-10-19 12:28:19Z" end-time="2026-10-19 12:28:20Z" duration="0.782695" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22796" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3379" name="Game" fullname="Game" runstate="Runnable" testcasecount="650" result="Failed" site="Child" start-time="2026-10-19 12:28:19Z" end-time="2026-10-19 12:28:20Z" duration="0.709090" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3380" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="650" result="Failed" site="Child" start-time="2026-10-19 12:28:19Z" end-time="2026-10-19 12:28:20Z" duration="0.609009" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3381" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="650" result="Failed" site="Child" start-time="2026-10-19 12:28:20Z" end-time="2026-10-19 12:28:20Z" duration="0.509812" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2734" name="HubSpellResearchAccessTests" fullname="Game.Run.Tests.HubSpellResearchAccessTests" classname="Game.Run.Tests.HubSpellResearchAccessTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-19 12:28:20Z" end-time="2026-10-19 12:28:20Z" duration="0.407711" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2735" name="EveryDungeonRewardHasOneResolvableOwnedItemAfterContentMaintenance" fullname="Game.Run.Tests.HubSpellResearchAccessTests.EveryDungeonRewardHasOneResolvableOwnedItemAfterContentMaintenance" methodname="EveryDungeonRewardHasOneResolvableOwnedItemAfterContentMaintenance" classname="Game.Run.Tests.HubSpellResearchAccessTests" runstate="Runnable" seed="439157807" result="Failed" start-time="2026-10-19 12:28:20Z" end-time="2026-10-19 12:28:20Z" duration="0.210048" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Spell_Emit_TerminationFireball
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.HubSpellResearchAccessTests.EveryDungeonRewardHasOneResolvableOwnedItemAfterContentMaintenance () [0x00047] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\HubSpellResearchAccessTests.cs:15
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2744" name="ResearchGrantCarriesIdentityAndCannotBeReplayedFromGenericSuccess" fullname="Game.Run.Tests.HubSpellResearchAccessTests.ResearchGrantCarriesIdentityAndCannotBeReplayedFromGenericSuccess" methodname="ResearchGrantCarriesIdentityAndCannotBeReplayedFromGenericSuccess" classname="Game.Run.Tests.HubSpellResearchAccessTests" runstate="Runnable" seed="1003677839" result="Passed" start-time="2026-10-19 12:28:20Z" end-time="2026-10-19 12:28:20Z" duration="0.026239" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2743" name="ResearchHasDistinctStationAndPauseOwnershipWithoutChangingExistingValues" fullname="Game.Run.Tests.HubSpellResearchAccessTests.ResearchHasDistinctStationAndPauseOwnershipWithoutChangingExistingValues" methodname="ResearchHasDistinctStationAndPauseOwnershipWithoutChangingExistingValues" classname="Game.Run.Tests.HubSpellResearchAccessTests" runstate="Runnable" seed="523465335" result="Passed" start-time="2026-10-19 12:28:20Z" end-time="2026-10-19 12:28:20Z" duration="0.021951" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="2742" name="SuppliedMechanicIcons_AreSharedBySpellInventoryAndShop" fullname="Game.Run.Tests.HubSpellResearchAccessTests.SuppliedMechanicIcons_AreSharedBySpellInventoryAndShop" classname="Game.Run.Tests.HubSpellResearchAccessTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-19 12:28:20Z" end-time="2026-10-19 12:28:20Z" duration="0.032713" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="2736" name="SuppliedMechanicIcons_AreSharedBySpellInventoryAndShop(&quot;Modify_ManaRestore&quot;,&quot;法力回流&quot;,&quot;add_mana&quot;)" fullname="Game.Run.Tests.HubSpellResearchAccessTests.SuppliedMechanicIcons_AreSharedBySpellInventoryAndShop(&quot;Modify_ManaRestore&quot;,&quot;法力回流&quot;,&quot;add_mana&quot;)" methodname="SuppliedMechanicIcons_AreSharedBySpellInventoryAndShop" classname="Game.Run.Tests.HubSpellResearchAccessTests" runstate="Runnable" seed="516644694" result="Passed" start-time="2026-10-19 12:28:20Z" end-time="2026-10-19 12:28:20Z" duration="0.008408" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="2737" name="SuppliedMechanicIcons_AreSharedBySpellInventoryAndShop(&quot;Modify_CastFaster&quot;,&quot;快速释放&quot;,&quot;cast_faster&quot;)" fullname="Game.Run.Tests.HubSpellResearchAccessTests.SuppliedMechanicIcons_AreSharedBySpellInventoryAndShop(&quot;Modify_CastFaster&quot;,&quot;快速释放&quot;,&quot;cast_faster&quot;)" methodname="SuppliedMechanicIcons_AreSharedBySpellInventoryAndShop" classname="Game.Run.Tests.HubSpellResearchAccessTests" runstate="Runnable" seed="920949030" result="Passed" start-time="2026-10-19 12:28:20Z" end-time="2026-10-19 12:28:20Z" duration="0.003533" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="2738" name="SuppliedMechanicIcons_AreSharedBySpellInventoryAndShop(&quot;Modify_ReloadFaster&quot;,&quot;快速周转&quot;,&quot;reload_faster&quot;)" fullname="Game.Run.Tests.HubSpellResearchAccessTests.SuppliedMechanicIcons_AreSharedBySpellInventoryAndShop(&quot;Modify_ReloadFaster&quot;,&quot;快速周转&quot;,&quot;reload_faster&quot;)" methodname="SuppliedMechanicIcons_AreSharedBySpellInventoryAndShop" classname="Game.Run.Tests.HubSpellResearchAccessTests" runstate="Runnable" seed="381126841" result="Passed" start-time="2026-10-19 12:28:20Z" end-time="2026-10-19 12:28:20Z" duration="0.004086" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="2739" name="SuppliedMechanicIcons_AreSharedBySpellInventoryAndShop(&quot;Copy_Alpha&quot;,&quot;α借用&quot;,&quot;alpha&quot;)" fullname="Game.Run.Tests.HubSpellResearchAccessTests.SuppliedMechanicIcons_AreSharedBySpellInventoryAndShop(&quot;Copy_Alpha&quot;,&quot;α借用&quot;,&quot;alpha&quot;)" methodname="SuppliedMechanicIcons_AreSharedBySpellInventoryAndShop" classname="Game.Run.Tests.HubSpellResearchAccessTests" runstate="Runnable" seed="30081347" result="Passed" start-time="2026-10-19 12:28:20Z" end-time="2026-10-19 12:28:20Z" duration="0.002930" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="2740" name="SuppliedMechanicIcons_AreSharedBySpellInventoryAndShop(&quot;Copy_Gamma&quot;,&quot;γ借用&quot;,&quot;gamma&quot;)" fullname="Game.Run.Tests.HubSpellResearchAccessTests.SuppliedMechanicIcons_AreSharedBySpellInventoryAndShop(&quot;Copy_Gamma&quot;,&quot;γ借用&quot;,&quot;gamma&quot;)" methodname="SuppliedMechanicIcons_AreSharedBySpellInventoryAndShop" classname="Game.Run.Tests.HubSpellResearchAccessTests" runstate="Runnable" seed="936756654" result="Passed" start-time="2026-10-19 12:28:20Z" end-time="2026-10-19 12:28:20Z" duration="0.003503" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="2741" name="SuppliedMechanicIcons_AreSharedBySpellInventoryAndShop(&quot;Modify_ShortLifetime&quot;,&quot;减少投射物寿命&quot;,&quot;short_life&quot;)" fullname="Game.Run.Tests.HubSpellResearchAccessTests.SuppliedMechanicIcons_AreSharedBySpellInventoryAndShop(&quot;Modify_ShortLifetime&quot;,&quot;减少投射物寿命&quot;,&quot;short_life&quot;)" methodname="SuppliedMechanicIcons_AreSharedBySpellInventoryAndShop" classname="Game.Run.Tests.HubSpellResearchAccessTests" runstate="Runnable" seed="2103072776" result="Passed" start-time="2026-10-19 12:28:20Z" end-time="2026-10-19 12:28:20Z" duration="0.002947" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

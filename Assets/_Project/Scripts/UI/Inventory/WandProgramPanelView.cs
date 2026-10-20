@@ -50,23 +50,24 @@ namespace Game.UI
             InventoryItemSnapshot wand=default; bool found=false;
             for (int i=0;i<count;i++) if (items[i].Location.Kind==ItemLocationKind.EquippedWand && items[i].Location.OwnerId==actor
                 && items[i].Location.SlotIndex==_wandSlot) { wand=items[i]; found=true; break; }
-            int capacity=found?wand.Rules.WandProgramCapacity:0, occupied=0, protectedCount=0;
-            var protection=controller.Session.RunCoordinator?.Protection;
+            int capacity=found?wand.Rules.WandProgramCapacity:0, occupied=0;
             for (int i=0;i<count;i++) if (items[i].Location.Kind==ItemLocationKind.WandSlot && items[i].Location.OwnerId==wand.InstanceId)
-            { occupied++; if(protection!=null && protection.Contains(items[i].InstanceId)) protectedCount++; }
+            { occupied++; }
             if(_icon!=null) { _icon.sprite=found?wand.Icon:null;_icon.enabled=found && wand.Icon!=null; }
             if(_wandDrag==null)_wandDrag=_icon.GetComponent<EquippedWandDragView>()??_icon.gameObject.AddComponent<EquippedWandDragView>();
             _wandDrag.Bind(controller,wand,found);
-            _header.font=controller.UiFont; _header.text=(_wandSlot+1)+" · "+(found?wand.DisplayName:"空法杖位 · 拖入法杖");
+            _header.font=controller.UiFont;_header.supportRichText=true;_header.fontSize=20;_header.resizeTextForBestFit=false;
+            _header.text=(_wandSlot+1)+" · "+(found?wand.DisplayName:"空法杖位 · 拖入法杖");
             var read=controller.Session.WandsReadOnly;
             if (found && read.TryGetState(wand.InstanceId,out var state) && read.TryGetProgram(wand.InstanceId,out var program))
             {
                 // UI打开会暂停。离散库存刷新才求预览，持续恢复的资源由外部HUD显示。
-                var summary=CastEvaluator.Evaluate(program.Program,program.BaseDraws,float.MaxValue,CastModifierState.Default,_preview);
-                _header.text+="\nMana "+state.CurrentMana.ToString("0.#")+"/"+state.MaxMana.ToString("0.#")
-                    +" · 恢复 "+state.ManaRegenPerSecond.ToString("0.#")+"/s · 冷却 "+state.CooldownRemaining.ToString("0.##")+"/"+state.CastCooldown.ToString("0.##")+"s"
-                    +"\n法术槽 "+occupied+"/"+capacity+" · 基础抽取 "+program.BaseDraws+" · 本次预估蓝耗 "+summary.ManaSpent.ToString("0.#")
-                    +" · 受保护法术 "+protectedCount;
+                float mana;
+                if(controller.Session.UseSpellProgrammingV2)mana=WandInventoryView.V2ManaPreview(controller.Session,wand.InstanceId);
+                else mana=CastEvaluator.Evaluate(program.Program,program.BaseDraws,float.MaxValue,CastModifierState.Default,_preview).ManaSpent;
+                _header.text+=" · 法术槽 "+occupied+"/"+capacity+" · 基础抽取 "+program.BaseDraws
+                    +"\n"+WandInventoryView.ResourceCaption(state)
+                    +"\n"+WandInventoryView.ManaPreviewCaption(program,mana);
             }
             while (_slots.Count<capacity)
             {

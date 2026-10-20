@@ -39,7 +39,7 @@ namespace Game.Run
                 if (!_profile.Items.Catalog.TryGetRules(request.MaterialContentId, out rules) || rules.Kind != ItemKind.Material
                     || (rules.MaterialKey != 5 && rules.MaterialKey != 6) || !IsCarriedBackpack(request.BackpackId))
                 { result.Failure = MaterialTransferFailure.WrongOwnership; return result; }
-                item = new RuntimeItemState("pending", request.MaterialContentId, 0);
+                item = null; // 固体目标由预约选择已有堆；只有确需新格时创建身份。
             }
             else
             {
@@ -50,7 +50,7 @@ namespace Game.Run
                 { result.Failure = MaterialTransferFailure.WrongOwnership; return result; }
                 _profile.Items.Catalog.TryGetRules(item.ContentId, out rules);
             }
-            _reservation.Configure(item, request.BackpackId, rules, request.ExpectedVersion, request.SolidItem);
+            _reservation.Configure(item, request.BackpackId, rules, request.ExpectedVersion, request.SolidItem,request.MaterialContentId);
             if (_reservation.FreeCapacity == 0) { result.Failure = MaterialTransferFailure.Capacity; return result; }
             _executing = true;
             try

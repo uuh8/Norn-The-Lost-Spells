@@ -10,8 +10,8 @@ namespace Game.Run.Tests
     /// <summary>正式容量和输入冲突的外部契约；不保存Scene、不接触真实玩家档。</summary>
     public sealed class BackpackAuthoringTests
     {
-        [TestCase("Assets/_Project/ScriptableObjects/SinglePlayer/Hub/SinglePlayerWands/bag.asset")]
-        [TestCase("Assets/_Project/ScriptableObjects/SinglePlayer/Hub/SinglePlayerRaids/StarterBag.asset")]
+        [TestCase("Assets/_Project/ScriptableObjects/Items/Backpacks/Item_Backpack_Bag.asset")]
+        [TestCase("Assets/_Project/ScriptableObjects/Items/Backpacks/Item_Backpack_StarterBag.asset")]
         public void FormalBackpackHasSixtyFourRealCells(string path)
         {
             var bag = AssetDatabase.LoadAssetAtPath<ItemDefinition>(path);

@@ -22,7 +22,7 @@ namespace Game.Run.Tests
     public sealed class ContainerSandboxPlayModeTests
     {
         private const string ScenePath = "Assets/_Project/Scenes/Tests/ContainerSandbox.unity";
-        private const string Root = "Assets/_Project/ScriptableObjects/Tests/SinglePlayerContainers/";
+        private const string Root = "Assets/_Project/Tests/Fixtures/Run/SinglePlayerContainers/";
         private Scene _scene;
         private SinglePlayerInventorySession _session;
         private ElementWorldRuntime _world;
@@ -50,8 +50,8 @@ namespace Game.Run.Tests
             if (scene.path != ScenePath) return;
             _scene = scene; _session = Find<SinglePlayerInventorySession>(); _world = Find<ElementWorldRuntime>();
             _collector = Find<MaterialCollectionController>(); _supply = Find<ContainerSandboxMaterialAuthoring>();
-            Assert.That(_session.ConfigureAndInitialize(AssetDatabase.LoadAssetAtPath<ItemCatalog>(Root + "Catalog.asset"),
-                AssetDatabase.LoadAssetAtPath<SinglePlayerStartingInventory>(Root + "StartingInventory.asset"), _directory), Is.True);
+            Assert.That(_session.ConfigureAndInitialize(AssetDatabase.LoadAssetAtPath<ItemCatalog>("Assets/_Project/Tests/Fixtures/Run/SinglePlayerContainers/Catalog.asset"),
+                AssetDatabase.LoadAssetAtPath<SinglePlayerStartingInventory>("Assets/_Project/Tests/Fixtures/Run/SinglePlayerContainers/StartingInventory.asset"), _directory), Is.True);
         }
         private T Find<T>() where T : Component
         { foreach (var root in _scene.GetRootGameObjects()) { var value = root.GetComponentInChildren<T>(true); if (value != null) return value; } return null; }

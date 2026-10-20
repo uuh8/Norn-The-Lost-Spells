@@ -11,21 +11,21 @@ namespace Game.Character.Tests
     public sealed class EnemySpellProgramAssetContractTests
     {
         private const string SpellPath =
-            "Assets/_Project/ScriptableObjects/Enemy/EnemySpells/EnemySpell_Emit_Fireball.asset";
+            "Assets/_Project/ScriptableObjects/Spell/Definitions/Enemy/Spell_Emit_Fireball.asset";
         private const string ProgramPath =
-            "Assets/_Project/ScriptableObjects/Enemy/Programs/Enemy_Wizard_Program_Fireball.asset";
+            "Assets/_Project/ScriptableObjects/Spell/Programs/Enemy/Wand_Enemy_Wizard_Fireball.asset";
         private const string PrefabPath =
             "Assets/_Project/Art/Prefabs/BaseEnemy/MagicEnemy_Base.prefab";
         private const string ArrowSpellPath =
-            "Assets/_Project/ScriptableObjects/Enemy/EnemySpells/EnemySpell_Emit_Arrow.asset";
+            "Assets/_Project/ScriptableObjects/Spell/Definitions/Enemy/Spell_Emit_Arrow.asset";
         private const string GravitySpellPath =
-            "Assets/_Project/ScriptableObjects/Enemy/EnemySpells/EnemySpell_Mdy_Gravity.asset";
+            "Assets/_Project/ScriptableObjects/Spell/Definitions/Enemy/Spell_Modify_Gravity.asset";
         private const string ArrowProgramPath =
-            "Assets/_Project/ScriptableObjects/Enemy/Programs/Enemy_Arrow_Program.asset";
+            "Assets/_Project/ScriptableObjects/Spell/Programs/Enemy/Wand_Enemy_Arrow.asset";
         private const string ArrowDefinitionPath =
-            "Assets/_Project/ScriptableObjects/Enemy/Enemy_Arrow_Definition.asset";
+            "Assets/_Project/ScriptableObjects/Enemies/Definitions/EnemyDefinition_Arrow.asset";
         private const string ArrowAttackPath =
-            "Assets/_Project/ScriptableObjects/Enemy/Enemy_Arrow_AttackDefinition.asset";
+            "Assets/_Project/ScriptableObjects/Enemies/Attacks/Enemy_Arrow_AttackDefinition.asset";
         private const string ArrowPrefabPath =
             "Assets/_Project/Art/Prefabs/BaseEnemy/ArrowEnemy_Base.prefab";
         private const string BowControllerPath =

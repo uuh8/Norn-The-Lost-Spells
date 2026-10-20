@@ -96,6 +96,9 @@ namespace Game.Run
         {
             if (expectedVersion != Version) return Result(false, InventoryFailureReason.StaleVersion);
             if (!TryGet(instanceId, out RuntimeItemState item)) return Result(false, InventoryFailureReason.NotFound);
+            if(item.Material!=null&&destination.Kind==ItemLocationKind.Backpack)
+                foreach(var target in _items.Values)if(target.Item.InstanceId!=instanceId&&target.Location==destination&&MaterialStackOps.Compatible(item,target.Item))
+                    return MaterialStackOps.TryMerge(this,instanceId,target.Item.InstanceId,expectedVersion);
             return TryApply(new[] { new InventoryEntry(item, destination) }, expectedVersion);
         }
 
@@ -114,6 +117,7 @@ namespace Game.Run
                 if (reason != InventoryFailureReason.None) return Result(false, reason);
                 if (!candidate.TryGetValue(next.Item.InstanceId, out InventoryEntry previous)) return Result(false, InventoryFailureReason.NotFound);
                 if (previous.Item.IsStarterEquipment != next.Item.IsStarterEquipment) return Result(false, InventoryFailureReason.InvalidState);
+                if(!ItemStackOps.MatchingWandStats(previous.Item,next.Item))return Result(false,InventoryFailureReason.InvalidState);
                 // 在途归属只允许投掷服务写入，普通拖拽不能从飞行体取回同一满瓶。
                 if (previous.Location.Kind == ItemLocationKind.ThrownContainer || next.Location.Kind == ItemLocationKind.ThrownContainer)
                     return Result(false, InventoryFailureReason.InvalidOwnership);
@@ -126,7 +130,7 @@ namespace Game.Run
                 {
                     if (next.Item.Composition == null && previous.Item.Composition.Total == 0)
                         next = new InventoryEntry(new RuntimeItemState(next.Item.InstanceId, next.Item.ContentId, next.Item.RemainingCharges,
-                            next.Item.HasUnlimitedCharges, next.Item.StackStateKey, previous.Item.Composition, next.Item.Material), next.Location);
+                            next.Item.HasUnlimitedCharges, next.Item.StackStateKey, previous.Item.Composition, next.Item.Material,next.Item.Attachment,next.Item.RolledWandStats), next.Location);
                     if (!ReferenceEquals(next.Item.Composition, previous.Item.Composition)) return Result(false, InventoryFailureReason.InvalidState);
                 }
                 if (previous.Item.Material == null ? next.Item.Material != null : next.Item.Material == null
@@ -170,8 +174,11 @@ namespace Game.Run
                 if (!candidate.TryGetValue(pair.Key, out InventoryEntry entry) || pair.Value <= 0) return false;
                 RuntimeItemState item = entry.Item; if (item.HasUnlimitedCharges) continue;
                 if (item.RemainingCharges < pair.Value) return false;
-                candidate[pair.Key] = new InventoryEntry(new RuntimeItemState(item.InstanceId, item.ContentId,
-                    item.RemainingCharges - pair.Value, false, item.StackStateKey, item.Composition, item.Material, item.Attachment), entry.Location); changed = true;
+                // 候选表只在成功支付后提交；最后一次 Emit 的 Trigger 已保存在 Ticket 中，
+                // 移除卡片释放格子不会取消预付的后续层，失败则整张卡保持原样。
+                if (item.RemainingCharges == pair.Value) candidate.Remove(pair.Key);
+                else candidate[pair.Key] = new InventoryEntry(new RuntimeItemState(item.InstanceId, item.ContentId,
+                    item.RemainingCharges - pair.Value, false, item.StackStateKey, item.Composition, item.Material, item.Attachment,item.RolledWandStats), entry.Location); changed = true;
             }
             if (ValidateAll(candidate) != InventoryFailureReason.None) return false;
             prepared = _prepared = new PreparedInventory(candidate, changed); return true;
@@ -182,6 +189,7 @@ namespace Game.Run
             if (commit && (prepared.Changed || materialChanged)) Commit(prepared.Candidate);
             _prepared = null; return true;
         }
+        internal bool OwnsPreparation(PreparedInventory prepared) => prepared != null && ReferenceEquals(prepared, _prepared);
         internal sealed class PreparedInventory
         {
             internal readonly Dictionary<string, InventoryEntry> Candidate;
@@ -208,7 +216,7 @@ namespace Game.Run
         {
             if (item == null || item.Composition != null || !_catalog.TryGetRules(item.ContentId, out var rules) || rules.Kind != ItemKind.Container) return item;
             return new RuntimeItemState(item.InstanceId, item.ContentId, item.RemainingCharges, item.HasUnlimitedCharges,
-                item.StackStateKey, new ContainerComposition(rules.ContainerCapacity, rules.ContainerMaterials), item.Material);
+                item.StackStateKey, new ContainerComposition(rules.ContainerCapacity, rules.ContainerMaterials), item.Material,item.Attachment,item.RolledWandStats);
         }
 
         internal bool TryPrepareMaterialChange(string id, RuntimeItemState replacement, ItemLocation location, out PreparedInventory prepared)
@@ -216,7 +224,8 @@ namespace Game.Run
             prepared = null;
             if (IsResourceBusy || !_items.TryGetValue(id, out var previous)
                 || !_catalog.TryGetRules(previous.Item.ContentId, out var rules)
-                || (rules.Kind != ItemKind.Container && rules.Kind != ItemKind.Material)) return false;
+                || (rules.Kind != ItemKind.Container && rules.Kind != ItemKind.Material
+                    && !(previous.Location.Kind==ItemLocationKind.ThrownContainer && rules.UseKind==ItemUseKind.Throw))) return false;
             var candidate = new Dictionary<string, InventoryEntry>(_items, StringComparer.Ordinal);
             if (replacement == null) candidate.Remove(id);
             else
@@ -229,6 +238,18 @@ namespace Game.Run
         }
 
         internal InventoryOperationResult Result(bool success, InventoryFailureReason reason) => new InventoryOperationResult(success, reason, Version);
+        internal Dictionary<string,InventoryEntry> CopyCandidate()=>new Dictionary<string,InventoryEntry>(_items,StringComparer.Ordinal);
+        internal InventoryOperationResult CommitMaterialLayout(Dictionary<string,InventoryEntry> candidate,uint version)
+        {
+            if(IsResourceBusy)return Result(false,InventoryFailureReason.ResourceBusy);
+            if(version!=Version)return Result(false,InventoryFailureReason.StaleVersion);
+            // 整理/合并是离散候选事务，材料总量逐键比较；通用移动入口仍不允许改数量。
+            var before=new ulong[256];var after=new ulong[256];
+            foreach(var entry in _items.Values)if(entry.Item.Material!=null)before[entry.Item.Material.MaterialKey]+=entry.Item.Material.Quantity;
+            foreach(var entry in candidate.Values)if(entry.Item.Material!=null)after[entry.Item.Material.MaterialKey]+=entry.Item.Material.Quantity;
+            for(int i=0;i<256;i++)if(before[i]!=after[i])return Result(false,InventoryFailureReason.InvalidState);
+            var reason=ValidateAll(candidate);return reason==InventoryFailureReason.None?FinishCandidate(candidate,true):Result(false,reason);
+        }
         private void Commit(Dictionary<string, InventoryEntry> candidate) { _items = candidate; Version++; }
 
         private InventoryFailureReason ValidateItem(RuntimeItemState item)
@@ -237,6 +258,7 @@ namespace Game.Run
                 return InventoryFailureReason.InvalidIdentity;
             if (item.RemainingCharges < 0 || item.StackStateKey == null) return InventoryFailureReason.InvalidState;
             if (!_catalog.TryGetRules(item.ContentId, out InventoryItemRules rules)) return InventoryFailureReason.UnknownContent;
+            if(item.RolledWandStats.HasValue&&(rules.Kind!=ItemKind.Wand||!item.RolledWandStats.Value.IsValid||!_catalog.ValidateWandTraits(item.RolledWandStats.Value)))return InventoryFailureReason.InvalidState;
             if (rules.Kind != ItemKind.Spell && (item.RemainingCharges != 0 || item.HasUnlimitedCharges)) return InventoryFailureReason.InvalidState;
             if (item.Attachment != null && rules.Kind != ItemKind.Spell) return InventoryFailureReason.InvalidState;
             if (item.Composition != null && (rules.Kind != ItemKind.Container || item.Composition.Capacity != rules.ContainerCapacity
@@ -251,9 +273,10 @@ namespace Game.Run
             foreach (InventoryEntry entry in candidate.Values)
             {
                 // 一个可更新组分只能属于一个实例，防止两个瓶子共享同一数组复制资产。
-                if (entry.Item.Composition != null)
+                if (entry.Item.Composition != null || entry.Item.Material!=null)
                     foreach (InventoryEntry other in candidate.Values)
-                        if (entry.Item.InstanceId != other.Item.InstanceId && ReferenceEquals(entry.Item.Composition, other.Item.Composition))
+                        if (entry.Item.InstanceId != other.Item.InstanceId && (entry.Item.Composition!=null && ReferenceEquals(entry.Item.Composition, other.Item.Composition)
+                            || entry.Item.Material!=null && ReferenceEquals(entry.Item.Material,other.Item.Material)))
                             return InventoryFailureReason.InvalidState;
                 InventoryFailureReason reason = ValidateLocation(entry, candidate);
                 if (reason != InventoryFailureReason.None) return reason;
@@ -298,7 +321,7 @@ namespace Game.Run
                 case ItemLocationKind.WandSlot:
                     if (rules.Kind != ItemKind.Spell) return InventoryFailureReason.WrongKind;
                     if (location.SlotIndex < 0) return InventoryFailureReason.OutOfBounds;
-                    _catalog.TryGetRules(candidate[location.OwnerId].Item.ContentId, out InventoryItemRules wandRules);
+                    _catalog.TryGetRules(candidate[location.OwnerId].Item, out InventoryItemRules wandRules);
                     if (location.SlotIndex >= wandRules.WandProgramCapacity) return InventoryFailureReason.OutOfBounds;
                     if (!HasZeroGridMetadata(location)) return InventoryFailureReason.InvalidState;
                     break;
@@ -317,7 +340,8 @@ namespace Game.Run
                     if (location.SlotIndex != -1 || !HasZeroGridMetadata(location)) return InventoryFailureReason.InvalidState;
                     break;
                 case ItemLocationKind.ThrownContainer:
-                    if (rules.Kind != ItemKind.Container) return InventoryFailureReason.WrongKind;
+                    // 保留旧序列化location编号；它现在也承载普通物体在途，不复制第二份库存。
+                    if (rules.Kind != ItemKind.Container && rules.UseKind != ItemUseKind.Throw) return InventoryFailureReason.WrongKind;
                     if (location.SlotIndex != -1 || !HasZeroGridMetadata(location)) return InventoryFailureReason.InvalidState;
                     break;
                 case ItemLocationKind.WorldItem:

@@ -1,0 +1,934 @@
+using System;
+using System.IO;
+using Game.ElementField;
+using Game.Rendering;
+using Game.Character;
+using Game.Combat;
+using Game.Skills;
+using Game.Materials;
+using UnityEditor;
+using UnityEditor.Build.Reporting;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+namespace Game.EditorTools
+{
+    /// <summary>
+    /// 独立原型的显式 Play Mode 观测入口；只在外部请求时读 Inspector 数据，
+    /// 不自动生成、保存或修改场景。帧时间用预分配环形数组，避免测量本身产生热路径 GC。
+    /// </summary>
+    [InitializeOnLoad]
+    internal static class GridLiquidPrototypeCapture
+    {
+        private enum BenchmarkSceneKind { World, Sector, Partial, P7, Dense }
+
+        private const string ReservoirScene =
+            "Assets/_Project/Scenes/Prototypes/LiquidReservoirPrototype.unity";
+        private const string WorldScene =
+            "Assets/_Project/Scenes/Prototypes/LiquidWorldPrototype.unity";
+        private const string SectorScene =
+            "Assets/_Project/Scenes/Prototypes/LiquidSectorPrototype.unity";
+        private const string PartialScene =
+            "Assets/_Project/Scenes/Prototypes/LiquidPartialSurfacePrototype.unity";
+        private const string P7ComparisonScene =
+            "Assets/_Project/Scenes/Prototypes/P7_DemoRun_GridLiquid.unity";
+        private const string DenseScene =
+            "Assets/_Project/Scenes/Prototypes/LiquidDenseLakePrototype.unity";
+        private const string PlayerFolder = "Builds/GridLiquidPrototypeBenchmark";
+        private const string RequestPath = "Temp/ElementPerformance/grid-liquid-capture.request";
+        private const string ResultPath = "Temp/ElementPerformance/grid-liquid-capture.json";
+        private static readonly float[] FrameMs = new float[300];
+        private static int _frameCursor, _frameCount, _lastFrame = -1;
+        private static int _remainingSteps;
+        private static double _nextPoll;
+        private static double _nextStep;
+        private static Vector3 _fireCaptureCenter;
+        private static Camera _fireCaptureCamera;
+        private static Transform _fireOriginalInterest;
+
+        static GridLiquidPrototypeCapture()
+        {
+            EditorApplication.update+=Poll;
+            EditorApplication.playModeStateChanged+=OnValidationPlayState;
+        }
+        private static void OnValidationPlayState(PlayModeStateChange state)
+        {
+            if(!SessionState.GetBool("LiquidValidation.BackgroundRequested",false))return;
+            if(state==PlayModeStateChange.EnteredPlayMode)
+            {
+                // 只给显式验证窗口启用后台帧；在第一个Runtime Update之前设置，避免初始化停在第1帧。
+                SessionState.SetBool("LiquidValidation.PreviousBackground",Application.runInBackground);Application.runInBackground=true;EditorApplication.QueuePlayerLoopUpdate();
+            }
+            if(state==PlayModeStateChange.EnteredEditMode)
+            {Application.runInBackground=SessionState.GetBool("LiquidValidation.PreviousBackground",false);SessionState.SetBool("LiquidValidation.BackgroundRequested",false);}
+        }
+
+        private static void Poll()
+        {
+            if (_remainingSteps > 0 && EditorApplication.isPlaying
+                && EditorApplication.timeSinceStartup >= _nextStep)
+            {
+                // Editor 在后台可能停帧；逐帧命令只验证数量与状态，不作 FPS 证据。
+                EditorApplication.isPaused = true;
+                EditorApplication.Step();
+                _remainingSteps--;
+                _nextStep = EditorApplication.timeSinceStartup + .05d;
+            }
+            if (EditorApplication.isPlaying && !EditorApplication.isPaused
+                && Time.frameCount != _lastFrame)
+            {
+                _lastFrame = Time.frameCount;
+                FrameMs[_frameCursor] = Time.unscaledDeltaTime * 1000f;
+                _frameCursor = (_frameCursor + 1) % FrameMs.Length;
+                if (_frameCount < FrameMs.Length) _frameCount++;
+            }
+            if (EditorApplication.timeSinceStartup < _nextPoll) return;
+            _nextPoll = EditorApplication.timeSinceStartup + .25d;
+            if (!File.Exists(RequestPath)) return;
+            string command = File.ReadAllText(RequestPath).Trim();
+            File.Delete(RequestPath);
+            if(command=="refresh" && !EditorApplication.isPlayingOrWillChangePlaymode)
+            {AssetDatabase.Refresh();return;}
+            if (command == "open-production" && !EditorApplication.isPlayingOrWillChangePlaymode
+                && !EditorSceneManager.GetActiveScene().isDirty)
+            {
+                EditorSceneManager.OpenScene("Assets/_Project/Scenes/P7_DemoRun.unity");
+                Capture();
+                return;
+            }
+            if (command == "open-reservoir" && !EditorApplication.isPlayingOrWillChangePlaymode
+                && !EditorSceneManager.GetActiveScene().isDirty)
+            {
+                EditorSceneManager.OpenScene(ReservoirScene);
+                Capture();
+                return;
+            }
+            if (command == "open-sector" && !EditorApplication.isPlayingOrWillChangePlaymode
+                && !EditorSceneManager.GetActiveScene().isDirty)
+            {
+                EditorSceneManager.OpenScene(SectorScene);
+                Capture();
+                return;
+            }
+            if (command == "open-partial" && !EditorApplication.isPlayingOrWillChangePlaymode
+                && !EditorSceneManager.GetActiveScene().isDirty)
+            {
+                EditorSceneManager.OpenScene(PartialScene);
+                Capture();
+                return;
+            }
+            if (command == "open-dense" && !EditorApplication.isPlayingOrWillChangePlaymode
+                && !EditorSceneManager.GetActiveScene().isDirty)
+            {
+                EditorSceneManager.OpenScene(DenseScene);
+                Capture();
+                return;
+            }
+            if (command == "build-dense-player" && !EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                BuildPlayerBenchmark(BenchmarkSceneKind.Dense);
+                Capture();
+                return;
+            }
+            if (command == "build-player" && !EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                BuildPlayerBenchmark(BenchmarkSceneKind.World);
+                Capture();
+                return;
+            }
+            if (command == "build-sector-player" && !EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                BuildPlayerBenchmark(BenchmarkSceneKind.Sector);
+                Capture();
+                return;
+            }
+            if (command == "build-partial-player" && !EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                BuildPlayerBenchmark(BenchmarkSceneKind.Partial);
+                Capture();
+                return;
+            }
+            if (command == "build-p7-player" && !EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                // 独立 P7 对照 Player 由用户实际施法；构建不改正式场景或 Build Settings。
+                BuildPlayerBenchmark(BenchmarkSceneKind.P7);
+                Capture();
+                return;
+            }
+            if (command == "audit-p7" && !EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                GridLiquidP7CutoverAudit.Run();
+                Capture();
+                return;
+            }
+            if (command == "play" && !EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                SessionState.SetBool("LiquidValidation.BackgroundRequested",true);
+                EditorApplication.EnterPlaymode();
+                return;
+            }
+            if (command == "background-on" && EditorApplication.isPlaying)
+            {
+                // 自动化读取指标时 Editor 不占焦点；否则 Play Mode 会停在同一帧，
+                // 把“未继续模拟”误当作排水或性能问题。只用于独立原型测试。
+                Application.runInBackground = true;
+            }
+            if(command=="dismiss-validation-guide" && EditorApplication.isPlaying)
+            {
+                // 新Play会正常打开Gameplay Guide并申请暂停。验证走它的公开Close，
+                // 让暂停所有者释放自己的Reason，不绕过Coordinator强写timeScale。
+                Type guideType=Type.GetType("Game.UI.GameplayGuideController, Game.UI");
+                if(guideType!=null)foreach(var guide in UnityEngine.Object.FindObjectsByType(guideType,FindObjectsSortMode.None))
+                    guideType.GetMethod("Close").Invoke(guide,null);
+            }
+            if (command == "focus-game" && EditorApplication.isPlaying)
+            {
+                Type gameViewType = Type.GetType("UnityEditor.GameView,UnityEditor");
+                if (gameViewType != null) EditorWindow.GetWindow(gameViewType).Focus();
+                Application.runInBackground = true;
+            }
+            if (command == "step-120" && EditorApplication.isPlaying)
+            {
+                _remainingSteps = 120;
+                _nextStep = EditorApplication.timeSinceStartup;
+                EditorApplication.isPaused = true;
+            }
+            if (command == "profile-flow" && EditorApplication.isPlaying)
+            {
+                // 显式短窗口诊断：不开 Deep Profile、不修改用户场景或法杖。
+                StartProfile();
+                var world = UnityEngine.Object.FindFirstObjectByType<ElementWorldRuntime>();
+                var wizard = UnityEngine.Object.FindFirstObjectByType<WizardController>();
+                if (world != null && wizard != null && Physics.Raycast(wizard.transform.position
+                        + new Vector3(4f,12f,4f),Vector3.down,out RaycastHit hit,24f,1<<8))
+                {
+                    var request = new ElementWriteRequest(hit.point+Vector3.up*4f,
+                        MaterialId.Water,6120,.6f,false);
+                    world.TryEnqueueWrite(in request);
+                }
+            }
+            if(command=="profile-window" && EditorApplication.isPlaying)StartProfile();
+            if(command=="protect-benchmark-player" && EditorApplication.isPlaying)
+            {
+                // 仅显式压力测量保护测试角色，避免死亡菜单暂停材料世界。
+                // 不改Prefab/Asset或正式伤害规则；退出这次Play时实例与开关一起销毁。
+                var players=UnityEngine.Object.FindObjectsByType<WizardController>(FindObjectsSortMode.None);
+                string receipt=DateTime.UtcNow.ToString("O");
+                foreach(var player in players)
+                {var health=player.GetComponentInParent<HealthComponent>();if(health==null)continue;health.SetInvulnerable(true);receipt+="\n"+player.name+" HP="+health.CurrentHp+" Invulnerable="+health.IsInvulnerable;}
+                File.WriteAllText("Temp/ElementPerformance/benchmark-player-protection.txt",receipt);
+            }
+            if ((command == "seed-fire-row" || command == "fire-camera" || command == "fire-camera-low"
+                || command == "fire-camera-high" || command == "fire-camera-overhead" || command == "fire-camera-overhead-roll"
+                || command == "fire-lod-far" || command == "fire-lod-near" || command == "fire-inspect"
+                || command == "fire-no-splats" || command == "fire-opaque-surface" || command == "fire-appearance-restore") && EditorApplication.isPlaying)
+                FireVisualDiagnostic(command);
+            if(command=="visibility-seed-distant" && EditorApplication.isPlaying)
+            {
+                // 只在显式诊断Play中创建远处数量，停止Play即恢复原关卡；不改Asset或保存Scene。
+                var world=UnityEngine.Object.FindFirstObjectByType<ElementWorldRuntime>();var source=world!=null?world.GridLiquids as LiquidWorldRuntime:null;
+                int accepted=0;
+                if(source!=null)for(int i=0;i<120;i++)
+                {
+                    Vector3 at=world.InterestPosition+new Vector3(200+(i%12)*8,5,(i/12)*8);
+                    var cell=ElementWorldCoordinates.WorldToGlobalCell(at,source.Origin,source.CellSize);
+                    if(source.TryAddInitial(cell,MaterialId.Water,256,true))accepted++;
+                }
+                File.WriteAllText("Temp/ElementPerformance/visibility-distant-seeds.txt",DateTime.UtcNow.ToString("O")+" Accepted="+accepted);
+            }
+            if(command=="cast-mixed-five" && EditorApplication.isPlaying)
+            {
+                // 真实施法链，临时Program仅持有四个现有Spell引用；不改用户的法杖资产。
+                var wizard=UnityEngine.Object.FindFirstObjectByType<WizardController>();
+                if(wizard!=null && wizard.SpellCaster!=null)
+                {
+                    var program=ScriptableObject.CreateInstance<WandLoadout>();program.BaseDraws=4;
+                    program.Spells=new[]{
+                        AssetDatabase.LoadAssetAtPath<Game.Skills.SpellDefinition>("Assets/_Project/ScriptableObjects/Spell/Definitions/Spell_Emit_WaterField.asset"),
+                        AssetDatabase.LoadAssetAtPath<Game.Skills.SpellDefinition>("Assets/_Project/ScriptableObjects/Spell/Definitions/Spell_Emit_Fireball.asset"),
+                        AssetDatabase.LoadAssetAtPath<Game.Skills.SpellDefinition>("Assets/_Project/ScriptableObjects/Spell/Definitions/Spell_Emit_PoisonProjectile.asset"),
+                        AssetDatabase.LoadAssetAtPath<Game.Skills.SpellDefinition>("Assets/_Project/ScriptableObjects/Spell/Definitions/Spell_Emit_StickyProjectile.asset")};
+                    var health=wizard.GetComponent<HealthComponent>();var owner=wizard.GetComponent<Collider>();
+                    Vector3 point=wizard.transform.position+wizard.transform.forward*6+wizard.transform.right*3;
+                    var world=UnityEngine.Object.FindFirstObjectByType<ElementWorldRuntime>();
+                    var baker=world!=null?world.GetComponent<ElementFieldSolidBaker>():null;
+                    int mask=baker!=null?new SerializedObject(baker).FindProperty("_solidLayerMask").intValue:~0;
+                    if(Physics.Raycast(point+Vector3.up*12,Vector3.down,out RaycastHit hit,24,mask,QueryTriggerInteraction.Ignore))point=hit.point;
+                    int emitted=0;
+                    try{for(int i=0;i<5;i++)emitted+=wizard.SpellCaster.CastProgram(program,point+new Vector3(i*.5f,4,-2),point+Vector3.right*(i*.5f),health!=null?health.TeamId:(byte)0,wizard.gameObject.GetInstanceID(),owner,SpellManaPolicy.IgnoreMana);}
+                    finally{UnityEngine.Object.DestroyImmediate(program);}
+                    File.WriteAllText("Temp/ElementPerformance/p7-mixed-burst.txt",DateTime.UtcNow.ToString("O")+" Emitted="+emitted);
+                }
+            }
+            if(command.StartsWith("isolate-liquid-",StringComparison.Ordinal) && EditorApplication.isPlaying)
+            {
+                var field=UnityEngine.Object.FindFirstObjectByType<GridLiquidFieldSurfaceRenderer>();
+                if(field!=null)field.SetValidationRenderWork(command!="isolate-liquid-full",command=="isolate-liquid-hidden",true);
+            }
+            if(command=="isolate-liquid-restore" && EditorApplication.isPlaying)
+            {var field=UnityEngine.Object.FindFirstObjectByType<GridLiquidFieldSurfaceRenderer>();if(field!=null)field.SetValidationRenderWork(false,false,false);}
+            if(command.StartsWith("isolate-fire-",StringComparison.Ordinal) && EditorApplication.isPlaying)
+            {var fire=UnityEngine.Object.FindFirstObjectByType<GpuFireParcelRenderer>();if(fire!=null)fire.SetValidationHideDraw(command=="isolate-fire-hidden");}
+            if(command=="isolate-freeze-clock" && EditorApplication.isPlaying)
+            {SessionState.SetFloat("LiquidIsolation.TimeScale",Time.timeScale);Time.timeScale=0;}
+            if(command=="isolate-restore-clock" && EditorApplication.isPlaying)
+                Time.timeScale=SessionState.GetFloat("LiquidIsolation.TimeScale",1);
+            if (command == "finish-flow-profile")
+            {
+                UnityEditorInternal.ProfilerDriver.profileGPU=SessionState.GetBool("LiquidFlow.PreviousGpuProfiler",false);
+                UnityEditorInternal.ProfilerDriver.SetAreaEnabled(UnityEngine.Profiling.ProfilerArea.GPU,SessionState.GetBool("LiquidFlow.PreviousGpuArea",false));
+                UnityEditorInternal.ProfilerDriver.SetAreaEnabled(UnityEngine.Profiling.ProfilerArea.CPU,SessionState.GetBool("LiquidFlow.PreviousCpuProfiler",true));
+                UnityEditorInternal.ProfilerDriver.profileEditor=SessionState.GetBool("LiquidFlow.PreviousEditorProfiler",false);
+                UnityEditorInternal.ProfilerDriver.enabled = SessionState.GetBool("LiquidFlow.PreviousProfiler",false);
+                SessionState.SetBool("LiquidFlow.ProfileActive",false);
+            }
+            if (command == "stop" && EditorApplication.isPlaying)
+            {
+                EditorApplication.ExitPlaymode();
+                return;
+            }
+            if ((command == "deposit-water" || command == "deposit-water-empty")
+                && EditorApplication.isPlaying)
+            {
+                var probes = UnityEngine.Object.FindObjectsByType<LiquidPrototypeProbe>(
+                    FindObjectsInactive.Include, FindObjectsSortMode.None);
+                for (int i = 0; i < probes.Length; i++)
+                    if (probes[i].name == "Water Deposit Probe")
+                    {
+                        // 仅在 Play Mode 临时挪到天然水池之外，检查法术式新水滩能否形成。
+                        if (command == "deposit-water-empty")
+                            probes[i].transform.position = new Vector3(-8f, 1f, -4f);
+                        probes[i].Deposit();
+                    }
+            }
+            if (command == "toggle-outlet" && EditorApplication.isPlaying)
+            {
+                var outlets = UnityEngine.Object.FindObjectsByType<StableLiquidOutletAuthoring>(
+                    FindObjectsInactive.Include, FindObjectsSortMode.None);
+                for (int i = 0; i < outlets.Length; i++) outlets[i].Toggle();
+            }
+            if (command == "toggle-depth-outlet" && EditorApplication.isPlaying)
+            {
+                var outlets = UnityEngine.Object.FindObjectsByType<StableLiquidOutletAuthoring>(
+                    FindObjectsInactive.Include, FindObjectsSortMode.None);
+                for (int i = 0; i < outlets.Length; i++)
+                    if (outlets[i].name == "Depth Lake Outlet - Toggle In Play Mode")
+                        outlets[i].Toggle();
+            }
+            if (command == "screenshot" && EditorApplication.isPlaying)
+            {
+                Directory.CreateDirectory("Temp/ElementPerformance");
+                ScreenCapture.CaptureScreenshot("Temp/ElementPerformance/grid-liquid-game.png");
+            }
+            if(command=="continuous-gpu-counts" && EditorApplication.isPlaying)
+            {
+                // 显式观测才做AsyncGPUReadback；日常Draw不把CPU与GPU同步等待。
+                var field=UnityEngine.Object.FindFirstObjectByType<GridLiquidFieldSurfaceRenderer>();
+                if(field!=null && field.DebugArguments!=null)
+                {
+                    int pages=field.SurfacePages;
+                    UnityEngine.Rendering.AsyncGPUReadback.Request(field.DebugArguments,request=>
+                    {
+                        if(request.hasError)return;var values=request.GetData<uint>();ulong indices=0;int nonempty=0;
+                        for(int i=0;i<pages;i++){indices+=values[i*5];if(values[i*5]>0)nonempty++;}
+                        File.WriteAllText("Temp/ElementPerformance/continuous-gpu-counts.json",JsonUtility.ToJson(new GpuCounts{Utc=DateTime.UtcNow.ToString("O"),Pages=pages,Nonempty=nonempty,Triangles=indices/3},true));
+                    });
+                }
+            }
+            if (command == "cast-validation" && EditorApplication.isPlaying)
+            {
+                // 显式一次性检查：调用真实 SpellCaster/Projectile/Deposit 链，
+                // 不修改玩家法杖资产，不用直接写入 Grid 假装施法通过。
+                WizardController wizard = UnityEngine.Object.FindFirstObjectByType<WizardController>();
+                WandLoadout library = AssetDatabase.LoadAssetAtPath<WandLoadout>(
+                    "Assets/_Project/ScriptableObjects/Spell/Programs/Validation/Wand_GridWater.asset");
+                if (wizard != null && wizard.SpellCaster != null && library != null)
+                {
+                    var program = ScriptableObject.CreateInstance<WandLoadout>();
+                    program.BaseDraws = 1;
+                    var health = wizard.GetComponent<HealthComponent>();
+                    var collider = wizard.GetComponent<Collider>();
+                    var world = UnityEngine.Object.FindFirstObjectByType<ElementWorldRuntime>();
+                    var baker = world != null ? world.GetComponent<ElementFieldSolidBaker>() : null;
+                    int mask = baker != null ? new SerializedObject(baker).FindProperty("_solidLayerMask").intValue : ~0;
+                    int emitted = 0;
+                    try
+                    {
+                        for (int i = 0; i < library.Spells.Length; i++)
+                        {
+                            Vector3 point = wizard.transform.position + new Vector3(3f + i * 2f, 0f, 2f);
+                            if (!Physics.Raycast(point + Vector3.up * 12f, Vector3.down, out RaycastHit hit,
+                                    24f, mask, QueryTriggerInteraction.Ignore)) continue;
+                            program.Spells = new[] { library.Spells[i] };
+                            emitted += wizard.SpellCaster.CastProgram(program, hit.point + Vector3.up * 2f,
+                                hit.point, health != null ? health.TeamId : (byte)0,
+                                wizard.gameObject.GetInstanceID(), collider, SpellManaPolicy.IgnoreMana);
+                        }
+                    }
+                    finally { UnityEngine.Object.DestroyImmediate(program); }
+                    File.WriteAllText("Temp/ElementPerformance/p7-grid-real-cast.txt",
+                        DateTime.UtcNow.ToString("O") + " Emitted=" + emitted);
+                }
+            }
+            if (command == "diagnose-user-cubes" && EditorApplication.isPlaying)
+            {
+                var world=UnityEngine.Object.FindFirstObjectByType<ElementWorldRuntime>();
+                var colliders=UnityEngine.Object.FindObjectsByType<BoxCollider>(FindObjectsSortMode.None);
+                var report=new System.Text.StringBuilder(DateTime.UtcNow.ToString("O"));
+                if(world!=null && world.GridLiquids!=null)
+                    foreach(var collider in colliders)
+                        if(collider.name=="Cube" || collider.name=="Cube (1)")
+                        {
+                            var cell=Vector3Int.FloorToInt((collider.bounds.center-world.Origin)/world.CellSize);
+                            report.Append($"\n{collider.name}: Layer={collider.gameObject.layer}, Enabled={collider.enabled}, "
+                                + $"Trigger={collider.isTrigger}, Cell={cell}, Solid={world.GridLiquids.IsSolidForSurface(cell)}");
+                        }
+                File.WriteAllText("Temp/ElementPerformance/liquid-user-cubes.txt",report.ToString());
+            }
+            if((command=="focus-p7-liquids" || command=="focus-p7-liquids-low") && EditorApplication.isPlaying)
+            {
+                // 仅在 Play 中建立临时验收视角，Stop 后撤销；不保存用户场景或修改 Cinemachine 资产。
+                var wizard=UnityEngine.Object.FindFirstObjectByType<WizardController>();
+                Camera original=Camera.main;
+                if(wizard!=null && original!=null)
+                {
+                    var root=new GameObject("Liquid feedback capture camera");
+                    var camera=root.AddComponent<Camera>();camera.CopyFrom(original);
+                    var cameras=UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsSortMode.None);
+                    foreach(var other in cameras)if(other!=camera)other.enabled=false;
+                    root.tag="MainCamera";
+                    Vector3 target=wizard.transform.position+new Vector3(5f,0f,2f);
+                    root.transform.position=target+new Vector3(-3f,command=="focus-p7-liquids-low"?1.1f:6f,-4f);
+                    root.transform.LookAt(target);camera.fieldOfView=48f;camera.enabled=true;
+                }
+            }
+            if(command=="ignite-sticky-chain" && EditorApplication.isPlaying)
+            {
+                // 一次性八格稀薄燃料，只在第一格上方放火，检查 Runtime Tick 的实际蔓延。
+                var world=UnityEngine.Object.FindFirstObjectByType<ElementWorldRuntime>();
+                var wizard=UnityEngine.Object.FindFirstObjectByType<WizardController>();
+                if(world!=null && wizard!=null && Physics.Raycast(wizard.transform.position
+                    +new Vector3(-2f,12f,3f),Vector3.down,out RaycastHit hit,24f,1<<8))
+                {
+                    var cell=Vector3Int.FloorToInt((hit.point+Vector3.up*world.CellSize*.5f-world.Origin)/world.CellSize);
+                    SessionState.SetInt("LiquidChain.X",cell.x);SessionState.SetInt("LiquidChain.Y",cell.y);
+                    SessionState.SetInt("LiquidChain.Z",cell.z);
+                    bool accepted=true;
+                    for(int i=0;i<8;i++)
+                    {
+                        Vector3 center=world.Origin+((Vector3)(cell+Vector3Int.right*i)+Vector3.one*.5f)*world.CellSize;
+                        var fuel=new ElementWriteRequest(center,MaterialId.Sticky,4,0f,false);
+                        accepted&=world.TryEnqueueWrite(in fuel);
+                    }
+                    Vector3 source=world.Origin+((Vector3)(cell+Vector3Int.up)+Vector3.one*.5f)*world.CellSize;
+                    var flame=new ElementWriteRequest(source,MaterialId.Fire,255,0f,false);
+                    accepted&=world.TryEnqueueWrite(in flame);
+                    File.WriteAllText("Temp/ElementPerformance/liquid-burning-chain.txt",$"{DateTime.UtcNow:O} Accepted={accepted}, FirstCell={cell}, Cells=8, FuelPerCell=4, ExternalFireSources=1");
+                }
+            }
+            if(command=="inspect-sticky-chain" && EditorApplication.isPlaying)
+            {
+                var world=UnityEngine.Object.FindFirstObjectByType<ElementWorldRuntime>();
+                if(world!=null && world.GridLiquids!=null)
+                {
+                    var cell=new Vector3Int(SessionState.GetInt("LiquidChain.X",0),SessionState.GetInt("LiquidChain.Y",0),SessionState.GetInt("LiquidChain.Z",0));
+                    var report=new System.Text.StringBuilder($"\n{DateTime.UtcNow:O}");
+                    for(int i=0;i<8;i++)
+                    {
+                        var sample=cell+Vector3Int.right*i;
+                        world.GridLiquids.TryGetQuantity(sample,MaterialId.Sticky,out uint fuel);
+                        world.TryGetAmount(sample,MaterialId.Fire,out byte flame);
+                        report.Append($"\nCell[{i}]: Sticky={fuel}, Fire={flame}");
+                    }
+                    report.Append($"\nIgnitedStickyGmu={((LiquidWorldRuntime)world.GridLiquids).IgnitedStickyQuantity}");
+                    File.AppendAllText("Temp/ElementPerformance/liquid-burning-chain.txt",report.ToString());
+                }
+            }
+            if (command == "ignite-sticky" && EditorApplication.isPlaying)
+            {
+                var world=UnityEngine.Object.FindFirstObjectByType<ElementWorldRuntime>();
+                var wizard=UnityEngine.Object.FindFirstObjectByType<WizardController>();
+                if(world!=null && wizard!=null && Physics.Raycast(wizard.transform.position
+                        +new Vector3(2f,12f,2f),Vector3.down,out RaycastHit hit,24f,1<<8))
+                {
+                    var cell=Vector3Int.FloorToInt((hit.point+Vector3.up*world.CellSize*.5f-world.Origin)/world.CellSize);
+                    Vector3 center=world.Origin+((Vector3)cell+Vector3.one*.5f)*world.CellSize;
+                    SessionState.SetInt("LiquidIgnition.X",cell.x);SessionState.SetInt("LiquidIgnition.Y",cell.y);
+                    SessionState.SetInt("LiquidIgnition.Z",cell.z);
+                    var samples=new LiquidMaterialCellSample[65536];
+                    int count=((LiquidWorldRuntime)world.GridLiquids).CopyOccupiedCells(MaterialId.Sticky,samples);ulong fuel=0;
+                    for(int i=0;i<count;i++) fuel+=samples[i].Amount;
+                    SessionState.SetString("LiquidIgnition.Before",fuel.ToString());
+                    var sticky=new ElementWriteRequest(center,MaterialId.Sticky,255,0f,false);
+                    var fire=new ElementWriteRequest(center+Vector3.up*world.CellSize,MaterialId.Fire,255,0f,false);
+                    bool retained=world.TryEnqueueWrite(in sticky)&&world.TryEnqueueWrite(in fire);
+                    File.WriteAllText("Temp/ElementPerformance/liquid-user-ignition.txt",
+                        DateTime.UtcNow.ToString("O")+$" Retained={retained}, BeforeSticky={fuel}, AddedSticky=255, FuelCell={cell}");
+                }
+            }
+            if (command == "check-ignition" && EditorApplication.isPlaying)
+            {
+                var world=UnityEngine.Object.FindFirstObjectByType<ElementWorldRuntime>();
+                if(world!=null && world.GridLiquids!=null)
+                {
+                    var cell=new Vector3Int(SessionState.GetInt("LiquidIgnition.X",0),SessionState.GetInt("LiquidIgnition.Y",0),
+                        SessionState.GetInt("LiquidIgnition.Z",0));
+                    var samples=new LiquidMaterialCellSample[65536];
+                    int count=((LiquidWorldRuntime)world.GridLiquids).CopyOccupiedCells(MaterialId.Sticky,samples);ulong fuel=0;
+                    for(int i=0;i<count;i++) fuel+=samples[i].Amount;
+                    world.TryGetAmount(cell,MaterialId.Fire,out byte fire);
+                    File.AppendAllText("Temp/ElementPerformance/liquid-user-ignition.txt",
+                        $"\n{DateTime.UtcNow:O} AfterSticky={fuel}, FireAtFuel={fire}, Cells={count}, "
+                        + $"IgnitedStickyGmu={((LiquidWorldRuntime)world.GridLiquids).IgnitedStickyQuantity}");
+                }
+            }
+            if (command == "toggle-internal" && EditorApplication.isPlaying)
+            {
+                var cells = UnityEngine.Object.FindObjectsByType<StableLiquidStaticCellAuthoring>(
+                    FindObjectsInactive.Include, FindObjectsSortMode.None);
+                for (int i = 0; i < cells.Length; i++) cells[i].Toggle();
+            }
+            if (command == "toggle-sector-internal" && EditorApplication.isPlaying)
+            {
+                var cells = UnityEngine.Object.FindObjectsByType<StableLiquidStaticCellAuthoring>(
+                    FindObjectsInactive.Include, FindObjectsSortMode.None);
+                for (int i = 0; i < cells.Length; i++)
+                    if (cells[i].name == "Sector Lake Internal Floor - Toggle In Play Mode")
+                        cells[i].Toggle();
+            }
+            Capture();
+        }
+
+        private static void Capture()
+        {
+            float[] sorted = new float[_frameCount];
+            Array.Copy(FrameMs, sorted, _frameCount);
+            Array.Sort(sorted);
+            var snapshot = new Snapshot
+            {
+                Utc = DateTime.UtcNow.ToString("O"),
+                Scene = SceneManager.GetActiveScene().path,
+                SceneDirty = EditorSceneManager.GetActiveScene().isDirty,
+                Playing = EditorApplication.isPlaying,
+                Paused = EditorApplication.isPaused,
+                RunInBackground = Application.runInBackground,
+                TimeScale=Time.timeScale,
+                RemainingSteps = _remainingSteps,
+                Frame = Time.frameCount,
+                Samples = sorted.Length,
+                P50Ms = sorted.Length > 0 ? sorted[(sorted.Length-1) / 2] : 0f,
+                P95Ms = sorted.Length > 0 ? sorted[Mathf.CeilToInt(sorted.Length * .95f)-1] : 0f,
+                MaxMs = sorted.Length > 0 ? sorted[sorted.Length - 1] : 0f
+            };
+            // 显式低频 Capture 才分配审计数据。恢复后核对实际开关，不按组件 enabled 猜根对象状态。
+            GameObject[] roots = SceneManager.GetActiveScene().GetRootGameObjects();
+            snapshot.Roots = new RootSnapshot[roots.Length];
+            for (int i = 0; i < roots.Length; i++)
+                snapshot.Roots[i] = new RootSnapshot { Name = roots[i].name, Active = roots[i].activeSelf };
+            Type pauseType = Type.GetType("Game.Run.RunPauseCoordinator, Game.Run");
+            if (pauseType != null)
+                foreach (var coordinator in UnityEngine.Object.FindObjectsByType(pauseType, FindObjectsSortMode.None))
+                    snapshot.PauseReasons = pauseType.GetProperty("ActiveReasons").GetValue(coordinator).ToString();
+            var renderers=UnityEngine.Object.FindObjectsByType<GridLiquidFieldSurfaceRenderer>(FindObjectsSortMode.None);
+            snapshot.ContinuousRendererCount=renderers.Length;
+            var continuous=renderers.Length==1?renderers[0]:null;
+            if(continuous!=null)
+            {
+                var data=new SerializedObject(continuous);
+                snapshot.ContinuousReady=continuous.IsReady;snapshot.ContinuousGpuBytes=continuous.GpuAllocatedBytes;
+                snapshot.ContinuousCpuFallback=continuous.CpuFallback;snapshot.ContinuousPages=continuous.SurfacePages;
+                snapshot.ContinuousRebuiltPages=continuous.RebuiltSurfacePages;
+                snapshot.ContinuousVisiblePages=continuous.VisibleSurfacePages;snapshot.ContinuousHybridPages=continuous.HybridPages;snapshot.ContinuousCulledPages=continuous.CulledSourcePages;
+                snapshot.ContinuousHybridLagMs=continuous.HybridDisplayLagMilliseconds;snapshot.ContinuousHybridVisible=continuous.HasVisibleHybridCache;
+                snapshot.ContinuousAlpha=continuous.InterpolationAlpha;
+                snapshot.ContinuousGcBytes=data.FindProperty("_gcBytes").longValue;
+                snapshot.ContinuousCaptureMs=data.FindProperty("_captureMilliseconds").floatValue;
+                snapshot.ContinuousDisplayLagMs=data.FindProperty("_displayLagMilliseconds").floatValue;
+                snapshot.ContinuousOverflow=data.FindProperty("_capacityOverflow").boolValue;
+                snapshot.ContinuousSubdivision=data.FindProperty("_subdivision").intValue;
+                snapshot.ContinuousDrops=data.FindProperty("_smallDrops").intValue;
+                snapshot.FallbackReason=continuous.FallbackReason;
+                snapshot.VisibleFallbackPages=continuous.CpuFallback?continuous.SurfacePages:0;
+            }
+            var liquids = UnityEngine.Object.FindObjectsByType<LiquidWorldRuntime>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+            if (liquids.Length > 0)
+            {
+                LiquidWorldRuntime liquid = continuous!=null && continuous.Source!=null?continuous.Source:liquids[0];
+                snapshot.SourceInstanceId=liquid.GetInstanceID();
+                snapshot.Initialized = liquid.IsFluidInitialized;
+                snapshot.TerrainFallbacks=liquid.TerrainFallbackCount;
+                snapshot.TransportHistoryOverflows=liquid.TransportHistoryOverflowCount;
+                snapshot.TotalQuantity = liquid.TotalQuantity.ToString();
+                snapshot.PendingQuantity = liquid.PendingQuantity.ToString();
+                snapshot.ResidentChunks = liquid.ResidentChunkCount;
+                snapshot.ActiveCells = liquid.ActiveCellCount;
+                snapshot.SleepingCells=liquid.SleepingCellCount;
+                snapshot.StableRegions = liquid.StableRegionCount;
+                snapshot.StableQuantity = liquid.StableQuantity.ToString();
+                snapshot.TransferCommitted = liquid.Transfers != null
+                    ? liquid.Transfers.CommittedGmu.ToString() : "0";
+                snapshot.SectorCommitted = liquid.Transfers != null
+                    ? liquid.Transfers.SectorCommittedGmu.ToString() : "0";
+                snapshot.Absorbed = liquid.Transfers != null
+                    ? liquid.Transfers.AbsorbedGmu.ToString() : "0";
+                snapshot.DynamicWaterSurfaceVersion =
+                    liquid.GetDynamicSurfaceVersion(Game.Materials.MaterialId.Water);
+                snapshot.DynamicStoreVersion = liquid.DynamicSurfaceVersion;
+                snapshot.DynamicStaticVersion = liquid.DynamicStaticVersion;
+                snapshot.StableWaterSurfaceVersion =
+                    liquid.GetStableSurfaceVersion(Game.Materials.MaterialId.Water);
+                snapshot.DynamicWaterCandidateVersion =
+                    liquid.GetDynamicCandidateVersion(Game.Materials.MaterialId.Water);
+                snapshot.AutoCompressed = liquid.AutoCompressedRegions;
+                snapshot.AutoPartialSurfaceCompressed =
+                    liquid.AutoPartialSurfaceCompressedRegions;
+                snapshot.AutoRejected = liquid.RejectedAutoCandidates;
+                snapshot.AutoInvalidated = liquid.InvalidatedAutoCandidates;
+                snapshot.AutoSeedInspections = liquid.AutoSeedInspections.ToString();
+                snapshot.AutoCandidateAgeTicks = liquid.AutoCandidateAgeTicks;
+                snapshot.ExpandedStableRegions = liquid.ExpandedStableRegions;
+                snapshot.ResidentExpandedSectors = liquid.ResidentExpandedSectors;
+                snapshot.RejectedStableExpansions = liquid.RejectedStableExpansions;
+                snapshot.LastStableExpansionFailure = liquid.LastStableExpansionFailure.ToString();
+                snapshot.RecapturedStableRegions = liquid.RecapturedStableRegions;
+                snapshot.RejectedStableRecaptures = liquid.RejectedStableRecaptures;
+                snapshot.LastStableRecaptureFailure = liquid.LastStableRecaptureFailure.ToString();
+                snapshot.Rejected = liquid.RejectedDepositCount;
+                snapshot.Overflow = liquid.ActivityOverflowCount;
+            }
+            ElementWorldRuntime world = UnityEngine.Object.FindFirstObjectByType<ElementWorldRuntime>(
+                FindObjectsInactive.Include);
+            if (world != null)
+            {
+                snapshot.GridFireChunks = world.LastGridFireChunkCount;
+                snapshot.GridFireSamples = world.LastGridFireSampleCount;
+            }
+            var fireRenderer = UnityEngine.Object.FindFirstObjectByType<GpuFireParcelRenderer>();
+            if (fireRenderer != null)
+            {
+                snapshot.FireReady = fireRenderer.IsReady;
+                snapshot.FireGcBytes = fireRenderer.LastGcBytes;
+                snapshot.FirePeakGcBytes = fireRenderer.PeakGcBytes;
+                snapshot.FireLastSeeds = fireRenderer.LastSeedCount;
+                snapshot.FireTotalSeeds = fireRenderer.TotalSeeds;
+            }
+            var outletComponents = UnityEngine.Object.FindObjectsByType<StableLiquidOutletAuthoring>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+            snapshot.Outlets = outletComponents.Length;
+            for (int i = 0; i < outletComponents.Length; i++)
+                if (outletComponents[i].IsOpen) snapshot.OpenOutlets++;
+            var surfaces = UnityEngine.Object.FindObjectsByType<LiquidSurfaceRenderer>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < surfaces.Length; i++)
+            {
+                var surface = new SerializedObject(surfaces[i]);
+                SerializedProperty materialProperty = surface.FindProperty("_material");
+                string material = materialProperty.enumNames[materialProperty.enumValueIndex];
+                int pendingNew = surface.FindProperty("_pendingNewViews").intValue;
+                int dirty = surface.FindProperty("_pendingDirtyViews").intValue;
+                int queued = surface.FindProperty("_oldestQueuedFrames").intValue;
+                int omitted = surface.FindProperty("_omittedCandidateViews").intValue;
+                if (material == "Water") { snapshot.WaterNew = pendingNew;
+                    snapshot.WaterDirty = dirty; snapshot.WaterOldest = queued;
+                    snapshot.WaterOmitted = omitted; }
+                else if (material == "Poison") { snapshot.PoisonNew = pendingNew;
+                    snapshot.PoisonDirty = dirty;
+                    snapshot.PoisonOldest = queued; snapshot.PoisonOmitted = omitted; }
+                else if (material == "Sticky") { snapshot.StickyDirty = dirty; }
+            }
+            var stableSurfaces = UnityEngine.Object.FindObjectsByType<StableLiquidSurfaceRenderer>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < stableSurfaces.Length; i++)
+            {
+                var stable = new SerializedObject(stableSurfaces[i]);
+                SerializedProperty material = stable.FindProperty("_material");
+                if (material.enumNames[material.enumValueIndex] != "Water") continue;
+                snapshot.WaterStableDraws = stable.FindProperty("_submittedDraws").intValue;
+                snapshot.WaterStableTopologyRebuilds =
+                    stable.FindProperty("_topologyRebuilds").uintValue;
+                break;
+            }
+            Directory.CreateDirectory("Temp/ElementPerformance");
+            // 两个World/Lab并存、停帧或EditMode统计均不是正式独立性能窗口。
+            snapshot.MeasurementValid=snapshot.Playing && !snapshot.Paused && snapshot.TimeScale>0 && snapshot.Initialized
+                && snapshot.Samples>=120 && snapshot.ContinuousRendererCount==1 && snapshot.Frame>120;
+            File.WriteAllText(ResultPath, JsonUtility.ToJson(snapshot, true));
+        }
+
+        private static void BuildPlayerBenchmark(BenchmarkSceneKind sceneKind)
+        {
+            bool previousTiming = PlayerSettings.enableFrameTimingStats;
+            Directory.CreateDirectory(PlayerFolder);
+            string scene = sceneKind == BenchmarkSceneKind.Dense ? DenseScene
+                : sceneKind == BenchmarkSceneKind.Sector ? SectorScene
+                : sceneKind == BenchmarkSceneKind.Partial ? PartialScene
+                : sceneKind == BenchmarkSceneKind.P7 ? P7ComparisonScene : WorldScene;
+            string executable = sceneKind == BenchmarkSceneKind.Dense ? "GridLiquidDenseBenchmark.exe"
+                : sceneKind == BenchmarkSceneKind.Sector ? "GridLiquidSectorBenchmark.exe"
+                : sceneKind == BenchmarkSceneKind.Partial ? "GridLiquidPartialBenchmark.exe"
+                : sceneKind == BenchmarkSceneKind.P7 ? "GridLiquidP7Benchmark.exe"
+                : "GridLiquidPrototypeBenchmark.exe";
+            string resultFile = sceneKind == BenchmarkSceneKind.Dense ? "dense-build-result.txt"
+                : sceneKind == BenchmarkSceneKind.Sector ? "sector-build-result.txt"
+                : sceneKind == BenchmarkSceneKind.Partial ? "partial-build-result.txt"
+                : sceneKind == BenchmarkSceneKind.P7 ? "p7-build-result.txt"
+                : "build-result.txt";
+            try
+            {
+                if (AssetDatabase.LoadAssetAtPath<SceneAsset>(scene) == null)
+                    throw new InvalidOperationException("基准场景尚未生成：" + scene);
+                PlayerSettings.enableFrameTimingStats = true;
+                // 每种基准只打包自己的已保存场景；构建不修改 P7 生产配置。
+                BuildReport report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
+                {
+                    scenes = new[] { scene },
+                    target = BuildTarget.StandaloneWindows64,
+                    locationPathName = PlayerFolder + "/" + executable,
+                    options = BuildOptions.Development
+                });
+                File.WriteAllText(PlayerFolder + "/" + resultFile,
+                    report.summary.result + " Errors=" + report.summary.totalErrors);
+            }
+            catch (Exception exception)
+            {
+                File.WriteAllText(PlayerFolder + "/" + resultFile,
+                    exception.ToString());
+            }
+            finally { PlayerSettings.enableFrameTimingStats = previousTiming; }
+        }
+
+        [Serializable]private sealed class GpuCounts{public string Utc;public int Pages,Nonempty;public ulong Triangles;}
+        // 显式 Editor 诊断只在请求时分配对象/做 Readback，不纳入 Runtime/Profiler 测量窗口。
+        // 所有视角、LOD 和火格变化仅作用于 Play 实例，Stop 后随 Unity 撤销；不保存关卡或 Profile。
+        private static void FireVisualDiagnostic(string command)
+        {
+            var fire = UnityEngine.Object.FindFirstObjectByType<GpuFireParcelRenderer>();
+            if (fire == null || !fire.IsReady) return;
+            const System.Reflection.BindingFlags fields = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var world = UnityEngine.Object.FindFirstObjectByType<ElementWorldRuntime>();
+            var wizard = UnityEngine.Object.FindFirstObjectByType<WizardController>();
+            if (command == "fire-no-splats" || command == "fire-opaque-surface" || command == "fire-appearance-restore")
+            {
+                var settings = (GpuFireParcelRenderProfile)typeof(GpuFireParcelRenderer).GetField("_profile", fields).GetValue(fire);
+                bool restore = command == "fire-appearance-restore";
+                var gas = (MaterialPropertyBlock)typeof(GpuFireParcelRenderer).GetField("_gasProperties", fields).GetValue(fire);
+                var splats = (MaterialPropertyBlock)typeof(GpuFireParcelRenderer).GetField("_surfaceSplatProperties", fields).GetValue(fire);
+                var body = (MaterialPropertyBlock)typeof(GpuFireParcelRenderer).GetField("_surfaceProperties", fields).GetValue(fire);
+                gas.SetFloat("_GasAlphaScale", restore ? settings.GasAlphaScale : 0);
+                splats.SetFloat("_SurfaceAlphaScale", restore ? settings.SurfaceSplatAlphaScale : 0);
+                // 保留 .92 对照用于复现背景透出的条带；restore 总是恢复当前生产主体的完整覆盖。
+                body.SetFloat("_Alpha", command == "fire-no-splats" ? .92f : 1f);
+            }
+            if (command == "seed-fire-row" && world != null && wizard != null)
+            {
+                Vector3 point = wizard.transform.position + new Vector3(3,0,4);
+                var baker = world.GetComponent<ElementFieldSolidBaker>();
+                int mask = baker != null ? new SerializedObject(baker).FindProperty("_solidLayerMask").intValue : ~0;
+                var positions = new System.Collections.Generic.List<Vector3>();
+                for (int i = 0; i < 8; i++)
+                {
+                    if (!Physics.Raycast(point + new Vector3(i * .6f,12,0), Vector3.down, out var hit, 24, mask, QueryTriggerInteraction.Ignore)) continue;
+                    Vector3 source = hit.point + Vector3.up * .13f;
+                    var request = new ElementWriteRequest(source, MaterialId.Fire, 255, 0, false);
+                    if (world.TryEnqueueWrite(in request)) positions.Add(source);
+                }
+                _fireCaptureCenter = positions.Count > 0 ? (positions[0] + positions[positions.Count-1]) * .5f : point;
+                File.WriteAllText("Temp/ElementPerformance/fire-row.json", JsonUtility.ToJson(new FireRow { Utc=DateTime.UtcNow.ToString("O"), Positions=positions.ToArray() }, true));
+            }
+            if (command == "fire-camera" || command == "fire-camera-low" || command == "fire-camera-high"
+                || command == "fire-camera-overhead" || command == "fire-camera-overhead-roll")
+            {
+                if (_fireCaptureCamera == null)
+                {
+                    var original = Camera.main;
+                    if (original == null) return;
+                    var host = new GameObject("Temporary fire verification camera");
+                    _fireCaptureCamera = host.AddComponent<Camera>(); _fireCaptureCamera.CopyFrom(original);
+                    foreach (var camera in UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsSortMode.None))
+                        if (camera != _fireCaptureCamera) camera.enabled = false;
+                    host.tag = "MainCamera";
+                    // 工具程序集没有 URP Runtime 引用；用 Editor-only 反射绑定可选 Camera Data，避免扩大 Assembly 依赖。
+                    Type cameraDataType = Type.GetType("UnityEngine.Rendering.Universal.UniversalAdditionalCameraData, Unity.RenderPipelines.Universal.Runtime");
+                    if (cameraDataType != null)
+                    {
+                        var cameraData = _fireCaptureCamera.gameObject.AddComponent(cameraDataType);
+                        cameraDataType.GetProperty("requiresDepthTexture").SetValue(cameraData, true);
+                    }
+                }
+                if (command == "fire-camera-overhead" || command == "fire-camera-overhead-roll")
+                {
+                    _fireCaptureCamera.transform.position = _fireCaptureCenter + Vector3.up * 7;
+                    // 正俯视时LookAt的Forward与World Up共线，明确Quaternion避免工具自己制造不稳定朝向。
+                    _fireCaptureCamera.transform.rotation = Quaternion.Euler(90,0,command == "fire-camera-overhead-roll" ? 45 : 0);
+                }
+                else
+                {
+                    _fireCaptureCamera.transform.position = _fireCaptureCenter + (command == "fire-camera-high"
+                        ? new Vector3(0,6,-2) : new Vector3(-3,command == "fire-camera-low" ? 1.3f : 3,-5));
+                    _fireCaptureCamera.transform.LookAt(_fireCaptureCenter + Vector3.up * .5f);
+                }
+                _fireCaptureCamera.fieldOfView = 52;
+            }
+            if (command == "fire-lod-far" || command == "fire-lod-near")
+            {
+                var interestField = typeof(GpuFireParcelRenderer).GetField("_interestCenter", fields);
+                if (_fireOriginalInterest == null) _fireOriginalInterest = (Transform)interestField.GetValue(fire);
+                if (command == "fire-lod-near") interestField.SetValue(fire, _fireOriginalInterest);
+                else
+                {
+                    var host = new GameObject("Temporary forced far fire LOD (diagnostic)");
+                    host.transform.position = _fireCaptureCenter + Vector3.right * 24;
+                    interestField.SetValue(fire, host.transform);
+                }
+            }
+            if (command != "fire-inspect") return;
+            var states = (GraphicsBuffer)typeof(GpuFireParcelRenderer).GetField("_stateBuffer", fields).GetValue(fire);
+            var surface = (FireParcelSurfaceResources)typeof(GpuFireParcelRenderer).GetField("_surfaceResources", fields).GetValue(fire);
+            var profile = (GpuFireParcelRenderProfile)typeof(GpuFireParcelRenderer).GetField("_profile", fields).GetValue(fire);
+            var report = new FireReport { Utc=DateTime.UtcNow.ToString("O"), Ready=fire.IsReady, GcBytes=fire.LastGcBytes, PeakGcBytes=fire.PeakGcBytes,
+                Capacity=profile.Capacity, LastSeeds=fire.LastSeedCount, Profile=JsonUtility.ToJson(profile), TimeScale=Time.timeScale };
+            report.UsesLocalSurface = fire.UsesLocalSurface;
+            report.HasSurfaceResources = surface != null;
+            report.DrawCalls = fire.UsesLocalSurface ? 4 : 2;
+            report.DrawBounds = fire.LastDrawBounds;
+            report.VisibilityFadeStart = profile.VisibilityFadeStart;
+            report.VisibilityFadeEnd = profile.VisibilityFadeEnd;
+            if (_fireCaptureCamera != null)
+            {
+                report.CameraPosition = _fireCaptureCamera.transform.position;
+                report.CameraForward = _fireCaptureCamera.transform.forward;
+            }
+            var depth = (Material)typeof(GpuFireParcelRenderer).GetField("_surfaceDepthMaterial", fields).GetValue(fire);
+            var color = (Material)typeof(GpuFireParcelRenderer).GetField("_surfaceMaterial", fields).GetValue(fire);
+            var bodyProperties = (MaterialPropertyBlock)typeof(GpuFireParcelRenderer).GetField("_surfaceProperties", fields).GetValue(fire);
+            var interest = (Transform)typeof(GpuFireParcelRenderer).GetField("_interestCenter", fields).GetValue(fire);
+            report.MaterialState = depth != null
+                ? "Depth queue="+depth.renderQueue+" DepthOnly="+depth.GetFloat("_DepthOnly")+" ZWrite="+depth.GetFloat("_DepthWrite")+" ColorMask="+depth.GetFloat("_ColorWriteMask")
+                    +" Color queue="+color.renderQueue+" Alpha="+bodyProperties.GetFloat("_Alpha")
+                : "Unified soft Surface/Gas Splat; no local Mesh/Depth Material";
+            if (surface != null)
+                report.SurfaceGridCenter = FireParcelSurfaceGridPlanner.Plan(interest.position,profile.SurfaceBoundsRadius,profile.SurfaceVoxelSize).Bounds.center;
+            UnityEngine.Rendering.AsyncGPUReadback.Request(states, read =>
+            {
+                report.ReadbackError=read.hasError;
+                if(!read.hasError) foreach (var state in read.GetData<FireParcelStateGpu>())
+                {
+                    if(state.Active>.5f) report.Active++;
+                    if(state.Active>.5f && state.SurfaceWeight>.001f) report.Surface++;
+                    if(state.Active>.5f && state.GasWeight>.001f) report.Gas++;
+                }
+                // 统一模式没有Triangle/Counter资源，不能把合法的null当作Readback失败。
+                if (surface == null)
+                {
+                    File.WriteAllText("Temp/ElementPerformance/fire-inspect.json",JsonUtility.ToJson(report,true));
+                    return;
+                }
+                UnityEngine.Rendering.AsyncGPUReadback.Request(surface.Counter, count =>
+                {
+                    report.ReadbackError |= count.hasError; if(!count.hasError) report.Triangles=count.GetData<uint>()[0];
+                    UnityEngine.Rendering.AsyncGPUReadback.Request(surface.Overflow, overflow =>
+                    {
+                        report.ReadbackError |= overflow.hasError; if(!overflow.hasError) report.Overflow=overflow.GetData<uint>()[0];
+                        UnityEngine.Rendering.AsyncGPUReadback.Request(surface.Triangles, triangles =>
+                        {
+                            report.ReadbackError |= triangles.hasError;
+                            if(!triangles.hasError)
+                            {
+                                var data=triangles.GetData<float>();
+                                for(int i=0;i<Math.Min(report.Triangles,(uint)profile.MaximumSurfaceTriangleCount);i++)
+                                {
+                                    int j=i*24;
+                                    Vector3 a=new Vector3(data[j],data[j+1],data[j+2]);
+                                    Vector3 b=new Vector3(data[j+8],data[j+9],data[j+10]);
+                                    Vector3 c=new Vector3(data[j+16],data[j+17],data[j+18]);
+                                    report.MaximumEdgeLength=Mathf.Max(report.MaximumEdgeLength,(a-b).magnitude,(b-c).magnitude,(c-a).magnitude);
+                                }
+                            }
+                            File.WriteAllText("Temp/ElementPerformance/fire-inspect.json",JsonUtility.ToJson(report,true));
+                        });
+                    });
+                });
+            });
+        }
+        [Serializable] private sealed class FireRow { public string Utc; public Vector3[] Positions; }
+        [Serializable] private sealed class FireReport
+        { public string Utc,Profile,MaterialState; public bool Ready,ReadbackError,UsesLocalSurface,HasSurfaceResources;
+          public int Capacity,LastSeeds,Active,Surface,Gas,DrawCalls; public uint Triangles,Overflow; public long GcBytes,PeakGcBytes;
+          public float TimeScale,MaximumEdgeLength,VisibilityFadeStart,VisibilityFadeEnd;
+          public Vector3 SurfaceGridCenter,CameraPosition,CameraForward; public Bounds DrawBounds; }
+        private static void StartProfile()
+        {
+            if(!SessionState.GetBool("LiquidFlow.ProfileActive",false))
+            {
+                SessionState.SetBool("LiquidFlow.PreviousProfiler",UnityEditorInternal.ProfilerDriver.enabled);
+                SessionState.SetBool("LiquidFlow.PreviousGpuProfiler",UnityEditorInternal.ProfilerDriver.profileGPU);
+                SessionState.SetBool("LiquidFlow.PreviousGpuArea",UnityEditorInternal.ProfilerDriver.IsAreaEnabled(UnityEngine.Profiling.ProfilerArea.GPU));
+                SessionState.SetBool("LiquidFlow.PreviousCpuProfiler",UnityEditorInternal.ProfilerDriver.IsAreaEnabled(UnityEngine.Profiling.ProfilerArea.CPU));
+                SessionState.SetBool("LiquidFlow.PreviousEditorProfiler",UnityEditorInternal.ProfilerDriver.profileEditor);
+                SessionState.SetBool("LiquidFlow.ProfileActive",true);
+            }
+            // GPU Usage 在 Native Graphics Jobs 下无法提供完整计时，还会增加采样开销。
+            // 日常瓶颈窗口只开 CPU；独立的 GPU fence 实验已有自己的明确计时边界。
+            // Finish 命令仍按 SessionState 恢复用户原设置，不修改 Graphics Jobs 或 Graphics API。
+            UnityEditorInternal.ProfilerDriver.enabled=true;UnityEditorInternal.ProfilerDriver.profileGPU=false;
+            UnityEditorInternal.ProfilerDriver.SetAreaEnabled(UnityEngine.Profiling.ProfilerArea.CPU,true);
+            UnityEditorInternal.ProfilerDriver.SetAreaEnabled(UnityEngine.Profiling.ProfilerArea.GPU,false);
+            UnityEditorInternal.ProfilerDriver.profileEditor=false;
+            // 显式诊断记录实际Profiler目标和帧索引，旧连接/禁用模块不能伪装成当前Play数据。
+            var info=new System.Text.StringBuilder(DateTime.UtcNow.ToString("O"));
+            int connected=UnityEditorInternal.ProfilerDriver.connectedProfiler;
+            info.Append("\nConnected=").Append(connected).Append(' ').Append(UnityEditorInternal.ProfilerDriver.GetConnectionIdentifier(connected));
+            foreach(int id in UnityEditorInternal.ProfilerDriver.GetAvailableProfilers())info.Append("\nAvailable=").Append(id).Append(' ').Append(UnityEditorInternal.ProfilerDriver.GetConnectionIdentifier(id));
+            info.Append("\nEnabled=").Append(UnityEditorInternal.ProfilerDriver.enabled).Append("\nCpuEnabled=").Append(UnityEditorInternal.ProfilerDriver.IsAreaEnabled(UnityEngine.Profiling.ProfilerArea.CPU));
+            info.Append("\nGpuAreaEnabled=").Append(UnityEditorInternal.ProfilerDriver.IsAreaEnabled(UnityEngine.Profiling.ProfilerArea.GPU));
+            info.Append("\nTimeScale=").Append(Time.timeScale).Append("\nLastFrame=").Append(UnityEditorInternal.ProfilerDriver.lastFrameIndex);
+            File.WriteAllText("Temp/ElementPerformance/continuous-profiler-state.txt",info.ToString());
+            _frameCursor=_frameCount=0;
+        }
+        [Serializable] private sealed class RootSnapshot { public string Name; public bool Active; }
+        [Serializable] private sealed class Snapshot
+        {
+            public RootSnapshot[] Roots;
+            public string PauseReasons;
+            public string Utc, Scene, TotalQuantity, PendingQuantity;
+            public string StableQuantity, TransferCommitted, SectorCommitted, Absorbed;
+            public string AutoSeedInspections;
+            public string LastStableExpansionFailure, LastStableRecaptureFailure;
+            public bool SceneDirty, Playing, Paused, Initialized, RunInBackground;
+            public int RemainingSteps;
+            public int Frame, Samples, ResidentChunks, ActiveCells, SleepingCells, StableRegions;
+            public int GridFireChunks, GridFireSamples;
+            public bool FireReady;
+            public long FireGcBytes, FirePeakGcBytes;
+            public int FireLastSeeds;
+            public uint FireTotalSeeds;
+            public int ResidentExpandedSectors;
+            public int Outlets, OpenOutlets;
+            public int AutoCandidateAgeTicks;
+            public int WaterNew, WaterDirty, WaterOldest, WaterOmitted;
+            public int WaterStableDraws;
+            public int PoisonNew, PoisonDirty, PoisonOldest, PoisonOmitted, StickyDirty;
+            public float P50Ms, P95Ms, MaxMs;
+            public float TimeScale;
+            public bool ContinuousReady,ContinuousCpuFallback,ContinuousOverflow;
+            public bool ContinuousHybridVisible;
+            public bool MeasurementValid;
+            public string FallbackReason;
+            public int ContinuousRendererCount,SourceInstanceId,VisibleFallbackPages;
+            public long ContinuousGpuBytes,ContinuousGcBytes;
+            public int ContinuousPages,ContinuousRebuiltPages,ContinuousSubdivision,ContinuousDrops,ContinuousVisiblePages,ContinuousHybridPages,ContinuousCulledPages;
+            public float ContinuousAlpha,ContinuousCaptureMs,ContinuousDisplayLagMs;
+            public float ContinuousHybridLagMs;
+            public uint TerrainFallbacks,TransportHistoryOverflows;
+            public uint DynamicWaterSurfaceVersion, StableWaterSurfaceVersion;
+            public uint DynamicWaterCandidateVersion, WaterStableTopologyRebuilds;
+            public uint DynamicStoreVersion, DynamicStaticVersion;
+            public uint Rejected, Overflow, AutoCompressed, AutoPartialSurfaceCompressed,
+                AutoRejected, AutoInvalidated;
+            public uint ExpandedStableRegions, RejectedStableExpansions;
+            public uint RecapturedStableRegions, RejectedStableRecaptures;
+        }
+    }
+}

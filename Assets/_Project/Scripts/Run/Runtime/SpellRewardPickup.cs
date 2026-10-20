@@ -6,12 +6,11 @@ namespace Game.Run
 {
     /// <summary>
     /// 把 Unity Trigger 转换为“向本局法术背包授予奖励”的一次性 Scene Adapter。
-    /// 奖励规则属于 RunSpellSession；本组件只判断玩家是否进入以及拾取物何时隐藏。
+    /// 奖励由携带库存裁定；本组件只判断玩家是否进入以及拾取物何时隐藏。
     /// </summary>
     [RequireComponent(typeof(Collider))]
     public sealed class SpellRewardPickup : MonoBehaviour
     {
-        [SerializeField] private RunSpellSession _session;
         [SerializeField, Min(0)] private int _encounterIndex;
         [SerializeField] private LayerMask _playerLayers;
         [SerializeField] private GameObject _visualRoot;
@@ -20,6 +19,9 @@ namespace Game.Run
         private SpellDefinition _rewardSpell;
         private bool _available;
         private bool _consumed;
+        private DungeonRewardProfile _randomProfile;
+        private int _rewardCharges;
+        public void ConfigureRandomRewards(DungeonRewardProfile profile)=>_randomProfile=profile;
 
         /// <summary>
         /// 奖励是否已经被对应 Encounter 解锁。公开只读状态主要用于测试和 Editor 诊断。
@@ -77,7 +79,11 @@ namespace Game.Run
                 return;
             }
 
-            if (e.RewardSpell == null)
+            if (_randomProfile!=null)
+            {
+                var roll=_randomProfile.Roll(1)[0];_rewardSpell=roll.Spell;_rewardCharges=roll.Charges;
+            }
+            else if (e.RewardSpell == null)
             {
                 GameLog.Warn(
                     $"Encounter {_encounterIndex} 已完成，但 DemoRunDefinition 没有配置 Reward Spell。",
@@ -85,8 +91,10 @@ namespace Game.Run
                 return;
             }
 
-            // 奖励定义来自本次 Encounter 的只读配置；真正的可变库存仍由 RunSpellSession 持有。
-            _rewardSpell = e.RewardSpell;
+            // 奖励定义来自本次 Encounter 的只读配置；真正的拥有关系由物品实例库存持有。
+            else _rewardSpell = e.RewardSpell;
+            // 关后确定奖励和普通地面法术共用图标表现，但仍保留原有奖励解锁/重试逻辑。
+            WorldSpellIconPresentation.Apply(_visualRoot,_rewardSpell.Icon);
             _available = true;
             SetPresentationActive(true);
         }
@@ -107,25 +115,13 @@ namespace Game.Run
             var modern=PracticeSpellRewardAdapter.FindInScene(gameObject.scene);
             if(modern!=null)
             {
-                if(!modern.TryGrant("encounter."+_encounterIndex,_rewardSpell))return;
+                bool grantedModern=_randomProfile!=null?modern.TryGrantFinite("encounter."+_encounterIndex,_rewardSpell,_rewardCharges)
+                    :modern.TryGrant("encounter."+_encounterIndex,_rewardSpell);
+                if(!grantedModern)return;
                 _consumed=true;_available=false;SetPresentationActive(false);return;
             }
-            if (_session == null || _rewardSpell == null)
-            {
-                GameLog.Warn("SpellRewardPickup 缺少 RunSpellSession 或 Reward Spell。", "Run");
-                return;
-            }
-
-            // 即使玩家已拥有该法术，也消耗这个世界拾取物；否则 Trigger 会在角色多个 Collider 下反复触发。
-            bool granted = _session.TryGrantSpell(_rewardSpell);
-            if (!granted)
-            {
-                GameLog.Info($"法术奖励 {_rewardSpell.DisplayName} 已存在，本次不重复加入。", "Run");
-            }
-
-            _consumed = true;
-            _available = false;
-            SetPresentationActive(false);
+            // 缺少工作区时保留世界入口，不能把奖励写进已弃用的临时库。
+            GameLog.Warn("法术奖励缺少携带库存工作区，保留领取入口。", "Run");
         }
 
         private void SetPresentationActive(bool active)

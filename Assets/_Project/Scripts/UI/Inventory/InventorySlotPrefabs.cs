@@ -11,6 +11,7 @@ namespace Game.UI
         public InventoryItemView BackpackItem, NearbyItem, WarehouseItem;
         public InventorySlotView WandProgramSlot, SpellStorageSlot, WandSelectorSlot;
         public ToolbeltSlotView BackpackToolSlot, WorkspaceToolSlot;
+        public InventoryInfoPopup InfoPopup;
 
         // 兼容已有Scene不必自动保存接线；Controller首次访问缓存，滚动/拖拽热路径不查Resources。
         internal static InventorySlotPrefabs LoadDefault() => Resources.Load<InventorySlotPrefabs>("InventorySlotPrefabs");

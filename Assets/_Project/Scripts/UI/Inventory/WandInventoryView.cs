@@ -95,15 +95,13 @@ namespace Game.UI
                     if(!_equipment[slot].AuthoredLayout)PlaceView(_equipment[slot], new Vector2(_wideLayout?220:150,_wideLayout?100:52));
                     _equipment[slot].Bind(controller, equipped, InventoryItemDisplay.Row, 48);
                     if(_wideLayout && controller.Session.WandsReadOnly.TryGetState(equipped.InstanceId,out var resource))
-                        _equipment[slot].SetCaption((slot+1)+" · "+equipped.DisplayName+"\nMana "+Mathf.RoundToInt(resource.CurrentMana)+"/"+Mathf.RoundToInt(resource.MaxMana)
-                            +(resource.CooldownRemaining>0?" · 冷却 "+resource.CooldownRemaining.ToString("0.0")+"s":" · 就绪"));
+                        _equipment[slot].SetCaption((slot+1)+" · "+equipped.DisplayName+"\nMana "+Mathf.RoundToInt(resource.MaxMana));
                     if (_selectorLayout)
                     {
                         if(!_equipment[slot].AuthoredLayout){PlaceView(_equipment[slot], new Vector2(cardWidth - 6, cardHeight - 6));_equipment[slot].Rect.anchoredPosition = new Vector2(3, -3);}
                         string resourceCaption = "";
                         if (controller.Session.WandsReadOnly.TryGetState(equipped.InstanceId, out var cardState))
-                            resourceCaption = "Mana " + cardState.CurrentMana.ToString("0.#") + "/" + cardState.MaxMana.ToString("0.#")
-                                + (cardState.CooldownRemaining > 0 ? " · 冷却 " + cardState.CooldownRemaining.ToString("0.#") + "s" : " · 就绪");
+                            resourceCaption = "Mana " + Mathf.RoundToInt(cardState.MaxMana);
                         _equipment[slot].ConfigureWandCard((slot + 1) + " · " + equipped.DisplayName, resourceCaption, controller.UiFont,controller.BuiltinUiFont);
                     }
                     else if (_selectedWandId == null) _selectedWandId = equipped.InstanceId;
@@ -113,7 +111,7 @@ namespace Game.UI
             for (int i = 0; i < count; i++) if (items[i].InstanceId == _selectedWandId && items[i].Kind == ItemKind.Wand) { wand = items[i]; hasWand = true; break; }
             int capacity = hasWand ? wand.Rules.WandProgramCapacity : 0;
             int occupied=0;for(int i=0;i<count;i++)if(items[i].Location.Kind==ItemLocationKind.WandSlot && items[i].Location.OwnerId==wand.InstanceId)occupied++;
-            if (_programTitle != null) _programTitle.text = hasWand ? wand.DisplayName + " · 程序槽 "+occupied+" / " + capacity : "选择一根法杖查看程序";
+            if (_programTitle != null) { _programTitle.fontSize=22;_programTitle.text = hasWand ? wand.DisplayName + " · 法术槽 "+occupied+" / " + capacity : "选择一根法杖查看法术"; }
             if(_wideLayout && hasWand && _programTitle != null && controller.Session.WandsReadOnly.TryGetProgram(wand.InstanceId,out var program))_programTitle.text+=" · 基础抽取 "+program.BaseDraws;
             if(_stats!=null)
             {
@@ -122,18 +120,10 @@ namespace Game.UI
                     && controller.Session.WandsReadOnly.TryGetProgram(wand.InstanceId,out var selectedProgram))
                 {
                     // 只在离散UI刷新中求根层预算，不提交资源；不能把整串成本相加冒充每次施法蓝耗。
-                    var summary=CastEvaluator.Evaluate(selectedProgram.Program,selectedProgram.BaseDraws,float.MaxValue,CastModifierState.Default,_preview);
-                    int protectedCount = 0;
-                    var protection = controller.Session.RunCoordinator?.Protection;
-                    for (int i = 0; i < count; i++) if (items[i].Location.Kind == ItemLocationKind.WandSlot && items[i].Location.OwnerId == wand.InstanceId && protection != null && protection.Contains(items[i].InstanceId)) protectedCount++;
-                    _stats.text="Mana "+state.CurrentMana.ToString("0.#")+" / "+state.MaxMana.ToString("0.#")
-                        +"    恢复 "+state.ManaRegenPerSecond.ToString("0.#")+"/s\n施法冷却 "+state.CastCooldown.ToString("0.##")
-                        +"s    剩余 "+state.CooldownRemaining.ToString("0.##")+"s\n根层蓝耗 "+summary.ManaSpent.ToString("0.#")
-                        +"    抽取 "+selectedProgram.BaseDraws+"    程序容量 "+capacity + "    保护法术 " + protectedCount;
-                    if (_selectorLayout) _stats.text = "Mana " + state.CurrentMana.ToString("0.#") + "/" + state.MaxMana.ToString("0.#")
-                        + " · 冷却 " + state.CooldownRemaining.ToString("0.##") + "/" + state.CastCooldown.ToString("0.##") + "s · 保护法术 " + protectedCount
-                        // 属性使用同一段横向文本，Text 只在作者区域确实放不下时自然换行。
-                        + " · 恢复 " + state.ManaRegenPerSecond.ToString("0.#") + "/s · 基础抽取 " + selectedProgram.BaseDraws + " · 预估蓝耗 " + summary.ManaSpent.ToString("0.#");
+                    float mana=controller.Session.UseSpellProgrammingV2?V2ManaPreview(controller.Session,wand.InstanceId):
+                        CastEvaluator.Evaluate(selectedProgram.Program,selectedProgram.BaseDraws,float.MaxValue,CastModifierState.Default,_preview).ManaSpent;
+                    _stats.supportRichText=true;_stats.fontSize=20;_stats.resizeTextForBestFit=false;
+                    _stats.text=ResourceCaption(state)+" · "+ManaPreviewCaption(selectedProgram,mana);
                 }
             }
             while (_programSlots.Count < capacity)
@@ -161,6 +151,25 @@ namespace Game.UI
                 _spells[slot].gameObject.SetActive(found);
                 if (found) { if(!_spells[slot].AuthoredLayout)PlaceView(_spells[slot], new Vector2(70,_selectorLayout?76:_wideLayout?90:54)); _spells[slot].Bind(controller, spell, InventoryItemDisplay.Program, 48); }
             }
+        }
+        // 仅在库存离散Refresh格式化文字，不在Update分配；显示取整不修改真实随机资源精度，Rich Text不改作者Rect。
+        internal static string ResourceCaption(in WandStateSnapshot state) =>
+            "<color=#389CFF>Mana上限 "+Mathf.RoundToInt(state.MaxMana)+"</color>"
+            +" · <color=#9BDFFF>恢复 "+Mathf.RoundToInt(state.ManaRegenPerSecond)+"/s</color>"
+            +" · <color=#FFD65C>冷却 "+state.CastCooldown.ToString("0.##")+"s</color>";
+        internal static string ManaPreviewCaption(in WandProgramSnapshot program,float immediate)
+        {
+            // 槽内合计帮助观察编辑变化，但不能替代根层预算：未被抽取的Emit和Trigger后缀本次不支付。
+            float total=0;for(int i=0;i<program.Program.Count;i++)if(program.Program[i]!=null)total+=Mathf.Max(0,program.Program[i].ManaCost);
+            return "本次预估蓝耗 "+Mathf.RoundToInt(immediate)+" · 槽内合计 "+Mathf.RoundToInt(total);
+        }
+        internal static float V2ManaPreview(SinglePlayerInventorySession session,string wand)
+        {
+            // 只在离散库存Refresh执行，与研究台同源；不再对Copy调用Legacy解释器。
+            if(!session.TryCaptureWandResearch(wand,out var snapshot))return 0;
+            var b=new SpellBuildBuffer(false);
+            return new SpellProgramMachine().TryBuild(snapshot.Execution.Program,snapshot.Execution.Draw,snapshot.Inputs,b,out var summary)
+                ?Mathf.Max(0,snapshot.Inputs.AvailableMana-summary.ManaAfter):0;
         }
         private static GameObject Slot(InventorySlotView template,RectTransform parent, Vector2 position, Vector2 size)
         {

@@ -28,10 +28,10 @@ namespace Game.Run.Tests
             _files=new MemoryFiles();
             _previous=SceneManager.GetActiveScene();_scene=SceneManager.CreateScene("ItemLifecycle_"+Guid.NewGuid().ToString("N"));
             SceneManager.SetActiveScene(_scene);
-            var catalog=AssetDatabase.LoadAssetAtPath<ItemCatalog>("Assets/_Project/ScriptableObjects/SinglePlayer/Hub/SinglePlayerRaids/Catalog.asset");
+            var catalog=AssetDatabase.LoadAssetAtPath<ItemCatalog>("Assets/_Project/ScriptableObjects/World/Hub/Inventory/Catalog.asset");
             Assert.That(catalog.TryCreateIndex(out _index,out var error),Is.True,error);
-            _apple=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Items/Food/Apple.asset");
-            var bag=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Hub/SinglePlayerWands/bag.asset");
+            _apple=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/Food/Item_Food_Apple.asset");
+            var bag=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/Backpacks/Item_Backpack_Bag.asset");
             _store=new ItemOwnershipStore(_index);
             Assert.That(_store.TryAdd(new RuntimeItemState("bag",bag.ContentId,0),new ItemLocation(ItemLocationKind.EquippedBackpack,"player",0,0,0,0)),Is.True);
             Assert.That(_store.TryAdd(new RuntimeItemState("apple",_apple.ContentId,0),new ItemLocation(ItemLocationKind.Backpack,"bag",0,0,0,-1)),Is.True);
@@ -87,7 +87,7 @@ namespace Game.Run.Tests
         }
         [UnityTest] public IEnumerator PumpkinUsesUserPickupPrefabScaleAndRuntimeHierarchy()
         {
-            var definition=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Items/Food/Pumpkin.asset");
+            var definition=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/Food/Item_Food_Pumpkin.asset");
             Assert.That(definition.PickupPrefab,Is.Not.Null);Assert.That(definition.PickupPrefab.transform.localScale,Is.EqualTo(Vector3.one*2.5f));
             Assert.That(_store.TryAdd(new RuntimeItemState("pumpkin",definition.ContentId,0),new ItemLocation(ItemLocationKind.Backpack,"bag",3,3,0,-1)),Is.True);
             Assert.That(Drop("pumpkin").Success,Is.True);yield return null;var proxy=Proxy("pumpkin");

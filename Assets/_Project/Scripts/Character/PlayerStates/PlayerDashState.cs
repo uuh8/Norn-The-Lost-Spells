@@ -91,7 +91,7 @@ namespace Game.Character
             Vector3 velocity = _dashDirection * horizontalSpeed;
             // 空中 Dash 暂停垂直速度但不清零，结束后继续原有抛物线；地面 Dash 保留贴地压力。
             velocity.y = _player.IsAirborneForDash ? 0f : _player.VerticalVelocity;
-            _player.CharacterController.Move(velocity * Time.deltaTime);
+            _player.MoveCharacter(velocity * Time.deltaTime);
         }
 
         #endregion

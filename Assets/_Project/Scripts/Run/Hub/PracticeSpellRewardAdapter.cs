@@ -17,6 +17,10 @@ namespace Game.Run
             return null;
         }
         public bool TryGrant(string key,SpellDefinition spell)
+            =>Grant(key,spell,0,false);
+        public bool TryGrantFinite(string key,SpellDefinition spell,int charges)
+            =>Grant(key,spell,charges,true);
+        private bool Grant(string key,SpellDefinition spell,int charges,bool finite)
         {
             if(!_granted.TryGetValue(key,out var completed)){completed=new HashSet<SpellDefinition>();_granted.Add(key,completed);}
             if(completed.Contains(spell))return true;
@@ -24,21 +28,14 @@ namespace Game.Run
             if(session.Profile==null || !session.Profile.Items.Catalog.TryFindSpell(spell,out _))
             {GameLog.Error("法术奖励缺少唯一的ItemDefinition映射，保留世界奖励。","PracticeReward");return false;}
             if(session.RaidWriteLocked || session.PendingMaterialOutputs>0 || session.PendingContainerFlights>0
-                || session.Profile==null || !PracticeSpellRewardOps.TryGrant(session.Profile,spell,out _))
+                || session.Profile==null || !(finite?PracticeSpellRewardOps.TryGrantFinite(session.Profile,spell,charges,out _):PracticeSpellRewardOps.TryGrant(session.Profile,spell,out _)))
             {
                 EventBus<NearbyPickupResultEvent>.Publish(new NearbyPickupResultEvent{InventoryId=session.ReadOnly?.InventoryId,
                     Success=false,RequiresArrangement=true,Reason=InventoryFailureReason.Capacity});return false;
             }
             completed.Add(spell);
             EventBus<InventoryChangedEvent>.Publish(new InventoryChangedEvent{InventoryId=session.ReadOnly.InventoryId,Version=session.ReadOnly.Version});
-            EventBus<SpellRewardGrantedEvent>.Publish(new SpellRewardGrantedEvent{Spell=spell,LibraryCount=session.ReadOnly.Count});return true;
-        }
-        public bool TryGrantLibrary(string key,SpellLibrary library)
-        {
-            if(library==null || library.Available==null)return false;
-            bool complete=true;
-            foreach(var spell in library.Available)if(spell!=null && !TryGrant(key,spell))complete=false;
-            return complete;
+            EventBus<SpellRewardGrantedEvent>.Publish(new SpellRewardGrantedEvent{Spell=spell});return true;
         }
     }
 }

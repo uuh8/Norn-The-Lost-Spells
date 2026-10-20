@@ -44,6 +44,8 @@ namespace Game.Run.Tests
         private void Loaded(Scene scene,LoadSceneMode mode)
         {
             if(scene.path!=Hub)return;_scene=scene;_session=Find<SinglePlayerInventorySession>(scene);_player=Find<WizardController>(scene);
+            // 返回时由正式上下文先恢复库存与法杖资源，测试只观察，不能抢着初始化另一份 Profile。
+            if (HubPracticeSession.Current != null) return;
             var serialized=new SerializedObject(_session);var catalog=(ItemCatalog)serialized.FindProperty("_catalog").objectReferenceValue;
             Assert.That(catalog.TryCreateIndex(out var index,out _),Is.True);SinglePlayerProfile profile;
             if(_repository==null)
@@ -51,6 +53,7 @@ namespace Game.Run.Tests
                 var seeds=(SinglePlayerStartingInventory)serialized.FindProperty("_startingInventory").objectReferenceValue;
                 Assert.That(seeds.TryCreate(index,out profile,out _),Is.True);
                 _repository=new ProfileSaveRepository("Temp/SinglePlayer/PracticeMemory/"+Guid.NewGuid().ToString("N"),index,_files);
+                Assert.That(_repository.TrySave(profile).Success,Is.True,"首次内存档也要存在，主菜单往返才能读取它。");
             }
             else Assert.That(_repository.TryLoad(out profile).Success,Is.True);
             Assert.That(_session.Initialize(profile,_repository),Is.True);
@@ -63,6 +66,44 @@ namespace Game.Run.Tests
         {foreach(var root in _scene.GetRootGameObjects())foreach(var portal in root.GetComponentsInChildren<HubPracticePortal>(true))if(portal.name=="远征点 · "+suffix)return portal;throw new InvalidOperationException("缺少练习门");}
         [UnityTest]public IEnumerator ContactP7AndReturnPreservesHubAssets(){yield return Practice("P7");}
         [UnityTest]public IEnumerator ContactP8AndReturnPreservesHubAssets(){yield return Practice("P8");}
+        [UnityTest] public IEnumerator ReturnToMainMenuSavesCarriedInventoryAndReleasesContext()
+        { yield return MenuReturn(false); }
+        [UnityTest] public IEnumerator FailedMenuSaveKeepsCurrentMapAndAllowsRetry()
+        { yield return MenuReturn(true); }
+        private IEnumerator MenuReturn(bool failFirst)
+        {
+            var portal = Portal("P7"); string destination = portal.ScenePath;
+            Assert.That(portal.TryEnter(_player.CharacterController), Is.True);
+            float end = Time.realtimeSinceStartup + 30;
+            while (Time.realtimeSinceStartup < end && (HubPracticeSession.Current == null || HubPracticeSession.Current.Loading || !SceneManager.GetSceneByPath(destination).isLoaded)) yield return null;
+            yield return null;
+            var scene = SceneManager.GetSceneByPath(destination);
+            Find<GameplayGuideController>(scene)?.Close();
+            var inventory = Find<PracticeInventoryWorkspace>(scene).Session;
+            int count = inventory.ReadOnly.Count; long currency = inventory.Currency;
+            var carried = new List<string>();
+            foreach (var entry in inventory.Profile.Items)
+                if (entry.Location.Kind != ItemLocationKind.WorldItem) carried.Add(entry.Item.InstanceId);
+            const string menu = "Assets/_Project/Scenes/P7_MainMenu.unity";
+            if (failFirst)
+            {
+                _files.Fail = true;
+                Assert.That(HubPracticeSession.Current.ReturnToMainMenu(menu), Is.False);
+                Assert.That(HubPracticeSession.Current.Loading, Is.False);
+                Assert.That(scene.isLoaded, Is.True); Assert.That(inventory.Profile.RaidActionsFrozen, Is.False);
+                Assert.That(inventory.ReadOnly.Count, Is.EqualTo(count)); _files.Fail = false;
+            }
+            Find<DemoPauseMenuController>(scene).ReturnToMainMenu();
+            end = Time.realtimeSinceStartup + 30;
+            while (Time.realtimeSinceStartup < end && (HubPracticeSession.Current != null || !SceneManager.GetSceneByPath(menu).isLoaded)) yield return null;
+            Assert.That(HubPracticeSession.Current, Is.Null, "主菜单不能遗留上一场景的 DontDestroyOnLoad 库存上下文。");
+            Assert.That(SceneManager.GetSceneByPath(menu).isLoaded, Is.True);
+            Assert.That(_repository.TryLoad(out var restored).Success, Is.True);
+            foreach (string id in carried) Assert.That(restored.Items.TryGet(id, out _), Is.True, "回主菜单丢失携带物品：" + id);
+            Assert.That(restored.Items.Count, Is.EqualTo(carried.Count), "未拾取的关卡地面物品不寄回存档。");
+            Assert.That(restored.Currency, Is.EqualTo(currency));
+            Assert.That(Time.timeScale, Is.EqualTo(1));
+        }
         [UnityTest]public IEnumerator P7DeathKeepsBackpackWarehouseAndCurrencyButLosesOtherCarriedGear(){yield return DeathReturns("P7",false);}
         [UnityTest]public IEnumerator P8DeathRetriesFailedCommitThenReturnsWithoutLegacyPanel(){yield return DeathReturns("P8",true);}
         [UnityTest]public IEnumerator P8BossBattleDeathKeepsBackpackAndReturnsWithOtherCarriedLost(){yield return DeathReturns("P8",false,true);}
@@ -204,30 +245,29 @@ namespace Game.Run.Tests
             end=Time.realtimeSinceStartup+30;while(HubPracticeSession.Current!=null && Time.realtimeSinceStartup<end)yield return null;
             Assert.That(_session.Profile.Items.TryGet(id,out _),Is.False);
         }
-        [UnityTest] public IEnumerator PendingThrowSaveFailureKeepsBottleAndRetryCanEnterPractice()
+        [UnityTest] public IEnumerator HubMaterialThrowPreservesBottleWhenWorldExperimentsAreDisabled()
         {
-            _player.enabled=false;
-            var hub=Find<HubInteractionController>(_scene);Move(_player,hub.Definition.ExperimentCenter);yield return null;
+            // 当前据点只做整备与研究预览；材料实射在 Home/P7/P8，不能启用旧实验设计来满足测试。
+            Assert.That(_session.WorldActionsAllowed,Is.False);
             string bottle=null;
             foreach(var entry in _session.Profile.Items)
                 if(entry.Item.Composition!=null && entry.Item.Composition.Total>0){bottle=entry.Item.InstanceId;break;}
             Assert.That(bottle,Is.Not.Null);
             Assert.That(_session.Profile.Items.TryMove(bottle,new GridPlacement(0,0,0).InBackpack(_session.EquippedBackpackId)).Success,Is.True);
             EventBus<ToolbeltBindingRequestedEvent>.Publish(new ToolbeltBindingRequestedEvent{InventoryId=_session.ReadOnly.InventoryId,ToolSlot=0,ItemId=bottle,ExpectedVersion=_session.ToolbeltReadOnly.ConfigurationVersion});
-            EventBus<HeldItemSelectionRequestedEvent>.Publish(new HeldItemSelectionRequestedEvent{InventoryId=_session.ReadOnly.InventoryId,SlotIndex=3});yield return null;yield return null;
-            var keyboard=_keyboard;
-            InputSystem.QueueStateEvent(keyboard,new UnityEngine.InputSystem.LowLevel.KeyboardState(Key.G));InputSystem.Update();yield return null;yield return null;
-            InputSystem.QueueStateEvent(keyboard,new UnityEngine.InputSystem.LowLevel.KeyboardState());InputSystem.Update();yield return null;
-            Assert.That(_session.PendingContainerFlights,Is.EqualTo(1));Assert.That(_session.Save().Success,Is.False,"普通保存仍保护孤儿在途量");
-            _session.ReadOnly.TryGetView(bottle,out var before);long currency=_session.Profile.Currency;
-            _files.Fail=true;Assert.That(Portal("P7").TryEnter(_player.CharacterController),Is.False);
-            Assert.That(_session.PendingContainerFlights,Is.EqualTo(1));Assert.That(_session.ReadOnly.TryGetView(bottle,out var after),Is.True);
-            Assert.That(after.Location.Kind,Is.EqualTo(ItemLocationKind.ThrownContainer));Assert.That(after.ContainerTotal,Is.EqualTo(before.ContainerTotal));
-            Assert.That(_session.Profile.Currency,Is.EqualTo(currency));Assert.That(HubPracticeSession.Current,Is.Null);
-            _files.Fail=false;Find<HubNavigationView>(_scene)?.Cancel();
-            Assert.That(Portal("P7").TryEnter(_player.CharacterController),Is.True,"待投放材料不能永久堵门");
-            Assert.That(_session.PendingContainerFlights,Is.Zero);Assert.That(_session.ReadOnly.TryGetView(bottle,out _),Is.False,"投出的瓶不能重新发进背包");
-            float end=Time.realtimeSinceStartup+30;while(HubPracticeSession.Current!=null && HubPracticeSession.Current.Loading && Time.realtimeSinceStartup<end)yield return null;
+            EventBus<HeldItemSelectionRequestedEvent>.Publish(new HeldItemSelectionRequestedEvent{InventoryId=_session.ReadOnly.InventoryId,SlotIndex=3});
+            yield return null;yield return null;
+            string before=AssetSnapshot(_session.Profile);
+            EditorWindow.GetWindow(Type.GetType("UnityEditor.GameView,UnityEditor")).Focus();yield return new WaitForEndOfFrame();
+            var use=_player.GetComponent<ContainerUseController>();
+            _inputFixture.Press(_keyboard.gKey);yield return null;yield return null;
+            // UnityTest helper 先排队，下一帧 canceled 后再等 LateUpdate 完成权限检查。
+            _inputFixture.Release(_keyboard.gKey);yield return null;yield return new WaitForEndOfFrame();
+            Assert.That(use.LastResult.Transfer.RequestId,Is.GreaterThan(0),"必须经真实 G 请求，不能用没有输入冒充拒绝。");
+            Assert.That(use.LastResult.Success,Is.False);
+            Assert.That(use.LastResult.Transfer.Failure,Is.EqualTo(MaterialTransferFailure.ResourceBusy));
+            Assert.That(_session.PendingContainerFlights,Is.Zero);
+            Assert.That(AssetSnapshot(_session.Profile),Is.EqualTo(before),"非法材料投掷不能损失物品或组分。");
         }
         [UnityTest]public IEnumerator P7DepartureShrinksAndClosesBeforeOpaqueLoadThenReveals()
         {
@@ -283,10 +323,10 @@ namespace Game.Run.Tests
                 inventory.Profile.Items.Catalog.TryGetRules(bag.ContentId,out var bagRules);
                 for(int y=0;y<bagRules.BackpackHeight;y++)for(int x=0;x<bagRules.BackpackWidth;x++)
                     inventory.Profile.Items.TryAdd(RuntimeItemState.Create(content,8,true),new GridPlacement(x,y,0).InBackpack(bag.InstanceId));
-                var library=(Game.Skills.SpellLibrary)new SerializedObject(Find<StageExitPortal>(scene)).FindProperty("_fullLibrary").objectReferenceValue;
+                var library=AssetDatabase.LoadAssetAtPath<Game.Skills.SpellLibrary>("Assets/_Project/ScriptableObjects/Spell/Libraries/SpellLibrary_Player.asset");
                 Assert.That(PracticeSpellRewardOps.TryGrant(inventory.Profile,library.Available[0],out _),Is.False,"实际满容量，不能把空背包测试冒充复现");
             }
-            var gate=Find<StageExitPortal>(scene);Assert.That(gate,Is.Not.Null);gate.CloseDuration=0;gate.TravelerTransitDuration=0;
+            var gate=Find<StageExitPortal>(scene);Assert.That(gate,Is.Not.Null);
             int index=new SerializedObject(gate).FindProperty("_encounterIndex").intValue;
             EventBus<EncounterCompletedEvent>.Publish(new EncounterCompletedEvent{EncounterIndex=index});
             Move(player,gate.transform.position);yield return null;
@@ -327,10 +367,11 @@ namespace Game.Run.Tests
         }
         private IEnumerator Practice(string suffix,bool collect=false,bool full=false)
         {
-            _before=JsonUtility.ToJson(ProfileSaveMapper.ToDto(_session.Profile,0));var gate=Portal(suffix);string target=gate.ScenePath;
+            _before=AssetSnapshot(_session.Profile);var gate=Portal(suffix);string target=gate.ScenePath;
             // 接触只显示提示；走真实Input System的F输入，不能用TryEnter冒充玩家操作。
             Move(_player,gate.transform.position+Vector3.up*.2f);
-            yield return null;_inputFixture.Press(_keyboard.fKey);yield return null;_inputFixture.Release(_keyboard.fKey);
+            // TestRunner Coroutine 可先于交互组件 Update 恢复；等本帧结束再按键，避免读取移动前的站点缓存。
+            yield return new WaitForEndOfFrame();_inputFixture.Press(_keyboard.fKey);yield return null;_inputFixture.Release(_keyboard.fKey);
             float end=Time.realtimeSinceStartup+25;Scene practice=default;
             while(Time.realtimeSinceStartup<end){practice=SceneManager.GetSceneByPath(target);if(practice.IsValid() && practice.isLoaded)break;yield return null;}
             Assert.That(practice.IsValid() && practice.isLoaded,Is.True,"接触后未加载 "+target);
@@ -346,7 +387,7 @@ namespace Game.Run.Tests
                 player.enabled=false;
                 var inventory=Find<SinglePlayerInventorySession>(practice);var nearby=Find<NearbyPickupController>(practice);
                 Assert.That(inventory.CanAccessWarehouse,Is.False);Assert.That(nearby.Player,Is.EqualTo(player.transform));
-                var content=new[]{"Food/Pumpkin","Herb/Herb_Flower_01","Container/Container_02","HubSpell"};
+                var content=new[]{"Food/Item_Food_Pumpkin","Herb/Item_Herb_Flower_01","Containers/Item_Container_02","HubSpell"};
                 string bag=null;foreach(var entry in inventory.Profile.Items)if(entry.Location.Kind==ItemLocationKind.EquippedBackpack)bag=entry.Item.InstanceId;
                 Assert.That(bag,Is.Not.Null);
                 if(full)
@@ -354,7 +395,6 @@ namespace Game.Run.Tests
                     var ui=Find<SinglePlayerInventoryController>(practice);
                     _inputFixture.Press(_keyboard.tabKey);yield return null;_inputFixture.Release(_keyboard.tabKey);yield return null;
                     Assert.That(ui.IsOpen,Is.True,"练习图Tab应打开携带背包");
-                    Assert.That(Find<WandEditorController>(practice),Is.Null,"练习图只保留新版背包，不再实例化旧编辑器");
                     ui.Close();yield return null;Assert.That(Time.timeScale,Is.EqualTo(1));
                     inventory.Profile.Items.TryGet(bag,out var bagItem);inventory.Profile.Items.Catalog.TryGetRules(bagItem.ContentId,out var rules);
                     inventory.Profile.Items.Catalog.TryGet("item.food.apple",out var apple);
@@ -388,14 +428,14 @@ namespace Game.Run.Tests
                 ScreenCapture.CaptureScreenshot("TestResults/SinglePlayer/M6-T3-ItemCarry/"+suffix+"-pickup.png");
             }
             // 原关卡的玩家/法术与世界有独立初始化，实际施法也不能写进据点库存。
-            player.GetComponent<SpellCaster>().CastWand(player.transform.position+Vector3.up*2,player.transform.position+Vector3.forward*10,1,777,player.CharacterController);
+            // 此处只验证物品往返；真实施法与扣费由研究台/OwnedWand 的实射用例验证。
             Move(player,back.transform.position+Vector3.up*.2f);
             yield return null;_inputFixture.Press(_keyboard.fKey);yield return null;_inputFixture.Release(_keyboard.fKey);
             end=Time.realtimeSinceStartup+25;
             while(Time.realtimeSinceStartup<end){var hub=SceneManager.GetSceneByPath(Hub);if(hub.IsValid() && hub.isLoaded && _session!=null && _session.gameObject.scene==hub)break;yield return null;}
             yield return null;yield return null;Assert.That(_scene.path,Is.EqualTo(Hub));Assert.That(_scene.isLoaded,Is.True);Assert.That(_session,Is.Not.Null);
-            Assert.That(HubPracticeSession.Current,Is.Null);Assert.That(RunSessionCoordinator.Current,Is.Null);
-            if(!collect)Assert.That(JsonUtility.ToJson(ProfileSaveMapper.ToDto(_session.Profile,0)),Is.EqualTo(_before));
+            Assert.That(HubPracticeSession.Current,Is.Null);
+            if(!collect)Assert.That(AssetSnapshot(_session.Profile),Is.EqualTo(_before));
             else
             {
                 foreach(string id in ids){Assert.That(_session.ReadOnly.TryGetView(id,out var item),Is.True,"回Hub丢失"+id);
@@ -406,9 +446,12 @@ namespace Game.Run.Tests
         }
         private static WorldItemSpawnPoint Spawn(Scene scene,SinglePlayerInventorySession session,Transform player,string key)
         {
+            string file=System.IO.Path.GetFileName(key);
+            if(!file.StartsWith("Item_",StringComparison.Ordinal))file="Item_"+key.Split('/')[0]+"_"+file;
             var definition=AssetDatabase.LoadAssetAtPath<ItemDefinition>(key=="HubSpell"
-                ?"Assets/_Project/ScriptableObjects/SinglePlayer/Hub/SinglePlayerWands/fire.asset"
-                :"Assets/_Project/ScriptableObjects/SinglePlayer/Items/"+key+".asset");
+                ?"Assets/_Project/ScriptableObjects/Spell/Items/Item_Spell_Emit_Fireball.asset"
+                :"Assets/_Project/ScriptableObjects/Items/"+System.IO.Path.GetDirectoryName(key).Replace('\\','/')+"/"+file+".asset");
+            Assert.That(definition,Is.Not.Null,"测试素材路径未随目录更新："+key);
             var node=definition.PickupPrefab!=null?UnityEngine.Object.Instantiate(definition.PickupPrefab):new GameObject("Test authored item");
             SceneManager.MoveGameObjectToScene(node,scene);node.transform.position=player.position+Vector3.up*.4f;
             var point=node.GetComponent<WorldItemSpawnPoint>();if(point==null)point=node.AddComponent<WorldItemSpawnPoint>();
@@ -443,17 +486,26 @@ namespace Game.Run.Tests
             }
             finally{UnityEditorInternal.ProfilerDriver.enabled=recording;UnityEditorInternal.ProfilerDriver.SetAreaEnabled(UnityEngine.Profiling.ProfilerArea.CPU,cpu);}
         }
-        [UnityTest]public IEnumerator FailedSaveRejectsPracticeContactAndLeavesReadableFailure()
+        [UnityTest]public IEnumerator FailedSaveRejectsPracticeContactAndPublishesReadableFailure()
         {
-            var navigation=Find<HubNavigationView>(_scene);
-            // 用户当前布局停用了旧导航Canvas。失败提示用例只在隔离Scene显式启用消费者，不改正式Scene配置。
-            TestContext.WriteLine("Saved navigation activeSelf="+navigation.gameObject.activeSelf);
-            navigation.gameObject.SetActive(true);yield return null;
-            Assert.That(navigation.isActiveAndEnabled,Is.True,"失败提示消费者需要活动层级。");
+            // 不启用作者已经撤下的旧导航 Canvas；直接检查失败通知契约，UI 不应承担保存权威。
+            string failure=null;Action<HubDepartureReviewResultEvent> received=result=>failure=result.Message;
+            EventBus<HubDepartureReviewResultEvent>.Subscribe(received);
+            try
+            {
             _files.Fail=true;var gate=Portal("P7");_before=JsonUtility.ToJson(ProfileSaveMapper.ToDto(_session.Profile,0));
             Assert.That(gate.TryEnter(_player.CharacterController),Is.False);Assert.That(HubPracticeSession.Current,Is.Null);
             Assert.That(_scene.isLoaded,Is.True);Assert.That(JsonUtility.ToJson(ProfileSaveMapper.ToDto(_session.Profile,0)),Is.EqualTo(_before));
-            Assert.That(Time.timeScale,Is.Zero);Find<HubNavigationView>(_scene).Cancel();Assert.That(Time.timeScale,Is.EqualTo(1));yield return null;
+            Assert.That(failure,Does.Contain("保存失败"));Assert.That(Time.timeScale,Is.EqualTo(1));
+            }
+            finally{EventBus<HubDepartureReviewResultEvent>.Unsubscribe(received);}
+            yield return null;
+        }
+        private static string AssetSnapshot(SinglePlayerProfile profile)
+        {
+            var dto=ProfileSaveMapper.ToDto(profile,0);
+            // Version 是并发保护代数，进入地图/移除未拾取物允许推进；不把它当玩家财产。
+            dto.InventoryVersion=0;return JsonUtility.ToJson(dto);
         }
         [UnityTearDown]public IEnumerator Cleanup()
         {
@@ -461,7 +513,6 @@ namespace Game.Run.Tests
             {
                 SceneManager.sceneLoaded-=Loaded;if(_files!=null)_files.Fail=false;Time.timeScale=1;
                 if(HubPracticeSession.Current!=null)UnityEngine.Object.Destroy(HubPracticeSession.Current.gameObject);
-                RunSessionCoordinator.Current?.EndRun();
                 // Single加载可能已卸载Runner初始Scene；先创建空承载Scene，再卸载本例的真实场景。
                 var empty=SceneManager.GetSceneByName("Practice test cleanup");if(!empty.IsValid() || !empty.isLoaded)empty=SceneManager.CreateScene("Practice test cleanup");SceneManager.SetActiveScene(empty);
                 for(int i=SceneManager.sceneCount-1;i>=0;i--){var scene=SceneManager.GetSceneAt(i);if(scene!=empty && (scene.path==Hub || scene.path=="Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub.unity" || scene.path.EndsWith("P7_MainMenu.unity") || scene.path.EndsWith("P7_DemoRun.unity") || scene.path.EndsWith("P8_BossField.unity")))yield return SceneManager.UnloadSceneAsync(scene);}

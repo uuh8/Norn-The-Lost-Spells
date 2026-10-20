@@ -28,6 +28,22 @@ namespace Game.Skills
         [Tooltip("施放本法术消耗的法力")]
         public float ManaCost = 0f;
 
+        [Header("Draw V2（仅新解释器使用，Legacy 保持原语义）")]
+        [Tooltip("当前 Scope 的施法间隔增量，单位秒；允许有限负值。")]
+        public float CastDelayDelta = 0f;
+        [Tooltip("本轮共享 Reload 增量，单位秒；Trigger 子层也参与。")]
+        public float ReloadDelta = 0f;
+        [Min(1), Tooltip("Trigger 构建独立子 Scope 时请求的 Draw 次数。")]
+        public int TriggerDrawCount = 1;
+        [Tooltip("Alpha优先discard首项/hand首项/deck首项；Gamma取deck末项，否则hand末项。")]
+        public SpellCopyMode CopyMode;
+        [Tooltip("-1沿用Prefab寿命；非负值覆盖，秒。V2内容建议显式配置。")]
+        public float LifetimeSeconds = -1;
+        [Tooltip("同Scope寿命加法，允许缩短；最终至少0.01秒，最多600秒。")]
+        public float ModLifetimeAddSeconds;
+        [Min(0), Tooltip("同Scope寿命倍率，叠乘；1不变，0.5使剩余寿命减半。先加秒再乘倍率。")]
+        public float ModLifetimeMul = 1f;
+
         #endregion
 
 

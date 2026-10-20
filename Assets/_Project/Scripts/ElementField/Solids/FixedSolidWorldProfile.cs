@@ -23,6 +23,11 @@ namespace Game.ElementField
         [SerializeField, Range(1, 2)] private int _depositGrainCells = 1;
         [SerializeField, Range(1, 8)] private int _maximumColliderChunksPerTick = 8;
         [SerializeField, Range(1, 32)] private int _maximumNavigationBoxesPerChunk = 16;
+        [Header("Whole island gravity")]
+        [SerializeField] private bool _enableGravity=true;
+        [SerializeField,Min(0)] private float _gravityAcceleration=9.81f;
+        [SerializeField,Range(1,8)] private int _maximumFallCellsPerTick=4;
+        [SerializeField,Min(.05f)] private float _supportRecheckSeconds=.25f;
         [SerializeField] private FixedSolidMaterialBehavior[] _materials =
         {
             new FixedSolidMaterialBehavior { Material = MaterialId.Ice, BlocksMovement = true },
@@ -36,6 +41,10 @@ namespace Game.ElementField
         public int MaximumColliderChunksPerTick => _maximumColliderChunksPerTick;
         public int MaximumNavigationBoxesPerChunk => _maximumNavigationBoxesPerChunk;
         public int MaterialCount => _materials != null ? _materials.Length : 0;
+        public bool EnableGravity=>_enableGravity;
+        public float GravityAcceleration=>_gravityAcceleration;
+        public int MaximumFallCellsPerTick=>_maximumFallCellsPerTick;
+        public float SupportRecheckSeconds=>_supportRecheckSeconds;
         public FixedSolidMaterialBehavior GetMaterial(int index) => _materials[index];
     }
 }

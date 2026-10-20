@@ -109,7 +109,7 @@ namespace Game.Character.Tests
         public void P8BossAssets_UseNavMeshAndValidCombatDistanceOrdering()
         {
             const string definitionPath =
-                "Assets/_Project/ScriptableObjects/P8/Boss/P8_Boss_Velmora_Definition.asset";
+                "Assets/_Project/ScriptableObjects/Enemies/Boss/P8_Boss_Velmora_Definition.asset";
             const string prefabPath =
                 "Assets/_Project/Art/Prefabs/Boss/Boss.prefab";
             BossDefinition definition =

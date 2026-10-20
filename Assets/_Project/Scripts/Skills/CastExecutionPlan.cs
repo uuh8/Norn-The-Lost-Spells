@@ -8,13 +8,15 @@ namespace Game.Skills
         private readonly EmitCommand[] _commands;
         private readonly int[] _children, _slots, _outputSlots;
         private readonly SpellKind[] _kinds;
+        private readonly int[] _outputIds;
         public int Index { get; }
         public int Parent { get; }
         public float ManaCost { get; }
         public int CommandCount => _commands.Length;
         public int UseCount => _slots.Length;
-        internal CastExecutionLayer(int index, int parent, float mana, EmitCommand[] commands, int[] children, int[] slots, SpellKind[] kinds, int[] outputSlots)
-        { Index = index; Parent = parent; ManaCost = mana; _commands = commands; _children = children; _slots = slots; _kinds = kinds; _outputSlots = outputSlots; }
+        internal CastExecutionLayer(int index, int parent, float mana, EmitCommand[] commands, int[] children, int[] slots, SpellKind[] kinds, int[] outputSlots, int[] outputIds = null)
+        { Index = index; Parent = parent; ManaCost = mana; _commands = commands; _children = children; _slots = slots; _kinds = kinds; _outputSlots = outputSlots; _outputIds=outputIds; }
+        public int GetOutputId(int index) => _outputIds == null ? index : _outputIds[index];
         public EmitCommand GetCommand(int index) => _commands[index];
         public int GetChild(int index) => _children[index];
         public int GetSlot(int index) => _slots[index];
@@ -28,6 +30,23 @@ namespace Game.Skills
         public int LayerCount => _layers.Length;
         public CastExecutionLayer GetLayer(int index) => _layers[index];
         private CastExecutionPlan(CastExecutionLayer[] layers) { _layers = layers; }
+        /// <summary>运行适配器只复制冻结结果，不调用Legacy解释器；Mana已由根事务统一支付。</summary>
+        public static CastExecutionPlan FromGraph(ShotExecutionGraph graph)
+        {
+            var layers = new CastExecutionLayer[graph.Scopes.Count];
+            for (int l = 0; l < layers.Length; l++)
+            {
+                var scope = graph.Scopes[l]; int count = scope.OutputIds.Count;
+                var commands = new EmitCommand[count]; var children = new int[count]; var slots = new int[count];
+                for (int i = 0; i < count; i++)
+                { var output = graph.Outputs[scope.OutputIds[i]]; commands[i] = output.Command; children[i] = output.PayloadScopeId;
+                    slots[i] = graph.Program.Instructions[output.SourceCardIndex].SourceSlot; }
+                var outputIds=new int[count];for(int i=0;i<count;i++)outputIds[i]=scope.OutputIds[i];
+                layers[l] = new CastExecutionLayer(l, scope.ParentScopeId, 0, commands, children,
+                    System.Array.Empty<int>(), System.Array.Empty<SpellKind>(), slots,outputIds);
+            }
+            return new CastExecutionPlan(layers);
+        }
         public static bool TryBuild(IReadOnlyList<SpellDefinition> program, int draws, out CastExecutionPlan plan)
         {
             plan = null;

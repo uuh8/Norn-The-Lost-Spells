@@ -14,6 +14,7 @@ namespace Game.Character.Tests
 {
     public sealed class WizardBossTeleportTests
     {
+        private static readonly Vector3 TestOrigin=new Vector3(10000f,10000f,10000f);
         private readonly List<Object> _createdObjects = new List<Object>();
         private int _telegraphCount;
         private int _departedCount;
@@ -23,6 +24,8 @@ namespace Game.Character.Tests
         public IEnumerator SetUp()
         {
             Time.timeScale = 1f;
+            // NUnit默认复用Fixture实例；事件计数属于单个用例，不能继承上一例的已传送次数。
+            _telegraphCount = _departedCount = _arrivedCount = 0;
             EventBus<BossTeleportEvent>.Subscribe(OnBossTeleport);
             yield return null;
         }
@@ -49,13 +52,13 @@ namespace Game.Character.Tests
         {
             BossDefinition definition = CreateTeleportDefinition();
             WizardBossController boss = CreateBoss(definition);
-            Vector3 destination = new Vector3(9f, 0f, -6f);
+            Vector3 destination = TestOrigin + new Vector3(9f, 0f, -6f);
             ReplaceSampler(
                 boss,
                 new BossTeleportSampler(
                     new FixedWorldQuery(destination, false),
                     new Vector3[4]));
-            Transform target = CreateTarget(new Vector3(4f, 0f, 0f));
+            Transform target = CreateTarget(TestOrigin + new Vector3(4f, 0f, 0f));
             Vector3 source = boss.transform.position;
 
             Assert.That(boss.TryActivate(target), Is.True);
@@ -91,7 +94,7 @@ namespace Game.Character.Tests
                 new BossTeleportSampler(
                     new FixedWorldQuery(Vector3.zero, true),
                     new Vector3[4]));
-            Transform target = CreateTarget(new Vector3(4f, 0f, 0f));
+            Transform target = CreateTarget(TestOrigin + new Vector3(4f, 0f, 0f));
             Vector3 source = boss.transform.position;
 
             Assert.That(boss.TryActivate(target), Is.True);
@@ -112,6 +115,12 @@ namespace Game.Character.Tests
             BossDefinition definition =
                 ScriptableObject.CreateInstance<BossDefinition>();
             definition.StopDistance = 50f;
+            // Decision会先按战斗距离横移，再选择Teleport；此用例只测传送事务，隔离该Steering。
+            definition.MoveSpeed = 0f;
+            // 这是传送事务的隔离用例，不让地形穿透修正/重力混入“位置必须锁定”的断言。
+            // 生产Boss仍使用真实重力；此处临时SO与远离场景几何的坐标只影响测试对象。
+            definition.GravityAcceleration = 0f;
+            definition.GroundedStickSpeed = 0f;
             definition.DecisionInterval = 0.01f;
             definition.TeleportTelegraphDuration = 0.05f;
             definition.TeleportRecoveryDuration = 0.05f;
@@ -129,6 +138,7 @@ namespace Game.Character.Tests
         {
             GameObject bossObject = new GameObject("Teleport Boss");
             bossObject.SetActive(false);
+            bossObject.transform.position = TestOrigin;
             bossObject.AddComponent<CharacterController>();
             bossObject.AddComponent<HealthComponent>();
             bossObject.AddComponent<StatusController>();

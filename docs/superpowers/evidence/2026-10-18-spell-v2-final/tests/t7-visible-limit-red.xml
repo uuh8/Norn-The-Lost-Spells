@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-18 14:52:42Z" end-time="2026-10-18 14:52:48Z" duration="6.6112476">
+  <test-suite type="TestSuite" id="1892" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="809" result="Failed" site="Child" start-time="2026-10-18 14:52:42Z" end-time="2026-10-18 14:52:48Z" duration="6.611248" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1885" name="Game.Run.PlayMode.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.PlayMode.Tests.dll" runstate="Runnable" testcasecount="791" result="Failed" site="Child" start-time="2026-10-18 14:52:42Z" end-time="2026-10-18 14:52:48Z" duration="6.515560" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26084" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1886" name="Game" fullname="Game" runstate="Runnable" testcasecount="791" result="Failed" site="Child" start-time="2026-10-18 14:52:42Z" end-time="2026-10-18 14:52:48Z" duration="6.505984" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1887" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="791" result="Failed" site="Child" start-time="2026-10-18 14:52:42Z" end-time="2026-10-18 14:52:48Z" duration="6.490151" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1888" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="791" result="Failed" site="Child" start-time="2026-10-18 14:52:42Z" end-time="2026-10-18 14:52:48Z" duration="6.471701" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1297" name="HubSpellResearchPlayModeTests" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-18 14:52:42Z" end-time="2026-10-18 14:52:48Z" duration="6.451412" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1305" name="ResearchComplexLimitShowsBriefVisibleReason" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.ResearchComplexLimitShowsBriefVisibleReason" methodname="ResearchComplexLimitShowsBriefVisibleReason" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="2031006281" result="Failed" start-time="2026-10-18 14:52:42Z" end-time="2026-10-18 14:52:48Z" duration="6.379557" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  技术预算拒绝要有简短可见原因，不能只留空白预览。
+  Expected: String containing "复杂"
+  But was:  "出发推演"
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.HubSpellResearchPlayModeTests+<ResearchComplexLimitShowsBriefVisibleReason>d__30.MoveNext () [0x001b5] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\RunPlayMode\HubSpellResearchPlayModeTests.cs:180
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in .\Library\PackageCache\com.unity.test-framework@aebcb98460c6\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/playmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

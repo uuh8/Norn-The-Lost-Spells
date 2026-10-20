@@ -288,13 +288,6 @@ namespace Game.Run.Tests
                 CreateRectObject("GameplayHUD", demoRunRoot.transform);
             GameObject notificationRoot =
                 CreateRectObject("NotificationRoot", demoRunRoot.transform);
-            GameObject wandRoot =
-                CreateRectObject("WandEditorRoot", demoRunRoot.transform);
-            GameObject wandPanel =
-                CreateRectObject("PanelRoot", wandRoot.transform);
-            WandEditorController wandEditor =
-                wandRoot.AddComponent<WandEditorController>();
-            SetPrivateField(wandEditor, "_panelRoot", wandPanel);
             demoRunRoot.SetActive(false);
 
             GameObject controllerObject =
@@ -316,13 +309,6 @@ namespace Game.Run.Tests
             Assert.That(demoRunRoot.activeSelf, Is.True);
             Assert.That(gameplayRoot.activeSelf, Is.False);
             Assert.That(notificationRoot.activeSelf, Is.False);
-            Assert.That(wandRoot.activeSelf, Is.True);
-            Assert.That(wandPanel.activeSelf, Is.False);
-
-            wandEditor.Toggle();
-            Assert.That(wandPanel.activeSelf, Is.True,
-                "P8 只能隐藏 P7 专属 HUD，不能让共享 WandEditorController 失去启用状态。");
-            wandEditor.ForceClose();
         }
 
         private void PublishInitialization()

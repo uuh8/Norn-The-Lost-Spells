@@ -69,11 +69,13 @@ namespace Game.ElementField
                 }
                 _world = world; _baker = baker; _origin = origin; _size = size;
                 _store = new FixedSolidVolumeStore(chunkSize, _profile.MaximumChunks, _profile.CellCapacityGmu, materials);
-                _conversionDirty = new ElementChunkKey[_profile.MaximumChunks];
+                // 重力跨Chunk平移会同时失效旧/新两组页；数量Owner上限仍不变。
+                _conversionDirty = new ElementChunkKey[_profile.MaximumChunks*2];
                 _pending = new MaterialPhaseDepositQueue(_profile.MaximumPendingDeposits);
                 _depositRequestLimit=_profile.MaximumCellsPerTick;
                 _physics = new FixedSolidPhysicsAdapter(transform, _store, BlocksMaterial,
                     _profile.MaximumNavigationBoxesPerChunk, origin, size);
+                InitializeGravity();
                 return true;
             }
             catch (Exception ex) { GameLog.Error($"FixedSolid 初始化失败：{ex.Message}", "ElementField"); _store = null; return false; }
@@ -313,7 +315,7 @@ namespace Game.ElementField
             int count = Physics.OverlapBoxNonAlloc(center, size * .5f, _actorHits, Quaternion.identity, ~0, QueryTriggerInteraction.Ignore);
             bool blocked = count == _actorHits.Length;
             for (int i = 0; i < count; i++)
-            { var hit = _actorHits[i]; _actorHits[i] = null; blocked |= hit is CharacterController || hit != null && hit.GetComponentInParent<StatusController>() != null; }
+            { var hit = _actorHits[i]; _actorHits[i] = null; blocked |= hit is CharacterController || hit != null && ElementFieldSolidBaker.HasStatusOwner(hit); }
             return blocked;
         }
         private void OnDestroy() => _physics?.Dispose();

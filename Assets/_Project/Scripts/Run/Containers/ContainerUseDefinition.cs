@@ -8,6 +8,10 @@ namespace Game.Run
     {
         [SerializeField, Min(1)] private float _pourRate = 100;
         [SerializeField, Min(1)] private float _collectionRate = 2000;
+        [SerializeField,Range(.05f,.5f)] private float _collectionRadius=.5f;
+        [SerializeField,Min(1)] private float _gasPourMultiplier=4;
+        [SerializeField,Range(.2f,1)] private float _gasDepositRadius=.8f;
+        [SerializeField,Min(1)] private int _maximumPourBatchGmu=1024;
         [SerializeField, Min(.1f)] private float _forwardDistance = 1.5f;
         [SerializeField, Min(.1f)] private float _pourSpeed = 8;
         [SerializeField, Min(0)] private float _pourLift = 2;
@@ -19,6 +23,10 @@ namespace Game.Run
         [SerializeField] private GameObject _throwPrefab;
         public float PourRate => _pourRate;
         public float CollectionRate => _collectionRate;
+        public float CollectionRadius=>_collectionRadius;
+        public float GasPourMultiplier=>_gasPourMultiplier;
+        public float GasDepositRadius=>_gasDepositRadius;
+        public ulong MaximumPourBatchGmu=>(ulong)System.Math.Max(1,_maximumPourBatchGmu);
         public float ForwardDistance => _forwardDistance;
         public float PourSpeed => _pourSpeed;
         public float PourLift => _pourLift;

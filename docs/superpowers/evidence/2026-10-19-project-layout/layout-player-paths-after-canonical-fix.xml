@@ -1,0 +1,656 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="46" result="Failed(Child)" total="46" passed="45" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-19 02:56:49Z" end-time="2026-10-19 02:59:07Z" duration="138.2241828">
+  <test-suite type="TestSuite" id="1903" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="820" result="Failed" site="Child" start-time="2026-10-19 02:56:49Z" end-time="2026-10-19 02:59:07Z" duration="138.224183" total="46" passed="45" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1022" name="Game.Character.PlayMode.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.PlayMode.Tests.dll" runstate="Runnable" testcasecount="18" result="Failed" site="Child" start-time="2026-10-19 02:56:49Z" end-time="2026-10-19 02:56:50Z" duration="0.386706" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22796" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1023" name="Game" fullname="Game" runstate="Runnable" testcasecount="18" result="Failed" site="Child" start-time="2026-10-19 02:56:49Z" end-time="2026-10-19 02:56:50Z" duration="0.378600" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1024" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="18" result="Failed" site="Child" start-time="2026-10-19 02:56:49Z" end-time="2026-10-19 02:56:50Z" duration="0.361021" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1025" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="18" result="Failed" site="Child" start-time="2026-10-19 02:56:49Z" end-time="2026-10-19 02:56:50Z" duration="0.345839" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1019" name="WizardBossTeleportTests" fullname="Game.Character.Tests.WizardBossTeleportTests" classname="Game.Character.Tests.WizardBossTeleportTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-19 02:56:49Z" end-time="2026-10-19 02:56:50Z" duration="0.326329" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1020" name="Teleport_LocksDestinationUntilTelegraphThenMovesAndStartsCooldown" fullname="Game.Character.Tests.WizardBossTeleportTests.Teleport_LocksDestinationUntilTelegraphThenMovesAndStartsCooldown" methodname="Teleport_LocksDestinationUntilTelegraphThenMovesAndStartsCooldown" classname="Game.Character.Tests.WizardBossTeleportTests" runstate="Runnable" seed="1095522487" result="Passed" start-time="2026-10-19 02:56:49Z" end-time="2026-10-19 02:56:49Z" duration="0.216232" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Failed to create agent because there is no valid NavMesh
+[EnemyNavigation] Enemy 'Teleport Boss' 的 NavMeshAgent 未贴合已烘焙 NavMesh；请检查出生点和 Agent Type
+]]></output>
+              </test-case>
+              <test-case id="1021" name="Teleport_WhenNoCandidateIsSafe_StaysAndReleasesActionLock" fullname="Game.Character.Tests.WizardBossTeleportTests.Teleport_WhenNoCandidateIsSafe_StaysAndReleasesActionLock" methodname="Teleport_WhenNoCandidateIsSafe_StaysAndReleasesActionLock" classname="Game.Character.Tests.WizardBossTeleportTests" runstate="Runnable" seed="2070533362" result="Failed" start-time="2026-10-19 02:56:49Z" end-time="2026-10-19 02:56:50Z" duration="0.088201" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 0
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.WizardBossTeleportTests+<Teleport_WhenNoCandidateIsSafe_StaysAndReleasesActionLock>d__8.MoveNext () [0x00172] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\CharacterPlayMode\WizardBossTeleportTests.cs:107
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in .\Library\PackageCache\com.unity.test-framework@aebcb98460c6\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Failed to create agent because there is no valid NavMesh
+[EnemyNavigation] Enemy 'Teleport Boss' 的 NavMeshAgent 未贴合已烘焙 NavMesh；请检查出生点和 Agent Type
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="1896" name="Game.Run.PlayMode.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.PlayMode.Tests.dll" runstate="Runnable" testcasecount="802" result="Passed" start-time="2026-10-19 02:56:50Z" end-time="2026-10-19 02:59:07Z" duration="137.820034" total="44" passed="44" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="22796" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1897" name="Game" fullname="Game" runstate="Runnable" testcasecount="802" result="Passed" start-time="2026-10-19 02:56:50Z" end-time="2026-10-19 02:59:07Z" duration="137.793498" total="44" passed="44" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1898" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="802" result="Passed" start-time="2026-10-19 02:56:50Z" end-time="2026-10-19 02:59:07Z" duration="137.786504" total="44" passed="44" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1899" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="802" result="Passed" start-time="2026-10-19 02:56:50Z" end-time="2026-10-19 02:59:07Z" duration="137.768480" total="44" passed="44" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1028" name="BackpackWorkspacePlayModeTests" fullname="Game.Run.Tests.BackpackWorkspacePlayModeTests" classname="Game.Run.Tests.BackpackWorkspacePlayModeTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-10-19 02:56:50Z" end-time="2026-10-19 02:57:01Z" duration="11.774314" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1037" name="ActualPointerDragRotatesAndRejectedPlacementKeepsSource" fullname="Game.Run.Tests.BackpackWorkspacePlayModeTests.ActualPointerDragRotatesAndRejectedPlacementKeepsSource" methodname="ActualPointerDragRotatesAndRejectedPlacementKeepsSource" classname="Game.Run.Tests.BackpackWorkspacePlayModeTests" runstate="Runnable" seed="4063902" result="Passed" start-time="2026-10-19 02:56:50Z" end-time="2026-10-19 02:56:52Z" duration="2.651502" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[ElementField] Element World: GC 0/3 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/3 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Surface Water: GC 0/8 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Water: GC 0/8 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/8 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Poison: GC 0/8 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1031" name="AllThreeProgramsRemainExpandedWithoutSelecting" fullname="Game.Run.Tests.BackpackWorkspacePlayModeTests.AllThreeProgramsRemainExpandedWithoutSelecting" methodname="AllThreeProgramsRemainExpandedWithoutSelecting" classname="Game.Run.Tests.BackpackWorkspacePlayModeTests" runstate="Runnable" seed="1425225921" result="Passed" start-time="2026-10-19 02:56:52Z" end-time="2026-10-19 02:56:53Z" duration="0.549235" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[ElementField] Element World: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Surface Water: GC 0/9 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Water: GC 0/9 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/9 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Poison: GC 0/9 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1032" name="CaptureBackpackAndHudWithRealTestAssets" fullname="Game.Run.Tests.BackpackWorkspacePlayModeTests.CaptureBackpackAndHudWithRealTestAssets" methodname="CaptureBackpackAndHudWithRealTestAssets" classname="Game.Run.Tests.BackpackWorkspacePlayModeTests" runstate="Runnable" seed="491078144" result="Passed" start-time="2026-10-19 02:56:53Z" end-time="2026-10-19 02:56:54Z" duration="0.856855" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[ElementField] Element World: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Surface Water: GC 0/12 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Water: GC 0/12 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/12 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Poison: GC 0/12 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1030" name="DragToEquipmentMovesAssetAndClickOnlyInspects" fullname="Game.Run.Tests.BackpackWorkspacePlayModeTests.DragToEquipmentMovesAssetAndClickOnlyInspects" methodname="DragToEquipmentMovesAssetAndClickOnlyInspects" classname="Game.Run.Tests.BackpackWorkspacePlayModeTests" runstate="Runnable" seed="445026661" result="Passed" start-time="2026-10-19 02:56:54Z" end-time="2026-10-19 02:56:54Z" duration="0.559406" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[ElementField] Element World: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Surface Water: GC 0/7 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Water: GC 0/7 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/7 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Poison: GC 0/7 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1036" name="FullBackpackOpensForArrangementAndNearbyDragCollectsOnlyAfterSpaceIsFreed" fullname="Game.Run.Tests.BackpackWorkspacePlayModeTests.FullBackpackOpensForArrangementAndNearbyDragCollectsOnlyAfterSpaceIsFreed" methodname="FullBackpackOpensForArrangementAndNearbyDragCollectsOnlyAfterSpaceIsFreed" classname="Game.Run.Tests.BackpackWorkspacePlayModeTests" runstate="Runnable" seed="1100459494" result="Passed" start-time="2026-10-19 02:56:54Z" end-time="2026-10-19 02:56:55Z" duration="1.016120" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[ElementField] Element World: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Surface Water: GC 0/8 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Water: GC 0/8 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/8 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Poison: GC 0/8 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1035" name="PreviewManaShowsEmitMulticastAndOnlyCurrentTriggerLayer" fullname="Game.Run.Tests.BackpackWorkspacePlayModeTests.PreviewManaShowsEmitMulticastAndOnlyCurrentTriggerLayer" methodname="PreviewManaShowsEmitMulticastAndOnlyCurrentTriggerLayer" classname="Game.Run.Tests.BackpackWorkspacePlayModeTests" runstate="Runnable" seed="31519778" result="Passed" start-time="2026-10-19 02:56:55Z" end-time="2026-10-19 02:56:56Z" duration="0.465664" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[ElementField] Element World: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Surface Water: GC 0/9 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Water: GC 0/9 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/9 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Poison: GC 0/9 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1038" name="StableBackpackHudDragAndPourScopesHaveNoGcAlloc" fullname="Game.Run.Tests.BackpackWorkspacePlayModeTests.StableBackpackHudDragAndPourScopesHaveNoGcAlloc" methodname="StableBackpackHudDragAndPourScopesHaveNoGcAlloc" classname="Game.Run.Tests.BackpackWorkspacePlayModeTests" runstate="Runnable" seed="490077675" result="Passed" start-time="2026-10-19 02:56:56Z" end-time="2026-10-19 02:57:00Z" duration="4.275518" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[ElementField] Element World: GC 0/16 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/16 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Surface Water: GC 0/149 frames, total 0 B, max 0 B/frame; queue peak new=3, dirty=4, age=4 frames, omitted=0, pending frames=42.
+[Rendering] Grid Stable Surface Water: GC 0/149 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/149 frames, total 0 B, max 0 B/frame; queue peak new=3, dirty=5, age=4 frames, omitted=0, pending frames=42.
+[Rendering] Grid Stable Surface Poison: GC 0/149 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1029" name="TabOpensOnlyBackpackAndPreservesAuthorLayoutAndCoins" fullname="Game.Run.Tests.BackpackWorkspacePlayModeTests.TabOpensOnlyBackpackAndPreservesAuthorLayoutAndCoins" methodname="TabOpensOnlyBackpackAndPreservesAuthorLayoutAndCoins" classname="Game.Run.Tests.BackpackWorkspacePlayModeTests" runstate="Runnable" seed="1543925232" result="Passed" start-time="2026-10-19 02:57:00Z" end-time="2026-10-19 02:57:01Z" duration="0.550298" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[ElementField] Element World: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Surface Water: GC 0/9 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Water: GC 0/9 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/9 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Poison: GC 0/9 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1033" name="TwentySlotProgramScrollsToLastCellAndAcceptsRealDrop" fullname="Game.Run.Tests.BackpackWorkspacePlayModeTests.TwentySlotProgramScrollsToLastCellAndAcceptsRealDrop" methodname="TwentySlotProgramScrollsToLastCellAndAcceptsRealDrop" classname="Game.Run.Tests.BackpackWorkspacePlayModeTests" runstate="Runnable" seed="1835451759" result="Passed" start-time="2026-10-19 02:57:01Z" end-time="2026-10-19 02:57:01Z" duration="0.441510" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[ElementField] Element World: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Surface Water: GC 0/8 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Water: GC 0/8 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/8 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Poison: GC 0/8 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1034" name="ZeroWalletAndNoEquippedBackpackDisplayActualEmptyState" fullname="Game.Run.Tests.BackpackWorkspacePlayModeTests.ZeroWalletAndNoEquippedBackpackDisplayActualEmptyState" methodname="ZeroWalletAndNoEquippedBackpackDisplayActualEmptyState" classname="Game.Run.Tests.BackpackWorkspacePlayModeTests" runstate="Runnable" seed="971434730" result="Passed" start-time="2026-10-19 02:57:01Z" end-time="2026-10-19 02:57:01Z" duration="0.391205" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[ElementField] Element World: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Surface Water: GC 0/6 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Water: GC 0/6 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/6 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Poison: GC 0/6 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1297" name="HubSpellResearchPlayModeTests" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" testcasecount="16" result="Passed" start-time="2026-10-19 02:57:01Z" end-time="2026-10-19 02:57:55Z" duration="53.932087" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1311" name="DirectP7PracticeDefaultsToV2WithoutHubTransfer" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.DirectP7PracticeDefaultsToV2WithoutHubTransfer" methodname="DirectP7PracticeDefaultsToV2WithoutHubTransfer" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="795206092" result="Passed" start-time="2026-10-19 02:57:01Z" end-time="2026-10-19 02:57:05Z" duration="3.690973" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Items] 场景物品缺少同Scene库存Session。
+[Items] 场景物品缺少同Scene库存Session。
+[Items] 场景物品缺少同Scene库存Session。
+[Items] 场景物品缺少同Scene库存Session。
+[Items] 场景物品缺少同Scene库存Session。
+[Items] 场景物品缺少同Scene库存Session。
+[Items] 场景物品缺少同Scene库存Session。
+[Items] 场景物品缺少同Scene库存Session。
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[Rendering] Grid Stable Surface Water: GC 0/1 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/1 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/1 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1298" name="FormalHubResearchFAndBackpackRemainIndependent" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.FormalHubResearchFAndBackpackRemainIndependent" methodname="FormalHubResearchFAndBackpackRemainIndependent" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="969787913" result="Passed" start-time="2026-10-19 02:57:05Z" end-time="2026-10-19 02:57:09Z" duration="4.251524" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1308" name="HomeResearchAreaOpensWithFAndKeepsDungeonEntryClosed" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.HomeResearchAreaOpensWithFAndKeepsDungeonEntryClosed" methodname="HomeResearchAreaOpensWithFAndKeepsDungeonEntryClosed" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="1962291812" result="Passed" start-time="2026-10-19 02:57:09Z" end-time="2026-10-19 02:57:14Z" duration="5.006555" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[ElementField] Fluid Collider Root 与 Simulation Bounds Center 必须赋值，且 Bounds Size 三轴大于 0，GPU PBF 已禁用。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[Rendering] Grid Stable Surface Water: GC 0/5 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/5 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/5 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1312" name="LegacySessionCannotOfferV2ResearchPreview" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.LegacySessionCannotOfferV2ResearchPreview" methodname="LegacySessionCannotOfferV2ResearchPreview" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="1269404389" result="Passed" start-time="2026-10-19 02:57:14Z" end-time="2026-10-19 02:57:16Z" duration="2.039052" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1309" name="LibraryTracksDistinctInstancesAcrossBothWandsAndSwap" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.LibraryTracksDistinctInstancesAcrossBothWandsAndSwap" methodname="LibraryTracksDistinctInstancesAcrossBothWandsAndSwap" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="1201697738" result="Passed" start-time="2026-10-19 02:57:16Z" end-time="2026-10-19 02:57:18Z" duration="1.180338" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1310" name="PracticeEntryRejectsExhaustedInstalledQualificationWithoutSavingOrLoading" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.PracticeEntryRejectsExhaustedInstalledQualificationWithoutSavingOrLoading" methodname="PracticeEntryRejectsExhaustedInstalledQualificationWithoutSavingOrLoading" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="1951875500" result="Passed" start-time="2026-10-19 02:57:18Z" end-time="2026-10-19 02:57:19Z" duration="1.146874" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1307" name="ResearchComplexHomeFiniteMulticastMatchesActualGraphAndImpacts" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.ResearchComplexHomeFiniteMulticastMatchesActualGraphAndImpacts" methodname="ResearchComplexHomeFiniteMulticastMatchesActualGraphAndImpacts" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="106403093" result="Passed" start-time="2026-10-19 02:57:19Z" end-time="2026-10-19 02:57:25Z" duration="5.890809" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[ElementField] Fluid Collider Root 与 Simulation Bounds Center 必须赋值，且 Bounds Size 三轴大于 0，GPU PBF 已禁用。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[ElementField] Element World: GC 0/11 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/11 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/67 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/67 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/67 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1305" name="ResearchComplexLimitShowsBriefVisibleReason" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.ResearchComplexLimitShowsBriefVisibleReason" methodname="ResearchComplexLimitShowsBriefVisibleReason" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="1144439575" result="Passed" start-time="2026-10-19 02:57:25Z" end-time="2026-10-19 02:57:27Z" duration="2.281271" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1304" name="ResearchComplexScopeCopyWrapAndFixedCardsUseSameGrid" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.ResearchComplexScopeCopyWrapAndFixedCardsUseSameGrid" methodname="ResearchComplexScopeCopyWrapAndFixedCardsUseSameGrid" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="1573538607" result="Passed" start-time="2026-10-19 02:57:27Z" end-time="2026-10-19 02:57:28Z" duration="1.478036" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1313" name="ResearchComplexShuffleHasBriefIdentityAndKeepsInstallationOrder" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.ResearchComplexShuffleHasBriefIdentityAndKeepsInstallationOrder" methodname="ResearchComplexShuffleHasBriefIdentityAndKeepsInstallationOrder" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="717992851" result="Passed" start-time="2026-10-19 02:57:28Z" end-time="2026-10-19 02:57:30Z" duration="1.251088" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1306" name="ResearchComplexTwoTriggersPreviewMatchesActualP7Root" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.ResearchComplexTwoTriggersPreviewMatchesActualP7Root" methodname="ResearchComplexTwoTriggersPreviewMatchesActualP7Root" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="1812587019" result="Passed" start-time="2026-10-19 02:57:30Z" end-time="2026-10-19 02:57:37Z" duration="7.019603" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[ElementField] Element World: GC 0/13 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/13 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/46 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/46 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/46 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1299" name="ResearchOwnsPauseAndEditsActualItemsWithoutChangingForecastResources" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.ResearchOwnsPauseAndEditsActualItemsWithoutChangingForecastResources" methodname="ResearchOwnsPauseAndEditsActualItemsWithoutChangingForecastResources" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="471517263" result="Passed" start-time="2026-10-19 02:57:37Z" end-time="2026-10-19 02:57:39Z" duration="2.652259" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1300" name="ResearchRejectsForgeryDisabledAreaAndAwayPhaseAndClosesOutside" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.ResearchRejectsForgeryDisabledAreaAndAwayPhaseAndClosesOutside" methodname="ResearchRejectsForgeryDisabledAreaAndAwayPhaseAndClosesOutside" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="1707859753" result="Passed" start-time="2026-10-19 02:57:39Z" end-time="2026-10-19 02:57:41Z" duration="1.227366" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1301" name="ResearchRejectsMissingAreaFrozenTransitionAndReplayedGrant" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.ResearchRejectsMissingAreaFrozenTransitionAndReplayedGrant" methodname="ResearchRejectsMissingAreaFrozenTransitionAndReplayedGrant" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="1993017095" result="Passed" start-time="2026-10-19 02:57:41Z" end-time="2026-10-19 02:57:42Z" duration="1.263367" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Error after 5 attempt(s): Unknown -  -- Result type: PointsBalanceResult -- Url: https://generators.ai.unity.com -- Trace Id f0f9b00f-688e-445c-b5d5-fcea9b8149c3 => 
+Error after 5 attempt(s): Unknown -  -- Result type: SettingsResult -- Url: https://generators.ai.unity.com -- Trace Id f0f9b00f-688e-445c-b5d5-fcea9b8149c3 => 
+]]></output>
+              </test-case>
+              <test-case id="1303" name="ResearchToP7CastAndReturnKeepsV2ResourcesAndActualReplay" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.ResearchToP7CastAndReturnKeepsV2ResourcesAndActualReplay" methodname="ResearchToP7CastAndReturnKeepsV2ResourcesAndActualReplay" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="504166355" result="Passed" start-time="2026-10-19 02:57:42Z" end-time="2026-10-19 02:57:54Z" duration="12.364811" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+[ElementField] Element World: GC 0/12 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/12 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/174 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/174 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/174 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1302" name="UnconsumedOldGrantExpiresAfterANewerFailedRequest" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.UnconsumedOldGrantExpiresAfterANewerFailedRequest" methodname="UnconsumedOldGrantExpiresAfterANewerFailedRequest" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="1200694647" result="Passed" start-time="2026-10-19 02:57:54Z" end-time="2026-10-19 02:57:55Z" duration="1.162221" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1524" name="OwnedWandV2PlayModeTests" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-10-19 02:57:55Z" end-time="2026-10-19 02:59:05Z" duration="70.161607" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1532" name="CancelledProjectileNeverReleasesTerminationPayload" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.CancelledProjectileNeverReleasesTerminationPayload" methodname="CancelledProjectileNeverReleasesTerminationPayload" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="345919553" result="Passed" start-time="2026-10-19 02:57:55Z" end-time="2026-10-19 02:57:56Z" duration="0.175631" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1533" name="ContinuousFastInputFor30Seconds" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.ContinuousFastInputFor30Seconds" methodname="ContinuousFastInputFor30Seconds" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="1847287683" result="Passed" start-time="2026-10-19 02:57:56Z" end-time="2026-10-19 02:58:26Z" duration="30.377390" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1537" name="ContinuousHeavyInputFor30Seconds" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.ContinuousHeavyInputFor30Seconds" methodname="ContinuousHeavyInputFor30Seconds" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="612006788" result="Passed" start-time="2026-10-19 02:58:26Z" end-time="2026-10-19 02:58:56Z" duration="30.364190" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1527" name="DelayedSkyfallIsObservedOnlyAfterActualBirth" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.DelayedSkyfallIsObservedOnlyAfterActualBirth" methodname="DelayedSkyfallIsObservedOnlyAfterActualBirth" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="113110038" result="Passed" start-time="2026-10-19 02:58:56Z" end-time="2026-10-19 02:58:57Z" duration="0.448711" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1535" name="DisabledV2SourceCancelsPendingSkyfallWithoutPhantomRelease" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.DisabledV2SourceCancelsPendingSkyfallWithoutPhantomRelease" methodname="DisabledV2SourceCancelsPendingSkyfallWithoutPhantomRelease" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="667460331" result="Passed" start-time="2026-10-19 02:58:57Z" end-time="2026-10-19 02:58:57Z" duration="0.428488" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1530" name="DisabledWizardCannotResumeUnreleasedShot" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.DisabledWizardCannotResumeUnreleasedShot" methodname="DisabledWizardCannotResumeUnreleasedShot" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="833967616" result="Passed" start-time="2026-10-19 02:58:57Z" end-time="2026-10-19 02:58:59Z" duration="1.400479" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1534" name="GammaBorrowedOutputUsesRealOwnedAdapterWithoutChargingTargetMana" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.GammaBorrowedOutputUsesRealOwnedAdapterWithoutChargingTargetMana" methodname="GammaBorrowedOutputUsesRealOwnedAdapterWithoutChargingTargetMana" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="926625087" result="Passed" start-time="2026-10-19 02:58:59Z" end-time="2026-10-19 02:58:59Z" duration="0.148652" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1536" name="MouseHeldFromPausedUiNeedsReleaseBeforeV2ContinuousFire" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.MouseHeldFromPausedUiNeedsReleaseBeforeV2ContinuousFire" methodname="MouseHeldFromPausedUiNeedsReleaseBeforeV2ContinuousFire" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="1702417741" result="Passed" start-time="2026-10-19 02:58:59Z" end-time="2026-10-19 02:59:01Z" duration="2.176146" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1531" name="NormalLifetimeReleasesTerminationPayloadExactlyOnce" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.NormalLifetimeReleasesTerminationPayloadExactlyOnce" methodname="NormalLifetimeReleasesTerminationPayloadExactlyOnce" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="1036667558" result="Passed" start-time="2026-10-19 02:59:01Z" end-time="2026-10-19 02:59:01Z" duration="0.397997" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1526" name="QueuedV2ShotWaitsForAnimationThreshold" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.QueuedV2ShotWaitsForAnimationThreshold" methodname="QueuedV2ShotWaitsForAnimationThreshold" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="654533546" result="Passed" start-time="2026-10-19 02:59:01Z" end-time="2026-10-19 02:59:02Z" duration="1.146617" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1525" name="RealTimedChildUsesPrepaidGraphAfterSwitchingWands" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.RealTimedChildUsesPrepaidGraphAfterSwitchingWands" methodname="RealTimedChildUsesPrepaidGraphAfterSwitchingWands" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="1503348923" result="Passed" start-time="2026-10-19 02:59:02Z" end-time="2026-10-19 02:59:03Z" duration="0.334942" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1529" name="SwitchingAwayAndBackDuringWindupCancelsOldShot" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.SwitchingAwayAndBackDuringWindupCancelsOldShot" methodname="SwitchingAwayAndBackDuringWindupCancelsOldShot" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="1378869305" result="Passed" start-time="2026-10-19 02:59:03Z" end-time="2026-10-19 02:59:04Z" duration="1.385202" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1528" name="V2PressWaitsForConfiguredAnimatorRelease" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.V2PressWaitsForConfiguredAnimatorRelease" methodname="V2PressWaitsForConfiguredAnimatorRelease" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="2130764428" result="Passed" start-time="2026-10-19 02:59:04Z" end-time="2026-10-19 02:59:05Z" duration="1.360933" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[ElementField] 元素沉积已忽略：当前场景中不存在可用的 Element Write Sink。
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1677" name="SpellProgrammingV2WorkbenchPlayModeTests" fullname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests" classname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-19 02:59:05Z" end-time="2026-10-19 02:59:07Z" duration="1.883342" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <output><![CDATA[There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+              <test-case id="1680" name="FourByThreeGameView_KeepsTheGridAndControlsUsable" fullname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests.FourByThreeGameView_KeepsTheGridAndControlsUsable" methodname="FourByThreeGameView_KeepsTheGridAndControlsUsable" classname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests" runstate="Runnable" seed="331998348" result="Passed" start-time="2026-10-19 02:59:05Z" end-time="2026-10-19 02:59:06Z" duration="0.285069" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+              </test-case>
+              <test-case id="1681" name="LargeGraph_CanZoomPanFitAndSelectTheLastCard" fullname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests.LargeGraph_CanZoomPanFitAndSelectTheLastCard" methodname="LargeGraph_CanZoomPanFitAndSelectTheLastCard" classname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests" runstate="Runnable" seed="1581241958" result="Passed" start-time="2026-10-19 02:59:06Z" end-time="2026-10-19 02:59:06Z" duration="0.730523" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+              </test-case>
+              <test-case id="1679" name="NativeUgui_ClickSourceAndStepWithoutCommittingGameplay" fullname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests.NativeUgui_ClickSourceAndStepWithoutCommittingGameplay" methodname="NativeUgui_ClickSourceAndStepWithoutCommittingGameplay" classname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests" runstate="Runnable" seed="200788917" result="Passed" start-time="2026-10-19 02:59:06Z" end-time="2026-10-19 02:59:07Z" duration="0.223519" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1678" name="SavedSandbox_ThreeConfiguredSamplesMatchTheRuleGraph" fullname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests.SavedSandbox_ThreeConfiguredSamplesMatchTheRuleGraph" methodname="SavedSandbox_ThreeConfiguredSamplesMatchTheRuleGraph" classname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests" runstate="Runnable" seed="1122970403" result="Passed" start-time="2026-10-19 02:59:07Z" end-time="2026-10-19 02:59:07Z" duration="0.463361" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1682" name="WarmStepAndZoom_ReuseViewsWithoutManagedAllocations" fullname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests.WarmStepAndZoom_ReuseViewsWithoutManagedAllocations" methodname="WarmStepAndZoom_ReuseViewsWithoutManagedAllocations" classname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests" runstate="Runnable" seed="1871759910" result="Passed" start-time="2026-10-19 02:59:07Z" end-time="2026-10-19 02:59:07Z" duration="0.171480" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/playmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

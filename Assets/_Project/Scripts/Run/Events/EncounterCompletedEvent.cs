@@ -5,7 +5,7 @@ namespace Game.Run
 {
     /// <summary>
     /// 当前 Encounter 被纯 Tracker 判定为清场后发布一次。
-    /// RewardSpell 是只读资产引用；真正把奖励加入本局法术库由后续 RunSpellSession 负责。
+    /// RewardSpell 是只读资产引用；真正创建持有物品由当前库存的奖励 Adapter 负责。
     /// </summary>
     public struct EncounterCompletedEvent : IGameEvent
     {

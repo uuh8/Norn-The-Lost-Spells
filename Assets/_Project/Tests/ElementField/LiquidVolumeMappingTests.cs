@@ -357,7 +357,7 @@ namespace Game.ElementField.Tests
             var bindings=AssetDatabase.LoadAssetAtPath<MaterialReactionBindingProfile>(
                 "Assets/_Project/ScriptableObjects/Combat/Reactions/MaterialReactionBindings_Default.asset");
             var profile=AssetDatabase.LoadAssetAtPath<ElementReactionProfile>(
-                "Assets/_Project/ScriptableObjects/Status/ElementReactionProfile_Default.asset");
+                "Assets/_Project/ScriptableObjects/Combat/Status/ElementReactionProfile_Default.asset");
             var tuning=profile.CreateSnapshot(1f,1f);
             return new LiquidReactionAdapter(runtime,fire,bindings.CreateSnapshot(materials.CreateSnapshot()),
                 in tuning,16,(in ElementCellDeltaRequest request)=>false,add,damage);

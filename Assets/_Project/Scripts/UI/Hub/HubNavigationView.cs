@@ -28,7 +28,7 @@ namespace Game.UI
         private void OnDestroy(){_escape.performed-=Escape;_escape.Dispose();}
         private int _lastPrompt=-1;
         private static readonly ProfilerMarker UpdateMarker=new ProfilerMarker("Norn.Hub.NavigationUpdate");
-        private static readonly string[] Prompts={"Tab 背包 · F 交互/拾取","F 仓库 · Tab 背包","F 商店 · Tab 背包","走入传送门进入箱庭","实验区 · 离开据点清空世界元素","Tab 背包 · 走入出口开始撤离"};
+        private static readonly string[] Prompts={"Tab 背包 · F 交互/拾取","F 仓库 · Tab 背包","F 商店 · Tab 背包","走入传送门进入箱庭","实验区 · 离开据点清空世界元素","Tab 背包 · 走入出口开始撤离","F 法术研究台 · Tab 背包"};
         private void OnEnable(){_escape.Enable();EventBus<HubInteractionResultEvent>.Subscribe(OnInteraction);EventBus<HubDepartureReviewResultEvent>.Subscribe(OnReview);_depart.onClick.AddListener(Depart);_continue.onClick.AddListener(Continue);_cancel.onClick.AddListener(Cancel);}
         private void OnDisable(){_escape.Disable();EventBus<HubInteractionResultEvent>.Unsubscribe(OnInteraction);EventBus<HubDepartureReviewResultEvent>.Unsubscribe(OnReview);_depart.onClick.RemoveListener(Depart);_continue.onClick.RemoveListener(Continue);_cancel.onClick.RemoveListener(Cancel);Cancel();}
         private IEnumerator Start()
@@ -38,14 +38,15 @@ namespace Game.UI
             using(UpdateMarker.Auto())
             {
                 // 独立高排序HUD不能盖住整屏面板；只在可见状态变化时切换，稳定帧不扫描层级。
-                bool overlay=_inventory.IsOpen || _shop.IsOpen;
+                bool overlay=_inventory.IsOpen || _shop.IsOpen || WandResearchController.Current!=null && WandResearchController.Current.IsOpen;
                 if(_prompt.gameObject.activeSelf==overlay)_prompt.gameObject.SetActive(!overlay);
                 if(_shopOpenButton!=null && _shopOpenButton.activeSelf==overlay)_shopOpenButton.SetActive(!overlay);
                 if(_worldHud!=null)for(int i=0;i<_worldHud.Length;i++)if(_worldHud[i]!=null && _worldHud[i].activeSelf==overlay)_worldHud[i].SetActive(!overlay);
                 int prompt=0;var run=_inventory.Session.RunCoordinator;
                 if(run!=null && run.State.Phase!=RaidPhase.HubReady)prompt=5;
-                else if(_hub.TryGetStation(out var point))prompt=1+(int)point.Kind;
-                else if(_experiment.IsInside)prompt=4;
+                else if(_hub.TryGetStation(out var point))prompt=point.Kind==HubStationKind.Warehouse?1:
+                    point.Kind==HubStationKind.Shop?2:point.Kind==HubStationKind.SpellResearch?6:3;
+                else if(_experiment!=null && _experiment.IsInside)prompt=4;
                 if(prompt==_lastPrompt)return;_lastPrompt=prompt;_prompt.text=Prompts[prompt];
             }
         }
@@ -65,7 +66,7 @@ namespace Game.UI
         {
             if(result.InventoryId!=_inventory.Session.ReadOnly?.InventoryId)return;
             if(result.Departing){_inventory.Close();_shop.Close();Cancel();return;}
-            if(result.WorldReady && result.ResidentQuantity==0 && result.Message==_experiment.ResidueMessage){Cancel();return;}
+            if(result.WorldReady && result.ResidentQuantity==0 && _experiment!=null && result.Message==_experiment.ResidueMessage){Cancel();return;}
             _residue.text=result.Message;
             _continue.interactable=result.WorldReady;
             _departurePanel.SetActive(true);_pause?.RequestPause(RunPauseReason.HubConfirmation);

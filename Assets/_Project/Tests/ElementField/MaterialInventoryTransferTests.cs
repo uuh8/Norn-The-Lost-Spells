@@ -126,7 +126,8 @@ namespace Game.ElementField.Tests
             else Assert.That(world.Gas.StageConversionAdd(Vector3Int.zero, material, 100), Is.True);
             var destination = new Destination { AllowedMaterials = (ushort)(1 << (byte)material) };
             var port = new MaterialInventoryWorldPort(world.Runtime);
-            Assert.That(port.Transfer(Request(Vector3.one * 100.5f), destination, out var transferred), Is.EqualTo(MaterialTransferFailure.None));
+            var request=Request(Vector3.one*100.5f);request.SolidItem=solid;
+            Assert.That(port.Transfer(request, destination, out var transferred), Is.EqualTo(MaterialTransferFailure.None));
             world.Runtime.TryGetQuantity(Vector3Int.zero, material, out uint remaining);
             Assert.That(remaining, Is.EqualTo(70)); Assert.That(transferred, Is.EqualTo(30)); Assert.That(destination.Quantities[(byte)material], Is.EqualTo(30));
         }
@@ -146,7 +147,8 @@ namespace Game.ElementField.Tests
             Assert.That(world.Solid.ValidateConversionGeometry(), Is.True); world.Solid.PublishConversionGeometry();
             var destination = new Destination { AllowedMaterials = 1 << 6 };
             var port = new MaterialInventoryWorldPort(world.Runtime);
-            Assert.That(port.Transfer(Request(Vector3.one * 100.5f), destination, out _), Is.EqualTo(MaterialTransferFailure.GeometryRejected));
+            var request=Request(Vector3.one*100.5f);request.SolidItem=true;
+            Assert.That(port.Transfer(request, destination, out _), Is.EqualTo(MaterialTransferFailure.GeometryRejected));
             world.Solid.TryGetQuantity(Vector3Int.zero, MaterialId.DriedSlime, out uint quantity);
             Assert.That(quantity, Is.EqualTo(100)); Assert.That(world.Solid.TotalQuantity, Is.EqualTo(200));
             Assert.That(destination.Reserved, Is.False); Assert.That(destination.Committed, Is.False);

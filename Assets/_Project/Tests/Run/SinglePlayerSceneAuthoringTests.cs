@@ -38,9 +38,9 @@ namespace Game.Run.Tests
             foreach (string name in new[] { "_catalog", "_startingInventory" })
             {
                 var asset = serialized.FindProperty(name).objectReferenceValue;
-                Assert.That(AssetDatabase.GetAssetPath(asset), Does.StartWith("Assets/_Project/ScriptableObjects/SinglePlayer/"));
+                Assert.That(AssetDatabase.GetAssetPath(asset), Does.StartWith("Assets/_Project/ScriptableObjects/World/Hub/Inventory/"));
                 foreach (string dependency in AssetDatabase.GetDependencies(AssetDatabase.GetAssetPath(asset), true))
-                    Assert.That(dependency, Does.Not.StartWith("Assets/_Project/ScriptableObjects/Tests/"), dependency);
+                    Assert.That(dependency, Does.Not.StartWith("Assets/_Project/Tests/Fixtures/Run/"), dependency);
             }
             var catalog = (ItemCatalog)serialized.FindProperty("_catalog").objectReferenceValue;
             var seeds = (SinglePlayerStartingInventory)serialized.FindProperty("_startingInventory").objectReferenceValue;
@@ -51,16 +51,16 @@ namespace Game.Run.Tests
                 Assert.That(entry.Item.Composition.Total, Is.Zero, "新档不能从测试样本获得免费材料。");
         }
 
-        [Test] public void FormalHubHasThreeDistinctReachableStationsAndExplicitExperiment()
+        [Test] public void FormalHubHasFourDistinctReachableStationsAndExplicitExperiment()
         {
             Load(); var interaction = Find<HubInteractionController>(); Assert.That(interaction, Is.Not.Null);
             var definition = (HubDefinition)new SerializedObject(interaction).FindProperty("_definition").objectReferenceValue;
-            Assert.That(definition.Stations.Length, Is.EqualTo(3));
-            for (int i = 0; i < 3; i++)
+            Assert.That(definition.Stations.Length, Is.EqualTo(4));
+            for (int i = 0; i < definition.Stations.Length; i++)
             {
                 Assert.That(definition.TryFindNearest(definition.Stations[i].Position, out var station), Is.True);
                 Assert.That(station.Kind, Is.EqualTo(definition.Stations[i].Kind));
-                for (int j = i + 1; j < 3; j++) Assert.That(definition.Stations[i].Kind, Is.Not.EqualTo(definition.Stations[j].Kind));
+                for (int j = i + 1; j < definition.Stations.Length; j++) Assert.That(definition.Stations[i].Kind, Is.Not.EqualTo(definition.Stations[j].Kind));
             }
             Assert.That(definition.ContainsExperiment(definition.ExperimentCenter), Is.True);
             Assert.That(definition.ContainsExperiment(Find<WizardController>().transform.position), Is.False, "出生在普通整备区，不默认进入实验。");

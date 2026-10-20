@@ -21,6 +21,7 @@ namespace Game.UI
         public void OnDrag(PointerEventData data)=>_controller?.MoveGhost(data.position,data.pressEventCamera);
         public void OnEndDrag(PointerEventData data)=>_controller?.EndItemDrag(data.position,data.pressEventCamera);
         public void OnPointerClick(PointerEventData data)
-        {if(!_dragged && data.button==PointerEventData.InputButton.Left)_controller?.ClickItem(_item.InstanceId);_dragged=false;}
+        {if(data.button==PointerEventData.InputButton.Right)_controller?.ShowItemInfo(_item.InstanceId,data.position,data.pressEventCamera);
+            else if(!_dragged && data.button==PointerEventData.InputButton.Left)_controller?.ClickItem(_item.InstanceId);_dragged=false;}
     }
 }

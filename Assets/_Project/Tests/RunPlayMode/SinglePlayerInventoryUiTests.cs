@@ -22,7 +22,7 @@ namespace Game.Run.Tests
     public sealed class SinglePlayerInventoryUiTests
     {
         private const string ScenePath = "Assets/_Project/Scenes/Tests/InventorySandbox.unity";
-        private const string DataPath = "Assets/_Project/ScriptableObjects/Tests/SinglePlayer/";
+        private const string DataPath = "Assets/_Project/Tests/Fixtures/Run/SinglePlayer/";
         private Scene _scene;
         private string _directory;
         private SinglePlayerInventorySession _session;
@@ -49,7 +49,7 @@ namespace Game.Run.Tests
             _unrecognizedProfile = TestContext.CurrentContext.Test.Name == nameof(UnrecognizedProfileShowsFailureAndCannotSaveNewAssets);
             if (_unrecognizedProfile)
             { Directory.CreateDirectory(_directory); File.WriteAllText(Path.Combine(_directory, "profile.json"), "{\"SchemaVersion\":999}"); }
-            _catalog = AssetDatabase.LoadAssetAtPath<ItemCatalog>(DataPath + "Catalog.asset");
+            _catalog = AssetDatabase.LoadAssetAtPath<ItemCatalog>("Assets/_Project/Tests/Fixtures/Run/SinglePlayer/Catalog.asset");
             _configured = false;
             SceneManager.sceneLoaded += OnSceneLoaded;
             _scene = EditorSceneManager.LoadSceneInPlayMode(ScenePath, new LoadSceneParameters(LoadSceneMode.Additive));
@@ -81,7 +81,7 @@ namespace Game.Run.Tests
             _scene = scene;
             _session = Find<SinglePlayerInventorySession>(); _ui = Find<SinglePlayerInventoryController>();
             _grid = Find<InventoryGridView>(); _pause = Find<RunPauseCoordinator>();
-            var seeds = AssetDatabase.LoadAssetAtPath<SinglePlayerStartingInventory>(DataPath + "StartingInventory.asset");
+            var seeds = AssetDatabase.LoadAssetAtPath<SinglePlayerStartingInventory>("Assets/_Project/Tests/Fixtures/Run/SinglePlayer/StartingInventory.asset");
             _configured = _session.ConfigureAndInitialize(_catalog, seeds, _directory);
         }
 

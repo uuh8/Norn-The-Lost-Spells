@@ -30,7 +30,7 @@ namespace Game.Run.Tests
         private IEnumerator Open(string map)
         {
             EditorWindow.GetWindow(Type.GetType("UnityEditor.GameView,UnityEditor")).Focus();
-            _scene=EditorSceneManager.LoadSceneInPlayMode("Assets/_Project/Scenes/SinglePlayer/"+map+"_ModernUiReview.unity",new LoadSceneParameters(LoadSceneMode.Additive));
+            _scene=EditorSceneManager.LoadSceneInPlayMode("Assets/_Project/Scenes/"+map+".unity",new LoadSceneParameters(LoadSceneMode.Additive));
             for(int i=0;i<5;i++)yield return null;
             Find<GameplayGuideController>()?.Close();Time.timeScale=1;yield return null;
             _session=Find<SinglePlayerInventorySession>();_player=Find<WizardController>();_bag=Find<SinglePlayerInventoryController>();
@@ -41,7 +41,7 @@ namespace Game.Run.Tests
         private IEnumerator Layout(string map)
         {
             yield return Open(map);
-            Assert.That(Find<WandEditorController>(),Is.Null);Assert.That(Find<PlayerManaBar>(),Is.Null);
+            Assert.That(Find<PlayerManaBar>(),Is.Null);
             foreach(var root in _scene.GetRootGameObjects())foreach(var node in root.GetComponentsInChildren<Transform>(true))
                 Assert.That(node.name.Trim(),Is.Not.EqualTo("AimPoint"),"旧红十字必须移除，仅检查新增白点会漏掉重影");
             Assert.That(UnityEngine.Object.FindObjectsByType<PracticeInventoryWorkspace>(FindObjectsSortMode.None).Length,Is.EqualTo(1));
@@ -53,6 +53,9 @@ namespace Game.Run.Tests
             Assert.That(((RectTransform)dot).sizeDelta,Is.EqualTo(new Vector2(5,5)));
             _input.Press(_keys.tabKey);yield return null;_input.Release(_keys.tabKey);yield return null;
             Assert.That(_bag.IsOpen,Is.True);Assert.That(Time.timeScale,Is.Zero);
+            var convenience=new SerializedObject(_bag.GetComponent<BackpackWorkspaceView>());
+            Assert.That(convenience.FindProperty("_organize").objectReferenceValue,Is.Not.Null,"副本共用工作区也需要整理按钮");
+            Assert.That(convenience.FindProperty("_pickupAll").objectReferenceValue,Is.Not.Null,"副本共用工作区也需要全拾取按钮");
             Assert.That(Find<HeldItemHud>().GetComponentInParent<Canvas>().enabled,Is.False);
             Assert.That(Find<ContainerCompositionView>().GetComponentInParent<Canvas>().enabled,Is.False);
             yield return new WaitForEndOfFrame();Directory.CreateDirectory(Evidence);ScreenCapture.CaptureScreenshot(Evidence+"/"+map+"-backpack.png");
@@ -115,13 +118,17 @@ namespace Game.Run.Tests
         [UnityTest]public IEnumerator ActualKeyboardSelectionAndMouseCastConsumeOwnedMana()
         {
             yield return Open("P7_DemoRun");
+            // Fixture额外开启的缓存诊断在Editor合成输入时报告Package内部状态错误。
+            // 此用例验证游戏输入/实际Mana链路，采用直接读取；TearDown恢复原settings，不改项目配置。
+            InputSystem.settings.SetInternalFeatureFlag("USE_READ_VALUE_CACHING",false);
             _input.Press(_keys.digit2Key);yield return null;_input.Release(_keys.digit2Key);yield return null;
             Assert.That(_session.ToolbeltReadOnly.SelectedSlot,Is.EqualTo(1));
             _input.Press(_keys.digit1Key);yield return null;_input.Release(_keys.digit1Key);yield return null;
             Assert.That(_session.WandsReadOnly.TryGetSlot(0,out var before),Is.True);
             Assert.That(_player.GetComponent<OwnedWandCastAdapter>().TryCapture(out var program,out _),Is.True);
             Assert.That(program.Program.Count,Is.GreaterThan(0));float legacy=_player.GetComponent<ManaComponent>().CurrentMana;
-            InputSystem.QueueStateEvent(_mouse,new MouseState{buttons=1});yield return null;InputSystem.QueueStateEvent(_mouse,new MouseState());
+            // 使用Fixture按键入口保留其余设备状态，避免整体MouseState覆写触发缓存校验。
+            _input.Press(_mouse.leftButton);yield return null;_input.Release(_mouse.leftButton);
             float end=Time.realtimeSinceStartup+4;bool spent=false;
             while(Time.realtimeSinceStartup<end){if(_session.WandsReadOnly.TryGetSlot(0,out var now)&&now.CurrentMana<before.CurrentMana){spent=true;break;}yield return null;}
             Assert.That(spent,Is.True,"点击必须消耗背包中实际法杖的Mana，不能继续走旧SpellCaster.CastWand路径");
@@ -140,7 +147,7 @@ namespace Game.Run.Tests
         [UnityTest]public IEnumerator RewardIsOwnedAndIdempotentAndFullInventoryCanRetry()
         {
             yield return Open("P7_DemoRun");_player.enabled=false;
-            var rewards=Find<PracticeSpellRewardAdapter>();var spell=RunSpellSession.Current.FullLibrary.Available[0];
+            var rewards=Find<PracticeSpellRewardAdapter>();var spell=AssetDatabase.LoadAssetAtPath<Game.Skills.SpellLibrary>("Assets/_Project/ScriptableObjects/Spell/Libraries/SpellLibrary_Player.asset").Available[0];
             Assert.That(_session.Profile.Items.Catalog.TryFindSpell(spell,out var definition),Is.True);
             int count=_session.ReadOnly.Count;Assert.That(rewards.TryGrant("test",spell),Is.True);Assert.That(_session.ReadOnly.Count,Is.EqualTo(count+1));
             Assert.That(rewards.TryGrant("test",spell),Is.True);Assert.That(_session.ReadOnly.Count,Is.EqualTo(count+1));
@@ -167,7 +174,7 @@ namespace Game.Run.Tests
             Assert.That(adapter.TryCapture(out var edited,out var source),Is.True);Assert.That(edited.Program.GetInstanceId(0),Is.EqualTo(finite.InstanceId));
             Assert.That(_player.SpellCaster.CastOwnedProgram(edited,source,new Vector3(30,20,20),new Vector3(30,20,40),1,777,_player.CharacterController),Is.EqualTo(1));
             Assert.That(_session.ReadOnly.TryGetView(finite.InstanceId,out var card),Is.True);Assert.That(card.RemainingCharges,Is.EqualTo(2));
-            var catalog=AssetDatabase.LoadAssetAtPath<ItemCatalog>("Assets/_Project/ScriptableObjects/SinglePlayer/Hub/SinglePlayerRaids/Catalog.asset");
+            var catalog=AssetDatabase.LoadAssetAtPath<ItemCatalog>("Assets/_Project/ScriptableObjects/World/Hub/Inventory/Catalog.asset");
             var definitions=new SerializedObject(catalog).FindProperty("_definitions");ItemDefinition bottleDefinition=null;
             for(int i=0;i<definitions.arraySize;i++){var item=(ItemDefinition)definitions.GetArrayElementAtIndex(i).objectReferenceValue;if(item.Kind==ItemKind.Container){bottleDefinition=item;break;}}
             var bottle=RuntimeItemState.Create(bottleDefinition.ContentId);string bagId=null;
@@ -184,7 +191,7 @@ namespace Game.Run.Tests
             while(HubPracticeSession.Current!=null&&Time.realtimeSinceStartup<end)yield return null;
             _scene=SceneManager.GetSceneByPath("Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub.unity");
             yield return null;yield return null;Assert.That(_scene.isLoaded,Is.True);
-            Assert.That(SceneManager.GetSceneByPath("Assets/_Project/Scenes/SinglePlayer/P8_BossField_ModernUiReview.unity").isLoaded,Is.False);
+            Assert.That(SceneManager.GetSceneByPath("Assets/_Project/Scenes/P7_DemoRun.unity").isLoaded,Is.False);
             _session=Find<SinglePlayerInventorySession>();_player=Find<WizardController>();_bag=Find<SinglePlayerInventoryController>();
             AssertCarriedProgram(initial.SourceWandId,finite.InstanceId);
             Assert.That(_session.ToolbeltReadOnly.SelectedSlot,Is.EqualTo(3));
@@ -222,7 +229,7 @@ namespace Game.Run.Tests
         }
         private void CreateSelectedBottle()
         {
-            var catalog=AssetDatabase.LoadAssetAtPath<ItemCatalog>("Assets/_Project/ScriptableObjects/SinglePlayer/Hub/SinglePlayerRaids/Catalog.asset");
+            var catalog=AssetDatabase.LoadAssetAtPath<ItemCatalog>("Assets/_Project/ScriptableObjects/World/Hub/Inventory/Catalog.asset");
             var definitions=new SerializedObject(catalog).FindProperty("_definitions");ItemDefinition definition=null;
             for(int i=0;i<definitions.arraySize;i++){var item=(ItemDefinition)definitions.GetArrayElementAtIndex(i).objectReferenceValue;if(item.Kind==ItemKind.Container){definition=item;break;}}
             string bag=null;foreach(var entry in _session.Profile.Items)if(entry.Location.Kind==ItemLocationKind.EquippedBackpack)bag=entry.Item.InstanceId;
@@ -236,14 +243,13 @@ namespace Game.Run.Tests
             {
                 _bag?.Close();Time.timeScale=1;
                 if(HubPracticeSession.Current!=null)UnityEngine.Object.Destroy(HubPracticeSession.Current.gameObject);
-                if(RunSessionCoordinator.Current!=null)UnityEngine.Object.Destroy(RunSessionCoordinator.Current.gameObject);
                 foreach(var projectile in UnityEngine.Object.FindObjectsByType<ProjectileBase>(FindObjectsSortMode.None))UnityEngine.Object.Destroy(projectile.gameObject);
                 yield return null;
                 var empty=SceneManager.GetSceneByName("Modern practice test cleanup");if(!empty.IsValid()||!empty.isLoaded)empty=SceneManager.CreateScene("Modern practice test cleanup");SceneManager.SetActiveScene(empty);
                 for(int i=SceneManager.sceneCount-1;i>=0;i--)
                 {
                     var scene=SceneManager.GetSceneAt(i);
-                    if(scene!=empty&&(scene==_scene||scene.path.EndsWith("_ModernUiReview.unity")||scene.path=="Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub.unity"))yield return SceneManager.UnloadSceneAsync(scene);
+                    if(scene!=empty&&(scene==_scene||scene.path=="Assets/_Project/Scenes/P7_DemoRun.unity"||scene.path=="Assets/_Project/Scenes/P8_BossField.unity"||scene.path=="Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub.unity"))yield return SceneManager.UnloadSceneAsync(scene);
                 }
             }
             finally{_input?.TearDown();Application.runInBackground=_background;Time.timeScale=1;}

@@ -8,6 +8,10 @@ namespace Game.Core
         public string MaterialWorldId;
         public ulong RequestId;
         public uint ProgramRevision;
+        // V2分别校验程序、牌堆、法杖资源和库存；Legacy入口不读取追加字段。
+        public long ExecutionRevision;
+        public uint ResourceVersion, InventoryVersion;
+        public bool UseV2;
         public int LayerIndex;
         public CastResourceOperation Operation;
     }

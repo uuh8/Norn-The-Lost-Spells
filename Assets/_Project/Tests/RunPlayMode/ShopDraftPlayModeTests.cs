@@ -16,7 +16,7 @@ namespace Game.Run.Tests
     /// <summary>只加载独立草稿和内存资产；验证复制Canvas没有订阅Tab、E打开正确商店以及旧交易仍生效。</summary>
     public sealed class ShopDraftPlayModeTests : BackpackWorkspacePlayModeTests
     {
-        protected override string ReviewPath => "Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub_ShopDraftReview.unity";
+        protected override string ReviewPath => "Assets/_Project/Scenes/Tests/Hub/SinglePlayer_Hub_ShopDraftReview.unity";
         protected override string EvidencePath => "TestResults/SinglePlayer/M6-T1-ShopDraft";
         protected override SinglePlayerProfile CustomizeProfile(SinglePlayerProfile profile, ItemCatalogIndex index)
         {

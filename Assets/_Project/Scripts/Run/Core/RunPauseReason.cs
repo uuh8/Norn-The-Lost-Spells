@@ -7,16 +7,17 @@ namespace Game.Run
     /// 使用 Flags 而不是单一 bool，是为了避免一个界面关闭时误恢复仍被另一个界面暂停的 Gameplay。
     /// </summary>
     [Flags]
-    public enum RunPauseReason : byte
+    public enum RunPauseReason : ushort
     {
         None = 0,
-        WandEditor = 1 << 0,
+        // bit 0 曾用于旧法杖编辑器；保留空位，现有理由的数值不整体移动。
         PauseMenu = 1 << 1,
         TerminalResult = 1 << 2,
         SceneTransition = 1 << 3,
         GameplayGuide = 1 << 4,
         Inventory = 1 << 5,
         Shop = 1 << 6,
-        HubConfirmation = 1 << 7
+        HubConfirmation = 1 << 7,
+        SpellResearch = 1 << 8
     }
 }

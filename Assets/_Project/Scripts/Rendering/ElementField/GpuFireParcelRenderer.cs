@@ -73,6 +73,8 @@ namespace Game.Rendering
         private int _seedScanChunkCursor;
         private readonly MaterialPresentationView _view=new MaterialPresentationView();
         private Camera _viewCamera;
+        // Unity被销毁/未绑定的Transform可能CLR引用非null；使用Unity判空并复用世界兴趣点，不能用??=。
+        private Vector3 InterestPosition=>_interestCenter!=null?_interestCenter.position:_worldRuntime.InterestPosition;
         public bool IsReady => _initialized;
         public bool UsesLocalSurface => _useLocalSurface;
         public Bounds LastDrawBounds { get; private set; }
@@ -121,7 +123,6 @@ namespace Game.Rendering
                 GameLog.Error("GPU Fire Compute Kernel Contract 不完整，请先检查 Shader Import Error。", "Rendering");
                 return false;
             }
-            _interestCenter ??= transform;
             _phase = _profile.CreatePhaseSettings();
             _visibleKeys = new ElementChunkKey[_world.MaximumResidentChunkCount];
             _chunkReader = _world as IElementWorldChunkReadOnly;
@@ -186,7 +187,7 @@ namespace Game.Rendering
         private void InitializeLocalSurface()
         {
             FireParcelSurfaceGridSettings initialGrid = FireParcelSurfaceGridPlanner.Plan(
-                _interestCenter.position, _profile.SurfaceBoundsRadius, _profile.SurfaceVoxelSize);
+                InterestPosition, _profile.SurfaceBoundsRadius, _profile.SurfaceVoxelSize);
             _surfaceResources = new FireParcelSurfaceResources(in initialGrid, _profile.MaximumSurfaceTriangleCount);
             _densityClearKernel = _surfaceDensityCompute.FindKernel("ClearFireDensity");
             _densityScatterKernel = _surfaceDensityCompute.FindKernel("ScatterFireDensity");
@@ -220,7 +221,7 @@ namespace Game.Rendering
         {
             LastGcBytes = 0;
             // Scene卸载/死亡可先销毁兴趣中心，再销毁Renderer；Unity的假null必须用==检查，不能读已销毁Transform。
-            if (!_initialized || _interestCenter == null || Time.timeScale <= 0f)
+            if (!_initialized || _worldRuntime == null || Time.timeScale <= 0f)
                 return;
             long allocated = GC.GetAllocatedBytesForCurrentThread();
             float dt = Mathf.Min(Time.deltaTime, _profile.MaximumVisualDeltaTime);
@@ -237,10 +238,10 @@ namespace Game.Rendering
 
         private void LateUpdate()
         {
-            if (!_initialized || _interestCenter == null)
+            if (!_initialized || _worldRuntime == null)
                 return;
             long allocated = GC.GetAllocatedBytesForCurrentThread();
-            Bounds bounds = new Bounds(_interestCenter.position,
+            Bounds bounds = new Bounds(InterestPosition,
                 Vector3.one * (_profile.DrawBoundsRadius * 2f));
             LastDrawBounds = bounds;
             _surfaceSplatRenderParams.worldBounds = bounds;
@@ -252,7 +253,7 @@ namespace Game.Rendering
             if (_useLocalSurface)
             {
                 FireParcelSurfaceGridSettings grid = FireParcelSurfaceGridPlanner.Plan(
-                    _interestCenter.position, _profile.SurfaceBoundsRadius, _profile.SurfaceVoxelSize);
+                    InterestPosition, _profile.SurfaceBoundsRadius, _profile.SurfaceVoxelSize);
                 using (SurfaceMarker.Auto()) ReconstructSurface(in grid);
                 _surfaceRenderParams.worldBounds = bounds;
                 _surfaceDepthRenderParams.worldBounds = bounds;
@@ -288,7 +289,7 @@ namespace Game.Rendering
 
         private void SetVisibility(MaterialPropertyBlock properties)
         {
-            properties.SetVector("_VisibilityCenter", _interestCenter.position);
+            properties.SetVector("_VisibilityCenter", InterestPosition);
             properties.SetFloat("_VisibilityFadeStart", _profile.VisibilityFadeStart);
             properties.SetFloat("_VisibilityFadeEnd", _profile.VisibilityFadeEnd);
         }
@@ -365,7 +366,7 @@ namespace Game.Rendering
         private int CollectSeeds()
         {
             if(_viewCamera==null || !_viewCamera.isActiveAndEnabled)_viewCamera=Camera.main;
-            _view.Update(_viewCamera,_interestCenter.position,_profile.VisibilityFadeStart,_profile.VisibilityFadeEnd,8);
+            _view.Update(_viewCamera,InterestPosition,_profile.VisibilityFadeStart,_profile.VisibilityFadeEnd,8);
             int keyCount = _world.CopyVisibleChunkKeys(_visibleKeys);
             int seedCount = 0;
             int chunkSize = _world.ChunkSize;

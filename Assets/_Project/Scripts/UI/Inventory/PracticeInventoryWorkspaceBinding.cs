@@ -16,9 +16,7 @@ namespace Game.UI
         [SerializeField] private Canvas _containerCanvas;
         private void Awake()
         {
-            // 两套编辑器共享Tab会同时打开并各持有Pause Reason。只在已接入携带背包的练习上下文撤下旧入口。
-            foreach(var root in gameObject.scene.GetRootGameObjects())
-                foreach(var editor in root.GetComponentsInChildren<WandEditorController>(true))editor.SuspendForInventoryWorkspace();
+            // 场景只装配携带背包；旧法杖编辑器已在 Authoring 迁移时移除，不再运行时互相禁用。
             _inventory.ConfigurePracticeWorkspace(_workspace.Session,_workspace.Nearby,_workspace.Pause);
             foreach(var root in gameObject.scene.GetRootGameObjects())
             {var menu=root.GetComponentInChildren<DemoPauseMenuController>(true);if(menu!=null)menu.ConfigurePracticeInventory(_inventory);}

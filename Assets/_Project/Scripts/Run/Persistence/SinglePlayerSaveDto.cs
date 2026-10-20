@@ -34,5 +34,11 @@ namespace Game.Run
         public string AttachmentContainerId;
         public ulong AttachmentDose;
         public bool AttachmentEnabled;
+        public bool HasRolledWandStats;
+        public float WandMaxMana,WandManaRegen,WandCooldown;
+        public float WandReloadTime, WandSpreadDegrees;
+        public bool WandShuffle;
+        public string[] WandAlwaysCastContentIds;
+        public int WandCapacity,WandBaseDraws;
     }
 }

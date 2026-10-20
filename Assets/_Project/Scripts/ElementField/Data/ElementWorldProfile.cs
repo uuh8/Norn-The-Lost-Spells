@@ -31,6 +31,8 @@ namespace Game.ElementField
         [SerializeField, Range(0, byte.MaxValue)] private int _maxDownFlowPerTick = 64;
         [SerializeField, Range(0, byte.MaxValue)] private int _maxLateralFlowPerTick = 16;
         [SerializeField, Range(0, byte.MaxValue)] private int _fireDecayPerTick = 1;
+        [Tooltip("真实火格每Tick向下转移的最大强度；独立于Water后端。0关闭，255允许整格每Tick下落一格。")]
+        [SerializeField,Range(0,byte.MaxValue)]private int _maxFireDownFlowPerTick;
 
         [Header("Water Simulation Backend")]
         [Tooltip("Legacy Cell=0、Gpu PBF=1、Grid Liquid=2；后端切换仅在退出并重新进入 Play 后生效。")]
@@ -83,6 +85,7 @@ namespace Game.ElementField
         public byte MaxDownFlowPerTick => (byte)_maxDownFlowPerTick;
         public byte MaxLateralFlowPerTick => (byte)_maxLateralFlowPerTick;
         public byte FireDecayPerTick => (byte)_fireDecayPerTick;
+        public byte MaxFireDownFlowPerTick=>(byte)_maxFireDownFlowPerTick;
         public WaterSimulationMode WaterSimulationMode => _waterSimulationMode;
         public bool EnableFluidChunkStreaming => _enableFluidChunkStreaming;
         public MaterialCatalog MaterialCatalog => _materialCatalog;
@@ -118,7 +121,7 @@ namespace Game.ElementField
                 (byte)_fireDecayPerTick,
                 _chunkSize,
                 _waterSimulationMode == WaterSimulationMode.LegacyCell,
-                _reactionProfile.Extinguish);
+                _reactionProfile.Extinguish,(byte)_maxFireDownFlowPerTick);
         }
 
         public FluidChunkStreamingSettings CreateFluidChunkStreamingSettings()
@@ -154,6 +157,7 @@ namespace Game.ElementField
             _maxDownFlowPerTick = Mathf.Clamp(_maxDownFlowPerTick, 0, byte.MaxValue);
             _maxLateralFlowPerTick = Mathf.Clamp(_maxLateralFlowPerTick, 0, byte.MaxValue);
             _fireDecayPerTick = Mathf.Clamp(_fireDecayPerTick, 0, byte.MaxValue);
+            _maxFireDownFlowPerTick=Mathf.Clamp(_maxFireDownFlowPerTick,0,byte.MaxValue);
             _fluidWarmPaddingChunks = Mathf.Max(0, _fluidWarmPaddingChunks);
             _fluidArchiveGraceSeconds = Mathf.Max(0f, _fluidArchiveGraceSeconds);
             _maximumArchivedFluidChunks = Mathf.Max(1, _maximumArchivedFluidChunks);

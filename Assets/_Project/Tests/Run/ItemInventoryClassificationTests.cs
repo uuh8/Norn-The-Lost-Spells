@@ -10,7 +10,7 @@ namespace Game.Run.Tests
         [Test]
         public void EveryCurrentHubDefinitionHasTheExpectedCategoryWithoutChangingKind()
         {
-            var catalog=AssetDatabase.LoadAssetAtPath<ItemCatalog>("Assets/_Project/ScriptableObjects/SinglePlayer/Hub/SinglePlayerRaids/Catalog.asset");
+            var catalog=AssetDatabase.LoadAssetAtPath<ItemCatalog>("Assets/_Project/ScriptableObjects/World/Hub/Inventory/Catalog.asset");
             var entries=new SerializedObject(catalog).FindProperty("_definitions");
             int food=0,herbs=0,tools=0;var report=new StringBuilder("ContentId\tName\tKind\tDisplayCategory\n");
             for(int i=0;i<entries.arraySize;i++)

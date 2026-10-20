@@ -11,6 +11,8 @@ namespace Game.UI
     {
         [SerializeField, Min(8)] private float _cellSize = 48f;
         [SerializeField] private bool _fitToViewport;
+        [SerializeField] private bool _fitWidthToViewport;
+        public void ConfigureViewportWidthFit(bool fit){_fitWidthToViewport=fit;}
         [SerializeField, Min(8)] private float _minimumCellSize = 24f;
         public void ConfigureViewportFit(bool fit) { _fitToViewport=fit; }
         private readonly List<InventoryItemView> _views = new List<InventoryItemView>();
@@ -30,8 +32,9 @@ namespace Game.UI
             InventoryItemSnapshot bag = default; bool found = false;
             for (int i = 0; i < count; i++) if (items[i].InstanceId == backpackId) { bag = items[i]; found = true; break; }
             int width = found ? bag.Rules.BackpackWidth : 0, height = found ? bag.Rules.BackpackHeight : 0;
-            if (_fitToViewport && width>0 && height>0 && transform.parent is RectTransform viewport)
-                _cellSize=Mathf.Max(_minimumCellSize,Mathf.Min(viewport.rect.width/width,viewport.rect.height/height));
+            if ((_fitToViewport || _fitWidthToViewport) && width>0 && height>0 && transform.parent is RectTransform viewport)
+                // 放大操作区时按宽度显示完整列，超出高度用手动滚动；按较小轴缩放会让加宽后仍留下大片空白。
+                _cellSize=Mathf.Max(_minimumCellSize,_fitWidthToViewport?viewport.rect.width/width:Mathf.Min(viewport.rect.width/width,viewport.rect.height/height));
             ((RectTransform)transform).sizeDelta = new Vector2(width * _cellSize, height * _cellSize);
             int required = width * height;
             while (_cells.Count < required)

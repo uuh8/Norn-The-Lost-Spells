@@ -27,7 +27,9 @@ namespace Game.ElementField
             int simulationChunkCount,
             long worldTick,
             byte maxDownFlowPerTick,
-            byte maxLateralFlowPerTick)
+            byte maxLateralFlowPerTick,
+            byte maxFireDownFlowPerTick=0,
+            bool simulateCellWater=true)
         {
             if (store == null)
                 throw new ArgumentNullException(nameof(store));
@@ -47,11 +49,16 @@ namespace Game.ElementField
                 ElementWorldChunk chunk = simulationChunks[chunkIndex];
                 if (chunk == null)
                     continue;
+                // GPU/Grid液体不经过旧Cell Water；没有Fire的Chunk无需为火焰准备任何邻居。
+                if (!simulateCellWater && !chunk.HasFire)
+                    continue;
 
                 for (int z = 0; z <= last; z++)
                 for (int y = 0; y <= last; y++)
                 for (int x = 0; x <= last; x++)
                 {
+                    // 只有外表面才可能跨Chunk；内部Cell无需读取和重复入队同一个邻居。
+                    if(x>0 && x<last && y>0 && y<last && z>0 && z<last)continue;
                     ElementCell cell = chunk.GetCell(new Vector3Int(x, y, z));
                     if (cell.IsEmpty)
                         continue;
@@ -60,6 +67,12 @@ namespace Game.ElementField
                     bool fire = cell.MaterialKind == MaterialId.Fire;
                     if (!water && !fire)
                         continue;
+                    if(!simulateCellWater)
+                    {
+                        if(fire && y==0 && maxFireDownFlowPerTick>0)
+                            QueueNeighbor(store,new ElementChunkKey(chunk.Key.X,chunk.Key.Y-1,chunk.Key.Z),true);
+                        continue;
+                    }
 
                     // 对“不存在的水平邻居”，先用与 Solver 完全相同的扩散公式做廉价预测。
                     // transfer = min(maxTransfer, floor((source - 0) / 8))。
@@ -69,9 +82,8 @@ namespace Game.ElementField
                             cell.Amount,
                             targetAmount: 0,
                             maxLateralFlowPerTick) > 0;
-                    bool canCreateDownReceiver = water
-                        && maxDownFlowPerTick > 0
-                        && cell.Amount > 0;
+                    bool canCreateDownReceiver = cell.Amount>0
+                        && (water && maxDownFlowPerTick>0 || fire && maxFireDownFlowPerTick>0);
 
                     if (x == 0)
                         QueueNeighbor(store, new ElementChunkKey(chunk.Key.X - 1, chunk.Key.Y, chunk.Key.Z), canCreateHorizontalReceiver);

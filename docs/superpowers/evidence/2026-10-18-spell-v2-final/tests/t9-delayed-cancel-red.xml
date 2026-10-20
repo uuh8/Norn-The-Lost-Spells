@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-18 13:53:23Z" end-time="2026-10-18 13:53:25Z" duration="1.9178527">
+  <test-suite type="TestSuite" id="1889" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="806" result="Failed" site="Child" start-time="2026-10-18 13:53:23Z" end-time="2026-10-18 13:53:25Z" duration="1.917853" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1882" name="Game.Run.PlayMode.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.PlayMode.Tests.dll" runstate="Runnable" testcasecount="788" result="Failed" site="Child" start-time="2026-10-18 13:53:23Z" end-time="2026-10-18 13:53:25Z" duration="1.844118" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26084" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1883" name="Game" fullname="Game" runstate="Runnable" testcasecount="788" result="Failed" site="Child" start-time="2026-10-18 13:53:23Z" end-time="2026-10-18 13:53:25Z" duration="1.830236" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1884" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="788" result="Failed" site="Child" start-time="2026-10-18 13:53:23Z" end-time="2026-10-18 13:53:25Z" duration="1.819698" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1885" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="788" result="Failed" site="Child" start-time="2026-10-18 13:53:23Z" end-time="2026-10-18 13:53:25Z" duration="1.797281" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1513" name="OwnedWandV2PlayModeTests" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-18 13:53:23Z" end-time="2026-10-18 13:53:25Z" duration="1.779959" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1521" name="DisabledV2SourceCancelsPendingSkyfallWithoutPhantomRelease" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.DisabledV2SourceCancelsPendingSkyfallWithoutPhantomRelease" methodname="DisabledV2SourceCancelsPendingSkyfallWithoutPhantomRelease" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="902668368" result="Failed" start-time="2026-10-18 13:53:23Z" end-time="2026-10-18 13:53:25Z" duration="1.722688" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: Cancelled
+  But was:  Released
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OwnedWandV2PlayModeTests+<DisabledV2SourceCancelsPendingSkyfallWithoutPhantomRelease>d__27.MoveNext () [0x00159] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\RunPlayMode\OwnedWandV2PlayModeTests.cs:148
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in .\Library\PackageCache\com.unity.test-framework@aebcb98460c6\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/playmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

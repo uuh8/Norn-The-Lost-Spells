@@ -13,13 +13,17 @@ namespace Game.Run
         internal static bool HaveMatchingState(RuntimeItemState a, RuntimeItemState b) => a != null && b != null
             && string.Equals(a.ContentId, b.ContentId, StringComparison.Ordinal)
             && a.RemainingCharges == b.RemainingCharges && a.HasUnlimitedCharges == b.HasUnlimitedCharges
+            && MatchingWandStats(a,b)
             && string.Equals(a.StackStateKey, b.StackStateKey, StringComparison.Ordinal)
             && (a.Attachment == null ? b.Attachment == null : a.Attachment.SameAs(b.Attachment))
             && (a.Composition == null ? b.Composition == null || b.Composition.Total == 0 : a.Composition.SameAs(b.Composition))
             && (a.Material == null ? b.Material == null : b.Material != null && a.Material.MaterialKey == b.Material.MaterialKey
                 && a.Material.Quantity == b.Material.Quantity);
+        internal static bool MatchingWandStats(RuntimeItemState a,RuntimeItemState b)=>a.RolledWandStats.HasValue==b.RolledWandStats.HasValue
+            &&(!a.RolledWandStats.HasValue||a.RolledWandStats.Value.SameAs(b.RolledWandStats.Value));
         public static InventoryOperationResult TryMerge(ItemOwnershipStore store, string memberId, string targetId, uint expectedVersion)
         {
+            if(store.TryGet(memberId,out var material)&&material.Material!=null)return MaterialStackOps.TryMerge(store,memberId,targetId,expectedVersion);
             if (expectedVersion != store.Version) return store.Result(false, InventoryFailureReason.StaleVersion);
             if (!store.TryGet(memberId, out RuntimeItemState member) || !store.TryGet(targetId, out RuntimeItemState target))
                 return store.Result(false, InventoryFailureReason.NotFound);
@@ -45,6 +49,7 @@ namespace Game.Run
         public static InventoryOperationResult TryMoveStack(ItemOwnershipStore store, string memberId,
             in ItemLocation destination, uint expectedVersion)
         {
+            if(store.TryGet(memberId,out var material)&&material.Material!=null)return store.TryMove(memberId,destination,expectedVersion);
             if (expectedVersion != store.Version) return store.Result(false, InventoryFailureReason.StaleVersion);
             if (!store.TryGetLocation(memberId, out ItemLocation source)) return store.Result(false, InventoryFailureReason.NotFound);
             if (source.Kind != ItemLocationKind.Backpack) return store.Result(false, InventoryFailureReason.InvalidOwnership);

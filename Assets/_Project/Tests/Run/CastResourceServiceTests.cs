@@ -135,11 +135,25 @@ namespace Game.Run.Tests
             Assert.That(result.Reason, Is.EqualTo(OwnedWandFailureReason.InvalidProgram)); Assert.That(Mana(), Is.EqualTo(100));
         }
         [Test]
-        public void LastPayloadUseAtZeroStillExecutesPrepaidLayer()
+        public void LastPayloadUseRemovesCardButStillExecutesPrepaidLayer()
         {
             Build(child: 1); var root = Request(CastResourceOperation.PrepareRoot); Request(CastResourceOperation.Complete, root.TicketId);
-            Assert.That(Charges("b"), Is.Zero); Assert.That(Request(CastResourceOperation.PrepareLayer, root.TicketId, 1).Success, Is.True);
+            Assert.That(_store.TryGet("b", out _), Is.False); Assert.That(Request(CastResourceOperation.PrepareLayer, root.TicketId, 1).Success, Is.True);
             Assert.That(Request(CastResourceOperation.Complete, root.TicketId, 1).Success, Is.True); Assert.That(Mana(), Is.EqualTo(83));
+        }
+        [Test]
+        public void LastRootUseIsRemovedOnlyAfterSuccessfulCommit()
+        {
+            Build(root: 1, trigger: false); uint before = _store.Version;
+            var cancelled = Request(CastResourceOperation.PrepareRoot);
+            Assert.That(_store.TryGet("a", out _), Is.True);
+            Request(CastResourceOperation.Cancel, cancelled.TicketId);
+            Assert.That(Charges("a"), Is.EqualTo(1)); Assert.That(_store.Version, Is.EqualTo(before));
+            var root = Request(CastResourceOperation.PrepareRoot);
+            Assert.That(Request(CastResourceOperation.Complete, root.TicketId).Success, Is.True);
+            Assert.That(_store.TryGet("a", out _), Is.False);
+            _wands.Synchronize(); _wands.ReadOnly.TryGetProgram("wand", out var program);
+            Assert.That(program.Program[0], Is.Null); Assert.That(Mana(), Is.EqualTo(90));
         }
         [Test]
         public void DifferentScopeAndStaleProgramCannotPrepareResources()

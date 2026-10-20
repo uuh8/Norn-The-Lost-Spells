@@ -74,21 +74,21 @@ namespace Game.Run.Tests
         [Test]
         public void RequestPause_FirstReason_PausesAndTracksOwner()
         {
-            bool changed = _coordinator.RequestPause(RunPauseReason.WandEditor);
+            bool changed = _coordinator.RequestPause(RunPauseReason.Inventory);
 
             Assert.That(changed, Is.True);
             Assert.That(_coordinator.IsPaused, Is.True);
-            Assert.That(_coordinator.ActiveReasons, Is.EqualTo(RunPauseReason.WandEditor));
+            Assert.That(_coordinator.ActiveReasons, Is.EqualTo(RunPauseReason.Inventory));
             Assert.That(Time.timeScale, Is.Zero);
         }
 
         [Test]
         public void ReleasePause_OneOfMultipleReasons_KeepsGameplayPaused()
         {
-            _coordinator.RequestPause(RunPauseReason.WandEditor);
+            _coordinator.RequestPause(RunPauseReason.Inventory);
             _coordinator.RequestPause(RunPauseReason.PauseMenu);
 
-            bool changed = _coordinator.ReleasePause(RunPauseReason.WandEditor);
+            bool changed = _coordinator.ReleasePause(RunPauseReason.Inventory);
 
             Assert.That(changed, Is.True);
             Assert.That(_coordinator.IsPaused, Is.True);
@@ -132,15 +132,15 @@ namespace Game.Run.Tests
         }
 
         [Test]
-        public void InventoryRelease_DoesNotReleasePauseMenuOrWandEditor()
+        public void InventoryRelease_DoesNotReleasePauseMenuOrResearch()
         {
             _coordinator.RequestPause(RunPauseReason.Inventory);
             _coordinator.RequestPause(RunPauseReason.PauseMenu);
-            _coordinator.RequestPause(RunPauseReason.WandEditor);
+            _coordinator.RequestPause(RunPauseReason.SpellResearch);
             _coordinator.ReleasePause(RunPauseReason.Inventory);
             Assert.That(Time.timeScale, Is.Zero);
             Assert.That(_coordinator.HasReason(RunPauseReason.PauseMenu), Is.True);
-            Assert.That(_coordinator.HasReason(RunPauseReason.WandEditor), Is.True);
+            Assert.That(_coordinator.HasReason(RunPauseReason.SpellResearch), Is.True);
         }
 
         [Test]
@@ -157,6 +157,16 @@ namespace Game.Run.Tests
             Assert.That(_coordinator.ActiveReasons, Is.EqualTo(RunPauseReason.None));
             Assert.That(Time.timeScale, Is.EqualTo(1f),
                 "LoadSceneAsync 前必须恢复全局 Time Scale，避免新 Scene 启动后看似卡死。");
+        }
+        [Test]public void ResearchNinthBitDoesNotReleaseOtherWindowsOrTransitions()
+        {
+            _coordinator.RequestPause(RunPauseReason.SpellResearch);_coordinator.RequestPause(RunPauseReason.Inventory);
+            _coordinator.RequestPause(RunPauseReason.Shop);_coordinator.RequestPause(RunPauseReason.SceneTransition);
+            Assert.That((ushort)_coordinator.ActiveReasons & 256,Is.EqualTo(256));
+            _coordinator.ReleasePause(RunPauseReason.SpellResearch);_coordinator.ReleasePause(RunPauseReason.SpellResearch);
+            Assert.That(Time.timeScale,Is.Zero);Assert.That(_coordinator.HasReason(RunPauseReason.Inventory),Is.True);
+            _coordinator.ReleasePause(RunPauseReason.Inventory);_coordinator.ReleasePause(RunPauseReason.Shop);Assert.That(Time.timeScale,Is.Zero);
+            _coordinator.ReleasePause(RunPauseReason.SceneTransition);Assert.That(Time.timeScale,Is.EqualTo(1));
         }
     }
 }

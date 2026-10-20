@@ -7,15 +7,24 @@ using UnityEngine;
 namespace Game.Run
 {
     /// <summary>单机整备的唯一写持有者。只读数据向 UI 开放，动作/保存通过带库存范围的 Core 命令。</summary>
+    // 资源先走上一帧delta，再由角色支付本帧新施法；反序会在提交帧立刻减掉一帧冷却。
+    [DefaultExecutionOrder(-100)]
     public sealed class SinglePlayerInventorySession : MonoBehaviour, IWalletReadOnly
     {
         [SerializeField] private ItemCatalog _catalog;
         [SerializeField] private SinglePlayerStartingInventory _startingInventory;
+        [SerializeField,Tooltip("Owned法杖使用Draw V2；作者SO、敌人与Boss仍走各自Legacy入口。")]
+        private bool _useSpellProgrammingV2;
+        public bool UseSpellProgrammingV2 => _useSpellProgrammingV2;
         [SerializeField, Tooltip("独立 Sandbox 必须保持启用，避免测试动作写正式资产目录。")]
         private bool _sandboxProfile = true;
         [SerializeField,Tooltip("稳定世界键；Hub为hub.map1。仅保存据点地面资产，不保存元素世界。")] private string _worldSceneKey="";
         public string WorldSceneKey=>string.IsNullOrEmpty(_worldSceneKey)?gameObject.scene.path:_worldSceneKey;
         [SerializeField] private string _sandboxName = "Sandbox";
+        [SerializeField,Tooltip("Scene实验许可：正式据点关闭，家/副本启用；UI不能绕过世界写入范围。")]
+        private bool _allowWorldExperiments=true;
+        [SerializeField,Tooltip("家没有仓库站点，禁止通过库存命令远程修改仓库。")]
+        private bool _allowWarehouse=true;
 #if UNITY_EDITOR
         [SerializeField,Tooltip("Scene Preview每次Play从场景布局建立临时资产，不触碰正式档；Saved Profile用于真实保存验证。")]
         private EditorInventoryProfileMode _editorProfileMode;
@@ -29,6 +38,7 @@ namespace Game.Run
         [SerializeField,Range(0,1),Tooltip("地面Normal与世界Up的Dot下限；0.5允许最多约60度斜面。")]
         private float _groundMinNormalY=.5f;
         [SerializeField,Min(0)] private float _groundClearance=.01f;
+        [SerializeField,Range(0,2),Tooltip("普通物体投到墙边时，在碰撞点附近寻找完整落地支撑的最大半径；普通Drop和保存姿态不使用此搜索。")] private float _throwLandingSearchRadius=1.5f;
         private readonly WorldItemGroundPlacement _groundPlacement=new WorldItemGroundPlacement();
         private readonly Dictionary<(string,string),WorldItemSpawnPoint> _visualSources=new Dictionary<(string,string),WorldItemSpawnPoint>();
         private readonly Dictionary<int,Transform> _worldRoots=new Dictionary<int,Transform>();
@@ -52,7 +62,20 @@ namespace Game.Run
         private bool _initializationAttempted;
         private uint _savedVersion;
         private bool _worldPresentationDirty;
-        private uint _savedToolVersion, _walletVersion;
+        private uint _savedToolVersion, _walletVersion, _savedWalletVersion;
+        internal int PendingDungeonDrops;
+        internal bool TryRecordDungeonCompletion()
+        {
+            if(!_practiceWorkspace||_profile==null||RaidWriteLocked||_profile.AdventureProgress==long.MaxValue)return false;
+            _profile.AdventureProgress++;_walletVersion++;return true;
+        }
+        internal bool TryCreditDungeonCoins(long amount)
+        {
+            if(!_practiceWorkspace||_profile==null||_read==null||WorldActor==null||amount<=0
+                ||RaidWriteLocked||_profile.RaidActionsFrozen||_profile.Currency>long.MaxValue-amount)return false;
+            _profile.Currency+=amount;_walletVersion++;
+            EventBus<InventoryChangedEvent>.Publish(new InventoryChangedEvent{InventoryId=_read.InventoryId,Version=_read.Version});return true;
+        }
         private ToolbeltService _toolbelt;
         public IToolbeltReadOnly ToolbeltReadOnly => _toolbelt;
         public IWalletReadOnly WalletReadOnly => this;
@@ -66,14 +89,67 @@ namespace Game.Run
         private WandLoadoutService _wands;
         private RaidSpellEligibility _eligibility;
         private CastResourceService _casts;
+        private WandExecutionTransactionService _castsV2;
+        public ICastResourceReadOnly V2CastResourcesReadOnly => _castsV2?.ReadOnly;
+        public bool TryGetWandExecution(string id, out WandExecutionSnapshot snapshot)
+        { snapshot = default; return _castsV2 != null && _castsV2.TryGetState(id, out snapshot); }
+        public bool TryCaptureWandResearch(string id, out WandResearchSnapshot snapshot)
+        {
+            snapshot = null;
+            if (_castsV2 == null || !TryGetWandExecution(id, out var state) || !_wands.ReadOnly.TryGetState(id, out var resources)) return false;
+            var uses = new int[state.Program.Count]; var eligible = new bool[uses.Length];
+            bool peacefulExperiment = _allowWorldExperiments && !IsAwayRuntime;
+            bool entry = _eligibility.RaidId == null && !peacefulExperiment;
+            for (int i = 0; i < uses.Length; i++)
+            {
+                if(state.Program.Instructions[i].IsIntrinsic){uses[i]=-1;eligible[i]=true;continue;}
+                string card = state.Program.Instructions[i].InstanceId;
+                if (!_profile.Items.TryGet(card, out var item)) return false;
+                var kind = state.Program.Instructions[i].Kind;
+                bool qualification = kind == Game.Skills.SpellKind.Modify || kind == Game.Skills.SpellKind.Multicast || kind == Game.Skills.SpellKind.Copy;
+                uses[i] = qualification || item.HasUnlimitedCharges ? -1 : item.RemainingCharges;
+                // 据点明确假设下次出发资格；不写真实资格，也不回满Mana。
+                eligible[i] = !qualification || _eligibility.CanExecuteQualification(item, peacefulExperiment) || entry && item.RemainingCharges > 0;
+            }
+            var definitions = new List<Game.Skills.SpellDefinition>(); var ids = new List<string>();
+            foreach (var owned in _profile.Items)
+            {
+                if (!_profile.Items.Catalog.TryGet(owned.Item.ContentId, out var definition) || definition.Kind != ItemKind.Spell) continue;
+                var location = owned.Location; bool accessible = location.Kind == ItemLocationKind.SpellStorage && location.OwnerId == _profile.ActorId;
+                // 库是“可安装的散装实例”，不是全部所有物；已装进任意法杖的卡只出现在对应序列。
+                // 按实例过滤，保留同ContentId的其它副本；拆卸/交换后权威位置改变便自然返回库。
+                if (location.Kind == ItemLocationKind.WandSlot) continue;
+                var root = location;
+                while (root.HasParentInstance && _profile.Items.TryGetLocation(root.OwnerId, out var parent)) root = parent;
+                accessible |= root.OwnerId == _profile.ActorId && (root.Kind == ItemLocationKind.EquippedBackpack || root.Kind == ItemLocationKind.EquippedWand);
+                if (!accessible) continue;
+                definitions.Add(definition.SpellDefinition); ids.Add(owned.Item.InstanceId);
+            }
+            if (!Game.Skills.SpellProgramCompiler.TryCompile(definitions, new Game.Skills.SpellProgramCompileInputs(1, ids), out var library, out _)) return false;
+            snapshot = new WandResearchSnapshot(state, new Game.Skills.SpellExecutionInputs(state.Mana, resources.MaxMana, uses, eligible,
+                inputVersion: _profile.Items.Version), library, entry); return true;
+        }
+        // Session拥有归档，AdoptCommitted只重建资源服务；历史不进入Profile DTO或资源恢复。
+        private WandExecutionReplayArchive _executionReplays = new WandExecutionReplayArchive();
+        public WandExecutionReplayArchive ExecutionReplays => _executionReplays;
+        internal WandSessionTransfer CaptureWandTransfer() => new WandSessionTransfer { Resources = _wands.CaptureContinuity(), Archive = _executionReplays, UseV2 = _useSpellProgrammingV2 };
+        internal void RestoreWandTransfer(WandSessionTransfer transfer, bool resources = true)
+        {
+            if (transfer == null) return; _useSpellProgrammingV2=transfer.UseV2; if (resources) _wands.RestoreContinuity(transfer.Resources); _executionReplays = transfer.Archive;
+            _castsV2?.CancelAll();
+            _castsV2 = new WandExecutionTransactionService(_profile, _wands, _eligibility, _read.InventoryId, _executionReplays, _casts.MaterialOutputs, _allowWorldExperiments);
+        }
         private InventoryMaterialTransferService _materials;
         private ContainerUseService _containerUses;
         private SpellAttachmentService _attachments;
         public SinglePlayerRunCoordinator RunCoordinator { get; internal set; }
         internal ExperimentAreaController ExperimentArea {get;set;}
         internal HubInteractionController HubInteraction {get;set;}
-        public bool WorldActionsAllowed=>ExperimentArea==null || _profile?.PendingRaid!=null || ExperimentArea.IsInside;
-        public bool CanAccessWarehouse => !_practiceWorkspace && _profile != null && _profile.PendingRaid == null && !_profile.RaidActionsFrozen
+        // 练习副本复用Hub资产但不建立PendingRaid；资格/冻结仍由命令Gate裁定，不能继承城镇禁用开关。
+        public bool WorldActionsAllowed=>_profile!=null && (IsAwayRuntime || _allowWorldExperiments && (ExperimentArea==null || ExperimentArea.IsInside));
+        public bool TryFindMaterialContent(byte key, out string contentId)
+        { contentId = null; return _profile != null && _profile.Items.Catalog.TryFindMaterialContent(key, out contentId); }
+        public bool CanAccessWarehouse => _allowWarehouse && !_practiceWorkspace && _profile != null && _profile.PendingRaid == null && !_profile.RaidActionsFrozen
             && (RunCoordinator == null || RunCoordinator.State.Phase == RaidPhase.HubReady)
             && (HubInteraction == null || HubInteraction.TryGetStation(out var station)
                 && (station.Kind == HubStationKind.Warehouse || station.Kind == HubStationKind.Shop));
@@ -102,7 +178,7 @@ namespace Game.Run
         public int SpellStorageCapacity => _profile?.Items.Catalog.SpellStorageCapacity ?? 12;
         public string InitializationMessage { get; private set; }
         public bool HasUnsavedChanges => _profile != null && (_worldPresentationDirty || _profile.SaveGeneration == 0 || _profile.Items.Version != _savedVersion
-            || _profile.ToolConfigurationVersion != _savedToolVersion);
+            || _profile.ToolConfigurationVersion != _savedToolVersion || _walletVersion!=_savedWalletVersion);
         public long SavedGeneration => _profile?.SaveGeneration ?? 0;
 
         private void Start()
@@ -165,6 +241,7 @@ namespace Game.Run
             _toolbelt = new ToolbeltService(profile, _read.InventoryId);
             _eligibility = new RaidSpellEligibility(profile);
             _casts = new CastResourceService(profile, _wands, _eligibility, _read.InventoryId);
+            _castsV2 = new WandExecutionTransactionService(profile, _wands, _eligibility, _read.InventoryId, _executionReplays, _casts.MaterialOutputs, _allowWorldExperiments);
             _attachments = new SpellAttachmentService(profile, _read.InventoryId);
             _materials = new InventoryMaterialTransferService(profile, _read.InventoryId);
             _containerUses = new ContainerUseService(profile, _read.InventoryId);
@@ -192,6 +269,7 @@ namespace Game.Run
             EventBus<HeldItemSelectionRequestedEvent>.Subscribe(OnHeldSelection);
             EventBus<WandResourceRequestedEvent>.Subscribe(OnWandResource);
             EventBus<CastResourceRequestedEvent>.Subscribe(OnCastResource);
+            EventBus<SpellExecutionObservedEvent>.Subscribe(OnSpellObserved);
             EventBus<SpellRaidLifecycleRequestedEvent>.Subscribe(OnRaidLifecycle);
             EventBus<InventorySaveRequestedEvent>.Subscribe(OnSaveRequested); _subscribed = true;
             EventBus<MaterialTransferRequestedEvent>.Subscribe(OnMaterialTransfer);
@@ -214,8 +292,10 @@ namespace Game.Run
             EventBus<HeldItemSelectionRequestedEvent>.Unsubscribe(OnHeldSelection);
             EventBus<WandResourceRequestedEvent>.Unsubscribe(OnWandResource);
             EventBus<CastResourceRequestedEvent>.Unsubscribe(OnCastResource);
+            EventBus<SpellExecutionObservedEvent>.Unsubscribe(OnSpellObserved);
             EventBus<SpellRaidLifecycleRequestedEvent>.Unsubscribe(OnRaidLifecycle);
             _casts?.CancelAll();
+            _castsV2?.CancelAll();
             _casts?.MaterialOutputs.EndAll();
             EventBus<InventorySaveRequestedEvent>.Unsubscribe(OnSaveRequested); _subscribed = false;
             EventBus<MaterialTransferRequestedEvent>.Unsubscribe(OnMaterialTransfer);
@@ -276,6 +356,7 @@ namespace Game.Run
         private void OnWandResource(WandResourceRequestedEvent e)
         { if (_read != null && e.InventoryId == _read.InventoryId && !_casts.IsPending)
                 EventBus<WandResourceResultEvent>.Publish(_wands.Execute(e)); }
+        private void OnSpellObserved(SpellExecutionObservedEvent observation) { _castsV2?.Observe(observation); }
         private void OnCastResource(CastResourceRequestedEvent request)
         {
             if (_read == null || request.InventoryId != _read.InventoryId) return;
@@ -287,7 +368,7 @@ namespace Game.Run
                     TicketId = request.TicketId, Operation = request.Operation, Reason = OwnedWandFailureReason.ResourceBusy }); return;
             }
             uint before = _profile.Items.Version;
-            CastResourceResultEvent result = _casts.Execute(request);
+            CastResourceResultEvent result = request.UseV2 ? _castsV2.Execute(request) : _casts.Execute(request);
             if (before != _profile.Items.Version)
                 EventBus<InventoryChangedEvent>.Publish(new InventoryChangedEvent { InventoryId = _read.InventoryId, Version = _read.Version });
             EventBus<CastResourceResultEvent>.Publish(result);
@@ -316,7 +397,7 @@ namespace Game.Run
             if (_eligibility.RaidId != null || _casts.IsPending || _profile.Items.IsResourceBusy)
                 return new ProfilePersistenceResult(ProfilePersistenceStatus.WriteBlocked, "测试冒险进行中，请先结束测试局再保存整备。");
             ProfilePersistenceResult result = _repository.TrySave(_profile);
-            if (result.Success) { _savedVersion = _profile.Items.Version; _savedToolVersion = _profile.ToolConfigurationVersion;_worldPresentationDirty=false; }
+            if (result.Success) { _savedVersion = _profile.Items.Version; _savedToolVersion = _profile.ToolConfigurationVersion;_savedWalletVersion=_walletVersion;_worldPresentationDirty=false; }
             return result;
         }
         private void OnMaterialTransfer(MaterialTransferRequestedEvent request)
@@ -331,7 +412,10 @@ namespace Game.Run
         private void OnContainerUse(ContainerUseRequestedEvent request)
         {
             if (_read == null || request.InventoryId != _read.InventoryId) return;
-            if (RaidWriteLocked || !WorldActionsAllowed) {EventBus<ContainerUseResultEvent>.Publish(new ContainerUseResultEvent{Kind=request.Kind,
+            // 实验区限制的是材料世界写入；普通物体只迁移原有实例，和丢到地面一样可在据点其他地方执行。
+            bool ordinaryThrow=request.Kind==ContainerUseKind.Throw && _profile.Items.TryGet(request.ItemId,out var throwable)
+                && throwable.Composition==null && throwable.Material==null && _profile.Items.Catalog.TryGetRules(throwable.ContentId,out var rules) && rules.UseKind==ItemUseKind.Throw;
+            if (RaidWriteLocked || !WorldActionsAllowed && !ordinaryThrow) {EventBus<ContainerUseResultEvent>.Publish(new ContainerUseResultEvent{Kind=request.Kind,
                 Transfer=new MaterialTransferResultEvent{InventoryId=request.InventoryId,SourceId=request.SourceId,RequestId=request.RequestId,Failure=MaterialTransferFailure.ResourceBusy}});return;}
             var result = _containerUses.Execute(request);
             if (result.Success && request.Kind != ContainerUseKind.Pour)
@@ -341,7 +425,31 @@ namespace Game.Run
         private void OnContainerImpact(ContainerImpactEvent impact)
         {
             if (_read == null || impact.InventoryId != _read.InventoryId) return;
+            WorldItemPickup landing=null;string landedId=null;
+            // 在途普通物体先准备隐藏Pickup，再提交落地。创建/地面检查失败让原代理重试，避免物品变隐形。
+            foreach(var entry in _profile.Items)
+                if(entry.Location.Kind==ItemLocationKind.ThrownContainer && entry.Location.OwnerId==impact.FlightId && entry.Item.Composition==null && entry.Item.Material==null)
+                {landedId=entry.Item.InstanceId;break;}
+            if(landedId!=null)
+            {
+                if(!float.IsFinite(impact.Position.x) || !float.IsFinite(impact.Position.y) || !float.IsFinite(impact.Position.z))return;
+                try
+                {
+                    landing=CreateProxy(landedId,impact.FlightId,false);if(landing==null)return;
+                    landing.transform.position=impact.Position;
+                    if(!_groundPlacement.TryPlace(landing.gameObject,landing.gameObject.scene,WorldActor,_dropGroundMask,
+                        _groundProbeAbove,_groundProbeBelow,_groundMinNormalY,_groundClearance,_throwLandingSearchRadius))
+                    {Destroy(landing.gameObject);return;}
+                }
+                catch(Exception exception){if(landing!=null)Destroy(landing.gameObject);GameLog.Warn("投掷物落地代理准备失败："+exception.Message,"Items");return;}
+            }
             var result = _containerUses.Impact(impact);
+            if(landing!=null)
+            {
+                if(!result.Success)Destroy(landing.gameObject);
+                else
+                {landing.TryBind(_profile.Items,landedId,impact.FlightId,_read.InventoryId);RememberGround(landedId,landing.transform);landing.gameObject.SetActive(true);}
+            }
             if (result.Success) EventBus<InventoryChangedEvent>.Publish(new InventoryChangedEvent { InventoryId = _read.InventoryId, Version = _read.Version });
             EventBus<ContainerUseResultEvent>.Publish(result);
         }
@@ -400,6 +508,9 @@ namespace Game.Run
             if (warehouse && !CanAccessWarehouse) return store.Result(false, InventoryFailureReason.WarehouseUnavailable);
             switch (command.Kind)
             {
+                case InventoryCommandKind.OrganizeBackpack:
+                    if(command.OwnerId!=EquippedBackpackId)return store.Result(false,InventoryFailureReason.InvalidOwnership);
+                    return BackpackOrganizeOps.TryOrganize(store,command.OwnerId,command.ExpectedVersion);
                 case InventoryCommandKind.Place:
                 case InventoryCommandKind.MoveStack:
                     ItemLocation destination;
@@ -577,12 +688,13 @@ namespace Game.Run
         public WorldItemPickup FindWorldProxy(string instanceId)
         {if(string.IsNullOrEmpty(instanceId))return null;foreach(var proxy in _spawnedPickups)if(proxy!=null && proxy.ItemId==instanceId)return proxy;return null;}
         internal void EndWorldResources()
-        { _casts?.CancelAll(); _casts?.MaterialOutputs.EndAll(); _containerUses?.EndWorldTransits(); }
+        { _casts?.CancelAll(); _castsV2?.CancelAll(); _casts?.MaterialOutputs.EndAll(); _containerUses?.EndWorldTransits(); }
         internal void AdoptPracticeDeath(SinglePlayerProfile candidate)
         {
             // 提交后仅更新资产与快捷投影；马上卸载地图，不能用通用AdoptCommitted在练习Scene重生据点地面代理。
             EndWorldResources();_profile.Adopt(candidate);_toolbelt.Synchronize();
             _savedVersion=_profile.Items.Version;_savedToolVersion=_profile.ToolConfigurationVersion;
+            _savedWalletVersion=_walletVersion;
         }
         internal void AdoptCommitted(SinglePlayerProfile candidate, bool preserveWandResources = false)
         {
@@ -597,14 +709,17 @@ namespace Game.Run
             _walletVersion++; _toolbelt?.Synchronize();
             // 据点交易不开始新生命：保留既有法杖Mana/冷却；Raid终局仍沿用完整重建。
             if (!preserveWandResources) _wands = new WandLoadoutService(_profile, _read.InventoryId);
+            else _wands.Synchronize(true);
             _eligibility = new RaidSpellEligibility(_profile);
             if (_profile.PendingRaid != null) _eligibility.Resume(_profile.PendingRaid);
             _casts = new CastResourceService(_profile, _wands, _eligibility, _read.InventoryId);
+            _castsV2 = new WandExecutionTransactionService(_profile, _wands, _eligibility, _read.InventoryId, _executionReplays, _casts.MaterialOutputs, _allowWorldExperiments);
             _attachments = new SpellAttachmentService(_profile, _read.InventoryId);
             _materials = new InventoryMaterialTransferService(_profile, _read.InventoryId);
             _containerUses = new ContainerUseService(_profile, _read.InventoryId);
             _savedVersion = _profile.Items.Version;
             _savedToolVersion = _profile.ToolConfigurationVersion;
+            _savedWalletVersion = _walletVersion;
             // 场景退出的OnDisable也会结算并采用Profile。父物件正停用时Unity禁止SetParent；
             // 此时只提交资产数据，代理留给下次正常初始化创建，不能在销毁链重建层级。
             if(gameObject.activeInHierarchy)
@@ -613,6 +728,11 @@ namespace Game.Run
         }
         internal bool InitializeTransferred(SinglePlayerProfile profile,ProfileSaveRepository repository,bool scenePreview)
         {IsScenePreview=scenePreview;return Initialize(profile,repository);}
+        internal void RejectTransferredProfile(string message)
+        {
+            // 目标Scene恢复失败不能让Start沿作者种子另建一份新档，隐藏原资产丢失问题。
+            _initializationAttempted=true;InitializationMessage=message;
+        }
         internal void ResumePracticeQualifications(string raidId,IReadOnlyList<string> qualified)
         {
             if(!_eligibility.TryResumePractice(raidId,qualified))
@@ -639,7 +759,7 @@ namespace Game.Run
             foreach(var point in points)if(point.enabled && point.gameObject.activeInHierarchy)point.TryActivate();
         }
         internal bool TryRegisterAwayWorldItem(ItemDefinition definition,string sceneKey,string spawnId,Vector3 position,Quaternion rotation,
-            int charges,bool unlimited,WorldItemSpawnPoint source)
+            int charges,bool unlimited,WorldItemSpawnPoint source,int initialMaterialQuantity=0,WandStats? rolledWandStats=null)
         {
             if(_profile==null || !IsAwayRuntime || definition==null || string.IsNullOrWhiteSpace(sceneKey) || string.IsNullOrWhiteSpace(spawnId)
                 || RaidWriteLocked || _profile.RaidActionsFrozen || _profile.Items.IsResourceBusy || _casts.IsPending
@@ -649,6 +769,17 @@ namespace Game.Run
             if(!_practiceWorkspace && RunCoordinator!=null && RunCoordinator.State.Phase!=RaidPhase.Exploring)return false;
             if(_awaySpawnIds.ContainsKey((sceneKey,spawnId)))return true;
             var item=RuntimeItemState.Create(definition.ContentId,definition.Kind==ItemKind.Spell?charges:0,definition.Kind==ItemKind.Spell && unlimited);
+            if(rolledWandStats.HasValue)
+            {
+                if(definition.Kind!=ItemKind.Wand||!rolledWandStats.Value.IsValid)return false;
+                item=new RuntimeItemState(item.InstanceId,item.ContentId,0,rolledWandStats:rolledWandStats);
+            }
+            if(definition.Kind==ItemKind.Material && initialMaterialQuantity>0)
+            {
+                _profile.Items.Catalog.TryGetRules(definition.ContentId,out var rules);
+                item=new RuntimeItemState(item.InstanceId,item.ContentId,0,material:new MaterialItemState(rules.MaterialKey,
+                    Math.Min((ulong)initialMaterialQuantity,rules.MaterialItemCapacity)));
+            }
             string owner="loot."+(_profile.PendingRaid?.RaidId??"practice")+"."+item.InstanceId;
             var proxy=CreateProxy(item.InstanceId,owner,false,definition,source);proxy.transform.SetPositionAndRotation(position,rotation);
             if(!_profile.Items.TryAdd(item,new ItemLocation(ItemLocationKind.WorldItem,owner,0,0,0,-1)))
@@ -680,6 +811,7 @@ namespace Game.Run
             {
                 EndWorldResources();_profile.Adopt(next);_toolbelt.Synchronize();
                 _savedVersion=_profile.Items.Version;_savedToolVersion=_profile.ToolConfigurationVersion;
+                _savedWalletVersion=_walletVersion;
             }
             return result;
         }
@@ -687,6 +819,8 @@ namespace Game.Run
         internal ProfilePersistenceResult BuildPortalCandidate(bool removePracticeGround,out SinglePlayerProfile next)
         {
             next=null;
+            if (PendingDungeonDrops>0)
+                return new ProfilePersistenceResult(ProfilePersistenceStatus.WriteBlocked,"战利品正在落地，请稍后重试。");
             if (_profile.Items.IsResourceBusy || _casts.IsPending)
                 return new ProfilePersistenceResult(ProfilePersistenceStatus.WriteBlocked, "材料事务尚在执行，请稍后重试。");
             var entries=new List<InventoryEntry>();bool removed=false;

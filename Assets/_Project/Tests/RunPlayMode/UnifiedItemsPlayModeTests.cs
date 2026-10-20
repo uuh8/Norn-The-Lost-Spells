@@ -17,7 +17,7 @@ namespace Game.Run.Tests
     /// <summary>使用最新作者布局Review，内存档与合成输入验证真正的装备/模型/F路径。</summary>
     public sealed class UnifiedItemsPlayModeTests : BackpackWorkspacePlayModeTests
     {
-        protected override string ReviewPath => "Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub_UnifiedItemsReview.unity";
+        protected override string ReviewPath => "Assets/_Project/Scenes/Tests/Hub/SinglePlayer_Hub_UnifiedItemsReview.unity";
         protected override string EvidencePath => "TestResults/SinglePlayer/M6-T10-PortalAim";
         private Image Frame(int index)
         {
@@ -138,7 +138,7 @@ namespace Game.Run.Tests
         {
             var hub = Find<HubInteractionController>(); var area = new SerializedObject(hub).FindProperty("_shopArea").objectReferenceValue as HubAreaVolume;
             Assert.That(area, Is.Not.Null); Player.enabled = false; Player.CharacterController.enabled = false; Player.transform.position = area.Center; Player.CharacterController.enabled = true; Physics.SyncTransforms(); yield return null;
-            var pumpkin = AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Items/Food/Pumpkin.asset");
+            var pumpkin = AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/Food/Item_Food_Pumpkin.asset");
             Assert.That(Session.TryRegisterWorldItem(pumpkin, Session.WorldSceneKey, "f.priority", Player.transform.position + Vector3.forward, Quaternion.identity), Is.True);
             var nearby = Find<NearbyPickupController>(); nearby.RefreshCandidates(); int count = nearby.Count; Assert.That(count, Is.GreaterThan(0));
             var shop = Find<ShopController>(); shop.Close(); Keys(Key.E); yield return null; Keys(); yield return null; Assert.That(shop.IsOpen, Is.False);

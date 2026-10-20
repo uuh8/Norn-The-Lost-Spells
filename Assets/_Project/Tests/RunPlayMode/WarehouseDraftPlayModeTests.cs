@@ -14,7 +14,7 @@ namespace Game.Run.Tests
     /// <summary>复制最新作者布局到独立Review；测试输入和暂停，资产继续使用基类内存档。</summary>
     public sealed class WarehouseDraftPlayModeTests : BackpackWorkspacePlayModeTests
     {
-        protected override string ReviewPath => "Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub_WarehouseDraftReview.unity";
+        protected override string ReviewPath => "Assets/_Project/Scenes/Tests/Hub/SinglePlayer_Hub_WarehouseDraftReview.unity";
         protected override string EvidencePath => "TestResults/SinglePlayer/M6-T1-WarehouseDraft";
         protected override SinglePlayerProfile CustomizeProfile(SinglePlayerProfile profile, ItemCatalogIndex index)
         {

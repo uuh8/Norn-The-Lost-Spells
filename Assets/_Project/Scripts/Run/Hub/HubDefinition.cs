@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Game.Run
 {
-    public enum HubStationKind : byte { Warehouse, Shop, Expedition }
+    public enum HubStationKind : byte { Warehouse, Shop, Expedition, SpellResearch }
     /// <summary>固定据点空间配置；交互点/范围属于SO，不让UI按钮决定玩家可从何处操作。</summary>
     [CreateAssetMenu(menuName="Norn/Single Player/Hub")]
     public sealed class HubDefinition : ScriptableObject

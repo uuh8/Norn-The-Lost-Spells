@@ -73,6 +73,7 @@ namespace Game.ElementField
         private readonly bool[] _mergedSurfaceResults;
         private readonly Outlet[] _outlets;
         private readonly LiquidVolumeStore _store;
+        private readonly List<Vector3Int> _terrainRelocationTargets=new List<Vector3Int>(4096);
         private readonly LiquidActivityScheduler _activity;
         private readonly LiquidTransferLedger _ledger = new LiquidTransferLedger();
         private readonly Dictionary<Vector3Int, int> _dynamicOutlets;
@@ -643,7 +644,7 @@ namespace Game.ElementField
                 for (int i = 0; i < _regionCount; i++)
                     if (_regions[i].IsActive && _regions[i].Contains(cell))
                         return RejectExpansion(StableLiquidExpansionFailure.OccupiedTarget);
-                var targets = new List<Vector3Int>();
+                var targets = _terrainRelocationTargets;
                 if (!_store.TryRelocateCellForStaticSolid(cell,
                     Math.Min(_maximumImmediateExpansionCells, 512), targets))
                     return RejectExpansion(StableLiquidExpansionFailure.OccupiedTarget);

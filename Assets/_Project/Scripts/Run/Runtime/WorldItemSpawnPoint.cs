@@ -11,6 +11,8 @@ namespace Game.Run
         [SerializeField] private ItemDefinition _definition;
         [SerializeField] private string _sceneKey="hub.map1",_spawnId;
         [SerializeField,Min(0)] private int _initialCharges=8;
+        [SerializeField,Min(0),Tooltip("固体材料世界实例的初始GMU；0保留原空材料模板行为。")]
+        private int _initialMaterialQuantity;
         [SerializeField] private bool _unlimited;
         private Renderer[] _renderers;
         private bool[] _rendererEnabled;
@@ -36,7 +38,7 @@ namespace Game.Run
                 if(point.enabled && point!=this && point.SceneKey==SceneKey && point.SpawnId==_spawnId)
                 {GameLog.Error("场景物品SpawnId重复，作者模型保留："+_spawnId,"Items");return false;}
             bool accepted=_session.IsAwayRuntime
-                ?_session.TryRegisterAwayWorldItem(_definition,SceneKey,_spawnId,transform.position,transform.rotation,_initialCharges,_unlimited,this)
+                ?_session.TryRegisterAwayWorldItem(_definition,SceneKey,_spawnId,transform.position,transform.rotation,_initialCharges,_unlimited,this,_initialMaterialQuantity)
                 :_session.TryRegisterWorldItem(_definition,SceneKey,_spawnId,transform.position,transform.rotation,_initialCharges,_unlimited,this);
             if(accepted)HideAuthorVisual();return accepted;
         }

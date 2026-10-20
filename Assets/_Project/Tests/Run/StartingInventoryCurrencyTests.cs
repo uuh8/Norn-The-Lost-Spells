@@ -21,11 +21,11 @@ namespace Game.Run.Tests
         }
         [Test] public void ProductionNewProfileHasLargeTestContentsAndMaterialSupply()
         {
-            const string root="Assets/_Project/ScriptableObjects/SinglePlayer/Hub/";
-            var catalog=AssetDatabase.LoadAssetAtPath<ItemCatalog>(root+"SinglePlayerRaids/Catalog.asset");Assert.That(catalog.TryCreateIndex(out var index,out _),Is.True);
-            var seeds=AssetDatabase.LoadAssetAtPath<SinglePlayerStartingInventory>(root+"SinglePlayerRaids/StartingInventory.asset");Assert.That(seeds.TryCreate(index,out var profile,out _),Is.True);int bottles=0;
+            const string root="Assets/_Project/ScriptableObjects/World/Hub/";
+            var catalog=AssetDatabase.LoadAssetAtPath<ItemCatalog>("Assets/_Project/ScriptableObjects/World/Hub/Inventory/Catalog.asset");Assert.That(catalog.TryCreateIndex(out var index,out _),Is.True);
+            var seeds=AssetDatabase.LoadAssetAtPath<SinglePlayerStartingInventory>("Assets/_Project/ScriptableObjects/World/Hub/Inventory/StartingInventory.asset");Assert.That(seeds.TryCreate(index,out var profile,out _),Is.True);int bottles=0;
             foreach(var item in profile.Items)if(item.Item.Composition!=null){bottles++;Assert.That(item.Item.Composition.Total,Is.EqualTo(item.Item.Composition.Capacity*2/3));}
-            Assert.That(bottles,Is.GreaterThan(0));var shop=AssetDatabase.LoadAssetAtPath<ShopDefinition>(root+"SinglePlayerTrading/Shop.asset");foreach(var offer in shop.Offers)if(offer.IsMaterial)Assert.That(offer.Stock,Is.EqualTo(60000));
+            Assert.That(bottles,Is.GreaterThan(0));var shop=AssetDatabase.LoadAssetAtPath<ShopDefinition>("Assets/_Project/ScriptableObjects/World/Hub/Trading/Shop.asset");foreach(var offer in shop.Offers)if(offer.IsMaterial)Assert.That(offer.Stock,Is.EqualTo(60000));
         }
         [TestCase(0L, true)]
         [TestCase(5000L, true)]

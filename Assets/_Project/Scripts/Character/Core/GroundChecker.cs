@@ -1,4 +1,5 @@
 using UnityEngine;
+using Unity.Profiling;
 
 namespace Game.Character
 {
@@ -20,6 +21,10 @@ namespace Game.Character
         // 只检测这些 Layer 上的碰撞体，LayerMask 在底层是一个 32 位的整数（int），每一bit对应一个 Layer
         // 用 LayerMask 的意义：防止把其他角色、可拾取物等误判为地面
         [SerializeField] private LayerMask _groundLayer;
+        private CharacterController _controller;
+        private bool _controllerDriven;
+        private readonly RaycastHit[] _hits=new RaycastHit[16];
+        private static readonly ProfilerMarker Marker=new ProfilerMarker("Norn.Character.GroundProbe");
 
         // ── 对外只读属性，State 直接读这三个，不允许外部写 ──────────────
 
@@ -34,39 +39,34 @@ namespace Game.Character
         // 与 CharacterController.slopeLimit 对比，判断是否超坡
         public float GroundAngle { get; private set; }
 
-        private void Update()
-        {
-            CheckGround();
-        }
+        private void Awake()=>_controller=GetComponent<CharacterController>();
+        public void UseControllerSampling()=>_controllerDriven=true;
+        public void Refresh()=>CheckGround();
+        private void Update(){if(!_controllerDriven && Time.timeScale>0)CheckGround();}
 
         private void CheckGround()
         {
-            // 起点从脚底上方一个球半径处开始
-            // 原因：脚底(transform.position)恰好贴着地面
-            // 如果从脚底直接发射，球的起点已经和地面重叠，SphereCast 无法正确检测
-            // 上移一个球半径，保证球的初始位置在地面以上
-            Vector3 origin = transform.position + Vector3.up * _sphereRadius;
-
-            if (Physics.SphereCast(
-                    origin,
-                    _sphereRadius,
-                    Vector3.down,    // 向下扫
-                    out RaycastHit hit,     // 撞到了什么（含法线、距离、碰撞点）
-                    _groundCheckDistance,   // 最多扫这么远
-                    _groundLayer,        // 只检测地面层
-                    QueryTriggerInteraction.Ignore)) // 忽略 Trigger（只检实体碰撞体）
+            using var sample=Marker.Auto();
+            // Transform原点不一定等于胶囊脚底；center/height和作者缩放才定义真实支撑位置。
+            Vector3 foot=Foot();float radius=Radius();
+            float lift=_controller!=null?Mathf.Max(.06f,_controller.skinWidth*Mathf.Abs(transform.lossyScale.y)+.02f):.06f;
+            Vector3 origin=foot+Vector3.up*(radius+lift);
+            int count=Physics.SphereCastNonAlloc(origin,radius,Vector3.down,_hits,_groundCheckDistance+lift,_groundLayer,QueryTriggerInteraction.Ignore);
+            float nearest=float.PositiveInfinity;Vector3 normal=Vector3.up;
+            for(int i=0;i<count;i++)
             {
-                IsGrounded = true;
-                GroundNormal = hit.normal; // 记录地面法线，斜坡处理要用
-                GroundAngle = Vector3.Angle(hit.normal, Vector3.up);
+                var hit=_hits[i];
+                // 球扫可能先碰自身/侧墙；不能让最近的一面墙遮掉真正的脚底支撑。
+                if(hit.collider==null||hit.collider.transform.IsChildOf(transform)||hit.normal.y<=.05f||hit.distance>=nearest)continue;
+                nearest=hit.distance;normal=hit.normal;
+                // SphereCast在薄物体边缘返回球面接触Normal；短竖直Ray获取支撑表面自身的Normal，避免平栏杆误滑坡。
+                if(hit.collider.Raycast(new Ray(hit.point+Vector3.up*.08f,Vector3.down),out var surface,.16f)&&surface.normal.y>.05f)normal=surface.normal;
             }
-            else
-            {
-                IsGrounded = false;
-                GroundNormal = Vector3.up; // 空中时法线默认朝上，避免 null
-                GroundAngle = 0f;
-            }
+            IsGrounded=nearest<float.PositiveInfinity;GroundNormal=IsGrounded?normal:Vector3.up;
+            GroundAngle=IsGrounded?Vector3.Angle(GroundNormal,Vector3.up):0;
         }
+        private Vector3 Foot()=>_controller!=null?transform.TransformPoint(_controller.center)-Vector3.up*(_controller.height*Mathf.Abs(transform.lossyScale.y)*.5f):transform.position;
+        private float Radius()=>_controller!=null?Mathf.Max(_sphereRadius,_controller.radius-.01f)*Mathf.Max(Mathf.Abs(transform.lossyScale.x),Mathf.Abs(transform.lossyScale.z)):_sphereRadius;
 
         // 在 Scene 视图中可视化检测范围（只在选中 Player 时显示）
         // 绿色 = 接地，红色 = 悬空
@@ -75,15 +75,15 @@ namespace Game.Character
         {
             Gizmos.color = IsGrounded ? Color.green : Color.red;
 
-            Vector3 origin = transform.position + Vector3.up * _sphereRadius;
+            Vector3 origin = Foot() + Vector3.up * (Radius()+.1f);
 
             // 画起点的球（检测起始位置）
-            Gizmos.DrawWireSphere(origin, _sphereRadius);
+            Gizmos.DrawWireSphere(origin, Radius());
 
             // 画终点的球（检测最远到哪里）
             Gizmos.DrawWireSphere(
-                origin + Vector3.down * _groundCheckDistance,
-                _sphereRadius);
+                origin + Vector3.down * (_groundCheckDistance+.1f),
+                Radius());
         }
     }
 }

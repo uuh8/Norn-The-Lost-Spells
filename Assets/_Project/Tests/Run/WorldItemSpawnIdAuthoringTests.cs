@@ -13,7 +13,7 @@ namespace Game.Run.Tests
     public sealed class WorldItemSpawnIdAuthoringTests
     {
         private Scene _scene;
-        private Type Tools => Type.GetType("Game.EditorTools.WorldItemSpawnIdTools, Game.PbfTask13.Editor");
+        private Type Tools => Type.GetType("Game.EditorTools.WorldItemSpawnIdTools, Game.Project.Editor");
         [SetUp] public void SetUp() => _scene = EditorSceneManager.NewPreviewScene();
         [TearDown] public void TearDown() => EditorSceneManager.ClosePreviewScene(_scene);
 

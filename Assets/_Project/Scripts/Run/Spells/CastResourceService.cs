@@ -113,7 +113,7 @@ namespace Game.Run
                 }
             return true;
         }
-        private static bool ValidNumbers(in EmitCommand cmd)
+        internal static bool ValidNumbers(in EmitCommand cmd)
         {
             // Prefab 合法不代表 Rigidbody 配置合法。最终快照必须在产生任何对象前检查，NaN 不能进入 Physics。
             return WandRuntimeState.IsFinite(cmd.Speed) && cmd.Speed >= 0 && WandRuntimeState.IsFinite(cmd.Damage)
@@ -126,7 +126,8 @@ namespace Game.Run
                 && WandRuntimeState.IsFinite(cmd.SkyfallHeight) && WandRuntimeState.IsFinite(cmd.SkyfallBackOffset)
                 && WandRuntimeState.IsFinite(cmd.LandingSiteDuration) && cmd.LandingSiteDuration >= 0
                 && WandRuntimeState.IsFinite(cmd.PayloadDelaySeconds) && cmd.PayloadDelaySeconds >= 0
-                && cmd.PayloadTrigger <= PayloadTriggerMode.AfterDelay && cmd.DamageType <= DamageType.True
+                && cmd.PayloadTrigger <= PayloadTriggerMode.OnTermination && cmd.DamageType <= DamageType.True
+                && float.IsFinite(cmd.LifetimeSeconds) && cmd.LifetimeSeconds>=-1 && cmd.LifetimeSeconds<=600 && float.IsFinite(cmd.LifetimeAddSeconds)
                 && cmd.MotionMode <= ProjectileMotionMode.Orbit;
         }
         private bool TryTicket(in CastResourceRequestedEvent request, out CastResourceReservation ticket)

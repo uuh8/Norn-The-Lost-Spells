@@ -494,7 +494,7 @@ namespace Game.ElementField
                         _settings.FireDecayPerTick,
                         _settings.ChunkSize,
                         _effectiveWaterSimulationMode == WaterSimulationMode.LegacyCell,
-                        _settings.Extinguish);
+                        _settings.Extinguish,_settings.MaxFireDownFlowPerTick);
                 }
 
                 FluidChunkStreamingSettings streamingSettings =
@@ -664,6 +664,7 @@ namespace Game.ElementField
             // 固体只处理待写／拓扑变化，气体与液体共享固定时钟和活动范围。
             _conversionScheduler?.BeginTick(_tickInterval,LiquidActivityDomain());
             _fixedSolidRuntime?.Step();
+            _fixedSolidRuntime?.StepGravity(_tickInterval);
             if (_gasRuntime != null && _gasRuntime.IsMaterialInitialized)
             { _gasRuntime.SetActivityDomain(LiquidActivityDomain()); _gasRuntime.Step(_tickInterval); }
             if (_hasGridLiquidRoute)

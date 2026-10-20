@@ -46,7 +46,25 @@ namespace Game.Run
         {destination.Clear();foreach(var id in _eligible)destination.Add(id);}
         internal void Resume(PendingRaidRecord pending)
         { RaidId = pending.RaidId; for (int i = 0; i < pending.QualifiedIds.Length; i++) _eligible.Add(pending.QualifiedIds[i]); Version++; }
-        public static bool IsQualification(SpellDefinition spell) => spell != null && (spell.Kind == SpellKind.Modify || spell.Kind == SpellKind.Multicast);
+        public static bool IsQualification(SpellDefinition spell) => spell != null && (spell.Kind == SpellKind.Modify || spell.Kind == SpellKind.Multicast || spell.Kind == SpellKind.Copy);
+        /// <summary>和平试验检查仍持有的正数资格，不花掉下次入局资格；真正Raid只认可已提交的资格集合。</summary>
+        internal bool CanExecuteQualification(RuntimeItemState item, bool peacefulExperiment)
+            => item.HasUnlimitedCharges || IsEligible(item.InstanceId)
+            || peacefulExperiment && RaidId == null && _profile.PendingRaid == null && item.RemainingCharges > 0;
+        internal static bool CanStartPractice(SinglePlayerProfile profile)
+        {
+            // 目标Scene开始入局才发现0资格会使整批资格Reconcile失败；必须在保存/切图前阻止降级运行。
+            foreach(var entry in profile.Items)
+            {
+                if(entry.Location.Kind!=ItemLocationKind.WandSlot || entry.Item.HasUnlimitedCharges || entry.Item.RemainingCharges>0
+                    || !profile.Items.Catalog.TryGet(entry.Item.ContentId,out var definition) || !IsQualification(definition.SpellDefinition))continue;
+                var root=entry.Location;
+                while(root.HasParentInstance)
+                {if(!profile.Items.TryGetLocation(root.OwnerId,out var parent))return false;root=parent;}
+                if(root.OwnerId==profile.ActorId && (root.Kind==ItemLocationKind.EquippedBackpack || root.Kind==ItemLocationKind.EquippedWand))return false;
+            }
+            return true;
+        }
         InventoryFailureReason IInventoryCommitPolicy.Prepare(Dictionary<string, InventoryEntry> candidate, out object preparation, out bool changed)
         {
             preparation = null; changed = false; if (RaidId == null) return InventoryFailureReason.None;

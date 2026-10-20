@@ -14,7 +14,7 @@ namespace Game.Run.Tests
     /// <summary>统一 F 上下文：站点优先，离开站点后拾取；使用最新作者隔离 Review。</summary>
     public sealed class InteractionPromptPlayModeTests : BackpackWorkspacePlayModeTests
     {
-        protected override string ReviewPath => "Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub_UnifiedItemsReview.unity";
+        protected override string ReviewPath => "Assets/_Project/Scenes/Tests/Hub/SinglePlayer_Hub_UnifiedItemsReview.unity";
         protected override string EvidencePath => "TestResults/SinglePlayer/M6-T1-InteractionPrompt";
         private HubInteractionController _hub;
         private NearbyPickupListView _view;
@@ -44,7 +44,7 @@ namespace Game.Run.Tests
         }
         private void Spawn(string name, int sequence)
         {
-            var definition = AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Items/Food/" + name + ".asset");
+            var definition = AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/Food/" + name + ".asset");
             Assert.That(Session.TryRegisterWorldItem(definition, Session.WorldSceneKey, "prompt." + sequence,
                 Player.transform.position + Vector3.right * (.6f + .15f * sequence), Quaternion.identity), Is.True);
             // 注册采用候选Profile后代理重建；仅保留本用例投放，不能依赖上一代组件引用。
@@ -58,7 +58,7 @@ namespace Game.Run.Tests
         }
         [UnityTest] public IEnumerator PickupPanelIsNearCharacterAndCameraIndependent()
         {
-            Move(Vector3.zero); Spawn("Apple", 0); Find<NearbyPickupController>().RefreshCandidates(); yield return null;
+            Move(Vector3.zero); Spawn("Item_Food_Apple", 0); Find<NearbyPickupController>().RefreshCandidates(); yield return null;
             Assert.That(_view.Panel.gameObject.activeInHierarchy, Is.True);
             Canvas.ForceUpdateCanvases(); var screen = RectTransformUtility.WorldToScreenPoint(null, _view.Panel.position);
             Assert.That(screen.x / Screen.width, Is.InRange(.54f, .59f), "提示左缘应靠近画面中央角色右侧，不能继续位于70%宽度。");
@@ -87,7 +87,7 @@ namespace Game.Run.Tests
         }
         [UnityTest] public IEnumerator StationUsesFirstExistingRowAndFDoesNotAlsoPickNearbyItem()
         {
-            Move(Area("_shopArea").Center); Spawn("Apple", 0); Spawn("Beetroot", 1);
+            Move(Area("_shopArea").Center); Spawn("Item_Food_Apple", 0); Spawn("Item_Food_Beetroot", 1);
             var nearby = Find<NearbyPickupController>(); nearby.RefreshCandidates(); yield return null;
             Assert.That(HasVisibleText("F 商店"), Is.True); Assert.That(_view.VisibleCount, Is.EqualTo(2));
             Canvas.ForceUpdateCanvases();
@@ -118,7 +118,7 @@ namespace Game.Run.Tests
         }
         [UnityTest] public IEnumerator StableStationAndPickupListHaveZeroScopedGc()
         {
-            Move(Area("_shopArea").Center); Spawn("Apple", 0); Spawn("Beetroot", 1);
+            Move(Area("_shopArea").Center); Spawn("Item_Food_Apple", 0); Spawn("Item_Food_Beetroot", 1);
             Find<NearbyPickupController>().RefreshCandidates(); for(int i=0;i<20;i++)yield return null;
             Assert.That(HasVisibleText("F 商店"), Is.True); Assert.That(_view.VisibleCount, Is.EqualTo(2));
             bool recording=UnityEditorInternal.ProfilerDriver.enabled;

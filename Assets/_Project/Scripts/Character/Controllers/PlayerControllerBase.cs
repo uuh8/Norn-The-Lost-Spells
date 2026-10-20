@@ -89,6 +89,11 @@ namespace Game.Character
         // ── 对外暴露给 State 的属性 ──
         public CharacterController CharacterController => _characterController;
         public GroundChecker GroundChecker => _groundChecker;
+        public void MoveCharacter(Vector3 displacement)
+        {
+            // Move更新实际碰撞后立即采样，State的落地/离地转换使用本帧位置，不等待另一个MonoBehaviour.Update。
+            _characterController.Move(displacement);_groundChecker.Refresh();
+        }
         public Animator Animator => _animator;
         public Camera MainCamera => _mainCamera; // 暴露给瞄准（屏幕中心射线 + 转向相机朝向）
         /// <summary>当前启用的玩家实例（单人游戏的轻量注册表）。敌人感知据此拿玩家，免每帧 FindObjectOfType。多玩家时为最后启用者。</summary>
@@ -261,6 +266,7 @@ namespace Game.Character
             _characterController = GetComponent<CharacterController>();
             _animator = GetComponentInChildren<Animator>();
             _groundChecker = GetComponent<GroundChecker>();
+            _groundChecker.UseControllerSampling();
             _statusController = GetComponent<StatusController>();
             _inputActions = new InputSystem_Actions(); // Input System 根据 .inputactions 资产生成的强类型 C# 包装器。
             _mainCamera = Camera.main;                 // Camera.main 会按 MainCamera Tag 查找；这里只在 Awake 缓存一次。
@@ -335,6 +341,9 @@ namespace Game.Character
             // 暂停时（如打开法杖编程界面 Time.timeScale=0）玩家完全惰性：不读输入、不跑状态机、不入队攻击。
             // 否则在 UI 里左键拖拽会被误读为"按下攻击"，关面板恢复时间瞬间凭空放一发。
             if (Time.timeScale == 0f) return;
+
+            // 角色采样顺序由自己掌握，避免GroundChecker.Update在Move前/后随机执行而读到上一帧位置。
+            _groundChecker.Refresh();
 
             _moveInput = _inputActions.Player.Move.ReadValue<Vector2>();
             _lookInput = _inputActions.Player.Look.ReadValue<Vector2>();

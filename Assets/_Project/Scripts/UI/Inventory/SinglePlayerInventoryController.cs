@@ -36,6 +36,14 @@ namespace Game.UI
             }
         }
         [SerializeField] private Text _details, _status;
+        private InventoryInfoPopup _infoPopup;
+        public void ShowItemInfo(string id,Vector2 pointer,Camera camera)
+        {
+            if(!_open || _read==null || !_read.TryGetView(id,out var item))return;
+            if(_infoPopup==null && SlotPrefabs!=null && SlotPrefabs.InfoPopup!=null)
+                _infoPopup=Instantiate(SlotPrefabs.InfoPopup,_panelRoot.transform);
+            if(_infoPopup!=null){CancelDrag();_infoPopup.Show(item.DisplayName,pointer,camera,UiFont);}
+        }
         [SerializeField] private InputActionReference _toggleAction, _rotateAction, _cancelAction, _splitAction;
         [SerializeField] private bool _openOnStart = true;
         [SerializeField] private InventoryWorkspaceView _workspace;
@@ -86,7 +94,6 @@ namespace Game.UI
         private float _dragCellSize;
         private Vector2 _lastPointer;
         private Camera _pointerCamera;
-        private InventoryDragAutoScroll _autoScroll;
         private InventoryViewportPan _backpackPan,_nearbyPan;
         private string _selectedId, _viewBackpackId;
         private ulong _requestId;
@@ -112,7 +119,9 @@ namespace Game.UI
         private Vector2Int _previewCell;
         private int _previewTurns;
         private uint _previewVersion;
+        private bool _previewNearby;
         private static readonly Unity.Profiling.ProfilerMarker PreviewMarker=new Unity.Profiling.ProfilerMarker("Norn.Backpack.DragPreview");
+        private static readonly Unity.Profiling.ProfilerMarker InteractionMarker=new Unity.Profiling.ProfilerMarker("Norn.Inventory.InteractionTick");
         private static readonly Unity.Profiling.ProfilerMarker DragFollowMarker=new Unity.Profiling.ProfilerMarker("Norn.Backpack.DragFollow");
         public bool IsOpen => _open;
         public string SelectedItemId => _selectedId;
@@ -135,10 +144,10 @@ namespace Game.UI
         // 角标只呈现数值；资格/保护说明仍在已有详情里。目录Rebuild缓存结果，滚动不格式化。
         public string SpellCountCaption(in InventoryItemSnapshot item)
         {
-            if(item.Kind!=ItemKind.Spell)return "";
+            if(item.Kind!=ItemKind.Spell || item.IsQualificationSpell)return "";
             if(_session!=null && _session.SpellUsesReadOnly!=null && _session.SpellUsesReadOnly.TryGetState(item.InstanceId,out var use))
-                return use.Unlimited?"":use.RemainingCharges.ToString();
-            return item.HasUnlimitedCharges?"":item.RemainingCharges.ToString();
+                return use.Unlimited || use.RemainingCharges<=0?"":use.RemainingCharges.ToString();
+            return item.HasUnlimitedCharges || item.RemainingCharges<=0?"":item.RemainingCharges.ToString();
         }
 
         private void OnEnable()
@@ -202,7 +211,7 @@ namespace Game.UI
             else OpenBackpack(); // 仓库中Tab切到随身编程；重复Tab关闭，不更换库存或暂停所有者。
         }
         private void OnRotate(InputAction.CallbackContext context) => RotateDrag();
-        private void OnCancel(InputAction.CallbackContext context) { if (_dragging){CancelDrag();CancelArrangement();Refresh();} else Close(); }
+        private void OnCancel(InputAction.CallbackContext context) { if(_infoPopup!=null && _infoPopup.IsOpen){_infoPopup.Hide();return;}if (_dragging){CancelDrag();CancelArrangement();Refresh();} else Close(); }
         public void Open()
         {
             if (_embedded) return;
@@ -231,6 +240,7 @@ namespace Game.UI
         }
         public void Close()
         {
+            _infoPopup?.Hide();
             _backpackPan?.Cancel();_nearbyPan?.Cancel();
             CancelDrag(); CancelArrangement(); _waitingOpen = false;
             if (_open && !_embedded) _pauseCoordinator?.ReleasePause(RunPauseReason.Inventory);
@@ -307,10 +317,18 @@ namespace Game.UI
         private void PreviewGrid()
         {
             using var marker=PreviewMarker.Auto();
-            if (!TryGridPlacement(out var cell,out bool nearby) || nearby)
-            { if(_previewVisible)_gridView?.ClearPreview();_previewVisible=false;return; }
-            if (_previewVisible && cell==_previewCell && _turns==_previewTurns && _previewVersion==_read.Version) return;
-            _previewVisible=true;_previewCell=cell;_previewTurns=_turns;_previewVersion=_read.Version;
+            if (!TryGridPlacement(out var cell,out bool nearby))
+            { if(_previewVisible){_gridView?.ClearPreview();_nearbyGrid?.ClearPreview();}_previewVisible=false;return; }
+            if (_previewVisible && _previewNearby==nearby && cell==_previewCell && _turns==_previewTurns && _previewVersion==_read.Version) return;
+            // 从一个网格跨到另一个必须清除原色，不让上一个目标残留绿色提示。
+            _gridView?.ClearPreview();_nearbyGrid?.ClearPreview();
+            _previewVisible=true;_previewNearby=nearby;_previewCell=cell;_previewTurns=_turns;_previewVersion=_read.Version;
+            if(nearby)
+            {
+                var placement=new GridPlacement(cell.x,cell.y,_turns);
+                _nearbyGrid.ShowPreview(_dragSource.Rules.Shape,placement,_nearbyGrid.CanPreview(_dragSource.InstanceId,_dragSource.Rules.Shape,placement));
+                return;
+            }
             bool valid=_read is IInventoryPlacementPreview preview && preview.PreviewPlacement(_dragSource.InstanceId,_gridView.BackpackId,
                 new GridPlacement(cell.x,cell.y,_turns),_wholeStack,_dragVersion)==InventoryFailureReason.None;
             _gridView.ShowPreview(_dragSource.Rules.Shape,cell.x,cell.y,_turns,valid);
@@ -325,7 +343,7 @@ namespace Game.UI
             if (_ghost != null) _ghost.Bind(null, _dragSource, InventoryItemDisplay.Grid, _dragCellSize, StackCount(_dragSource), _turns);
             MoveGhost(_lastPointer, _pointerCamera);
         }
-        public void CancelDrag() { _gridView?.ClearPreview(); _previewVisible=false; _outsideDropHint=false; _dragging = false; if (_ghost != null) _ghost.gameObject.SetActive(false); }
+        public void CancelDrag() { _gridView?.ClearPreview(); _nearbyGrid?.ClearPreview(); _previewVisible=false; _outsideDropHint=false; _dragging = false; if (_ghost != null) _ghost.gameObject.SetActive(false); }
         private bool IsOutsidePanel(Vector2 pointer,Camera camera) => _panelRoot!=null && _panelRoot.transform is RectTransform rect
             && !RectTransformUtility.RectangleContainsScreenPoint(rect,pointer,camera);
         public void EndItemDrag(Vector2 pointer,Camera camera)
@@ -413,6 +431,13 @@ namespace Game.UI
         public void DropOnItem(in InventoryItemSnapshot target,Vector2 pointer,Camera camera)
         {
             if (!_dragging) return;
+            if(_dragSource.Kind==ItemKind.Material&&target.Kind==ItemKind.Material&&_dragSource.ContentId==target.ContentId
+                &&target.Location.Kind==ItemLocationKind.Backpack)
+            {
+                var merge=BaseCommand();merge.Kind=_dragSource.Location.Kind==ItemLocationKind.WorldItem?InventoryCommandKind.Pickup:InventoryCommandKind.Place;
+                merge.Destination=InventoryDestination.Backpack;merge.OwnerId=target.Location.OwnerId;merge.X=target.Location.X;merge.Y=target.Location.Y;
+                merge.QuarterTurns=target.Location.QuarterTurns;merge.WholeStack=false;Submit(merge);return;
+            }
             if(IsPendingPickup(target.InstanceId) || _draft.Contains(target.InstanceId))
             {TryDropOnGrid(pointer,camera);return;}
             switch (target.Location.Kind)
@@ -479,6 +504,22 @@ namespace Game.UI
                 WorldOwner=item.Location.OwnerId,OwnerId=location.OwnerId,X=location.X,Y=location.Y,QuarterTurns=(location.QuarterTurns+1)%4});
         }
         public void PickupSelected()=>_nearby?.TryCollect(_selectedId);
+        private ulong _organizeRequest;
+        public void OrganizeBackpack()
+        {
+            if(_read==null||_dragging||_draft.Active)return;CancelArrangement();
+            _organizeRequest=++_requestId;
+            EventBus<InventoryCommandEvent>.Publish(new InventoryCommandEvent{InventoryId=_read.InventoryId,RequestId=_organizeRequest,
+                Kind=InventoryCommandKind.OrganizeBackpack,OwnerId=_session.EquippedBackpackId,ExpectedVersion=_read.Version});
+            Refresh();
+        }
+        public void PickupAllNearby()
+        {
+            if(_read==null||_nearby==null||_dragging||_draft.Active)return;
+            int collected=_nearby.CollectAll(out int remaining);Refresh();
+            _backpackWorkspace?.ShowPickupResult(collected,remaining);
+            SetStatus("已拾取 "+collected+" 件 · 附近剩余 "+remaining+" 件");
+        }
         private void OnHubInteraction(HubInteractionResultEvent result)
         {
             if (_embedded) return;
@@ -522,6 +563,8 @@ namespace Game.UI
         }
         private void Refresh()
         {
+            // 网格Refresh恢复作者底色，旧的预览缓存因此失效；即使指针/库存版本没变也必须重画。
+            _previewVisible=false;
             if (!_open || _read == null || _itemPrefab == null) return;
             if(_draft.Active && !_draft.OriginUnchanged(_read))_draft.Clear();
             if (_items.Length < _read.Count) _items = new InventoryItemSnapshot[_read.Count];
@@ -591,10 +634,10 @@ namespace Game.UI
                 _details.text = item.DisplayName + "\n当前位置：" + LocationText(item.Location.Kind) + "\n"
                     + (item.Kind == ItemKind.Spell ? DescribeSpellUse(item)
                         : item.Kind == ItemKind.Wand ? "程序容量 " + item.Rules.WandProgramCapacity
-                        : item.Kind == ItemKind.Container ? "真实材料 " + item.ContainerTotal + "/" + item.ContainerCapacity + " GMU"
-                        : item.Kind == ItemKind.Material ? "真实材料 " + item.MaterialQuantity + " GMU" : "")
+                        : item.Kind == ItemKind.Container ? "数量 " + item.ContainerTotal + "/" + item.ContainerCapacity
+                        : item.Kind == ItemKind.Material ? "数量 " + item.MaterialQuantity : "")
                     + (StackCount(item)>1?" · 同格 " + StackCount(item) + " 份":"")
-                    + (item.Attachment == null ? "" : "\n附着剂量 " + item.Attachment.Dose + " GMU · 持续关联该卡");
+                    + (item.Attachment == null ? "" : "\n附着剂量 " + item.Attachment.Dose + " · 持续关联该卡");
             }
             else _details.text = "选择物品查看详情";
         }
@@ -615,29 +658,29 @@ namespace Game.UI
             if (_read == null || change.InventoryId != _read.InventoryId) return;
             // EventBus同步调用，但不同对象OnEnable订阅次序不保证。等本轮事件完成后读程序投影，
             // 避免布局已含新卡而蓝耗仍读取前一版本；暂停期间LateUpdate照常执行。
-            if(_backpackWorkspace!=null){_pendingBackpackRefresh=true;return;}
-            if (_waitingOpen) Open(); else Refresh();
+            _pendingBackpackRefresh=true;
         }
         private void OnNearbyChanged(NearbyPickupListChangedEvent e)
         {if(_open && !_dragging && _read!=null && e.InventoryId==_read.InventoryId)_pendingBackpackRefresh=true;}
         private void LateUpdate()
         {
+            // 覆盖暂停期间的预览/手动滚动热路径；离散dirty刷新另有分配，不计入稳定拖拽验证。
+            using var interaction=InteractionMarker.Auto();
             if(_pendingBackpackRefresh)
             { _pendingBackpackRefresh=false;if(_waitingOpen)Open();else if(_open)Refresh(); }
             _backpackPan?.Tick(_open && !_dragging);_nearbyPan?.Tick(_open && !_dragging);
             _warehouseGrid?.TickInteraction(_open, _dragging, _lastPointer, _pointerCamera, Time.unscaledDeltaTime);
-            // UI暂停时仍需连续推进；静止鼠标不会触发OnDrag，不能只在该回调滚动。
+            // 拖出包外不再改变ScrollRect位置；手动滚动由ViewportPan/Scrollbar承担。
             if(_open && _dragging && _gridView!=null)
             {
-                if(_autoScroll==null)_autoScroll=_gridView.GetComponentInParent<InventoryDragAutoScroll>();
-                bool scrolled=_autoScroll!=null && _autoScroll.Tick(_lastPointer,_pointerCamera,true,Time.unscaledDeltaTime);
-                scrolled=(_nearbyGrid!=null && _nearbyGrid.TickAutoScroll(_lastPointer,_pointerCamera,Time.unscaledDeltaTime)) || scrolled;
-                if(scrolled)MoveGhost(_lastPointer,_pointerCamera);
+                // 延后的库存Refresh会清色；静止指针没有OnDrag回调，也要补画失效的预览。
+                if(!_previewVisible)PreviewGrid();
             }
         }
         private void OnResult(InventoryCommandResultEvent result)
         {
             if (_read == null || result.InventoryId != _read.InventoryId || result.RequestId != _requestId) return;
+            if(result.RequestId==_organizeRequest)_backpackWorkspace?.ShowOrganizeResult(result.Success);
             if(!string.IsNullOrEmpty(_revealDroppedId))
             {
                 if(result.Success){_nearby?.RefreshCandidates();Refresh();

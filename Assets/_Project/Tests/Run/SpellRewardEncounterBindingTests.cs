@@ -64,7 +64,7 @@ namespace Game.Run.Tests
                 DemoEncounterController encounter = encounterObject.AddComponent<DemoEncounterController>();
                 rewardObject.AddComponent<BoxCollider>().isTrigger = true;
                 portalObject.AddComponent<BoxCollider>().isTrigger = true;
-                AllSpellsRewardPickup reward = rewardObject.AddComponent<AllSpellsRewardPickup>();
+                DungeonFinalRewardPickup reward = rewardObject.AddComponent<DungeonFinalRewardPickup>();
                 StageExitPortal portal = portalObject.AddComponent<StageExitPortal>();
 
                 SetPrivateField(encounter, "_encounterIndex", 3);

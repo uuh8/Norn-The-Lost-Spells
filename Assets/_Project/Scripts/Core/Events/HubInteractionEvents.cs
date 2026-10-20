@@ -1,8 +1,8 @@
 namespace Game.Core
 {
-    public enum HubInteractionKind : byte { Warehouse, Shop, Expedition }
-    public struct HubInteractionRequestedEvent : IGameEvent { public string InventoryId; public HubInteractionKind Kind; }
-    public struct HubInteractionResultEvent : IGameEvent { public string InventoryId; public HubInteractionKind Kind; public bool Success; public string Message; }
+    public enum HubInteractionKind : byte { Warehouse, Shop, Expedition, SpellResearch }
+    public struct HubInteractionRequestedEvent : IGameEvent { public string InventoryId, CallerId; public ulong RequestId; public HubInteractionKind Kind; }
+    public struct HubInteractionResultEvent : IGameEvent { public string InventoryId, CallerId; public ulong RequestId; public HubInteractionKind Kind; public bool Success; public string Message; }
     public enum HubDepartureReviewOperation : byte { Review, Depart, ConfirmAndDepart }
     public struct HubDepartureReviewRequestedEvent : IGameEvent {public string InventoryId;public HubDepartureReviewOperation Operation;}
     public struct HubDepartureReviewResultEvent : IGameEvent {public string InventoryId;public bool WorldReady,Departing;public ulong ResidentQuantity;public string Message;}

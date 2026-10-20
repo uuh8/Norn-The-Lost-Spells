@@ -15,7 +15,7 @@ namespace Game.Run.Tests
     /// <summary>使用最新用户布局的独立副本和内存档，验证实际释放/点击对资产的结果。</summary>
     public sealed class ItemPresentationFeedbackPlayModeTests : BackpackWorkspacePlayModeTests
     {
-        protected override string ReviewPath => "Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub_ItemFeedbackReview.unity";
+        protected override string ReviewPath => "Assets/_Project/Scenes/Tests/Hub/SinglePlayer_Hub_ItemFeedbackReview.unity";
         protected override string EvidencePath => "TestResults/SinglePlayer/M6-T1-ItemPresentationFeedback";
         [UnitySetUp] public IEnumerator IsolateItems()
         {
@@ -41,7 +41,7 @@ namespace Game.Run.Tests
             if(!ShapeCase)return original;
             int width=TestContext.CurrentContext.Test.Name.StartsWith("FullBagLarge")?4:2,height=width==4?5:3;
             var catalog=Object.Instantiate(original);_assets.Add(catalog);
-            var definition=Object.Instantiate(AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Items/Food/Apple.asset"));_assets.Add(definition);
+            var definition=Object.Instantiate(AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/Food/Item_Food_Apple.asset"));_assets.Add(definition);
             var data=new SerializedObject(definition);data.FindProperty("_contentId").stringValue="feedback.large";
             data.FindProperty("_maxStack").intValue=2;
             data.FindProperty("_shapeWidth").intValue=width;data.FindProperty("_shapeHeight").intValue=height;
@@ -58,8 +58,8 @@ namespace Game.Run.Tests
             bool fill=TestContext.CurrentContext.Test.Name.StartsWith("FullBagLarge");int width=fill?4:2,height=fill?5:3;
             int x=TestContext.CurrentContext.Test.Name.StartsWith("BorderRotation")?6:0,y=0;
             var store=new ItemOwnershipStore(index);
-            var bag=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Hub/SinglePlayerWands/bag.asset");
-            var bottle=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Hub/SinglePlayerContainers/bottle.asset");
+            var bag=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/Backpacks/Item_Backpack_Bag.asset");
+            var bottle=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/Containers/Definitions/Item_Container_Bottle.asset");
             Assert.That(store.TryAdd(new RuntimeItemState("bag",bag.ContentId,0),new ItemLocation(ItemLocationKind.EquippedBackpack,"player",0,0,0,0)),Is.True);
             Assert.That(store.TryAdd(new RuntimeItemState("large","feedback.large",0),new ItemLocation(ItemLocationKind.Backpack,"bag",x,y,0,-1)),Is.True);
             if(fill)for(int cy=0;cy<8;cy++)for(int cx=0;cx<8;cx++)if(cx<x || cx>=x+width || cy<y || cy>=y+height)
@@ -72,7 +72,7 @@ namespace Game.Run.Tests
             if(blocker)
             {
                 Backpack.Close();
-                var bottle=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Hub/SinglePlayerContainers/bottle.asset");
+                var bottle=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/Containers/Definitions/Item_Container_Bottle.asset");
                 Assert.That(Session.Profile.Items.TryAdd(new RuntimeItemState("block",bottle.ContentId,0),new ItemLocation(ItemLocationKind.Backpack,"bag",2,0,0,-1)),Is.True);
             }
         }
@@ -131,7 +131,7 @@ namespace Game.Run.Tests
         }
         [UnityTest] public IEnumerator HighlightKeepsOriginalSurfaceMaterial()
         {
-            var definition=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Items/Food/Apple.asset");
+            var definition=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/Food/Item_Food_Apple.asset");
             var original=definition.WorldModel.GetComponentInChildren<Renderer>().sharedMaterial; string before=EditorJsonUtility.ToJson(original);
             Assert.That(Session.TryRegisterWorldItem(definition,Session.WorldSceneKey,"feedback.apple",Player.transform.position+Vector3.right,Quaternion.identity),Is.True);
             yield return null;
@@ -210,15 +210,16 @@ namespace Game.Run.Tests
             Assert.That(first.Location.Kind,Is.EqualTo(ItemLocationKind.WorldItem));Assert.That(second.Location.Kind,Is.EqualTo(ItemLocationKind.Backpack));
             Assert.That(second.Location.QuarterTurns,Is.EqualTo(1));Assert.That(Session.ReadOnly.Count,Is.EqualTo(beforeCount));
         }
-        [UnityTest] public IEnumerator NearbyEdgeScrollWorksWhileDraggingWithoutAssetMutation()
+        [UnityTest] public IEnumerator NearbyEdgeDragKeepsScrollPositionWithoutAssetMutation()
         {
             Backpack.OpenBackpack();yield return null;var grid=NearbyGrid();var scroll=grid.GetComponentInParent<ScrollRect>();
             var viewport=scroll.viewport;var point=RectTransformUtility.WorldToScreenPoint(null,viewport.TransformPoint(new Vector3(viewport.rect.center.x,viewport.rect.yMin+1,0)));
             uint before=Session.ReadOnly.Version;Session.ReadOnly.TryGetView("b0",out var item);Backpack.BeginDrag(item,point,null,false);
-            Assert.That(grid.TickAutoScroll(point,null,.25f),Is.True);Assert.That(scroll.verticalNormalizedPosition,Is.LessThan(1));
+            Vector2 position=scroll.normalizedPosition;for(int i=0;i<30;i++)yield return null;
+            Assert.That(scroll.normalizedPosition,Is.EqualTo(position));
             Assert.That(Backpack.IsDragging,Is.True);Assert.That(Session.ReadOnly.Version,Is.EqualTo(before));Backpack.CancelDrag();
         }
-        [UnityTest] public IEnumerator StableNearbyAutoScrollHasNoScopedGc()
+        [UnityTest] public IEnumerator StableNearbyEdgeDragHasNoScopedGc()
         {
             bool recording=UnityEditorInternal.ProfilerDriver.enabled;bool cpu=UnityEditorInternal.ProfilerDriver.IsAreaEnabled(UnityEngine.Profiling.ProfilerArea.CPU);
             try
@@ -229,7 +230,7 @@ namespace Game.Run.Tests
                 Session.ReadOnly.TryGetView("b0",out var item);Backpack.BeginDrag(item,pointer,null,false);
                 for(int i=0;i<10;i++)yield return null;int first=UnityEditorInternal.ProfilerDriver.lastFrameIndex+1;
                 for(int i=0;i<60;i++)yield return null;int last=UnityEditorInternal.ProfilerDriver.lastFrameIndex;
-                WriteProfile("nearby-autoscroll-profiler",first,last,new[]{"Norn.Backpack.AutoScroll","Norn.HeldItemHud.Update"},"Paused backpack, pointer held at nearby edge, no asset or candidate changes; warmup excluded");
+                WriteProfile("nearby-edge-drag-profiler",first,last,new[]{"Norn.Inventory.InteractionTick","Norn.HeldItemHud.Update"},"Paused stationary edge drag, autoscroll disabled; warmup excluded");
                 Backpack.CancelDrag();
             }
             finally{UnityEditorInternal.ProfilerDriver.enabled=recording;UnityEditorInternal.ProfilerDriver.SetAreaEnabled(UnityEngine.Profiling.ProfilerArea.CPU,cpu);}
@@ -247,7 +248,7 @@ namespace Game.Run.Tests
             var metrics=new System.Text.StringBuilder();
             foreach(string relative in new[]{"Food/Apple","Container/Container_01","Herb/Herb_Flower_01"})
             {
-                var definition=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Items/"+relative+".asset");
+                var definition=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/"+relative+".asset");
                 Assert.That(Session.TryRegisterWorldItem(definition,Session.WorldSceneKey,"proof."+relative,Player.transform.position+Vector3.right,Quaternion.identity),Is.True);
                 yield return null;WorldItemPickup current=null;
                 foreach(var root in Scene.GetRootGameObjects())foreach(var proxy in root.GetComponentsInChildren<WorldItemPickup>())

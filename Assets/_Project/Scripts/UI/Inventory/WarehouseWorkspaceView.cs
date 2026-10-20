@@ -17,6 +17,8 @@ namespace Game.UI
         [SerializeField] private Sprite _bagFallback;
         [SerializeField] private ToolbeltView _tools;
         private int _buttonCategory;
+        private Sprite _authoredBagSprite;
+        private void Awake(){if(_bagIcon!=null)_authoredBagSprite=_bagIcon.sprite;}
         public void SetCategoryFilter(int category) { _buttonCategory = category; Filter(); }
         private void OnEnable()
         { _search?.onValueChanged.AddListener(Search); _category?.onValueChanged.AddListener(Category); _organize?.onClick.AddListener(Organize); }
@@ -40,9 +42,10 @@ namespace Game.UI
                 for (int j = 0; j < i; j++) if (items[j].Location == item.Location) { represented = true; break; }
                 if (!represented) used += item.Rules.Shape.CellCount;
             }
-            if (_bagCaption != null) _bagCaption.text = found ? "当前背包\n" + bag.DisplayName + "\n已占 " + used + "/" + (bag.Rules.BackpackWidth * bag.Rules.BackpackHeight) + " 格" : "未装备背包";
-            if (_bagCapacity != null) _bagCapacity.text = found ? "携带背包 · 已占 " + used + "/" + (bag.Rules.BackpackWidth * bag.Rules.BackpackHeight) + " 格" : "未装备背包";
-            if (_bagIcon != null) { _bagIcon.sprite = found ? bag.Icon != null ? bag.Icon : _bagFallback : null; _bagIcon.enabled = found && _bagIcon.sprite != null; _bagIcon.preserveAspect = true; }
+            if (_bagCaption != null) _bagCaption.text = found ? bag.DisplayName+"\n已占 "+used+"/"+(bag.Rules.BackpackWidth*bag.Rules.BackpackHeight)+" 格" : "未装备背包";
+            if (_bagCapacity != null) _bagCapacity.text = found ? "已占 " + used + "/" + (bag.Rules.BackpackWidth * bag.Rules.BackpackHeight) + " 格" : "未装备背包";
+            // 数据缺图标时保留作者Image美术，不用null覆盖；Awake缓存防止换包后丢失原备用图片。
+            if (_bagIcon != null) { _bagIcon.sprite = found ? bag.Icon != null ? bag.Icon : _bagFallback!=null?_bagFallback:_authoredBagSprite : null; _bagIcon.enabled = found && _bagIcon.sprite != null; _bagIcon.preserveAspect = true; }
         }
     }
 }

@@ -86,9 +86,9 @@ namespace Game.UI
             _containerDetails.text="";
             if(_inventory.Session.TryCopyContainer(_inventory.SelectedItemId,_composition,out int n,out ulong total,out ulong capacity))
             {
-                string text="容器："+total+" / "+capacity+" GMU · 剩余 "+(capacity-total)+"\n";
+                string text="容器："+total+" / "+capacity+" · 剩余 "+(capacity-total)+"\n";
                 // 最多八组分用两列文字；有限详情区域保留全部组分与操作提示，不把后几项截掉。
-                for(int i=0;i<n;i++)text+=MaterialName(_composition[i].MaterialKey)+" "+_composition[i].Quantity+" GMU"+(i%2==1 || i==n-1?"\n":"    |    ");
+                for(int i=0;i<n;i++)text+=MaterialName(_composition[i].MaterialKey)+" "+_composition[i].Quantity+(i%2==1 || i==n-1?"\n":"    |    ");
                 _containerDetails.text=text+"E 采集 · H 持续撒出 · G 投掷破碎\n关闭面板后靠近材料操作。";
             }
             if(_pickup!=null)_pickup.gameObject.SetActive(_inventory.Session.ReadOnly.TryGetView(_inventory.SelectedItemId,out var selected) && selected.Location.Kind==ItemLocationKind.WorldItem);

@@ -102,8 +102,12 @@ namespace Game.ElementField
             if (_liquidOccupancy == null)
                 _liquidOccupancy = GetComponent<FluidGameplayOccupancyBridge>();
             _environmentSourceId = gameObject.GetInstanceID();
+            InitializeProjection();
+        }
+        private void InitializeProjection()
+        {
             _statusProjection = _runtime != null ? _runtime.MaterialStatusProjection : null;
-            // 每个目标、每条投影规则各有一个 byte 槽；所有分配都留在 Awake，Update/Tick 中零 GC。
+            // 每个目标/规则一个槽。Awake若早于世界初始化，Start再建立一次；Update绝不懒分配。
             _maximumAmounts = _statusProjection != null
                 ? new byte[MaxTargetsPerQuery * _statusProjection.Count]
                 : System.Array.Empty<byte>();
@@ -120,6 +124,8 @@ namespace Game.ElementField
 
         private void Start()
         {
+            // 同一GameObject的Awake先后不由组件排列保证；所有Awake完成后才能消费生产规则快照。
+            if (_statusProjection == null) InitializeProjection();
             // Awake 负责建立引用；Start 再报告初始化契约问题，给其他同帧 Awake 的 Runtime 留出初始化顺序。
             if (_runtime == null || !_runtime.IsInitialized)
             {
@@ -164,7 +170,7 @@ namespace Game.ElementField
                 || float.IsNaN(deltaTime)
                 || float.IsInfinity(deltaTime)
                 || _runtime == null
-                || !_runtime.IsInitialized)
+                || !_runtime.IsInitialized || _statusProjection == null)
             {
                 return;
             }

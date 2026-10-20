@@ -20,7 +20,7 @@ namespace Game.Run.Tests
         {
             if(!TestContext.CurrentContext.Test.Name.StartsWith("DraftRotation") && !TestContext.CurrentContext.Test.Name.StartsWith("GrabAnchor"))return original;
             _catalog=Object.Instantiate(original);
-            var source=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Hub/SinglePlayerContainers/bottle.asset");
+            var source=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/Containers/Definitions/Item_Container_Bottle.asset");
             _definition=Object.Instantiate(source);var definition=new SerializedObject(_definition);
             definition.FindProperty("_shapeWidth").intValue=2;definition.FindProperty("_shapeHeight").intValue=3;
             var cells=definition.FindProperty("_occupiedCells");cells.arraySize=6;for(int i=0;i<6;i++)cells.GetArrayElementAtIndex(i).vector2IntValue=new Vector2Int(i%2,i/2);
@@ -56,7 +56,7 @@ namespace Game.Run.Tests
         {
             if(!TestContext.CurrentContext.Test.Name.StartsWith("GrabAnchorFootprint"))return profile;
             profile.Items.TryMove("b0",ItemLocation.Warehouse);profile.Items.TryMove("b1",ItemLocation.Warehouse);
-            var pumpkin=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Items/Food/Pumpkin.asset");
+            var pumpkin=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/Food/Item_Food_Pumpkin.asset");
             Assert.That(profile.Items.TryAdd(new RuntimeItemState("footprint",pumpkin.ContentId,0),new GridPlacement(0,0,0).InBackpack("bag")),Is.True);
             return profile;
         }
@@ -199,7 +199,7 @@ namespace Game.Run.Tests
             Backpack.Close();Player.enabled=false;
             foreach(var root in Scene.GetRootGameObjects())foreach(var camera in root.GetComponentsInChildren<Camera>(true))camera.enabled=false;
             foreach(var root in Scene.GetRootGameObjects())foreach(var item in root.GetComponentsInChildren<WorldItemPickup>(true))item.gameObject.SetActive(false);
-            var definition=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/SinglePlayer/Items/Food/Apple.asset");
+            var definition=AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/Food/Item_Food_Apple.asset");
             Assert.That(Session.TryRegisterWorldItem(definition,Session.WorldSceneKey,"arrangement.glow",Player.transform.position+Vector3.right,Quaternion.identity),Is.True);yield return null;
             WorldItemPickup proxy=null;foreach(var root in Scene.GetRootGameObjects())foreach(var item in root.GetComponentsInChildren<WorldItemPickup>())proxy=item;
             Assert.That(proxy,Is.Not.Null);foreach(var node in proxy.GetComponentsInChildren<Transform>())node.gameObject.layer=30;

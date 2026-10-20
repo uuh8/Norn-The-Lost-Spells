@@ -19,7 +19,7 @@ namespace Game.Run.Tests
     /// <summary>用户保存后的区域Review与内存Profile；验证真实输入/投射物及滚动坐标，避免只测试方法是否返回true。</summary>
     public sealed class HubAreaPlayModeTests : BackpackWorkspacePlayModeTests
     {
-        protected override string ReviewPath => "Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub_AreaReview.unity";
+        protected override string ReviewPath => "Assets/_Project/Scenes/Tests/Hub/SinglePlayer_Hub_AreaReview.unity";
         protected override string EvidencePath => "TestResults/SinglePlayer/M6-T1-Areas";
         private void Move(Vector3 point)
         {
@@ -32,7 +32,7 @@ namespace Game.Run.Tests
         private Image Crosshair()
         { foreach (var root in Scene.GetRootGameObjects()) foreach (var image in root.GetComponentsInChildren<Image>(true)) if (image.name == "Crosshair") return image; Assert.Fail("缺少准星"); return null; }
 
-        [UnityTest] public IEnumerator ShopAreaEdgeOpensWithEAndOutsideCannotOpen()
+        [UnityTest] public IEnumerator ShopAreaEdgeOpensWithFAndOutsideCannotOpen()
         {
             var hub = Find<HubInteractionController>(); var center = hub.Definition.Stations[1].Position;
             Player.enabled = false; Move(center + new Vector3(3, .4f, 0));
@@ -41,7 +41,7 @@ namespace Game.Run.Tests
             void Request(HubInteractionRequestedEvent e){requests++;}
             void Result(HubInteractionResultEvent e){results++;success=e.Success;}
             EventBus<HubInteractionRequestedEvent>.Subscribe(Request);EventBus<HubInteractionResultEvent>.Subscribe(Result);
-            try {Keys(Key.E);yield return null;Keys();}
+            try {Keys(Key.F);yield return null;Keys();}
             finally {EventBus<HubInteractionRequestedEvent>.Unsubscribe(Request);EventBus<HubInteractionResultEvent>.Unsubscribe(Result);}
             System.IO.Directory.CreateDirectory(EvidencePath);
             var nav=Find<HubNavigationView>();var input=Find<HubInteractInput>();
@@ -49,18 +49,18 @@ namespace Game.Run.Tests
             Assert.That(requests,Is.EqualTo(1));Assert.That(results,Is.EqualTo(1));Assert.That(success,Is.True);
             Assert.That(nav.isActiveAndEnabled,Is.False,"保留用户隐藏提示Canvas，业务交互仍必须工作");
             var shop = Find<ShopController>(); Assert.That(shop.IsOpen, Is.True, "同一商店区域里离原点超过2m仍应开商店");
-            shop.Close(); Move(center + new Vector3(20, .4f, 0)); Keys(Key.E); yield return null; Keys();
+            shop.Close(); Move(center + new Vector3(20, .4f, 0)); Keys(Key.F); yield return null; Keys();
             Assert.That(shop.IsOpen, Is.False); shop.Open(); Assert.That(shop.IsOpen, Is.False, "区外按钮也不能绕过距离校验");
         }
         [UnityTest] public IEnumerator WarehouseRegionWorksWithoutPromptCanvasAndDisabledShopHasNoPointFallback()
         {
             var hub=Find<HubInteractionController>();Player.enabled=false;
-            Move(hub.Definition.Stations[0].Position+new Vector3(3,.4f,2));Keys(Key.E);yield return null;Keys();
+            Move(hub.Definition.Stations[0].Position+new Vector3(3,.4f,2));Keys(Key.F);yield return null;Keys();
             Assert.That(Warehouse.IsOpen,Is.True);Assert.That(Warehouse.WarehouseMode,Is.True);Assert.That(Backpack.IsOpen,Is.False);
             Warehouse.Close();var area=(Behaviour)new SerializedObject(hub).FindProperty("_shopArea").objectReferenceValue;
             area.enabled=false;Move(hub.Definition.Stations[1].Position+Vector3.up*.4f);
             Assert.That(hub.TryGetStation(out _),Is.False,"已停用实际区域，不能退回旧2m点");
-            Keys(Key.E);yield return null;Keys();Assert.That(Find<ShopController>().IsOpen,Is.False);
+            Keys(Key.F);yield return null;Keys();Assert.That(Find<ShopController>().IsOpen,Is.False);
         }
         [UnityTest] public IEnumerator ExperimentBoxControlsPermissionAndSimulationWithoutDeletingWorld()
         {

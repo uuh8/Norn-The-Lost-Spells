@@ -10,10 +10,10 @@ namespace Game.Character.Tests
     /// </summary>
     public sealed class EnemyNavigationAssetContractTests
     {
-        [TestCase("Assets/_Project/ScriptableObjects/Enemy/Enemy_Sword_Definition.asset")]
-        [TestCase("Assets/_Project/ScriptableObjects/Enemy/Enemy_Wizard_Definition.asset")]
+        [TestCase("Assets/_Project/ScriptableObjects/Enemies/Definitions/EnemyDefinition_Melee.asset")]
+        [TestCase("Assets/_Project/ScriptableObjects/Enemies/Definitions/EnemyDefinition_Wizard.asset")]
         // 精英资源已归入 EliteEnemy；检查真实生产资产，避免旧路径导致覆盖静默丢失。
-        [TestCase("Assets/_Project/ScriptableObjects/P7/EliteEnemy/P7_EliteMagicEnemyDefinition.asset")]
+        [TestCase("Assets/_Project/ScriptableObjects/Enemies/Elite/EnemyDefinition_EliteWizard.asset")]
         public void ProductionEnemyDefinition_HasUsableSerializedNavigationParameters(string assetPath)
         {
             EnemyDefinition definition = AssetDatabase.LoadAssetAtPath<EnemyDefinition>(assetPath);

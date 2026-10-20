@@ -63,7 +63,7 @@ namespace Game.Run.Tests
             for(int i=0;i<shop.ReadOnly.Count;i++)
             {var offer=shop.ReadOnly.GetOffer(i);if(offer.IsMaterial){materials++;Assert.That(offer.Icon,Is.Not.Null,offer.DisplayName);Assert.That(AssetDatabase.GetAssetPath(offer.Icon),Does.Contain("Funtion_UI2"));}}
             Assert.That(materials,Is.EqualTo(8));
-            var spell=AssetDatabase.LoadAssetAtPath<SpellDefinition>("Assets/_Project/ScriptableObjects/Spell/Spell_Emit_Iceball.asset");Assert.That(spell.Icon,Is.Not.Null);
+            var spell=AssetDatabase.LoadAssetAtPath<SpellDefinition>("Assets/_Project/ScriptableObjects/Spell/Definitions/Spell_Emit_Iceball.asset");Assert.That(spell.Icon,Is.Not.Null);
             Session.ReadOnly.TryGetView("ice",out var ice);Assert.That(ice.Icon,Is.SameAs(spell.Icon));
             ui.Close();Backpack.OpenBackpack();yield return null;bool found=false;
             foreach(var view in Backpack.GetComponentsInChildren<InventoryItemView>())if(view.Snapshot.InstanceId=="ice")

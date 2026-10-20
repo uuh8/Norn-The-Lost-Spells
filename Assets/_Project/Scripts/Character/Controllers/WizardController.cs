@@ -55,6 +55,8 @@ namespace Game.Character
         private HealthComponent _health;
         private OwnedWandCastAdapter _ownedWands;
         private bool _usesOwnedWands;
+        private readonly OwnedWandFireScheduler _fireScheduler = new OwnedWandFireScheduler();
+        private bool _awaitAttackRelease;
         private WandProgramSnapshot _pendingProgram, _activeProgram;
         private OwnedWandCastContext _pendingSource, _activeSource;
 
@@ -82,6 +84,7 @@ namespace Game.Character
             _ownedWands?.CancelOutstanding();
             AttackBufferCounter=0;_pendingProgram=_activeProgram=default;_pendingSource=_activeSource=default;
             _ownedWands=adapter;_usesOwnedWands=true;
+            _awaitAttackRelease=true;
             // 来源随后失效也保持owned语义，不能退回无限资源旧路径。
             if(StateMachine!=null)StateMachine.ChangeState(GroundedState);
             EventBus<CrosshairVisibilityEvent>.Publish(new CrosshairVisibilityEvent{Visible=true});
@@ -122,6 +125,8 @@ namespace Game.Character
 
         protected override void OnDisable()
         {
+            _fireScheduler.Reset(); AttackBufferCounter = 0;_awaitAttackRelease=true;
+            _pendingProgram=_activeProgram=default;_pendingSource=_activeSource=default;
             EventBus<RaidStateChangedEvent>.Unsubscribe(OnRaidStateChanged);
             EventBus<HeldItemUseResetEvent>.Unsubscribe(OnHeldUseReset);
             base.OnDisable();
@@ -138,8 +143,12 @@ namespace Game.Character
         private void OnHeldUseReset(HeldItemUseResetEvent change)
         {
             if (!_usesOwnedWands || _ownedWands?.ReadOnly == null || change.InventoryId != _ownedWands.ReadOnly.InventoryId) return;
-            // 只取消尚未进入攻击的缓存；已开始的动画/可靠资源提交继续，不退费或吞掉已发Trigger。
+            // 清掉尚未释放的动画来源；已发Trigger持有自己的冻结上下文，不受这里清缓存影响。
             AttackBufferCounter = 0; _pendingProgram = default; _pendingSource = default;
+            if(_ownedWands!=null && _ownedWands.IsV2){_activeProgram=default;_activeSource=default;}
+            _fireScheduler.Reset();
+            // 只对暂停上下文锁住旧按住；正常战斗换杖仍允许持续按住并重新捕获新来源。
+            if(Time.timeScale<=0)_awaitAttackRelease=true;
         }
         # endregion
 
@@ -151,7 +160,12 @@ namespace Game.Character
         {
             // 暂停时 UI 也会使用鼠标，不能把 UI 点击记录成恢复游戏后的施法。
             if (Time.timeScale == 0f)
+            {
+                _awaitAttackRelease=true;
                 return;
+            }
+            // Gameplay里新的performed边沿证明玩家已经重新按下，不必再等额外一帧。
+            _awaitAttackRelease=false;
             if (_usesOwnedWands && (_ownedWands == null || !_ownedWands.TryCapture(out _pendingProgram, out _pendingSource))) return;
 
             _pendingCastAimPoint = ResolveAimTargetPoint(
@@ -163,7 +177,7 @@ namespace Game.Character
             // 因此动画或冷却期间稍早按下的下一发不会丢失。新点击覆盖旧请求，仍不会无限积压次数。
             float queueLifetime = (_combo != null ? _combo.AttackCooldown : 0f) + AttackBufferTime;
             if (_usesOwnedWands && _ownedWands.ReadOnly.TryGetState(_pendingProgram.SourceWandId, out WandStateSnapshot state))
-                queueLifetime = state.CastCooldown + AttackBufferTime;
+                queueLifetime = (_ownedWands.IsV2 ? Mathf.Max(state.CooldownRemaining, .05f) : state.CastCooldown) + AttackBufferTime;
             AttackBufferCounter = queueLifetime;
         }
 
@@ -278,6 +292,7 @@ namespace Game.Character
         /// </summary>
         public override bool TryStartAttack()
         {
+            if (_usesOwnedWands && _ownedWands != null && _ownedWands.IsV2) return TryBeginV2Cast();
             if (AttackBufferCounter <= 0f || (_usesOwnedWands ? _ownedWands == null || !_ownedWands.CanStart(_pendingProgram) : AttackCooldownCounter > 0f))
                 return false;
 
@@ -288,9 +303,34 @@ namespace Game.Character
         /// <summary>空中状态的平行入口；复用同一个攻击缓存，只由攻击 State 选择空中动画。</summary>
         public override bool TryStartAirAttack()
         {
+            if (_usesOwnedWands && _ownedWands != null && _ownedWands.IsV2) return TryBeginV2Cast();
             if (AttackBufferCounter <= 0f || (_usesOwnedWands ? _ownedWands == null || !_ownedWands.CanStart(_pendingProgram) : AttackCooldownCounter > 0f))
                 return false;
 
+            ConsumeBufferedCast();
+            return true;
+        }
+        private bool TryBeginV2Cast()
+        {
+            if(_awaitAttackRelease){if(IsAttackHeld)return false;_awaitAttackRelease=false;}
+            // 据点只提供推演；世界不允许施法时不创建候选，也不按住刷失败消息。
+            if(!_ownedWands.WorldCastingAllowed)return false;
+            bool queued = AttackBufferCounter > 0;
+            if ((!queued && !IsAttackHeld) || Time.timeScale <= 0 || _spellCaster == null || _health == null) return false;
+            var read = _ownedWands.ReadOnly;
+            if (read == null || !read.TryGetState(read.SelectedWandId, out var state)) return false;
+            // 共享State已经先检查Dash；此处再防直接调用时越过最高优先级。
+            if (!_fireScheduler.CanAttempt(Time.frameCount, Time.timeAsDouble, true,
+                !(DashBufferCounter > 0 && DashCooldownCounter <= 0), state.CooldownRemaining, true)) return false;
+            if (!queued)
+            {
+                if (!_ownedWands.TryCapture(out _pendingProgram, out _pendingSource)) return false;
+                _pendingCastAimPoint = ResolveAimTargetPoint(_aimMask, _aimMaxDistance, _aimHits);
+            }
+            if (_pendingProgram.SourceWandId != read.SelectedWandId || !_ownedWands.CanStart(_pendingProgram))
+            { AttackBufferCounter = 0; return false; }
+            if (!_ownedWands.HasExecutableV2Program(_pendingProgram.SourceWandId)) { AttackBufferCounter = 0; return false; }
+            // V2也先进入攻击State，不能在输入接缝直接创建弹体。按住只排下一发，不重启当前动画。
             ConsumeBufferedCast();
             return true;
         }
@@ -315,9 +355,16 @@ namespace Game.Character
         public int ReleaseActiveCast(Vector3 spawn, Vector3 aim, byte team, int attacker, Collider collider)
         {
             if (_spellCaster == null) return 0;
-            return _usesOwnedWands
+            // 动画等待期间可能换杖/换持物/开始转场；只能释放仍被玩家持有且版本一致的来源。
+            if (_usesOwnedWands && _ownedWands == null) return 0;
+            if (_usesOwnedWands && _ownedWands.IsV2 && (!_ownedWands.WorldCastingAllowed
+                || _ownedWands.ReadOnly?.SelectedWandId != _activeProgram.SourceWandId || !_ownedWands.CanStart(_activeProgram))) return 0;
+            int emitted = _usesOwnedWands
                 ? _spellCaster.CastOwnedProgram(_activeProgram, _activeSource, spawn, aim, team, attacker, collider)
                 : _spellCaster.CastWand(spawn, aim, team, attacker, collider);
+            if (_usesOwnedWands && _ownedWands.IsV2)
+                _fireScheduler.RecordAttempt(Time.frameCount, Time.timeAsDouble, _ownedWands.LastRootCommitted);
+            return emitted;
         }
 
         /// <summary>取第 index 段的 Animator 状态 hash；越界或未配置返回 0。</summary>

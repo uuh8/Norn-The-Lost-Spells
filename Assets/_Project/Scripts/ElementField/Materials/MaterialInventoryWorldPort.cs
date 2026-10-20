@@ -17,6 +17,7 @@ namespace Game.ElementField
         private readonly MaterialAmount[] _sample = new MaterialAmount[8], _amounts = new MaterialAmount[8];
         private readonly ulong[] _totals = new ulong[256], _remaining = new ulong[256];
         private readonly ulong[] _remainders = new ulong[8];
+        private readonly RaycastHit[] _visibility=new RaycastHit[32];
         private int _count, _components;
         private static readonly ProfilerMarker TransferMarker = new ProfilerMarker("Norn.MaterialTransfer.World");
         private static readonly ProfilerMarker SampleMarker = new ProfilerMarker("Norn.MaterialTransfer.Sample");
@@ -26,7 +27,7 @@ namespace Game.ElementField
             transferred = 0;
             using var measurement = TransferMarker.Auto();
             MaterialTransferFailure failure;
-            using (SampleMarker.Auto()) failure = Sample(request.SampleCenter, request.Radius, destination.AllowedMaterials, !request.SolidItem);
+            using (SampleMarker.Auto()) failure = Sample(request.SampleCenter, request.Radius, destination.AllowedMaterials, !request.SolidItem,request.CollectorPosition);
             if (failure != MaterialTransferFailure.None) return failure;
             ulong budget = Math.Min(request.Budget, destination.FreeCapacity);
             if (budget == 0) return MaterialTransferFailure.Capacity;
@@ -63,7 +64,7 @@ namespace Game.ElementField
             for (int i = 0; i < _count; i++) if (_takes[i] > 0) Publish(_addresses[i]);
             _world.Gases?.FinishConversion(); transferred = total; return MaterialTransferFailure.None;
         }
-        private MaterialTransferFailure Sample(Vector3 center, float radius, ushort allowed, bool strictMix)
+        private MaterialTransferFailure Sample(Vector3 center, float radius, ushort allowed, bool strictMix,Vector3 actor)
         {
             _count = _components = 0; Array.Clear(_totals, 0, _totals.Length); int visited = 0;
             for (byte key = 1; key <= 8; key++)
@@ -73,6 +74,8 @@ namespace Game.ElementField
                 // 直接拾取固体仍按所选材料身份采样，不把周围液体变成该固体物品。
                 if (!compatible && !strictMix) continue;
                 if (!_world.MaterialRoutes.TryResolve((MaterialId)key, out var backend)) continue;
+                // 容器只采流体相；较大采样球触及地面冰块时，不应把整次采气当作不兼容混合物拒绝。
+                if(strictMix&&backend==MaterialSimulationBackendKind.FixedSolid)continue;
                 if (backend != MaterialSimulationBackendKind.GridLiquid && backend != MaterialSimulationBackendKind.FixedSolid
                     && backend != MaterialSimulationBackendKind.GridGas)
                 {
@@ -92,6 +95,14 @@ namespace Game.ElementField
                     if ((closest - center).sqrMagnitude > radius * radius) continue;
                     var address = new MaterialConversionAddress(cell, (MaterialId)key);
                     if (!_world.IsConversionAddressActive(address) || !Read(address, out uint quantity) || quantity == 0) continue;
+                    // 放大范围只增加可见样本：仍限制实际材料格在角色3m内，墙后的气体不能被大球抽走。
+                    Vector3 target=lower+Vector3.one*(size*.5f),delta=target-actor;
+                    if(delta.sqrMagnitude>9)continue;
+                    int hits=Physics.RaycastNonAlloc(actor,delta.normalized,_visibility,Mathf.Max(0,delta.magnitude-.01f),~0,QueryTriggerInteraction.Ignore);
+                    bool blocked=hits==_visibility.Length;
+                    for(int h=0;h<hits;h++)
+                    {var collider=_visibility[h].collider;if(collider is CharacterController||ElementFieldSolidBaker.HasStatusOwner(collider)||collider.TryGetComponent<GeneratedMaterialSolidCollider>(out _))continue;blocked=true;}
+                    if(blocked)continue;
                     if (!compatible) return MaterialTransferFailure.IncompatibleMaterial;
                     if (_count == MaximumEntries) return MaterialTransferFailure.SamplingLimit;
                     _addresses[_count] = address; _available[_count] = quantity; _count++;

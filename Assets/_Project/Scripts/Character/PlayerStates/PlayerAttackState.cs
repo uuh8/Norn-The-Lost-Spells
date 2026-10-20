@@ -125,7 +125,7 @@ namespace Game.Character
         {
             // 锁定水平移动；CC 每帧必须被 Move，否则 isGrounded 检测失效
             Vector3 velocity = Vector3.up * _player.VerticalVelocity;
-            _player.CharacterController.Move(velocity * Time.deltaTime);
+            _player.MoveCharacter(velocity * Time.deltaTime);
         }
 
         /// <summary>

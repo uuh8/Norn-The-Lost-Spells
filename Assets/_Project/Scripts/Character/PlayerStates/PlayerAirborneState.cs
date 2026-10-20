@@ -77,7 +77,7 @@ namespace Game.Character
             Vector3 velocity = _player.MoveDirection * _player.MoveSpeed * _player.StatusMoveSpeedMultiplier;
             velocity.y = _player.VerticalVelocity;
             // Move 仍在 Update 调用；CharacterController 不是 Rigidbody，不由 FixedUpdate 的 Physics Step 自动推进。
-            _player.CharacterController.Move(velocity * Time.deltaTime);
+            _player.MoveCharacter(velocity * Time.deltaTime);
         }
 
         private void CheckTransition()

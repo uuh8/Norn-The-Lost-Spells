@@ -14,7 +14,7 @@ namespace Game.Run.Tests
     /// <summary>使用作者新布局：前三格真的没有Title/Value，后七格真的没有Mana/Cooldown。</summary>
     public sealed class HeldItemHudPresentationPlayModeTests : BackpackWorkspacePlayModeTests
     {
-        protected override string ReviewPath => "Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub_UnifiedItemsReview.unity";
+        protected override string ReviewPath => "Assets/_Project/Scenes/Tests/Hub/SinglePlayer_Hub_UnifiedItemsReview.unity";
         protected override string EvidencePath => "TestResults/SinglePlayer/M6-T8-InventoryAudit";
         private HeldItemHud Hud => Find<HeldItemHud>();
         protected override ItemCatalog CustomizeCatalog(ItemCatalog catalog)

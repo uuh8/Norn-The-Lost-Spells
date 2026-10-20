@@ -49,7 +49,9 @@ namespace Game.Run
             _lastRequests[source] = request.RequestId;
             if (request.ExpectedVersion != _profile.Items.Version) return Fail(result, MaterialTransferFailure.StaleVersion);
             if (!_profile.Items.TryGet(request.ItemId, out var item) || !IsCarried(request.ItemId)) return Fail(result, MaterialTransferFailure.WrongOwnership);
-            if (request.Kind == ContainerUseKind.ReleaseSolid ? item.Material == null : item.Composition == null)
+            if (request.Kind == ContainerUseKind.Throw
+                ? !_profile.Items.Catalog.TryGetRules(item.ContentId,out var throwRules) || throwRules.UseKind==ItemUseKind.None
+                : request.Kind == ContainerUseKind.ReleaseSolid ? item.Material == null : item.Composition == null)
                 return Fail(result, MaterialTransferFailure.WrongOwnership);
             _executing = true;
             try
@@ -73,7 +75,7 @@ namespace Game.Run
             if (flight == null) return Fail(result, MaterialTransferFailure.Capacity);
             string id = Guid.NewGuid().ToString("N");
             var location = new ItemLocation(ItemLocationKind.ThrownContainer, id, 0, 0, 0, -1);
-            if (!_profile.Items.TryPrepareMaterialChange(item.InstanceId, item, location, out var prepared)) return Fail(result, MaterialTransferFailure.ResourceBusy);
+            if (!_profile.Items.TryPrepareMaterialItem(item, location, false, out var prepared)) return Fail(result, MaterialTransferFailure.ResourceBusy);
             _throw.Request = request; _throw.FlightId = id; _throw.Proxy = null;
             try
             {
@@ -87,7 +89,7 @@ namespace Game.Run
             flight.Id = id; flight.ItemId = item.InstanceId; flight.WorldId = request.WorldId; flight.SourceId = request.SourceId;
             flight.Active = true; flight.Impacted = false; flight.Deposited = 0; flight.Radius = request.Radius; PendingFlights++;
             result.Success = true; result.FlightId = id; result.Transfer.Version = _profile.Items.Version;
-            result.Transfer.Transferred = item.Composition.Total;
+            result.Transfer.Transferred = item.Composition?.Total ?? item.Material?.Quantity ?? 0;
             try { _throw.Proxy.Launch(); }
             catch (Exception exception)
             { GameLog.Error("已提交投掷代理启动失败，数量保留在途：" + exception.Message, "ContainerUse"); }
@@ -105,6 +107,29 @@ namespace Game.Run
             _executing = true;
             try
             {
+                if(item.Composition==null && item.Material==null)
+                {
+                    // 普通物体落地继续是同一实例，只改归属；不伪造材料Deposit或自动触发炼金。
+                    var ground=new ItemLocation(ItemLocationKind.WorldItem,flight.Id,0,0,0,-1);
+                    if(!_profile.Items.TryPrepareMaterialItem(item,ground,false,out var placement))return Fail(result,MaterialTransferFailure.ResourceBusy);
+                    _profile.Items.CompletePrepared(placement,true);result.Success=true;result.Transfer.Version=_profile.Items.Version;
+                    Resolve(flight,ContainerTransitEndReason.Deposited,0);return result;
+                }
+                if (item.Material != null)
+                {
+                    // 固体落地交回真正的材料 Owner；先预约扣量，世界拒绝时保留原在途实例。
+                    ulong amount = System.Math.Min(1024UL, item.Material.Quantity);
+                    _amounts[0] = new MaterialAmount(item.Material.MaterialKey, amount);
+                    _reservation.Configure(item, _profile.Items.Version);
+                    result.Transfer.Failure = Deposit(flight.WorldId, flight.Position, System.Math.Max(flight.Radius,.75f), 1, out result.Transfer.Transferred);
+                    // 大堆只能部分落地时，固定半径会永久耗尽空间。按真实拒收逐级扩展，仍保留有界采样和原在途余量。
+                    if(result.Transfer.Failure==MaterialTransferFailure.Capacity)flight.Radius=Math.Min(2f,Math.Max(.75f,flight.Radius)+.25f);
+                    if (result.Transfer.Failure != MaterialTransferFailure.None) return result;
+                    flight.Deposited += result.Transfer.Transferred;
+                    result.Transfer.Version = _profile.Items.Version;
+                    if (_profile.Items.TryGet(flight.ItemId, out _)) return result;
+                    result.Success = true; Resolve(flight, ContainerTransitEndReason.Deposited, flight.Deposited); return result;
+                }
                 int count = item.Composition.CopyTo(_amounts);
                 if (count == 0)
                 {
@@ -123,7 +148,10 @@ namespace Game.Run
                     ulong total = 0; for (int i = 0; i < batchCount; i++) total += _amounts[i].Quantity;
                     bool final = total == item.Composition.Total;
                     _reservation.Configure(item, _profile.Items.Version, final);
-                    result.Transfer.Failure = Deposit(flight.WorldId, flight.Position, final ? flight.Radius : System.Math.Max(flight.Radius, .75f), batchCount, out result.Transfer.Transferred);
+                    // 最后一批也保留相同落地区域；气体每格容量较小，缩回瓶体半径会使尾量永久拒收。
+                    result.Transfer.Failure = Deposit(flight.WorldId, flight.Position, System.Math.Max(flight.Radius, .75f), batchCount, out result.Transfer.Transferred);
+                    // 满气瓶与固体堆共用容量约束；不能只扩大固体区域而让容器尾量永久卡在空壳中。
+                    if(result.Transfer.Failure==MaterialTransferFailure.Capacity)flight.Radius=Math.Min(2f,Math.Max(.75f,flight.Radius)+.25f);
                     if (result.Transfer.Failure != MaterialTransferFailure.None) return result;
                     flight.Deposited += result.Transfer.Transferred;
                     if (!final) { result.Transfer.Version = _profile.Items.Version; return result; }
@@ -149,10 +177,11 @@ namespace Game.Run
             // “已投放”只能由世界写入成功路径裁决；外部默认struct消息不能冒充成功销毁材料。
             if (!_profile.Items.TryGet(flight.ItemId, out var item) || !_profile.Items.TryGetLocation(flight.ItemId, out var location)
                 || !_profile.Items.TryPrepareMaterialChange(flight.ItemId, null, location, out var prepared)) return;
-            int count = item.Composition.CopyTo(_all); ulong quantity = item.Composition.Total;
+            int count = item.Composition?.CopyTo(_all)??0; ulong quantity = item.Composition?.Total ?? item.Material?.Quantity ?? 0;
+            if (item.Material != null) { _all[0] = new MaterialAmount(item.Material.MaterialKey, item.Material.Quantity); count = 1; }
             _profile.Items.CompletePrepared(prepared, true);
             for (int i = 0; i < count; i++) _lost[_all[i].MaterialKey] += _all[i].Quantity;
-            GameLog.Warn($"投掷世界归属结束：{flight.Id}, {quantity} GMU, {ended.Reason}；未返还瓶壳/材料。", "ContainerUse");
+            GameLog.Warn($"投掷世界归属结束：{flight.Id}, {quantity} GMU, {ended.Reason}；未自动返还物品。", "ContainerUse");
             Resolve(flight, ended.Reason, quantity);
         }
         public void EndWorldTransits()

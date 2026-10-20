@@ -30,6 +30,9 @@ namespace Game.Run
             if(!_session.ConfigurePractice(profile,repository,scenePreview,player,sceneKey,spawns))
                 throw new InvalidOperationException("练习库存初始化失败。");
             _qualified=qualified;_session.ResumePracticeQualifications(raidId,qualified);
+            // 只有有作者地牢配置的P7接入掉落，P8沿用原Boss流程；不让Run引用UI或Character。
+            foreach(var root in gameObject.scene.GetRootGameObjects())
+            {var dungeon=root.GetComponentInChildren<DungeonRunContent>(true);if(dungeon!=null)dungeon.Bind(_session);}
         }
         internal ProfilePersistenceResult SaveForLeaving()
         {

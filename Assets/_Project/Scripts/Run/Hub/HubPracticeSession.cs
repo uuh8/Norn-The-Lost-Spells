@@ -15,6 +15,8 @@ namespace Game.Run
     public sealed class HubPracticeSession : MonoBehaviour
     {
         public static HubPracticeSession Current{get;private set;}
+        private WandSessionTransfer _wandTransfer;
+        private bool _preserveWandResources = true;
         public bool Loading{get;private set;}
         private string _hubPath;
         private GameObject _returnPrefab;
@@ -42,6 +44,14 @@ namespace Game.Run
         private BossEncounterController _bossEncounter;
         private HubPracticePortal _returnGate;
         private bool _deathPending;
+        private bool _hasShownGameplayGuide;
+        private string _menuDestination;
+        public bool TryMarkGameplayGuideShown()
+        {
+            if (_hasShownGameplayGuide) return false;
+            _hasShownGameplayGuide = true;
+            return true;
+        }
         public bool OwnsScene(Scene scene)=>_workspace!=null && _workspace.gameObject.scene==scene;
         private void OnEnable()
         {
@@ -76,9 +86,9 @@ namespace Game.Run
                     // Save成功才采用；旧Scene的OnDestroy不能用失败前的装备快照覆盖这份清算。
                     _workspace.SuppressExitSnapshot();session.AdoptPracticeDeath(candidate);
                     _profile=session.Profile;_profile.RaidActionsFrozen=true;
-                    _qualified.Clear();_selectedHeldSlot=-1;_returning=true;
+                    _qualified.Clear();_selectedHeldSlot=-1;_returning=true;_preserveWandResources=false;
                     _transitPlayer=null;_transitPortal=null;_transitPortalId=0;
-                    _workspace.Pause.PrepareForSceneTransition();RunSessionCoordinator.Current?.EndRun();
+                    _workspace.Pause.PrepareForSceneTransition();
                     do {yield return Load(_hubPath);if(_workspace!=null)yield return new WaitForSecondsRealtime(.5f);}
                     while(_workspace!=null && ReferenceEquals(Current,this));
                     yield break;
@@ -168,8 +178,14 @@ namespace Game.Run
         }
         public static bool TryBegin(SinglePlayerInventorySession session,string target,GameObject returnPrefab, Transform portal = null, Transform player = null, int portalId = 0)
         {
-            if(Current!=null || session==null || returnPrefab==null || !CanLoad(target))return false;
+            if(Current!=null || session==null || session.ReadOnly==null || returnPrefab==null || !CanLoad(target))return false;
             if(session.RunCoordinator==null || session.RunCoordinator.State.Phase!=RaidPhase.HubReady || !session.RunCoordinator.ActionsAllowed)return false;
+            if(!RaidSpellEligibility.CanStartPractice(session.Profile))
+            {
+                EventBus<HubDepartureReviewResultEvent>.Publish(new HubDepartureReviewResultEvent{InventoryId=session.ReadOnly?.InventoryId,
+                    WorldReady=false,Message="法杖中有已耗尽的资格法术，请先移除或更换后出发。"});
+                return false;
+            }
             if(session.PracticeWorkspacePrefab==null){GameLog.Error("练习入口缺少PracticeInventoryWorkspace Prefab，请运行物品携带接线工具。","Practice");return false;}
             var saved=session.SaveForPortalDeparture();if(!saved.Success)
             {
@@ -181,6 +197,7 @@ namespace Game.Run
             context._hubPath=session.gameObject.scene.path;context._returnPrefab=returnPrefab;
             context._profile=session.Profile;context._repository=session.Repository;context._scenePreview=session.IsScenePreview;
             context._selectedHeldSlot=session.ToolbeltReadOnly.SelectedSlot;
+            context._wandTransfer=session.CaptureWandTransfer();
             context._workspacePrefab=session.PracticeWorkspacePrefab;
             context._sourceRun=session.RunCoordinator;context._sourceRun.SetPracticeTransition(true);
             context._transitPlayer=player;context._transitPortal=portal;context._transitPortalId=portalId;
@@ -203,10 +220,24 @@ namespace Game.Run
             if(!saved.Success){GameLog.Warn("回据点保存失败，留在练习地图："+saved.Message,"Practice");return false;}
             _profile.RaidActionsFrozen=true;
             _transitPlayer=player;_transitPortal=portal;_transitPortalId=portalId;
-            _returning=true;RunSessionCoordinator.Current?.EndRun();StartCoroutine(Load(_hubPath));return true;
+            _wandTransfer=_workspace.Session.CaptureWandTransfer();
+            _returning=true;StartCoroutine(Load(_hubPath));return true;
+        }
+        /// <summary>回主菜单也必须先提交真实携带库存；加载成功后释放跨场景上下文。</summary>
+        public bool ReturnToMainMenu(string path)
+        {
+            if (Loading || _returning || _deathPending || !CanLoad(path) || _workspace == null) return false;
+            var saved = _workspace.SaveForLeaving();
+            if (!saved.Success) { GameLog.Warn("返回主菜单保存失败：" + saved.Message, "Practice"); return false; }
+            // 保存失败时不冻结、不换场景；成功后禁止重复导航，避免同一快照并发写入。
+            _profile.RaidActionsFrozen = true;
+            _menuDestination = path; _returning = true;
+            _transitPlayer = null; _transitPortal = null; _transitPortalId = 0;
+            StartCoroutine(Load(path)); return true;
         }
         private IEnumerator Load(string path)
         {
+            if (_workspace != null && _workspace.Session != null) _wandTransfer = _workspace.Session.CaptureWandTransfer();
             Loading=true;Cursor.lockState=CursorLockMode.None;Cursor.visible=true;
             Time.timeScale=0;
             yield return PortalTransitionCoordinator.CloseAndFade(_transitPlayer,_transitPortal,_transitPortalId);
@@ -240,6 +271,11 @@ namespace Game.Run
         }
         private void OnLoaded(Scene scene,LoadSceneMode mode)
         {
+            if (!string.IsNullOrEmpty(_menuDestination) && scene.path == _menuDestination)
+            {
+                Time.timeScale = 1; PortalTransitionCoordinator.Reveal(null);
+                Destroy(gameObject); return;
+            }
             bool practice=scene.path=="Assets/_Project/Scenes/P7_DemoRun.unity" || scene.path=="Assets/_Project/Scenes/P8_BossField.unity";
             if(!practice)foreach(var root in scene.GetRootGameObjects())if(root.GetComponentInChildren<PracticeInventorySceneBootstrap>(true)!=null){practice=true;break;}
             if(scene.path!=_hubPath && !practice)return;
@@ -265,7 +301,7 @@ namespace Game.Run
                 foreach(var root in scene.GetRootGameObjects())
                 {
                     var session=root.GetComponentInChildren<SinglePlayerInventorySession>(true);
-                    if(session!=null && session.ReadOnly==null){session.InitializeTransferred(_profile,_repository,_scenePreview);session.RestorePracticeHeldSelection(_selectedHeldSlot);}
+                    if(session!=null && session.ReadOnly==null){session.InitializeTransferred(_profile,_repository,_scenePreview);session.RestorePracticeHeldSelection(_selectedHeldSlot);session.RestoreWandTransfer(_wandTransfer,_preserveWandResources);}
                     if(_hasReturnPosition)foreach(var controller in root.GetComponentsInChildren<CharacterController>(true))
                     {
                         if(controller.GetComponent<HealthComponent>()?.TeamId!=1)continue;
@@ -288,6 +324,7 @@ namespace Game.Run
             workspace.name="PracticeInventoryWorkspace_本轮携带资产";_workspace=workspace.GetComponent<PracticeInventoryWorkspace>();
             _workspace.Configure(_profile,_repository,_scenePreview,actor.transform,scene.path,_spawns,_practiceRaidId,_qualified);
             _workspace.Session.RestorePracticeHeldSelection(_selectedHeldSlot);
+            _workspace.Session.RestoreWandTransfer(_wandTransfer, !_retrying && _preserveWandResources);
             workspace.SetActive(true);_workspace.Session.ActivateSceneItems(scene);
             // P7保留练习回程与最终房间出口；P8只在Boss胜利后生成门，不弹旧结果框。
             if(_bossEncounter==null)SpawnReturnGate();

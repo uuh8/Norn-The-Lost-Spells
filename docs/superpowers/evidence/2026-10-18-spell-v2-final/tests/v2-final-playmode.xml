@@ -1,0 +1,778 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="75" result="Failed(Child)" total="75" passed="73" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-18 14:06:43Z" end-time="2026-10-18 14:08:38Z" duration="115.1349449">
+  <test-suite type="TestSuite" id="1890" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="807" result="Failed" site="Child" start-time="2026-10-18 14:06:43Z" end-time="2026-10-18 14:08:38Z" duration="115.134945" total="75" passed="73" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1883" name="Game.Run.PlayMode.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.PlayMode.Tests.dll" runstate="Runnable" testcasecount="789" result="Failed" site="Child" start-time="2026-10-18 14:06:43Z" end-time="2026-10-18 14:08:38Z" duration="115.047956" total="75" passed="73" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26084" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1884" name="Game" fullname="Game" runstate="Runnable" testcasecount="789" result="Failed" site="Child" start-time="2026-10-18 14:06:43Z" end-time="2026-10-18 14:08:38Z" duration="115.038606" total="75" passed="73" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1885" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="789" result="Failed" site="Child" start-time="2026-10-18 14:06:43Z" end-time="2026-10-18 14:08:38Z" duration="115.020561" total="75" passed="73" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1886" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="789" result="Failed" site="Child" start-time="2026-10-18 14:06:43Z" end-time="2026-10-18 14:08:38Z" duration="115.004684" total="75" passed="73" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1056" name="BossEncounterControllerTests" fullname="Game.Run.Tests.BossEncounterControllerTests" classname="Game.Run.Tests.BossEncounterControllerTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-18 14:06:43Z" end-time="2026-10-18 14:06:44Z" duration="0.718496" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1058" name="BossDeath_CompletesExactlyOnce" fullname="Game.Run.Tests.BossEncounterControllerTests.BossDeath_CompletesExactlyOnce" methodname="BossDeath_CompletesExactlyOnce" classname="Game.Run.Tests.BossEncounterControllerTests" runstate="Runnable" seed="1386699696" result="Passed" start-time="2026-10-18 14:06:43Z" end-time="2026-10-18 14:06:44Z" duration="0.146008" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1059" name="PlayerDeath_FailsExactlyOnce" fullname="Game.Run.Tests.BossEncounterControllerTests.PlayerDeath_FailsExactlyOnce" methodname="PlayerDeath_FailsExactlyOnce" classname="Game.Run.Tests.BossEncounterControllerTests" runstate="Runnable" seed="1198202918" result="Passed" start-time="2026-10-18 14:06:44Z" end-time="2026-10-18 14:06:44Z" duration="0.081886" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1060" name="SafeZoneEnter_OnlyArmsWithoutStartingEncounter" fullname="Game.Run.Tests.BossEncounterControllerTests.SafeZoneEnter_OnlyArmsWithoutStartingEncounter" methodname="SafeZoneEnter_OnlyArmsWithoutStartingEncounter" classname="Game.Run.Tests.BossEncounterControllerTests" runstate="Runnable" seed="1016652982" result="Passed" start-time="2026-10-18 14:06:44Z" end-time="2026-10-18 14:06:44Z" duration="0.094802" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1061" name="SafeZoneExit_StartsOnceThenLetsParticlesExpire" fullname="Game.Run.Tests.BossEncounterControllerTests.SafeZoneExit_StartsOnceThenLetsParticlesExpire" methodname="SafeZoneExit_StartsOnceThenLetsParticlesExpire" classname="Game.Run.Tests.BossEncounterControllerTests" runstate="Runnable" seed="1440667977" result="Passed" start-time="2026-10-18 14:06:44Z" end-time="2026-10-18 14:06:44Z" duration="0.249566" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1057" name="TryBegin_PublishesOnceAndIgnoresExternalDeath" fullname="Game.Run.Tests.BossEncounterControllerTests.TryBegin_PublishesOnceAndIgnoresExternalDeath" methodname="TryBegin_PublishesOnceAndIgnoresExternalDeath" classname="Game.Run.Tests.BossEncounterControllerTests" runstate="Runnable" seed="1542401275" result="Passed" start-time="2026-10-18 14:06:44Z" end-time="2026-10-18 14:06:44Z" duration="0.083057" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1232" name="HubAreaPlayModeTests" fullname="Game.Run.Tests.HubAreaPlayModeTests" classname="Game.Run.Tests.HubAreaPlayModeTests" runstate="Runnable" testcasecount="17" result="Failed" site="Child" start-time="2026-10-18 14:06:44Z" end-time="2026-10-18 14:06:49Z" duration="5.130161" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1233" name="ShopAreaEdgeOpensWithEAndOutsideCannotOpen" fullname="Game.Run.Tests.HubAreaPlayModeTests.ShopAreaEdgeOpensWithEAndOutsideCannotOpen" methodname="ShopAreaEdgeOpensWithEAndOutsideCannotOpen" classname="Game.Run.Tests.HubAreaPlayModeTests" runstate="Runnable" seed="331816481" result="Failed" start-time="2026-10-18 14:06:44Z" end-time="2026-10-18 14:06:49Z" duration="4.617711" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.HubAreaPlayModeTests+<ShopAreaEdgeOpensWithEAndOutsideCannotOpen>d__8.MoveNext () [0x002b6] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\RunPlayMode\HubAreaPlayModeTests.cs:49
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in .\Library\PackageCache\com.unity.test-framework@aebcb98460c6\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[ElementField] Element World: GC 0/3 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/3 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Surface Water: GC 0/6 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Water: GC 0/6 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/6 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Poison: GC 0/6 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1234" name="WarehouseRegionWorksWithoutPromptCanvasAndDisabledShopHasNoPointFallback" fullname="Game.Run.Tests.HubAreaPlayModeTests.WarehouseRegionWorksWithoutPromptCanvasAndDisabledShopHasNoPointFallback" methodname="WarehouseRegionWorksWithoutPromptCanvasAndDisabledShopHasNoPointFallback" classname="Game.Run.Tests.HubAreaPlayModeTests" runstate="Runnable" seed="895981012" result="Failed" start-time="2026-10-18 14:06:49Z" end-time="2026-10-18 14:06:49Z" duration="0.490251" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.HubAreaPlayModeTests+<WarehouseRegionWorksWithoutPromptCanvasAndDisabledShopHasNoPointFallback>d__9.MoveNext () [0x000d3] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\RunPlayMode\HubAreaPlayModeTests.cs:59
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in .\Library\PackageCache\com.unity.test-framework@aebcb98460c6\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[ElementField] Element World: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Surface Water: GC 0/6 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Water: GC 0/6 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/6 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Poison: GC 0/6 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1297" name="HubSpellResearchPlayModeTests" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-18 14:06:49Z" end-time="2026-10-18 14:07:13Z" duration="24.131637" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1298" name="FormalHubResearchFAndBackpackRemainIndependent" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.FormalHubResearchFAndBackpackRemainIndependent" methodname="FormalHubResearchFAndBackpackRemainIndependent" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="27638457" result="Passed" start-time="2026-10-18 14:06:49Z" end-time="2026-10-18 14:06:53Z" duration="3.427955" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1303" name="ResearchComplexScopeCopyWrapAndFixedCardsUseSameGrid" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.ResearchComplexScopeCopyWrapAndFixedCardsUseSameGrid" methodname="ResearchComplexScopeCopyWrapAndFixedCardsUseSameGrid" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="979232145" result="Passed" start-time="2026-10-18 14:06:53Z" end-time="2026-10-18 14:06:54Z" duration="1.719064" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1299" name="ResearchOwnsPauseAndEditsActualItemsWithoutChangingForecastResources" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.ResearchOwnsPauseAndEditsActualItemsWithoutChangingForecastResources" methodname="ResearchOwnsPauseAndEditsActualItemsWithoutChangingForecastResources" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="1004957600" result="Passed" start-time="2026-10-18 14:06:54Z" end-time="2026-10-18 14:06:56Z" duration="1.758096" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1300" name="ResearchRejectsForgeryDisabledAreaAndAwayPhaseAndClosesOutside" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.ResearchRejectsForgeryDisabledAreaAndAwayPhaseAndClosesOutside" methodname="ResearchRejectsForgeryDisabledAreaAndAwayPhaseAndClosesOutside" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="2029498370" result="Passed" start-time="2026-10-18 14:06:56Z" end-time="2026-10-18 14:06:58Z" duration="1.404716" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1301" name="ResearchRejectsMissingAreaFrozenTransitionAndReplayedGrant" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.ResearchRejectsMissingAreaFrozenTransitionAndReplayedGrant" methodname="ResearchRejectsMissingAreaFrozenTransitionAndReplayedGrant" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="986651250" result="Passed" start-time="2026-10-18 14:06:58Z" end-time="2026-10-18 14:06:59Z" duration="1.461433" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1302" name="ResearchToP7CastAndReturnKeepsV2ResourcesAndActualReplay" fullname="Game.Run.Tests.HubSpellResearchPlayModeTests.ResearchToP7CastAndReturnKeepsV2ResourcesAndActualReplay" methodname="ResearchToP7CastAndReturnKeepsV2ResourcesAndActualReplay" classname="Game.Run.Tests.HubSpellResearchPlayModeTests" runstate="Runnable" seed="2039743780" result="Passed" start-time="2026-10-18 14:06:59Z" end-time="2026-10-18 14:07:13Z" duration="14.348892" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+[ElementField] Element World: GC 0/12 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/12 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Stable Surface Water: GC 0/172 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/172 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/172 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1485" name="OwnedWandCastPlayModeTests" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" testcasecount="28" result="Passed" start-time="2026-10-18 14:07:13Z" end-time="2026-10-18 14:07:20Z" duration="6.645866" total="28" passed="28" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1491" name="ActualTimerExecutesPayloadFromOriginalWand" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.ActualTimerExecutesPayloadFromOriginalWand" methodname="ActualTimerExecutesPayloadFromOriginalWand" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="642879256" result="Passed" start-time="2026-10-18 14:07:13Z" end-time="2026-10-18 14:07:14Z" duration="0.435713" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1496" name="ChangedProgramRejectsQueuedRootWithoutPayment" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.ChangedProgramRejectsQueuedRootWithoutPayment" methodname="ChangedProgramRejectsQueuedRootWithoutPayment" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="1863438807" result="Passed" start-time="2026-10-18 14:07:14Z" end-time="2026-10-18 14:07:14Z" duration="0.179811" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1508" name="ChildInitExceptionKeepsPrepaymentButDoesNotSpendFutureMana" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.ChildInitExceptionKeepsPrepaymentButDoesNotSpendFutureMana" methodname="ChildInitExceptionKeepsPrepaymentButDoesNotSpendFutureMana" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="2014568747" result="Passed" start-time="2026-10-18 14:07:14Z" end-time="2026-10-18 14:07:14Z" duration="0.164118" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Skills] 施法生成失败，未提交本层资源：测试 Init 故障
+]]></output>
+              </test-case>
+              <test-case id="1492" name="DelayedSkyfallPreservesSourceIntoImpactPayload" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.DelayedSkyfallPreservesSourceIntoImpactPayload" methodname="DelayedSkyfallPreservesSourceIntoImpactPayload" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="1584491585" result="Passed" start-time="2026-10-18 14:07:14Z" end-time="2026-10-18 14:07:14Z" duration="0.317283" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1506" name="DestroyedCasterCancelsDelayedSkyfallBudgetWhileSessionRemains" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.DestroyedCasterCancelsDelayedSkyfallBudgetWhileSessionRemains" methodname="DestroyedCasterCancelsDelayedSkyfallBudgetWhileSessionRemains" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="767243261" result="Passed" start-time="2026-10-18 14:07:14Z" end-time="2026-10-18 14:07:15Z" duration="0.177134" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1505" name="DestroyingUntriggeredParentReleasesReservationWithoutRefund" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.DestroyingUntriggeredParentReleasesReservationWithoutRefund" methodname="DestroyingUntriggeredParentReleasesReservationWithoutRefund" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="467970190" result="Passed" start-time="2026-10-18 14:07:15Z" end-time="2026-10-18 14:07:15Z" duration="0.172537" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1498" name="DisabledSessionFailsWithoutLegacyFallback" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.DisabledSessionFailsWithoutLegacyFallback" methodname="DisabledSessionFailsWithoutLegacyFallback" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="117747318" result="Passed" start-time="2026-10-18 14:07:15Z" end-time="2026-10-18 14:07:15Z" duration="0.169334" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1493" name="EditingAfterLaunchPreservesCapturedPayload" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.EditingAfterLaunchPreservesCapturedPayload" methodname="EditingAfterLaunchPreservesCapturedPayload" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="1331996682" result="Passed" start-time="2026-10-18 14:07:15Z" end-time="2026-10-18 14:07:15Z" duration="0.169761" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1497" name="EmptyProgramDoesNotCharge" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.EmptyProgramDoesNotCharge" methodname="EmptyProgramDoesNotCharge" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="953566754" result="Passed" start-time="2026-10-18 14:07:15Z" end-time="2026-10-18 14:07:15Z" duration="0.176439" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1503" name="ExhaustedPayloadStopsRootWithoutManaCooldownOrProjectile" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.ExhaustedPayloadStopsRootWithoutManaCooldownOrProjectile" methodname="ExhaustedPayloadStopsRootWithoutManaCooldownOrProjectile" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="774141884" result="Passed" start-time="2026-10-18 14:07:15Z" end-time="2026-10-18 14:07:15Z" duration="0.169779" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1509" name="FailureOnSecondEmitRollsBackPreviouslyCreatedFirstEmit" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.FailureOnSecondEmitRollsBackPreviouslyCreatedFirstEmit" methodname="FailureOnSecondEmitRollsBackPreviouslyCreatedFirstEmit" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="360513732" result="Passed" start-time="2026-10-18 14:07:15Z" end-time="2026-10-18 14:07:16Z" duration="0.176597" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Skills] 施法生成失败，未提交本层资源：测试 Init 故障
+]]></output>
+              </test-case>
+              <test-case id="1502" name="FiniteTriggerPrepaysBothInstancesAndRepeatedImpactCannotDuplicate" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.FiniteTriggerPrepaysBothInstancesAndRepeatedImpactCannotDuplicate" methodname="FiniteTriggerPrepaysBothInstancesAndRepeatedImpactCannotDuplicate" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="2061996826" result="Passed" start-time="2026-10-18 14:07:16Z" end-time="2026-10-18 14:07:16Z" duration="0.175437" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1513" name="HudRendersReadableScene" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.HudRendersReadableScene" methodname="HudRendersReadableScene" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="301163756" result="Passed" start-time="2026-10-18 14:07:16Z" end-time="2026-10-18 14:07:17Z" duration="0.877802" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1487" name="ImpactPayloadKeepsOriginalWandAfterSwitch" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.ImpactPayloadKeepsOriginalWandAfterSwitch" methodname="ImpactPayloadKeepsOriginalWandAfterSwitch" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="997532901" result="Passed" start-time="2026-10-18 14:07:17Z" end-time="2026-10-18 14:07:17Z" duration="0.164203" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1494" name="IndependentRootCooldownAllowsAnotherWandImmediately" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.IndependentRootCooldownAllowsAnotherWandImmediately" methodname="IndependentRootCooldownAllowsAnotherWandImmediately" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="2000190872" result="Passed" start-time="2026-10-18 14:07:17Z" end-time="2026-10-18 14:07:17Z" duration="0.175249" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1490" name="InvalidPrefabDoesNotChargeOrStartCooldown" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.InvalidPrefabDoesNotChargeOrStartCooldown" methodname="InvalidPrefabDoesNotChargeOrStartCooldown" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="1670089262" result="Passed" start-time="2026-10-18 14:07:17Z" end-time="2026-10-18 14:07:17Z" duration="0.176171" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1501" name="LastFiniteRootAndPayloadDisappearWhileActualImpactStillExecutes" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.LastFiniteRootAndPayloadDisappearWhileActualImpactStillExecutes" methodname="LastFiniteRootAndPayloadDisappearWhileActualImpactStillExecutes" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="1190649950" result="Passed" start-time="2026-10-18 14:07:17Z" end-time="2026-10-18 14:07:17Z" duration="0.174660" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1499" name="MissingEventReceiverCannotApproveFreeCast" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.MissingEventReceiverCannotApproveFreeCast" methodname="MissingEventReceiverCannotApproveFreeCast" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="2098764756" result="Passed" start-time="2026-10-18 14:07:17Z" end-time="2026-10-18 14:07:18Z" duration="0.173506" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1504" name="MutatingPayloadDefinitionAfterLaunchDoesNotChangeFrozenDamage" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.MutatingPayloadDefinitionAfterLaunchDoesNotChangeFrozenDamage" methodname="MutatingPayloadDefinitionAfterLaunchDoesNotChangeFrozenDamage" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="1739635053" result="Passed" start-time="2026-10-18 14:07:18Z" end-time="2026-10-18 14:07:18Z" duration="0.177682" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1510" name="NewClickDuringAnimationChangesPendingButKeepsActiveSource" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.NewClickDuringAnimationChangesPendingButKeepsActiveSource" methodname="NewClickDuringAnimationChangesPendingButKeepsActiveSource" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="692829479" result="Passed" start-time="2026-10-18 14:07:18Z" end-time="2026-10-18 14:07:18Z" duration="0.465292" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1511" name="NumericKeysAndPauseGuardUseActualInputActions" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.NumericKeysAndPauseGuardUseActualInputActions" methodname="NumericKeysAndPauseGuardUseActualInputActions" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="1317089561" result="Passed" start-time="2026-10-18 14:07:18Z" end-time="2026-10-18 14:07:18Z" duration="0.193456" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1495" name="PauseFreezesResourcesAndDoesNotQueueUiClick" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.PauseFreezesResourcesAndDoesNotQueueUiClick" methodname="PauseFreezesResourcesAndDoesNotQueueUiClick" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="2080173356" result="Passed" start-time="2026-10-18 14:07:18Z" end-time="2026-10-18 14:07:19Z" duration="0.202260" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1489" name="PayloadInsufficientManaDoesNotBorrowSelectedWand" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.PayloadInsufficientManaDoesNotBorrowSelectedWand" methodname="PayloadInsufficientManaDoesNotBorrowSelectedWand" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="1051317851" result="Passed" start-time="2026-10-18 14:07:19Z" end-time="2026-10-18 14:07:19Z" duration="0.183677" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1512" name="RealWizardAnimationReleasesClickSourceAfterSwitch" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.RealWizardAnimationReleasesClickSourceAfterSwitch" methodname="RealWizardAnimationReleasesClickSourceAfterSwitch" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="1486475181" result="Passed" start-time="2026-10-18 14:07:19Z" end-time="2026-10-18 14:07:19Z" duration="0.488862" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1507" name="RootInitExceptionCleansSpawnAndLeavesFiniteUsesManaCooldownUntouched" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.RootInitExceptionCleansSpawnAndLeavesFiniteUsesManaCooldownUntouched" methodname="RootInitExceptionCleansSpawnAndLeavesFiniteUsesManaCooldownUntouched" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="354639480" result="Passed" start-time="2026-10-18 14:07:19Z" end-time="2026-10-18 14:07:19Z" duration="0.164547" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Skills] 施法生成失败，未提交本层资源：测试 Init 故障
+]]></output>
+              </test-case>
+              <test-case id="1486" name="RootLocksClickSourceAndUsesOwnedManaOnly" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.RootLocksClickSourceAndUsesOwnedManaOnly" methodname="RootLocksClickSourceAndUsesOwnedManaOnly" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="1708977858" result="Passed" start-time="2026-10-18 14:07:19Z" end-time="2026-10-18 14:07:20Z" duration="0.176413" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1488" name="TimedPayloadKeepsOriginalWandAfterSwitch" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.TimedPayloadKeepsOriginalWandAfterSwitch" methodname="TimedPayloadKeepsOriginalWandAfterSwitch" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="607532050" result="Passed" start-time="2026-10-18 14:07:20Z" end-time="2026-10-18 14:07:20Z" duration="0.175233" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1500" name="WrongRuntimeComponentDoesNotCharge" fullname="Game.Run.Tests.OwnedWandCastPlayModeTests.WrongRuntimeComponentDoesNotCharge" methodname="WrongRuntimeComponentDoesNotCharge" classname="Game.Run.Tests.OwnedWandCastPlayModeTests" runstate="Runnable" seed="1032541922" result="Passed" start-time="2026-10-18 14:07:20Z" end-time="2026-10-18 14:07:20Z" duration="0.170851" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1514" name="OwnedWandV2PlayModeTests" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-18 14:07:20Z" end-time="2026-10-18 14:08:23Z" duration="63.141158" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1519" name="CancelledProjectileNeverReleasesTerminationPayload" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.CancelledProjectileNeverReleasesTerminationPayload" methodname="CancelledProjectileNeverReleasesTerminationPayload" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="1397028611" result="Passed" start-time="2026-10-18 14:07:20Z" end-time="2026-10-18 14:07:20Z" duration="0.212391" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1520" name="ContinuousFastInputFor30Seconds" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.ContinuousFastInputFor30Seconds" methodname="ContinuousFastInputFor30Seconds" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="1769784290" result="Passed" start-time="2026-10-18 14:07:20Z" end-time="2026-10-18 14:07:51Z" duration="30.394762" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Error after 5 attempt(s): Unknown -  -- Result type: PointsBalanceResult -- Url: https://generators.ai.unity.com -- Trace Id 4085ed17-7c7c-483a-b02e-a206fd713a3f => 
+]]></output>
+              </test-case>
+              <test-case id="1523" name="ContinuousHeavyInputFor30Seconds" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.ContinuousHeavyInputFor30Seconds" methodname="ContinuousHeavyInputFor30Seconds" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="95870366" result="Passed" start-time="2026-10-18 14:07:51Z" end-time="2026-10-18 14:08:21Z" duration="30.416133" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1517" name="DelayedSkyfallIsObservedOnlyAfterActualBirth" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.DelayedSkyfallIsObservedOnlyAfterActualBirth" methodname="DelayedSkyfallIsObservedOnlyAfterActualBirth" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="1843718730" result="Passed" start-time="2026-10-18 14:08:21Z" end-time="2026-10-18 14:08:21Z" duration="0.459800" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1522" name="DisabledV2SourceCancelsPendingSkyfallWithoutPhantomRelease" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.DisabledV2SourceCancelsPendingSkyfallWithoutPhantomRelease" methodname="DisabledV2SourceCancelsPendingSkyfallWithoutPhantomRelease" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="241922281" result="Passed" start-time="2026-10-18 14:08:21Z" end-time="2026-10-18 14:08:22Z" duration="0.479514" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1521" name="GammaBorrowedOutputUsesRealOwnedAdapterWithoutChargingTargetMana" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.GammaBorrowedOutputUsesRealOwnedAdapterWithoutChargingTargetMana" methodname="GammaBorrowedOutputUsesRealOwnedAdapterWithoutChargingTargetMana" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="828408864" result="Passed" start-time="2026-10-18 14:08:22Z" end-time="2026-10-18 14:08:22Z" duration="0.167664" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1518" name="NormalLifetimeReleasesTerminationPayloadExactlyOnce" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.NormalLifetimeReleasesTerminationPayloadExactlyOnce" methodname="NormalLifetimeReleasesTerminationPayloadExactlyOnce" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="1518379263" result="Passed" start-time="2026-10-18 14:08:22Z" end-time="2026-10-18 14:08:23Z" duration="0.451573" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1516" name="QueuedV2ShotReleasesBeforeAnimationThreshold" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.QueuedV2ShotReleasesBeforeAnimationThreshold" methodname="QueuedV2ShotReleasesBeforeAnimationThreshold" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="1218705648" result="Passed" start-time="2026-10-18 14:08:23Z" end-time="2026-10-18 14:08:23Z" duration="0.174608" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1515" name="RealTimedChildUsesPrepaidGraphAfterSwitchingWands" fullname="Game.Run.Tests.OwnedWandV2PlayModeTests.RealTimedChildUsesPrepaidGraphAfterSwitchingWands" methodname="RealTimedChildUsesPrepaidGraphAfterSwitchingWands" classname="Game.Run.Tests.OwnedWandV2PlayModeTests" runstate="Runnable" seed="1708521364" result="Passed" start-time="2026-10-18 14:08:23Z" end-time="2026-10-18 14:08:23Z" duration="0.370678" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1642" name="SpellAttachmentPlayModeTests" fullname="Game.Run.Tests.SpellAttachmentPlayModeTests" classname="Game.Run.Tests.SpellAttachmentPlayModeTests" runstate="Runnable" testcasecount="15" result="Passed" start-time="2026-10-18 14:08:23Z" end-time="2026-10-18 14:08:34Z" duration="10.467654" total="15" passed="15" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1655" name="ActualGameViewShowsReleasedAttachedLiquidAndConfigurationPanel" fullname="Game.Run.Tests.SpellAttachmentPlayModeTests.ActualGameViewShowsReleasedAttachedLiquidAndConfigurationPanel" methodname="ActualGameViewShowsReleasedAttachedLiquidAndConfigurationPanel" classname="Game.Run.Tests.SpellAttachmentPlayModeTests" runstate="Runnable" seed="1481487700" result="Passed" start-time="2026-10-18 14:08:23Z" end-time="2026-10-18 14:08:25Z" duration="2.336634" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Rendering] Grid Surface Water: GC 0/105 frames, total 0 B, max 0 B/frame; queue peak new=1, dirty=0, age=0 frames, omitted=0, pending frames=1.
+[Rendering] Grid Stable Surface Water: GC 0/105 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/105 frames, total 0 B, max 0 B/frame; queue peak new=1, dirty=0, age=0 frames, omitted=0, pending frames=1.
+[Rendering] Grid Stable Surface Poison: GC 0/105 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1650" name="DestroyingOutputEndsOwnershipWithoutRefillingSource" fullname="Game.Run.Tests.SpellAttachmentPlayModeTests.DestroyingOutputEndsOwnershipWithoutRefillingSource" methodname="DestroyingOutputEndsOwnershipWithoutRefillingSource" classname="Game.Run.Tests.SpellAttachmentPlayModeTests" runstate="Runnable" seed="635736430" result="Passed" start-time="2026-10-18 14:08:25Z" end-time="2026-10-18 14:08:26Z" duration="0.209804" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[SpellMaterials] 附着输出世界归属结束：08df2411dad84bfda51c07465039fbb2, 3 GMU；未返还库存。
+[Rendering] Grid Surface Water: GC 0/7 frames, total 0 B, max 0 B/frame; queue peak new=1, dirty=1, age=0 frames, omitted=0, pending frames=2.
+[Rendering] Grid Stable Surface Water: GC 0/7 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/7 frames, total 0 B, max 0 B/frame; queue peak new=1, dirty=1, age=0 frames, omitted=0, pending frames=2.
+[Rendering] Grid Stable Surface Poison: GC 0/7 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1651" name="DisablingCommittedProxyEndsOwnershipAndReleasesSaveGuard" fullname="Game.Run.Tests.SpellAttachmentPlayModeTests.DisablingCommittedProxyEndsOwnershipAndReleasesSaveGuard" methodname="DisablingCommittedProxyEndsOwnershipAndReleasesSaveGuard" classname="Game.Run.Tests.SpellAttachmentPlayModeTests" runstate="Runnable" seed="1313222125" result="Passed" start-time="2026-10-18 14:08:26Z" end-time="2026-10-18 14:08:26Z" duration="0.246313" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[SpellMaterials] 附着输出世界归属结束：446470eaae964e13ab52a74ca3bed84b, 3 GMU；未返还库存。
+[Rendering] Grid Surface Water: GC 0/7 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Water: GC 0/7 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/7 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Poison: GC 0/7 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1645" name="EmptySourceKeepsOrdinaryOutputAndManaCharge" fullname="Game.Run.Tests.SpellAttachmentPlayModeTests.EmptySourceKeepsOrdinaryOutputAndManaCharge" methodname="EmptySourceKeepsOrdinaryOutputAndManaCharge" classname="Game.Run.Tests.SpellAttachmentPlayModeTests" runstate="Runnable" seed="98391998" result="Passed" start-time="2026-10-18 14:08:26Z" end-time="2026-10-18 14:08:26Z" duration="0.263315" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Rendering] Grid Surface Water: GC 0/6 frames, total 0 B, max 0 B/frame; queue peak new=1, dirty=0, age=0 frames, omitted=0, pending frames=1.
+[Rendering] Grid Stable Surface Water: GC 0/6 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/6 frames, total 0 B, max 0 B/frame; queue peak new=1, dirty=0, age=0 frames, omitted=0, pending frames=1.
+[Rendering] Grid Stable Surface Poison: GC 0/6 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1654" name="GasAttachmentReturnsTrueSteamToWorld" fullname="Game.Run.Tests.SpellAttachmentPlayModeTests.GasAttachmentReturnsTrueSteamToWorld" methodname="GasAttachmentReturnsTrueSteamToWorld" classname="Game.Run.Tests.SpellAttachmentPlayModeTests" runstate="Runnable" seed="76815327" result="Passed" start-time="2026-10-18 14:08:26Z" end-time="2026-10-18 14:08:27Z" duration="0.673154" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Rendering] Grid Surface Water: GC 0/35 frames, total 0 B, max 0 B/frame; queue peak new=1, dirty=0, age=0 frames, omitted=0, pending frames=1.
+[Rendering] Grid Stable Surface Water: GC 0/35 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/35 frames, total 0 B, max 0 B/frame; queue peak new=1, dirty=0, age=0 frames, omitted=0, pending frames=1.
+[Rendering] Grid Stable Surface Poison: GC 0/35 frames, total 0 B, max 0 B/frame.
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+              </test-case>
+              <test-case id="1657" name="ProfilerCapturesRealCapacityWaitingPathWithoutProjectMarkerAllocations" fullname="Game.Run.Tests.SpellAttachmentPlayModeTests.ProfilerCapturesRealCapacityWaitingPathWithoutProjectMarkerAllocations" methodname="ProfilerCapturesRealCapacityWaitingPathWithoutProjectMarkerAllocations" classname="Game.Run.Tests.SpellAttachmentPlayModeTests" runstate="Runnable" seed="2074411624" result="Passed" start-time="2026-10-18 14:08:27Z" end-time="2026-10-18 14:08:29Z" duration="2.056740" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+[SpellMaterials] 附着输出世界归属结束：79efa721acb341b392a8e6bd9f67315f, 10 GMU；未返还库存。
+[Rendering] Grid Surface Water: GC 0/101 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Water: GC 0/101 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/101 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Poison: GC 0/101 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1643" name="RealCollisionDepositsPartialMixedBudgetAndBalancesFamilies" fullname="Game.Run.Tests.SpellAttachmentPlayModeTests.RealCollisionDepositsPartialMixedBudgetAndBalancesFamilies" methodname="RealCollisionDepositsPartialMixedBudgetAndBalancesFamilies" classname="Game.Run.Tests.SpellAttachmentPlayModeTests" runstate="Runnable" seed="566057474" result="Passed" start-time="2026-10-18 14:08:29Z" end-time="2026-10-18 14:08:29Z" duration="0.288512" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Rendering] Grid Surface Water: GC 0/12 frames, total 0 B, max 0 B/frame; queue peak new=1, dirty=1, age=0 frames, omitted=0, pending frames=2.
+[Rendering] Grid Stable Surface Water: GC 0/12 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/12 frames, total 0 B, max 0 B/frame; queue peak new=1, dirty=1, age=0 frames, omitted=0, pending frames=2.
+[Rendering] Grid Stable Surface Poison: GC 0/12 frames, total 0 B, max 0 B/frame.
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+              </test-case>
+              <test-case id="1646" name="RootInitFailureRollsBackMaterialsAndEveryCreatedProxy" fullname="Game.Run.Tests.SpellAttachmentPlayModeTests.RootInitFailureRollsBackMaterialsAndEveryCreatedProxy" methodname="RootInitFailureRollsBackMaterialsAndEveryCreatedProxy" classname="Game.Run.Tests.SpellAttachmentPlayModeTests" runstate="Runnable" seed="742296120" result="Passed" start-time="2026-10-18 14:08:29Z" end-time="2026-10-18 14:08:29Z" duration="0.267811" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+[Skills] 施法生成失败，未提交本层资源：测试 Init 故障
+[Rendering] Grid Surface Water: GC 0/6 frames, total 0 B, max 0 B/frame; queue peak new=1, dirty=1, age=0 frames, omitted=0, pending frames=2.
+[Rendering] Grid Stable Surface Water: GC 0/6 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/6 frames, total 0 B, max 0 B/frame; queue peak new=1, dirty=1, age=0 frames, omitted=0, pending frames=2.
+[Rendering] Grid Stable Surface Poison: GC 0/6 frames, total 0 B, max 0 B/frame.
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+              </test-case>
+              <test-case id="1644" name="SameNameUnexecutedCardDoesNotConsumeAndSourceThrownKeepsBaseCast" fullname="Game.Run.Tests.SpellAttachmentPlayModeTests.SameNameUnexecutedCardDoesNotConsumeAndSourceThrownKeepsBaseCast" methodname="SameNameUnexecutedCardDoesNotConsumeAndSourceThrownKeepsBaseCast" classname="Game.Run.Tests.SpellAttachmentPlayModeTests" runstate="Runnable" seed="1180911088" result="Passed" start-time="2026-10-18 14:08:29Z" end-time="2026-10-18 14:08:31Z" duration="1.110206" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+[ContainerUse] 投掷世界归属结束：20f2d646c8ca49c6944bbc679d8d3195, 30 GMU, SceneEnded；未自动返还物品。
+[Rendering] Grid Surface Water: GC 0/59 frames, total 0 B, max 0 B/frame; queue peak new=1, dirty=1, age=0 frames, omitted=0, pending frames=2.
+[Rendering] Grid Stable Surface Water: GC 0/59 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/59 frames, total 0 B, max 0 B/frame; queue peak new=1, dirty=1, age=0 frames, omitted=0, pending frames=2.
+[Rendering] Grid Stable Surface Poison: GC 0/59 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1656" name="SceneUnloadEndsOutputsAndCleansProjectileSceneOwnership" fullname="Game.Run.Tests.SpellAttachmentPlayModeTests.SceneUnloadEndsOutputsAndCleansProjectileSceneOwnership" methodname="SceneUnloadEndsOutputsAndCleansProjectileSceneOwnership" classname="Game.Run.Tests.SpellAttachmentPlayModeTests" runstate="Runnable" seed="110405679" result="Passed" start-time="2026-10-18 14:08:31Z" end-time="2026-10-18 14:08:31Z" duration="0.212277" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[SpellMaterials] 附着输出世界归属结束：4c5aad81c80f4140a58cc521b4c443d6, 3 GMU；未返还库存。
+[Rendering] Grid Surface Water: GC 0/5 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Water: GC 0/5 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/5 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Poison: GC 0/5 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1652" name="SkyfallDelayKeepsOneBudgetAndReleasesAtActualCollision" fullname="Game.Run.Tests.SpellAttachmentPlayModeTests.SkyfallDelayKeepsOneBudgetAndReleasesAtActualCollision" methodname="SkyfallDelayKeepsOneBudgetAndReleasesAtActualCollision" classname="Game.Run.Tests.SpellAttachmentPlayModeTests" runstate="Runnable" seed="1650435430" result="Passed" start-time="2026-10-18 14:08:31Z" end-time="2026-10-18 14:08:32Z" duration="0.975491" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Rendering] Grid Surface Water: GC 0/53 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Water: GC 0/53 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/53 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Poison: GC 0/53 frames, total 0 B, max 0 B/frame.
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+              </test-case>
+              <test-case id="1653" name="StaticShieldAlsoTransfersOnlyItsApprovedMaterials" fullname="Game.Run.Tests.SpellAttachmentPlayModeTests.StaticShieldAlsoTransfersOnlyItsApprovedMaterials" methodname="StaticShieldAlsoTransfersOnlyItsApprovedMaterials" classname="Game.Run.Tests.SpellAttachmentPlayModeTests" runstate="Runnable" seed="455923547" result="Passed" start-time="2026-10-18 14:08:32Z" end-time="2026-10-18 14:08:32Z" duration="0.279543" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+[Combat] ProjectileShield collider should usually be a Trigger so it can reflect projectiles reliably.
+[Rendering] Grid Surface Water: GC 0/6 frames, total 0 B, max 0 B/frame; queue peak new=1, dirty=1, age=0 frames, omitted=0, pending frames=2.
+[Rendering] Grid Stable Surface Water: GC 0/6 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/6 frames, total 0 B, max 0 B/frame; queue peak new=1, dirty=1, age=0 frames, omitted=0, pending frames=2.
+[Rendering] Grid Stable Surface Poison: GC 0/6 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1647" name="TriggerDoesNotPreTakeFutureMaterialsAndChildRetainsOriginalWand" fullname="Game.Run.Tests.SpellAttachmentPlayModeTests.TriggerDoesNotPreTakeFutureMaterialsAndChildRetainsOriginalWand" methodname="TriggerDoesNotPreTakeFutureMaterialsAndChildRetainsOriginalWand" classname="Game.Run.Tests.SpellAttachmentPlayModeTests" runstate="Runnable" seed="976728934" result="Passed" start-time="2026-10-18 14:08:32Z" end-time="2026-10-18 14:08:32Z" duration="0.214563" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[SpellMaterials] 附着输出世界归属结束：c568602abcf74e9e9aa1b1bb7efa5c15, 3 GMU；未返还库存。
+[Rendering] Grid Surface Water: GC 0/6 frames, total 0 B, max 0 B/frame; queue peak new=1, dirty=1, age=0 frames, omitted=0, pending frames=2.
+[Rendering] Grid Stable Surface Water: GC 0/6 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/6 frames, total 0 B, max 0 B/frame; queue peak new=1, dirty=1, age=0 frames, omitted=0, pending frames=2.
+[Rendering] Grid Stable Surface Poison: GC 0/6 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1649" name="UiButtonsConfigureExactCardChangeDoseAndCloseWithoutSpending" fullname="Game.Run.Tests.SpellAttachmentPlayModeTests.UiButtonsConfigureExactCardChangeDoseAndCloseWithoutSpending" methodname="UiButtonsConfigureExactCardChangeDoseAndCloseWithoutSpending" classname="Game.Run.Tests.SpellAttachmentPlayModeTests" runstate="Runnable" seed="606561335" result="Passed" start-time="2026-10-18 14:08:32Z" end-time="2026-10-18 14:08:33Z" duration="0.325937" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Rendering] Grid Surface Water: GC 0/7 frames, total 0 B, max 0 B/frame; queue peak new=1, dirty=1, age=0 frames, omitted=0, pending frames=2.
+[Rendering] Grid Stable Surface Water: GC 0/7 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/7 frames, total 0 B, max 0 B/frame; queue peak new=1, dirty=1, age=0 frames, omitted=0, pending frames=2.
+[Rendering] Grid Stable Surface Poison: GC 0/7 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1648" name="WorldRejectKeepsVisibleOutputAndSaveBlockedThenRetryDepositsOnce" fullname="Game.Run.Tests.SpellAttachmentPlayModeTests.WorldRejectKeepsVisibleOutputAndSaveBlockedThenRetryDepositsOnce" methodname="WorldRejectKeepsVisibleOutputAndSaveBlockedThenRetryDepositsOnce" classname="Game.Run.Tests.SpellAttachmentPlayModeTests" runstate="Runnable" seed="69667157" result="Passed" start-time="2026-10-18 14:08:33Z" end-time="2026-10-18 14:08:34Z" duration="0.991566" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Rendering] Grid Surface Water: GC 0/54 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=1, age=0 frames, omitted=0, pending frames=1.
+[Rendering] Grid Stable Surface Water: GC 0/54 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/54 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=1, age=0 frames, omitted=0, pending frames=1.
+[Rendering] Grid Stable Surface Poison: GC 0/54 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1664" name="SpellProgrammingV2WorkbenchPlayModeTests" fullname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests" classname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-18 14:08:34Z" end-time="2026-10-18 14:08:36Z" duration="2.070623" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1667" name="FourByThreeGameView_KeepsTheGridAndControlsUsable" fullname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests.FourByThreeGameView_KeepsTheGridAndControlsUsable" methodname="FourByThreeGameView_KeepsTheGridAndControlsUsable" classname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests" runstate="Runnable" seed="1517727159" result="Passed" start-time="2026-10-18 14:08:34Z" end-time="2026-10-18 14:08:34Z" duration="0.294117" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1668" name="LargeGraph_CanZoomPanFitAndSelectTheLastCard" fullname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests.LargeGraph_CanZoomPanFitAndSelectTheLastCard" methodname="LargeGraph_CanZoomPanFitAndSelectTheLastCard" classname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests" runstate="Runnable" seed="239336404" result="Passed" start-time="2026-10-18 14:08:34Z" end-time="2026-10-18 14:08:35Z" duration="0.853480" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1666" name="NativeUgui_ClickSourceAndStepWithoutCommittingGameplay" fullname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests.NativeUgui_ClickSourceAndStepWithoutCommittingGameplay" methodname="NativeUgui_ClickSourceAndStepWithoutCommittingGameplay" classname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests" runstate="Runnable" seed="238856596" result="Passed" start-time="2026-10-18 14:08:35Z" end-time="2026-10-18 14:08:35Z" duration="0.240801" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1665" name="SavedSandbox_ThreeConfiguredSamplesMatchTheRuleGraph" fullname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests.SavedSandbox_ThreeConfiguredSamplesMatchTheRuleGraph" methodname="SavedSandbox_ThreeConfiguredSamplesMatchTheRuleGraph" classname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests" runstate="Runnable" seed="1895028632" result="Passed" start-time="2026-10-18 14:08:35Z" end-time="2026-10-18 14:08:35Z" duration="0.477251" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1669" name="WarmStepAndZoom_ReuseViewsWithoutManagedAllocations" fullname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests.WarmStepAndZoom_ReuseViewsWithoutManagedAllocations" methodname="WarmStepAndZoom_ReuseViewsWithoutManagedAllocations" classname="Game.Run.Tests.SpellProgrammingV2WorkbenchPlayModeTests" runstate="Runnable" seed="283571734" result="Passed" start-time="2026-10-18 14:08:35Z" end-time="2026-10-18 14:08:36Z" duration="0.186267" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1706" name="StageExitPortalTests" fullname="Game.Run.Tests.StageExitPortalTests" classname="Game.Run.Tests.StageExitPortalTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-18 14:08:36Z" end-time="2026-10-18 14:08:36Z" duration="0.433508" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1709" name="ClosingVisual_CancelsPendingOpenToIdleTransition" fullname="Game.Run.Tests.StageExitPortalTests.ClosingVisual_CancelsPendingOpenToIdleTransition" methodname="ClosingVisual_CancelsPendingOpenToIdleTransition" classname="Game.Run.Tests.StageExitPortalTests" runstate="Runnable" seed="1681876735" result="Passed" start-time="2026-10-18 14:08:36Z" end-time="2026-10-18 14:08:36Z" duration="0.179502" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1708" name="ClosingVisual_UsesUnscaledParticleTimeWhileGameplayIsPaused" fullname="Game.Run.Tests.StageExitPortalTests.ClosingVisual_UsesUnscaledParticleTimeWhileGameplayIsPaused" methodname="ClosingVisual_UsesUnscaledParticleTimeWhileGameplayIsPaused" classname="Game.Run.Tests.StageExitPortalTests" runstate="Runnable" seed="1884962726" result="Passed" start-time="2026-10-18 14:08:36Z" end-time="2026-10-18 14:08:36Z" duration="0.061951" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1707" name="MatchingCompletion_EnterUnlocksAllAndRequestsBossFieldExactlyOnce" fullname="Game.Run.Tests.StageExitPortalTests.MatchingCompletion_EnterUnlocksAllAndRequestsBossFieldExactlyOnce" methodname="MatchingCompletion_EnterUnlocksAllAndRequestsBossFieldExactlyOnce" classname="Game.Run.Tests.StageExitPortalTests" runstate="Runnable" seed="1722347624" result="Passed" start-time="2026-10-18 14:08:36Z" end-time="2026-10-18 14:08:36Z" duration="0.172322" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Run] StageExitPortal accepted Player; close wait=0.05s, target='P8_BossField'.
+[Run] IPortalTraveler 拒绝了 Transit 请求；将继续 Portal Close/Fade 主流程。
+[Run] StageExitPortal started CloseThenRequestTransition Coroutine.
+[Run] StageExitPortal publishing SceneTransitionRequestedEvent for 'P8_BossField'.
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1763" name="WarehouseShopWorkspacePlayModeTests" fullname="Game.Run.Tests.WarehouseShopWorkspacePlayModeTests" classname="Game.Run.Tests.WarehouseShopWorkspacePlayModeTests" runstate="Runnable" testcasecount="20" result="Passed" start-time="2026-10-18 14:08:36Z" end-time="2026-10-18 14:08:38Z" duration="2.248485" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1768" name="InitialGoldSynchronizesAllThreeWindowsAfterBuyAndSell" fullname="Game.Run.Tests.WarehouseShopWorkspacePlayModeTests.InitialGoldSynchronizesAllThreeWindowsAfterBuyAndSell" methodname="InitialGoldSynchronizesAllThreeWindowsAfterBuyAndSell" classname="Game.Run.Tests.WarehouseShopWorkspacePlayModeTests" runstate="Runnable" seed="407597848" result="Passed" start-time="2026-10-18 14:08:36Z" end-time="2026-10-18 14:08:37Z" duration="1.058300" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[ElementField] Element World: GC 0/2 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/2 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Surface Water: GC 0/13 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Water: GC 0/13 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/13 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Poison: GC 0/13 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1770" name="ShopEmbeddedInventoryTransfersOnlyChosenInstanceAndUpdatesWallet" fullname="Game.Run.Tests.WarehouseShopWorkspacePlayModeTests.ShopEmbeddedInventoryTransfersOnlyChosenInstanceAndUpdatesWallet" methodname="ShopEmbeddedInventoryTransfersOnlyChosenInstanceAndUpdatesWallet" classname="Game.Run.Tests.WarehouseShopWorkspacePlayModeTests" runstate="Runnable" seed="2042912025" result="Passed" start-time="2026-10-18 14:08:37Z" end-time="2026-10-18 14:08:38Z" duration="1.178085" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[ElementField] Element World: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[ElementField] Grid Runtime: GC 0/1 ticks, total 0 B, max 0 B/tick.
+[Rendering] Grid Surface Water: GC 0/15 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Water: GC 0/15 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Surface Poison: GC 0/15 frames, total 0 B, max 0 B/frame; queue peak new=0, dirty=0, age=0 frames, omitted=0, pending frames=0.
+[Rendering] Grid Stable Surface Poison: GC 0/15 frames, total 0 B, max 0 B/frame.
+Saving results to: Temp/SinglePlayer/playmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

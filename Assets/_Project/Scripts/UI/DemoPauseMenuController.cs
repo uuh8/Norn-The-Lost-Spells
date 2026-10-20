@@ -16,12 +16,10 @@ namespace Game.UI
     {
         [Header("References")]
         [SerializeField] private RunPauseCoordinator _pauseCoordinator;
-        [SerializeField] private WandEditorController _wandEditor;
         private SinglePlayerInventoryController _inventory;
         public void ConfigurePracticeInventory(SinglePlayerInventoryController inventory)=>_inventory=inventory;
         [SerializeField] private InputActionReference _pauseAction;
         [SerializeField] private DemoSceneTransitionController _sceneTransition;
-        [SerializeField] private RunSessionCoordinator _sessionCoordinator;
 
         [Header("Panels")]
         [SerializeField] private GameObject _pausePanel;
@@ -53,8 +51,8 @@ namespace Game.UI
 
         [Header("Scene Navigation")]
         [SerializeField] private string _mainMenuSceneName = "P7_MainMenu";
-        [SerializeField] private string _runSceneName = "P7_DemoRun";
-        [SerializeField] private string _bossSceneName = "P8_BossField";
+        [SerializeField] private string _hubSceneName = "SinglePlayer_Hub";
+        [SerializeField] private string _mainMenuScenePath = "Assets/_Project/Scenes/P7_MainMenu.unity";
 
         private float _runStartedRealtime;
         private bool _isLoadingScene;
@@ -124,14 +122,9 @@ namespace Game.UI
                 return;
             }
 
-            // Escape 从 Wand Editor 切换到 Pause Menu，而不是让两个全屏交互层同时争抢 Cursor。
+            // Escape 从背包切换到 Pause Menu，而不是让两个全屏交互层同时争抢 Cursor。
             _inventory?.Close();
-            if (_wandEditor != null)
-            {
-                _wandEditor.ForceClose();
-            }
-
-            _pauseCoordinator.RequestPause(RunPauseReason.PauseMenu);
+_pauseCoordinator.RequestPause(RunPauseReason.PauseMenu);
             SetPanelActive(_settingsPanel, false);
             SetPanelActive(_pausePanel, true);
         }
@@ -173,61 +166,25 @@ namespace Game.UI
             SetPanelActive(_pausePanel, true);
         }
 
+        // 保留 Inspector 按钮方法名；“重开”现在回据点，不再创建旧 P7 开场配置。
         public void RestartRun()
         {
-            if (!CanBeginNavigation(_runSceneName))
-            {
-                return;
-            }
-
-            RunSessionCoordinator coordinator = ResolveSessionCoordinator();
-            if (coordinator != null)
-            {
-                coordinator.EndRun();
-            }
-
-            BeginSceneLoad(_runSceneName);
+            if (!CanBeginNavigation(_hubSceneName)) return;
+            var session = HubPracticeSession.Current;
+            if (session != null) { if (session.ReturnToHub()) _isLoadingScene = true; return; }
+            BeginSceneLoad(_hubSceneName);
         }
-
         public void RetryBoss()
         {
-            if (!CanBeginNavigation(_bossSceneName))
-            {
-                return;
-            }
-
-            // 新版Practice从真实背包快照重试，旧独立教学仍使用原Run Session。
-            if (HubPracticeSession.Current != null)
-            {
-                if (HubPracticeSession.Current.RetryBoss()) _isLoadingScene = true;
-                return;
-            }
-
-            RunSessionCoordinator coordinator = ResolveSessionCoordinator();
-            if (coordinator == null || !coordinator.RestoreBossCheckpoint())
-            {
-                GameLog.Error(
-                    "Retry Boss 失败：没有可恢复的 Run Session 或 Boss Checkpoint。",
-                    "UI");
-                return;
-            }
-
-            BeginSceneLoad(_bossSceneName);
+            if (_isLoadingScene) return;
+            var session = HubPracticeSession.Current;
+            if (session != null && session.RetryBoss()) _isLoadingScene = true;
         }
-
         public void ReturnToMainMenu()
         {
-            if (!CanBeginNavigation(_mainMenuSceneName))
-            {
-                return;
-            }
-
-            RunSessionCoordinator coordinator = ResolveSessionCoordinator();
-            if (coordinator != null)
-            {
-                coordinator.EndRun();
-            }
-
+            if (!CanBeginNavigation(_mainMenuSceneName)) return;
+            var session = HubPracticeSession.Current;
+            if (session != null) { if (session.ReturnToMainMenu(_mainMenuScenePath)) _isLoadingScene = true; return; }
             BeginSceneLoad(_mainMenuSceneName);
         }
 
@@ -254,12 +211,7 @@ namespace Game.UI
 
             _inventory?.Close();
 
-            if (_wandEditor != null)
-            {
-                _wandEditor.ForceClose();
-            }
-
-            if (_pauseCoordinator != null)
+if (_pauseCoordinator != null)
             {
                 _pauseCoordinator.ReleasePause(RunPauseReason.PauseMenu);
             }
@@ -475,15 +427,7 @@ namespace Game.UI
                     !_sceneTransition.IsTransitioning);
         }
 
-        private RunSessionCoordinator ResolveSessionCoordinator()
-        {
-            if (_sessionCoordinator == null)
-            {
-                _sessionCoordinator = RunSessionCoordinator.Current;
-            }
 
-            return _sessionCoordinator;
-        }
 
         private static void SetPanelActive(GameObject panel, bool active)
         {

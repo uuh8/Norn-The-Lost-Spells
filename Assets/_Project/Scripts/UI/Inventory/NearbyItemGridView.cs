@@ -7,11 +7,13 @@ namespace Game.UI
     public sealed class NearbyItemGridView:MonoBehaviour
     {
         [SerializeField,Min(24)]private float _cellSize=64;
+        [SerializeField] private bool _fitWidthToViewport;
+        public void ConfigureViewportWidthFit(bool fit){_fitWidthToViewport=fit;}
         private readonly List<InventoryItemView> _views=new List<InventoryItemView>();
         private readonly List<Image> _cells=new List<Image>();
+        private readonly List<Color> _cellColors=new List<Color>();
         private InventoryGridLinesGraphic _lines;
         private ScrollRect _scroll;
-        private InventoryDragAutoScroll _autoScroll;
         private bool _hasLayout;
         private readonly NearbyItemPlacementCache _placements=new NearbyItemPlacementCache();
         private readonly List<string> _known=new List<string>();
@@ -27,6 +29,21 @@ namespace Game.UI
         public bool IsInvalid(string id)=>_placements.IsInvalid(id);
         public bool TryPlacement(string id,out GridPlacement placement)=>_placements.TryGet(id,out placement);
         public void CancelArrangement()=>_placements.Cancel();
+        public bool CanPreview(string id,InventoryShape shape,in GridPlacement placement)
+            =>_placements.Fits(id,shape,placement);
+        public void ClearPreview()
+        {for(int i=0;i<_cells.Count;i++)_cells[i].color=_cellColors[i];}
+        public void ShowPreview(InventoryShape shape,in GridPlacement placement,bool valid)
+        {
+            ClearPreview();
+            // 和背包按真实OccupiedCells着色，L形物品不会被误画成长方块；不产生逐帧数组。
+            for(int i=0;i<shape.CellCount;i++)
+            {
+                var cell=shape.GetCell(i,placement.QuarterTurns);int x=placement.X+cell.x,y=placement.Y+cell.y;
+                if(x<0 || x>=Columns || y<0 || y>=Rows)continue;
+                _cells[y*Columns+x].color=valid?new Color(.18f,.65f,.34f,1):new Color(.8f,.2f,.2f,1);
+            }
+        }
         public void MoveItem(string id,InventoryShape shape,in GridPlacement placement)=>_placements.Move(id,shape,placement,Columns);
         public bool TryGetCell(Vector2 pointer,Camera camera,out Vector2Int cell)
         {
@@ -45,6 +62,7 @@ namespace Game.UI
         }
         public void Refresh(SinglePlayerInventoryController controller,InventoryItemView prefab,InventoryItemSnapshot[] items,int count,NearbyPickupController nearby)
         {
+            if(_fitWidthToViewport && transform.parent is RectTransform widthViewport)_cellSize=Mathf.Max(24,widthViewport.rect.width/8);
             _controller=controller;_prefab=prefab;_items=items;_count=count;_nearby=nearby;
             string inventory=controller.Session.ReadOnly.InventoryId,scene=controller.Session.WorldSceneKey;
             if(_inventoryId!=inventory || _sceneKey!=scene){_placements.Clear();_known.Clear();_spareColumns=_spareRows=0;_hasLayout=false;_inventoryId=inventory;_sceneKey=scene;}
@@ -56,7 +74,6 @@ namespace Game.UI
             for(int i=0;i<count;i++)if(items[i].Location.Kind==ItemLocationKind.WorldItem && nearby!=null && nearby.IsNearby(items[i].InstanceId))
             {visible[index]=items[i];shapes[index++]=items[i].Rules.Shape;}
             if(_scroll==null)_scroll=GetComponentInParent<ScrollRect>();
-            if(_scroll!=null && _autoScroll==null){_autoScroll=_scroll.GetComponent<InventoryDragAutoScroll>();if(_autoScroll==null)_autoScroll=_scroll.gameObject.AddComponent<InventoryDragAutoScroll>();_autoScroll.Configure(_scroll);}
             Vector2 previous=_hasLayout && _scroll!=null ? _scroll.normalizedPosition : new Vector2(0,1);
             var viewport=transform.parent as RectTransform;var content=(RectTransform)transform;
             // normalizedPosition是比例；Content扩展时保持它会让物品瞬间跳动。先保存实际滚过的局部距离。
@@ -70,7 +87,12 @@ namespace Game.UI
             Rows=Mathf.Max(Mathf.CeilToInt(viewport.rect.height/_cellSize)+1,occupiedRows+1,_spareRows);
             ((RectTransform)transform).sizeDelta=new Vector2(Columns*_cellSize,Rows*_cellSize);
             var styles=controller.SlotPrefabs;
-            while(_cells.Count<Columns*Rows)_cells.Add(InventorySlotPrefabs.CreateCell(styles!=null?styles.NearbyCell:null,transform,"Nearby grid cell",new Color(.09f,.14f,.14f,1)));
+            while(_cells.Count<Columns*Rows)
+            {
+                var cell=InventorySlotPrefabs.CreateCell(styles!=null?styles.NearbyCell:null,transform,"Nearby grid cell",new Color(.09f,.14f,.14f,1));
+                _cells.Add(cell);_cellColors.Add(cell.color);
+            }
+            ClearPreview();
             for(int i=0;i<_cells.Count;i++){bool used=i<Columns*Rows;_cells[i].gameObject.SetActive(used);if(!used)continue;var rect=_cells[i].rectTransform;
                 rect.anchorMin=rect.anchorMax=rect.pivot=new Vector2(0,1);rect.anchoredPosition=new Vector2(i%Columns*_cellSize,-i/Columns*_cellSize);rect.sizeDelta=Vector2.one*_cellSize;rect.SetAsFirstSibling();}
             if(_lines==null)_lines=InventoryGridLinesGraphic.Ensure(transform);
@@ -84,10 +106,6 @@ namespace Game.UI
             if(_scroll!=null){_scroll.StopMovement();float overflowX=content.rect.width-viewport.rect.width,overflowY=content.rect.height-viewport.rect.height;
                 _scroll.normalizedPosition=new Vector2(overflowX>0?Mathf.Clamp01(previousX/overflowX):0,overflowY>0?1-Mathf.Clamp01(previousY/overflowY):1);}
             _hasLayout=true;
-        }
-        public bool TickAutoScroll(Vector2 pointer,Camera camera,float delta)
-        {
-            return _autoScroll!=null && _autoScroll.Tick(pointer,camera,true,delta);
         }
         public void RevealItem(string id)
         {

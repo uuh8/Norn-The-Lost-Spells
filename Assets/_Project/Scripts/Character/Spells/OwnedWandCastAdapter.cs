@@ -12,10 +12,16 @@ namespace Game.Character
     public sealed class OwnedWandCastAdapter : MonoBehaviour
     {
         [SerializeField] private SinglePlayerInventorySession _session;
+        [SerializeField] private bool _useV2;
+        public bool IsV2 => _useV2 || _session != null && _session.UseSpellProgrammingV2;
+        public bool LastRootCommitted { get; private set; }
+        public bool WorldCastingAllowed=>_session!=null && _session.WorldActionsAllowed;
+        public bool HasExecutableV2Program(string id) => _session != null && _session.TryGetWandExecution(id, out var state) && state.Program.Count > 0;
         [SerializeField] private InputActionReference _select1, _select2, _select3;
         [SerializeField] private string _materialWorldId = "container-world";
         [SerializeField] private Material _materialWaitingMaterial;
         private readonly string _callerId = Guid.NewGuid().ToString("N");
+        internal string CallerId => _callerId;
         private ulong _sequence;
         private CastResourceRequestedEvent _waiting;
         private CastResourceResultEvent _lastResult;
@@ -42,6 +48,8 @@ namespace Game.Character
         private void OnDisable()
         {
             CancelOutstanding();
+            // V2来源停用已撤销票据；预警中的根弹不能由仍活着的Caster协程稍后偷跑出来。
+            if(IsV2){var caster=GetComponent<SpellCaster>();if(caster!=null)caster.StopAllCoroutines();}
             EventBus<RaidResultEvent>.Unsubscribe(OnRaidResult);
             EventBus<CastResourceResultEvent>.Unsubscribe(OnResult);
             Unbind(_select1, Select1); Unbind(_select2, Select2); Unbind(_select3, Select3);
@@ -61,7 +69,12 @@ namespace Game.Character
         private void Select3(InputAction.CallbackContext _) => Select(2);
         public void Select(int slot)
         { IWandLoadoutReadOnly read = ReadOnly; if (Time.timeScale > 0 && read != null)
-                EventBus<WandSelectionRequestedEvent>.Publish(new WandSelectionRequestedEvent { InventoryId = read.InventoryId, SlotIndex = slot }); }
+            {
+                string previous = read.SelectedWandId;
+                EventBus<WandSelectionRequestedEvent>.Publish(new WandSelectionRequestedEvent { InventoryId = read.InventoryId, SlotIndex = slot });
+                if (IsV2 && previous != read.SelectedWandId) EventBus<HeldItemUseResetEvent>.Publish(new HeldItemUseResetEvent { InventoryId = read.InventoryId });
+            }
+        }
         public bool TryCapture(out WandProgramSnapshot program, out OwnedWandCastContext context)
         {
             program = default; context = default;
@@ -79,11 +92,12 @@ namespace Game.Character
         {
             prepared = default;
             if (!Request(context, context.TicketId == null ? CastResourceOperation.PrepareRoot : CastResourceOperation.PrepareLayer)) return false;
-            if (_session.CastResourcesReadOnly == null || !_session.CastResourcesReadOnly.TryGetLayer(_lastResult.TicketId, context.LayerIndex, out CastExecutionLayer layer))
+            ICastResourceReadOnly resources = context.V2 ? _session.V2CastResourcesReadOnly : _session.CastResourcesReadOnly;
+            if (resources == null || !resources.TryGetLayer(_lastResult.TicketId, context.LayerIndex, out CastExecutionLayer layer))
             { Request(context.WithTicket(_lastResult.TicketId), CastResourceOperation.Cancel); return false; }
             var supplies = new SpellMaterialOutputSnapshot[layer.CommandCount];
             for (int i = 0; i < supplies.Length; i++)
-                if (!_session.CastResourcesReadOnly.TryGetMaterialOutput(_lastResult.TicketId, context.LayerIndex, i, out supplies[i]))
+                if (!resources.TryGetMaterialOutput(_lastResult.TicketId, context.LayerIndex, i, out supplies[i]))
                 { Request(context.WithTicket(_lastResult.TicketId), CastResourceOperation.Cancel); return false; }
             prepared = context.WithPrepared(_lastResult.TicketId, layer, new CastSpawnTransaction(), supplies); return true;
         }
@@ -94,9 +108,16 @@ namespace Game.Character
             _waiting = new CastResourceRequestedEvent { InventoryId = context.InventoryId, SourceWandId = context.SourceWandId,
                 CallerId = _callerId, RequestId = ++_sequence, ProgramRevision = context.ProgramRevision,
                 TicketId = context.TicketId, LayerIndex = context.LayerIndex, Operation = operation, MaterialWorldId = _materialWorldId };
+            _waiting.UseV2 = context.V2;
+            if (context.V2 && _session.TryGetWandExecution(context.SourceWandId, out var snapshot))
+            { _waiting.ExecutionRevision = snapshot.Draw.ExecutionRevision; _waiting.ResourceVersion = snapshot.ResourceVersion;
+                _waiting.InventoryVersion = _session.ReadOnly.Version; }
+            if (operation == CastResourceOperation.PrepareRoot) LastRootCommitted = false;
             _received = false; _success = false; LastFailure = OwnedWandFailureReason.NoReceiver;
             EventBus<CastResourceRequestedEvent>.Publish(_waiting);
-            return _received && _success;
+            bool accepted = _received && _success;
+            if (accepted && operation == CastResourceOperation.Complete && context.LayerIndex == 0) LastRootCommitted = true;
+            return accepted;
         }
         internal void ReportSpawnFailure(in OwnedWandCastContext context)
         {
@@ -108,7 +129,7 @@ namespace Game.Character
         {
             IWandLoadoutReadOnly read = ReadOnly; if (read == null) return;
             EventBus<CastResourceRequestedEvent>.Publish(new CastResourceRequestedEvent { InventoryId = read.InventoryId,
-                CallerId = _callerId, RequestId = ++_sequence, Operation = CastResourceOperation.AbandonCaller });
+                CallerId = _callerId, RequestId = ++_sequence, Operation = CastResourceOperation.AbandonCaller, UseV2 = IsV2 });
         }
         internal Material WaitingMaterial => _materialWaitingMaterial;
         private void OnResult(CastResourceResultEvent result)
@@ -128,15 +149,16 @@ namespace Game.Character
         public readonly string TicketId;
         public readonly int LayerIndex;
         internal readonly CastExecutionLayer Layer;
+        internal readonly bool V2;
         internal readonly CastSpawnTransaction SpawnTransaction;
         private readonly SpellMaterialOutputSnapshot[] _supplies;
         private readonly MaterialPayloadRuntimeAdapter[] _materials;
         internal OwnedWandCastContext(OwnedWandCastAdapter adapter, string inventory, string source, uint revision)
-        { Enabled = true; Adapter = adapter; InventoryId = inventory; SourceWandId = source; ProgramRevision = revision;
+        { Enabled = true; V2 = adapter != null && adapter.IsV2; Adapter = adapter; InventoryId = inventory; SourceWandId = source; ProgramRevision = revision;
             TicketId = null; LayerIndex = 0; Layer = null; SpawnTransaction = null; _supplies = null; _materials = null; }
         private OwnedWandCastContext(in OwnedWandCastContext original, string ticket, int index, CastExecutionLayer layer, CastSpawnTransaction transaction,
             SpellMaterialOutputSnapshot[] supplies = null, MaterialPayloadRuntimeAdapter[] materials = null)
-        { Enabled = original.Enabled; Adapter = original.Adapter; InventoryId = original.InventoryId; SourceWandId = original.SourceWandId;
+        { Enabled = original.Enabled; V2 = original.V2; Adapter = original.Adapter; InventoryId = original.InventoryId; SourceWandId = original.SourceWandId;
             ProgramRevision = original.ProgramRevision; TicketId = ticket; LayerIndex = index; Layer = layer; SpawnTransaction = transaction; _supplies = supplies; _materials = materials; }
         internal OwnedWandCastContext WithTicket(string ticket) => new OwnedWandCastContext(this, ticket, LayerIndex, null, null);
         internal OwnedWandCastContext WithPrepared(string ticket, CastExecutionLayer layer, CastSpawnTransaction transaction, SpellMaterialOutputSnapshot[] supplies) =>
@@ -177,5 +199,13 @@ namespace Game.Character
             SpawnTransaction?.Track(go);
         }
         internal void Track(Coroutine coroutine) => SpawnTransaction?.Track(coroutine);
+        internal void ObserveOutput(int command) { if(V2)SpawnTransaction?.Observe(this,command); }
+        internal void ReportOutput(int command)
+        {
+            if(!V2||Adapter==null||Layer==null)return;
+            EventBus<SpellExecutionObservedEvent>.Publish(new SpellExecutionObservedEvent{InventoryId=InventoryId,SourceWandId=SourceWandId,
+                CallerId=Adapter.CallerId,TicketId=TicketId,ProgramRevision=ProgramRevision,LayerId=LayerIndex,
+                OutputId=Layer.GetOutputId(command),SimulationTime=Time.timeAsDouble,Kind=SpellExecutionObservationKind.OutputReleased});
+        }
     }
 }

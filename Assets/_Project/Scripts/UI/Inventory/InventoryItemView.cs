@@ -175,7 +175,7 @@ namespace Game.UI
                 if (controller != null && controller.UiFont != null && (!_authoredLayout || _label.font==null || _label.font==controller.BuiltinUiFont)) _label.font = controller.UiFont;
                 string charges = "";
                 string members = count > 1 ? " ×" + count : "";
-                if (snapshot.Kind == ItemKind.Material) charges = " · " + snapshot.MaterialQuantity + " GMU";
+                if (snapshot.Kind == ItemKind.Material) charges = " · " + snapshot.MaterialQuantity;
                 // 一格物品不能让长名称挤掉次数/堆叠数量。紧凑视图分两行并允许缩小字体，
                 // 数字继续可见；完整名称与指定副本在详情区查看。
                 if(!_authoredLayout)
@@ -195,7 +195,7 @@ namespace Game.UI
                 _label.raycastTarget = false;if(!_authoredLayout)_label.transform.SetAsLastSibling();
             }
             ApplySpellCount(snapshot.Kind==ItemKind.Spell,snapshot.Kind==ItemKind.Spell
-                ?controller!=null?controller.SpellCountCaption(snapshot):snapshot.HasUnlimitedCharges?"":snapshot.RemainingCharges.ToString():"",controller);
+                ?controller!=null?controller.SpellCountCaption(snapshot):snapshot.HasUnlimitedCharges || snapshot.RemainingCharges<=0?"":snapshot.RemainingCharges.ToString():"",controller);
             if(_containerFill==null)_containerFill=ContainerIconFill.Ensure(_icon);
             ContainerIconFill.Set(_containerFill,_icon,snapshot.Kind==ItemKind.Container,snapshot.ContainerTotal,snapshot.ContainerCapacity);
         }
@@ -207,7 +207,7 @@ namespace Game.UI
             var go=new GameObject("SpellCount",typeof(RectTransform),typeof(Text));
             go.transform.SetParent(_shapeVisualRoot!=null?_shapeVisualRoot:transform,false);
             _spellCount=go.GetComponent<Text>();_spellCount.font=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            _spellCount.fontSize=28;_spellCount.fontStyle=FontStyle.Bold;_spellCount.alignment=TextAnchor.UpperLeft;
+            _spellCount.fontSize=28;_spellCount.fontStyle=FontStyle.Bold;_spellCount.alignment=TextAnchor.LowerCenter;
             _spellCount.color=Color.white;_spellCount.raycastTarget=false;_spellCount.resizeTextForBestFit=false;
             _spellCount.horizontalOverflow=HorizontalWrapMode.Overflow;_spellCount.verticalOverflow=VerticalWrapMode.Overflow;
             Stretch(_spellCount.rectTransform);_spellCount.rectTransform.offsetMin=new Vector2(2,0);_spellCount.rectTransform.offsetMax=new Vector2(-2,0);
@@ -215,6 +215,7 @@ namespace Game.UI
         }
         private void ApplySpellCount(bool spell,string caption,SinglePlayerInventoryController controller)
         {
+            if(_snapshot.IsQualificationSpell)caption=""; // 角标只表示投射次数，修正/多重的资格数据继续留在Run。
             if(spell)EnsureSpellCount();
             if(_label!=null){if(spell)_label.text="";_label.gameObject.SetActive(!spell);}
             if(_spellCount==null)return;
@@ -282,6 +283,7 @@ namespace Game.UI
         public void OnPointerClick(PointerEventData data)
         {
             _hasPressGrab=false;
+            if(data.button==PointerEventData.InputButton.Right){_controller?.ShowItemInfo(_snapshot.InstanceId,data.position,data.pressEventCamera);return;}
             // 某些输入模块会在EndDrag之后继续派发Click；同一次按下发生过拖动就不旋转。
             if(data.button==PointerEventData.InputButton.Left && !_wasDragged)_controller?.ClickItem(_snapshot.InstanceId);
         }

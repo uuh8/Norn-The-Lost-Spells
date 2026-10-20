@@ -13,7 +13,7 @@ namespace Game.Run.Tests
 {
     public sealed class SpellStoragePlayModeTests : BackpackWorkspacePlayModeTests
     {
-        protected override string ReviewPath => "Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub_SpellStorageReview.unity";
+        protected override string ReviewPath => "Assets/_Project/Scenes/Tests/Hub/SinglePlayer_Hub_SpellStorageReview.unity";
         protected override string EvidencePath => "TestResults/SinglePlayer/M6-T1-SpellStorage";
 
         [UnityTest] public IEnumerator CapturePopulatedTrayAndSevenToolLayout()
