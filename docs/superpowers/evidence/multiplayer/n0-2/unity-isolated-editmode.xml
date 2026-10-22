@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="23" result="Passed" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.0794831">
+  <test-suite type="TestSuite" id="1000" name="online-unity-validation" fullname="online-unity-validation" runstate="Runnable" testcasecount="23" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.079483" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1026" name="Game.Networking.Tests.dll" fullname="F:/Develop Project/RPG/RPG/.tools/online-unity-validation/Library/ScriptAssemblies/Game.Networking.Tests.dll" runstate="Runnable" testcasecount="23" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.069073" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="43044" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1027" name="Game" fullname="Game" runstate="Runnable" testcasecount="23" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.068460" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1028" name="Networking" fullname="Game.Networking" runstate="Runnable" testcasecount="23" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.068242" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1029" name="Tests" fullname="Game.Networking.Tests" runstate="Runnable" testcasecount="23" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.067980" total="23" passed="23" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1020" name="ProtobufEnvelopeTests" fullname="Game.Networking.Tests.ProtobufEnvelopeTests" classname="Game.Networking.Tests.ProtobufEnvelopeTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.041183" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1022" name="Envelope_RejectsOversizedDeclaredLength" fullname="Game.Networking.Tests.ProtobufEnvelopeTests.Envelope_RejectsOversizedDeclaredLength" methodname="Envelope_RejectsOversizedDeclaredLength" classname="Game.Networking.Tests.ProtobufEnvelopeTests" runstate="Runnable" seed="1371029300" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.018004" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1024" name="Envelope_RejectsTruncatedBody" fullname="Game.Networking.Tests.ProtobufEnvelopeTests.Envelope_RejectsTruncatedBody" methodname="Envelope_RejectsTruncatedBody" classname="Game.Networking.Tests.ProtobufEnvelopeTests" runstate="Runnable" seed="1532163187" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.000533" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1023" name="Envelope_RejectsTruncatedHeader" fullname="Game.Networking.Tests.ProtobufEnvelopeTests.Envelope_RejectsTruncatedHeader" methodname="Envelope_RejectsTruncatedHeader" classname="Game.Networking.Tests.ProtobufEnvelopeTests" runstate="Runnable" seed="370153086" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.000596" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1025" name="Envelope_RejectsUnknownKind" fullname="Game.Networking.Tests.ProtobufEnvelopeTests.Envelope_RejectsUnknownKind" methodname="Envelope_RejectsUnknownKind" classname="Game.Networking.Tests.ProtobufEnvelopeTests" runstate="Runnable" seed="1265508498" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.000555" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1021" name="Envelope_RoundTripsOnlyDeclaredSegment" fullname="Game.Networking.Tests.ProtobufEnvelopeTests.Envelope_RoundTripsOnlyDeclaredSegment" methodname="Envelope_RoundTripsOnlyDeclaredSegment" classname="Game.Networking.Tests.ProtobufEnvelopeTests" runstate="Runnable" seed="2036642706" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.007522" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1001" name="ProtoCodecTests" fullname="Game.Networking.Tests.ProtoCodecTests" classname="Game.Networking.Tests.ProtoCodecTests" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.025343" total="18" passed="18" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1014" name="DisposedLease_CannotReadReusedMessage" fullname="Game.Networking.Tests.ProtoCodecTests.DisposedLease_CannotReadReusedMessage" methodname="DisposedLease_CannotReadReusedMessage" classname="Game.Networking.Tests.ProtoCodecTests" runstate="Runnable" seed="1057756248" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.003240" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1006" name="EmptyPayload_IsRejected" fullname="Game.Networking.Tests.ProtoCodecTests.EmptyPayload_IsRejected" methodname="EmptyPayload_IsRejected" classname="Game.Networking.Tests.ProtoCodecTests" runstate="Runnable" seed="1546316239" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.001105" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1018" name="Encode_RejectsInsufficientDestination" fullname="Game.Networking.Tests.ProtoCodecTests.Encode_RejectsInsufficientDestination" methodname="Encode_RejectsInsufficientDestination" classname="Game.Networking.Tests.ProtoCodecTests" runstate="Runnable" seed="467372732" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.001479" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1017" name="Encode_RejectsWrongMessageKind" fullname="Game.Networking.Tests.ProtoCodecTests.Encode_RejectsWrongMessageKind" methodname="Encode_RejectsWrongMessageKind" classname="Game.Networking.Tests.ProtoCodecTests" runstate="Runnable" seed="144943072" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.000211" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1016" name="Encode_UsesCallerBufferAndOffset" fullname="Game.Networking.Tests.ProtoCodecTests.Encode_UsesCallerBufferAndOffset" methodname="Encode_UsesCallerBufferAndOffset" classname="Game.Networking.Tests.ProtoCodecTests" runstate="Runnable" seed="1241646788" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.003773" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1013" name="OldLease_DoubleDisposeCannotReleaseNewRental" fullname="Game.Networking.Tests.ProtoCodecTests.OldLease_DoubleDisposeCannotReleaseNewRental" methodname="OldLease_DoubleDisposeCannotReleaseNewRental" classname="Game.Networking.Tests.ProtoCodecTests" runstate="Runnable" seed="1582799074" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.000245" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1005" name="OversizedPayload_IsRejectedBeforeRenting" fullname="Game.Networking.Tests.ProtoCodecTests.OversizedPayload_IsRejectedBeforeRenting" methodname="OversizedPayload_IsRejectedBeforeRenting" classname="Game.Networking.Tests.ProtoCodecTests" runstate="Runnable" seed="357656735" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.000255" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1010" name="PoolExhaustion_IsExplicit" fullname="Game.Networking.Tests.ProtoCodecTests.PoolExhaustion_IsExplicit" methodname="PoolExhaustion_IsExplicit" classname="Game.Networking.Tests.ProtoCodecTests" runstate="Runnable" seed="900252375" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.000862" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1004" name="ProtocolVersionMismatch_IsRejected" fullname="Game.Networking.Tests.ProtoCodecTests.ProtocolVersionMismatch_IsRejected" methodname="ProtocolVersionMismatch_IsRejected" classname="Game.Networking.Tests.ProtoCodecTests" runstate="Runnable" seed="851062451" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.000252" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1003" name="ProtocolVersionZero_IsRejected" fullname="Game.Networking.Tests.ProtoCodecTests.ProtocolVersionZero_IsRejected" methodname="ProtocolVersionZero_IsRejected" classname="Game.Networking.Tests.ProtoCodecTests" runstate="Runnable" seed="1429987866" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.000218" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1009" name="RejectedVersion_DoesNotLeakPoolSlot" fullname="Game.Networking.Tests.ProtoCodecTests.RejectedVersion_DoesNotLeakPoolSlot" methodname="RejectedVersion_DoesNotLeakPoolSlot" classname="Game.Networking.Tests.ProtoCodecTests" runstate="Runnable" seed="227764019" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.000332" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1019" name="Reply_HasItsOwnResettableType" fullname="Game.Networking.Tests.ProtoCodecTests.Reply_HasItsOwnResettableType" methodname="Reply_HasItsOwnResettableType" classname="Game.Networking.Tests.ProtoCodecTests" runstate="Runnable" seed="382001960" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.002699" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1011" name="ReusedMessage_DoesNotKeepPreviousFields" fullname="Game.Networking.Tests.ProtoCodecTests.ReusedMessage_DoesNotKeepPreviousFields" methodname="ReusedMessage_DoesNotKeepPreviousFields" classname="Game.Networking.Tests.ProtoCodecTests" runstate="Runnable" seed="2041319596" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.000651" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1012" name="ReusedMessage_DoesNotKeepUnknownFields" fullname="Game.Networking.Tests.ProtoCodecTests.ReusedMessage_DoesNotKeepUnknownFields" methodname="ReusedMessage_DoesNotKeepUnknownFields" classname="Game.Networking.Tests.ProtoCodecTests" runstate="Runnable" seed="500564221" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.002057" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1015" name="TextBudget_IsUtf8Bytes" fullname="Game.Networking.Tests.ProtoCodecTests.TextBudget_IsUtf8Bytes" methodname="TextBudget_IsUtf8Bytes" classname="Game.Networking.Tests.ProtoCodecTests" runstate="Runnable" seed="2092312812" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.000415" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1008" name="TruncatedPayload_IsRejectedAndReturned" fullname="Game.Networking.Tests.ProtoCodecTests.TruncatedPayload_IsRejectedAndReturned" methodname="TruncatedPayload_IsRejectedAndReturned" classname="Game.Networking.Tests.ProtoCodecTests" runstate="Runnable" seed="523767741" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.002347" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1002" name="UnicodeAndLargeSequence_RoundTrip" fullname="Game.Networking.Tests.ProtoCodecTests.UnicodeAndLargeSequence_RoundTrip" methodname="UnicodeAndLargeSequence_RoundTrip" classname="Game.Networking.Tests.ProtoCodecTests" runstate="Runnable" seed="1402868118" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.000351" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1007" name="UnknownKind_IsRejected" fullname="Game.Networking.Tests.ProtoCodecTests.UnknownKind_IsRejected" methodname="UnknownKind_IsRejected" classname="Game.Networking.Tests.ProtoCodecTests" runstate="Runnable" seed="1704591256" result="Passed" start-time="2026-10-20 16:40:14Z" end-time="2026-10-20 16:40:14Z" duration="0.000258" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: F:\Develop Project\RPG\RPG\docs\superpowers\evidence\multiplayer\n0-2\unity-isolated-editmode.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

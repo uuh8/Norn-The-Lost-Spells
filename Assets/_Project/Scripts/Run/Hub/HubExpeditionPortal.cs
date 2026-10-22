@@ -11,16 +11,25 @@ namespace Game.Run
         [SerializeField] private Transform _player;
         private bool _entered;
         private Collider _trigger;
+        private DungeonEntryChoiceGate _choice;
         public Transform PortalTransform => transform;
         public string InteractionLabel => "F 进入远征";
         public bool CanInteract(Collider actor) => _player != null && actor != null && actor.transform.IsChildOf(_player)
             && _session?.RunCoordinator?.State.Phase == RaidPhase.HubReady && _session.RunCoordinator.ActionsAllowed
             && PortalInteractionRegistry.Contains(_trigger, actor);
-        public bool Interact(Collider actor) { if (!CanInteract(actor)) return false; _entered = false; return TryEnter(actor); }
+        public bool Interact(Collider actor) { if (!CanInteract(actor)) return false; _entered = false; return _choice.Request(actor); }
         public int PortalId => gameObject.GetInstanceID();
-        private void Awake() { _trigger = GetComponent<Collider>(); PortalTransitionCoordinator.EnsureVisual(transform); }
-        private void OnEnable() => PortalInteractionRegistry.Register(this);
-        private void OnDisable() => PortalInteractionRegistry.Unregister(this);
+        private void Awake()
+        {
+            _trigger = GetComponent<Collider>(); PortalTransitionCoordinator.EnsureVisual(transform);
+            var run = _session != null ? _session.GetComponent<SinglePlayerRunCoordinator>() : null;
+            string destination = run != null && run.Definition != null ? run.Definition.WorldScenePath : string.Empty;
+            _choice = new DungeonEntryChoiceGate(PortalId, destination, InteractionLabel, CanInteract, TryEnter, BeginChoice, EndChoice);
+        }
+        private bool BeginChoice() => _session?.RunCoordinator?.TryBeginDungeonEntryChoice() == true;
+        private void EndChoice() => _session?.RunCoordinator?.EndDungeonEntryChoice();
+        private void OnEnable() { _choice?.Enable(); PortalInteractionRegistry.Register(this); }
+        private void OnDisable() { _choice?.Disable(); PortalInteractionRegistry.Unregister(this); }
         public bool TryEnter(Collider other)
         {
             if (_entered || other == null || _player == null || !other.transform.IsChildOf(_player)

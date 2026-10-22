@@ -35,6 +35,9 @@ namespace Game.Run
         public RaidSettlementReceipt LastResult => _session?.Profile?.LastRaidReceipt;
         public string Message { get; private set; } = "据点：选择携带卡保护，整备后出发。";
         public bool ActionsAllowed => !_practiceLoading && (State.Phase == RaidPhase.HubReady || State.Phase == RaidPhase.Exploring || State.Phase == RaidPhase.Extracting);
+        public bool TryBeginDungeonEntryChoice() => _pause != null && !_pause.IsPaused && ActionsAllowed
+            && State.Phase == RaidPhase.HubReady && _pause.RequestPause(RunPauseReason.DungeonEntryChoice);
+        public void EndDungeonEntryChoice() => _pause?.ReleasePause(RunPauseReason.DungeonEntryChoice);
         private bool _practiceLoading;
         internal void SetPracticeTransition(bool loading)
         {

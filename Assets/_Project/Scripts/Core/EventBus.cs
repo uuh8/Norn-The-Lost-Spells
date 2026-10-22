@@ -19,6 +19,9 @@ namespace Game.Core
     {
         private static event Action<T> _event;
 
+        // 可选交互没有Presentation接收者时应拒绝申请，避免拿到暂停却无人显示/释放。
+        public static bool HasSubscribers => _event != null;
+
         /// <summary>
         /// 注册事件订阅。必须与 <see cref="Unsubscribe"/> 成对调用，否则造成内存泄漏。
         /// 推荐在 MonoBehaviour.OnEnable 中调用。

@@ -85,6 +85,8 @@ namespace Game.Run
         internal Transform WorldActor;
         /// <summary>表现只读角色空间位置，不能通过这个入口提交资产或切图。</summary>
         public Transform ActorTransform => WorldActor;
+        // 明确诊断参数才可注入；复用已配置Catalog/Seeds，不给联机层开放单机资产的读取/上传。
+        internal bool ConfigureDiagnosticMemory(IProfileFileSystem files) => ConfigureAndInitialize(_catalog, _startingInventory, "Temp/SinglePlayer/PortalAcceptance", files);
         private readonly List<WorldItemPickup> _spawnedPickups=new List<WorldItemPickup>();
         private WandLoadoutService _wands;
         private RaidSpellEligibility _eligibility;

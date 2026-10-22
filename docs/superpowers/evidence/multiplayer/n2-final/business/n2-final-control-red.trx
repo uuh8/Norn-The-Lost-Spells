@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="fd05b4f0-6145-4e17-9581-7b3d6f4208a2" name="zhy@ZHY 2026-10-22 14:45:49" runUser="ZHY\zhy" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-22T14:45:49.9083723+08:00" queuing="2026-10-22T14:45:49.9083728+08:00" start="2026-10-22T14:45:45.0245545+08:00" finish="2026-10-22T14:45:50.9392536+08:00" />
+  <TestSettings name="default" id="8a130b60-5c1f-46d9-bc76-23f170b77652">
+    <Deployment runDeploymentRoot="zhy_ZHY_2026-10-22_14_45_49" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="cf2d540c-95b3-4d01-844a-d4a014838611" testId="0e96ea6f-8477-65dc-5382-3a6500c3d81a" testName="Norn.Business.Tests.JoinTicketBudgetTests.MintIsPersistentlyThrottled_AndExpiredBudgetCanRetry" computerName="ZHY" duration="00:00:01.8826977" startTime="2026-10-22T14:45:48.0696017+08:00" endTime="2026-10-22T14:45:49.9587029+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cf2d540c-95b3-4d01-844a-d4a014838611">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Norn.Business.Infrastructure.OnlineFailure)</Message>
+          <StackTrace>   at Norn.Business.Tests.JoinTicketBudgetTests.MintIsPersistentlyThrottled_AndExpiredBudgetCanRetry() in F:\Develop Project\RPG\Server\Norn.Business.Tests\JoinTicketBudgetTests.cs:line 20&#xD;
+   at Norn.Business.Tests.JoinTicketBudgetTests.MintIsPersistentlyThrottled_AndExpiredBudgetCanRetry() in F:\Develop Project\RPG\Server\Norn.Business.Tests\JoinTicketBudgetTests.cs:line 23&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5608ff73-678a-48a1-a17f-d3eac3413ed9" testId="de97ef4d-4bc6-2056-28e2-0b435b6144fe" testName="Norn.Business.Tests.RoomMatchmakingTests.PresenceKeepsMember_StaleLeaderExpiresWithoutReleasingRunAssets" computerName="ZHY" duration="00:00:01.7143462" startTime="2026-10-22T14:45:48.0710082+08:00" endTime="2026-10-22T14:45:49.8052863+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5608ff73-678a-48a1-a17f-d3eac3413ed9">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: OK&#xD;
+Actual:   MethodNotAllowed</Message>
+          <StackTrace>   at Norn.Business.Tests.RoomMatchmakingTests.Match(HttpClient client) in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomMatchmakingTests.cs:line 64&#xD;
+   at Norn.Business.Tests.RoomMatchmakingTests.PresenceKeepsMember_StaleLeaderExpiresWithoutReleasingRunAssets() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomMatchmakingTests.cs:line 33&#xD;
+   at Norn.Business.Tests.RoomMatchmakingTests.PresenceKeepsMember_StaleLeaderExpiresWithoutReleasingRunAssets() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomMatchmakingTests.cs:line 43&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c55a8a8f-55c7-43f8-a16f-a56568605cbb" testId="4443fb17-51be-9463-034e-de11dafcfdcd" testName="Norn.Business.Tests.RoomMatchmakingTests.ConcurrentMatch_FourSeatsAndFifthNewRoom_RetryDoesNotDuplicate" computerName="ZHY" duration="00:00:00.9452408" startTime="2026-10-22T14:45:49.9151002+08:00" endTime="2026-10-22T14:45:50.8591193+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c55a8a8f-55c7-43f8-a16f-a56568605cbb">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: OK&#xD;
+Actual:   MethodNotAllowed</Message>
+          <StackTrace>   at Norn.Business.Tests.RoomMatchmakingTests.Match(HttpClient client) in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomMatchmakingTests.cs:line 64&#xD;
+   at Norn.Business.Tests.RoomMatchmakingTests.ConcurrentMatch_FourSeatsAndFifthNewRoom_RetryDoesNotDuplicate() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomMatchmakingTests.cs:line 17&#xD;
+   at Norn.Business.Tests.RoomMatchmakingTests.ConcurrentMatch_FourSeatsAndFifthNewRoom_RetryDoesNotDuplicate() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomMatchmakingTests.cs:line 21&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="5206d083-c9d1-4ea4-b321-e5f35945eebb" testId="7cf56fa2-8c06-768d-a42c-89903e833266" testName="Norn.Business.Tests.RoomMatchmakingTests.MatchRejectsForeignDungeonAndAnonymous_AndReturnsCurrentRunningRoom" computerName="ZHY" duration="00:00:00.1049996" startTime="2026-10-22T14:45:49.8379546+08:00" endTime="2026-10-22T14:45:49.9132505+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5206d083-c9d1-4ea4-b321-e5f35945eebb">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Unauthorized&#xD;
+Actual:   MethodNotAllowed</Message>
+          <StackTrace>   at Norn.Business.Tests.RoomMatchmakingTests.MatchRejectsForeignDungeonAndAnonymous_AndReturnsCurrentRunningRoom() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomMatchmakingTests.cs:line 52&#xD;
+   at Norn.Business.Tests.RoomMatchmakingTests.MatchRejectsForeignDungeonAndAnonymous_AndReturnsCurrentRunningRoom() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomMatchmakingTests.cs:line 58&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="12515384-79eb-4843-bb24-6f3ba832bf55" testId="40d78026-d2bc-69a9-eb55-2e9b747ff4bf" testName="Norn.Business.Tests.JoinTicketBudgetTests.ConsumedTicketHistoryStaysOnePerMember_AndOldTicketStillRejected" computerName="ZHY" duration="00:00:00.6211932" startTime="2026-10-22T14:45:49.9599973+08:00" endTime="2026-10-22T14:45:50.5807089+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="12515384-79eb-4843-bb24-6f3ba832bf55">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 1&#xD;
+Actual:   2</Message>
+          <StackTrace>   at Norn.Business.Tests.JoinTicketBudgetTests.ConsumedTicketHistoryStaysOnePerMember_AndOldTicketStillRejected() in F:\Develop Project\RPG\Server\Norn.Business.Tests\JoinTicketBudgetTests.cs:line 36&#xD;
+   at Norn.Business.Tests.JoinTicketBudgetTests.ConsumedTicketHistoryStaysOnePerMember_AndOldTicketStillRejected() in F:\Develop Project\RPG\Server\Norn.Business.Tests\JoinTicketBudgetTests.cs:line 41&#xD;
+   at Norn.Business.Tests.JoinTicketBudgetTests.ConsumedTicketHistoryStaysOnePerMember_AndOldTicketStillRejected() in F:\Develop Project\RPG\Server\Norn.Business.Tests\JoinTicketBudgetTests.cs:line 41&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Norn.Business.Tests.RoomMatchmakingTests.ConcurrentMatch_FourSeatsAndFifthNewRoom_RetryDoesNotDuplicate" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="4443fb17-51be-9463-034e-de11dafcfdcd">
+      <Execution id="c55a8a8f-55c7-43f8-a16f-a56568605cbb" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomMatchmakingTests" name="ConcurrentMatch_FourSeatsAndFifthNewRoom_RetryDoesNotDuplicate" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomMatchmakingTests.MatchRejectsForeignDungeonAndAnonymous_AndReturnsCurrentRunningRoom" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="7cf56fa2-8c06-768d-a42c-89903e833266">
+      <Execution id="5206d083-c9d1-4ea4-b321-e5f35945eebb" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomMatchmakingTests" name="MatchRejectsForeignDungeonAndAnonymous_AndReturnsCurrentRunningRoom" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomMatchmakingTests.PresenceKeepsMember_StaleLeaderExpiresWithoutReleasingRunAssets" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="de97ef4d-4bc6-2056-28e2-0b435b6144fe">
+      <Execution id="5608ff73-678a-48a1-a17f-d3eac3413ed9" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomMatchmakingTests" name="PresenceKeepsMember_StaleLeaderExpiresWithoutReleasingRunAssets" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.JoinTicketBudgetTests.MintIsPersistentlyThrottled_AndExpiredBudgetCanRetry" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="0e96ea6f-8477-65dc-5382-3a6500c3d81a">
+      <Execution id="cf2d540c-95b3-4d01-844a-d4a014838611" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.JoinTicketBudgetTests" name="MintIsPersistentlyThrottled_AndExpiredBudgetCanRetry" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.JoinTicketBudgetTests.ConsumedTicketHistoryStaysOnePerMember_AndOldTicketStillRejected" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="40d78026-d2bc-69a9-eb55-2e9b747ff4bf">
+      <Execution id="12515384-79eb-4843-bb24-6f3ba832bf55" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.JoinTicketBudgetTests" name="ConsumedTicketHistoryStaysOnePerMember_AndOldTicketStillRejected" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="0e96ea6f-8477-65dc-5382-3a6500c3d81a" executionId="cf2d540c-95b3-4d01-844a-d4a014838611" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="de97ef4d-4bc6-2056-28e2-0b435b6144fe" executionId="5608ff73-678a-48a1-a17f-d3eac3413ed9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4443fb17-51be-9463-034e-de11dafcfdcd" executionId="c55a8a8f-55c7-43f8-a16f-a56568605cbb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7cf56fa2-8c06-768d-a42c-89903e833266" executionId="5206d083-c9d1-4ea4-b321-e5f35945eebb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="40d78026-d2bc-69a9-eb55-2e9b747ff4bf" executionId="12515384-79eb-4843-bb24-6f3ba832bf55" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="5" executed="5" passed="0" failed="5" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.13)&#xD;
+[xUnit.net 00:00:00.90]   Discovering: Norn.Business.Tests&#xD;
+[xUnit.net 00:00:01.15]   Discovered:  Norn.Business.Tests&#xD;
+[xUnit.net 00:00:01.19]   Starting:    Norn.Business.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:02.97]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:02.97]       Expected: OK&#xD;
+[xUnit.net 00:00:02.97]       Actual:   MethodNotAllowed&#xD;
+[xUnit.net 00:00:02.97]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.97]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomMatchmakingTests.cs(64,0): at Norn.Business.Tests.RoomMatchmakingTests.Match(HttpClient client)&#xD;
+[xUnit.net 00:00:02.97]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomMatchmakingTests.cs(33,0): at Norn.Business.Tests.RoomMatchmakingTests.PresenceKeepsMember_StaleLeaderExpiresWithoutReleasingRunAssets()&#xD;
+[xUnit.net 00:00:02.97]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomMatchmakingTests.cs(43,0): at Norn.Business.Tests.RoomMatchmakingTests.PresenceKeepsMember_StaleLeaderExpiresWithoutReleasingRunAssets()&#xD;
+[xUnit.net 00:00:02.97]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:03.06]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:03.06]       Expected: Unauthorized&#xD;
+[xUnit.net 00:00:03.06]       Actual:   MethodNotAllowed&#xD;
+[xUnit.net 00:00:03.06]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.06]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomMatchmakingTests.cs(52,0): at Norn.Business.Tests.RoomMatchmakingTests.MatchRejectsForeignDungeonAndAnonymous_AndReturnsCurrentRunningRoom()&#xD;
+[xUnit.net 00:00:03.06]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomMatchmakingTests.cs(58,0): at Norn.Business.Tests.RoomMatchmakingTests.MatchRejectsForeignDungeonAndAnonymous_AndReturnsCurrentRunningRoom()&#xD;
+[xUnit.net 00:00:03.06]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:03.10]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:03.10]       Expected: typeof(Norn.Business.Infrastructure.OnlineFailure)&#xD;
+[xUnit.net 00:00:03.10]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.10]         F:\Develop Project\RPG\Server\Norn.Business.Tests\JoinTicketBudgetTests.cs(20,0): at Norn.Business.Tests.JoinTicketBudgetTests.MintIsPersistentlyThrottled_AndExpiredBudgetCanRetry()&#xD;
+[xUnit.net 00:00:03.10]         F:\Develop Project\RPG\Server\Norn.Business.Tests\JoinTicketBudgetTests.cs(23,0): at Norn.Business.Tests.JoinTicketBudgetTests.MintIsPersistentlyThrottled_AndExpiredBudgetCanRetry()&#xD;
+[xUnit.net 00:00:03.10]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:03.72]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:03.72]       Expected: 1&#xD;
+[xUnit.net 00:00:03.72]       Actual:   2&#xD;
+[xUnit.net 00:00:03.72]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.72]         F:\Develop Project\RPG\Server\Norn.Business.Tests\JoinTicketBudgetTests.cs(36,0): at Norn.Business.Tests.JoinTicketBudgetTests.ConsumedTicketHistoryStaysOnePerMember_AndOldTicketStillRejected()&#xD;
+[xUnit.net 00:00:03.72]         F:\Develop Project\RPG\Server\Norn.Business.Tests\JoinTicketBudgetTests.cs(41,0): at Norn.Business.Tests.JoinTicketBudgetTests.ConsumedTicketHistoryStaysOnePerMember_AndOldTicketStillRejected()&#xD;
+[xUnit.net 00:00:03.72]         F:\Develop Project\RPG\Server\Norn.Business.Tests\JoinTicketBudgetTests.cs(41,0): at Norn.Business.Tests.JoinTicketBudgetTests.ConsumedTicketHistoryStaysOnePerMember_AndOldTicketStillRejected()&#xD;
+[xUnit.net 00:00:03.72]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:04.00]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:04.00]       Expected: OK&#xD;
+[xUnit.net 00:00:04.00]       Actual:   MethodNotAllowed&#xD;
+[xUnit.net 00:00:04.00]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.00]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomMatchmakingTests.cs(64,0): at Norn.Business.Tests.RoomMatchmakingTests.Match(HttpClient client)&#xD;
+[xUnit.net 00:00:04.00]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomMatchmakingTests.cs(17,0): at Norn.Business.Tests.RoomMatchmakingTests.ConcurrentMatch_FourSeatsAndFifthNewRoom_RetryDoesNotDuplicate()&#xD;
+[xUnit.net 00:00:04.00]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomMatchmakingTests.cs(21,0): at Norn.Business.Tests.RoomMatchmakingTests.ConcurrentMatch_FourSeatsAndFifthNewRoom_RetryDoesNotDuplicate()&#xD;
+[xUnit.net 00:00:04.00]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.01]   Finished:    Norn.Business.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T14:45:49.8088423+08:00">
+        <Text>[xUnit.net 00:00:02.95]     Norn.Business.Tests.RoomMatchmakingTests.PresenceKeepsMember_StaleLeaderExpiresWithoutReleasingRunAssets [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T14:45:49.9450204+08:00">
+        <Text>[xUnit.net 00:00:03.06]     Norn.Business.Tests.RoomMatchmakingTests.MatchRejectsForeignDungeonAndAnonymous_AndReturnsCurrentRunningRoom [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T14:45:49.9592727+08:00">
+        <Text>[xUnit.net 00:00:03.10]     Norn.Business.Tests.JoinTicketBudgetTests.MintIsPersistentlyThrottled_AndExpiredBudgetCanRetry [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T14:45:50.5813171+08:00">
+        <Text>[xUnit.net 00:00:03.72]     Norn.Business.Tests.JoinTicketBudgetTests.ConsumedTicketHistoryStaysOnePerMember_AndOldTicketStillRejected [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T14:45:50.8594525+08:00">
+        <Text>[xUnit.net 00:00:04.00]     Norn.Business.Tests.RoomMatchmakingTests.ConcurrentMatch_FourSeatsAndFifthNewRoom_RetryDoesNotDuplicate [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

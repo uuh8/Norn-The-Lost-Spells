@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-22 03:16:09Z" end-time="2026-10-22 03:16:10Z" duration="0.6347903">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2183" result="Failed" site="Child" start-time="2026-10-22 03:16:09Z" end-time="2026-10-22 03:16:10Z" duration="0.634790" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2253" name="Game.Networking.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Networking.Tests.dll" runstate="Runnable" testcasecount="49" result="Failed" site="Child" start-time="2026-10-22 03:16:09Z" end-time="2026-10-22 03:16:10Z" duration="0.537599" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28156" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2254" name="Game" fullname="Game" runstate="Runnable" testcasecount="49" result="Failed" site="Child" start-time="2026-10-22 03:16:09Z" end-time="2026-10-22 03:16:10Z" duration="0.429746" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2255" name="Networking" fullname="Game.Networking" runstate="Runnable" testcasecount="49" result="Failed" site="Child" start-time="2026-10-22 03:16:09Z" end-time="2026-10-22 03:16:10Z" duration="0.344515" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2256" name="Tests" fullname="Game.Networking.Tests" runstate="Runnable" testcasecount="49" result="Failed" site="Child" start-time="2026-10-22 03:16:09Z" end-time="2026-10-22 03:16:10Z" duration="0.245607" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2212" name="JoinAdmissionTests" fullname="Game.Networking.Tests.JoinAdmissionTests" classname="Game.Networking.Tests.JoinAdmissionTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-22 03:16:10Z" end-time="2026-10-22 03:16:10Z" duration="0.144237" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2214" name="EnvelopeRejectsOversizeAndTruncationBeforeAllocatingPayload" fullname="Game.Networking.Tests.JoinAdmissionTests.EnvelopeRejectsOversizeAndTruncationBeforeAllocatingPayload" methodname="EnvelopeRejectsOversizeAndTruncationBeforeAllocatingPayload" classname="Game.Networking.Tests.JoinAdmissionTests" runstate="Runnable" seed="694852300" result="Failed" start-time="2026-10-22 03:16:10Z" end-time="2026-10-22 03:16:10Z" duration="0.026233" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: <System.IO.InvalidDataException>
+  But was:  <System.NotImplementedException: The method or operation is not implemented.
+  at Game.Networking.JoinTicketEnvelopeSerialization.ReadJoinTicketRequestEnvelope (Mirror.NetworkReader r) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Networking\Authentication\JoinTicketEnvelope.cs:11 
+  at Game.Networking.Tests.JoinAdmissionTests+<>c__DisplayClass1_0.<EnvelopeRejectsOversizeAndTruncationBeforeAllocatingPayload>b__0 () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\JoinAdmissionTests.cs:21 
+  at NUnit.Framework.Assert.Throws (NUnit.Framework.Constraints.IResolveConstraint expression, NUnit.Framework.TestDelegate code, System.String message, System.Object[] args) [0x0002f] in <f577cd9686154d6ab10efd7e65e64366>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.JoinAdmissionTests.EnvelopeRejectsOversizeAndTruncationBeforeAllocatingPayload () [0x0002a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\JoinAdmissionTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2215" name="EnvelopeRoundtripPreservesBoundedSegment" fullname="Game.Networking.Tests.JoinAdmissionTests.EnvelopeRoundtripPreservesBoundedSegment" methodname="EnvelopeRoundtripPreservesBoundedSegment" classname="Game.Networking.Tests.JoinAdmissionTests" runstate="Runnable" seed="1149709202" result="Failed" label="Error" start-time="2026-10-22 03:16:10Z" end-time="2026-10-22 03:16:10Z" duration="0.002229" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[System.NotImplementedException : The method or operation is not implemented.]]></message>
+                  <stack-trace><![CDATA[  at Game.Networking.JoinTicketEnvelopeSerialization.WriteJoinTicketRequestEnvelope (Mirror.NetworkWriter w, Game.Networking.JoinTicketRequestEnvelope m) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Networking\Authentication\JoinTicketEnvelope.cs:10 
+  at Game.Networking.Tests.JoinAdmissionTests.EnvelopeRoundtripPreservesBoundedSegment () [0x00019] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\JoinAdmissionTests.cs:28 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 ]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2213" name="OldConnectionEpochCannotReplaceNewAdmission" fullname="Game.Networking.Tests.JoinAdmissionTests.OldConnectionEpochCannotReplaceNewAdmission" methodname="OldConnectionEpochCannotReplaceNewAdmission" classname="Game.Networking.Tests.JoinAdmissionTests" runstate="Runnable" seed="559772999" result="Failed" start-time="2026-10-22 03:16:10Z" end-time="2026-10-22 03:16:10Z" duration="0.001205" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.JoinAdmissionTests.OldConnectionEpochCannotReplaceNewAdmission () [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\JoinAdmissionTests.cs:13
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

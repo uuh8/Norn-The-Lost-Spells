@@ -22,7 +22,7 @@ namespace Game.EditorTools
         private const string StateKey = "Norn.SinglePlayer.Tests.";
         private static double _nextPoll;
         private static readonly string[] EditAssemblies={"Game.Core.Tests","Game.Combat.Tests","Game.Skills.Tests","Game.Character.Tests",
-            "Game.Run.Tests","Game.ElementField.Tests","Game.Materials.Tests","Game.Rendering.Tests","Game.UI.Tests"};
+            "Game.Run.Tests","Game.ElementField.Tests","Game.Materials.Tests","Game.Rendering.Tests","Game.UI.Tests","Game.Networking.Tests"};
 
         static ProjectTestRunner()
         {
@@ -82,7 +82,7 @@ namespace Game.EditorTools
                     throw new ArgumentException("必须指定本次验证的 TestNames。");
                 for (int i = 0; i < request.TestNames.Length; i++)
                     if (!IsProjectTest(request.TestNames[i]))
-                        throw new ArgumentException("此入口只允许项目现有九个测试模块的明确fixture或测试名。");
+                        throw new ArgumentException("此入口只允许项目测试程序集白名单内的明确fixture或测试名。");
 
                 SessionState.SetString(StateKey + "Started", DateTime.UtcNow.ToString("O"));
                 SessionState.SetString(StateKey + "Original", SceneManager.GetActiveScene().path);

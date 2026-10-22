@@ -1,0 +1,19 @@
+{
+  "Reviewed": true,
+  "Reviewer": "Codex - user-delegated visible acceptance",
+  "Runtime": "Windows native Player, Direct3D11",
+  "SignedOutScreenshot": "main-menu-signed-out.png",
+  "SignedInScreenshot": "main-menu-signed-in.png",
+  "Checks": {
+    "LoginAndRegisterOnMainMenu": true,
+    "OriginalBackgroundPreserved": true,
+    "NoOnlineModeOrLegacyPlayButton": true,
+    "PasswordMaskedBeforeLoginAndClearedAfterLogin": true,
+    "EnterHubDisabledBeforeLogin": true,
+    "RegistrationSucceededThroughActualButtons": true,
+    "LoginSucceededThroughActualButtons": true,
+    "EnterHubEnabledAfterLogin": true
+  },
+  "Scope": "OS mouse/keyboard input into the recorded owned window. Hub/P7/P8 transitions were verified separately by real-business PlayMode tests using MemoryFiles for local saves.",
+  "RejectedAttempt": "An early capture/input occurred during the Unity splash and was not accepted. The helper now waits for this Client's initialization log before allowing input."
+}

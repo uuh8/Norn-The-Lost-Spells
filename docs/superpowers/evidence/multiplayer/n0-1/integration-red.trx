@@ -1,0 +1,290 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="071d619f-3890-499e-9762-09803f16deae" name="zhy@ZHY 2026-10-20 22:29:19" runUser="ZHY\zhy" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-20T22:29:19.9755560+08:00" queuing="2026-10-20T22:29:19.9755573+08:00" start="2026-10-20T22:29:17.4873614+08:00" finish="2026-10-20T22:29:20.0052084+08:00" />
+  <TestSettings name="default" id="42b11ac2-d95d-415a-bfae-5b57daf8640b">
+    <Deployment runDeploymentRoot="zhy_ZHY_2026-10-20_22_29_19" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="924a3d12-9216-44ba-b322-3b090745aa4f" testId="febe8568-d933-2832-0667-c60f5ea0b4c0" testName="Norn.Business.Tests.FoundationEndpointsTests.Ping_MessageBudget_CountsUtf8BytesInsteadOfCharacters" computerName="ZHY" duration="00:00:00.0027919" startTime="2026-10-20T22:29:19.9363197+08:00" endTime="2026-10-20T22:29:19.9394390+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="924a3d12-9216-44ba-b322-3b090745aa4f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: BadRequest&#xD;
+Actual:   NotFound</Message>
+          <StackTrace>   at Norn.Business.Tests.FoundationEndpointsTests.Ping_MessageBudget_CountsUtf8BytesInsteadOfCharacters() in F:\Develop Project\RPG\Server\Norn.Business.Tests\FoundationEndpointsTests.cs:line 97&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b5f18353-7734-40fb-b002-b0a27bbe8921" testId="3caeeac5-aa6e-237c-ef13-fac082fd2e2b" testName="Norn.Business.Tests.FoundationEndpointsTests.Liveness_RespondsWithoutClaimingDatabaseReadiness" computerName="ZHY" duration="00:00:00.0027023" startTime="2026-10-20T22:29:19.9330859+08:00" endTime="2026-10-20T22:29:19.9358758+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b5f18353-7734-40fb-b002-b0a27bbe8921">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: OK&#xD;
+Actual:   NotFound</Message>
+          <StackTrace>   at Norn.Business.Tests.FoundationEndpointsTests.Liveness_RespondsWithoutClaimingDatabaseReadiness() in F:\Develop Project\RPG\Server\Norn.Business.Tests\FoundationEndpointsTests.cs:line 23&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="df01c00e-60ba-416a-a5f1-771416fce18c" testId="d784910c-6adc-ca4f-7214-4fda5a88e595" testName="Norn.Business.Tests.FoundationEndpointsTests.Ping_IncompatibleVersion_IsRejected(version: 2)" computerName="ZHY" duration="00:00:00.0019954" startTime="2026-10-20T22:29:19.9259729+08:00" endTime="2026-10-20T22:29:19.9282681+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="df01c00e-60ba-416a-a5f1-771416fce18c">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Conflict&#xD;
+Actual:   NotFound</Message>
+          <StackTrace>   at Norn.Business.Tests.FoundationEndpointsTests.Ping_IncompatibleVersion_IsRejected(UInt32 version) in F:\Develop Project\RPG\Server\Norn.Business.Tests\FoundationEndpointsTests.cs:line 60&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="aa24b287-241a-40aa-a727-89b3f89243be" testId="4e10c2a9-ac39-d6a6-32a5-9ccc1475d713" testName="Norn.Business.Tests.FoundationEndpointsTests.Ping_UnknownContentLength_StillEnforcesBodyBudget" computerName="ZHY" duration="00:00:00.0033905" startTime="2026-10-20T22:29:19.9102910+08:00" endTime="2026-10-20T22:29:19.9132591+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aa24b287-241a-40aa-a727-89b3f89243be">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: RequestEntityTooLarge&#xD;
+Actual:   NotFound</Message>
+          <StackTrace>   at Norn.Business.Tests.FoundationEndpointsTests.Ping_UnknownContentLength_StillEnforcesBodyBudget() in F:\Develop Project\RPG\Server\Norn.Business.Tests\FoundationEndpointsTests.cs:line 88&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="593a94b4-5171-4849-a821-91074f62abb3" testId="3c56bbac-4286-936d-32d6-75a8503eaabc" testName="Norn.Business.Tests.FoundationEndpointsTests.Ping_IncompatibleVersion_IsRejected(version: 0)" computerName="ZHY" duration="00:00:00.0039805" startTime="2026-10-20T22:29:19.9213950+08:00" endTime="2026-10-20T22:29:19.9255163+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="593a94b4-5171-4849-a821-91074f62abb3">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Conflict&#xD;
+Actual:   NotFound</Message>
+          <StackTrace>   at Norn.Business.Tests.FoundationEndpointsTests.Ping_IncompatibleVersion_IsRejected(UInt32 version) in F:\Develop Project\RPG\Server\Norn.Business.Tests\FoundationEndpointsTests.cs:line 60&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c8f78099-f0ec-47c6-8bce-a5307c5937a5" testId="c35ff9e7-fc52-9d7e-80cc-624a7d09af1c" testName="Norn.Business.Tests.FoundationEndpointsTests.Ping_OversizedBody_IsRejectedBeforeParsing" computerName="ZHY" duration="00:00:00.0034522" startTime="2026-10-20T22:29:19.9288250+08:00" endTime="2026-10-20T22:29:19.9325069+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c8f78099-f0ec-47c6-8bce-a5307c5937a5">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: RequestEntityTooLarge&#xD;
+Actual:   NotFound</Message>
+          <StackTrace>   at Norn.Business.Tests.FoundationEndpointsTests.Ping_OversizedBody_IsRejectedBeforeParsing() in F:\Develop Project\RPG\Server\Norn.Business.Tests\FoundationEndpointsTests.cs:line 79&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="96df68ac-efc7-4010-b3e8-9fe2974d1eb6" testId="78b56a72-613a-0dfb-6cc1-e09eec38f043" testName="Norn.Business.Tests.FoundationEndpointsTests.Ping_UnsupportedContentType_IsRejected" computerName="ZHY" duration="00:00:00.3380608" startTime="2026-10-20T22:29:19.4377391+08:00" endTime="2026-10-20T22:29:19.7969452+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="96df68ac-efc7-4010-b3e8-9fe2974d1eb6">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: UnsupportedMediaType&#xD;
+Actual:   NotFound</Message>
+          <StackTrace>   at Norn.Business.Tests.FoundationEndpointsTests.Ping_UnsupportedContentType_IsRejected() in F:\Develop Project\RPG\Server\Norn.Business.Tests\FoundationEndpointsTests.cs:line 105&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c659b34e-c82f-432c-980f-2eb1b6cf35cf" testId="01e331cb-e534-2e35-9701-61a7609aee43" testName="Norn.Business.Tests.FoundationEndpointsTests.Info_UsesSharedProtoJsonContract" computerName="ZHY" duration="00:00:00.1092774" startTime="2026-10-20T22:29:19.8107562+08:00" endTime="2026-10-20T22:29:19.9090271+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c659b34e-c82f-432c-980f-2eb1b6cf35cf">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: OK&#xD;
+Actual:   NotFound</Message>
+          <StackTrace>   at Norn.Business.Tests.FoundationEndpointsTests.Info_UsesSharedProtoJsonContract() in F:\Develop Project\RPG\Server\Norn.Business.Tests\FoundationEndpointsTests.cs:line 31&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="44e211ac-2564-42a7-adcc-91a011eef816" testId="9fcc7762-6973-db1b-d18d-34f10a135c68" testName="Norn.Business.Tests.FoundationEndpointsTests.Ping_RoundTrip_PreservesUnicodeAndLargeSequence" computerName="ZHY" duration="00:00:00.0067274" startTime="2026-10-20T22:29:19.9138104+08:00" endTime="2026-10-20T22:29:19.9208866+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="44e211ac-2564-42a7-adcc-91a011eef816">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: OK&#xD;
+Actual:   NotFound</Message>
+          <StackTrace>   at Norn.Business.Tests.FoundationEndpointsTests.Ping_RoundTrip_PreservesUnicodeAndLargeSequence() in F:\Develop Project\RPG\Server\Norn.Business.Tests\FoundationEndpointsTests.cs:line 44&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6b8112cb-23bd-429e-9861-39488e033137" testId="a5311b69-3f69-c4f8-e10e-08e4c34f09c1" testName="Norn.Business.Tests.FoundationEndpointsTests.Ping_TruncatedWireData_IsRejected" computerName="ZHY" duration="00:00:00.0030885" startTime="2026-10-20T22:29:19.9501981+08:00" endTime="2026-10-20T22:29:19.9502653+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6b8112cb-23bd-429e-9861-39488e033137">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: BadRequest&#xD;
+Actual:   NotFound</Message>
+          <StackTrace>   at Norn.Business.Tests.FoundationEndpointsTests.Ping_TruncatedWireData_IsRejected() in F:\Develop Project\RPG\Server\Norn.Business.Tests\FoundationEndpointsTests.cs:line 70&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Norn.Business.Tests.FoundationEndpointsTests.Ping_MessageBudget_CountsUtf8BytesInsteadOfCharacters" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="febe8568-d933-2832-0667-c60f5ea0b4c0">
+      <Execution id="924a3d12-9216-44ba-b322-3b090745aa4f" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.FoundationEndpointsTests" name="Ping_MessageBudget_CountsUtf8BytesInsteadOfCharacters" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.FoundationEndpointsTests.Ping_UnsupportedContentType_IsRejected" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="78b56a72-613a-0dfb-6cc1-e09eec38f043">
+      <Execution id="96df68ac-efc7-4010-b3e8-9fe2974d1eb6" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.FoundationEndpointsTests" name="Ping_UnsupportedContentType_IsRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.FoundationEndpointsTests.Ping_IncompatibleVersion_IsRejected(version: 2)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="d784910c-6adc-ca4f-7214-4fda5a88e595">
+      <Execution id="df01c00e-60ba-416a-a5f1-771416fce18c" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.FoundationEndpointsTests" name="Ping_IncompatibleVersion_IsRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.FoundationEndpointsTests.Ping_UnknownContentLength_StillEnforcesBodyBudget" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="4e10c2a9-ac39-d6a6-32a5-9ccc1475d713">
+      <Execution id="aa24b287-241a-40aa-a727-89b3f89243be" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.FoundationEndpointsTests" name="Ping_UnknownContentLength_StillEnforcesBodyBudget" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.FoundationEndpointsTests.Ping_RoundTrip_PreservesUnicodeAndLargeSequence" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="9fcc7762-6973-db1b-d18d-34f10a135c68">
+      <Execution id="44e211ac-2564-42a7-adcc-91a011eef816" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.FoundationEndpointsTests" name="Ping_RoundTrip_PreservesUnicodeAndLargeSequence" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.FoundationEndpointsTests.Info_UsesSharedProtoJsonContract" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="01e331cb-e534-2e35-9701-61a7609aee43">
+      <Execution id="c659b34e-c82f-432c-980f-2eb1b6cf35cf" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.FoundationEndpointsTests" name="Info_UsesSharedProtoJsonContract" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.FoundationEndpointsTests.Ping_IncompatibleVersion_IsRejected(version: 0)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="3c56bbac-4286-936d-32d6-75a8503eaabc">
+      <Execution id="593a94b4-5171-4849-a821-91074f62abb3" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.FoundationEndpointsTests" name="Ping_IncompatibleVersion_IsRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.FoundationEndpointsTests.Liveness_RespondsWithoutClaimingDatabaseReadiness" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="3caeeac5-aa6e-237c-ef13-fac082fd2e2b">
+      <Execution id="b5f18353-7734-40fb-b002-b0a27bbe8921" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.FoundationEndpointsTests" name="Liveness_RespondsWithoutClaimingDatabaseReadiness" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.FoundationEndpointsTests.Ping_TruncatedWireData_IsRejected" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="a5311b69-3f69-c4f8-e10e-08e4c34f09c1">
+      <Execution id="6b8112cb-23bd-429e-9861-39488e033137" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.FoundationEndpointsTests" name="Ping_TruncatedWireData_IsRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.FoundationEndpointsTests.Ping_OversizedBody_IsRejectedBeforeParsing" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="c35ff9e7-fc52-9d7e-80cc-624a7d09af1c">
+      <Execution id="c8f78099-f0ec-47c6-8bce-a5307c5937a5" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.FoundationEndpointsTests" name="Ping_OversizedBody_IsRejectedBeforeParsing" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="febe8568-d933-2832-0667-c60f5ea0b4c0" executionId="924a3d12-9216-44ba-b322-3b090745aa4f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3caeeac5-aa6e-237c-ef13-fac082fd2e2b" executionId="b5f18353-7734-40fb-b002-b0a27bbe8921" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d784910c-6adc-ca4f-7214-4fda5a88e595" executionId="df01c00e-60ba-416a-a5f1-771416fce18c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4e10c2a9-ac39-d6a6-32a5-9ccc1475d713" executionId="aa24b287-241a-40aa-a727-89b3f89243be" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3c56bbac-4286-936d-32d6-75a8503eaabc" executionId="593a94b4-5171-4849-a821-91074f62abb3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c35ff9e7-fc52-9d7e-80cc-624a7d09af1c" executionId="c8f78099-f0ec-47c6-8bce-a5307c5937a5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="78b56a72-613a-0dfb-6cc1-e09eec38f043" executionId="96df68ac-efc7-4010-b3e8-9fe2974d1eb6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="01e331cb-e534-2e35-9701-61a7609aee43" executionId="c659b34e-c82f-432c-980f-2eb1b6cf35cf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9fcc7762-6973-db1b-d18d-34f10a135c68" executionId="44e211ac-2564-42a7-adcc-91a011eef816" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a5311b69-3f69-c4f8-e10e-08e4c34f09c1" executionId="6b8112cb-23bd-429e-9861-39488e033137" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="10" executed="10" passed="0" failed="10" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.13)&#xD;
+[xUnit.net 00:00:00.42]   Discovering: Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.47]   Discovered:  Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.50]   Starting:    Norn.Business.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+[xUnit.net 00:00:00.89]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.89]       Expected: UnsupportedMediaType&#xD;
+[xUnit.net 00:00:00.89]       Actual:   NotFound&#xD;
+[xUnit.net 00:00:00.89]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.89]         F:\Develop Project\RPG\Server\Norn.Business.Tests\FoundationEndpointsTests.cs(105,0): at Norn.Business.Tests.FoundationEndpointsTests.Ping_UnsupportedContentType_IsRejected()&#xD;
+[xUnit.net 00:00:00.89]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.00]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.00]       Expected: OK&#xD;
+[xUnit.net 00:00:01.00]       Actual:   NotFound&#xD;
+[xUnit.net 00:00:01.00]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.00]         F:\Develop Project\RPG\Server\Norn.Business.Tests\FoundationEndpointsTests.cs(31,0): at Norn.Business.Tests.FoundationEndpointsTests.Info_UsesSharedProtoJsonContract()&#xD;
+[xUnit.net 00:00:01.00]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.00]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.00]       Expected: RequestEntityTooLarge&#xD;
+[xUnit.net 00:00:01.00]       Actual:   NotFound&#xD;
+[xUnit.net 00:00:01.00]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.00]         F:\Develop Project\RPG\Server\Norn.Business.Tests\FoundationEndpointsTests.cs(88,0): at Norn.Business.Tests.FoundationEndpointsTests.Ping_UnknownContentLength_StillEnforcesBodyBudget()&#xD;
+[xUnit.net 00:00:01.00]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.01]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.01]       Expected: OK&#xD;
+[xUnit.net 00:00:01.01]       Actual:   NotFound&#xD;
+[xUnit.net 00:00:01.01]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.01]         F:\Develop Project\RPG\Server\Norn.Business.Tests\FoundationEndpointsTests.cs(44,0): at Norn.Business.Tests.FoundationEndpointsTests.Ping_RoundTrip_PreservesUnicodeAndLargeSequence()&#xD;
+[xUnit.net 00:00:01.01]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.01]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.01]       Expected: Conflict&#xD;
+[xUnit.net 00:00:01.01]       Actual:   NotFound&#xD;
+[xUnit.net 00:00:01.01]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.01]         F:\Develop Project\RPG\Server\Norn.Business.Tests\FoundationEndpointsTests.cs(60,0): at Norn.Business.Tests.FoundationEndpointsTests.Ping_IncompatibleVersion_IsRejected(UInt32 version)&#xD;
+[xUnit.net 00:00:01.01]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.02]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.02]       Expected: Conflict&#xD;
+[xUnit.net 00:00:01.02]       Actual:   NotFound&#xD;
+[xUnit.net 00:00:01.02]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.02]         F:\Develop Project\RPG\Server\Norn.Business.Tests\FoundationEndpointsTests.cs(60,0): at Norn.Business.Tests.FoundationEndpointsTests.Ping_IncompatibleVersion_IsRejected(UInt32 version)&#xD;
+[xUnit.net 00:00:01.02]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.02]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.02]       Expected: RequestEntityTooLarge&#xD;
+[xUnit.net 00:00:01.02]       Actual:   NotFound&#xD;
+[xUnit.net 00:00:01.02]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.02]         F:\Develop Project\RPG\Server\Norn.Business.Tests\FoundationEndpointsTests.cs(79,0): at Norn.Business.Tests.FoundationEndpointsTests.Ping_OversizedBody_IsRejectedBeforeParsing()&#xD;
+[xUnit.net 00:00:01.02]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.02]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.02]       Expected: OK&#xD;
+[xUnit.net 00:00:01.02]       Actual:   NotFound&#xD;
+[xUnit.net 00:00:01.02]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.02]         F:\Develop Project\RPG\Server\Norn.Business.Tests\FoundationEndpointsTests.cs(23,0): at Norn.Business.Tests.FoundationEndpointsTests.Liveness_RespondsWithoutClaimingDatabaseReadiness()&#xD;
+[xUnit.net 00:00:01.02]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.03]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.03]       Expected: BadRequest&#xD;
+[xUnit.net 00:00:01.03]       Actual:   NotFound&#xD;
+[xUnit.net 00:00:01.03]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.03]         F:\Develop Project\RPG\Server\Norn.Business.Tests\FoundationEndpointsTests.cs(97,0): at Norn.Business.Tests.FoundationEndpointsTests.Ping_MessageBudget_CountsUtf8BytesInsteadOfCharacters()&#xD;
+[xUnit.net 00:00:01.03]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:01.04]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.04]       Expected: BadRequest&#xD;
+[xUnit.net 00:00:01.04]       Actual:   NotFound&#xD;
+[xUnit.net 00:00:01.04]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.04]         F:\Develop Project\RPG\Server\Norn.Business.Tests\FoundationEndpointsTests.cs(70,0): at Norn.Business.Tests.FoundationEndpointsTests.Ping_TruncatedWireData_IsRejected()&#xD;
+[xUnit.net 00:00:01.04]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.04]   Finished:    Norn.Business.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-20T22:29:19.8003988+08:00">
+        <Text>[xUnit.net 00:00:00.89]     Norn.Business.Tests.FoundationEndpointsTests.Ping_UnsupportedContentType_IsRejected [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-20T22:29:19.9094296+08:00">
+        <Text>[xUnit.net 00:00:01.00]     Norn.Business.Tests.FoundationEndpointsTests.Info_UsesSharedProtoJsonContract [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-20T22:29:19.9136390+08:00">
+        <Text>[xUnit.net 00:00:01.00]     Norn.Business.Tests.FoundationEndpointsTests.Ping_UnknownContentLength_StillEnforcesBodyBudget [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-20T22:29:19.9212602+08:00">
+        <Text>[xUnit.net 00:00:01.01]     Norn.Business.Tests.FoundationEndpointsTests.Ping_RoundTrip_PreservesUnicodeAndLargeSequence [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-20T22:29:19.9258184+08:00">
+        <Text>[xUnit.net 00:00:01.01]     Norn.Business.Tests.FoundationEndpointsTests.Ping_IncompatibleVersion_IsRejected(version: 0) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-20T22:29:19.9286593+08:00">
+        <Text>[xUnit.net 00:00:01.01]     Norn.Business.Tests.FoundationEndpointsTests.Ping_IncompatibleVersion_IsRejected(version: 2) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-20T22:29:19.9329281+08:00">
+        <Text>[xUnit.net 00:00:01.02]     Norn.Business.Tests.FoundationEndpointsTests.Ping_OversizedBody_IsRejectedBeforeParsing [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-20T22:29:19.9362195+08:00">
+        <Text>[xUnit.net 00:00:01.02]     Norn.Business.Tests.FoundationEndpointsTests.Liveness_RespondsWithoutClaimingDatabaseReadiness [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-20T22:29:19.9398649+08:00">
+        <Text>[xUnit.net 00:00:01.03]     Norn.Business.Tests.FoundationEndpointsTests.Ping_MessageBudget_CountsUtf8BytesInsteadOfCharacters [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-20T22:29:19.9826313+08:00">
+        <Text>[xUnit.net 00:00:01.04]     Norn.Business.Tests.FoundationEndpointsTests.Ping_TruncatedWireData_IsRejected [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

@@ -1,0 +1,262 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="2e6bb370-478f-472c-8f90-e8271dad194b" name="zhy@ZHY 2026-10-22 10:33:42" runUser="ZHY\zhy" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-22T10:33:42.1896833+08:00" queuing="2026-10-22T10:33:42.1896838+08:00" start="2026-10-22T10:33:37.4369861+08:00" finish="2026-10-22T10:33:43.6463298+08:00" />
+  <TestSettings name="default" id="67119475-52a4-49d6-b343-f60c39f84cef">
+    <Deployment runDeploymentRoot="zhy_ZHY_2026-10-22_10_33_42" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="5505c76e-4f73-40d1-a90c-58c83455bfff" testId="f79abd9c-3cca-3e45-04ec-af50bead7da6" testName="Norn.Business.Tests.RoomAdmissionTests.InvalidDungeon_Unauthenticated_AndDisabledFeature_AreRejected" computerName="ZHY" duration="00:00:00.0379038" startTime="2026-10-22T10:33:43.1120278+08:00" endTime="2026-10-22T10:33:43.1494978+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5505c76e-4f73-40d1-a90c-58c83455bfff">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Unauthorized&#xD;
+Actual:   NotFound</Message>
+          <StackTrace>   at Norn.Business.Tests.RoomAdmissionTests.InvalidDungeon_Unauthenticated_AndDisabledFeature_AreRejected() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs:line 81&#xD;
+   at Norn.Business.Tests.RoomAdmissionTests.InvalidDungeon_Unauthenticated_AndDisabledFeature_AreRejected() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs:line 85&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="54656a2d-f41e-412f-a48d-6e2a3dbb7dcc" testId="b841f808-960c-9506-b868-1c50116dbb05" testName="Norn.Business.Tests.RoomAdmissionTests.LeaderLeaveTransfersLeadership_AndRoomSurvivesBusinessRestart" computerName="ZHY" duration="00:00:00.4144040" startTime="2026-10-22T10:33:43.1503786+08:00" endTime="2026-10-22T10:33:43.5647459+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="54656a2d-f41e-412f-a48d-6e2a3dbb7dcc">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Created&#xD;
+Actual:   NotFound</Message>
+          <StackTrace>   at Norn.Business.Tests.RoomAdmissionTests.Create(HttpClient client) in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs:line 91&#xD;
+   at Norn.Business.Tests.RoomAdmissionTests.LeaderLeaveTransfersLeadership_AndRoomSurvivesBusinessRestart() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs:line 68&#xD;
+   at Norn.Business.Tests.RoomAdmissionTests.LeaderLeaveTransfersLeadership_AndRoomSurvivesBusinessRestart() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs:line 71&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="70fc2eca-2df2-4040-9919-c3024328b79f" testId="9a8527bf-cfac-112c-e807-77a9d80e3d60" testName="Norn.Business.Tests.RoomAdmissionTests.MembershipChangeResetsReadiness_AndStaleRevisionCannotReady" computerName="ZHY" duration="00:00:00.4454756" startTime="2026-10-22T10:33:42.2242216+08:00" endTime="2026-10-22T10:33:42.6693995+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="70fc2eca-2df2-4040-9919-c3024328b79f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Created&#xD;
+Actual:   NotFound</Message>
+          <StackTrace>   at Norn.Business.Tests.RoomAdmissionTests.Create(HttpClient client) in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs:line 91&#xD;
+   at Norn.Business.Tests.RoomAdmissionTests.MembershipChangeResetsReadiness_AndStaleRevisionCannotReady() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs:line 52&#xD;
+   at Norn.Business.Tests.RoomAdmissionTests.MembershipChangeResetsReadiness_AndStaleRevisionCannotReady() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs:line 58&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="af8a1a37-feb2-45c2-8f6e-596c8011fd1d" testId="78b346dd-a8cf-7397-beb4-b6de06656758" testName="Norn.Business.Tests.RoomAdmissionTests.FifthPlayer_IsRejected" computerName="ZHY" duration="00:00:00.3163550" startTime="2026-10-22T10:33:41.9241865+08:00" endTime="2026-10-22T10:33:42.2227227+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="af8a1a37-feb2-45c2-8f6e-596c8011fd1d">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Created&#xD;
+Actual:   NotFound</Message>
+          <StackTrace>   at Norn.Business.Tests.RoomAdmissionTests.Create(HttpClient client) in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs:line 91&#xD;
+   at Norn.Business.Tests.RoomAdmissionTests.FifthPlayer_IsRejected() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs:line 15&#xD;
+   at Norn.Business.Tests.RoomAdmissionTests.FifthPlayer_IsRejected() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs:line 23&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a67f876e-8724-4c2c-8503-becce5747232" testId="1fb188fc-990e-eb22-d54f-e948f6cb3fb5" testName="Norn.Business.Tests.RoomAdmissionTests.CharacterCannotJoinTwoRooms_AndOutsiderCannotRead" computerName="ZHY" duration="00:00:00.4406268" startTime="2026-10-22T10:33:42.6722761+08:00" endTime="2026-10-22T10:33:43.1111077+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a67f876e-8724-4c2c-8503-becce5747232">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Created&#xD;
+Actual:   NotFound</Message>
+          <StackTrace>   at Norn.Business.Tests.RoomAdmissionTests.Create(HttpClient client) in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs:line 91&#xD;
+   at Norn.Business.Tests.RoomAdmissionTests.CharacterCannotJoinTwoRooms_AndOutsiderCannotRead() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs:line 42&#xD;
+   at Norn.Business.Tests.RoomAdmissionTests.CharacterCannotJoinTwoRooms_AndOutsiderCannotRead() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs:line 46&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="93e029dc-7ea3-4a2e-a83a-74842445bc20" testId="e21f1432-be62-48dc-98ee-5c41e2e1877d" testName="Norn.Business.Tests.RoomAdmissionTests.ConcurrentLastSeat_AdmitsOnlyOnePlayer" computerName="ZHY" duration="00:00:01.5074571" startTime="2026-10-22T10:33:40.3621448+08:00" endTime="2026-10-22T10:33:41.9034361+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="93e029dc-7ea3-4a2e-a83a-74842445bc20">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Created&#xD;
+Actual:   NotFound</Message>
+          <StackTrace>   at Norn.Business.Tests.RoomAdmissionTests.Create(HttpClient client) in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs:line 91&#xD;
+   at Norn.Business.Tests.RoomAdmissionTests.ConcurrentLastSeat_AdmitsOnlyOnePlayer() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs:line 29&#xD;
+   at Norn.Business.Tests.RoomAdmissionTests.ConcurrentLastSeat_AdmitsOnlyOnePlayer() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs:line 35&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Norn.Business.Tests.RoomAdmissionTests.InvalidDungeon_Unauthenticated_AndDisabledFeature_AreRejected" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="f79abd9c-3cca-3e45-04ec-af50bead7da6">
+      <Execution id="5505c76e-4f73-40d1-a90c-58c83455bfff" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomAdmissionTests" name="InvalidDungeon_Unauthenticated_AndDisabledFeature_AreRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomAdmissionTests.ConcurrentLastSeat_AdmitsOnlyOnePlayer" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="e21f1432-be62-48dc-98ee-5c41e2e1877d">
+      <Execution id="93e029dc-7ea3-4a2e-a83a-74842445bc20" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomAdmissionTests" name="ConcurrentLastSeat_AdmitsOnlyOnePlayer" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomAdmissionTests.FifthPlayer_IsRejected" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="78b346dd-a8cf-7397-beb4-b6de06656758">
+      <Execution id="af8a1a37-feb2-45c2-8f6e-596c8011fd1d" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomAdmissionTests" name="FifthPlayer_IsRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomAdmissionTests.MembershipChangeResetsReadiness_AndStaleRevisionCannotReady" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="9a8527bf-cfac-112c-e807-77a9d80e3d60">
+      <Execution id="70fc2eca-2df2-4040-9919-c3024328b79f" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomAdmissionTests" name="MembershipChangeResetsReadiness_AndStaleRevisionCannotReady" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomAdmissionTests.CharacterCannotJoinTwoRooms_AndOutsiderCannotRead" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="1fb188fc-990e-eb22-d54f-e948f6cb3fb5">
+      <Execution id="a67f876e-8724-4c2c-8503-becce5747232" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomAdmissionTests" name="CharacterCannotJoinTwoRooms_AndOutsiderCannotRead" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomAdmissionTests.LeaderLeaveTransfersLeadership_AndRoomSurvivesBusinessRestart" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="b841f808-960c-9506-b868-1c50116dbb05">
+      <Execution id="54656a2d-f41e-412f-a48d-6e2a3dbb7dcc" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomAdmissionTests" name="LeaderLeaveTransfersLeadership_AndRoomSurvivesBusinessRestart" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f79abd9c-3cca-3e45-04ec-af50bead7da6" executionId="5505c76e-4f73-40d1-a90c-58c83455bfff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b841f808-960c-9506-b868-1c50116dbb05" executionId="54656a2d-f41e-412f-a48d-6e2a3dbb7dcc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9a8527bf-cfac-112c-e807-77a9d80e3d60" executionId="70fc2eca-2df2-4040-9919-c3024328b79f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="78b346dd-a8cf-7397-beb4-b6de06656758" executionId="af8a1a37-feb2-45c2-8f6e-596c8011fd1d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1fb188fc-990e-eb22-d54f-e948f6cb3fb5" executionId="a67f876e-8724-4c2c-8503-becce5747232" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e21f1432-be62-48dc-98ee-5c41e2e1877d" executionId="93e029dc-7ea3-4a2e-a83a-74842445bc20" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="6" executed="6" passed="0" failed="6" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.13)&#xD;
+[xUnit.net 00:00:00.86]   Discovering: Norn.Business.Tests&#xD;
+[xUnit.net 00:00:01.11]   Discovered:  Norn.Business.Tests&#xD;
+[xUnit.net 00:00:01.16]   Starting:    Norn.Business.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:02.73]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:02.73]       Expected: Created&#xD;
+[xUnit.net 00:00:02.73]       Actual:   NotFound&#xD;
+[xUnit.net 00:00:02.73]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.73]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs(91,0): at Norn.Business.Tests.RoomAdmissionTests.Create(HttpClient client)&#xD;
+[xUnit.net 00:00:02.73]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs(29,0): at Norn.Business.Tests.RoomAdmissionTests.ConcurrentLastSeat_AdmitsOnlyOnePlayer()&#xD;
+[xUnit.net 00:00:02.73]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs(35,0): at Norn.Business.Tests.RoomAdmissionTests.ConcurrentLastSeat_AdmitsOnlyOnePlayer()&#xD;
+[xUnit.net 00:00:02.73]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:03.05]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:03.05]       Expected: Created&#xD;
+[xUnit.net 00:00:03.05]       Actual:   NotFound&#xD;
+[xUnit.net 00:00:03.05]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.05]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs(91,0): at Norn.Business.Tests.RoomAdmissionTests.Create(HttpClient client)&#xD;
+[xUnit.net 00:00:03.05]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs(15,0): at Norn.Business.Tests.RoomAdmissionTests.FifthPlayer_IsRejected()&#xD;
+[xUnit.net 00:00:03.05]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs(23,0): at Norn.Business.Tests.RoomAdmissionTests.FifthPlayer_IsRejected()&#xD;
+[xUnit.net 00:00:03.05]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:03.49]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:03.49]       Expected: Created&#xD;
+[xUnit.net 00:00:03.49]       Actual:   NotFound&#xD;
+[xUnit.net 00:00:03.49]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.49]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs(91,0): at Norn.Business.Tests.RoomAdmissionTests.Create(HttpClient client)&#xD;
+[xUnit.net 00:00:03.49]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs(52,0): at Norn.Business.Tests.RoomAdmissionTests.MembershipChangeResetsReadiness_AndStaleRevisionCannotReady()&#xD;
+[xUnit.net 00:00:03.49]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs(58,0): at Norn.Business.Tests.RoomAdmissionTests.MembershipChangeResetsReadiness_AndStaleRevisionCannotReady()&#xD;
+[xUnit.net 00:00:03.49]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:03.94]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:03.94]       Expected: Created&#xD;
+[xUnit.net 00:00:03.94]       Actual:   NotFound&#xD;
+[xUnit.net 00:00:03.94]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.94]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs(91,0): at Norn.Business.Tests.RoomAdmissionTests.Create(HttpClient client)&#xD;
+[xUnit.net 00:00:03.94]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs(42,0): at Norn.Business.Tests.RoomAdmissionTests.CharacterCannotJoinTwoRooms_AndOutsiderCannotRead()&#xD;
+[xUnit.net 00:00:03.94]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs(46,0): at Norn.Business.Tests.RoomAdmissionTests.CharacterCannotJoinTwoRooms_AndOutsiderCannotRead()&#xD;
+[xUnit.net 00:00:03.94]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:03.97]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:03.97]       Expected: Unauthorized&#xD;
+[xUnit.net 00:00:03.97]       Actual:   NotFound&#xD;
+[xUnit.net 00:00:03.97]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.97]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs(81,0): at Norn.Business.Tests.RoomAdmissionTests.InvalidDungeon_Unauthenticated_AndDisabledFeature_AreRejected()&#xD;
+[xUnit.net 00:00:03.97]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs(85,0): at Norn.Business.Tests.RoomAdmissionTests.InvalidDungeon_Unauthenticated_AndDisabledFeature_AreRejected()&#xD;
+[xUnit.net 00:00:03.97]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:04.39]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:04.39]       Expected: Created&#xD;
+[xUnit.net 00:00:04.39]       Actual:   NotFound&#xD;
+[xUnit.net 00:00:04.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.39]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs(91,0): at Norn.Business.Tests.RoomAdmissionTests.Create(HttpClient client)&#xD;
+[xUnit.net 00:00:04.39]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs(68,0): at Norn.Business.Tests.RoomAdmissionTests.LeaderLeaveTransfersLeadership_AndRoomSurvivesBusinessRestart()&#xD;
+[xUnit.net 00:00:04.39]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs(71,0): at Norn.Business.Tests.RoomAdmissionTests.LeaderLeaveTransfersLeadership_AndRoomSurvivesBusinessRestart()&#xD;
+[xUnit.net 00:00:04.39]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.40]   Finished:    Norn.Business.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T10:33:41.9070474+08:00">
+        <Text>[xUnit.net 00:00:02.73]     Norn.Business.Tests.RoomAdmissionTests.ConcurrentLastSeat_AdmitsOnlyOnePlayer [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T10:33:42.2231358+08:00">
+        <Text>[xUnit.net 00:00:03.05]     Norn.Business.Tests.RoomAdmissionTests.FifthPlayer_IsRejected [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T10:33:42.6699978+08:00">
+        <Text>[xUnit.net 00:00:03.49]     Norn.Business.Tests.RoomAdmissionTests.MembershipChangeResetsReadiness_AndStaleRevisionCannotReady [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T10:33:43.1114893+08:00">
+        <Text>[xUnit.net 00:00:03.94]     Norn.Business.Tests.RoomAdmissionTests.CharacterCannotJoinTwoRooms_AndOutsiderCannotRead [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T10:33:43.1499542+08:00">
+        <Text>[xUnit.net 00:00:03.97]     Norn.Business.Tests.RoomAdmissionTests.InvalidDungeon_Unauthenticated_AndDisabledFeature_AreRejected [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T10:33:43.5655332+08:00">
+        <Text>[xUnit.net 00:00:04.39]     Norn.Business.Tests.RoomAdmissionTests.LeaderLeaveTransfersLeadership_AndRoomSurvivesBusinessRestart [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

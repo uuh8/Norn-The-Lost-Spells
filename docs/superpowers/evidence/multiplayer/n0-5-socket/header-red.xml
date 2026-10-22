@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-21 08:18:40Z" end-time="2026-10-21 08:18:41Z" duration="0.6491163">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2159" result="Failed" site="Child" start-time="2026-10-21 08:18:40Z" end-time="2026-10-21 08:18:41Z" duration="0.649116" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2231" name="Game.Networking.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Networking.Tests.dll" runstate="Runnable" testcasecount="33" result="Failed" site="Child" start-time="2026-10-21 08:18:40Z" end-time="2026-10-21 08:18:41Z" duration="0.549058" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25824" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2232" name="Game" fullname="Game" runstate="Runnable" testcasecount="33" result="Failed" site="Child" start-time="2026-10-21 08:18:40Z" end-time="2026-10-21 08:18:41Z" duration="0.454557" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2233" name="Networking" fullname="Game.Networking" runstate="Runnable" testcasecount="33" result="Failed" site="Child" start-time="2026-10-21 08:18:41Z" end-time="2026-10-21 08:18:41Z" duration="0.358240" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2234" name="Tests" fullname="Game.Networking.Tests" runstate="Runnable" testcasecount="33" result="Failed" site="Child" start-time="2026-10-21 08:18:41Z" end-time="2026-10-21 08:18:41Z" duration="0.260306" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2200" name="KcpHeaderTests" fullname="Game.Networking.Tests.KcpHeaderTests" classname="Game.Networking.Tests.KcpHeaderTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-21 08:18:41Z" end-time="2026-10-21 08:18:41Z" duration="0.158458" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2201" name="EveryWireByteKeepsItsOriginalMeaning" fullname="Game.Networking.Tests.KcpHeaderTests.EveryWireByteKeepsItsOriginalMeaning" methodname="EveryWireByteKeepsItsOriginalMeaning" classname="Game.Networking.Tests.KcpHeaderTests" runstate="Runnable" seed="871181886" result="Passed" start-time="2026-10-21 08:18:41Z" end-time="2026-10-21 08:18:41Z" duration="0.030315" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2202" name="ValidHeadersDoNotBoxOnTheHotPath" fullname="Game.Networking.Tests.KcpHeaderTests.ValidHeadersDoNotBoxOnTheHotPath" methodname="ValidHeadersDoNotBoxOnTheHotPath" classname="Game.Networking.Tests.KcpHeaderTests" runstate="Runnable" seed="18532918" result="Failed" start-time="2026-10-21 08:18:41Z" end-time="2026-10-21 08:18:41Z" duration="0.011559" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 0
+  But was:  16
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.KcpHeaderTests.ValidHeadersDoNotBoxOnTheHotPath () [0x00077] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\KcpHeaderTests.cs:32
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

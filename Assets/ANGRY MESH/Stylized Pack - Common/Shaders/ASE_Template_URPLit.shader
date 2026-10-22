@@ -809,9 +809,8 @@ Shader /*ase_name*/ "Hidden/ANGRYMESH/URPLit" /*end*/
 			#pragma multi_compile_fragment _ _REFLECTION_PROBE_BLENDING
 			#pragma multi_compile_fragment _ _REFLECTION_PROBE_BOX_PROJECTION
 
-			/*ase_srp_cond_begin:<140009*/
-			#pragma multi_compile_fragment _ _SHADOWS_SOFT
-            /*ase_srp_cond_end*/
+			// 本工程固定 URP 17.3；ase_srp_cond 是模板注释，Unity 不会按它过滤旧版本分支。
+			// 只保留下方完整软阴影变体集合，避免同一 Pass 重复声明 _SHADOWS_SOFT。
 
 			/*ase_srp_cond_begin:>=140009*/
 			#pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH
@@ -2937,9 +2936,8 @@ Shader /*ase_name*/ "Hidden/ANGRYMESH/URPLit" /*end*/
 			#pragma multi_compile_fragment _ _REFLECTION_PROBE_BLENDING
 			#pragma multi_compile_fragment _ _REFLECTION_PROBE_BOX_PROJECTION
 
-			/*ase_srp_cond_begin:<140009*/
-			#pragma multi_compile_fragment _ _SHADOWS_SOFT
-            /*ase_srp_cond_end*/
+			// 本工程固定 URP 17.3；ase_srp_cond 是模板注释，Unity 不会按它过滤旧版本分支。
+			// 只保留下方完整软阴影变体集合，避免同一 Pass 重复声明 _SHADOWS_SOFT。
 
 			/*ase_srp_cond_begin:>=140009*/
 			#pragma multi_compile_fragment _ _SHADOWS_SOFT _SHADOWS_SOFT_LOW _SHADOWS_SOFT_MEDIUM _SHADOWS_SOFT_HIGH

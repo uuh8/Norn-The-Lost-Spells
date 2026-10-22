@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Passed" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-22 04:00:21Z" end-time="2026-10-22 04:01:45Z" duration="83.84727">
+  <test-suite type="TestSuite" id="1897" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="817" result="Passed" start-time="2026-10-22 04:00:21Z" end-time="2026-10-22 04:01:45Z" duration="83.847270" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1890" name="Game.Run.PlayMode.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.PlayMode.Tests.dll" runstate="Runnable" testcasecount="799" result="Passed" start-time="2026-10-22 04:00:21Z" end-time="2026-10-22 04:01:45Z" duration="83.821370" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28156" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1891" name="Game" fullname="Game" runstate="Runnable" testcasecount="799" result="Passed" start-time="2026-10-22 04:00:21Z" end-time="2026-10-22 04:01:45Z" duration="83.814455" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1892" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="799" result="Passed" start-time="2026-10-22 04:00:21Z" end-time="2026-10-22 04:01:45Z" duration="83.790641" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1893" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="799" result="Passed" start-time="2026-10-22 04:00:21Z" end-time="2026-10-22 04:01:45Z" duration="83.781562" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1155" name="DungeonEntryFlowPlayModeTests" fullname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" classname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-22 04:00:21Z" end-time="2026-10-22 04:01:45Z" duration="83.758799" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1158" name="CachedLogin_BusinessUnavailable_DoesNotEnterHub" fullname="Game.Run.Tests.DungeonEntryFlowPlayModeTests.CachedLogin_BusinessUnavailable_DoesNotEnterHub" methodname="CachedLogin_BusinessUnavailable_DoesNotEnterHub" classname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" runstate="Runnable" seed="921900081" result="Passed" start-time="2026-10-22 04:00:21Z" end-time="2026-10-22 04:00:25Z" duration="3.990577" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[OnlineAccounts] 业务 Client 初始化：Ready
+[OnlineAccounts] 业务 HTTP 发起：POST /api/online/sessions
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：0 / ConnectionError
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1156" name="Login_P7ChoiceCancelMatchAndSinglePlayer_ReturnsWithSession" fullname="Game.Run.Tests.DungeonEntryFlowPlayModeTests.Login_P7ChoiceCancelMatchAndSinglePlayer_ReturnsWithSession" methodname="Login_P7ChoiceCancelMatchAndSinglePlayer_ReturnsWithSession" classname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" runstate="Runnable" seed="2030567206" result="Passed" start-time="2026-10-22 04:00:25Z" end-time="2026-10-22 04:01:09Z" duration="43.667286" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[OnlineAccounts] 业务 Client 初始化：Ready
+[OnlineAccounts] 业务 HTTP 发起：POST /api/online/sessions
+[OnlineAccounts] 业务 HTTP 完成：401 / ProtocolError
+[OnlineAccounts] 业务 HTTP 发起：POST /api/online/sessions
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[UI] Scene Transition Controller starting LoadSceneAsync('SinglePlayer_Hub').
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=True.
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+[Rendering] Grid Stable Surface Water: GC 0/92 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/92 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/92 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1157" name="Login_P8ChoiceCancelMatchAndSinglePlayer_ReturnsWithSession" fullname="Game.Run.Tests.DungeonEntryFlowPlayModeTests.Login_P8ChoiceCancelMatchAndSinglePlayer_ReturnsWithSession" methodname="Login_P8ChoiceCancelMatchAndSinglePlayer_ReturnsWithSession" classname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" runstate="Runnable" seed="1608363505" result="Passed" start-time="2026-10-22 04:01:09Z" end-time="2026-10-22 04:01:45Z" duration="36.072951" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[OnlineAccounts] 业务 Client 初始化：Ready
+[OnlineAccounts] 业务 HTTP 发起：POST /api/online/sessions
+[OnlineAccounts] 业务 HTTP 完成：401 / ProtocolError
+[OnlineAccounts] 业务 HTTP 发起：POST /api/online/sessions
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[UI] Scene Transition Controller starting LoadSceneAsync('SinglePlayer_Hub').
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=True.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[Rendering] Grid Stable Surface Water: GC 0/124 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/124 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/124 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+Saving results to: Temp/SinglePlayer/playmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

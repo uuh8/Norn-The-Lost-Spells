@@ -1,0 +1,126 @@
+{
+  "task": "N0-2",
+  "status": "implementation-and-automated-transport-validation; developer-Gate-pending",
+  "date": "2026-10-21",
+  "unity": "6000.3.16f1",
+  "mirror": "96.11.3",
+  "protobuf": "3.34.2",
+  "protoc": "34.2",
+  "unityUnsafeNuget": "6.1.2",
+  "unityPlayerUnsafeAssembly": "6.0.0.0",
+  "unityEditorSelectedUnsafeAssembly": "6.0.3.0",
+  "newProductionAssemblies": [
+    "Game.Networking",
+    "Game.Multiplayer"
+  ],
+  "pureCodecRed": {
+    "passed": 2,
+    "failed": 16
+  },
+  "pureCodecGreen": {
+    "passed": 18,
+    "failed": 0
+  },
+  "unityIsolatedEditMode": {
+    "passed": 23,
+    "failed": 0
+  },
+  "unityProjectEditMode": {
+    "passed": 23,
+    "failed": 0
+  },
+  "businessRegression": {
+    "passed": 10,
+    "failed": 0
+  },
+  "projectClientBuild": {
+    "Result": "Succeeded",
+    "UnityVersion": "6000.3.16f1",
+    "Output": "Builds/OnlineLab/Client/NornClient.exe",
+    "RecordedAtUtc": "2026-10-20T16:54:05.0605935Z",
+    "DedicatedServer": false,
+    "Errors": 0
+  },
+  "projectServerBuild": {
+    "Result": "Succeeded",
+    "UnityVersion": "6000.3.16f1",
+    "Output": "Builds/OnlineLab/Server/NornServer.exe",
+    "RecordedAtUtc": "2026-10-20T16:56:53.0148353Z",
+    "DedicatedServer": true,
+    "Errors": 1
+  },
+  "isolatedMultiProcess": {
+    "Passed": true,
+    "Scope": "Isolated same-source Windows Dedicated Server + two independent Client builds over local KCP",
+    "ServerAliveAfterClientAExit": true,
+    "ClientBAliveAfterClientAExit": true,
+    "ServerAliveAfterClientBExit": true,
+    "ClientAReplies": 6,
+    "ClientBReplies": 13,
+    "ClientBLastReplyAgeSeconds": 0.7696804000000022,
+    "RecordedAtUtc": "2026-10-20T16:48:14.3513345Z"
+  },
+  "projectMultiProcess": {
+    "Passed": true,
+    "Scope": "Original project Windows Dedicated Server + two independent Client builds over local KCP",
+    "ServerAliveAfterClientAExit": true,
+    "ClientBAliveAfterClientAExit": true,
+    "ServerAliveAfterClientBExit": true,
+    "ClientAReplies": 6,
+    "ClientBReplies": 14,
+    "ClientBLastReplyAgeSeconds": 0.27184110000000317,
+    "RecordedAtUtc": "2026-10-20T17:00:12.6475500Z"
+  },
+  "generationSha256": "af6fea6a77a3cf275a7930593be952bcd36cd27ec678943dabd07ab860204be4",
+  "sourceFingerprints": {
+    "Assets/_Project/Scripts/Networking/Protocol/ProtobufEnvelope.cs": "0e1bb4a8dadbdf8207a4d84b63f7a8e3fd09bd463669aa617df90e16855b823d",
+    "Assets/_Project/Scripts/Networking/Protocol/ProtoMessageCodec.cs": "f460575e4b1fcd86fe84bb77ab86126e81cf5245879e0ee9b8258a3846b90c7f",
+    "Assets/_Project/Scripts/Networking/Protocol/ProtoMessagePool.cs": "c5c013e82903431e0a09bee7772ab25079561ed76ae643c5bcf1c7e5943fcc6a",
+    "Assets/_Project/Scripts/Networking/Runtime/ConnectionSession.cs": "7848da28bff7fe5de2a2043e9ff015b1d2f23ef1be9c748378b868ccf73c9e61",
+    "Assets/_Project/Scripts/Networking/Runtime/NornNetworkManager.cs": "c74a10ca63411f6a75bfb21c871c81d4b94e0d4e97b7dfb7767907223d46970c",
+    "Assets/_Project/Scripts/Multiplayer/Runtime/DedicatedServerBootstrap.cs": "7a280bebab64f9fbe3c53c96b44b2c11a5cf2ac09e64132862f7acfc846d6a50",
+    "Assets/_Project/Scripts/Multiplayer/Runtime/OnlineClientBootstrap.cs": "429d750587304fc23092896e9c7312601623a164c793761eb2ae79ba87c2dd9b",
+    "Assets/_Project/Scripts/Multiplayer/Runtime/OnlineLabProbe.cs": "87a8b09c4b8b2b0b3716e6d5a312eb1bfac0f709eae0ca417073b4e12f6d907c",
+    "Assets/_Project/Scripts/Multiplayer/Runtime/OnlineNetworkProfile.cs": "c501899cc4137438198d16e8146bbf8f95a9bcc8a251887a6dad8174d1a01004",
+    "Assets/_Project/Tests/Networking/ProtobufEnvelopeTests.cs": "01f8c4e52e3e1572acea7e6a37d94cf45338383525c2c66787c0a19224af59e8",
+    "Assets/_Project/Tests/Networking/ProtoCodecTests.cs": "c9a2cc5a1c3a0c882f43d7f488d0465770da719c12356a52cd817a45058854b7",
+    "Assets/_Project/Editor/Networking/OnlineSceneSetup.cs": "96659413878c088d36d7905b47906da8b66093506d6c15139b2a1362b61f8224",
+    "Assets/_Project/Editor/Networking/OnlineBuildTools.cs": "362e26a91eef3261aa1c581024bdb562f3688be1844adeb5104b2b55e8f592d9",
+    "Assets/_Project/Editor/Networking/OnlineEditorRequests.cs": "8e5cec0f851cb2f1db4cfef76b9ed77b6e9e351fc9a8ae14f45a4615ade68dc7"
+  },
+  "knownIssues": [
+    "Original project Server BuildResult=Succeeded but totalErrors=1; existing ANGRYMESH URPLit template duplicate _SHADOWS_SOFT; source left unchanged"
+  ],
+  "notValidated": [
+    "Visible Client UI developer acceptance",
+    "Zero-error whole-project Server build",
+    "Headless Grid at 10 Hz",
+    "Gameplay Snapshot/prediction/combat",
+    "JoinTicket authentication and encryption",
+    "Linux",
+    "MySQL",
+    "Full single-player player-path regression",
+    "Profiler/GC"
+  ],
+  "subagentsUsed": false,
+  "committed": false,
+  "spawnedProbeProcessesCleanedUp": true,
+  "sharedProtocolEditorRecheck": {
+    "Status": "passed",
+    "UnityVersion": "6000.3.16f1",
+    "ProtocolAssembly": "Game.NetworkProtocol",
+    "ProtobufAssemblyVersion": "3.34.2.0",
+    "ProtocolVersion": 1,
+    "BinaryRoundTrip": true,
+    "ProtoJsonRoundTrip": true,
+    "HasUnityEngineReference": false,
+    "DedicatedServerBuildValidated": false,
+    "KcpMultiplayerValidated": false,
+    "RecordedAtUtc": "2026-10-20T17:01:48.8167216Z"
+  },
+  "automaticPluginIntegration": {
+    "projectSettings": "Only Standalone scripting define additions; existing symbols preserved",
+    "scriptTemplates": "Upstream editor moved its templates to Assets/ScriptTemplates preserving metadata",
+    "cloudServiceCreated": false
+  }
+}

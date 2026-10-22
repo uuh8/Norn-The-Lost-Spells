@@ -1,0 +1,97 @@
+{
+  "scope": "Same-source pure Codec tests on .NET 10; not Unity Editor/KCP/Profiler validation",
+  "passed": 2,
+  "failed": 16,
+  "results": [
+    {
+      "test": "UnicodeAndLargeSequence_RoundTrip",
+      "passed": false,
+      "error": "NUnit.Framework.AssertionException:   Expected: True\r\n  But was:  False\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression)\r\n   at Game.Networking.Tests.ProtoCodecTests.UnicodeAndLargeSequence_RoundTrip() in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Networking\\ProtoCodecTests.cs:line 22\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+    },
+    {
+      "test": "ProtocolVersionZero_IsRejected",
+      "passed": false,
+      "error": "NUnit.Framework.AssertionException:   Expected: VersionMismatch\r\n  But was:  MalformedPayload\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression)\r\n   at Game.Networking.Tests.ProtoCodecTests.ProtocolVersionZero_IsRejected() in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Networking\\ProtoCodecTests.cs:line 36\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+    },
+    {
+      "test": "ProtocolVersionMismatch_IsRejected",
+      "passed": false,
+      "error": "NUnit.Framework.AssertionException:   Expected: VersionMismatch\r\n  But was:  MalformedPayload\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression)\r\n   at Game.Networking.Tests.ProtoCodecTests.ProtocolVersionMismatch_IsRejected() in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Networking\\ProtoCodecTests.cs:line 44\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+    },
+    {
+      "test": "OversizedPayload_IsRejectedBeforeRenting",
+      "passed": false,
+      "error": "NUnit.Framework.AssertionException:   Expected: InvalidLength\r\n  But was:  MalformedPayload\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression)\r\n   at Game.Networking.Tests.ProtoCodecTests.OversizedPayload_IsRejectedBeforeRenting() in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Networking\\ProtoCodecTests.cs:line 54\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+    },
+    {
+      "test": "EmptyPayload_IsRejected",
+      "passed": false,
+      "error": "NUnit.Framework.AssertionException:   Expected: InvalidLength\r\n  But was:  MalformedPayload\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression)\r\n   at Game.Networking.Tests.ProtoCodecTests.EmptyPayload_IsRejected() in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Networking\\ProtoCodecTests.cs:line 64\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+    },
+    {
+      "test": "UnknownKind_IsRejected",
+      "passed": false,
+      "error": "NUnit.Framework.AssertionException:   Expected: UnknownKind\r\n  But was:  MalformedPayload\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression)\r\n   at Game.Networking.Tests.ProtoCodecTests.UnknownKind_IsRejected() in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Networking\\ProtoCodecTests.cs:line 72\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+    },
+    {
+      "test": "TruncatedPayload_IsRejectedAndReturned",
+      "passed": false,
+      "error": "NUnit.Framework.AssertionException:   Expected: True\r\n  But was:  False\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression)\r\n   at Game.Networking.Tests.ProtoCodecTests.TruncatedPayload_IsRejectedAndReturned() in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Networking\\ProtoCodecTests.cs:line 82\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+    },
+    {
+      "test": "RejectedVersion_DoesNotLeakPoolSlot",
+      "passed": false,
+      "error": "NUnit.Framework.AssertionException:   Expected: True\r\n  But was:  False\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression)\r\n   at Game.Networking.Tests.ProtoCodecTests.RejectedVersion_DoesNotLeakPoolSlot() in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Networking\\ProtoCodecTests.cs:line 91\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+    },
+    {
+      "test": "PoolExhaustion_IsExplicit",
+      "passed": false,
+      "error": "NUnit.Framework.AssertionException:   Expected: True\r\n  But was:  False\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression)\r\n   at Game.Networking.Tests.ProtoCodecTests.PoolExhaustion_IsExplicit() in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Networking\\ProtoCodecTests.cs:line 100\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+    },
+    {
+      "test": "ReusedMessage_DoesNotKeepPreviousFields",
+      "passed": false,
+      "error": "NUnit.Framework.AssertionException:   Expected: True\r\n  But was:  False\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression)\r\n   at Game.Networking.Tests.ProtoCodecTests.ReusedMessage_DoesNotKeepPreviousFields() in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Networking\\ProtoCodecTests.cs:line 114\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+    },
+    {
+      "test": "ReusedMessage_DoesNotKeepUnknownFields",
+      "passed": false,
+      "error": "NUnit.Framework.AssertionException:   Expected: True\r\n  But was:  False\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression)\r\n   at Game.Networking.Tests.ProtoCodecTests.ReusedMessage_DoesNotKeepUnknownFields() in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Networking\\ProtoCodecTests.cs:line 134\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+    },
+    {
+      "test": "OldLease_DoubleDisposeCannotReleaseNewRental",
+      "passed": false,
+      "error": "NUnit.Framework.AssertionException:   Expected: True\r\n  But was:  False\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression)\r\n   at Game.Networking.Tests.ProtoCodecTests.OldLease_DoubleDisposeCannotReleaseNewRental() in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Networking\\ProtoCodecTests.cs:line 145\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+    },
+    {
+      "test": "DisposedLease_CannotReadReusedMessage",
+      "passed": false,
+      "error": "NUnit.Framework.AssertionException:   Expected: True\r\n  But was:  False\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression)\r\n   at Game.Networking.Tests.ProtoCodecTests.DisposedLease_CannotReadReusedMessage() in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Networking\\ProtoCodecTests.cs:line 157\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+    },
+    {
+      "test": "TextBudget_IsUtf8Bytes",
+      "passed": false,
+      "error": "NUnit.Framework.AssertionException:   Expected: TextTooLong\r\n  But was:  MalformedPayload\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression)\r\n   at Game.Networking.Tests.ProtoCodecTests.TextBudget_IsUtf8Bytes() in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Networking\\ProtoCodecTests.cs:line 167\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+    },
+    {
+      "test": "Encode_UsesCallerBufferAndOffset",
+      "passed": false,
+      "error": "NUnit.Framework.AssertionException:   Expected: True\r\n  But was:  False\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression)\r\n   at Game.Networking.Tests.ProtoCodecTests.Encode_UsesCallerBufferAndOffset() in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Networking\\ProtoCodecTests.cs:line 175\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+    },
+    {
+      "test": "Encode_RejectsWrongMessageKind",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "Encode_RejectsInsufficientDestination",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "Reply_HasItsOwnResettableType",
+      "passed": false,
+      "error": "NUnit.Framework.AssertionException:   Expected: True\r\n  But was:  False\r\n\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression, String message, Object[] args)\r\n   at NUnit.Framework.Assert.That[TActual](TActual actual, IResolveConstraint expression)\r\n   at Game.Networking.Tests.ProtoCodecTests.Reply_HasItsOwnResettableType() in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Networking\\ProtoCodecTests.cs:line 200\r\n   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)\r\n   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)"
+    }
+  ]
+}

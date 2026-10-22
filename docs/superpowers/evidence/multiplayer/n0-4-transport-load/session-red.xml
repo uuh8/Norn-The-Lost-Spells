@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-21 04:11:51Z" end-time="2026-10-21 04:11:52Z" duration="0.6264527">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2153" result="Failed" site="Child" start-time="2026-10-21 04:11:51Z" end-time="2026-10-21 04:11:52Z" duration="0.626453" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2222" name="Game.Networking.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Networking.Tests.dll" runstate="Runnable" testcasecount="27" result="Failed" site="Child" start-time="2026-10-21 04:11:51Z" end-time="2026-10-21 04:11:52Z" duration="0.529164" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25824" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2223" name="Game" fullname="Game" runstate="Runnable" testcasecount="27" result="Failed" site="Child" start-time="2026-10-21 04:11:51Z" end-time="2026-10-21 04:11:52Z" duration="0.436982" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2224" name="Networking" fullname="Game.Networking" runstate="Runnable" testcasecount="27" result="Failed" site="Child" start-time="2026-10-21 04:11:51Z" end-time="2026-10-21 04:11:52Z" duration="0.336981" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2225" name="Tests" fullname="Game.Networking.Tests" runstate="Runnable" testcasecount="27" result="Failed" site="Child" start-time="2026-10-21 04:11:52Z" end-time="2026-10-21 04:11:52Z" duration="0.235865" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2192" name="ConnectionSessionTests" fullname="Game.Networking.Tests.ConnectionSessionTests" classname="Game.Networking.Tests.ConnectionSessionTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-21 04:11:52Z" end-time="2026-10-21 04:11:52Z" duration="0.133975" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2196" name="BudgetBelongsToEachConnectionAndClearDetaches" fullname="Game.Networking.Tests.ConnectionSessionTests.BudgetBelongsToEachConnectionAndClearDetaches" methodname="BudgetBelongsToEachConnectionAndClearDetaches" classname="Game.Networking.Tests.ConnectionSessionTests" runstate="Runnable" seed="1951860798" result="Failed" start-time="2026-10-21 04:11:52Z" end-time="2026-10-21 04:11:52Z" duration="0.022573" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.ConnectionSessionTests.BudgetBelongsToEachConnectionAndClearDetaches () [0x00022] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\ConnectionSessionTests.cs:48
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2193" name="CoalescedBurstIsAcceptedButCapacityIsBounded" fullname="Game.Networking.Tests.ConnectionSessionTests.CoalescedBurstIsAcceptedButCapacityIsBounded" methodname="CoalescedBurstIsAcceptedButCapacityIsBounded" classname="Game.Networking.Tests.ConnectionSessionTests" runstate="Runnable" seed="1096267690" result="Failed" start-time="2026-10-21 04:11:52Z" end-time="2026-10-21 04:11:52Z" duration="0.000811" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  同帧四包在 Burst 容量内。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.ConnectionSessionTests.CoalescedBurstIsAcceptedButCapacityIsBounded () [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\ConnectionSessionTests.cs:14
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2194" name="DuplicateDoesNotSpendAnotherToken" fullname="Game.Networking.Tests.ConnectionSessionTests.DuplicateDoesNotSpendAnotherToken" methodname="DuplicateDoesNotSpendAnotherToken" classname="Game.Networking.Tests.ConnectionSessionTests" runstate="Runnable" seed="294577669" result="Failed" start-time="2026-10-21 04:11:52Z" end-time="2026-10-21 04:11:52Z" duration="0.000553" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.ConnectionSessionTests.DuplicateDoesNotSpendAnotherToken () [0x00047] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\ConnectionSessionTests.cs:26
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2195" name="NonFiniteOrBackwardClockCannotChangeAcceptedSequence" fullname="Game.Networking.Tests.ConnectionSessionTests.NonFiniteOrBackwardClockCannotChangeAcceptedSequence" methodname="NonFiniteOrBackwardClockCannotChangeAcceptedSequence" classname="Game.Networking.Tests.ConnectionSessionTests" runstate="Runnable" seed="478196112" result="Failed" start-time="2026-10-21 04:11:52Z" end-time="2026-10-21 04:11:52Z" duration="0.000412" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.ConnectionSessionTests.NonFiniteOrBackwardClockCannotChangeAcceptedSequence () [0x0002b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\ConnectionSessionTests.cs:36
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Failed(Child)" total="7" passed="2" failed="5" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-22 01:24:06Z" end-time="2026-10-22 01:24:07Z" duration="0.6523721">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2179" result="Failed" site="Child" start-time="2026-10-22 01:24:06Z" end-time="2026-10-22 01:24:07Z" duration="0.652372" total="7" passed="2" failed="5" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3456" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="663" result="Failed" site="Child" start-time="2026-10-22 01:24:06Z" end-time="2026-10-22 01:24:07Z" duration="0.553667" total="7" passed="2" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28156" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3457" name="Game" fullname="Game" runstate="Runnable" testcasecount="663" result="Failed" site="Child" start-time="2026-10-22 01:24:06Z" end-time="2026-10-22 01:24:07Z" duration="0.459069" total="7" passed="2" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3458" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="663" result="Failed" site="Child" start-time="2026-10-22 01:24:06Z" end-time="2026-10-22 01:24:07Z" duration="0.358806" total="7" passed="2" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3459" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="663" result="Failed" site="Child" start-time="2026-10-22 01:24:07Z" end-time="2026-10-22 01:24:07Z" duration="0.259780" total="7" passed="2" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2717" name="DungeonEntryChoiceGateTests" fullname="Game.Run.Tests.DungeonEntryChoiceGateTests" classname="Game.Run.Tests.DungeonEntryChoiceGateTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-22 01:24:07Z" end-time="2026-10-22 01:24:07Z" duration="0.159420" total="7" passed="2" failed="5" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2721" name="Cancel_ReleasesOnlyChoiceAndAllowsRetry" fullname="Game.Run.Tests.DungeonEntryChoiceGateTests.Cancel_ReleasesOnlyChoiceAndAllowsRetry" methodname="Cancel_ReleasesOnlyChoiceAndAllowsRetry" classname="Game.Run.Tests.DungeonEntryChoiceGateTests" runstate="Runnable" seed="1237660578" result="Failed" start-time="2026-10-22 01:24:07Z" end-time="2026-10-22 01:24:07Z" duration="0.035878" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.DungeonEntryChoiceGateTests.Cancel_ReleasesOnlyChoiceAndAllowsRetry () [0x00062] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\DungeonEntryChoiceGateTests.cs:46
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2720" name="ForeignActorAndPortal_CannotConfirm" fullname="Game.Run.Tests.DungeonEntryChoiceGateTests.ForeignActorAndPortal_CannotConfirm" methodname="ForeignActorAndPortal_CannotConfirm" classname="Game.Run.Tests.DungeonEntryChoiceGateTests" runstate="Runnable" seed="1002385396" result="Failed" start-time="2026-10-22 01:24:07Z" end-time="2026-10-22 01:24:07Z" duration="0.001634" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.DungeonEntryChoiceGateTests.ForeignActorAndPortal_CannotConfirm () [0x00057] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\DungeonEntryChoiceGateTests.cs:41
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2724" name="LostEligibilityAndDisabledPortal_NeverEnter" fullname="Game.Run.Tests.DungeonEntryChoiceGateTests.LostEligibilityAndDisabledPortal_NeverEnter" methodname="LostEligibilityAndDisabledPortal_NeverEnter" classname="Game.Run.Tests.DungeonEntryChoiceGateTests" runstate="Runnable" seed="1926557014" result="Passed" start-time="2026-10-22 01:24:07Z" end-time="2026-10-22 01:24:07Z" duration="0.003816" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2722" name="Match_DoesNotInvokeSinglePlayerOrConsumeChoice" fullname="Game.Run.Tests.DungeonEntryChoiceGateTests.Match_DoesNotInvokeSinglePlayerOrConsumeChoice" methodname="Match_DoesNotInvokeSinglePlayerOrConsumeChoice" classname="Game.Run.Tests.DungeonEntryChoiceGateTests" runstate="Runnable" seed="1710300372" result="Failed" start-time="2026-10-22 01:24:07Z" end-time="2026-10-22 01:24:07Z" duration="0.001883" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.DungeonEntryChoiceGateTests.Match_DoesNotInvokeSinglePlayerOrConsumeChoice () [0x00030] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\DungeonEntryChoiceGateTests.cs:51
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2718" name="MissingPresentation_DoesNotPauseOrEnter" fullname="Game.Run.Tests.DungeonEntryChoiceGateTests.MissingPresentation_DoesNotPauseOrEnter" methodname="MissingPresentation_DoesNotPauseOrEnter" classname="Game.Run.Tests.DungeonEntryChoiceGateTests" runstate="Runnable" seed="914800391" result="Passed" start-time="2026-10-22 01:24:07Z" end-time="2026-10-22 01:24:07Z" duration="0.000653" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2719" name="RepeatedInteraction_OpensExactlyOneChoice" fullname="Game.Run.Tests.DungeonEntryChoiceGateTests.RepeatedInteraction_OpensExactlyOneChoice" methodname="RepeatedInteraction_OpensExactlyOneChoice" classname="Game.Run.Tests.DungeonEntryChoiceGateTests" runstate="Runnable" seed="36807556" result="Failed" start-time="2026-10-22 01:24:07Z" end-time="2026-10-22 01:24:07Z" duration="0.001235" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.DungeonEntryChoiceGateTests.RepeatedInteraction_OpensExactlyOneChoice () [0x00013] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\DungeonEntryChoiceGateTests.cs:33
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2723" name="SinglePlayer_RevalidatesAndEntersOnceAfterUnpause" fullname="Game.Run.Tests.DungeonEntryChoiceGateTests.SinglePlayer_RevalidatesAndEntersOnceAfterUnpause" methodname="SinglePlayer_RevalidatesAndEntersOnceAfterUnpause" classname="Game.Run.Tests.DungeonEntryChoiceGateTests" runstate="Runnable" seed="977004555" result="Failed" start-time="2026-10-22 01:24:07Z" end-time="2026-10-22 01:24:07Z" duration="0.000904" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.DungeonEntryChoiceGateTests.SinglePlayer_RevalidatesAndEntersOnceAfterUnpause () [0x0003b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\DungeonEntryChoiceGateTests.cs:56
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

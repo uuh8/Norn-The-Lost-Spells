@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-22 07:17:10Z" end-time="2026-10-22 07:18:48Z" duration="98.2938024">
+  <test-suite type="TestSuite" id="1899" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="819" result="Failed" site="Child" start-time="2026-10-22 07:17:10Z" end-time="2026-10-22 07:18:48Z" duration="98.293802" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1892" name="Game.Run.PlayMode.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.PlayMode.Tests.dll" runstate="Runnable" testcasecount="801" result="Failed" site="Child" start-time="2026-10-22 07:17:10Z" end-time="2026-10-22 07:18:48Z" duration="98.273746" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28156" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1893" name="Game" fullname="Game" runstate="Runnable" testcasecount="801" result="Failed" site="Child" start-time="2026-10-22 07:17:10Z" end-time="2026-10-22 07:18:48Z" duration="98.268125" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1894" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="801" result="Failed" site="Child" start-time="2026-10-22 07:17:10Z" end-time="2026-10-22 07:18:48Z" duration="98.246234" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1895" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="801" result="Failed" site="Child" start-time="2026-10-22 07:17:10Z" end-time="2026-10-22 07:18:48Z" duration="98.232531" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1155" name="DungeonEntryFlowPlayModeTests" fullname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" classname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-22 07:17:10Z" end-time="2026-10-22 07:18:48Z" duration="98.208524" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1160" name="CachedLogin_BusinessUnavailable_DoesNotEnterHub" fullname="Game.Run.Tests.DungeonEntryFlowPlayModeTests.CachedLogin_BusinessUnavailable_DoesNotEnterHub" methodname="CachedLogin_BusinessUnavailable_DoesNotEnterHub" classname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" runstate="Runnable" seed="693899032" result="Passed" start-time="2026-10-22 07:17:10Z" end-time="2026-10-22 07:17:13Z" duration="3.579897" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[OnlineAccounts] 业务 Client 初始化：Ready
+[OnlineAccounts] 业务 HTTP 发起：POST /api/online/sessions
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：0 / ConnectionError
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1156" name="Login_P7ChoiceCancelMatchAndSinglePlayer_ReturnsWithSession" fullname="Game.Run.Tests.DungeonEntryFlowPlayModeTests.Login_P7ChoiceCancelMatchAndSinglePlayer_ReturnsWithSession" methodname="Login_P7ChoiceCancelMatchAndSinglePlayer_ReturnsWithSession" classname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" runstate="Runnable" seed="1375411259" result="Passed" start-time="2026-10-22 07:17:13Z" end-time="2026-10-22 07:17:35Z" duration="22.018345" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[OnlineAccounts] 业务 Client 初始化：Ready
+[OnlineAccounts] 业务 HTTP 发起：POST /api/online/sessions
+[OnlineAccounts] 业务 HTTP 完成：401 / ProtocolError
+[OnlineAccounts] 业务 HTTP 发起：POST /api/online/sessions
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[UI] Scene Transition Controller starting LoadSceneAsync('SinglePlayer_Hub').
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=True.
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[Dungeon] P7地牢掉落已绑定四关当前敌人。
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+[Rendering] Grid Stable Surface Water: GC 0/141 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/141 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/141 frames, total 0 B, max 0 B/frame.
+]]></output>
+              </test-case>
+              <test-case id="1157" name="Login_P8ChoiceCancelMatchAndSinglePlayer_ReturnsWithSession" fullname="Game.Run.Tests.DungeonEntryFlowPlayModeTests.Login_P8ChoiceCancelMatchAndSinglePlayer_ReturnsWithSession" methodname="Login_P8ChoiceCancelMatchAndSinglePlayer_ReturnsWithSession" classname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" runstate="Runnable" seed="1656476574" result="Passed" start-time="2026-10-22 07:17:35Z" end-time="2026-10-22 07:17:58Z" duration="22.170902" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[OnlineAccounts] 业务 Client 初始化：Ready
+[OnlineAccounts] 业务 HTTP 发起：POST /api/online/sessions
+[OnlineAccounts] 业务 HTTP 完成：401 / ProtocolError
+[OnlineAccounts] 业务 HTTP 发起：POST /api/online/sessions
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[UI] Scene Transition Controller starting LoadSceneAsync('SinglePlayer_Hub').
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=True.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'FinishVertices', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel FinishVertices (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': Program 'SampleField', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel SampleField (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer divides may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': integer modulus may be much slower, try using uints if possible. at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(43) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (CellIndex) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(48) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(100) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (AddPlane) at kernel FinishVertices at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(101) (on d3d11)
+Shader warning in 'GridLiquidField(Clone)': use of potentially uninitialized variable (Field) at kernel SampleField at Assets/_Project/Art/Elemental/Compute/GridLiquidFieldCommon.hlsl(230) (on d3d11)
+[Rendering] Grid Stable Surface Water: GC 0/133 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Poison: GC 0/133 frames, total 0 B, max 0 B/frame.
+[Rendering] Grid Stable Surface Sticky: GC 0/133 frames, total 0 B, max 0 B/frame.
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=False.
+]]></output>
+              </test-case>
+              <test-case id="1158" name="PortalMatch_AuthenticatedAdmissionReconnectAndReturn_PreservesLocalHub" fullname="Game.Run.Tests.DungeonEntryFlowPlayModeTests.PortalMatch_AuthenticatedAdmissionReconnectAndReturn_PreservesLocalHub" methodname="PortalMatch_AuthenticatedAdmissionReconnectAndReturn_PreservesLocalHub" classname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" runstate="Runnable" seed="1428801783" result="Passed" start-time="2026-10-22 07:17:58Z" end-time="2026-10-22 07:18:22Z" duration="24.830311" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[OnlineAccounts] 业务 Client 初始化：Ready
+[OnlineAccounts] 业务 HTTP 发起：POST /api/online/sessions
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[UI] Scene Transition Controller starting LoadSceneAsync('SinglePlayer_Hub').
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=True.
+There can be only one active Event System.
+]]></output>
+              </test-case>
+              <test-case id="1159" name="PortalMatch_UnknownHttpOutcome_KeepsChoiceUntilCancellationConfirmed" fullname="Game.Run.Tests.DungeonEntryFlowPlayModeTests.PortalMatch_UnknownHttpOutcome_KeepsChoiceUntilCancellationConfirmed" methodname="PortalMatch_UnknownHttpOutcome_KeepsChoiceUntilCancellationConfirmed" classname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" runstate="Runnable" seed="1340448947" result="Failed" start-time="2026-10-22 07:18:22Z" end-time="2026-10-22 07:18:48Z" duration="25.581669" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  匹配结果尚未确认。请重试恢复房间，或取消并确认已退出；不会直接进入单机。
+  Expected: less than 112.47628190107571d
+  But was:  112.50674210107536d
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.DungeonEntryFlowPlayModeTests+<WaitRoomPhase>d__23.MoveNext () [0x00036] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\RunPlayMode\DungeonEntryFlowPlayModeTests.cs:165
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in .\Library\PackageCache\com.unity.test-framework@aebcb98460c6\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[UI] Scene Transition Controller 'PF_P7_SceneFade' subscribed; activeInHierarchy=True.
+[OnlineAccounts] 业务 Client 初始化：Ready
+[OnlineAccounts] 业务 HTTP 发起：POST /api/online/sessions
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[UI] Scene Transition Controller starting LoadSceneAsync('SinglePlayer_Hub').
+[UI] Scene Transition Controller 'PF_P7_SceneFade' unsubscribed; transitioning=True.
+Saving results to: Temp/SinglePlayer/playmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

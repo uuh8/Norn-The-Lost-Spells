@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="29fcdc56-8c44-413c-b093-04f618c8c7bc" name="zhy@ZHY 2026-10-22 11:11:54" runUser="ZHY\zhy" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-22T11:11:54.8152164+08:00" queuing="2026-10-22T11:11:54.8152172+08:00" start="2026-10-22T11:11:52.1238565+08:00" finish="2026-10-22T11:11:54.8241429+08:00" />
+  <TestSettings name="default" id="f881df50-a5b5-4633-9ea6-cc2e024bde3e">
+    <Deployment runDeploymentRoot="zhy_ZHY_2026-10-22_11_11_54" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="b5dadd48-db83-43c5-8261-24e6ab25eb32" testId="a5234237-f91e-31a5-f361-defb06693fbe" testName="Norn.Business.Tests.RoomLauncherTests.InvalidBuildPath_ReleasesBothMembersAssets" computerName="ZHY" duration="00:00:00.4776864" startTime="2026-10-22T11:11:54.2506098+08:00" endTime="2026-10-22T11:11:54.7150434+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b5dadd48-db83-43c5-8261-24e6ab25eb32">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(Norn.Business.Infrastructure.OnlineFailure)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at Norn.Business.Tests.RoomLauncherTests.InvalidBuildPath_ReleasesBothMembersAssets() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomLauncherTests.cs:line 20&#xD;
+   at Norn.Business.Tests.RoomLauncherTests.InvalidBuildPath_ReleasesBothMembersAssets() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomLauncherTests.cs:line 23&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at Norn.Business.Features.Rooms.RoomLauncher.StartReservedAsync(RunReservation run, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomLauncher.cs:line 7&#xD;
+   at Norn.Business.Tests.RoomLauncherTests.&lt;&gt;c__DisplayClass0_0.&lt;InvalidBuildPath_ReleasesBothMembersAssets&gt;b__0() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomLauncherTests.cs:line 20</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3f6f8acd-97a3-45bb-b3c3-edd2e1b45db8" testId="a5a459d7-73b0-5782-094e-ae6410dedf17" testName="Norn.Business.Tests.RoomLauncherTests.OccupiedUdpPort_ReleasesReservationWithoutStartingProcess" computerName="ZHY" duration="00:00:01.2300217" startTime="2026-10-22T11:11:52.9603172+08:00" endTime="2026-10-22T11:11:54.2304287+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3f6f8acd-97a3-45bb-b3c3-edd2e1b45db8">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(Norn.Business.Infrastructure.OnlineFailure)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at Norn.Business.Tests.RoomLauncherTests.OccupiedUdpPort_ReleasesReservationWithoutStartingProcess() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomLauncherTests.cs:line 32&#xD;
+   at Norn.Business.Tests.RoomLauncherTests.OccupiedUdpPort_ReleasesReservationWithoutStartingProcess() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomLauncherTests.cs:line 33&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at Norn.Business.Features.Rooms.RoomLauncher.StartReservedAsync(RunReservation run, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomLauncher.cs:line 7&#xD;
+   at Norn.Business.Tests.RoomLauncherTests.&lt;&gt;c__DisplayClass1_0.&lt;OccupiedUdpPort_ReleasesReservationWithoutStartingProcess&gt;b__0() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomLauncherTests.cs:line 32</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="806120f5-3ef5-4642-bf13-e8f91a0179d9" testId="23c55dce-c496-13e6-0329-a79ede0795e2" testName="Norn.Business.Tests.RoomLauncherTests.StartInfo_UsesLiteralArguments_HiddenWindow_AndSecretOnlyInEnvironment" computerName="ZHY" duration="00:00:00.0010891" startTime="2026-10-22T11:11:54.2490932+08:00" endTime="2026-10-22T11:11:54.2491881+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="806120f5-3ef5-4642-bf13-e8f91a0179d9">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at Norn.Business.Tests.RoomLauncherTests.StartInfo_UsesLiteralArguments_HiddenWindow_AndSecretOnlyInEnvironment() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomLauncherTests.cs:line 39&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Norn.Business.Tests.RoomLauncherTests.OccupiedUdpPort_ReleasesReservationWithoutStartingProcess" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="a5a459d7-73b0-5782-094e-ae6410dedf17">
+      <Execution id="3f6f8acd-97a3-45bb-b3c3-edd2e1b45db8" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomLauncherTests" name="OccupiedUdpPort_ReleasesReservationWithoutStartingProcess" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomLauncherTests.StartInfo_UsesLiteralArguments_HiddenWindow_AndSecretOnlyInEnvironment" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="23c55dce-c496-13e6-0329-a79ede0795e2">
+      <Execution id="806120f5-3ef5-4642-bf13-e8f91a0179d9" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomLauncherTests" name="StartInfo_UsesLiteralArguments_HiddenWindow_AndSecretOnlyInEnvironment" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomLauncherTests.InvalidBuildPath_ReleasesBothMembersAssets" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="a5234237-f91e-31a5-f361-defb06693fbe">
+      <Execution id="b5dadd48-db83-43c5-8261-24e6ab25eb32" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomLauncherTests" name="InvalidBuildPath_ReleasesBothMembersAssets" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="a5234237-f91e-31a5-f361-defb06693fbe" executionId="b5dadd48-db83-43c5-8261-24e6ab25eb32" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a5a459d7-73b0-5782-094e-ae6410dedf17" executionId="3f6f8acd-97a3-45bb-b3c3-edd2e1b45db8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="23c55dce-c496-13e6-0329-a79ede0795e2" executionId="806120f5-3ef5-4642-bf13-e8f91a0179d9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="3" executed="3" passed="0" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.13)&#xD;
+[xUnit.net 00:00:00.18]   Discovering: Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.26]   Discovered:  Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.31]   Starting:    Norn.Business.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:01.60]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:01.60]       Expected: typeof(Norn.Business.Infrastructure.OnlineFailure)&#xD;
+[xUnit.net 00:00:01.60]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:01.60]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:01.60]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.60]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomLauncherTests.cs(32,0): at Norn.Business.Tests.RoomLauncherTests.OccupiedUdpPort_ReleasesReservationWithoutStartingProcess()&#xD;
+[xUnit.net 00:00:01.60]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomLauncherTests.cs(33,0): at Norn.Business.Tests.RoomLauncherTests.OccupiedUdpPort_ReleasesReservationWithoutStartingProcess()&#xD;
+[xUnit.net 00:00:01.60]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.60]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:01.60]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomLauncher.cs(7,0): at Norn.Business.Features.Rooms.RoomLauncher.StartReservedAsync(RunReservation run, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.60]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomLauncherTests.cs(32,0): at Norn.Business.Tests.RoomLauncherTests.&lt;&gt;c__DisplayClass1_0.&lt;OccupiedUdpPort_ReleasesReservationWithoutStartingProcess&gt;b__0()&#xD;
+[xUnit.net 00:00:01.62]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:01.62]       Expected: True&#xD;
+[xUnit.net 00:00:01.62]       Actual:   False&#xD;
+[xUnit.net 00:00:01.62]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.62]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomLauncherTests.cs(39,0): at Norn.Business.Tests.RoomLauncherTests.StartInfo_UsesLiteralArguments_HiddenWindow_AndSecretOnlyInEnvironment()&#xD;
+[xUnit.net 00:00:01.62]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:01.62]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:02.08]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:02.08]       Expected: typeof(Norn.Business.Infrastructure.OnlineFailure)&#xD;
+[xUnit.net 00:00:02.08]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:02.08]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:02.08]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.08]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomLauncherTests.cs(20,0): at Norn.Business.Tests.RoomLauncherTests.InvalidBuildPath_ReleasesBothMembersAssets()&#xD;
+[xUnit.net 00:00:02.08]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomLauncherTests.cs(23,0): at Norn.Business.Tests.RoomLauncherTests.InvalidBuildPath_ReleasesBothMembersAssets()&#xD;
+[xUnit.net 00:00:02.08]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.08]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:02.08]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomLauncher.cs(7,0): at Norn.Business.Features.Rooms.RoomLauncher.StartReservedAsync(RunReservation run, CancellationToken ct)&#xD;
+[xUnit.net 00:00:02.08]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomLauncherTests.cs(20,0): at Norn.Business.Tests.RoomLauncherTests.&lt;&gt;c__DisplayClass0_0.&lt;InvalidBuildPath_ReleasesBothMembersAssets&gt;b__0()&#xD;
+[xUnit.net 00:00:02.09]   Finished:    Norn.Business.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T11:11:54.2333897+08:00">
+        <Text>[xUnit.net 00:00:01.60]     Norn.Business.Tests.RoomLauncherTests.OccupiedUdpPort_ReleasesReservationWithoutStartingProcess [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T11:11:54.2497148+08:00">
+        <Text>[xUnit.net 00:00:01.62]     Norn.Business.Tests.RoomLauncherTests.StartInfo_UsesLiteralArguments_HiddenWindow_AndSecretOnlyInEnvironment [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T11:11:54.7159906+08:00">
+        <Text>[xUnit.net 00:00:02.08]     Norn.Business.Tests.RoomLauncherTests.InvalidBuildPath_ReleasesBothMembersAssets [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

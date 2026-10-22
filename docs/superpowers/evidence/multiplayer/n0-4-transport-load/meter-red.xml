@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-21 04:25:17Z" end-time="2026-10-21 04:25:18Z" duration="0.6317433">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2154" result="Failed" site="Child" start-time="2026-10-21 04:25:17Z" end-time="2026-10-21 04:25:18Z" duration="0.631743" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2224" name="Game.Networking.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Networking.Tests.dll" runstate="Runnable" testcasecount="28" result="Failed" site="Child" start-time="2026-10-21 04:25:17Z" end-time="2026-10-21 04:25:18Z" duration="0.534602" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25824" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2225" name="Game" fullname="Game" runstate="Runnable" testcasecount="28" result="Failed" site="Child" start-time="2026-10-21 04:25:17Z" end-time="2026-10-21 04:25:18Z" duration="0.441754" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2226" name="Networking" fullname="Game.Networking" runstate="Runnable" testcasecount="28" result="Failed" site="Child" start-time="2026-10-21 04:25:17Z" end-time="2026-10-21 04:25:18Z" duration="0.342621" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2227" name="Tests" fullname="Game.Networking.Tests" runstate="Runnable" testcasecount="28" result="Failed" site="Child" start-time="2026-10-21 04:25:17Z" end-time="2026-10-21 04:25:18Z" duration="0.242725" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2192" name="CodecAllocationMeterTests" fullname="Game.Networking.Tests.CodecAllocationMeterTests" classname="Game.Networking.Tests.CodecAllocationMeterTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-21 04:25:18Z" end-time="2026-10-21 04:25:18Z" duration="0.139520" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2193" name="DetectsKnownAllocationAndEmptyScopeIsZero" fullname="Game.Networking.Tests.CodecAllocationMeterTests.DetectsKnownAllocationAndEmptyScopeIsZero" methodname="DetectsKnownAllocationAndEmptyScopeIsZero" classname="Game.Networking.Tests.CodecAllocationMeterTests" runstate="Runnable" seed="1353027692" result="Failed" start-time="2026-10-21 04:25:18Z" end-time="2026-10-21 04:25:18Z" duration="0.027055" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: greater than or equal to 1024
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.CodecAllocationMeterTests.DetectsKnownAllocationAndEmptyScopeIsZero () [0x00038] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\CodecAllocationMeterTests.cs:18
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

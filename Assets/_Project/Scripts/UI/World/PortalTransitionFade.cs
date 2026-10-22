@@ -11,11 +11,15 @@ namespace Game.UI
     {
         private CanvasGroup _group;
         private Coroutine _routine;
+        // 全局启动方法不需要 Scene 挂组件也会执行；真实 Server 不安装客户端过场 Canvas。
+        // Editor 保留原行为，便于在 Server 构建目标激活时继续检查现有单机场景。
+#if UNITY_EDITOR || !UNITY_SERVER
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Install()
         {
             var root = new GameObject("PortalTransitionFade"); DontDestroyOnLoad(root); root.AddComponent<PortalTransitionFade>();
         }
+#endif
         private void Awake()
         {
             var canvas = gameObject.AddComponent<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 32760;

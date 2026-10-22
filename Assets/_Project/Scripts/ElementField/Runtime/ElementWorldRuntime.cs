@@ -118,6 +118,9 @@ namespace Game.ElementField
 #endif
 
         public bool IsInitialized { get; private set; }
+        // 同 Assembly 的启动诊断只读配置值，不公开可被外部改写的 ScriptableObject。
+        internal float ConfiguredTickRate => _profile != null ? _profile.TickRate : 0f;
+        internal WaterSimulationMode ConfiguredWaterSimulationMode => _profile != null ? _profile.WaterSimulationMode : default;
         public Vector3 Origin => _origin;
         public float CellSize => IsInitialized ? _settings.CellSize : 0f;
         public int ChunkSize => IsInitialized ? _profile.ChunkSize : 0;

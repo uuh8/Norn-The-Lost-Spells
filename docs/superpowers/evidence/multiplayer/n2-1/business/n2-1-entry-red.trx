@@ -1,0 +1,352 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="9cdbf359-6998-4327-9e8d-7faa4cc54010" name="zhy@ZHY 2026-10-22 10:37:49" runUser="ZHY\zhy" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-22T10:37:49.9289254+08:00" queuing="2026-10-22T10:37:49.9289258+08:00" start="2026-10-22T10:37:46.3329819+08:00" finish="2026-10-22T10:37:52.2882965+08:00" />
+  <TestSettings name="default" id="87f44804-f270-4cea-89ef-7fcbe0a89572">
+    <Deployment runDeploymentRoot="zhy_ZHY_2026-10-22_10_37_49" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="64ef5a9b-fd44-4566-a58f-9454b3d58f13" testId="033eb239-7b12-2da0-c78d-335868ab63e5" testName="Norn.Business.Tests.RunEntryTests.InvalidSecondSnapshot_RollsBackWholeReservation" computerName="ZHY" duration="00:00:00.5319236" startTime="2026-10-22T10:37:49.2394114+08:00" endTime="2026-10-22T10:37:49.7704684+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="64ef5a9b-fd44-4566-a58f-9454b3d58f13">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(Norn.Business.Infrastructure.OnlineFailure)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at Norn.Business.Tests.RunEntryTests.Failure(String code, Func`1 operation) in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 137&#xD;
+   at Norn.Business.Tests.RunEntryTests.InvalidSecondSnapshot_RollsBackWholeReservation() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 131&#xD;
+   at Norn.Business.Tests.RunEntryTests.InvalidSecondSnapshot_RollsBackWholeReservation() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 134&#xD;
+   at Norn.Business.Tests.RunEntryTests.InvalidSecondSnapshot_RollsBackWholeReservation() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 134&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at Norn.Business.Features.Runs.RunEntryService.PrepareAsync(String leader, String room, UInt32 readyRevision, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunEntryService.cs:line 7&#xD;
+   at Norn.Business.Tests.RunEntryTests.&lt;&gt;c__DisplayClass7_0.&lt;InvalidSecondSnapshot_RollsBackWholeReservation&gt;b__0() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 131</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8d07748d-3e77-470e-a823-221a0d2af989" testId="f3068389-175e-25b0-a18e-847b0f2db1e9" testName="Norn.Business.Tests.RunEntryTests.AssetChangedAfterReady_DoesNotReserveAnyMember" computerName="ZHY" duration="00:00:00.5999235" startTime="2026-10-22T10:37:48.6521123+08:00" endTime="2026-10-22T10:37:49.2363868+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8d07748d-3e77-470e-a823-221a0d2af989">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(Norn.Business.Infrastructure.OnlineFailure)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at Norn.Business.Tests.RunEntryTests.Failure(String code, Func`1 operation) in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 137&#xD;
+   at Norn.Business.Tests.RunEntryTests.AssetChangedAfterReady_DoesNotReserveAnyMember() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 67&#xD;
+   at Norn.Business.Tests.RunEntryTests.AssetChangedAfterReady_DoesNotReserveAnyMember() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 70&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at Norn.Business.Features.Runs.RunEntryService.PrepareAsync(String leader, String room, UInt32 readyRevision, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunEntryService.cs:line 7&#xD;
+   at Norn.Business.Tests.RunEntryTests.&lt;&gt;c__DisplayClass3_0.&lt;AssetChangedAfterReady_DoesNotReserveAnyMember&gt;b__0() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 67</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="42697692-4176-4517-8fe7-b5f313d49bff" testId="00b4a74b-eac1-e51d-a105-49cc24f0a2ae" testName="Norn.Business.Tests.RunEntryTests.StartRequiresTwoReadyMembers_CurrentRevision_AndLeader" computerName="ZHY" duration="00:00:00.3614933" startTime="2026-10-22T10:37:50.7820419+08:00" endTime="2026-10-22T10:37:51.1443936+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="42697692-4176-4517-8fe7-b5f313d49bff">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: Exception type was not an exact match&#xD;
+Expected: typeof(Norn.Business.Infrastructure.OnlineFailure)&#xD;
+Actual:   typeof(System.NotImplementedException)&#xD;
+---- System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at Norn.Business.Tests.RunEntryTests.Failure(String code, Func`1 operation) in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 137&#xD;
+   at Norn.Business.Tests.RunEntryTests.StartRequiresTwoReadyMembers_CurrentRevision_AndLeader() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 22&#xD;
+   at Norn.Business.Tests.RunEntryTests.StartRequiresTwoReadyMembers_CurrentRevision_AndLeader() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 30&#xD;
+--- End of stack trace from previous location ---&#xD;
+----- Inner Stack Trace -----&#xD;
+   at Norn.Business.Features.Runs.RunEntryService.PrepareAsync(String leader, String room, UInt32 readyRevision, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunEntryService.cs:line 7&#xD;
+   at Norn.Business.Tests.RunEntryTests.&lt;&gt;c__DisplayClass0_0.&lt;StartRequiresTwoReadyMembers_CurrentRevision_AndLeader&gt;b__0() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 22</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="36a733d3-1b50-4b34-8525-d3acef1d5f64" testId="ca4d1bc7-db1d-0a6f-6308-202d3133f926" testName="Norn.Business.Tests.RunEntryTests.StartFailure_ReleasesOnlyMatchingEpochLease" computerName="ZHY" duration="00:00:00.4674777" startTime="2026-10-22T10:37:49.7716930+08:00" endTime="2026-10-22T10:37:50.2391004+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="36a733d3-1b50-4b34-8525-d3acef1d5f64">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at Norn.Business.Features.Runs.RunEntryService.PrepareAsync(String leader, String room, UInt32 readyRevision, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunEntryService.cs:line 7&#xD;
+   at Norn.Business.Tests.RunEntryTests.StartFailure_ReleasesOnlyMatchingEpochLease() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 77&#xD;
+   at Norn.Business.Tests.RunEntryTests.StartFailure_ReleasesOnlyMatchingEpochLease() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 91&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3fa1ba90-cf29-46f2-8097-987185048e6d" testId="84ffc6c4-ca35-a2f9-2dd0-d1ba886819cc" testName="Norn.Business.Tests.RunEntryTests.ConcurrentStart_OnlyOneRunAndTwoImmutableSnapshots" computerName="ZHY" duration="00:00:00.5407383" startTime="2026-10-22T10:37:50.2398522+08:00" endTime="2026-10-22T10:37:50.7809687+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3fa1ba90-cf29-46f2-8097-987185048e6d">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at Norn.Business.Features.Runs.RunEntryService.PrepareAsync(String leader, String room, UInt32 readyRevision, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunEntryService.cs:line 7&#xD;
+   at Norn.Business.Tests.RunEntryTests.ConcurrentStart_OnlyOneRunAndTwoImmutableSnapshots() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 37&#xD;
+   at Norn.Business.Tests.RunEntryTests.ConcurrentStart_OnlyOneRunAndTwoImmutableSnapshots() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 46&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0d2503dd-dcef-4302-b0de-4ac587da3301" testId="0db5d584-8f3e-c9d0-fac5-425949e57b52" testName="Norn.Business.Tests.RunEntryTests.ReservationSurvivesHostRestart_AndRetryDoesNotDuplicate" computerName="ZHY" duration="00:00:01.2401108" startTime="2026-10-22T10:37:47.3528642+08:00" endTime="2026-10-22T10:37:48.6305858+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0d2503dd-dcef-4302-b0de-4ac587da3301">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at Norn.Business.Features.Runs.RunEntryService.PrepareAsync(String leader, String room, UInt32 readyRevision, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunEntryService.cs:line 7&#xD;
+   at Norn.Business.Tests.RunEntryTests.ReservationSurvivesHostRestart_AndRetryDoesNotDuplicate() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 101&#xD;
+   at Norn.Business.Tests.RunEntryTests.ReservationSurvivesHostRestart_AndRetryDoesNotDuplicate() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 101&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="22ff210f-92f5-43f0-915c-ed7bc6fa949f" testId="71c1c27a-7e6a-f2b6-fb58-bbaa46887f53" testName="Norn.Business.Tests.RunEntryTests.ConcurrentInventoryMoveAndStart_NeverSnapshotWrongVersion" computerName="ZHY" duration="00:00:00.5203823" startTime="2026-10-22T10:37:51.1463170+08:00" endTime="2026-10-22T10:37:51.6667111+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="22ff210f-92f5-43f0-915c-ed7bc6fa949f">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at Norn.Business.Features.Runs.RunEntryService.PrepareAsync(String leader, String room, UInt32 readyRevision, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunEntryService.cs:line 7&#xD;
+   at Norn.Business.Tests.RunEntryTests.&lt;&gt;c__DisplayClass6_0.&lt;&lt;ConcurrentInventoryMoveAndStart_NeverSnapshotWrongVersion&gt;g__Start|0&gt;d.MoveNext() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 113&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Norn.Business.Tests.RunEntryTests.ConcurrentInventoryMoveAndStart_NeverSnapshotWrongVersion() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 115&#xD;
+   at Norn.Business.Tests.RunEntryTests.ConcurrentInventoryMoveAndStart_NeverSnapshotWrongVersion() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 122&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ca98aa83-c65d-48a3-a911-9c0f0d84a86b" testId="7f1cbd80-51e2-fcad-dd40-a726baeb1d1d" testName="Norn.Business.Tests.RunEntryTests.LeasedInventoryRejectsNewMoves_ButReturnsAlreadyCommittedReceipt" computerName="ZHY" duration="00:00:00.5138141" startTime="2026-10-22T10:37:51.6686275+08:00" endTime="2026-10-22T10:37:52.1824398+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ca98aa83-c65d-48a3-a911-9c0f0d84a86b">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at Norn.Business.Features.Runs.RunEntryService.PrepareAsync(String leader, String room, UInt32 readyRevision, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunEntryService.cs:line 7&#xD;
+   at Norn.Business.Tests.RunEntryTests.LeasedInventoryRejectsNewMoves_ButReturnsAlreadyCommittedReceipt() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 55&#xD;
+   at Norn.Business.Tests.RunEntryTests.LeasedInventoryRejectsNewMoves_ButReturnsAlreadyCommittedReceipt() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs:line 59&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Norn.Business.Tests.RunEntryTests.StartRequiresTwoReadyMembers_CurrentRevision_AndLeader" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="00b4a74b-eac1-e51d-a105-49cc24f0a2ae">
+      <Execution id="42697692-4176-4517-8fe7-b5f313d49bff" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RunEntryTests" name="StartRequiresTwoReadyMembers_CurrentRevision_AndLeader" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RunEntryTests.InvalidSecondSnapshot_RollsBackWholeReservation" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="033eb239-7b12-2da0-c78d-335868ab63e5">
+      <Execution id="64ef5a9b-fd44-4566-a58f-9454b3d58f13" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RunEntryTests" name="InvalidSecondSnapshot_RollsBackWholeReservation" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RunEntryTests.AssetChangedAfterReady_DoesNotReserveAnyMember" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="f3068389-175e-25b0-a18e-847b0f2db1e9">
+      <Execution id="8d07748d-3e77-470e-a823-221a0d2af989" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RunEntryTests" name="AssetChangedAfterReady_DoesNotReserveAnyMember" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RunEntryTests.StartFailure_ReleasesOnlyMatchingEpochLease" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="ca4d1bc7-db1d-0a6f-6308-202d3133f926">
+      <Execution id="36a733d3-1b50-4b34-8525-d3acef1d5f64" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RunEntryTests" name="StartFailure_ReleasesOnlyMatchingEpochLease" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RunEntryTests.ConcurrentStart_OnlyOneRunAndTwoImmutableSnapshots" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="84ffc6c4-ca35-a2f9-2dd0-d1ba886819cc">
+      <Execution id="3fa1ba90-cf29-46f2-8097-987185048e6d" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RunEntryTests" name="ConcurrentStart_OnlyOneRunAndTwoImmutableSnapshots" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RunEntryTests.ConcurrentInventoryMoveAndStart_NeverSnapshotWrongVersion" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="71c1c27a-7e6a-f2b6-fb58-bbaa46887f53">
+      <Execution id="22ff210f-92f5-43f0-915c-ed7bc6fa949f" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RunEntryTests" name="ConcurrentInventoryMoveAndStart_NeverSnapshotWrongVersion" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RunEntryTests.ReservationSurvivesHostRestart_AndRetryDoesNotDuplicate" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="0db5d584-8f3e-c9d0-fac5-425949e57b52">
+      <Execution id="0d2503dd-dcef-4302-b0de-4ac587da3301" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RunEntryTests" name="ReservationSurvivesHostRestart_AndRetryDoesNotDuplicate" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RunEntryTests.LeasedInventoryRejectsNewMoves_ButReturnsAlreadyCommittedReceipt" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="7f1cbd80-51e2-fcad-dd40-a726baeb1d1d">
+      <Execution id="ca98aa83-c65d-48a3-a911-9c0f0d84a86b" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RunEntryTests" name="LeasedInventoryRejectsNewMoves_ButReturnsAlreadyCommittedReceipt" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="033eb239-7b12-2da0-c78d-335868ab63e5" executionId="64ef5a9b-fd44-4566-a58f-9454b3d58f13" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f3068389-175e-25b0-a18e-847b0f2db1e9" executionId="8d07748d-3e77-470e-a823-221a0d2af989" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="00b4a74b-eac1-e51d-a105-49cc24f0a2ae" executionId="42697692-4176-4517-8fe7-b5f313d49bff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ca4d1bc7-db1d-0a6f-6308-202d3133f926" executionId="36a733d3-1b50-4b34-8525-d3acef1d5f64" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="84ffc6c4-ca35-a2f9-2dd0-d1ba886819cc" executionId="3fa1ba90-cf29-46f2-8097-987185048e6d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0db5d584-8f3e-c9d0-fac5-425949e57b52" executionId="0d2503dd-dcef-4302-b0de-4ac587da3301" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="71c1c27a-7e6a-f2b6-fb58-bbaa46887f53" executionId="22ff210f-92f5-43f0-915c-ed7bc6fa949f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7f1cbd80-51e2-fcad-dd40-a726baeb1d1d" executionId="ca98aa83-c65d-48a3-a911-9c0f0d84a86b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="8" executed="8" passed="0" failed="8" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.13)&#xD;
+[xUnit.net 00:00:00.24]   Discovering: Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.34]   Discovered:  Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.38]   Starting:    Norn.Business.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:01.69]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:01.69]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.69]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunEntryService.cs(7,0): at Norn.Business.Features.Runs.RunEntryService.PrepareAsync(String leader, String room, UInt32 readyRevision, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.69]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(101,0): at Norn.Business.Tests.RunEntryTests.ReservationSurvivesHostRestart_AndRetryDoesNotDuplicate()&#xD;
+[xUnit.net 00:00:01.69]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(101,0): at Norn.Business.Tests.RunEntryTests.ReservationSurvivesHostRestart_AndRetryDoesNotDuplicate()&#xD;
+[xUnit.net 00:00:01.69]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:02.29]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:02.29]       Expected: typeof(Norn.Business.Infrastructure.OnlineFailure)&#xD;
+[xUnit.net 00:00:02.29]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:02.29]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:02.29]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.29]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(137,0): at Norn.Business.Tests.RunEntryTests.Failure(String code, Func`1 operation)&#xD;
+[xUnit.net 00:00:02.29]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(67,0): at Norn.Business.Tests.RunEntryTests.AssetChangedAfterReady_DoesNotReserveAnyMember()&#xD;
+[xUnit.net 00:00:02.29]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(70,0): at Norn.Business.Tests.RunEntryTests.AssetChangedAfterReady_DoesNotReserveAnyMember()&#xD;
+[xUnit.net 00:00:02.29]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.29]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:02.29]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunEntryService.cs(7,0): at Norn.Business.Features.Runs.RunEntryService.PrepareAsync(String leader, String room, UInt32 readyRevision, CancellationToken ct)&#xD;
+[xUnit.net 00:00:02.29]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(67,0): at Norn.Business.Tests.RunEntryTests.&lt;&gt;c__DisplayClass3_0.&lt;AssetChangedAfterReady_DoesNotReserveAnyMember&gt;b__0()&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:02.82]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:02.82]       Expected: typeof(Norn.Business.Infrastructure.OnlineFailure)&#xD;
+[xUnit.net 00:00:02.82]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:02.82]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:02.82]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.82]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(137,0): at Norn.Business.Tests.RunEntryTests.Failure(String code, Func`1 operation)&#xD;
+[xUnit.net 00:00:02.83]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(131,0): at Norn.Business.Tests.RunEntryTests.InvalidSecondSnapshot_RollsBackWholeReservation()&#xD;
+[xUnit.net 00:00:02.83]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(134,0): at Norn.Business.Tests.RunEntryTests.InvalidSecondSnapshot_RollsBackWholeReservation()&#xD;
+[xUnit.net 00:00:02.83]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(134,0): at Norn.Business.Tests.RunEntryTests.InvalidSecondSnapshot_RollsBackWholeReservation()&#xD;
+[xUnit.net 00:00:02.83]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.83]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:02.83]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunEntryService.cs(7,0): at Norn.Business.Features.Runs.RunEntryService.PrepareAsync(String leader, String room, UInt32 readyRevision, CancellationToken ct)&#xD;
+[xUnit.net 00:00:02.83]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(131,0): at Norn.Business.Tests.RunEntryTests.&lt;&gt;c__DisplayClass7_0.&lt;InvalidSecondSnapshot_RollsBackWholeReservation&gt;b__0()&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:03.29]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:03.29]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.29]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunEntryService.cs(7,0): at Norn.Business.Features.Runs.RunEntryService.PrepareAsync(String leader, String room, UInt32 readyRevision, CancellationToken ct)&#xD;
+[xUnit.net 00:00:03.29]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(77,0): at Norn.Business.Tests.RunEntryTests.StartFailure_ReleasesOnlyMatchingEpochLease()&#xD;
+[xUnit.net 00:00:03.29]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(91,0): at Norn.Business.Tests.RunEntryTests.StartFailure_ReleasesOnlyMatchingEpochLease()&#xD;
+[xUnit.net 00:00:03.29]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:03.84]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:03.84]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.84]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunEntryService.cs(7,0): at Norn.Business.Features.Runs.RunEntryService.PrepareAsync(String leader, String room, UInt32 readyRevision, CancellationToken ct)&#xD;
+[xUnit.net 00:00:03.84]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(37,0): at Norn.Business.Tests.RunEntryTests.ConcurrentStart_OnlyOneRunAndTwoImmutableSnapshots()&#xD;
+[xUnit.net 00:00:03.84]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(46,0): at Norn.Business.Tests.RunEntryTests.ConcurrentStart_OnlyOneRunAndTwoImmutableSnapshots()&#xD;
+[xUnit.net 00:00:03.84]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:04.20]       Assert.Throws() Failure: Exception type was not an exact match&#xD;
+[xUnit.net 00:00:04.20]       Expected: typeof(Norn.Business.Infrastructure.OnlineFailure)&#xD;
+[xUnit.net 00:00:04.20]       Actual:   typeof(System.NotImplementedException)&#xD;
+[xUnit.net 00:00:04.20]       ---- System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:04.20]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.20]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(137,0): at Norn.Business.Tests.RunEntryTests.Failure(String code, Func`1 operation)&#xD;
+[xUnit.net 00:00:04.20]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(22,0): at Norn.Business.Tests.RunEntryTests.StartRequiresTwoReadyMembers_CurrentRevision_AndLeader()&#xD;
+[xUnit.net 00:00:04.20]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(30,0): at Norn.Business.Tests.RunEntryTests.StartRequiresTwoReadyMembers_CurrentRevision_AndLeader()&#xD;
+[xUnit.net 00:00:04.20]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.20]         ----- Inner Stack Trace -----&#xD;
+[xUnit.net 00:00:04.20]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunEntryService.cs(7,0): at Norn.Business.Features.Runs.RunEntryService.PrepareAsync(String leader, String room, UInt32 readyRevision, CancellationToken ct)&#xD;
+[xUnit.net 00:00:04.20]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(22,0): at Norn.Business.Tests.RunEntryTests.&lt;&gt;c__DisplayClass0_0.&lt;StartRequiresTwoReadyMembers_CurrentRevision_AndLeader&gt;b__0()&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:04.72]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:04.72]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.72]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunEntryService.cs(7,0): at Norn.Business.Features.Runs.RunEntryService.PrepareAsync(String leader, String room, UInt32 readyRevision, CancellationToken ct)&#xD;
+[xUnit.net 00:00:04.72]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(113,0): at Norn.Business.Tests.RunEntryTests.&lt;&gt;c__DisplayClass6_0.&lt;&lt;ConcurrentInventoryMoveAndStart_NeverSnapshotWrongVersion&gt;g__Start|0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:04.72]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.72]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(115,0): at Norn.Business.Tests.RunEntryTests.ConcurrentInventoryMoveAndStart_NeverSnapshotWrongVersion()&#xD;
+[xUnit.net 00:00:04.72]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(122,0): at Norn.Business.Tests.RunEntryTests.ConcurrentInventoryMoveAndStart_NeverSnapshotWrongVersion()&#xD;
+[xUnit.net 00:00:04.72]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:05.24]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:05.24]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.24]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunEntryService.cs(7,0): at Norn.Business.Features.Runs.RunEntryService.PrepareAsync(String leader, String room, UInt32 readyRevision, CancellationToken ct)&#xD;
+[xUnit.net 00:00:05.24]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(55,0): at Norn.Business.Tests.RunEntryTests.LeasedInventoryRejectsNewMoves_ButReturnsAlreadyCommittedReceipt()&#xD;
+[xUnit.net 00:00:05.24]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RunEntryTests.cs(59,0): at Norn.Business.Tests.RunEntryTests.LeasedInventoryRejectsNewMoves_ButReturnsAlreadyCommittedReceipt()&#xD;
+[xUnit.net 00:00:05.24]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:05.25]   Finished:    Norn.Business.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T10:37:48.6344974+08:00">
+        <Text>[xUnit.net 00:00:01.69]     Norn.Business.Tests.RunEntryTests.ReservationSurvivesHostRestart_AndRetryDoesNotDuplicate [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T10:37:49.2375104+08:00">
+        <Text>[xUnit.net 00:00:02.29]     Norn.Business.Tests.RunEntryTests.AssetChangedAfterReady_DoesNotReserveAnyMember [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T10:37:49.7711438+08:00">
+        <Text>[xUnit.net 00:00:02.82]     Norn.Business.Tests.RunEntryTests.InvalidSecondSnapshot_RollsBackWholeReservation [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T10:37:50.2394902+08:00">
+        <Text>[xUnit.net 00:00:03.29]     Norn.Business.Tests.RunEntryTests.StartFailure_ReleasesOnlyMatchingEpochLease [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T10:37:50.7813537+08:00">
+        <Text>[xUnit.net 00:00:03.83]     Norn.Business.Tests.RunEntryTests.ConcurrentStart_OnlyOneRunAndTwoImmutableSnapshots [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T10:37:51.1449884+08:00">
+        <Text>[xUnit.net 00:00:04.20]     Norn.Business.Tests.RunEntryTests.StartRequiresTwoReadyMembers_CurrentRevision_AndLeader [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T10:37:51.6672695+08:00">
+        <Text>[xUnit.net 00:00:04.72]     Norn.Business.Tests.RunEntryTests.ConcurrentInventoryMoveAndStart_NeverSnapshotWrongVersion [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T10:37:52.1830405+08:00">
+        <Text>[xUnit.net 00:00:05.24]     Norn.Business.Tests.RunEntryTests.LeasedInventoryRejectsNewMoves_ButReturnsAlreadyCommittedReceipt [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

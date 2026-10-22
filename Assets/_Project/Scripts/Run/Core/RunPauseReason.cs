@@ -18,6 +18,7 @@ namespace Game.Run
         Inventory = 1 << 5,
         Shop = 1 << 6,
         HubConfirmation = 1 << 7,
-        SpellResearch = 1 << 8
+        SpellResearch = 1 << 8,
+        DungeonEntryChoice = 1 << 9 // 玩法选择独立持有暂停，取消不能清掉背包/转场的其他Reason。
     }
 }

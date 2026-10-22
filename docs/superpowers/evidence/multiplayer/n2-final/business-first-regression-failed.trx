@@ -1,0 +1,980 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="9535a5d5-e3a0-4f9e-ada8-14597323c534" name="zhy@ZHY 2026-10-22 14:55:38" runUser="ZHY\zhy" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-22T14:55:38.5956154+08:00" queuing="2026-10-22T14:55:38.5956158+08:00" start="2026-10-22T14:55:37.0407210+08:00" finish="2026-10-22T14:55:44.7392110+08:00" />
+  <TestSettings name="default" id="6cef2086-fe2e-43cd-9d38-d46ad87f96ab">
+    <Deployment runDeploymentRoot="zhy_ZHY_2026-10-22_14_55_38" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="5b1eae29-e55e-46e0-9a47-87c269ef7f01" testId="c35ff9e7-fc52-9d7e-80cc-624a7d09af1c" testName="Norn.Business.Tests.FoundationEndpointsTests.Ping_OversizedBody_IsRejectedBeforeParsing" computerName="ZHY" duration="00:00:00.0023946" startTime="2026-10-22T14:55:38.5551098+08:00" endTime="2026-10-22T14:55:38.5577853+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5b1eae29-e55e-46e0-9a47-87c269ef7f01" />
+    <UnitTestResult executionId="79c73d87-c725-4e40-8cf8-177afaf0dd8c" testId="3c56bbac-4286-936d-32d6-75a8503eaabc" testName="Norn.Business.Tests.FoundationEndpointsTests.Ping_IncompatibleVersion_IsRejected(version: 0)" computerName="ZHY" duration="00:00:00.0067995" startTime="2026-10-22T14:55:38.5447290+08:00" endTime="2026-10-22T14:55:38.5518353+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="79c73d87-c725-4e40-8cf8-177afaf0dd8c" />
+    <UnitTestResult executionId="0bacb905-a8a5-41c4-8225-da1f1bbc3b60" testId="c982ec96-c1f7-6917-99cf-092308b42fdd" testName="Norn.Business.Tests.InventoryTransactionTests.ConcurrentMove_OnlyOneVersionCommits" computerName="ZHY" duration="00:00:00.5049901" startTime="2026-10-22T14:55:39.6731527+08:00" endTime="2026-10-22T14:55:40.1896197+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0bacb905-a8a5-41c4-8225-da1f1bbc3b60" />
+    <UnitTestResult executionId="83e32dcd-61cb-4fe8-85ff-55deda9beec9" testId="9a8527bf-cfac-112c-e807-77a9d80e3d60" testName="Norn.Business.Tests.RoomAdmissionTests.MembershipChangeResetsReadiness_AndStaleRevisionCannotReady" computerName="ZHY" duration="00:00:00.5803279" startTime="2026-10-22T14:55:41.3191592+08:00" endTime="2026-10-22T14:55:41.8986411+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="83e32dcd-61cb-4fe8-85ff-55deda9beec9" />
+    <UnitTestResult executionId="2007a0db-a98f-40c1-bdb2-37a5bab5d84c" testId="f3068389-175e-25b0-a18e-847b0f2db1e9" testName="Norn.Business.Tests.RunEntryTests.AssetChangedAfterReady_DoesNotReserveAnyMember" computerName="ZHY" duration="00:00:00.7475160" startTime="2026-10-22T14:55:39.7781625+08:00" endTime="2026-10-22T14:55:40.5262309+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2007a0db-a98f-40c1-bdb2-37a5bab5d84c" />
+    <UnitTestResult executionId="dbabcdf3-a714-4b29-b1a6-06f7d9b8f04c" testId="9b0dbdde-d647-49a7-ad6a-6d661d7c19d0" testName="Norn.Business.Tests.OnlineAccountsTests.WrongPasswordAndUnknownAccount_AreRejectedEqually" computerName="ZHY" duration="00:00:00.6529326" startTime="2026-10-22T14:55:39.6719307+08:00" endTime="2026-10-22T14:55:40.3310695+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dbabcdf3-a714-4b29-b1a6-06f7d9b8f04c" />
+    <UnitTestResult executionId="9cd42692-aab3-4891-9c8d-f28b6a137127" testId="3caeeac5-aa6e-237c-ef13-fac082fd2e2b" testName="Norn.Business.Tests.FoundationEndpointsTests.Liveness_RespondsWithoutClaimingDatabaseReadiness" computerName="ZHY" duration="00:00:00.0028295" startTime="2026-10-22T14:55:38.5580389+08:00" endTime="2026-10-22T14:55:38.5610178+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9cd42692-aab3-4891-9c8d-f28b6a137127" />
+    <UnitTestResult executionId="ed6e2ff3-c013-4a67-b5d5-8bab50cbbb29" testId="d75814b3-4c9e-abb5-0e73-5db98a44a438" testName="Norn.Business.Tests.OnlineAccountsTests.UsernameUnique_IgnoresCaseAndDoesNotCreateHalfProfile" computerName="ZHY" duration="00:00:01.2007464" startTime="2026-10-22T14:55:37.9223403+08:00" endTime="2026-10-22T14:55:39.1159166+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ed6e2ff3-c013-4a67-b5d5-8bab50cbbb29" />
+    <UnitTestResult executionId="06141573-8a17-4708-a34e-e6af7da208cf" testId="78b346dd-a8cf-7397-beb4-b6de06656758" testName="Norn.Business.Tests.RoomAdmissionTests.FifthPlayer_IsRejected" computerName="ZHY" duration="00:00:01.2840134" startTime="2026-10-22T14:55:40.0331622+08:00" endTime="2026-10-22T14:55:41.3178333+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="06141573-8a17-4708-a34e-e6af7da208cf" />
+    <UnitTestResult executionId="97892a18-8310-45e0-b513-c91c8abe630b" testId="25a10049-df4b-bb6d-6488-3e2185343c77" testName="Norn.Business.Tests.OnlineAccountsTests.WrongManifest_IsRejectedBeforeIssuingSession" computerName="ZHY" duration="00:00:00.4048902" startTime="2026-10-22T14:55:40.3323980+08:00" endTime="2026-10-22T14:55:40.7364211+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="97892a18-8310-45e0-b513-c91c8abe630b" />
+    <UnitTestResult executionId="326793d5-c548-4c15-be18-6cfce8f341ba" testId="c4b0c839-ca68-65f3-6591-fb939a35009a" testName="Norn.Business.Tests.OnlineProfileTests.LocalSave_IsNeverImported" computerName="ZHY" duration="00:00:00.5052168" startTime="2026-10-22T14:55:39.3270820+08:00" endTime="2026-10-22T14:55:39.8360491+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="326793d5-c548-4c15-be18-6cfce8f341ba" />
+    <UnitTestResult executionId="8770cd24-6d9b-4c0b-a854-13cc3ec28fc2" testId="0628ec2f-62dd-0d6e-94a0-d24b989fe52b" testName="Norn.Business.Tests.OnlineAccountsTests.DatabaseContainsPasswordHashAndTokenDigest_Only" computerName="ZHY" duration="00:00:00.5545684" startTime="2026-10-22T14:55:39.1161613+08:00" endTime="2026-10-22T14:55:39.6716482+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8770cd24-6d9b-4c0b-a854-13cc3ec28fc2" />
+    <UnitTestResult executionId="32c3bee0-1659-4591-8f31-fc370efc1ac9" testId="846a8d44-5d1d-878b-0bdb-42d512369bac" testName="Norn.Business.Tests.InventoryTransactionTests.OtherPlayersItem_IsNeverWritable" computerName="ZHY" duration="00:00:01.3045207" startTime="2026-10-22T14:55:37.9223960+08:00" endTime="2026-10-22T14:55:39.2230766+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="32c3bee0-1659-4591-8f31-fc370efc1ac9" />
+    <UnitTestResult executionId="1addbdc3-f5ea-4adc-8993-1e6aa9645a5b" testId="1e38dbba-2320-1f38-cdc4-02bf10ba9422" testName="Norn.Business.Tests.RoomInstanceTests.OldServerEpoch_CannotRenewOrAdmit_AndLeaseExpiryReleasesAssets" computerName="ZHY" duration="00:00:01.7052470" startTime="2026-10-22T14:55:37.9223674+08:00" endTime="2026-10-22T14:55:39.6214679+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1addbdc3-f5ea-4adc-8993-1e6aa9645a5b">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 1&#xD;
+Actual:   3</Message>
+          <StackTrace>   at Norn.Business.Tests.RoomInstanceTests.OldServerEpoch_CannotRenewOrAdmit_AndLeaseExpiryReleasesAssets() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs:line 80&#xD;
+   at Norn.Business.Tests.RoomInstanceTests.OldServerEpoch_CannotRenewOrAdmit_AndLeaseExpiryReleasesAssets() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs:line 83&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="88f6623b-5462-46d0-a4b4-3616a6885175" testId="e21f1432-be62-48dc-98ee-5c41e2e1877d" testName="Norn.Business.Tests.RoomAdmissionTests.ConcurrentLastSeat_AdmitsOnlyOnePlayer" computerName="ZHY" duration="00:00:02.1176073" startTime="2026-10-22T14:55:37.9225065+08:00" endTime="2026-10-22T14:55:40.0327795+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="88f6623b-5462-46d0-a4b4-3616a6885175" />
+    <UnitTestResult executionId="b7db00e1-70a9-4f22-be55-0adcb6466758" testId="febe8568-d933-2832-0667-c60f5ea0b4c0" testName="Norn.Business.Tests.FoundationEndpointsTests.Ping_MessageBudget_CountsUtf8BytesInsteadOfCharacters" computerName="ZHY" duration="00:00:00.0092793" startTime="2026-10-22T14:55:38.5611992+08:00" endTime="2026-10-22T14:55:38.5709193+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b7db00e1-70a9-4f22-be55-0adcb6466758" />
+    <UnitTestResult executionId="60289fd8-69d8-4264-90f7-0b8bef52f985" testId="2a409cc8-4326-5923-f7fc-7528062e9ef8" testName="Norn.Business.Tests.InventoryTransactionTests.ReusedCommandWithDifferentBody_AndStaleVersion_AreRejected" computerName="ZHY" duration="00:00:00.3477364" startTime="2026-10-22T14:55:41.4610423+08:00" endTime="2026-10-22T14:55:41.8089931+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="60289fd8-69d8-4264-90f7-0b8bef52f985" />
+    <UnitTestResult executionId="8844e442-acdc-4747-a93f-c4845ee4feaf" testId="033eb239-7b12-2da0-c78d-335868ab63e5" testName="Norn.Business.Tests.RunEntryTests.InvalidSecondSnapshot_RollsBackWholeReservation" computerName="ZHY" duration="00:00:00.6454391" startTime="2026-10-22T14:55:40.5264620+08:00" endTime="2026-10-22T14:55:41.1723286+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8844e442-acdc-4747-a93f-c4845ee4feaf" />
+    <UnitTestResult executionId="5e97caa6-be5f-42b9-be2d-55c80a673013" testId="c54116e0-544f-0d06-6def-facd21ca565c" testName="Norn.Business.Tests.InventoryTransactionTests.SqlFailureAfterLocationUpdate_RollsBackAllChanges" computerName="ZHY" duration="00:00:00.4178394" startTime="2026-10-22T14:55:40.6396227+08:00" endTime="2026-10-22T14:55:41.0579435+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5e97caa6-be5f-42b9-be2d-55c80a673013" />
+    <UnitTestResult executionId="387ee91c-0070-4f18-b80f-9f74dcab9363" testId="1b7bf223-7f24-6568-3f86-4116cdb2d073" testName="Norn.Business.Tests.InventoryTransactionTests.UnknownContent_IsRejectedWithoutChangingLocationOrVersion" computerName="ZHY" duration="00:00:00.4480374" startTime="2026-10-22T14:55:40.1900983+08:00" endTime="2026-10-22T14:55:40.6392586+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="387ee91c-0070-4f18-b80f-9f74dcab9363" />
+    <UnitTestResult executionId="ad4694ba-6cf6-400d-a72d-45a90b55a765" testId="f79abd9c-3cca-3e45-04ec-af50bead7da6" testName="Norn.Business.Tests.RoomAdmissionTests.InvalidDungeon_Unauthenticated_AndDisabledFeature_AreRejected" computerName="ZHY" duration="00:00:00.5131270" startTime="2026-10-22T14:55:42.4189270+08:00" endTime="2026-10-22T14:55:42.9321341+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ad4694ba-6cf6-400d-a72d-45a90b55a765" />
+    <UnitTestResult executionId="51069da3-a511-49b8-a3e1-b31d453684c3" testId="a93daaaf-5c55-296c-e45b-8b5b6a2e3741" testName="Norn.Business.Tests.RoomInstanceTests.ExpiredTicket_AndConcurrentConsume_ProduceAtMostOneAdmission" computerName="ZHY" duration="00:00:00.6498140" startTime="2026-10-22T14:55:41.2526045+08:00" endTime="2026-10-22T14:55:41.9026812+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="51069da3-a511-49b8-a3e1-b31d453684c3" />
+    <UnitTestResult executionId="6e6d0dea-aa47-42cc-9c22-608a443a0d48" testId="a9603600-581e-1cd0-f660-2140834a8817" testName="Norn.Business.Tests.RoomInstanceTests.ReadyRequiresSecret_ProcessIdentity_AndExactBuildManifest" computerName="ZHY" duration="00:00:00.6246939" startTime="2026-10-22T14:55:43.0549211+08:00" endTime="2026-10-22T14:55:43.6799761+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6e6d0dea-aa47-42cc-9c22-608a443a0d48" />
+    <UnitTestResult executionId="da83d817-920d-4b8d-b222-0e59e40728d4" testId="78b56a72-613a-0dfb-6cc1-e09eec38f043" testName="Norn.Business.Tests.FoundationEndpointsTests.Ping_UnsupportedContentType_IsRejected" computerName="ZHY" duration="00:00:00.3931841" startTime="2026-10-22T14:55:37.9222105+08:00" endTime="2026-10-22T14:55:38.3101443+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="da83d817-920d-4b8d-b222-0e59e40728d4" />
+    <UnitTestResult executionId="d1e53df3-0bdc-41b9-9aaa-b7c0975f9069" testId="8b7a4ac9-873e-78e0-aab0-e59677c0a527" testName="Norn.Business.Tests.InventoryTransactionTests.RepeatedCommand_ReturnsOriginalResult" computerName="ZHY" duration="00:00:00.4023906" startTime="2026-10-22T14:55:41.0581844+08:00" endTime="2026-10-22T14:55:41.4608230+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d1e53df3-0bdc-41b9-9aaa-b7c0975f9069" />
+    <UnitTestResult executionId="f1370cb0-3a94-4b16-991f-abc9606c084e" testId="a5234237-f91e-31a5-f361-defb06693fbe" testName="Norn.Business.Tests.RoomLauncherTests.InvalidBuildPath_ReleasesBothMembersAssets" computerName="ZHY" duration="00:00:00.8378522" startTime="2026-10-22T14:55:39.5035727+08:00" endTime="2026-10-22T14:55:40.3394939+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f1370cb0-3a94-4b16-991f-abc9606c084e" />
+    <UnitTestResult executionId="228453f5-eada-4e2c-83dd-9f085485b270" testId="03367a66-5e1e-c30f-489d-b4755c944d4b" testName="Norn.Business.Tests.RoomAdmissionTests.LostCreateResponse_CanRecoverCurrentRoom_AndBadManifestCannotMutate" computerName="ZHY" duration="00:00:00.3142226" startTime="2026-10-22T14:55:43.7063113+08:00" endTime="2026-10-22T14:55:44.0261903+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="228453f5-eada-4e2c-83dd-9f085485b270" />
+    <UnitTestResult executionId="0fb8e4f8-adc4-4c16-b08f-8dff6529be6f" testId="00b4a74b-eac1-e51d-a105-49cc24f0a2ae" testName="Norn.Business.Tests.RunEntryTests.StartRequiresTwoReadyMembers_CurrentRevision_AndLeader" computerName="ZHY" duration="00:00:00.4683741" startTime="2026-10-22T14:55:42.3453918+08:00" endTime="2026-10-22T14:55:42.8139819+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0fb8e4f8-adc4-4c16-b08f-8dff6529be6f" />
+    <UnitTestResult executionId="2582e2a6-ba2f-4b11-a83f-ffd905db2d8e" testId="01e331cb-e534-2e35-9701-61a7609aee43" testName="Norn.Business.Tests.FoundationEndpointsTests.Info_UsesSharedProtoJsonContract" computerName="ZHY" duration="00:00:00.1689969" startTime="2026-10-22T14:55:38.3279972+08:00" endTime="2026-10-22T14:55:38.4824405+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2582e2a6-ba2f-4b11-a83f-ffd905db2d8e" />
+    <UnitTestResult executionId="c0802ed8-3785-44ed-95d4-72855c7c417e" testId="a072b4db-d0ce-9f10-683a-65c3e33861ed" testName="Norn.Business.Tests.RoomInstanceTests.ReadyTimeout45Seconds_ReleasesOnlyThatRun" computerName="ZHY" duration="00:00:00.5095121" startTime="2026-10-22T14:55:42.5449405+08:00" endTime="2026-10-22T14:55:43.0546948+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c0802ed8-3785-44ed-95d4-72855c7c417e" />
+    <UnitTestResult executionId="de85b43f-1b55-4281-8dfa-2958393052f8" testId="a5311b69-3f69-c4f8-e10e-08e4c34f09c1" testName="Norn.Business.Tests.FoundationEndpointsTests.Ping_TruncatedWireData_IsRejected" computerName="ZHY" duration="00:00:00.0352649" startTime="2026-10-22T14:55:38.5768155+08:00" endTime="2026-10-22T14:55:38.6092265+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="de85b43f-1b55-4281-8dfa-2958393052f8" />
+    <UnitTestResult executionId="e159f029-cff2-481a-a480-eb91d2ee1d06" testId="b2de744f-26fb-5c89-e77a-d828a51c1fb9" testName="Norn.Business.Tests.OnlineAccountsTests.Profile_WithoutSession_IsUnauthorized" computerName="ZHY" duration="00:00:00.0834283" startTime="2026-10-22T14:55:41.5703880+08:00" endTime="2026-10-22T14:55:41.6541808+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e159f029-cff2-481a-a480-eb91d2ee1d06" />
+    <UnitTestResult executionId="981310bb-c6f6-425c-a713-e38719d60cec" testId="b841f808-960c-9506-b868-1c50116dbb05" testName="Norn.Business.Tests.RoomAdmissionTests.LeaderLeaveTransfersLeadership_AndRoomSurvivesBusinessRestart" computerName="ZHY" duration="00:00:00.7736472" startTime="2026-10-22T14:55:42.9323274+08:00" endTime="2026-10-22T14:55:43.7061255+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="981310bb-c6f6-425c-a713-e38719d60cec" />
+    <UnitTestResult executionId="8175180e-f8b9-4eef-ac93-2d4d1d99de76" testId="4e10c2a9-ac39-d6a6-32a5-9ccc1475d713" testName="Norn.Business.Tests.FoundationEndpointsTests.Ping_UnknownContentLength_StillEnforcesBodyBudget" computerName="ZHY" duration="00:00:00.0448072" startTime="2026-10-22T14:55:38.4840169+08:00" endTime="2026-10-22T14:55:38.5287854+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8175180e-f8b9-4eef-ac93-2d4d1d99de76" />
+    <UnitTestResult executionId="3b99e6f7-3d0a-405a-8a65-90a728d41b0a" testId="de97ef4d-4bc6-2056-28e2-0b435b6144fe" testName="Norn.Business.Tests.RoomMatchmakingTests.PresenceKeepsMember_StaleLeaderExpiresWithoutReleasingRunAssets" computerName="ZHY" duration="00:00:01.6865447" startTime="2026-10-22T14:55:37.9224537+08:00" endTime="2026-10-22T14:55:39.6015523+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3b99e6f7-3d0a-405a-8a65-90a728d41b0a" />
+    <UnitTestResult executionId="e597cfa8-93e8-44a9-9ac4-e0dd370a4b90" testId="9d1fc671-fe56-f62b-e471-99630bbffcaa" testName="Norn.Business.Tests.OnlineAccountsTests.AuthenticationRequests_AreRateLimitedWithoutUnboundedUsernameBuckets" computerName="ZHY" duration="00:00:00.3380900" startTime="2026-10-22T14:55:41.2318837+08:00" endTime="2026-10-22T14:55:41.5701383+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e597cfa8-93e8-44a9-9ac4-e0dd370a4b90" />
+    <UnitTestResult executionId="dab2ec20-3789-4668-9ac5-81425bf22dad" testId="5f1ca0a8-1d93-338a-e9b9-9bed8d95baa2" testName="Norn.Business.Tests.InventoryTransactionTests.OccupiedSlot_RejectsWithoutConsumingVersion" computerName="ZHY" duration="00:00:00.4476643" startTime="2026-10-22T14:55:39.2235043+08:00" endTime="2026-10-22T14:55:39.6720031+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dab2ec20-3789-4668-9ac5-81425bf22dad" />
+    <UnitTestResult executionId="684b9c19-9b5f-4fd2-a195-e9fa3975ffc0" testId="7f1cbd80-51e2-fcad-dd40-a726baeb1d1d" testName="Norn.Business.Tests.RunEntryTests.LeasedInventoryRejectsNewMoves_ButReturnsAlreadyCommittedReceipt" computerName="ZHY" duration="00:00:00.5312478" startTime="2026-10-22T14:55:44.1333085+08:00" endTime="2026-10-22T14:55:44.6647731+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="684b9c19-9b5f-4fd2-a195-e9fa3975ffc0" />
+    <UnitTestResult executionId="797c2ba0-7ab4-4d32-9ec3-6831d2500589" testId="52e2d790-51de-2939-67a3-0aed41877abe" testName="Norn.Business.Tests.RoomInstanceTests.DuplicateAllocation_OnlyOnePort_AndTicketRequiresReady" computerName="ZHY" duration="00:00:00.7260723" startTime="2026-10-22T14:55:40.5258410+08:00" endTime="2026-10-22T14:55:41.2523353+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="797c2ba0-7ab4-4d32-9ec3-6831d2500589" />
+    <UnitTestResult executionId="b7a20542-69c9-41be-bc52-00456e096722" testId="0db5d584-8f3e-c9d0-fac5-425949e57b52" testName="Norn.Business.Tests.RunEntryTests.ReservationSurvivesHostRestart_AndRetryDoesNotDuplicate" computerName="ZHY" duration="00:00:01.8591147" startTime="2026-10-22T14:55:37.9224817+08:00" endTime="2026-10-22T14:55:39.7777578+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b7a20542-69c9-41be-bc52-00456e096722" />
+    <UnitTestResult executionId="a92a7b6c-b966-428b-a5cf-7c6544e5cfd6" testId="9fcc7762-6973-db1b-d18d-34f10a135c68" testName="Norn.Business.Tests.FoundationEndpointsTests.Ping_RoundTrip_PreservesUnicodeAndLargeSequence" computerName="ZHY" duration="00:00:00.0153863" startTime="2026-10-22T14:55:38.5291006+08:00" endTime="2026-10-22T14:55:38.5445010+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a92a7b6c-b966-428b-a5cf-7c6544e5cfd6" />
+    <UnitTestResult executionId="089fc995-a685-4def-a8a5-2eca429f134f" testId="46c05a0b-42fa-ed06-5f0e-c01c51815765" testName="Norn.Business.Tests.RunEntryTests.FourReadyMembers_ReserveExactlyFourSnapshotsAndLeases" computerName="ZHY" duration="00:00:00.7857417" startTime="2026-10-22T14:55:43.3483930+08:00" endTime="2026-10-22T14:55:44.1330008+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="089fc995-a685-4def-a8a5-2eca429f134f" />
+    <UnitTestResult executionId="ddae7a93-5a19-4c69-a044-954578e27d49" testId="ca4d1bc7-db1d-0a6f-6308-202d3133f926" testName="Norn.Business.Tests.RunEntryTests.StartFailure_ReleasesOnlyMatchingEpochLease" computerName="ZHY" duration="00:00:00.6231451" startTime="2026-10-22T14:55:41.1726208+08:00" endTime="2026-10-22T14:55:41.7959427+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ddae7a93-5a19-4c69-a044-954578e27d49" />
+    <UnitTestResult executionId="64fb74fe-0a73-4a5b-9ad8-9dd2b4adaf10" testId="c63d2696-8ca7-884e-c0a0-2f01beca02f5" testName="Norn.Business.Tests.OnlineProfileTests.NewBusinessHost_ReadsSamePersistentProfile" computerName="ZHY" duration="00:00:01.4120877" startTime="2026-10-22T14:55:37.9223009+08:00" endTime="2026-10-22T14:55:39.3268320+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="64fb74fe-0a73-4a5b-9ad8-9dd2b4adaf10" />
+    <UnitTestResult executionId="905852b3-fc29-40c0-b88f-c093f88c3ddf" testId="7cf56fa2-8c06-768d-a42c-89903e833266" testName="Norn.Business.Tests.RoomMatchmakingTests.MatchRejectsForeignDungeonAndAnonymous_AndReturnsCurrentRunningRoom" computerName="ZHY" duration="00:00:00.5441774" startTime="2026-10-22T14:55:39.6018504+08:00" endTime="2026-10-22T14:55:40.1480362+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="905852b3-fc29-40c0-b88f-c093f88c3ddf" />
+    <UnitTestResult executionId="794a51db-6c63-4776-9814-87c8b2426bc6" testId="23c55dce-c496-13e6-0329-a79ede0795e2" testName="Norn.Business.Tests.RoomLauncherTests.StartInfo_UsesLiteralArguments_HiddenWindow_AndSecretOnlyInEnvironment" computerName="ZHY" duration="00:00:00.0079804" startTime="2026-10-22T14:55:39.5023454+08:00" endTime="2026-10-22T14:55:39.5024164+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="794a51db-6c63-4776-9814-87c8b2426bc6" />
+    <UnitTestResult executionId="bc3e5f1c-8e45-40a8-809d-9891dd2d2bf9" testId="84ffc6c4-ca35-a2f9-2dd0-d1ba886819cc" testName="Norn.Business.Tests.RunEntryTests.ConcurrentStart_OnlyOneRunAndTwoImmutableSnapshots" computerName="ZHY" duration="00:00:00.5486782" startTime="2026-10-22T14:55:41.7962143+08:00" endTime="2026-10-22T14:55:42.3451336+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bc3e5f1c-8e45-40a8-809d-9891dd2d2bf9" />
+    <UnitTestResult executionId="5db8888e-76ca-43ba-94c2-052c4bd2956a" testId="a5a459d7-73b0-5782-094e-ae6410dedf17" testName="Norn.Business.Tests.RoomLauncherTests.OccupiedUdpPort_ReleasesReservationWithoutStartingProcess" computerName="ZHY" duration="00:00:01.5719999" startTime="2026-10-22T14:55:37.9224174+08:00" endTime="2026-10-22T14:55:39.4937560+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5db8888e-76ca-43ba-94c2-052c4bd2956a">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+           ↓ (pos 0)&#xD;
+Expected: "PortUnavailable"&#xD;
+Actual:   "InstanceCapacity"&#xD;
+           ↑ (pos 0)</Message>
+          <StackTrace>   at Norn.Business.Tests.RoomLauncherTests.OccupiedUdpPort_ReleasesReservationWithoutStartingProcess() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomLauncherTests.cs:line 32&#xD;
+   at Norn.Business.Tests.RoomLauncherTests.OccupiedUdpPort_ReleasesReservationWithoutStartingProcess() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomLauncherTests.cs:line 33&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="8561e5b9-54e5-4734-b42a-4189b2fb13b4" testId="40d78026-d2bc-69a9-eb55-2e9b747ff4bf" testName="Norn.Business.Tests.JoinTicketBudgetTests.ConsumedTicketHistoryStaysOnePerMember_AndOldTicketStillRejected" computerName="ZHY" duration="00:00:01.0423407" startTime="2026-10-22T14:55:39.5841136+08:00" endTime="2026-10-22T14:55:40.6276143+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8561e5b9-54e5-4734-b42a-4189b2fb13b4" />
+    <UnitTestResult executionId="8dcac3dd-3907-4874-9c97-a19a937f350c" testId="55a17c57-9303-0199-27b6-906bfe9efbf7" testName="Norn.Business.Tests.OnlineAccountsTests.ExpiredAndRevokedSession_CannotReadProfile" computerName="ZHY" duration="00:00:00.4947540" startTime="2026-10-22T14:55:40.7376432+08:00" endTime="2026-10-22T14:55:41.2316135+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8dcac3dd-3907-4874-9c97-a19a937f350c" />
+    <UnitTestResult executionId="90205112-a640-46ff-a557-f77c60fb53c2" testId="0200210e-f015-2135-063d-318da3bf7619" testName="Norn.Business.Tests.RoomInstanceTests.NewBusinessHost_RecognizesSameReadyInstance_AndRenews" computerName="ZHY" duration="00:00:00.6415466" startTime="2026-10-22T14:55:41.9041391+08:00" endTime="2026-10-22T14:55:42.5446639+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="90205112-a640-46ff-a557-f77c60fb53c2" />
+    <UnitTestResult executionId="b01ea17a-6f63-4440-b354-168927f19aac" testId="1fb188fc-990e-eb22-d54f-e948f6cb3fb5" testName="Norn.Business.Tests.RoomAdmissionTests.CharacterCannotJoinTwoRooms_AndOutsiderCannotRead" computerName="ZHY" duration="00:00:00.5038167" startTime="2026-10-22T14:55:41.8989005+08:00" endTime="2026-10-22T14:55:42.4186334+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b01ea17a-6f63-4440-b354-168927f19aac" />
+    <UnitTestResult executionId="6b459a61-abc2-4a23-be59-0d2bd6d7469d" testId="a47680d0-ac17-d42c-7340-e353c038d60e" testName="Norn.Business.Tests.RoomInstanceTests.JoinTicket_CannotBeReplayedForAnotherActor" computerName="ZHY" duration="00:00:00.9036549" startTime="2026-10-22T14:55:39.6224533+08:00" endTime="2026-10-22T14:55:40.5255621+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6b459a61-abc2-4a23-be59-0d2bd6d7469d" />
+    <UnitTestResult executionId="9c6a9315-cbfb-40a5-a224-9064b489f78c" testId="d784910c-6adc-ca4f-7214-4fda5a88e595" testName="Norn.Business.Tests.FoundationEndpointsTests.Ping_IncompatibleVersion_IsRejected(version: 2)" computerName="ZHY" duration="00:00:00.0025468" startTime="2026-10-22T14:55:38.5520243+08:00" endTime="2026-10-22T14:55:38.5548457+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9c6a9315-cbfb-40a5-a224-9064b489f78c" />
+    <UnitTestResult executionId="13f2e1f7-445f-439c-b06c-e71581939ea9" testId="4443fb17-51be-9463-034e-de11dafcfdcd" testName="Norn.Business.Tests.RoomMatchmakingTests.ConcurrentMatch_FourSeatsAndFifthNewRoom_RetryDoesNotDuplicate" computerName="ZHY" duration="00:00:01.2828059" startTime="2026-10-22T14:55:40.1487312+08:00" endTime="2026-10-22T14:55:41.4320856+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="13f2e1f7-445f-439c-b06c-e71581939ea9" />
+    <UnitTestResult executionId="8cec02b0-38e5-4feb-9466-ef22a9aeea7a" testId="71c1c27a-7e6a-f2b6-fb58-bbaa46887f53" testName="Norn.Business.Tests.RunEntryTests.ConcurrentInventoryMoveAndStart_NeverSnapshotWrongVersion" computerName="ZHY" duration="00:00:00.5323497" startTime="2026-10-22T14:55:42.8142225+08:00" endTime="2026-10-22T14:55:43.3468600+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8cec02b0-38e5-4feb-9466-ef22a9aeea7a" />
+    <UnitTestResult executionId="574ffcf1-d3b6-43ae-8484-5c4864aee271" testId="0e96ea6f-8477-65dc-5382-3a6500c3d81a" testName="Norn.Business.Tests.JoinTicketBudgetTests.MintIsPersistentlyThrottled_AndExpiredBudgetCanRetry" computerName="ZHY" duration="00:00:01.6691548" startTime="2026-10-22T14:55:37.9197708+08:00" endTime="2026-10-22T14:55:39.5838869+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="574ffcf1-d3b6-43ae-8484-5c4864aee271" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Norn.Business.Tests.OnlineAccountsTests.Profile_WithoutSession_IsUnauthorized" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="b2de744f-26fb-5c89-e77a-d828a51c1fb9">
+      <Execution id="e159f029-cff2-481a-a480-eb91d2ee1d06" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OnlineAccountsTests" name="Profile_WithoutSession_IsUnauthorized" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RunEntryTests.ConcurrentStart_OnlyOneRunAndTwoImmutableSnapshots" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="84ffc6c4-ca35-a2f9-2dd0-d1ba886819cc">
+      <Execution id="bc3e5f1c-8e45-40a8-809d-9891dd2d2bf9" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RunEntryTests" name="ConcurrentStart_OnlyOneRunAndTwoImmutableSnapshots" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.InventoryTransactionTests.ConcurrentMove_OnlyOneVersionCommits" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="c982ec96-c1f7-6917-99cf-092308b42fdd">
+      <Execution id="0bacb905-a8a5-41c4-8225-da1f1bbc3b60" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.InventoryTransactionTests" name="ConcurrentMove_OnlyOneVersionCommits" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.FoundationEndpointsTests.Ping_UnsupportedContentType_IsRejected" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="78b56a72-613a-0dfb-6cc1-e09eec38f043">
+      <Execution id="da83d817-920d-4b8d-b222-0e59e40728d4" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.FoundationEndpointsTests" name="Ping_UnsupportedContentType_IsRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OnlineProfileTests.NewBusinessHost_ReadsSamePersistentProfile" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="c63d2696-8ca7-884e-c0a0-2f01beca02f5">
+      <Execution id="64fb74fe-0a73-4a5b-9ad8-9dd2b4adaf10" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OnlineProfileTests" name="NewBusinessHost_ReadsSamePersistentProfile" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomAdmissionTests.FifthPlayer_IsRejected" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="78b346dd-a8cf-7397-beb4-b6de06656758">
+      <Execution id="06141573-8a17-4708-a34e-e6af7da208cf" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomAdmissionTests" name="FifthPlayer_IsRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OnlineAccountsTests.DatabaseContainsPasswordHashAndTokenDigest_Only" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="0628ec2f-62dd-0d6e-94a0-d24b989fe52b">
+      <Execution id="8770cd24-6d9b-4c0b-a854-13cc3ec28fc2" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OnlineAccountsTests" name="DatabaseContainsPasswordHashAndTokenDigest_Only" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomMatchmakingTests.MatchRejectsForeignDungeonAndAnonymous_AndReturnsCurrentRunningRoom" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="7cf56fa2-8c06-768d-a42c-89903e833266">
+      <Execution id="905852b3-fc29-40c0-b88f-c093f88c3ddf" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomMatchmakingTests" name="MatchRejectsForeignDungeonAndAnonymous_AndReturnsCurrentRunningRoom" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomAdmissionTests.LostCreateResponse_CanRecoverCurrentRoom_AndBadManifestCannotMutate" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="03367a66-5e1e-c30f-489d-b4755c944d4b">
+      <Execution id="228453f5-eada-4e2c-83dd-9f085485b270" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomAdmissionTests" name="LostCreateResponse_CanRecoverCurrentRoom_AndBadManifestCannotMutate" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.InventoryTransactionTests.ReusedCommandWithDifferentBody_AndStaleVersion_AreRejected" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="2a409cc8-4326-5923-f7fc-7528062e9ef8">
+      <Execution id="60289fd8-69d8-4264-90f7-0b8bef52f985" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.InventoryTransactionTests" name="ReusedCommandWithDifferentBody_AndStaleVersion_AreRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.InventoryTransactionTests.RepeatedCommand_ReturnsOriginalResult" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="8b7a4ac9-873e-78e0-aab0-e59677c0a527">
+      <Execution id="d1e53df3-0bdc-41b9-9aaa-b7c0975f9069" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.InventoryTransactionTests" name="RepeatedCommand_ReturnsOriginalResult" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RunEntryTests.AssetChangedAfterReady_DoesNotReserveAnyMember" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="f3068389-175e-25b0-a18e-847b0f2db1e9">
+      <Execution id="2007a0db-a98f-40c1-bdb2-37a5bab5d84c" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RunEntryTests" name="AssetChangedAfterReady_DoesNotReserveAnyMember" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomInstanceTests.JoinTicket_CannotBeReplayedForAnotherActor" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="a47680d0-ac17-d42c-7340-e353c038d60e">
+      <Execution id="6b459a61-abc2-4a23-be59-0d2bd6d7469d" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomInstanceTests" name="JoinTicket_CannotBeReplayedForAnotherActor" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomInstanceTests.ReadyRequiresSecret_ProcessIdentity_AndExactBuildManifest" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="a9603600-581e-1cd0-f660-2140834a8817">
+      <Execution id="6e6d0dea-aa47-42cc-9c22-608a443a0d48" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomInstanceTests" name="ReadyRequiresSecret_ProcessIdentity_AndExactBuildManifest" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.FoundationEndpointsTests.Ping_RoundTrip_PreservesUnicodeAndLargeSequence" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="9fcc7762-6973-db1b-d18d-34f10a135c68">
+      <Execution id="a92a7b6c-b966-428b-a5cf-7c6544e5cfd6" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.FoundationEndpointsTests" name="Ping_RoundTrip_PreservesUnicodeAndLargeSequence" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomLauncherTests.InvalidBuildPath_ReleasesBothMembersAssets" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="a5234237-f91e-31a5-f361-defb06693fbe">
+      <Execution id="f1370cb0-3a94-4b16-991f-abc9606c084e" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomLauncherTests" name="InvalidBuildPath_ReleasesBothMembersAssets" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.InventoryTransactionTests.OtherPlayersItem_IsNeverWritable" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="846a8d44-5d1d-878b-0bdb-42d512369bac">
+      <Execution id="32c3bee0-1659-4591-8f31-fc370efc1ac9" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.InventoryTransactionTests" name="OtherPlayersItem_IsNeverWritable" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.InventoryTransactionTests.UnknownContent_IsRejectedWithoutChangingLocationOrVersion" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="1b7bf223-7f24-6568-3f86-4116cdb2d073">
+      <Execution id="387ee91c-0070-4f18-b80f-9f74dcab9363" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.InventoryTransactionTests" name="UnknownContent_IsRejectedWithoutChangingLocationOrVersion" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomInstanceTests.OldServerEpoch_CannotRenewOrAdmit_AndLeaseExpiryReleasesAssets" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="1e38dbba-2320-1f38-cdc4-02bf10ba9422">
+      <Execution id="1addbdc3-f5ea-4adc-8993-1e6aa9645a5b" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomInstanceTests" name="OldServerEpoch_CannotRenewOrAdmit_AndLeaseExpiryReleasesAssets" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomMatchmakingTests.ConcurrentMatch_FourSeatsAndFifthNewRoom_RetryDoesNotDuplicate" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="4443fb17-51be-9463-034e-de11dafcfdcd">
+      <Execution id="13f2e1f7-445f-439c-b06c-e71581939ea9" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomMatchmakingTests" name="ConcurrentMatch_FourSeatsAndFifthNewRoom_RetryDoesNotDuplicate" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.InventoryTransactionTests.OccupiedSlot_RejectsWithoutConsumingVersion" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="5f1ca0a8-1d93-338a-e9b9-9bed8d95baa2">
+      <Execution id="dab2ec20-3789-4668-9ac5-81425bf22dad" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.InventoryTransactionTests" name="OccupiedSlot_RejectsWithoutConsumingVersion" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RunEntryTests.ConcurrentInventoryMoveAndStart_NeverSnapshotWrongVersion" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="71c1c27a-7e6a-f2b6-fb58-bbaa46887f53">
+      <Execution id="8cec02b0-38e5-4feb-9466-ef22a9aeea7a" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RunEntryTests" name="ConcurrentInventoryMoveAndStart_NeverSnapshotWrongVersion" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.FoundationEndpointsTests.Liveness_RespondsWithoutClaimingDatabaseReadiness" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="3caeeac5-aa6e-237c-ef13-fac082fd2e2b">
+      <Execution id="9cd42692-aab3-4891-9c8d-f28b6a137127" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.FoundationEndpointsTests" name="Liveness_RespondsWithoutClaimingDatabaseReadiness" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.FoundationEndpointsTests.Ping_UnknownContentLength_StillEnforcesBodyBudget" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="4e10c2a9-ac39-d6a6-32a5-9ccc1475d713">
+      <Execution id="8175180e-f8b9-4eef-ac93-2d4d1d99de76" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.FoundationEndpointsTests" name="Ping_UnknownContentLength_StillEnforcesBodyBudget" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RunEntryTests.StartFailure_ReleasesOnlyMatchingEpochLease" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="ca4d1bc7-db1d-0a6f-6308-202d3133f926">
+      <Execution id="ddae7a93-5a19-4c69-a044-954578e27d49" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RunEntryTests" name="StartFailure_ReleasesOnlyMatchingEpochLease" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.FoundationEndpointsTests.Ping_OversizedBody_IsRejectedBeforeParsing" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="c35ff9e7-fc52-9d7e-80cc-624a7d09af1c">
+      <Execution id="5b1eae29-e55e-46e0-9a47-87c269ef7f01" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.FoundationEndpointsTests" name="Ping_OversizedBody_IsRejectedBeforeParsing" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OnlineAccountsTests.AuthenticationRequests_AreRateLimitedWithoutUnboundedUsernameBuckets" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="9d1fc671-fe56-f62b-e471-99630bbffcaa">
+      <Execution id="e597cfa8-93e8-44a9-9ac4-e0dd370a4b90" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OnlineAccountsTests" name="AuthenticationRequests_AreRateLimitedWithoutUnboundedUsernameBuckets" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OnlineAccountsTests.UsernameUnique_IgnoresCaseAndDoesNotCreateHalfProfile" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="d75814b3-4c9e-abb5-0e73-5db98a44a438">
+      <Execution id="ed6e2ff3-c013-4a67-b5d5-8bab50cbbb29" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OnlineAccountsTests" name="UsernameUnique_IgnoresCaseAndDoesNotCreateHalfProfile" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RunEntryTests.StartRequiresTwoReadyMembers_CurrentRevision_AndLeader" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="00b4a74b-eac1-e51d-a105-49cc24f0a2ae">
+      <Execution id="0fb8e4f8-adc4-4c16-b08f-8dff6529be6f" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RunEntryTests" name="StartRequiresTwoReadyMembers_CurrentRevision_AndLeader" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomLauncherTests.StartInfo_UsesLiteralArguments_HiddenWindow_AndSecretOnlyInEnvironment" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="23c55dce-c496-13e6-0329-a79ede0795e2">
+      <Execution id="794a51db-6c63-4776-9814-87c8b2426bc6" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomLauncherTests" name="StartInfo_UsesLiteralArguments_HiddenWindow_AndSecretOnlyInEnvironment" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomLauncherTests.OccupiedUdpPort_ReleasesReservationWithoutStartingProcess" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="a5a459d7-73b0-5782-094e-ae6410dedf17">
+      <Execution id="5db8888e-76ca-43ba-94c2-052c4bd2956a" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomLauncherTests" name="OccupiedUdpPort_ReleasesReservationWithoutStartingProcess" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OnlineAccountsTests.WrongManifest_IsRejectedBeforeIssuingSession" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="25a10049-df4b-bb6d-6488-3e2185343c77">
+      <Execution id="97892a18-8310-45e0-b513-c91c8abe630b" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OnlineAccountsTests" name="WrongManifest_IsRejectedBeforeIssuingSession" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OnlineProfileTests.LocalSave_IsNeverImported" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="c4b0c839-ca68-65f3-6591-fb939a35009a">
+      <Execution id="326793d5-c548-4c15-be18-6cfce8f341ba" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OnlineProfileTests" name="LocalSave_IsNeverImported" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OnlineAccountsTests.ExpiredAndRevokedSession_CannotReadProfile" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="55a17c57-9303-0199-27b6-906bfe9efbf7">
+      <Execution id="8dcac3dd-3907-4874-9c97-a19a937f350c" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OnlineAccountsTests" name="ExpiredAndRevokedSession_CannotReadProfile" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.FoundationEndpointsTests.Info_UsesSharedProtoJsonContract" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="01e331cb-e534-2e35-9701-61a7609aee43">
+      <Execution id="2582e2a6-ba2f-4b11-a83f-ffd905db2d8e" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.FoundationEndpointsTests" name="Info_UsesSharedProtoJsonContract" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RunEntryTests.ReservationSurvivesHostRestart_AndRetryDoesNotDuplicate" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="0db5d584-8f3e-c9d0-fac5-425949e57b52">
+      <Execution id="b7a20542-69c9-41be-bc52-00456e096722" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RunEntryTests" name="ReservationSurvivesHostRestart_AndRetryDoesNotDuplicate" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RunEntryTests.InvalidSecondSnapshot_RollsBackWholeReservation" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="033eb239-7b12-2da0-c78d-335868ab63e5">
+      <Execution id="8844e442-acdc-4747-a93f-c4845ee4feaf" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RunEntryTests" name="InvalidSecondSnapshot_RollsBackWholeReservation" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomAdmissionTests.ConcurrentLastSeat_AdmitsOnlyOnePlayer" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="e21f1432-be62-48dc-98ee-5c41e2e1877d">
+      <Execution id="88f6623b-5462-46d0-a4b4-3616a6885175" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomAdmissionTests" name="ConcurrentLastSeat_AdmitsOnlyOnePlayer" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.FoundationEndpointsTests.Ping_TruncatedWireData_IsRejected" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="a5311b69-3f69-c4f8-e10e-08e4c34f09c1">
+      <Execution id="de85b43f-1b55-4281-8dfa-2958393052f8" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.FoundationEndpointsTests" name="Ping_TruncatedWireData_IsRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.JoinTicketBudgetTests.MintIsPersistentlyThrottled_AndExpiredBudgetCanRetry" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="0e96ea6f-8477-65dc-5382-3a6500c3d81a">
+      <Execution id="574ffcf1-d3b6-43ae-8484-5c4864aee271" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.JoinTicketBudgetTests" name="MintIsPersistentlyThrottled_AndExpiredBudgetCanRetry" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OnlineAccountsTests.WrongPasswordAndUnknownAccount_AreRejectedEqually" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="9b0dbdde-d647-49a7-ad6a-6d661d7c19d0">
+      <Execution id="dbabcdf3-a714-4b29-b1a6-06f7d9b8f04c" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OnlineAccountsTests" name="WrongPasswordAndUnknownAccount_AreRejectedEqually" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomInstanceTests.ExpiredTicket_AndConcurrentConsume_ProduceAtMostOneAdmission" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="a93daaaf-5c55-296c-e45b-8b5b6a2e3741">
+      <Execution id="51069da3-a511-49b8-a3e1-b31d453684c3" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomInstanceTests" name="ExpiredTicket_AndConcurrentConsume_ProduceAtMostOneAdmission" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomAdmissionTests.CharacterCannotJoinTwoRooms_AndOutsiderCannotRead" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="1fb188fc-990e-eb22-d54f-e948f6cb3fb5">
+      <Execution id="b01ea17a-6f63-4440-b354-168927f19aac" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomAdmissionTests" name="CharacterCannotJoinTwoRooms_AndOutsiderCannotRead" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RunEntryTests.FourReadyMembers_ReserveExactlyFourSnapshotsAndLeases" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="46c05a0b-42fa-ed06-5f0e-c01c51815765">
+      <Execution id="089fc995-a685-4def-a8a5-2eca429f134f" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RunEntryTests" name="FourReadyMembers_ReserveExactlyFourSnapshotsAndLeases" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RunEntryTests.LeasedInventoryRejectsNewMoves_ButReturnsAlreadyCommittedReceipt" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="7f1cbd80-51e2-fcad-dd40-a726baeb1d1d">
+      <Execution id="684b9c19-9b5f-4fd2-a195-e9fa3975ffc0" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RunEntryTests" name="LeasedInventoryRejectsNewMoves_ButReturnsAlreadyCommittedReceipt" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomInstanceTests.NewBusinessHost_RecognizesSameReadyInstance_AndRenews" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="0200210e-f015-2135-063d-318da3bf7619">
+      <Execution id="90205112-a640-46ff-a557-f77c60fb53c2" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomInstanceTests" name="NewBusinessHost_RecognizesSameReadyInstance_AndRenews" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomInstanceTests.ReadyTimeout45Seconds_ReleasesOnlyThatRun" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="a072b4db-d0ce-9f10-683a-65c3e33861ed">
+      <Execution id="c0802ed8-3785-44ed-95d4-72855c7c417e" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomInstanceTests" name="ReadyTimeout45Seconds_ReleasesOnlyThatRun" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.JoinTicketBudgetTests.ConsumedTicketHistoryStaysOnePerMember_AndOldTicketStillRejected" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="40d78026-d2bc-69a9-eb55-2e9b747ff4bf">
+      <Execution id="8561e5b9-54e5-4734-b42a-4189b2fb13b4" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.JoinTicketBudgetTests" name="ConsumedTicketHistoryStaysOnePerMember_AndOldTicketStillRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomMatchmakingTests.PresenceKeepsMember_StaleLeaderExpiresWithoutReleasingRunAssets" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="de97ef4d-4bc6-2056-28e2-0b435b6144fe">
+      <Execution id="3b99e6f7-3d0a-405a-8a65-90a728d41b0a" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomMatchmakingTests" name="PresenceKeepsMember_StaleLeaderExpiresWithoutReleasingRunAssets" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.FoundationEndpointsTests.Ping_IncompatibleVersion_IsRejected(version: 2)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="d784910c-6adc-ca4f-7214-4fda5a88e595">
+      <Execution id="9c6a9315-cbfb-40a5-a224-9064b489f78c" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.FoundationEndpointsTests" name="Ping_IncompatibleVersion_IsRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomAdmissionTests.MembershipChangeResetsReadiness_AndStaleRevisionCannotReady" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="9a8527bf-cfac-112c-e807-77a9d80e3d60">
+      <Execution id="83e32dcd-61cb-4fe8-85ff-55deda9beec9" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomAdmissionTests" name="MembershipChangeResetsReadiness_AndStaleRevisionCannotReady" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.InventoryTransactionTests.SqlFailureAfterLocationUpdate_RollsBackAllChanges" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="c54116e0-544f-0d06-6def-facd21ca565c">
+      <Execution id="5e97caa6-be5f-42b9-be2d-55c80a673013" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.InventoryTransactionTests" name="SqlFailureAfterLocationUpdate_RollsBackAllChanges" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.FoundationEndpointsTests.Ping_IncompatibleVersion_IsRejected(version: 0)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="3c56bbac-4286-936d-32d6-75a8503eaabc">
+      <Execution id="79c73d87-c725-4e40-8cf8-177afaf0dd8c" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.FoundationEndpointsTests" name="Ping_IncompatibleVersion_IsRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomInstanceTests.DuplicateAllocation_OnlyOnePort_AndTicketRequiresReady" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="52e2d790-51de-2939-67a3-0aed41877abe">
+      <Execution id="797c2ba0-7ab4-4d32-9ec3-6831d2500589" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomInstanceTests" name="DuplicateAllocation_OnlyOnePort_AndTicketRequiresReady" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.FoundationEndpointsTests.Ping_MessageBudget_CountsUtf8BytesInsteadOfCharacters" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="febe8568-d933-2832-0667-c60f5ea0b4c0">
+      <Execution id="b7db00e1-70a9-4f22-be55-0adcb6466758" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.FoundationEndpointsTests" name="Ping_MessageBudget_CountsUtf8BytesInsteadOfCharacters" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomAdmissionTests.LeaderLeaveTransfersLeadership_AndRoomSurvivesBusinessRestart" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="b841f808-960c-9506-b868-1c50116dbb05">
+      <Execution id="981310bb-c6f6-425c-a713-e38719d60cec" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomAdmissionTests" name="LeaderLeaveTransfersLeadership_AndRoomSurvivesBusinessRestart" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomAdmissionTests.InvalidDungeon_Unauthenticated_AndDisabledFeature_AreRejected" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="f79abd9c-3cca-3e45-04ec-af50bead7da6">
+      <Execution id="ad4694ba-6cf6-400d-a72d-45a90b55a765" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomAdmissionTests" name="InvalidDungeon_Unauthenticated_AndDisabledFeature_AreRejected" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="c35ff9e7-fc52-9d7e-80cc-624a7d09af1c" executionId="5b1eae29-e55e-46e0-9a47-87c269ef7f01" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3c56bbac-4286-936d-32d6-75a8503eaabc" executionId="79c73d87-c725-4e40-8cf8-177afaf0dd8c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c982ec96-c1f7-6917-99cf-092308b42fdd" executionId="0bacb905-a8a5-41c4-8225-da1f1bbc3b60" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9a8527bf-cfac-112c-e807-77a9d80e3d60" executionId="83e32dcd-61cb-4fe8-85ff-55deda9beec9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f3068389-175e-25b0-a18e-847b0f2db1e9" executionId="2007a0db-a98f-40c1-bdb2-37a5bab5d84c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9b0dbdde-d647-49a7-ad6a-6d661d7c19d0" executionId="dbabcdf3-a714-4b29-b1a6-06f7d9b8f04c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3caeeac5-aa6e-237c-ef13-fac082fd2e2b" executionId="9cd42692-aab3-4891-9c8d-f28b6a137127" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d75814b3-4c9e-abb5-0e73-5db98a44a438" executionId="ed6e2ff3-c013-4a67-b5d5-8bab50cbbb29" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="78b346dd-a8cf-7397-beb4-b6de06656758" executionId="06141573-8a17-4708-a34e-e6af7da208cf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="25a10049-df4b-bb6d-6488-3e2185343c77" executionId="97892a18-8310-45e0-b513-c91c8abe630b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c4b0c839-ca68-65f3-6591-fb939a35009a" executionId="326793d5-c548-4c15-be18-6cfce8f341ba" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0628ec2f-62dd-0d6e-94a0-d24b989fe52b" executionId="8770cd24-6d9b-4c0b-a854-13cc3ec28fc2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="846a8d44-5d1d-878b-0bdb-42d512369bac" executionId="32c3bee0-1659-4591-8f31-fc370efc1ac9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1e38dbba-2320-1f38-cdc4-02bf10ba9422" executionId="1addbdc3-f5ea-4adc-8993-1e6aa9645a5b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e21f1432-be62-48dc-98ee-5c41e2e1877d" executionId="88f6623b-5462-46d0-a4b4-3616a6885175" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="febe8568-d933-2832-0667-c60f5ea0b4c0" executionId="b7db00e1-70a9-4f22-be55-0adcb6466758" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2a409cc8-4326-5923-f7fc-7528062e9ef8" executionId="60289fd8-69d8-4264-90f7-0b8bef52f985" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="033eb239-7b12-2da0-c78d-335868ab63e5" executionId="8844e442-acdc-4747-a93f-c4845ee4feaf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c54116e0-544f-0d06-6def-facd21ca565c" executionId="5e97caa6-be5f-42b9-be2d-55c80a673013" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1b7bf223-7f24-6568-3f86-4116cdb2d073" executionId="387ee91c-0070-4f18-b80f-9f74dcab9363" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f79abd9c-3cca-3e45-04ec-af50bead7da6" executionId="ad4694ba-6cf6-400d-a72d-45a90b55a765" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a93daaaf-5c55-296c-e45b-8b5b6a2e3741" executionId="51069da3-a511-49b8-a3e1-b31d453684c3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a9603600-581e-1cd0-f660-2140834a8817" executionId="6e6d0dea-aa47-42cc-9c22-608a443a0d48" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="78b56a72-613a-0dfb-6cc1-e09eec38f043" executionId="da83d817-920d-4b8d-b222-0e59e40728d4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8b7a4ac9-873e-78e0-aab0-e59677c0a527" executionId="d1e53df3-0bdc-41b9-9aaa-b7c0975f9069" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a5234237-f91e-31a5-f361-defb06693fbe" executionId="f1370cb0-3a94-4b16-991f-abc9606c084e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="03367a66-5e1e-c30f-489d-b4755c944d4b" executionId="228453f5-eada-4e2c-83dd-9f085485b270" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="00b4a74b-eac1-e51d-a105-49cc24f0a2ae" executionId="0fb8e4f8-adc4-4c16-b08f-8dff6529be6f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="01e331cb-e534-2e35-9701-61a7609aee43" executionId="2582e2a6-ba2f-4b11-a83f-ffd905db2d8e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a072b4db-d0ce-9f10-683a-65c3e33861ed" executionId="c0802ed8-3785-44ed-95d4-72855c7c417e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a5311b69-3f69-c4f8-e10e-08e4c34f09c1" executionId="de85b43f-1b55-4281-8dfa-2958393052f8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b2de744f-26fb-5c89-e77a-d828a51c1fb9" executionId="e159f029-cff2-481a-a480-eb91d2ee1d06" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b841f808-960c-9506-b868-1c50116dbb05" executionId="981310bb-c6f6-425c-a713-e38719d60cec" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4e10c2a9-ac39-d6a6-32a5-9ccc1475d713" executionId="8175180e-f8b9-4eef-ac93-2d4d1d99de76" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="de97ef4d-4bc6-2056-28e2-0b435b6144fe" executionId="3b99e6f7-3d0a-405a-8a65-90a728d41b0a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9d1fc671-fe56-f62b-e471-99630bbffcaa" executionId="e597cfa8-93e8-44a9-9ac4-e0dd370a4b90" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5f1ca0a8-1d93-338a-e9b9-9bed8d95baa2" executionId="dab2ec20-3789-4668-9ac5-81425bf22dad" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7f1cbd80-51e2-fcad-dd40-a726baeb1d1d" executionId="684b9c19-9b5f-4fd2-a195-e9fa3975ffc0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="52e2d790-51de-2939-67a3-0aed41877abe" executionId="797c2ba0-7ab4-4d32-9ec3-6831d2500589" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0db5d584-8f3e-c9d0-fac5-425949e57b52" executionId="b7a20542-69c9-41be-bc52-00456e096722" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9fcc7762-6973-db1b-d18d-34f10a135c68" executionId="a92a7b6c-b966-428b-a5cf-7c6544e5cfd6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="46c05a0b-42fa-ed06-5f0e-c01c51815765" executionId="089fc995-a685-4def-a8a5-2eca429f134f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ca4d1bc7-db1d-0a6f-6308-202d3133f926" executionId="ddae7a93-5a19-4c69-a044-954578e27d49" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c63d2696-8ca7-884e-c0a0-2f01beca02f5" executionId="64fb74fe-0a73-4a5b-9ad8-9dd2b4adaf10" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7cf56fa2-8c06-768d-a42c-89903e833266" executionId="905852b3-fc29-40c0-b88f-c093f88c3ddf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="23c55dce-c496-13e6-0329-a79ede0795e2" executionId="794a51db-6c63-4776-9814-87c8b2426bc6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="84ffc6c4-ca35-a2f9-2dd0-d1ba886819cc" executionId="bc3e5f1c-8e45-40a8-809d-9891dd2d2bf9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a5a459d7-73b0-5782-094e-ae6410dedf17" executionId="5db8888e-76ca-43ba-94c2-052c4bd2956a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="40d78026-d2bc-69a9-eb55-2e9b747ff4bf" executionId="8561e5b9-54e5-4734-b42a-4189b2fb13b4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="55a17c57-9303-0199-27b6-906bfe9efbf7" executionId="8dcac3dd-3907-4874-9c97-a19a937f350c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0200210e-f015-2135-063d-318da3bf7619" executionId="90205112-a640-46ff-a557-f77c60fb53c2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1fb188fc-990e-eb22-d54f-e948f6cb3fb5" executionId="b01ea17a-6f63-4440-b354-168927f19aac" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a47680d0-ac17-d42c-7340-e353c038d60e" executionId="6b459a61-abc2-4a23-be59-0d2bd6d7469d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d784910c-6adc-ca4f-7214-4fda5a88e595" executionId="9c6a9315-cbfb-40a5-a224-9064b489f78c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4443fb17-51be-9463-034e-de11dafcfdcd" executionId="13f2e1f7-445f-439c-b06c-e71581939ea9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="71c1c27a-7e6a-f2b6-fb58-bbaa46887f53" executionId="8cec02b0-38e5-4feb-9466-ef22a9aeea7a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0e96ea6f-8477-65dc-5382-3a6500c3d81a" executionId="574ffcf1-d3b6-43ae-8484-5c4864aee271" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="57" executed="57" passed="55" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.13)&#xD;
+[xUnit.net 00:00:00.13]   Discovering: Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.22]   Discovered:  Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.27]   Starting:    Norn.Business.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      Microsoft.AspNetCore.Http.BadHttpRequestException: Failed to read parameter "RegisterAccountRequest request" from the request body as JSON.&#xD;
+       ---&gt; System.Text.Json.JsonException: The JSON property 'LocalSave' could not be mapped to any .NET member contained in type 'Game.NetworkProtocol.RegisterAccountRequest'.&#xD;
+         at System.Text.Json.ThrowHelper.ThrowJsonException_UnmappedJsonProperty(Type type, String unmappedPropertyName)&#xD;
+         at System.Text.Json.JsonSerializer.LookupProperty(Object obj, ReadOnlySpan`1 unescapedPropertyName, ReadStack&amp; state, JsonSerializerOptions options, Boolean&amp; useExtensionProperty, Boolean createExtensionProperty)&#xD;
+         at System.Text.Json.Serialization.Converters.ObjectDefaultConverter`1.OnTryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value)&#xD;
+         at System.Text.Json.Serialization.JsonConverter`1.TryRead(Utf8JsonReader&amp; reader, Type typeToConvert, JsonSerializerOptions options, ReadStack&amp; state, T&amp; value, Boolean&amp; isPopulatedValue)&#xD;
+         at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader&amp; reader, T&amp; value, JsonSerializerOptions options, ReadStack&amp; state)&#xD;
+         at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.ContinueDeserialize[TReadBufferState,TStream](TReadBufferState&amp; bufferState, JsonReaderState&amp; jsonReaderState, ReadStack&amp; readStack, T&amp; value)&#xD;
+         at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.DeserializeAsync[TReadBufferState,TStream](TStream utf8Json, TReadBufferState bufferState, CancellationToken cancellationToken)&#xD;
+         at System.Text.Json.Serialization.Metadata.JsonTypeInfo`1.DeserializeAsObjectAsync(PipeReader utf8Json, CancellationToken cancellationToken)&#xD;
+         at Microsoft.AspNetCore.Http.HttpRequestJsonExtensions.ReadFromJsonAsync(HttpRequest request, JsonTypeInfo jsonTypeInfo, CancellationToken cancellationToken)&#xD;
+         at Microsoft.AspNetCore.Http.HttpRequestJsonExtensions.ReadFromJsonAsync(HttpRequest request, JsonTypeInfo jsonTypeInfo, CancellationToken cancellationToken)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;g__TryReadBodyAsync|102_0(HttpContext httpContext, Type bodyType, String parameterTypeName, String parameterName, Boolean allowEmptyRequestBody, Boolean throwOnBadRequest, JsonTypeInfo jsonTypeInfo)&#xD;
+         --- End of inner exception stack trace ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.Log.InvalidJsonRequestBody(HttpContext httpContext, String parameterTypeName, String parameterName, Exception exception, Boolean shouldThrow)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;g__TryReadBodyAsync|102_0(HttpContext httpContext, Type bodyType, String parameterTypeName, String parameterName, Boolean allowEmptyRequestBody, Boolean throwOnBadRequest, JsonTypeInfo jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)&#xD;
+         at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)&#xD;
+         at Microsoft.AspNetCore.RateLimiting.RateLimitingMiddleware.InvokeInternal(HttpContext context, EnableRateLimitingAttribute enableRateLimitingAttribute)&#xD;
+         at Norn.Business.Program.&lt;&gt;c__DisplayClass0_0.&lt;&lt;Main&gt;b__5&gt;d.MoveNext() in F:\Develop Project\RPG\Server\Norn.Business\Program.cs:line 69&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:01.90]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:01.90]                  ↓ (pos 0)&#xD;
+[xUnit.net 00:00:01.90]       Expected: "PortUnavailable"&#xD;
+[xUnit.net 00:00:01.90]       Actual:   "InstanceCapacity"&#xD;
+[xUnit.net 00:00:01.90]                  ↑ (pos 0)&#xD;
+[xUnit.net 00:00:01.90]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.90]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomLauncherTests.cs(32,0): at Norn.Business.Tests.RoomLauncherTests.OccupiedUdpPort_ReleasesReservationWithoutStartingProcess()&#xD;
+[xUnit.net 00:00:01.90]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomLauncherTests.cs(33,0): at Norn.Business.Tests.RoomLauncherTests.OccupiedUdpPort_ReleasesReservationWithoutStartingProcess()&#xD;
+[xUnit.net 00:00:01.90]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:02.02]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:02.02]       Expected: 1&#xD;
+[xUnit.net 00:00:02.02]       Actual:   3&#xD;
+[xUnit.net 00:00:02.02]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.02]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs(80,0): at Norn.Business.Tests.RoomInstanceTests.OldServerEpoch_CannotRenewOrAdmit_AndLeaseExpiryReleasesAssets()&#xD;
+[xUnit.net 00:00:02.02]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs(83,0): at Norn.Business.Tests.RoomInstanceTests.OldServerEpoch_CannotRenewOrAdmit_AndLeaseExpiryReleasesAssets()&#xD;
+[xUnit.net 00:00:02.02]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Norn.Business.Features.Accounts.SessionAuthenticationHandler[12]&#xD;
+      AuthenticationScheme: NornSession was challenged.&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+fail: Norn.Business[0]&#xD;
+      Online storage request failed. MySQL code 1264&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Norn.Business.Features.Accounts.SessionAuthenticationHandler[7]&#xD;
+      NornSession was not authenticated. Failure message: InvalidSession&#xD;
+info: Norn.Business.Features.Accounts.SessionAuthenticationHandler[12]&#xD;
+      AuthenticationScheme: NornSession was challenged.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Norn.Business.Features.Accounts.SessionAuthenticationHandler[7]&#xD;
+      NornSession was not authenticated. Failure message: InvalidSession&#xD;
+info: Norn.Business.Features.Accounts.SessionAuthenticationHandler[12]&#xD;
+      AuthenticationScheme: NornSession was challenged.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Norn.Business.Features.Accounts.SessionAuthenticationHandler[12]&#xD;
+      AuthenticationScheme: NornSession was challenged.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Norn.Business.Features.Accounts.SessionAuthenticationHandler[12]&#xD;
+      AuthenticationScheme: NornSession was challenged.&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:07.07]   Finished:    Norn.Business.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T14:55:39.4978872+08:00">
+        <Text>[xUnit.net 00:00:01.90]     Norn.Business.Tests.RoomLauncherTests.OccupiedUdpPort_ReleasesReservationWithoutStartingProcess [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T14:55:39.6218691+08:00">
+        <Text>[xUnit.net 00:00:02.02]     Norn.Business.Tests.RoomInstanceTests.OldServerEpoch_CannotRenewOrAdmit_AndLeaseExpiryReleasesAssets [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

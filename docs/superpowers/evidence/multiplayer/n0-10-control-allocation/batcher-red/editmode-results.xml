@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-21 12:59:39Z" end-time="2026-10-21 12:59:39Z" duration="0.7355435">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2164" result="Failed" site="Child" start-time="2026-10-21 12:59:39Z" end-time="2026-10-21 12:59:39Z" duration="0.735544" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2239" name="Game.Networking.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Networking.Tests.dll" runstate="Runnable" testcasecount="38" result="Failed" site="Child" start-time="2026-10-21 12:59:39Z" end-time="2026-10-21 12:59:39Z" duration="0.630096" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25824" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2240" name="Game" fullname="Game" runstate="Runnable" testcasecount="38" result="Failed" site="Child" start-time="2026-10-21 12:59:39Z" end-time="2026-10-21 12:59:39Z" duration="0.528993" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2241" name="Networking" fullname="Game.Networking" runstate="Runnable" testcasecount="38" result="Failed" site="Child" start-time="2026-10-21 12:59:39Z" end-time="2026-10-21 12:59:39Z" duration="0.420067" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2242" name="Tests" fullname="Game.Networking.Tests" runstate="Runnable" testcasecount="38" result="Failed" site="Child" start-time="2026-10-21 12:59:39Z" end-time="2026-10-21 12:59:39Z" duration="0.308695" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2208" name="MirrorTimeBufferTests" fullname="Game.Networking.Tests.MirrorTimeBufferTests" classname="Game.Networking.Tests.MirrorTimeBufferTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-21 12:59:39Z" end-time="2026-10-21 12:59:39Z" duration="0.201006" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2209" name="BatcherHandlesMultipleFrameTimestampsWithoutFirstQueueAllocation" fullname="Game.Networking.Tests.MirrorTimeBufferTests.BatcherHandlesMultipleFrameTimestampsWithoutFirstQueueAllocation" methodname="BatcherHandlesMultipleFrameTimestampsWithoutFirstQueueAllocation" classname="Game.Networking.Tests.MirrorTimeBufferTests" runstate="Runnable" seed="1425381284" result="Failed" start-time="2026-10-21 12:59:39Z" end-time="2026-10-21 12:59:39Z" duration="0.056516" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  首次使用批次队列不应在收包回调内分配 backing array。
+  Expected: 0
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.MirrorTimeBufferTests.BatcherHandlesMultipleFrameTimestampsWithoutFirstQueueAllocation () [0x000ac] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\MirrorTimeBufferTests.cs:25
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2210" name="ServerTimeSnapshotBufferDoesNotGrowWhileReceivingBoundedBurst" fullname="Game.Networking.Tests.MirrorTimeBufferTests.ServerTimeSnapshotBufferDoesNotGrowWhileReceivingBoundedBurst" methodname="ServerTimeSnapshotBufferDoesNotGrowWhileReceivingBoundedBurst" classname="Game.Networking.Tests.MirrorTimeBufferTests" runstate="Runnable" seed="147246623" result="Passed" start-time="2026-10-21 12:59:39Z" end-time="2026-10-21 12:59:39Z" duration="0.019459" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

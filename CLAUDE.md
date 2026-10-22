@@ -25,6 +25,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 |---|---|
 | Game.Core | None |
 | Game.Materials | None |
+| Game.NetworkProtocol | None; pure shared contracts from the sibling Shared/Protocol local UPM package; Google.Protobuf is third-party |
+| Game.Networking | Core, NetworkProtocol; Mirror / Mirror.Transports / kcp2k; transport and bounded codecs only |
+| Game.Multiplayer | Core, NetworkProtocol, Networking; Mirror for current local experimental composition |
 | Game.Combat | Core, Materials |
 | Game.Skills | Core, Combat |
 | Game.Run | Core, Combat, Skills |
@@ -52,6 +55,38 @@ New code goes in the lowest assembly that satisfies its dependencies. Cross-modu
 
 Production assets are grouped by responsibility, never by development phase/version. Spells, spell items, wand stats/items and programs live under `ScriptableObjects/Spell/{Definitions,Items,Wands,Programs,Libraries}`; only old GUID compatibility copies live in `Spell/Compatibility`. Other items use `ScriptableObjects/Items`, world/station/raid configuration uses `ScriptableObjects/World`, input uses `ScriptableObjects/Input`. Test-only content lives in `Tests/Fixtures`; Review scenes belong in `Scenes/Tests`, never beside the formal Hub/Home. Materials belong under `Art/Materials`, not ScriptableObjects. Preserve ContentIds, serialized field names and scene-load paths when reorganizing; existing `norn.v2.*` IDs remain save contracts, not a reason to recreate version directories.
 
+## Online foundation (N0–N1)
+
+- Keep sibling workspace folders `RPG / Server / Shared`; the current Git root is only the Unity project. Server and Shared have independent local repositories, so a complete backup must include all three.
+- `Shared/Protocol` is a `netstandard2.1` Class Library plus local UPM package. Schema lives in `Protos`, unique generated C# in `Runtime/Generated`; do not import a duplicate first-party protocol DLL.
+- Use the project-local .NET SDK 10.0.402 / runtime 10.0.13 through `Tools/Networking/Invoke-OnlineDotNet.ps1`; keep system SDK installations unchanged. Google.Protobuf 3.34.2 / protoc 34.2 are pinned in dependency-lock.json.
+- `Test-OnlineFoundation.ps1` covers foundation HTTP/Protobuf only; KCP, Dedicated Server, database and multiplayer/Profiler acceptance remain separate gates. Update the Chinese living online explanation after each Task.
+- Mirror 96.11.3 is now imported with original metadata under ThirdParty/Networking/Mirror, excluding Examples/Tests. N0-2 is a loopback-only transport lab, without business authentication/gameplay replication. Use explicit Online menus for scene setup and Client/Server builds; preserve formal scenes and global build scene settings. Pooled messages require Schema-aligned partial reset including unknown fields.
+- N0-2 visible GUI acceptance was delegated to Codex and passed on 2026-10-21; evidence is under `docs/superpowers/evidence/multiplayer/n0-2-gui-startup`. Do not request that same gate again. N0 local acceptance subsequently passed; see `docs/superpowers/evidence/multiplayer/n0-final/acceptance.json`. Lab Server builds add `APP_UI_EDITOR_ONLY` per build, and PortalTransitionFade startup is Editor/Client only. Two native Built-in Resource startup errors remain unresolved; formal Gameplay/remote compatibility must track them and must not assume harmless fallback.
+- N0-4 TransportLoadLab is a separate four-client loopback numeric/text experiment, without authentication/gameplay. FunctionalPassed and ZeroAllocationPassed are independent gates; maintain the two existing Chinese online learning documents.
+- A known 1 KiB control allocation returned 0 from GC.GetAllocatedBytesForCurrentThread in the current Unity runtime. Do not use those byte zeros (including old World/Grid Tick diagnostics) as allocation evidence. Network scope measurements use a calibrated fixed-capacity current-thread GC.Alloc event recorder; event counts are not bytes. Keep full-frame ProfilerRecorder results separate and calibrate measurement tools before claiming zero.
+- Final local N0: 67 EditMode / 10 business tests; four-client numeric, deterministic 5% loss and bounded development-auth snapshots passed steady zero allocation. Text positive control allocates. Development credentials/ActorIds are not accounts or JoinTickets. List-fingerprint EncryptionTransport function/rejection passed but steady allocations remain; remote gate is false, N8 must remediate. MySQL/accounts/formal gameplay are not implemented.
+- Raw IO adapter supports Windows IPv4 loopback only; Linux/public network/IL2CPP remain unvalidated. Preserve four Mirror patches plus hashes; full allocation traces use diagnostic Burst=64, normal acceptance uses 8. Keep traces distinct from budget evidence.
+- Normal lab builds preserve original Rendering/Resources inputs. Rendering scope reloads RP assets by GUID/path and restores original settings bytes. Do not reuse managed references after their native Assets were unloaded. URP Global Settings removal was reverted after RenderGraphSettings rejection; isolation menus are diagnostics only. Preserve formal scenes/global Build Scene List.
+
+### Current N1 entry and acceptance
+
+- User ruling2026-10-22: main-menu Login/Register is mandatory even for single-player. Mode choice is F at dungeon entry portals, never a main-menu Online Mode button; return/extraction portals retain their duties.
+- `OnlineAccountBootstrap` owns the separate persistent application Session root; UI unload does not log out. EnterHub requires a fresh successful business Profile response, not just a cached Token. Tokens remain memory-only; online/local assets stay isolated.
+- `DungeonEntryChoiceGate` owns pending choice, actor/range validation and its Pause Reason. UI only sends Core intents. N2 now connects F-portal matching; unknown outcomes must never silently fall back to single-player.
+- N1 local evidence: n1-final/acceptance.json; 26 business/MySQL,83 related EditMode,3 full-flow PlayMode, native D3D11 persistence/idle0B. N0 encryption/native startup errors, D3D12 Client, Linux/public/IL2CPP remain separate unpassed gates.
+- Private MySQL8.4.13:127.0.0.1:13384,dev/test Schema,least-privilege app/migrate/control users; --no-monitor and PID/start-time/path identity checks plus authenticated SHUTDOWN. Never operate the existing system instance or commit local secrets. Keep fundamentals/GUI instructions separate from implementation history.
+
+### Current N2 instance/admission boundary
+
+- N2 local acceptance is complete2026-10-23: n2-final/acceptance.json and cleanup.json,58 real-MySQL business/91 related EditMode/6 full-flow PlayMode plus two final visible native Clients. Wait for user N2 confirmation before N3. OnlineRoom is only an authenticated connection staging scene, no actors/combat.
+- Normal and diagnostic local business menus now enable Rooms/Instances; deployment defaults remain false. Same-Dungeon atomic matching,2–4 seats,ReadyRevision/current asset version,leader Start/DS Ready/Ticket; Open-lobby presence90s never expires Starting/Running. Ticket budget persists5s minimum and one row per member including consumed tickets.
+- Preserve/deactivate Hub roots and load OnlineRoom additively after authentication; return restores original Hub/session. Re-entry same Actor/higher Epoch; check connectionId before sequence/rate state. Unknown cancellation must be confirmed; expired Open-lobby identity restores local input without client asset unlock.
+- Formal Room uses RoomProtocolEnvelope ID41798; legacy ProtobufEnvelope ID44385 collides with Mirror.ObjectDestroyMessage and stays N0-lab-only. Keep JoinAdmissionTests ID checks; do not hide collisions via ReplaceHandler.
+- Preserve migrations001–003;004 adds queue/presence/ticket budget. One-use Ticket60s and ConnectionEpoch fencing are separate from player Session. DS secret goes through environment with business DB settings removed. Host stop leaves DS alive for PID/UTC StartTicks/normalized-path re-adoption; only kill matching owned processes.
+- Ready45s,heartbeat15s,freeze60s,lease120s,idle shutdown180s; CanSimulate requires business Ready. Final evidence n2-final, living Task N2-2B/foundation28; previous n2-1/n2-2 remain historical. Windows loopback only, no public/Linux/IL2CPP/D3D12/encrypted-zero-GC acceptance.
+- RoomManager+Transport useGUILayout=false prevents inherited OnGUI layout736B/frame; formal UGUI stays enabled. Serialized DualMode=false before Awake is required for current Windows IPv4 Raw IO. Actual final NativeSocket=true/calibrated120-frame Client connected windows peak0B; excludes lobby HTTP/diagnostic IO/Server heartbeat. Keep failed native-before-layout-fix/callstack evidence distinct from final green results.
+
 ## Code Conventions
 
 | Category | Style | Example |
@@ -62,6 +97,13 @@ Production assets are grouped by responsibility, never by development phase/vers
 | Namespaces | `Game.<Assembly>` | `Game.Combat`, `Game.Core` |
 
 Every script must declare a namespace matching its assembly.
+
+### Learning-oriented comments and setup instructions
+
+- New scripts and substantive edits need concise Simplified Chinese comments explaining responsibilities, architecture boundaries, non-obvious control flow and design reasons.
+- `.proto` files need compact responsibility sections, summaries above message/enum definitions, and Chinese comments for fields/enum values on the same line after the semicolon, with aligned columns where practical, matching the user's MyMMO reference. Explain business meaning, relevant units/defaults and compatibility; put long conceptual explanations in the separate foundation guide. Update generated comments through the Schema and regeneration, never by editing generated C#.
+- Teach setup through IDE/Editor operations, official package sources and concrete file settings. Do not use PowerShell or terminal recipes as the learning workflow unless explicitly requested; explain what to click, why it is needed and what confirms success.
+- Maintain the separate beginner foundation guide `Assets/_Project/Docs/2026-10-21 双端开发基础指南（是什么、为什么、怎么操作）.md` for what/why/manual operations; retain implementation history and evidence in the living online explainer.
 
 ## Performance Rules
 
@@ -76,10 +118,11 @@ State objects are pre-instantiated in `Awake()` and reused — never allocate th
 ## Workflow
 
 - **Before any cross-module or architectural change**: write a plan and confirm alignment first.
-- **Subagent policy**: never use a SubAgent unless the user explicitly approves SubAgent use for the current task. Prior approval does not carry over to later tasks.
+- **Subagents**: use SubAgents when independent investigation, implementation or review benefits from parallel work. Assign clear file ownership; coordinate shared Unity Editor, builds, tests and Git mutations in the main agent. The user removed the previous prohibition on 2026-10-23.
 - **Feature flow**: non-trivial features normally go brainstorm → one detailed implementation plan → user confirmation → execute. Save the Chinese plan under `docs/superpowers/plans/`; do not create a separate spec unless the user explicitly requests one. Large features ship in **phases**, each gated by the developer verifying in the Editor before the next begins.
 - **Incremental learning document**: for P2 and subsequent P3/P4/P5 development, maintain one Simplified Chinese living explainer under `Assets/_Project/Docs/` for the whole phase. Update it after every completed Task with fundamentals, implementation technology, architecture integration, alternatives/trade-offs, tests, debugging, and interview-oriented explanations. Start every Task with a several-hundred-Chinese-character overview explaining its purpose and completed work; restart section numbering from 1 inside every Task; prefer a few information-dense sections over many shallow numbered headings. Explicitly list every created/modified script and explain its responsibility, assembly/architecture position, integration path, relevant C#/Unity technology or built-in APIs, and important trade-offs. The document remains explicitly "in progress" until the entire phase is complete. This learning workflow does not authorize SubAgent use.
 - **Renaming a MonoBehaviour script**: move the `.cs` **and its `.meta` together** (`git mv` both) so the script GUID survives and prefab/scene references don't break — never delete-and-recreate (that orphans the reference and resets serialized fields).
+- **每轮汇报**：每轮结束明确列出本轮完成内容、实际验证及限制、接下来具体推进项。
 - **Commits**: use [Conventional Commits](https://www.conventionalcommits.org/). Examples:
   - `feat(combat): add hit-stun state machine`
   - `fix(core): prevent EventBus null-ref on first-frame subscription`

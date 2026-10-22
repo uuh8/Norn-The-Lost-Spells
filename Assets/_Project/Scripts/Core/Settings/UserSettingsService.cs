@@ -24,6 +24,8 @@ namespace Game.Core
             }
         }
 
+#if UNITY_EDITOR || !UNITY_SERVER
+        // 无画面 Server 不应加载个人显示/音量偏好，也不应对 Screen 或 AudioListener 应用客户端设置。
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void InitializeBeforeSceneLoad()
         {
@@ -35,6 +37,7 @@ namespace Game.Core
             _isLoaded = false;
             LoadFromPlayerPrefs(publishChange: false);
         }
+#endif
 
         public static bool Set(UserSettingsValues values)
         {

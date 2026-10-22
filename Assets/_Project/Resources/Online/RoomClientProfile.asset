@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 695057240893aa64c899ceafe72d9957, type: 3}
+  m_Name: RoomClientProfile
+  m_EditorClassIdentifier: Game.Multiplayer::Game.Multiplayer.OnlineRoomProfile
+  _portals:
+  - PortalScenePath: Assets/_Project/Scenes/P7_DemoRun.unity
+    DungeonId: p7
+  - PortalScenePath: Assets/_Project/Scenes/P8_BossField.unity
+    DungeonId: p8
+  - PortalScenePath: Assets/_Project/Scenes/Tests/RaidWorldSandbox.unity
+    DungeonId: raid
+  _connectionPrefab: {fileID: 3799843360564433449, guid: 089613635d520994b8b5ec491416ccbe, type: 3}
+  _connectionScene: Assets/_Project/Scenes/Online/OnlineRoom.unity
+  _hubScene: Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub.unity

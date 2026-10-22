@@ -1,0 +1,59 @@
+{
+  "LocalN1Passed": true,
+  "RecordedAtUtc": "2026-10-22T02:17:51.5179073Z",
+  "Menu": "Login/Register; single-player also requires login",
+  "ModeEntry": "F at dungeon portal: SinglePlayer / Matchmaking / Cancel",
+  "ApplicationSessionSurvivesSceneChanges": true,
+  "BusinessTests": 26,
+  "EditModeTests": 83,
+  "PlayModeTests": 3,
+  "NativePersistencePassed": true,
+  "IdleGcPassed": true,
+  "IdleGcScope": "Positively calibrated 120 idle frames per native diagnostic Client; first Null Graphics, resume visible Direct3D11; not HTTP transition or full-game performance",
+  "GracefulDatabaseRestartPassed": true,
+  "SinglePlayerFilesUnchanged": 5,
+  "SettingsUnchanged": 4,
+  "OtherOriginalProtectedFilesUnchanged": 49,
+  "PlannedSceneChange": "P7_MainMenu only",
+  "Builds": [
+    {
+      "Role": "account-menu-client",
+      "Passed": true,
+      "RecordedAtUtc": "2026-10-22T01:53:03.2445071Z",
+      "Output": "Builds/OnlineAccounts/Menu/NornMenuClient.exe",
+      "ProtobufSha256": "daf183a458e6b7cef93469283cf0f7357eaa5fd740ff3e50a4ef7ddf983bf950"
+    },
+    {
+      "Role": "account-client",
+      "Passed": true,
+      "RecordedAtUtc": "2026-10-22T01:54:23.8332085Z",
+      "Output": "Builds/OnlineAccounts/Lab/NornAccountClient.exe",
+      "ProtobufSha256": "daf183a458e6b7cef93469283cf0f7357eaa5fd740ff3e50a4ef7ddf983bf950"
+    },
+    {
+      "Role": "server",
+      "Passed": true,
+      "RecordedAtUtc": "2026-10-22T01:55:40.4307281Z",
+      "Output": "Builds/OnlineLab/Server/NornServer.exe",
+      "ProtobufSha256": "daf183a458e6b7cef93469283cf0f7357eaa5fd740ff3e50a4ef7ddf983bf950"
+    }
+  ],
+  "ManifestItemCount": 61,
+  "ManifestHash": "af1d4ed8e2750c9aea352af338fc66620eec8af00693d58af12590c298c98fc6",
+  "ManifestScope": "N1 item identity/build gate; not full Gameplay signature or online dungeon handshake",
+  "N2Implemented": false,
+  "MatchmakingAvailable": false,
+  "FullOnlineGameComplete": false,
+  "RemoteGatePassed": false,
+  "LinuxValidated": false,
+  "Il2CppValidated": false,
+  "D3D12ClientValidated": false,
+  "EncryptedZeroAllocationPassed": false,
+  "NativeStartupErrorsResolved": false,
+  "KnownLimits": [
+    "N0 EncryptionTransport steady allocation remediation remains N8",
+    "Two native Built-in Resource startup errors unresolved",
+    "D3D12 native Client crash history retained; final visible gates use D3D11",
+    "No production room/JoinTicket/authoritative gameplay replication yet"
+  ]
+}

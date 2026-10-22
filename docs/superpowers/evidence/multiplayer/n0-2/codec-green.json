@@ -1,0 +1,97 @@
+{
+  "scope": "Same-source pure Codec tests on .NET 10; not Unity Editor/KCP/Profiler validation",
+  "passed": 18,
+  "failed": 0,
+  "results": [
+    {
+      "test": "UnicodeAndLargeSequence_RoundTrip",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "ProtocolVersionZero_IsRejected",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "ProtocolVersionMismatch_IsRejected",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "OversizedPayload_IsRejectedBeforeRenting",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "EmptyPayload_IsRejected",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "UnknownKind_IsRejected",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "TruncatedPayload_IsRejectedAndReturned",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "RejectedVersion_DoesNotLeakPoolSlot",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "PoolExhaustion_IsExplicit",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "ReusedMessage_DoesNotKeepPreviousFields",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "ReusedMessage_DoesNotKeepUnknownFields",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "OldLease_DoubleDisposeCannotReleaseNewRental",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "DisposedLease_CannotReadReusedMessage",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "TextBudget_IsUtf8Bytes",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "Encode_UsesCallerBufferAndOffset",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "Encode_RejectsWrongMessageKind",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "Encode_RejectsInsufficientDestination",
+      "passed": true,
+      "error": null
+    },
+    {
+      "test": "Reply_HasItsOwnResettableType",
+      "passed": true,
+      "error": null
+    }
+  ]
+}

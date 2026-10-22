@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-22 03:49:31Z" end-time="2026-10-22 03:49:32Z" duration="0.0964707">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2184" result="Failed" site="Child" start-time="2026-10-22 03:49:31Z" end-time="2026-10-22 03:49:32Z" duration="0.096471" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2254" name="Game.Networking.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Networking.Tests.dll" runstate="Runnable" testcasecount="50" result="Failed" site="Child" start-time="2026-10-22 03:49:32Z" end-time="2026-10-22 03:49:32Z" duration="0.070768" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28156" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2255" name="Game" fullname="Game" runstate="Runnable" testcasecount="50" result="Failed" site="Child" start-time="2026-10-22 03:49:32Z" end-time="2026-10-22 03:49:32Z" duration="0.065518" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2256" name="Networking" fullname="Game.Networking" runstate="Runnable" testcasecount="50" result="Failed" site="Child" start-time="2026-10-22 03:49:32Z" end-time="2026-10-22 03:49:32Z" duration="0.059533" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2257" name="Tests" fullname="Game.Networking.Tests" runstate="Runnable" testcasecount="50" result="Failed" site="Child" start-time="2026-10-22 03:49:32Z" end-time="2026-10-22 03:49:32Z" duration="0.052003" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2212" name="JoinAdmissionTests" fullname="Game.Networking.Tests.JoinAdmissionTests" classname="Game.Networking.Tests.JoinAdmissionTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-22 03:49:32Z" end-time="2026-10-22 03:49:32Z" duration="0.047871" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2213" name="RoomMessageIds_DoNotCollideWithMirrorBuiltins" fullname="Game.Networking.Tests.JoinAdmissionTests.RoomMessageIds_DoNotCollideWithMirrorBuiltins" methodname="RoomMessageIds_DoNotCollideWithMirrorBuiltins" classname="Game.Networking.Tests.JoinAdmissionTests" runstate="Runnable" seed="1969492239" result="Failed" start-time="2026-10-22 03:49:32Z" end-time="2026-10-22 03:49:32Z" duration="0.022525" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Game.Networking.ProtobufEnvelope conflicts with Mirror.ObjectDestroyMessage at 44385
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.JoinAdmissionTests.RoomMessageIds_DoNotCollideWithMirrorBuiltins () [0x000d6] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\JoinAdmissionTests.cs:23
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,87 @@
+{
+  "task": "N0-1",
+  "status": "n0-1-verified",
+  "sdk": "10.0.402",
+  "runtime": "10.0.13",
+  "sdkArchiveSha512": "ae4fd528cb7e9f6af6aaf7de36715a69f761f183744f1bb3025d19f5a92447090ec561410e46266c1d10a63781ed6f3de771760bc76c876d87daabc367b898cd",
+  "projects": [
+    {
+      "name": "Norn.Business",
+      "path": "Server/Norn.Business/Norn.Business.csproj",
+      "version": "0.1.0",
+      "target": "net10.0"
+    },
+    {
+      "name": "Game.NetworkProtocol",
+      "path": "Shared/Protocol/Game.NetworkProtocol.csproj",
+      "version": "0.1.0",
+      "target": "netstandard2.1"
+    },
+    {
+      "name": "Norn.Business.Tests",
+      "path": "Server/Norn.Business.Tests/Norn.Business.Tests.csproj",
+      "version": "0.1.0",
+      "target": "net10.0"
+    }
+  ],
+  "integration": {
+    "total": 10,
+    "executed": 10,
+    "passed": 10,
+    "failed": 0
+  },
+  "generationSha256": "89e9125ccf0f4f9d7ddcfae66b7db47d96bff120326fa516351d07d74efeb618",
+  "commentOnlyRevision": {
+    "date": "2026-10-21",
+    "schemaDescriptorSha256Before": "6678c17ddf586f47575aed9d66e6b81ac06be099d9cb87aad983a55d425f0b98",
+    "schemaDescriptorSha256After": "6678c17ddf586f47575aed9d66e6b81ac06be099d9cb87aad983a55d425f0b98",
+    "integrationPassed": 10,
+    "integrationTotal": 10,
+    "testEvidence": "comments-regression.trx",
+    "unityEditorRerun": false
+  },
+  "lockedRestore": true,
+  "releaseBuild": true,
+  "publish": true,
+  "publishPath": "Server/.artifacts/publish/business",
+  "realProcess": {
+    "Status": "passed",
+    "RecordedAtUtc": "2026-10-20T14:36:08.9719767Z",
+    "Sdk": "10.0.402",
+    "Runtime": "10.0.13",
+    "Protobuf": "3.34.2",
+    "ProtocolVersion": 1,
+    "RealProcessHttpProtobuf": true,
+    "RealProcessVersionMismatchRejected": true,
+    "RealProcessOversizedPayloadRejected": true,
+    "KcpMultiplayerValidated": false,
+    "UnityDedicatedServerValidated": false
+  },
+  "unity": {
+    "version": "6000.3.16f1",
+    "protocolPackageVersion": "0.1.0",
+    "editorGate": "passed",
+    "dedicatedServerModuleInstalled": false,
+    "aiAssistantEmbeddedProtobuf": "3.33.2.0",
+    "aiPluginIsOverridable": true,
+    "requiredLoadedProtobuf": "3.34.2.0",
+    "editorEvidence": "unity-protocol-report.json",
+    "actualLoadedProtobuf": "3.34.2.0",
+    "verifiedAtUtc": "2026-10-20T15:12:46.9824403Z"
+  },
+  "notValidated": [
+    "Dedicated Server Build",
+    "KCP multiplayer",
+    "Headless Grid",
+    "Linux runtime",
+    "Profiler/GC",
+    "MySQL transactions"
+  ],
+  "repositories": [
+    "RPG",
+    "Server",
+    "Shared"
+  ],
+  "branch": "codex/online-foundation",
+  "committed": false
+}

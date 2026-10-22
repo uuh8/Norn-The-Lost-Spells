@@ -1,0 +1,283 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="79c60ed9-3730-4efc-bf6c-c16071c75f14" name="zhy@ZHY 2026-10-22 11:02:54" runUser="ZHY\zhy" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-22T11:02:54.6384216+08:00" queuing="2026-10-22T11:02:54.6384221+08:00" start="2026-10-22T11:02:51.0803068+08:00" finish="2026-10-22T11:02:55.9311684+08:00" />
+  <TestSettings name="default" id="44871501-3daf-40be-85a7-f93377565ae1">
+    <Deployment runDeploymentRoot="zhy_ZHY_2026-10-22_11_02_54" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="eb34d36f-1015-41bf-afd2-7080e15afe32" testId="a93daaaf-5c55-296c-e45b-8b5b6a2e3741" testName="Norn.Business.Tests.RoomInstanceTests.ExpiredTicket_AndConcurrentConsume_ProduceAtMostOneAdmission" computerName="ZHY" duration="00:00:00.3943624" startTime="2026-10-22T11:02:54.2160950+08:00" endTime="2026-10-22T11:02:54.6103199+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eb34d36f-1015-41bf-afd2-7080e15afe32">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at Norn.Business.Features.Rooms.RoomInstanceService.AllocateAsync(RunReservation run, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomInstanceService.cs:line 11&#xD;
+   at Norn.Business.Tests.RoomInstanceTests.MakeReady(OnlineFactory f, RunData run) in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs:line 111&#xD;
+   at Norn.Business.Tests.RoomInstanceTests.ExpiredTicket_AndConcurrentConsume_ProduceAtMostOneAdmission() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs:line 63&#xD;
+   at Norn.Business.Tests.RoomInstanceTests.ExpiredTicket_AndConcurrentConsume_ProduceAtMostOneAdmission() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs:line 70&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="cea3b146-2090-4ff8-92ea-d50102688be2" testId="a47680d0-ac17-d42c-7340-e353c038d60e" testName="Norn.Business.Tests.RoomInstanceTests.JoinTicket_CannotBeReplayedForAnotherActor" computerName="ZHY" duration="00:00:00.4623637" startTime="2026-10-22T11:02:53.3272432+08:00" endTime="2026-10-22T11:02:53.7756529+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cea3b146-2090-4ff8-92ea-d50102688be2">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at Norn.Business.Features.Rooms.RoomInstanceService.AllocateAsync(RunReservation run, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomInstanceService.cs:line 11&#xD;
+   at Norn.Business.Tests.RoomInstanceTests.MakeReady(OnlineFactory f, RunData run) in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs:line 111&#xD;
+   at Norn.Business.Tests.RoomInstanceTests.JoinTicket_CannotBeReplayedForAnotherActor() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs:line 45&#xD;
+   at Norn.Business.Tests.RoomInstanceTests.JoinTicket_CannotBeReplayedForAnotherActor() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs:line 57&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="60091f31-0877-4f76-92da-9cd802384b19" testId="52e2d790-51de-2939-67a3-0aed41877abe" testName="Norn.Business.Tests.RoomInstanceTests.DuplicateAllocation_OnlyOnePort_AndTicketRequiresReady" computerName="ZHY" duration="00:00:00.4382653" startTime="2026-10-22T11:02:53.7769734+08:00" endTime="2026-10-22T11:02:54.2150962+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="60091f31-0877-4f76-92da-9cd802384b19">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at Norn.Business.Features.Rooms.RoomInstanceService.AllocateAsync(RunReservation run, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomInstanceService.cs:line 11&#xD;
+   at Norn.Business.Tests.RoomInstanceTests.DuplicateAllocation_OnlyOnePort_AndTicketRequiresReady() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs:line 21&#xD;
+   at Norn.Business.Tests.RoomInstanceTests.DuplicateAllocation_OnlyOnePort_AndTicketRequiresReady() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs:line 25&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="29c62290-c0ad-441a-b973-d50d8cd2f670" testId="1e38dbba-2320-1f38-cdc4-02bf10ba9422" testName="Norn.Business.Tests.RoomInstanceTests.OldServerEpoch_CannotRenewOrAdmit_AndLeaseExpiryReleasesAssets" computerName="ZHY" duration="00:00:01.1894501" startTime="2026-10-22T11:02:52.0876437+08:00" endTime="2026-10-22T11:02:53.3103951+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="29c62290-c0ad-441a-b973-d50d8cd2f670">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at Norn.Business.Features.Rooms.RoomInstanceService.AllocateAsync(RunReservation run, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomInstanceService.cs:line 11&#xD;
+   at Norn.Business.Tests.RoomInstanceTests.MakeReady(OnlineFactory f, RunData run) in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs:line 111&#xD;
+   at Norn.Business.Tests.RoomInstanceTests.OldServerEpoch_CannotRenewOrAdmit_AndLeaseExpiryReleasesAssets() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs:line 76&#xD;
+   at Norn.Business.Tests.RoomInstanceTests.OldServerEpoch_CannotRenewOrAdmit_AndLeaseExpiryReleasesAssets() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs:line 82&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9a74b99f-1c59-4f0a-822e-310b663676e1" testId="a9603600-581e-1cd0-f660-2140834a8817" testName="Norn.Business.Tests.RoomInstanceTests.ReadyRequiresSecret_ProcessIdentity_AndExactBuildManifest" computerName="ZHY" duration="00:00:00.4013081" startTime="2026-10-22T11:02:55.4375862+08:00" endTime="2026-10-22T11:02:55.8393291+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9a74b99f-1c59-4f0a-822e-310b663676e1">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at Norn.Business.Features.Rooms.RoomInstanceService.AllocateAsync(RunReservation run, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomInstanceService.cs:line 11&#xD;
+   at Norn.Business.Tests.RoomInstanceTests.ReadyRequiresSecret_ProcessIdentity_AndExactBuildManifest() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs:line 32&#xD;
+   at Norn.Business.Tests.RoomInstanceTests.ReadyRequiresSecret_ProcessIdentity_AndExactBuildManifest() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs:line 39&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ec88156c-8533-432a-be7b-e642c2c15a1d" testId="a072b4db-d0ce-9f10-683a-65c3e33861ed" testName="Norn.Business.Tests.RoomInstanceTests.ReadyTimeout45Seconds_ReleasesOnlyThatRun" computerName="ZHY" duration="00:00:00.4042365" startTime="2026-10-22T11:02:55.0329314+08:00" endTime="2026-10-22T11:02:55.4370171+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ec88156c-8533-432a-be7b-e642c2c15a1d">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at Norn.Business.Features.Rooms.RoomInstanceService.AllocateAsync(RunReservation run, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomInstanceService.cs:line 11&#xD;
+   at Norn.Business.Tests.RoomInstanceTests.ReadyTimeout45Seconds_ReleasesOnlyThatRun() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs:line 88&#xD;
+   at Norn.Business.Tests.RoomInstanceTests.ReadyTimeout45Seconds_ReleasesOnlyThatRun() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs:line 91&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="22ca1eae-16ed-4efb-ad87-672088f0966b" testId="0200210e-f015-2135-063d-318da3bf7619" testName="Norn.Business.Tests.RoomInstanceTests.NewBusinessHost_RecognizesSameReadyInstance_AndRenews" computerName="ZHY" duration="00:00:00.4201926" startTime="2026-10-22T11:02:54.6159538+08:00" endTime="2026-10-22T11:02:55.0319464+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="22ca1eae-16ed-4efb-ad87-672088f0966b">
+      <Output>
+        <ErrorInfo>
+          <Message>System.NotImplementedException : The method or operation is not implemented.</Message>
+          <StackTrace>   at Norn.Business.Features.Rooms.RoomInstanceService.AllocateAsync(RunReservation run, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomInstanceService.cs:line 11&#xD;
+   at Norn.Business.Tests.RoomInstanceTests.MakeReady(OnlineFactory f, RunData run) in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs:line 111&#xD;
+   at Norn.Business.Tests.RoomInstanceTests.NewBusinessHost_RecognizesSameReadyInstance_AndRenews() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs:line 98&#xD;
+   at Norn.Business.Tests.RoomInstanceTests.NewBusinessHost_RecognizesSameReadyInstance_AndRenews() in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs:line 98&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Norn.Business.Tests.RoomInstanceTests.DuplicateAllocation_OnlyOnePort_AndTicketRequiresReady" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="52e2d790-51de-2939-67a3-0aed41877abe">
+      <Execution id="60091f31-0877-4f76-92da-9cd802384b19" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomInstanceTests" name="DuplicateAllocation_OnlyOnePort_AndTicketRequiresReady" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomInstanceTests.ReadyTimeout45Seconds_ReleasesOnlyThatRun" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="a072b4db-d0ce-9f10-683a-65c3e33861ed">
+      <Execution id="ec88156c-8533-432a-be7b-e642c2c15a1d" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomInstanceTests" name="ReadyTimeout45Seconds_ReleasesOnlyThatRun" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomInstanceTests.JoinTicket_CannotBeReplayedForAnotherActor" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="a47680d0-ac17-d42c-7340-e353c038d60e">
+      <Execution id="cea3b146-2090-4ff8-92ea-d50102688be2" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomInstanceTests" name="JoinTicket_CannotBeReplayedForAnotherActor" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomInstanceTests.ReadyRequiresSecret_ProcessIdentity_AndExactBuildManifest" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="a9603600-581e-1cd0-f660-2140834a8817">
+      <Execution id="9a74b99f-1c59-4f0a-822e-310b663676e1" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomInstanceTests" name="ReadyRequiresSecret_ProcessIdentity_AndExactBuildManifest" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomInstanceTests.NewBusinessHost_RecognizesSameReadyInstance_AndRenews" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="0200210e-f015-2135-063d-318da3bf7619">
+      <Execution id="22ca1eae-16ed-4efb-ad87-672088f0966b" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomInstanceTests" name="NewBusinessHost_RecognizesSameReadyInstance_AndRenews" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomInstanceTests.OldServerEpoch_CannotRenewOrAdmit_AndLeaseExpiryReleasesAssets" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="1e38dbba-2320-1f38-cdc4-02bf10ba9422">
+      <Execution id="29c62290-c0ad-441a-b973-d50d8cd2f670" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomInstanceTests" name="OldServerEpoch_CannotRenewOrAdmit_AndLeaseExpiryReleasesAssets" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.RoomInstanceTests.ExpiredTicket_AndConcurrentConsume_ProduceAtMostOneAdmission" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="a93daaaf-5c55-296c-e45b-8b5b6a2e3741">
+      <Execution id="eb34d36f-1015-41bf-afd2-7080e15afe32" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.RoomInstanceTests" name="ExpiredTicket_AndConcurrentConsume_ProduceAtMostOneAdmission" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="a93daaaf-5c55-296c-e45b-8b5b6a2e3741" executionId="eb34d36f-1015-41bf-afd2-7080e15afe32" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a47680d0-ac17-d42c-7340-e353c038d60e" executionId="cea3b146-2090-4ff8-92ea-d50102688be2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="52e2d790-51de-2939-67a3-0aed41877abe" executionId="60091f31-0877-4f76-92da-9cd802384b19" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1e38dbba-2320-1f38-cdc4-02bf10ba9422" executionId="29c62290-c0ad-441a-b973-d50d8cd2f670" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a9603600-581e-1cd0-f660-2140834a8817" executionId="9a74b99f-1c59-4f0a-822e-310b663676e1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a072b4db-d0ce-9f10-683a-65c3e33861ed" executionId="ec88156c-8533-432a-be7b-e642c2c15a1d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0200210e-f015-2135-063d-318da3bf7619" executionId="22ca1eae-16ed-4efb-ad87-672088f0966b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="7" executed="7" passed="0" failed="7" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.13)&#xD;
+[xUnit.net 00:00:00.31]   Discovering: Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.39]   Discovered:  Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.42]   Starting:    Norn.Business.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:01.67]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:01.67]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.67]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomInstanceService.cs(11,0): at Norn.Business.Features.Rooms.RoomInstanceService.AllocateAsync(RunReservation run, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.67]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs(111,0): at Norn.Business.Tests.RoomInstanceTests.MakeReady(OnlineFactory f, RunData run)&#xD;
+[xUnit.net 00:00:01.67]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs(76,0): at Norn.Business.Tests.RoomInstanceTests.OldServerEpoch_CannotRenewOrAdmit_AndLeaseExpiryReleasesAssets()&#xD;
+[xUnit.net 00:00:01.67]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs(82,0): at Norn.Business.Tests.RoomInstanceTests.OldServerEpoch_CannotRenewOrAdmit_AndLeaseExpiryReleasesAssets()&#xD;
+[xUnit.net 00:00:01.67]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:02.13]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:02.13]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.13]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomInstanceService.cs(11,0): at Norn.Business.Features.Rooms.RoomInstanceService.AllocateAsync(RunReservation run, CancellationToken ct)&#xD;
+[xUnit.net 00:00:02.13]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs(111,0): at Norn.Business.Tests.RoomInstanceTests.MakeReady(OnlineFactory f, RunData run)&#xD;
+[xUnit.net 00:00:02.13]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs(45,0): at Norn.Business.Tests.RoomInstanceTests.JoinTicket_CannotBeReplayedForAnotherActor()&#xD;
+[xUnit.net 00:00:02.13]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs(57,0): at Norn.Business.Tests.RoomInstanceTests.JoinTicket_CannotBeReplayedForAnotherActor()&#xD;
+[xUnit.net 00:00:02.13]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:02.57]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:02.57]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.57]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomInstanceService.cs(11,0): at Norn.Business.Features.Rooms.RoomInstanceService.AllocateAsync(RunReservation run, CancellationToken ct)&#xD;
+[xUnit.net 00:00:02.57]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs(21,0): at Norn.Business.Tests.RoomInstanceTests.DuplicateAllocation_OnlyOnePort_AndTicketRequiresReady()&#xD;
+[xUnit.net 00:00:02.57]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs(25,0): at Norn.Business.Tests.RoomInstanceTests.DuplicateAllocation_OnlyOnePort_AndTicketRequiresReady()&#xD;
+[xUnit.net 00:00:02.57]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:02.97]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:02.97]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.97]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomInstanceService.cs(11,0): at Norn.Business.Features.Rooms.RoomInstanceService.AllocateAsync(RunReservation run, CancellationToken ct)&#xD;
+[xUnit.net 00:00:02.97]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs(111,0): at Norn.Business.Tests.RoomInstanceTests.MakeReady(OnlineFactory f, RunData run)&#xD;
+[xUnit.net 00:00:02.97]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs(63,0): at Norn.Business.Tests.RoomInstanceTests.ExpiredTicket_AndConcurrentConsume_ProduceAtMostOneAdmission()&#xD;
+[xUnit.net 00:00:02.97]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs(70,0): at Norn.Business.Tests.RoomInstanceTests.ExpiredTicket_AndConcurrentConsume_ProduceAtMostOneAdmission()&#xD;
+[xUnit.net 00:00:02.97]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:03.39]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:03.39]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.39]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomInstanceService.cs(11,0): at Norn.Business.Features.Rooms.RoomInstanceService.AllocateAsync(RunReservation run, CancellationToken ct)&#xD;
+[xUnit.net 00:00:03.39]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs(111,0): at Norn.Business.Tests.RoomInstanceTests.MakeReady(OnlineFactory f, RunData run)&#xD;
+[xUnit.net 00:00:03.39]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs(98,0): at Norn.Business.Tests.RoomInstanceTests.NewBusinessHost_RecognizesSameReadyInstance_AndRenews()&#xD;
+[xUnit.net 00:00:03.39]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs(98,0): at Norn.Business.Tests.RoomInstanceTests.NewBusinessHost_RecognizesSameReadyInstance_AndRenews()&#xD;
+[xUnit.net 00:00:03.39]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:03.79]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:03.79]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.79]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomInstanceService.cs(11,0): at Norn.Business.Features.Rooms.RoomInstanceService.AllocateAsync(RunReservation run, CancellationToken ct)&#xD;
+[xUnit.net 00:00:03.79]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs(88,0): at Norn.Business.Tests.RoomInstanceTests.ReadyTimeout45Seconds_ReleasesOnlyThatRun()&#xD;
+[xUnit.net 00:00:03.79]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs(91,0): at Norn.Business.Tests.RoomInstanceTests.ReadyTimeout45Seconds_ReleasesOnlyThatRun()&#xD;
+[xUnit.net 00:00:03.79]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:04.20]       System.NotImplementedException : The method or operation is not implemented.&#xD;
+[xUnit.net 00:00:04.20]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.20]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomInstanceService.cs(11,0): at Norn.Business.Features.Rooms.RoomInstanceService.AllocateAsync(RunReservation run, CancellationToken ct)&#xD;
+[xUnit.net 00:00:04.20]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs(32,0): at Norn.Business.Tests.RoomInstanceTests.ReadyRequiresSecret_ProcessIdentity_AndExactBuildManifest()&#xD;
+[xUnit.net 00:00:04.20]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomInstanceTests.cs(39,0): at Norn.Business.Tests.RoomInstanceTests.ReadyRequiresSecret_ProcessIdentity_AndExactBuildManifest()&#xD;
+[xUnit.net 00:00:04.20]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.21]   Finished:    Norn.Business.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T11:02:53.3130331+08:00">
+        <Text>[xUnit.net 00:00:01.67]     Norn.Business.Tests.RoomInstanceTests.OldServerEpoch_CannotRenewOrAdmit_AndLeaseExpiryReleasesAssets [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T11:02:53.7760992+08:00">
+        <Text>[xUnit.net 00:00:02.13]     Norn.Business.Tests.RoomInstanceTests.JoinTicket_CannotBeReplayedForAnotherActor [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T11:02:54.2158067+08:00">
+        <Text>[xUnit.net 00:00:02.57]     Norn.Business.Tests.RoomInstanceTests.DuplicateAllocation_OnlyOnePort_AndTicketRequiresReady [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T11:02:54.6108397+08:00">
+        <Text>[xUnit.net 00:00:02.97]     Norn.Business.Tests.RoomInstanceTests.ExpiredTicket_AndConcurrentConsume_ProduceAtMostOneAdmission [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T11:02:55.0323616+08:00">
+        <Text>[xUnit.net 00:00:03.39]     Norn.Business.Tests.RoomInstanceTests.NewBusinessHost_RecognizesSameReadyInstance_AndRenews [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T11:02:55.4373365+08:00">
+        <Text>[xUnit.net 00:00:03.79]     Norn.Business.Tests.RoomInstanceTests.ReadyTimeout45Seconds_ReleasesOnlyThatRun [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-10-22T11:02:55.8397376+08:00">
+        <Text>[xUnit.net 00:00:04.20]     Norn.Business.Tests.RoomInstanceTests.ReadyRequiresSecret_ProcessIdentity_AndExactBuildManifest [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
