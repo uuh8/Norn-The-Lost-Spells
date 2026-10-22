@@ -1,0 +1,27 @@
+syntax = "proto3";
+package norn.protocol.lab;
+option csharp_namespace = "Game.NetworkProtocol";
+
+// ==================== N0 本机开发认证 ====================
+// 仅验证连接身份边界；不表示已有业务账号、JoinTicket 签发或公网安全。
+// 所有字段编号永久保留含义，删除后使用 reserved，不复用旧编号。
+message LocalLabAuthRequest { // Client 连接边界的开发认证请求；不携带可自行指定的 ActorId。
+  uint32 protocol_version = 1; // 应用协议版本；0/不兼容版本拒绝，不是 Protobuf 库版本。
+  bytes credential        = 2; // 单次实验的 32 字节短期凭据；只在连接边界使用，不写进证据日志。
+  uint64 nonce            = 3; // 本次握手随机关联号；0/本轮已使用值拒绝，不是账号或角色 ID。
+}
+
+message LocalLabAuthReply { // Server 校验通过后回送请求关联号和临时身份；随后才能进入 Ready/Snapshot。
+  uint32 protocol_version = 1; // 服务器当前应用协议版本；客户端再次检查。
+  uint64 nonce            = 2; // 原请求关联号，阻止把旧应答误配给本次握手。
+  uint64 actor_id         = 3; // 服务器为当前认证连接绑定的临时 ActorId；不持久化、不接受客户端自报。
+}
+
+// ==================== 认证后有界数值快照 ====================
+// 仅验证服务器身份/时钟/请求确认的传输链路，不是 RPG 角色移动或世界复制实现。
+message LocalLabSnapshot {
+  uint32 protocol_version             = 1; // 应用协议版本；每包检查，默认 0 拒绝。
+  uint64 actor_id                     = 2; // 从连接的服务器认证上下文取得；客户端只接收自己的 ActorId。
+  uint64 server_tick                  = 3; // 服务器实验时钟 Tick；单调递增，不是客户端 Rendering Frame。
+  uint64 last_accepted_probe_sequence = 4; // 服务器已校验接受的 Ping 序号；客户端不能据此授予资源或结算。
+}

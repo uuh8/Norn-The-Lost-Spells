@@ -1,0 +1,29 @@
+syntax = "proto3";
+package norn.protocol;
+option csharp_namespace = "Game.NetworkProtocol";
+
+////////////////////////////////////////////////////////////////
+//  副本入场 / One-use JoinTicket
+////////////////////////////////////////////////////////////////
+
+// 一次性握手，非每Tick消息；Ticket仅本机回环验证，不代表公网加密已就绪。
+message JoinTicketRequest
+{
+    uint32 protocol_version = 1; // 应用协议版本，缺省0拒绝。
+    string ticket           = 2; // 业务服签发的64位hex短期凭据，不写日志/客户端存档。
+    string player_id        = 3; // 期望角色；业务服必须核对Ticket绑定，不能据此自选Actor。
+    uint64 nonce            = 4; // 关联本次握手回复，非身份或重放保护的替代品。
+}
+
+// 仅在业务服原子兑换成功后发送；Actor/ConnectionEpoch均来自服务器。
+message JoinTicketReplyMessage
+{
+    uint32 protocol_version = 1; // 应用协议版本，不是Protobuf包版本。
+    uint64 nonce            = 2; // 原请求随机关联号。
+    string player_id        = 3; // 已验证的线上角色身份。
+    string room_id          = 4; // 房间身份，不是Unity Scene名。
+    string run_id           = 5; // 本次副本身份。
+    uint32 room_epoch       = 6; // 当前有效实例代次。
+    uint32 connection_epoch = 7; // 重连递增；迟到旧回复不能覆盖新连接。
+    uint64 actor_id         = 8; // 本Run内服务器分配的稳定身份，范围1–4。
+}

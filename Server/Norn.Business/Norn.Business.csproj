@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework><Version>0.1.0</Version>
+    <Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile><TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <UserSecretsId>norn-online-business-local</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../Shared/Protocol/Game.NetworkProtocol.csproj" />
+    <PackageReference Include="Google.Protobuf" />
+    <PackageReference Include="MySqlConnector" />
+    <PackageReference Include="Dapper" />
+    <!-- EmbeddedResource 让迁移随程序发布；不依赖运行目录中碰巧存在某份 SQL。 -->
+    <EmbeddedResource Include="Migrations/*.sql" />
+  </ItemGroup>
+</Project>
