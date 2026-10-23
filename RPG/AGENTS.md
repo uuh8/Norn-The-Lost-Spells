@@ -27,7 +27,7 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 | Game.Materials | None |
 | Game.NetworkProtocol | None; pure shared contracts from the sibling Shared/Protocol local UPM package; Google.Protobuf is third-party |
 | Game.Networking | Core, NetworkProtocol; third-party Mirror / Mirror.Transports / kcp2k; no gameplay authority |
-| Game.Multiplayer | Core, NetworkProtocol, Networking; Mirror currently used only for local experimental composition |
+| Game.Multiplayer | Core, NetworkProtocol, Networking, Character, Combat; N3 authority/prediction/replica composition; Mirror is transport-facing only here |
 | Game.Combat | Core, Materials |
 | Game.Skills | Core, Combat |
 | Game.Run | Core, Combat, Skills |

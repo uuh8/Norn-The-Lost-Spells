@@ -27,6 +27,13 @@ namespace Game.Character
             _remainingAirDashes = _maxAirDashes;
         }
 
+        /// <summary>校正不能调用 ResetForGrounded，否则每次收到 Snapshot 都会免费补充一次空中能力。</summary>
+        public void RestoreRemaining(int extraJumps, int airDashes)
+        {
+            _remainingExtraJumps = extraJumps < 0 ? 0 : extraJumps > _maxExtraJumps ? _maxExtraJumps : extraJumps;
+            _remainingAirDashes = airDashes < 0 ? 0 : airDashes > _maxAirDashes ? _maxAirDashes : airDashes;
+        }
+
         public bool TryConsumeExtraJump()
         {
             if (_remainingExtraJumps <= 0)

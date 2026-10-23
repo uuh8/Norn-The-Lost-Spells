@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-23 01:53:41Z" end-time="2026-10-23 01:53:41Z" duration="0.6601998">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2236" result="Failed" site="Child" start-time="2026-10-23 01:53:41Z" end-time="2026-10-23 01:53:41Z" duration="0.660200" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2233" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-10-23 01:53:41Z" end-time="2026-10-23 01:53:41Z" duration="0.553314" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28156" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2234" name="Game" fullname="Game" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-10-23 01:53:41Z" end-time="2026-10-23 01:53:41Z" duration="0.464241" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2235" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-10-23 01:53:41Z" end-time="2026-10-23 01:53:41Z" duration="0.367036" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2236" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-10-23 01:53:41Z" end-time="2026-10-23 01:53:41Z" duration="0.267560" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2227" name="PredictionInterpolationTests" fullname="Game.Multiplayer.Tests.PredictionInterpolationTests" classname="Game.Multiplayer.Tests.PredictionInterpolationTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-23 01:53:41Z" end-time="2026-10-23 01:53:41Z" duration="0.164114" total="5" passed="4" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2230" name="HistoryOverflow_HardCorrectsInsteadOfReplayingAnIncompletePast" fullname="Game.Multiplayer.Tests.PredictionInterpolationTests.HistoryOverflow_HardCorrectsInsteadOfReplayingAnIncompletePast" methodname="HistoryOverflow_HardCorrectsInsteadOfReplayingAnIncompletePast" classname="Game.Multiplayer.Tests.PredictionInterpolationTests" runstate="Runnable" seed="1112698642" result="Passed" start-time="2026-10-23 01:53:41Z" end-time="2026-10-23 01:53:41Z" duration="0.032471" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2232" name="Interpolation_ResumesBufferedTimelineAfterAuthorityFreeze" fullname="Game.Multiplayer.Tests.PredictionInterpolationTests.Interpolation_ResumesBufferedTimelineAfterAuthorityFreeze" methodname="Interpolation_ResumesBufferedTimelineAfterAuthorityFreeze" classname="Game.Multiplayer.Tests.PredictionInterpolationTests" runstate="Runnable" seed="2018310477" result="Failed" start-time="2026-10-23 01:53:41Z" end-time="2026-10-23 01:53:41Z" duration="0.012853" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 5 +/- 0.001d
+  But was:  10.0f
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.PredictionInterpolationTests.Interpolation_ResumesBufferedTimelineAfterAuthorityFreeze () [0x0008b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\PredictionInterpolationTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2231" name="Interpolation_UsesServerTimeAndStopsAtNewestInsteadOfRunningForever" fullname="Game.Multiplayer.Tests.PredictionInterpolationTests.Interpolation_UsesServerTimeAndStopsAtNewestInsteadOfRunningForever" methodname="Interpolation_UsesServerTimeAndStopsAtNewestInsteadOfRunningForever" classname="Game.Multiplayer.Tests.PredictionInterpolationTests" runstate="Runnable" seed="494490561" result="Passed" start-time="2026-10-23 01:53:41Z" end-time="2026-10-23 01:53:41Z" duration="0.000967" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2228" name="Reconcile_ReplaysOnlyUnacknowledgedInputs" fullname="Game.Multiplayer.Tests.PredictionInterpolationTests.Reconcile_ReplaysOnlyUnacknowledgedInputs" methodname="Reconcile_ReplaysOnlyUnacknowledgedInputs" classname="Game.Multiplayer.Tests.PredictionInterpolationTests" runstate="Runnable" seed="541196505" result="Passed" start-time="2026-10-23 01:53:41Z" end-time="2026-10-23 01:53:41Z" duration="0.002672" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2229" name="Reconcile_WrongEpochOrFutureAckNeverChangesMotor" fullname="Game.Multiplayer.Tests.PredictionInterpolationTests.Reconcile_WrongEpochOrFutureAckNeverChangesMotor" methodname="Reconcile_WrongEpochOrFutureAckNeverChangesMotor" classname="Game.Multiplayer.Tests.PredictionInterpolationTests" runstate="Runnable" seed="1400043734" result="Passed" start-time="2026-10-23 01:53:41Z" end-time="2026-10-23 01:53:41Z" duration="0.000326" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,170 @@
+[
+  {
+    "Name": "Game.Combat.Tests.MaterialReactionSemanticTests.DefaultBindingAsset_ContainsWaterAndPoisonFireRules",
+    "Message": "System.InvalidOperationException : Reaction Binding[2] 的 Sticky 不在 Material Catalog 中。"
+  },
+  {
+    "Name": "Game.Combat.Tests.MaterialReactionSemanticTests.Evaluator_IgniteGooConsumesStickyAndProducesFireOnFireSide",
+    "Message": "  Expected: 77\n  But was:  76\n"
+  },
+  {
+    "Name": "Game.ElementField.Tests.ElementWorldFluidRoutingTests.SparseFireCollectionPreservesSampleSequenceAcrossChunkAndCursorWrap",
+    "Message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\sparse-fire-sample-sequence.json\"."
+  },
+  {
+    "Name": "Game.ElementField.Tests.MaterialReactionProcessTableTests.ReservedCapacityKeepsOutputOrderCooldownAndVacantSlotReuse(4)",
+    "Message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\toxic-reserved-scan-4.json\"."
+  },
+  {
+    "Name": "Game.ElementField.Tests.MaterialReactionProcessTableTests.ReservedCapacityKeepsOutputOrderCooldownAndVacantSlotReuse(65536)",
+    "Message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\toxic-reserved-scan-65536.json\"."
+  },
+  {
+    "Name": "Game.Rendering.Tests.ElementWaterShaderContractTests.ProceduralLiquidOpaqueFragmentDiagnosticIsBoundPerDraw",
+    "Message": "  Expected: String containing \"if (_DebugForceOpaqueFragment > 0.5f)\"\n  But was:  \"Shader \"Game/Elemental/Liquid Procedural\"\n{\n    // Property 名称和默认值与 Legacy ElementWater 保持一致，因此同一套 Water 调参经验可以迁移；\n    // 唯一变化是 Vertex 不再来自 Unity Mesh，而是来自 GPU Marching Cubes Triangle Buffer。\n    Properties\n    {\n        [Header(Color)]\n        _ShallowColor(\"Shallow Color\", Color) = (0.35, 0.85, 0.88, 1)\n        _DeepColor(\"Deep Color\", Color) = (0.04, 0.18, 0.65, 1)\n        _FresnelColor(\"Fresnel Color\", Color) = (0.72, 1.0, 0.96, 1)\n\n        [Header(Transparency)]\n        _ShallowAlpha(\"Shallow Alpha\", Range(0, 1)) = 0.2\n        _DeepAlpha(\"Deep Alpha\", Range(0, 1)) = 0.65\n        _FresnelAlphaStrength(\"Fresnel Alpha Strength\", Range(0, 0.5)) = 0.15\n        _WaterAlpha(\"Global Water Alpha\", Range(0, 1)) = 1.0\n\n        [Header(Waves)]\n        _WaveScaleA(\"Wave Scale A\", Float) = 15.0\n        _WaveScaleB(\"Wave Scale B\", Float) = 12.0\n        _WaveSpeedA(\"Wave Speed A\", Vector) = (0.05, 0.02, 0, 0)\n        _WaveSpeedB(\"Wave Speed B\", Vector) = (-0.03, 0.04, 0, 0)\n        _WaveNormalStrength(\"Wave Normal Strength\", Range(0, 1)) = 0.25\n        _TriplanarSharpness(\"Triplanar Sharpness\", Range(1, 8)) = 4.0\n        _VolumeWaveWorldScale(\"Volume Wave World Scale\", Float) = 1.0\n\n        [Header(Depth And Fresnel)]\n        _DepthFadeDistance(\"Depth Fade Distance\", Range(0.05, 5)) = 1.5\n        _DepthNoiseStrength(\"Depth Noise Strength\", Range(0, 0.5)) = 0.12\n        _FresnelPower(\"Fresnel Power\", Range(0.5, 8)) = 4.0\n        _Smoothness(\"Smoothness\", Range(0, 1)) = 0.85\n\n        [Header(Foam)]\n        _FoamColor(\"Foam Color\", Color) = (0.85, 1.0, 1.0, 1)\n        _FoamDistance(\"Foam Distance\", Range(0.01, 1)) = 0.25\n        _FoamStrength(\"Foam Strength\", Range(0, 1)) = 0.8\n        _FoamAlphaBoost(\"Foam Alpha Boost\", Range(0, 0.5)) = 0.2\n\n        [Header(Development Fragment Isolation)]\n        [Toggle] _DebugForceOpaqueFragment(\"Force Opaque Fragment\", Float) = 0\n    }\n\n    SubShader\n    {\n        Tags\n        {\n            \"RenderPipeline\" = \"UniversalPipeline\"\n            \"RenderType\" = \"Transparent\"\n            \"Queue\" = \"Transparent\"\n        }\n\n        Blend SrcAlpha OneMinusSrcAlpha\n        ZWrite Off\n        ZTest LEqual\n        // Compute 已把 Winding 朝 outward 修正；Cull Back 可省掉封闭液体背面的大量透明 Overdraw。\n        Cull Back\n\n        Pass\n        {\n            Name \"LiquidProceduralForward\"\n            Tags { \"LightMode\" = \"UniversalForward\" }\n\n            HLSLPROGRAM\n            #pragma target 4.5\n            #pragma vertex LiquidProceduralVertex\n            #pragma fragment LiquidProceduralFragment\n\n            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN\n            #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS\n            #pragma multi_compile _ _FORWARD_PLUS\n            #pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS\n            #pragma multi_compile_fragment _ _SHADOWS_SOFT\n            #pragma multi_compile_fog\n\n            #include \"ElementLiquidSurfaceLighting.hlsl\"\n\n            // UnityIndirect.cginc 只有在宏先定义后才生成无参数 helper。Vertex 必须先 Init，\n            // 再用 GetIndirectVertexID 修正 Vulkan/GL 与 D3D 对 startVertex 的不同语义。\n            #define UNITY_INDIRECT_DRAW_ARGS IndirectDrawArgs\n            #include \"UnityIndirect.cginc\"\n\n            struct FluidSurfaceVertex\n            {\n                float3 positionWS;\n                float padding0;\n                float3 normalWS;\n                float padding1;\n            };\n\n            struct FluidSurfaceTriangle\n            {\n                FluidSurfaceVertex v0;\n                FluidSurfaceVertex v1;\n                FluidSurfaceVertex v2;\n            };\n\n            StructuredBuffer<FluidSurfaceTriangle> _FluidSurfaceTriangles;\n            struct ProceduralAttributes\n            {\n                // SV_VertexID 是当前 Draw 的逻辑顶点编号，不需要创建 Unity Mesh/Vertex Buffer。\n                uint vertexID : SV_VertexID;\n            };\n\n            FluidSurfaceVertex GetSurfaceVertex(uint vertexID)\n            {\n                uint triangleIndex = vertexID / 3u;\n                uint cornerIndex = vertexID - triangleIndex * 3u;\n                // triangle 是 HLSL 的几何着色器输入修饰符；Unity 6 DXC 不允许把它当局部变量名。\n                FluidSurfaceTriangle surfaceTriangle = _FluidSurfaceTriangles[triangleIndex];\n                if (cornerIndex == 0u)\n                    return surfaceTriangle.v0;\n                // Unity 6 DXC 不支持用 ?: 在两个自定义 Struct 之间选择返回值；\n                // 显式分支既保留相同 Corner 映射，也避免 type mismatch 使整个 Pass 编译失败。\n                if (cornerIndex == 1u)\n                    return surfaceTriangle.v1;\n                return surfaceTriangle.v2;\n            }\n\n            ProceduralVaryings LiquidProceduralVertex(ProceduralAttributes input)\n            {\n                ProceduralVaryings output = (ProceduralVaryings)0;\n                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);\n                InitIndirectDrawArgs(0);\n                uint correctedVertexID = GetIndirectVertexID(input.vertexID);\n                FluidSurfaceVertex vertex = GetSurfaceVertex(correctedVertexID);\n\n                // Marching Cubes 已输出 World Space，因此不能再乘 Object-to-World；只需 World-to-Clip。\n                output.positionWS = vertex.positionWS;\n                output.normalWS = SafeNormalize(vertex.normalWS);\n                output.positionCS = TransformWorldToHClip(vertex.positionWS);\n                output.shadowCoord = TransformWorldToShadowCoord(vertex.positionWS);\n                output.fogFactor = ComputeFogFactor(output.positionCS.z);\n                OUTPUT_SH(output.normalWS, output.vertexSH);\n                return output;\n            }\n\n            ENDHLSL\n        }\n    }\n\n    Fallback \"Hidden/Universal Render Pipeline/FallbackError\"\n}\n\"\n"
+  },
+  {
+    "Name": "Game.Rendering.Tests.ElementWaterShaderContractTests.ProceduralLiquidUsesUnityIndirectContractAndSharedWaterCore",
+    "Message": "  Expected: String containing \"ElementWaterCore.hlsl\"\n  But was:  \"Shader \"Game/Elemental/Liquid Procedural\"\n{\n    // Property 名称和默认值与 Legacy ElementWater 保持一致，因此同一套 Water 调参经验可以迁移；\n    // 唯一变化是 Vertex 不再来自 Unity Mesh，而是来自 GPU Marching Cubes Triangle Buffer。\n    Properties\n    {\n        [Header(Color)]\n        _ShallowColor(\"Shallow Color\", Color) = (0.35, 0.85, 0.88, 1)\n        _DeepColor(\"Deep Color\", Color) = (0.04, 0.18, 0.65, 1)\n        _FresnelColor(\"Fresnel Color\", Color) = (0.72, 1.0, 0.96, 1)\n\n        [Header(Transparency)]\n        _ShallowAlpha(\"Shallow Alpha\", Range(0, 1)) = 0.2\n        _DeepAlpha(\"Deep Alpha\", Range(0, 1)) = 0.65\n        _FresnelAlphaStrength(\"Fresnel Alpha Strength\", Range(0, 0.5)) = 0.15\n        _WaterAlpha(\"Global Water Alpha\", Range(0, 1)) = 1.0\n\n        [Header(Waves)]\n        _WaveScaleA(\"Wave Scale A\", Float) = 15.0\n        _WaveScaleB(\"Wave Scale B\", Float) = 12.0\n        _WaveSpeedA(\"Wave Speed A\", Vector) = (0.05, 0.02, 0, 0)\n        _WaveSpeedB(\"Wave Speed B\", Vector) = (-0.03, 0.04, 0, 0)\n        _WaveNormalStrength(\"Wave Normal Strength\", Range(0, 1)) = 0.25\n        _TriplanarSharpness(\"Triplanar Sharpness\", Range(1, 8)) = 4.0\n        _VolumeWaveWorldScale(\"Volume Wave World Scale\", Float) = 1.0\n\n        [Header(Depth And Fresnel)]\n        _DepthFadeDistance(\"Depth Fade Distance\", Range(0.05, 5)) = 1.5\n        _DepthNoiseStrength(\"Depth Noise Strength\", Range(0, 0.5)) = 0.12\n        _FresnelPower(\"Fresnel Power\", Range(0.5, 8)) = 4.0\n        _Smoothness(\"Smoothness\", Range(0, 1)) = 0.85\n\n        [Header(Foam)]\n        _FoamColor(\"Foam Color\", Color) = (0.85, 1.0, 1.0, 1)\n        _FoamDistance(\"Foam Distance\", Range(0.01, 1)) = 0.25\n        _FoamStrength(\"Foam Strength\", Range(0, 1)) = 0.8\n        _FoamAlphaBoost(\"Foam Alpha Boost\", Range(0, 0.5)) = 0.2\n\n        [Header(Development Fragment Isolation)]\n        [Toggle] _DebugForceOpaqueFragment(\"Force Opaque Fragment\", Float) = 0\n    }\n\n    SubShader\n    {\n        Tags\n        {\n            \"RenderPipeline\" = \"UniversalPipeline\"\n            \"RenderType\" = \"Transparent\"\n            \"Queue\" = \"Transparent\"\n        }\n\n        Blend SrcAlpha OneMinusSrcAlpha\n        ZWrite Off\n        ZTest LEqual\n        // Compute 已把 Winding 朝 outward 修正；Cull Back 可省掉封闭液体背面的大量透明 Overdraw。\n        Cull Back\n\n        Pass\n        {\n            Name \"LiquidProceduralForward\"\n            Tags { \"LightMode\" = \"UniversalForward\" }\n\n            HLSLPROGRAM\n            #pragma target 4.5\n            #pragma vertex LiquidProceduralVertex\n            #pragma fragment LiquidProceduralFragment\n\n            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN\n            #pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS\n            #pragma multi_compile _ _FORWARD_PLUS\n            #pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS\n            #pragma multi_compile_fragment _ _SHADOWS_SOFT\n            #pragma multi_compile_fog\n\n            #include \"ElementLiquidSurfaceLighting.hlsl\"\n\n            // UnityIndirect.cginc 只有在宏先定义后才生成无参数 helper。Vertex 必须先 Init，\n            // 再用 GetIndirectVertexID 修正 Vulkan/GL 与 D3D 对 startVertex 的不同语义。\n            #define UNITY_INDIRECT_DRAW_ARGS IndirectDrawArgs\n            #include \"UnityIndirect.cginc\"\n\n            struct FluidSurfaceVertex\n            {\n                float3 positionWS;\n                float padding0;\n                float3 normalWS;\n                float padding1;\n            };\n\n            struct FluidSurfaceTriangle\n            {\n                FluidSurfaceVertex v0;\n                FluidSurfaceVertex v1;\n                FluidSurfaceVertex v2;\n            };\n\n            StructuredBuffer<FluidSurfaceTriangle> _FluidSurfaceTriangles;\n            struct ProceduralAttributes\n            {\n                // SV_VertexID 是当前 Draw 的逻辑顶点编号，不需要创建 Unity Mesh/Vertex Buffer。\n                uint vertexID : SV_VertexID;\n            };\n\n            FluidSurfaceVertex GetSurfaceVertex(uint vertexID)\n            {\n                uint triangleIndex = vertexID / 3u;\n                uint cornerIndex = vertexID - triangleIndex * 3u;\n                // triangle 是 HLSL 的几何着色器输入修饰符；Unity 6 DXC 不允许把它当局部变量名。\n                FluidSurfaceTriangle surfaceTriangle = _FluidSurfaceTriangles[triangleIndex];\n                if (cornerIndex == 0u)\n                    return surfaceTriangle.v0;\n                // Unity 6 DXC 不支持用 ?: 在两个自定义 Struct 之间选择返回值；\n                // 显式分支既保留相同 Corner 映射，也避免 type mismatch 使整个 Pass 编译失败。\n                if (cornerIndex == 1u)\n                    return surfaceTriangle.v1;\n                return surfaceTriangle.v2;\n            }\n\n            ProceduralVaryings LiquidProceduralVertex(ProceduralAttributes input)\n            {\n                ProceduralVaryings output = (ProceduralVaryings)0;\n                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);\n                InitIndirectDrawArgs(0);\n                uint correctedVertexID = GetIndirectVertexID(input.vertexID);\n                FluidSurfaceVertex vertex = GetSurfaceVertex(correctedVertexID);\n\n                // Marching Cubes 已输出 World Space，因此不能再乘 Object-to-World；只需 World-to-Clip。\n                output.positionWS = vertex.positionWS;\n                output.normalWS = SafeNormalize(vertex.normalWS);\n                output.positionCS = TransformWorldToHClip(vertex.positionWS);\n                output.shadowCoord = TransformWorldToShadowCoord(vertex.positionWS);\n                output.fogFactor = ComputeFogFactor(output.positionCS.z);\n                OUTPUT_SH(output.normalWS, output.vertexSH);\n                return output;\n            }\n\n            ENDHLSL\n        }\n    }\n\n    Fallback \"Hidden/Universal Render Pipeline/FallbackError\"\n}\n\"\n"
+  },
+  {
+    "Name": "Game.Rendering.Tests.GpuFireParcelSplatTests.BothFlamePhasesKeepCoverageInSteepAndTopViews",
+    "Message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\fire-view-0-0-0.json\"."
+  },
+  {
+    "Name": "Game.Rendering.Tests.GpuFireParcelSplatTests.DistantFadeIsWideAndContinuous",
+    "Message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\fire-view-0-0-0.json\"."
+  },
+  {
+    "Name": "Game.Rendering.Tests.GpuFireParcelSplatTests.StraightDownProjectionRemainsStableWithCameraRoll",
+    "Message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\fire-view-0-90-0.json\"."
+  },
+  {
+    "Name": "Game.Rendering.Tests.GpuFireParcelSplatTests.UniformFlamesRemainVisibleAcrossFormerNearBoundary",
+    "Message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\fire-view-0-0-0.json\"."
+  },
+  {
+    "Name": "Game.Rendering.Tests.GpuFireParcelSurfaceTests.AdjacentSourcesShareBodyButDistantSourcesStaySeparate",
+    "Message": "Timeout value of 180000 ms was exceeded. If this is intended, increase the timeout value using a TimeoutAttribute."
+  },
+  {
+    "Name": "Game.Rendering.Tests.GridLiquidFieldFrameTests.ColdSlopeSupportCannotChangeCommittedGeometryWhenBakeBudgetRenews",
+    "Message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\slope-cold-support.json\"."
+  },
+  {
+    "Name": "Game.Rendering.Tests.GridLiquidFieldFrameTests.CommittedSlopeShapeDoesNotChangeWhenItBecomesPreviousAtNextTick",
+    "Message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\slope-committed-snapshot.json\"."
+  },
+  {
+    "Name": "Game.Rendering.Tests.GridLiquidFieldFrameTests.FrozenMixedAndAirFieldKeepsPackedPresentationSignature",
+    "Message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\frozen-presentation-signature.json\"."
+  },
+  {
+    "Name": "Game.Rendering.Tests.GridLiquidFieldFrameTests.SparseFrozenPoolsKeepPackedShapeAndQuantityWithZeroCaptureAllocation(4096)",
+    "Message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\sparse-presentation-capture.json\"."
+  },
+  {
+    "Name": "Game.Rendering.Tests.GridLiquidFieldFrameTests.SparseFrozenPoolsKeepPackedShapeAndQuantityWithZeroCaptureAllocation(16)",
+    "Message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\sparse-presentation-dense-fallback.json\"."
+  },
+  {
+    "Name": "Game.Rendering.Tests.GridLiquidFieldGpuTests.EqualQuantityHasComparableVisibleVolumeOnFlatAndSteepSupport",
+    "Message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\continuous-support-volume.json\"."
+  },
+  {
+    "Name": "Game.Rendering.Tests.GridLiquidFieldGpuTests.ProductionFrameMeshHasClosedSurfaceAndQuantityCalibratedVolume",
+    "Message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\continuous-volume-calibration.json\"."
+  },
+  {
+    "Name": "Game.Rendering.Tests.GridLiquidFieldGpuTests.RealSlopeGpuMeshMovesBetweenTicksAndRetainsBoundaryPose",
+    "Message": "  GPU callback timed out.\n  Expected: less than 89814.59060489999d\n  But was:  89814.654746099986d\n"
+  },
+  {
+    "Name": "Game.Rendering.Tests.GridLiquidFieldGpuTests.SustainedSlopeMeshDoesNotSinkIntoActualCollider",
+    "Message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\continuous-slope-contact.json\"."
+  },
+  {
+    "Name": "Game.Rendering.Tests.GridLiquidFieldPerformanceTests.MaterialChangeRemovalAndSlotMovementMatchFullGpuRebuild",
+    "Message": "  Expected: less than 89834.833146599995d\n  But was:  89834.885910399986d\n"
+  },
+  {
+    "Name": "Game.Rendering.Tests.GridLiquidFieldPerformanceTests.MotionInOneRegionRetainsDistantStaticGpuGeometry",
+    "Message": "  Expected: less than 89845.701046699993d\n  But was:  89845.761332399998d\n"
+  },
+  {
+    "Name": "Game.Rendering.Tests.GridLiquidVisibilityTests.AccumulatedPagesDoNotBlockNewWaterNearCamera(False,False)",
+    "Message": "  Expected: True\n  But was:  False\n"
+  },
+  {
+    "Name": "Game.Rendering.Tests.GridLiquidVisibilityTests.AccumulatedPagesDoNotBlockNewWaterNearCamera(True,False)",
+    "Message": "  Expected: True\n  But was:  False\n"
+  },
+  {
+    "Name": "Game.Rendering.Tests.GridLiquidVisibilityTests.AccumulatedPagesDoNotBlockNewWaterNearCamera(True,True)",
+    "Message": "  Expected: True\n  But was:  False\n"
+  },
+  {
+    "Name": "Game.Rendering.Tests.GridLiquidVisibilityTests.CpuSnapshotRetainsOwnersThatMayLeaveGpuDomain",
+    "Message": "  Expected: 256\n  But was:  0\n"
+  },
+  {
+    "Name": "Game.Rendering.Tests.GridLiquidVisibilityTests.VisibleOverflowProducesGpuGeometryAtNewImpact",
+    "Message": "  Expected: True\n  But was:  False\n"
+  },
+  {
+    "Name": "Game.Run.Tests.BackpackAuthoringTests.ThrowAndSolidCollectionDoNotShareG",
+    "Message": "System.NullReferenceException : Object reference not set to an instance of an object"
+  },
+  {
+    "Name": "Game.Run.Tests.HubSpatialLayoutTests.AllStationTextHasCameraFacingBehaviour",
+    "Message": "  Expected: greater than or equal to 3\n  But was:  0\n"
+  },
+  {
+    "Name": "Game.Run.Tests.HubSpatialLayoutTests.PersistentHintsAreAtScreenEdge",
+    "Message": "  Expected: greater than or equal to 2\n  But was:  1\n"
+  },
+  {
+    "Name": "Game.Run.Tests.ItemInventoryClassificationTests.EveryCurrentHubDefinitionHasTheExpectedCategoryWithoutChangingKind",
+    "Message": "  containertest.ice不能放入4–0\n  Expected: False\n  But was:  True\n"
+  },
+  {
+    "Name": "Game.Run.Tests.ItemPresentationTests.MissingOnlyBakeKeepsExistingIconsAndSceneClean",
+    "Message": "System.Reflection.TargetParameterCountException : Number of parameters specified does not match the expected number."
+  },
+  {
+    "Name": "Game.Run.Tests.SinglePlayerSceneAuthoringTests.FormalHubHasOneGameCameraOneWorldAndNoLegacyReflection",
+    "Message": "  Expected: not equal to \"Reflection_pass\"\n  But was:  \"Reflection_pass\"\n"
+  },
+  {
+    "Name": "Game.Run.Tests.SinglePlayerSceneAuthoringTests.FormalHubHasProductionInventoryAndIndependentConfiguration",
+    "Message": "  Expected: 0\n  But was:  9999999\n"
+  },
+  {
+    "Name": "Game.Run.Tests.SpellProgramContentContractTests.TerminationHasADifferentTriggerConditionFromExistingFireballs",
+    "Message": "System.NullReferenceException : Object reference not set to an instance of an object"
+  },
+  {
+    "Name": "Game.Run.Tests.WarehouseCatalogViewTests.EmptyWarehouseStillDisplaysBackgroundSquares",
+    "Message": "System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.\n  ----> System.NullReferenceException : Object reference not set to an instance of an object"
+  },
+  {
+    "Name": "Game.Run.Tests.WarehouseCatalogViewTests.FilterAndOrganizeOnlyChangePresentation",
+    "Message": "System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.\n  ----> System.NullReferenceException : Object reference not set to an instance of an object"
+  },
+  {
+    "Name": "Game.Run.Tests.WarehouseCatalogViewTests.FoodAndHerbsAreMaterialsAndOnlyUsableContainersAreTools",
+    "Message": "System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.\n  ----> System.NullReferenceException : Object reference not set to an instance of an object"
+  },
+  {
+    "Name": "Game.Run.Tests.WarehouseCatalogViewTests.ManyKindsExtendContentWithoutCreatingEveryRowOfViews",
+    "Message": "System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.\n  ----> System.NullReferenceException : Object reference not set to an instance of an object"
+  },
+  {
+    "Name": "Game.Run.Tests.WarehouseCatalogViewTests.SameContentHasOneSquareWhileDifferentStatesKeepTheirIdentity",
+    "Message": "System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.\n  ----> System.NullReferenceException : Object reference not set to an instance of an object"
+  },
+  {
+    "Name": "Game.Run.Tests.WarehouseCatalogViewTests.SameKindContainersUseSeparateWarehouseSquares",
+    "Message": "System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.\n  ----> System.NullReferenceException : Object reference not set to an instance of an object"
+  }
+]

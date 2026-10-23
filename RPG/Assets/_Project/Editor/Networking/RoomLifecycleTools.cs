@@ -88,8 +88,8 @@ namespace Game.Project.Editor
             finally { if (original.IsValid() && original.isLoaded) SceneManager.SetActiveScene(original); EditorSceneManager.CloseScene(scene, true); }
         }
         [MenuItem("Tools/Norn/Online/Build Room Client (Windows)")]
-        public static void BuildClient() => OnlineBuildTools.Build(false, ScenePath, ClientPath, "room-client");
+        public static void BuildClient() { OnlineMovementTools.Verify(); OnlineBuildTools.Build(false, ScenePath, ClientPath, "room-client"); }
         [MenuItem("Tools/Norn/Online/Build Room Dedicated Server (Windows)")]
-        public static void BuildServer() => OnlineBuildTools.Build(true, ScenePath, ServerPath, "room-server");
+        public static void BuildServer() { OnlineMovementTools.Verify(); OnlineBuildTools.Build(true, ScenePath, ServerPath, "room-server"); }
     }
 }

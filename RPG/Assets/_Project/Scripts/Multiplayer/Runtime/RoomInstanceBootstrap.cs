@@ -24,7 +24,7 @@ namespace Game.Multiplayer
         public bool Ready { get; private set; }
         public int Heartbeats { get; private set; }
         public OnlineInventorySession Inventory { get; private set; }
-#if UNITY_SERVER
+#if UNITY_SERVER && !UNITY_EDITOR
         private IEnumerator Start()
         {
             _manager = GetComponent<RoomNetworkManager>();
@@ -38,6 +38,9 @@ namespace Game.Multiplayer
             { Fail("LaunchCompatibilityMismatch"); yield break; }
             GetComponent<JoinTicketAuthenticator>().ConfigureServer(_launch, _secret); _manager.Configure(_launch.Port); _manager.StartServer();
             yield return null;
+            // N3的碰撞/NavMesh资源必须实际装配完成，不能仅监听成功就向业务服宣告可模拟。
+            var world = OnlineWorldBootstrap.Active;
+            if (!IsMovementWorldReady(world)) { Fail("MovementWorldNotReady"); yield break; }
             if (!NetworkServer.active || !_manager.transport.ServerActive()) { Fail("TransportNotListening"); yield break; }
             using var process = Process.GetCurrentProcess();
             var request = new InstanceReadyRequest { RoomEpoch = _launch.RoomEpoch, ProtocolVersion = manifest.ProtocolVersion, BuildVersion = manifest.BuildVersion, ManifestHash = manifest.Hash,
@@ -64,6 +67,16 @@ namespace Game.Multiplayer
                 long status = _request.responseCode; Release();
                 if (success) { _lastRenew = Time.realtimeSinceStartupAsDouble; Heartbeats++; _manager.SetFrozen(false); }
                 else if (status == 401 || status == 409) { Fail("InstanceEpochExpired"); yield break; }
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+                // 本机显式采样仅在稀疏Heartbeat检查，不在Update轮询文件，也不新增远端控制API。
+                string diagnostic = Path.Combine(Path.GetDirectoryName(_statePath), "movement-diagnostics.request");
+                if (File.Exists(diagnostic))
+                {
+                    string command = File.ReadAllText(diagnostic).Trim(); File.Delete(diagnostic);
+                    if (command == "measure" && OnlineWorldBootstrap.Active != null)
+                        OnlineWorldBootstrap.Active.GetComponent<AuthorityTickDriver>().StartDiagnosticMeasurement();
+                }
+#endif
                 WriteState();
             }
         }
@@ -77,6 +90,9 @@ namespace Game.Multiplayer
             if (now - _lastConnection > _launch.IdleShutdownSeconds) Application.Quit();
         }
 #endif
+        // Ready是“可执行权威模拟”的承诺，独立方法也让缺装配的失败边界能够回归。
+        public static bool IsMovementWorldReady(OnlineWorldBootstrap world) =>
+            world != null && world.isActiveAndEnabled && world.WorldReady && world.IsAuthority;
         public static string Argument(string name)
         { string[] args = Environment.GetCommandLineArgs(); for (int i = 0; i + 1 < args.Length; i++) if (args[i] == name) return args[i + 1]; return null; }
         private void Release() { var request = _request; _request = null; request?.Dispose(); }
@@ -87,10 +103,22 @@ namespace Game.Multiplayer
             if (_statePath == null || _manager == null) return;
             // 稀疏控制/连接事件的诊断报告，不在每Tick写文件；不包含Secret/Ticket/密码。
             using var process = Process.GetCurrentProcess();
+            var world = OnlineWorldBootstrap.Active;
+            var actors = new Vector3[4];
+            if (world != null && world.Registry != null)
+                for (int i = 0; i < 4; i++) if (world.Registry[i].Player != null) actors[i] = world.Registry[i].Player.transform.position;
+            var enemy = world != null && world.Registry != null ? world.Registry[4].Enemy : null;
+            var driver = world != null ? world.GetComponent<AuthorityTickDriver>() : null;
             File.WriteAllText(_statePath, JsonUtility.ToJson(new State { Ready = Ready, Frozen = _manager.Frozen, CanSimulate = _manager.CanSimulate, Heartbeats = Heartbeats, Members = Inventory == null ? 0 : Inventory.MemberCount,
                 Clients = _manager.AuthenticatedConnections, Accepted = GetComponent<JoinTicketAuthenticator>().Accepted, Served = _manager.Served,
+                MovementTick = world != null ? world.ServerTick : 0, ActorPositions = actors, EnemyPosition = enemy != null ? enemy.transform.position : Vector3.zero,
+                EnemyTarget = enemy != null && enemy.Perception != null ? enemy.Perception.TargetActorId : 0,
+                MeasuredTicks = driver != null ? driver.MeasuredTicks : 0, TickCounterValid = driver != null && driver.TickCounterValid,
+                TickAllocationEvents = driver != null ? driver.TickAllocationEvents : 0,
                 ProcessId = process.Id, ProcessStartTicks = process.StartTime.ToUniversalTime().Ticks, InstanceId = _launch.InstanceId, Error = error, RecordedAtUtc = DateTime.UtcNow.ToString("O") }, true));
         }
-        [Serializable] private sealed class State { public bool Ready, Frozen, CanSimulate; public int Heartbeats, Members, Clients, ProcessId; public long ProcessStartTicks, Accepted, Served; public string InstanceId, Error, RecordedAtUtc; }
+        [Serializable] private sealed class State { public bool Ready, Frozen, CanSimulate; public int Heartbeats, Members, Clients, ProcessId; public long ProcessStartTicks, Accepted, Served; public string InstanceId, Error, RecordedAtUtc;
+            public uint MovementTick; public Vector3[] ActorPositions; public Vector3 EnemyPosition; public ulong EnemyTarget;
+            public int MeasuredTicks; public bool TickCounterValid; public long TickAllocationEvents; }
     }
 }

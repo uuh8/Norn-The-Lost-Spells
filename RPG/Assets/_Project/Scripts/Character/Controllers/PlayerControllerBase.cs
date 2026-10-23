@@ -14,8 +14,233 @@ namespace Game.Character
     // 使 Awake 中的 GetComponent 成为可靠依赖读取，而不是每帧查找或运行到一半才发现组件缺失。
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(GroundChecker))]
-    public abstract class PlayerControllerBase : MonoBehaviour
+    public abstract class PlayerControllerBase : MonoBehaviour, IPlayerMovementSimulation
     {
+        [SerializeField] private PlayerExecutionMode _executionMode;
+        private bool _initialized, _inputSubscribed, _isSimulating, _isReplaying;
+        private bool _jumpPressedPending, _dashPressedPending, _inputSuppressed;
+        private bool _waitJumpRelease, _waitDashRelease, _hasFocus = true;
+        private bool _hasReplicaPresentation;
+        private PlayerLocomotionKind _lastReplicaPresentation;
+        private float _simulationDeltaTime;
+
+        public PlayerExecutionMode ExecutionMode => _executionMode;
+        public bool OwnsLocalInput => _executionMode == PlayerExecutionMode.SinglePlayer || _executionMode == PlayerExecutionMode.Prediction;
+        public bool CanPlayMovementFeedback => OwnsLocalInput && !_isReplaying;
+        public float SimulationDeltaTime => _simulationDeltaTime;
+        public Transform CameraRoot => _cameraRoot;
+
+        /// <summary>
+        /// 组合层把 Prefab 实例放在 inactive hierarchy 后先配置，再激活触发 Awake。
+        /// 因而 Authority／Replica 从出生开始就不创建 Input、读取 Camera 或占用单机 Current。
+        /// </summary>
+        public void ConfigureExecutionMode(PlayerExecutionMode mode)
+        {
+            if (_executionMode == mode) return;
+            UnbindLocalInput();
+            _executionMode = mode;
+            ClearOnlineInput();
+            if (!_initialized) return;
+            if (!OwnsLocalInput)
+            {
+                if (_inputActions != null) { _inputActions.Dispose(); _inputActions = null; }
+                _mainCamera = null;
+            }
+            else if (isActiveAndEnabled) BindLocalInput();
+            if (_executionMode != PlayerExecutionMode.SinglePlayer)
+            {
+                if (_animator != null) _animator.applyRootMotion = false;
+                var portalInput = GetComponent<PortalInteractInput>();
+                if (portalInput != null) portalInput.enabled = false;
+            }
+        }
+
+        /// <summary>
+        /// 只采样本地拥有者。performed 先锁存边沿，本方法读取后消费一次；同一 Rendering 帧补跑多 Tick
+        /// 不会把 WasPressedThisFrame 重复当成多次跳跃。鼠标增量另在 LateUpdate 每帧采样一次。
+        /// </summary>
+        public PlayerSimulationFrame SampleInput(uint sequence, uint epoch, bool suppressed = false)
+        {
+            bool blocked = suppressed || !OwnsLocalInput || !_hasFocus || _inputActions == null;
+            if (blocked)
+            {
+                ClearOnlineInput();
+                return new PlayerSimulationFrame(sequence, epoch, Vector2.zero, _cameraYaw, false, false, false, true);
+            }
+            _inputSuppressed = false;
+            bool jumpHeld = _inputActions.Player.Jump.IsPressed();
+            bool dashHeld = _inputActions.Player.Dash.IsPressed();
+            if (!jumpHeld) _waitJumpRelease = false;
+            if (!dashHeld) _waitDashRelease = false;
+            bool jumpPressed = _jumpPressedPending && !_waitJumpRelease;
+            bool dashPressed = _dashPressedPending && !_waitDashRelease;
+            _jumpPressedPending = _dashPressedPending = false;
+            if (_mainCamera == null) _mainCamera = Camera.main;
+            // 在线相机由组合层在角色Awake后创建；_mainCamera可能仍指向已禁用的连接界面Camera。
+            // Prediction直接使用自己LateUpdate维护的轨道Yaw，单机保留原Camera方向语义。
+            float yaw = _executionMode == PlayerExecutionMode.Prediction ? _cameraYaw :
+                _mainCamera != null ? _mainCamera.transform.eulerAngles.y : _cameraYaw;
+            return new PlayerSimulationFrame(sequence, epoch, _inputActions.Player.Move.ReadValue<Vector2>(), yaw,
+                jumpPressed, jumpHeld && !_waitJumpRelease, dashPressed, false);
+        }
+
+        /// <summary>
+        /// 唯一运动推进。Driver 从 Update 调用固定步长；单机 wrapper 传入渲染 deltaTime。
+        /// Replay 复用相同运动规则，但禁止重复表现和对其他 Rigidbody 施加推力。
+        /// </summary>
+        public void Simulate(in PlayerSimulationFrame input, float deltaTime, bool replay = false)
+        {
+            if (!_initialized || _executionMode == PlayerExecutionMode.Replica || _isSimulating ||
+                !IsFinite(deltaTime) || deltaTime <= 0f) return;
+            _simulationDeltaTime = deltaTime;
+            _isSimulating = true; _isReplaying = replay;
+            try
+            {
+                if (_stateMachine.CurrentState == null)
+                {
+                    TargetFacing = transform.forward;
+                    _stateMachine.ChangeState(_groundedState);
+                }
+                _groundChecker.Refresh();
+                // 历史输入只恢复历史运动；不能把当前菜单／失焦的 Camera 门禁改回过去的值。
+                if (!replay) _inputSuppressed = input.InputSuppressed;
+                if (input.InputSuppressed)
+                {
+                    ClearSimulationInput();
+                    _moveInput = Vector2.zero;
+                }
+                else
+                {
+                    _moveInput = IsFinite(input.MoveAxis.x) && IsFinite(input.MoveAxis.y)
+                        ? Vector2.ClampMagnitude(input.MoveAxis, 1f) : Vector2.zero;
+                    if (input.JumpPressed) JumpBufferCounter = _jumpBufferTime;
+                    if (input.DashPressed) DashBufferCounter = _dashBufferTime;
+                }
+                float yaw = IsFinite(input.ViewYaw) ? input.ViewYaw : 0f;
+                // 轨道相机无 roll；世界 yaw 足以还原水平前／右向量，服务器完全不依赖 Camera.main。
+                _moveDirection = _moveInput.sqrMagnitude < .01f ? Vector3.zero :
+                    Quaternion.Euler(0f, yaw, 0f) * new Vector3(_moveInput.x, 0f, _moveInput.y).normalized;
+                TickInputCounters(deltaTime);
+                VerticalVelocity = _jumpCutRuntime.Evaluate(VerticalVelocity, !input.InputSuppressed && input.JumpHeld);
+                _stateMachine.Update();
+                if (!replay && OwnsLocalInput) SyncAnimatorParameters();
+            }
+            finally { _isSimulating = false; _isReplaying = false; }
+        }
+
+        public PlayerMovementSnapshot CaptureMovementSnapshot()
+        {
+            return new PlayerMovementSnapshot
+            {
+                Position = transform.position, Rotation = transform.rotation, TargetFacing = TargetFacing,
+                VerticalVelocity = VerticalVelocity, Locomotion = ResolveLocomotion(),
+                IsGrounded = _groundChecker != null && _groundChecker.IsGrounded,
+                GroundNormal = _groundChecker != null ? _groundChecker.GroundNormal : Vector3.up,
+                GroundAngle = _groundChecker != null ? _groundChecker.GroundAngle : 0f,
+                CoyoteTimeCounter = CoyoteTimeCounter, JumpBufferCounter = JumpBufferCounter,
+                AttackBufferCounter = AttackBufferCounter, AttackCooldownCounter = AttackCooldownCounter,
+                DashCooldownCounter = DashCooldownCounter, DashBufferCounter = DashBufferCounter,
+                IsAirborneForDash = IsAirborneForDash,
+                DashDirection = _dashState != null ? _dashState.Direction : Vector3.zero,
+                DashElapsed = _dashState != null ? _dashState.Elapsed : 0f,
+                ExtraJumpsRemaining = _airActionBudget != null ? _airActionBudget.RemainingExtraJumps : 0,
+                AirDashesRemaining = _airActionBudget != null ? _airActionBudget.RemainingAirDashes : 0,
+                JumpCutArmed = _jumpCutRuntime != null && _jumpCutRuntime.IsArmed
+            };
+        }
+
+        /// <summary>
+        /// 恢复运动根与所有影响重放的状态，绝不走普通 Enter／Exit，也不播 VFX。
+        /// 暂停 CC 后传送可清除旧接触缓存；同步 Physics 后，下一次显式 Tick 才重新采样实际支撑。
+        /// </summary>
+        public void RestoreMovementSnapshot(in PlayerMovementSnapshot snapshot)
+        {
+            if (!_initialized) return;
+            bool wasEnabled = _characterController.enabled;
+            if (wasEnabled) _characterController.enabled = false;
+            transform.SetPositionAndRotation(snapshot.Position, snapshot.Rotation);
+            if (wasEnabled) _characterController.enabled = true;
+            Physics.SyncTransforms();
+            TargetFacing = snapshot.TargetFacing;
+            VerticalVelocity = snapshot.VerticalVelocity;
+            CoyoteTimeCounter = snapshot.CoyoteTimeCounter;
+            JumpBufferCounter = snapshot.JumpBufferCounter;
+            AttackBufferCounter = snapshot.AttackBufferCounter;
+            AttackCooldownCounter = snapshot.AttackCooldownCounter;
+            DashCooldownCounter = snapshot.DashCooldownCounter;
+            DashBufferCounter = snapshot.DashBufferCounter;
+            IsAirborneForDash = snapshot.IsAirborneForDash;
+            _groundChecker.RestoreSnapshot(snapshot.IsGrounded, snapshot.GroundNormal, snapshot.GroundAngle);
+            _dashState.RestoreSnapshot(snapshot.DashDirection, snapshot.DashElapsed);
+            _airActionBudget.RestoreRemaining(snapshot.ExtraJumpsRemaining, snapshot.AirDashesRemaining);
+            _jumpCutRuntime.RestoreArmed(snapshot.JumpCutArmed);
+            PlayerStateBase state;
+            switch (snapshot.Locomotion)
+            {
+                case PlayerLocomotionKind.Airborne: state = _airborneState; break;
+                case PlayerLocomotionKind.Sliding: state = _slidingState; break;
+                case PlayerLocomotionKind.Dash: state = _dashState; break;
+                default: state = _groundedState; break;
+            }
+            _stateMachine.RestoreState(state);
+        }
+
+        /// <summary>Replica 只按插值结果更新 Animator；不读 Input、不调用 Move，也不运行 AI／战斗。</summary>
+        public void PresentReplicaMovement(float normalizedMoveAmount)
+        {
+            if (_executionMode != PlayerExecutionMode.Replica || !_initialized) return;
+            var kind = ResolveLocomotion();
+            bool changed = !_hasReplicaPresentation || kind != _lastReplicaPresentation;
+            _lastReplicaPresentation = kind; _hasReplicaPresentation = true;
+            if (_animator == null || _animator.runtimeAnimatorController == null) return;
+            if (changed && kind == PlayerLocomotionKind.Dash)
+            {
+                int hash = IsAirborneForDash ? _airDashStateHash : _dashStateHash;
+                if (hash != 0) _animator.CrossFadeInFixedTime(hash, .1f, 0);
+            }
+            else if (changed && kind == PlayerLocomotionKind.Airborne && VerticalVelocity > 0f)
+                PlayJumpStartAnimation();
+            _moveInput = Vector2.up * Mathf.Clamp01(normalizedMoveAmount);
+            SyncAnimatorParameters();
+        }
+
+        /// <summary>断线／菜单／失焦只清本地意图；冷却与运动状态仍由服务器 Tick 决定。</summary>
+        public void ClearOnlineInput()
+        {
+            _inputSuppressed = true;
+            _waitJumpRelease = _waitDashRelease = true;
+            _jumpPressedPending = _dashPressedPending = false;
+            _moveInput = Vector2.zero; _moveDirection = Vector3.zero; _lookInput = Vector2.zero;
+            ClearSimulationInput();
+        }
+
+        private void ClearSimulationInput()
+        {
+            JumpBufferCounter = DashBufferCounter = AttackBufferCounter = 0f;
+        }
+
+        private void TickInputCounters(float deltaTime)
+        {
+            if (JumpBufferCounter > 0f) JumpBufferCounter -= deltaTime;
+            if (CoyoteTimeCounter > 0f) CoyoteTimeCounter -= deltaTime;
+            if (AttackBufferCounter > 0f) AttackBufferCounter -= deltaTime;
+            if (AttackCooldownCounter > 0f) AttackCooldownCounter -= deltaTime;
+            if (DashCooldownCounter > 0f) DashCooldownCounter -= deltaTime;
+            if (DashBufferCounter > 0f) DashBufferCounter -= deltaTime;
+        }
+
+        private PlayerLocomotionKind ResolveLocomotion()
+        {
+            if (_stateMachine == null) return PlayerLocomotionKind.Grounded;
+            var state = _stateMachine.CurrentState;
+            if (ReferenceEquals(state, _dashState)) return PlayerLocomotionKind.Dash;
+            if (ReferenceEquals(state, _airborneState)) return PlayerLocomotionKind.Airborne;
+            if (ReferenceEquals(state, _slidingState)) return PlayerLocomotionKind.Sliding;
+            return PlayerLocomotionKind.Grounded;
+        }
+
+        private static bool IsFinite(float value) => !float.IsNaN(value) && !float.IsInfinity(value);
+
         [Header("Movement")] [SerializeField] private float _moveSpeed = 5f;
         [SerializeField] private float _rotationSpeed = 10f;
 
@@ -91,12 +316,15 @@ namespace Game.Character
         public GroundChecker GroundChecker => _groundChecker;
         public void MoveCharacter(Vector3 displacement)
         {
+            // Replica 从 Snapshot 定位；在线运动只允许在显式 Simulate 内写 CC，阻断遗留自动路径。
+            if (_executionMode == PlayerExecutionMode.Replica ||
+                (_executionMode != PlayerExecutionMode.SinglePlayer && !_isSimulating)) return;
             // Move更新实际碰撞后立即采样，State的落地/离地转换使用本帧位置，不等待另一个MonoBehaviour.Update。
             _characterController.Move(displacement);_groundChecker.Refresh();
         }
         public Animator Animator => _animator;
         public Camera MainCamera => _mainCamera; // 暴露给瞄准（屏幕中心射线 + 转向相机朝向）
-        /// <summary>当前启用的玩家实例（单人游戏的轻量注册表）。敌人感知据此拿玩家，免每帧 FindObjectOfType。多玩家时为最后启用者。</summary>
+        /// <summary>本机拥有输入的玩家。线上敌人使用注入的 Roster，不再把这个本地入口当成全体玩家。</summary>
         public static PlayerControllerBase Current { get; private set; }
         public Vector2 MoveInput => _moveInput;
         public Vector3 MoveDirection => _moveDirection;
@@ -160,7 +388,12 @@ namespace Game.Character
         /// 起跳动画入口 seam。原型角色继续使用 jump Trigger；Wizard 重写后用可调时长的
         /// CrossFade 重播 JumpStart，避免 Animator Controller 中写死 Transition Duration。
         /// </summary>
-        public virtual void PlayJumpStartAnimation() => _animator.SetTrigger(JumpHash);
+        public virtual void PlayJumpStartAnimation()
+        {
+            if (_animator != null && _animator.runtimeAnimatorController != null &&
+                _executionMode != PlayerExecutionMode.Authority && !_isReplaying)
+                _animator.SetTrigger(JumpHash);
+        }
 
         /// <summary>
         /// Gameplay 的统一“真正起跳”反馈入口。普通跳、Coyote Jump、二段跳都走这里，
@@ -168,6 +401,7 @@ namespace Game.Character
         /// </summary>
         public void PlayJumpStartedFeedback()
         {
+            if (!CanPlayMovementFeedback) return;
             PlayJumpStartAnimation();
             PlayJumpVfx();
         }
@@ -179,14 +413,18 @@ namespace Game.Character
         /// 落地时清除 Trigger 型 Animator 的陈旧起跳请求。Wizard 虽已改为代码驱动，
         /// 保留统一清理可防止旧 Controller 数据或热重载遗留 Trigger。
         /// </summary>
-        public void ClearPendingJumpAnimation() => _animator.ResetTrigger(JumpHash);
+        public void ClearPendingJumpAnimation()
+        {
+            if (CanPlayMovementFeedback && _animator != null && _animator.runtimeAnimatorController != null)
+                _animator.ResetTrigger(JumpHash);
+        }
 
         // IsPressed 持续按住为 true，松开为 false。
         // WasPressedThisFrame用于检测“按下”的上升沿。核心特性：只在按下的那一帧返回 true
         // WasReleasedThisFrame用于检测“松开”的下降沿。核心特性：只在松开的那个帧返回 true
         // ReadValue<>()用于读取当前输入的值。例如 moveAction.ReadValue<Vector2>() 读取摇杆偏移。
-        public bool IsAttackHeld => _inputActions.Player.Attack.IsPressed();
-        public bool AttackPressedThisFrame => _inputActions.Player.Attack.WasPressedThisFrame();
+        public bool IsAttackHeld => _executionMode == PlayerExecutionMode.SinglePlayer && _inputActions != null && _inputActions.Player.Attack.IsPressed();
+        public bool AttackPressedThisFrame => _executionMode == PlayerExecutionMode.SinglePlayer && _inputActions != null && _inputActions.Player.Attack.WasPressedThisFrame();
 
         /// <summary>
         /// 攻击触发 seam：共享的 GroundedState 在攻击优先级位调用本钩子。
@@ -258,9 +496,19 @@ namespace Game.Character
 
         protected virtual void Awake()
         {
+            if (_initialized) return;
             // 所有玩家共享同一过门视觉接口；仅移动Animator模型，不移动CharacterController物理根。
-            if (GetComponent<PlayerPortalTraveler>() == null) gameObject.AddComponent<PlayerPortalTraveler>();
-            if (GetComponent<PortalInteractInput>() == null) gameObject.AddComponent<PortalInteractInput>();
+            // 在线出入口由组合层管理；Authority／Replica 不得偷偷增加读取本机 F 的组件。
+            if (_executionMode == PlayerExecutionMode.SinglePlayer)
+            {
+                if (GetComponent<PlayerPortalTraveler>() == null) gameObject.AddComponent<PlayerPortalTraveler>();
+                if (GetComponent<PortalInteractInput>() == null) gameObject.AddComponent<PortalInteractInput>();
+            }
+            else
+            {
+                var portalInput = GetComponent<PortalInteractInput>();
+                if (portalInput != null) portalInput.enabled = false;
+            }
             // GetComponent 在当前 GameObject 上查组件；GetComponentInChildren 还会搜索子层级，
             // Animator 通常挂在角色模型子物体上，所以两者不能混用。
             _characterController = GetComponent<CharacterController>();
@@ -268,8 +516,20 @@ namespace Game.Character
             _groundChecker = GetComponent<GroundChecker>();
             _groundChecker.UseControllerSampling();
             _statusController = GetComponent<StatusController>();
-            _inputActions = new InputSystem_Actions(); // Input System 根据 .inputactions 资产生成的强类型 C# 包装器。
-            _mainCamera = Camera.main;                 // Camera.main 会按 MainCamera Tag 查找；这里只在 Awake 缓存一次。
+            if (OwnsLocalInput)
+            {
+                _inputActions = new InputSystem_Actions(); // 只为本机拥有者创建强类型输入包装器。
+                _mainCamera = Camera.main;
+                if (_executionMode == PlayerExecutionMode.Prediction && _cameraRoot != null)
+                {
+                    // 线上出生点可能有任意 yaw。枢轴世界角才是首帧 Camera 的起点，不能首帧归零。
+                    Vector3 angles = _cameraRoot.eulerAngles;
+                    _cameraYaw = angles.y;
+                    _cameraPitch = Mathf.Clamp(angles.x > 180f ? angles.x - 360f : angles.x, _pitchMin, _pitchMax);
+                }
+            }
+            if (_executionMode != PlayerExecutionMode.SinglePlayer && _animator != null)
+                _animator.applyRootMotion = false; // 线上物理根只由显式运动或 Replica Snapshot 写入。
 
             // 初始化FSM State（这是共有的状态，私有的状态在各自的Controller中单独初始化）
             _stateMachine = new PlayerStateMachine();
@@ -300,10 +560,13 @@ namespace Game.Character
             {
                 _airDashStateHash = Animator.StringToHash(_airDashStateName);
             }
+            _initialized = true;
         }
 
         protected virtual void Start()
         {
+            // 组合层可能已在 Start 前应用出生／重连 Snapshot，不能再把恢复后的阶段改成 Grounded。
+            if (_stateMachine.CurrentState != null) return;
             // Start 而非 Awake 进入初始状态：保证所有 GameObject 的 Awake 已执行完
             TargetFacing = transform.forward;           // 锁存初值 = 出生朝向，避免开局自转到世界 +Z
             _stateMachine.ChangeState(_groundedState);  // 将初始状态切到 GroundedState。
@@ -311,70 +574,82 @@ namespace Game.Character
 
         protected virtual void OnEnable()
         {
-            EventBus<UserSettingsChangedEvent>.Subscribe(OnUserSettingsChanged);
-            ApplyUserSettings(UserSettingsService.Current);
-
-            // InputActionMap 只有 Enable 后才会更新动作状态并触发 performed；Disable 时必须解除回调，避免重复订阅。
-            _inputActions.Player.Enable();
-            _inputActions.Player.Jump.performed += OnJumpPerformed;
-            _inputActions.Player.Attack.performed += OnAttackPerformed;
-            _inputActions.Player.Dash.performed += OnDashPerformed;
-
-            Current = this; // 注册为当前玩家
+            if (OwnsLocalInput) BindLocalInput();
         }
 
         protected virtual void OnDisable()
         {
-            EventBus<UserSettingsChangedEvent>.Unsubscribe(OnUserSettingsChanged);
+            UnbindLocalInput();
+            ClearOnlineInput();
+        }
 
-            _inputActions.Player.Jump.performed -= OnJumpPerformed;
-            _inputActions.Player.Attack.performed -= OnAttackPerformed;
-            _inputActions.Player.Dash.performed -= OnDashPerformed;
-            _inputActions.Player.Disable();
+        protected virtual void OnDestroy()
+        {
+            UnbindLocalInput();
+            if (_inputActions != null) { _inputActions.Dispose(); _inputActions = null; }
+        }
 
-            if (Current == this) Current = null; // 注销（仅当自己仍是当前者）
+        private void BindLocalInput()
+        {
+            if (_inputSubscribed || !OwnsLocalInput) return;
+            if (_inputActions == null) _inputActions = new InputSystem_Actions();
+            if (_mainCamera == null) _mainCamera = Camera.main;
+            EventBus<UserSettingsChangedEvent>.Subscribe(OnUserSettingsChanged);
+            ApplyUserSettings(UserSettingsService.Current);
+            _inputActions.Player.Jump.performed += OnJumpPerformed;
+            _inputActions.Player.Attack.performed += OnAttackPerformed;
+            _inputActions.Player.Dash.performed += OnDashPerformed;
+            _inputActions.Player.Enable();
+            _inputSubscribed = true;
+            _inputSuppressed = false;
+            _waitJumpRelease = _waitDashRelease = _executionMode == PlayerExecutionMode.Prediction;
+            Current = this;
+        }
+
+        private void UnbindLocalInput()
+        {
+            if (_inputSubscribed)
+            {
+                EventBus<UserSettingsChangedEvent>.Unsubscribe(OnUserSettingsChanged);
+                _inputActions.Player.Jump.performed -= OnJumpPerformed;
+                _inputActions.Player.Attack.performed -= OnAttackPerformed;
+                _inputActions.Player.Dash.performed -= OnDashPerformed;
+                _inputActions.Player.Disable();
+                _inputSubscribed = false;
+            }
+            if (Current == this) Current = null;
         }
 
         // CharacterController 不是由 Rigidbody Physics Step 推进的动态刚体；角色主动调用 Move，故放在 Update 跟随输入帧率。
         private void Update()
         {
+            // Authority／Prediction 由 Root 的固定 Tick 调用；Replica 只应用 Snapshot。
+            if (_executionMode != PlayerExecutionMode.SinglePlayer) return;
             // 暂停时（如打开法杖编程界面 Time.timeScale=0）玩家完全惰性：不读输入、不跑状态机、不入队攻击。
             // 否则在 UI 里左键拖拽会被误读为"按下攻击"，关面板恢复时间瞬间凭空放一发。
             if (Time.timeScale == 0f) return;
 
-            // 角色采样顺序由自己掌握，避免GroundChecker.Update在Move前/后随机执行而读到上一帧位置。
-            _groundChecker.Refresh();
-
-            _moveInput = _inputActions.Player.Move.ReadValue<Vector2>();
             _lookInput = _inputActions.Player.Look.ReadValue<Vector2>();
-            _moveDirection = CalculateMoveDirection();
-
-            // 计时器统一在 Controller 递减（更新 Buffer 和 CD）
-            if (JumpBufferCounter > 0f) JumpBufferCounter -= Time.deltaTime;
-            if (CoyoteTimeCounter > 0f) CoyoteTimeCounter -= Time.deltaTime;
-            if (AttackBufferCounter > 0f) AttackBufferCounter -= Time.deltaTime;
-            if (AttackCooldownCounter > 0f) AttackCooldownCounter -= Time.deltaTime;
-            if (DashCooldownCounter > 0f) DashCooldownCounter -= Time.deltaTime;
-            if (DashBufferCounter > 0f) DashBufferCounter -= Time.deltaTime;
-
-            // 使用 InputAction 当前按住状态而非 canceled 回调：即使按键在 Jump Buffer 真正起跳前已松开，
-            // 下一帧也会把这次已武装的上升速度截断。Evaluate 每次跳跃最多生效一次。
-            VerticalVelocity = _jumpCutRuntime.Evaluate(
-                VerticalVelocity,
-                _inputActions.Player.Jump.IsPressed());
-
-            // Input System 回调已经写入离散按键意图；当前 State 按优先级消费，再同步最终 Gameplay 状态。
-            _stateMachine.Update();
-            SyncAnimatorParameters();
+            var frame = SampleInput(0, 0);
+            Simulate(frame, Time.deltaTime);
         }
 
         private void LateUpdate()
         {
+            if (!OwnsLocalInput || _inputSuppressed || !_hasFocus || _inputActions == null) return;
             // 暂停时不转轨道相机：打开编程界面解锁鼠标后，晃鼠标不应让镜头乱晃。
             if (Time.timeScale == 0f) return;
 
             // 在 LateUpdate 旋转相机枢轴：发生在所有 Update（角色移动）之后
+            if (_executionMode == PlayerExecutionMode.Prediction)
+                _lookInput = _inputActions.Player.Look.ReadValue<Vector2>();
             HandleCameraRotation();
+        }
+
+        private void OnApplicationFocus(bool focused)
+        {
+            _hasFocus = focused;
+            if (!focused && _executionMode != PlayerExecutionMode.SinglePlayer) ClearOnlineInput();
         }
 
         /// <summary>
@@ -383,6 +658,9 @@ namespace Game.Character
         /// </summary>
         private void OnControllerColliderHit(ControllerColliderHit hit)
         {
+            // 本地预测只校正自己，绝不能在每次 Replay 时再次给动态世界施加冲量。
+            if (_isReplaying || (_executionMode != PlayerExecutionMode.SinglePlayer &&
+                _executionMode != PlayerExecutionMode.Authority)) return;
             Rigidbody rb = hit.rigidbody;
             if (rb == null) return; // 静态物体不推
             if (rb.isKinematic) return; // Kinematic 不推
@@ -398,7 +676,9 @@ namespace Game.Character
 
         private void OnJumpPerformed(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
         {
-            JumpBufferCounter = _jumpBufferTime;
+            if (!OwnsLocalInput || Time.timeScale == 0f || !_hasFocus) return;
+            if (_executionMode == PlayerExecutionMode.SinglePlayer) JumpBufferCounter = _jumpBufferTime;
+            else if (!_inputSuppressed && !_waitJumpRelease) _jumpPressedPending = true;
         }
 
         /// <summary>
@@ -407,6 +687,7 @@ namespace Game.Character
         /// </summary>
         protected virtual void OnAttackPerformed(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
         {
+            if (_executionMode != PlayerExecutionMode.SinglePlayer) return;
             // performed 是 Input System 判定该 Action 完成一次交互时触发的回调。
             // 暂停界面也会使用鼠标；UI 点击不能泄漏成恢复游戏后的攻击请求。
             if (Time.timeScale == 0f)
@@ -417,7 +698,9 @@ namespace Game.Character
 
         private void OnDashPerformed(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
         {
-            DashBufferCounter = _dashBufferTime;
+            if (!OwnsLocalInput || Time.timeScale == 0f || !_hasFocus) return;
+            if (_executionMode == PlayerExecutionMode.SinglePlayer) DashBufferCounter = _dashBufferTime;
+            else if (!_inputSuppressed && !_waitDashRelease) _dashPressedPending = true;
         }
 
         private void OnUserSettingsChanged(UserSettingsChangedEvent settingsEvent)
@@ -436,6 +719,7 @@ namespace Game.Character
 
         private void SyncAnimatorParameters()
         {
+            if (_animator == null || _animator.runtimeAnimatorController == null) return;
             // 设置速度参数，确保值在0-1之间
             _animator.SetFloat(SpeedHash, Mathf.Clamp01(_moveInput.magnitude));
             // 检查角色是否处于地面状态且垂直速度小于等于0
@@ -445,22 +729,9 @@ namespace Game.Character
             SyncCharacterAnimatorParameters(animIsGrounded);
         }
 
-        private Vector3 CalculateMoveDirection()
-        {
-            if (_moveInput.sqrMagnitude < 0.01f) return Vector3.zero;
-
-            Vector3 cameraForward = _mainCamera.transform.forward;
-            Vector3 cameraRight = _mainCamera.transform.right;
-            cameraForward.y = 0f;
-            cameraRight.y = 0f;
-            cameraForward.Normalize();
-            cameraRight.Normalize();
-
-            return (cameraForward * _moveInput.y + cameraRight * _moveInput.x).normalized;
-        }
-
         private void HandleCameraRotation()
         {
+            if (_cameraRoot == null) return;
             float effectiveSensitivity =
                 _lookSensitivity * _settingsLookSensitivityMultiplier;
             _cameraYaw += _lookInput.x * effectiveSensitivity;

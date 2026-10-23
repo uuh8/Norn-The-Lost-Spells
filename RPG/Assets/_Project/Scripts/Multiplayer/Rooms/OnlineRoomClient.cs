@@ -55,7 +55,7 @@ namespace Game.Multiplayer
             EventBus<OnlineRoomRequestEvent>.Unsubscribe(OnCommand);
             _http?.Abort(); _http?.Dispose(); _http = null; StopAllCoroutines(); StopConnection();
             // 应用退出不跨网络等待DELETE；Open大厅由90秒Presence过期回收，运行中由DS Lease裁决。
-            RestoreHub(); if (_routine != null) Application.runInBackground = _originalBackground; _routine = null; _room = null;
+            OnlineWorldBootstrap.ShutdownActive(); RestoreHub(); if (_routine != null) Application.runInBackground = _originalBackground; _routine = null; _room = null;
         }
         private void OnMatch(DungeonMatchRequestedEvent request)
         {
@@ -129,7 +129,7 @@ namespace Game.Multiplayer
                         // 只有真实认证成功才释放门暂停；UI没有LoadScene权，也不把本地资产带进去。
                         EventBus<DungeonOnlineEntryConfirmedEvent>.Publish(new DungeonOnlineEntryConfirmedEvent { PortalId = _portal });
                         yield return EnterConnectionScene(); _inConnectionScene = true;
-                        _phase = OnlineRoomPhase.Connected; Status("已进入联机连接测试区，可验证重连与返回；副本战斗尚未开放。");
+            _phase = OnlineRoomPhase.Connected; Status("已进入联机移动与AI验证副本；可移动、跳跃、冲刺和重连，合作战斗尚未开放。");
                         yield return Connected();
                         break;
                     }
@@ -181,6 +181,7 @@ namespace Game.Multiplayer
             if (ticket == null || ticket.RoomId != _room.RoomId || ticket.PlayerId != _account.PlayerId || ticket.RunId != _room.RunId || ticket.RoomEpoch != _room.RoomEpoch || _profile.ConnectionPrefab == null)
             { _code = "InvalidTicketReply"; yield break; }
             var root = Instantiate(_profile.ConnectionPrefab); _manager = root.GetComponent<RoomNetworkManager>(); _auth = root.GetComponent<JoinTicketAuthenticator>();
+            if (root.GetComponent<MovementNetworkChannel>() == null) root.AddComponent<MovementNetworkChannel>();
             _manager.Configure(ticket.Port); _auth.ConfigureClient(ticket); _manager.StartClient();
             double deadline = Time.realtimeSinceStartupAsDouble + 12;
             while (Time.realtimeSinceStartupAsDouble < deadline && NetworkClient.active && !_auth.ClientAuthenticated) yield return _connectionPoll;
@@ -296,8 +297,10 @@ namespace Game.Multiplayer
         }
         private IEnumerator ReturnToHub()
         {
-            RestoreHub();
+            // 在线Tick/Physics先结束，再卸载世界并恢复Hub，避免全局物理模式污染单机一帧。
+            OnlineWorldBootstrap.ShutdownActive();
             if (_connectionScene.IsValid() && _connectionScene.isLoaded) yield return SceneManager.UnloadSceneAsync(_connectionScene);
+            RestoreHub();
             Time.timeScale = 1; Cursor.lockState = CursorLockMode.Locked; Cursor.visible = false;
         }
     }

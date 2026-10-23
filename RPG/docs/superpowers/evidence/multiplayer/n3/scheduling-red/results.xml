@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-22 18:19:37Z" end-time="2026-10-22 18:19:37Z" duration="0.1030982">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2231" result="Failed" site="Child" start-time="2026-10-22 18:19:37Z" end-time="2026-10-22 18:19:37Z" duration="0.103098" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2227" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-22 18:19:37Z" end-time="2026-10-22 18:19:37Z" duration="0.074008" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28156" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2228" name="Game" fullname="Game" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-22 18:19:37Z" end-time="2026-10-22 18:19:37Z" duration="0.068490" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2229" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-22 18:19:37Z" end-time="2026-10-22 18:19:37Z" duration="0.062782" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2230" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-22 18:19:37Z" end-time="2026-10-22 18:19:37Z" duration="0.056823" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2221" name="MovementSchedulingTests" fullname="Game.Multiplayer.Tests.MovementSchedulingTests" classname="Game.Multiplayer.Tests.MovementSchedulingTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-22 18:19:37Z" end-time="2026-10-22 18:19:37Z" duration="0.048879" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2222" name="Input_DuplicateWrongEpochAndNaNDoNotAdvanceConsumedAck" fullname="Game.Multiplayer.Tests.MovementSchedulingTests.Input_DuplicateWrongEpochAndNaNDoNotAdvanceConsumedAck" methodname="Input_DuplicateWrongEpochAndNaNDoNotAdvanceConsumedAck" classname="Game.Multiplayer.Tests.MovementSchedulingTests" runstate="Runnable" seed="472986956" result="Failed" start-time="2026-10-22 18:19:37Z" end-time="2026-10-22 18:19:37Z" duration="0.015890" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.MovementSchedulingTests.Input_DuplicateWrongEpochAndNaNDoNotAdvanceConsumedAck () [0x0000f] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\MovementSchedulingTests.cs:16
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2225" name="Input_FloodIsBounded_AndActorEpochResetClearsOldQueue" fullname="Game.Multiplayer.Tests.MovementSchedulingTests.Input_FloodIsBounded_AndActorEpochResetClearsOldQueue" methodname="Input_FloodIsBounded_AndActorEpochResetClearsOldQueue" classname="Game.Multiplayer.Tests.MovementSchedulingTests" runstate="Runnable" seed="1703884261" result="Failed" start-time="2026-10-22 18:19:37Z" end-time="2026-10-22 18:19:37Z" duration="0.001945" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: in range (1,32)
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.MovementSchedulingTests.Input_FloodIsBounded_AndActorEpochResetClearsOldQueue () [0x0004d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\MovementSchedulingTests.cs:55
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2224" name="Input_NeutralizeClearsQueueButPreservesOldSequenceFence" fullname="Game.Multiplayer.Tests.MovementSchedulingTests.Input_NeutralizeClearsQueueButPreservesOldSequenceFence" methodname="Input_NeutralizeClearsQueueButPreservesOldSequenceFence" classname="Game.Multiplayer.Tests.MovementSchedulingTests" runstate="Runnable" seed="1068589150" result="Failed" start-time="2026-10-22 18:19:37Z" end-time="2026-10-22 18:19:37Z" duration="0.000483" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.MovementSchedulingTests.Input_NeutralizeClearsQueueButPreservesOldSequenceFence () [0x0000f] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\MovementSchedulingTests.cs:43
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2223" name="Input_NoNewFrameDoesNotRepeatEdges_AndSilenceBecomesNeutral" fullname="Game.Multiplayer.Tests.MovementSchedulingTests.Input_NoNewFrameDoesNotRepeatEdges_AndSilenceBecomesNeutral" methodname="Input_NoNewFrameDoesNotRepeatEdges_AndSilenceBecomesNeutral" classname="Game.Multiplayer.Tests.MovementSchedulingTests" runstate="Runnable" seed="469251292" result="Failed" start-time="2026-10-22 18:19:37Z" end-time="2026-10-22 18:19:37Z" duration="0.000433" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.MovementSchedulingTests.Input_NoNewFrameDoesNotRepeatEdges_AndSilenceBecomesNeutral () [0x0000f] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\MovementSchedulingTests.cs:31
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2226" name="Tick_FrozenHasNoDebt_AndCatchupIsBounded" fullname="Game.Multiplayer.Tests.MovementSchedulingTests.Tick_FrozenHasNoDebt_AndCatchupIsBounded" methodname="Tick_FrozenHasNoDebt_AndCatchupIsBounded" classname="Game.Multiplayer.Tests.MovementSchedulingTests" runstate="Runnable" seed="1038581870" result="Failed" start-time="2026-10-22 18:19:37Z" end-time="2026-10-22 18:19:37Z" duration="0.007429" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.MovementSchedulingTests.Tick_FrozenHasNoDebt_AndCatchupIsBounded () [0x00058] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\MovementSchedulingTests.cs:68
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

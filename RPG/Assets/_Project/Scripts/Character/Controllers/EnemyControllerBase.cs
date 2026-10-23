@@ -13,7 +13,7 @@ namespace Game.Character
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(NavMeshAgent))]
     [RequireComponent(typeof(HealthComponent))]
-    public abstract class EnemyControllerBase : MonoBehaviour
+    public abstract class EnemyControllerBase : MonoBehaviour, IAuthorityTickParticipant
     {
         [Header("数据")]
         [SerializeField] protected EnemyDefinition _definition;
@@ -25,6 +25,7 @@ namespace Game.Character
         protected CharacterController _cc;
         protected Animator _animator;
         private StatusController _statusController;
+        private HealthComponent _health;
 
         private EnemyPerception _perception;
         private EnemyStateMachine _stateMachine;
@@ -35,6 +36,11 @@ namespace Game.Character
         private int _hurtStateHash;
         private int _id;
         private bool _dead;
+        private bool _isOnlineAuthority;
+        private bool _isOnlineReplica;
+        private ICombatActorRosterReadOnly _onlineRoster;
+        private bool _hasAuthorityTick;
+        private uint _lastAuthorityTick;
 
         private float _verticalVelocity;
 
@@ -50,6 +56,68 @@ namespace Game.Character
         public float AttackCooldownCounter { get; set; }
         public bool IsDead => _dead;
         public Animator Animator => _animator;
+        public int TeamId => _health != null ? _health.TeamId : 0;
+        public bool IsOnlineAuthority => _isOnlineAuthority;
+        public bool IsOnlineReplica => _isOnlineReplica;
+        /// <summary>本次领域推进的步长；单机由 Update 注入，在线由统一 Authority Driver 注入。</summary>
+        public float SimulationDeltaTime { get; private set; }
+
+        /// <summary>由在线场景组合明确指定 Authority，避免通过本机 Player Current 推断角色身份。</summary>
+        public void ConfigureOnlineAuthority(ICombatActorRosterReadOnly roster)
+        {
+            _isOnlineAuthority = true;
+            _isOnlineReplica = false;
+            _onlineRoster = roster;
+            ResetOnlineExecution();
+            _perception?.BindRoster(roster);
+            _navigation?.SetReplicaSuspended(false);
+        }
+
+        /// <summary>Replica 仅消费快照表现，不执行本机 Enemy AI。</summary>
+        public void ConfigureOnlineReplica()
+        {
+            _isOnlineAuthority = false;
+            _isOnlineReplica = true;
+            _onlineRoster = null;
+            ResetOnlineExecution();
+            _perception?.BindRoster(null);
+            _navigation?.SetReplicaSuspended(true);
+        }
+
+        /// <summary>
+        /// 统一 Driver 已完成 CanSimulate 门禁后才调用。这里再拒绝重复或过期 Tick，
+        /// 防止注册重复等组合错误让同一个 CharacterController 在一轮里 Move 两次。
+        /// </summary>
+        public void StepAuthority(float deltaTime, uint serverTick)
+        {
+            if (!_isOnlineAuthority || _dead || !isActiveAndEnabled || _perception == null ||
+                _cc == null || !_cc.enabled || deltaTime <= 0f ||
+                float.IsNaN(deltaTime) || float.IsInfinity(deltaTime))
+                return;
+
+            // uint 差值转有符号数可保持正常递增与跨 uint 回卷的先后关系；不接受半个序号空间以前的 Tick。
+            if (_hasAuthorityTick && unchecked((int)(serverTick - _lastAuthorityTick)) <= 0)
+                return;
+
+            _hasAuthorityTick = true;
+            _lastAuthorityTick = serverTick;
+            SimulationDeltaTime = deltaTime;
+            StepCooldown();
+            _perception.Tick();
+            StepOnlineLocomotion();
+            SyncAnimator();
+        }
+
+        private void ResetOnlineExecution()
+        {
+            _hasAuthorityTick = false;
+            SimulationDeltaTime = 0f;
+            // 从旧单机攻击态切出必须走 Exit，确保已打开的近战命中窗口得到关闭。
+            // 不直接丢弃 CurrentState，避免残留攻击资源绕过 N3 的 locomotion-only 边界。
+            if (_stateMachine != null && _stateMachine.CurrentState != null)
+                _stateMachine.ChangeState(_idleState);
+            _navigation?.StopNavigation(true);
+        }
 
         /// <summary>进入战斗后使用的走位状态（多态接缝）：近战=ChaseState，远程=KiteState。</summary>
         public abstract EnemyStateBase EngageState { get; }
@@ -62,12 +130,18 @@ namespace Game.Character
             // StatusController 属于 Combat，Character 只消费最终倍率，不理解 Sticky/Reaction 规则。
             // Awake 缓存避免敌人 MoveHorizontal 热路径反复 GetComponent。
             _statusController = GetComponent<StatusController>();
+            _health = GetComponent<HealthComponent>();
 
             _perception = new EnemyPerception(this);
             _stateMachine = new EnemyStateMachine();
             _idleState = new EnemyIdleState(this);
             _hurtState = new EnemyHurtState(this);
             _navigation = new EnemyNavigationMotor(navMeshAgent, _definition, transform);
+            // 允许组合层先在 inactive 对象上指定身份；Awake 以后补完同一份配置，不依赖 Start 顺序。
+            if (_isOnlineAuthority || _isOnlineReplica)
+                _perception.BindRoster(_onlineRoster);
+            if (_isOnlineReplica)
+                _navigation.SetReplicaSuspended(true);
 
             // 攻击/施法动画状态名取自攻击数据(数据驱动)；空 → 0 → CrossFade 不切动画
             string atkStateName = (_definition != null && _definition.Attack != null)
@@ -86,7 +160,8 @@ namespace Game.Character
 
         private void Start()
         {
-            _stateMachine.ChangeState(_idleState);
+            if (!_isOnlineAuthority && !_isOnlineReplica)
+                _stateMachine.ChangeState(_idleState);
         }
 
         protected virtual void OnEnable()
@@ -103,6 +178,8 @@ namespace Game.Character
 
         private void OnDamageReceived(DamageReceivedEvent e)
         {
+            // N3 尚未接权威战斗；在线不让本地 Combat 事件切入旧攻击/硬直 FSM。
+            if (_isOnlineAuthority || _isOnlineReplica) return;
             if (_dead || e.TargetId != _id) return;
             if (e.RemainingHp <= 0f) return;        // 致死那一击交给 OnDeath，不进硬直
             if (!e.TriggerHitReaction) return;      // DoT/环境跳伤：不进硬直，避免被持续伤害锁死
@@ -111,6 +188,7 @@ namespace Game.Character
 
         private void OnDeath(DeathEvent e)
         {
+            if (_isOnlineReplica) return;
             if (_dead || e.TargetId != _id) return;
             _dead = true;
             _navigation?.DisableNavigation();
@@ -122,11 +200,73 @@ namespace Game.Character
 
         private void Update()
         {
-            if (_dead) return;
-            if (AttackCooldownCounter > 0f) AttackCooldownCounter -= Time.deltaTime;
+            // 在线对象只由显式 Tick 推进，不能同时接受 Unity Update 的第二次感知和位移。
+            if (_dead || _isOnlineAuthority || _isOnlineReplica) return;
+            SimulationDeltaTime = Time.deltaTime;
+            StepCooldown();
             _perception.Tick();
             _stateMachine.Update();
             SyncAnimator();
+        }
+
+        private void StepCooldown()
+        {
+            if (AttackCooldownCounter > 0f)
+                AttackCooldownCounter = Mathf.Max(0f, AttackCooldownCounter - SimulationDeltaTime);
+        }
+
+        private void StepOnlineLocomotion()
+        {
+            if (!_perception.HasTarget || _definition == null)
+            {
+                StopNavigation(true);
+                StayGrounded();
+                return;
+            }
+
+            Vector3 targetPosition = _perception.TargetPosition;
+            RangedEnemyController ranged = this as RangedEnemyController;
+            if (ranged != null)
+            {
+                if (EnemyPerceptionMath.ShouldRetreat(
+                        _perception.DistanceToTarget, _perception.VerticalDistanceToTarget,
+                        _definition.RetreatDistance, _definition.RangedRetreatMaxHeight))
+                {
+                    EnemyNavigationResult retreat = PlanNavigationAwayFrom(targetPosition);
+                    if (EnemyNavigationMath.ShouldContinueRetreat(retreat))
+                    {
+                        FaceNavigationOrTarget(targetPosition);
+                        MoveAlongNavigation();
+                        return;
+                    }
+                }
+
+                if (ranged.CanAttackTarget(targetPosition))
+                {
+                    HoldOnlinePosition(targetPosition);
+                    return;
+                }
+            }
+
+            // 复用真实 NavMesh 路径与绕障；路径不可用时保留目标并重试，绝不直线移动 Transform 穿墙。
+            // 近战保留 AttackRange 的站位距离，N3 仅停步而不进入旧 AttackState 或 CastProgram。
+            float stoppingDistance = ranged == null ? Mathf.Max(0.05f, _definition.AttackRange * 0.8f) : 0.05f;
+            PlanNavigationTo(targetPosition, stoppingDistance);
+            if (ranged == null && CanAttackThroughNavigation(targetPosition, _definition.AttackRange))
+            {
+                HoldOnlinePosition(targetPosition);
+                return;
+            }
+
+            FaceNavigationOrTarget(targetPosition);
+            MoveAlongNavigation();
+        }
+
+        private void HoldOnlinePosition(Vector3 targetPosition)
+        {
+            _navigation?.HoldPosition();
+            FaceTarget(targetPosition);
+            StayGrounded();
         }
 
         private void SyncAnimator()
@@ -152,7 +292,7 @@ namespace Game.Character
                 ? _definition.MoveSpeed * Mathf.Max(0f, statusMultiplier)
                 : 0f;
             return _navigation != null
-                ? _navigation.NavigateTo(targetPos, stoppingDistance, moveSpeed, Time.deltaTime)
+                ? _navigation.NavigateTo(targetPos, stoppingDistance, moveSpeed, SimulationDeltaTime)
                 : EnemyNavigationResult.Unavailable;
         }
 
@@ -165,7 +305,7 @@ namespace Game.Character
                 ? _definition.MoveSpeed * Mathf.Max(0f, statusMultiplier)
                 : 0f;
             return _navigation != null
-                ? _navigation.TryNavigateRetreat(targetPos, moveSpeed, Time.deltaTime)
+                ? _navigation.TryNavigateRetreat(targetPos, moveSpeed, SimulationDeltaTime)
                 : EnemyNavigationResult.Unavailable;
         }
 
@@ -176,7 +316,7 @@ namespace Game.Character
             ApplyGravity();
             Vector3 velocity = horizontal;
             velocity.y = _verticalVelocity;
-            _cc.Move(velocity * Time.deltaTime);
+            _cc.Move(velocity * SimulationDeltaTime);
             _navigation?.SyncToCharacter();
         }
 
@@ -184,7 +324,7 @@ namespace Game.Character
         public void StayGrounded()
         {
             ApplyGravity();
-            _cc.Move(Vector3.up * _verticalVelocity * Time.deltaTime);
+            _cc.Move(Vector3.up * _verticalVelocity * SimulationDeltaTime);
             _navigation?.SyncToCharacter();
         }
 
@@ -216,7 +356,7 @@ namespace Game.Character
             direction.y = 0f;
             if (direction.sqrMagnitude < 1e-6f) return;
             Quaternion rot = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, rot, _rotationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, rot, _rotationSpeed * SimulationDeltaTime);
         }
 
         /// <summary>数据驱动 CrossFade 进入指定 Animator 状态（hash 为 0 静默跳过）。</summary>
@@ -229,7 +369,7 @@ namespace Game.Character
         private void ApplyGravity()
         {
             if (_cc.isGrounded && _verticalVelocity < 0f) _verticalVelocity = -2f;
-            else _verticalVelocity += _gravity * Time.deltaTime;
+            else _verticalVelocity += _gravity * SimulationDeltaTime;
         }
 
         #endregion

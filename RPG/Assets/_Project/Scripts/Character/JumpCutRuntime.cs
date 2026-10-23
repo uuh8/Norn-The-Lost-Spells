@@ -10,6 +10,9 @@ namespace Game.Character
     {
         private readonly float _velocityMultiplier;
         private bool _isArmed;
+        public bool IsArmed => _isArmed;
+        /// <summary>这是一跳内的一次性权限，必须与垂直速度一起恢复，避免重放重复截断上升速度。</summary>
+        public void RestoreArmed(bool isArmed) => _isArmed = isArmed;
 
         public JumpCutRuntime(float velocityMultiplier)
         {

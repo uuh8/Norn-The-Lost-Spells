@@ -19,6 +19,9 @@ namespace Game.Networking
         private ProtoMessageCodec _codec;
         private double _nextPing;
         private ulong _sequence;
+        // 组合层接收可信连接生命周期，不让Networking反向引用角色/AI实现。
+        public event Action<NetworkConnectionToClient, JoinConnectionIdentity> ServerActorJoined;
+        public event Action<NetworkConnectionToClient, JoinConnectionIdentity> ServerActorLeft;
         public long Replies { get; private set; }
         public long Served { get; private set; }
         public int AuthenticatedConnections { get; private set; }
@@ -52,13 +55,30 @@ namespace Game.Networking
             var identity = connection.authenticationData as JoinConnectionIdentity;
             if (identity == null || !IPAddress.TryParse(connection.address, out var ip) || !IPAddress.IsLoopback(ip.IsIPv4MappedToIPv6 ? ip.MapToIPv4() : ip)) { connection.Disconnect(); return; }
             _sessions[(int)identity.ActorId - 1].Attach(connection.connectionId); AuthenticatedConnections++;
+            ServerActorJoined?.Invoke(connection, identity);
             GameLog.Info("副本账户准入成功。", "OnlineRooms");
         }
         public override void OnServerDisconnect(NetworkConnectionToClient connection)
         {
-            if (connection.authenticationData is JoinConnectionIdentity) AuthenticatedConnections--;
+            if (connection.authenticationData is JoinConnectionIdentity identity)
+            {
+                AuthenticatedConnections--;
+                if (identity.ActorId >= 1 && identity.ActorId <= 4 && _sessions[(int)identity.ActorId - 1].ConnectionId == connection.connectionId)
+                    ServerActorLeft?.Invoke(connection, identity); // Transport清理阶段不再依赖isAuthenticated仍为true。
+            }
             for (int i = 0; i < _sessions.Length; i++) if (_sessions[i].ConnectionId == connection.connectionId) _sessions[i].Clear();
             base.OnServerDisconnect(connection);
+        }
+        public bool IsCurrentActorConnection(NetworkConnectionToClient connection, JoinConnectionIdentity identity)
+        {
+            return connection != null && identity != null && connection.isAuthenticated && identity.ActorId >= 1 && identity.ActorId <= 4 &&
+                ReferenceEquals(connection.authenticationData, identity) && _sessions[(int)identity.ActorId - 1].ConnectionId == connection.connectionId;
+        }
+        public NetworkConnectionToClient ActorConnection(int seatIndex)
+        {
+            if (seatIndex < 0 || seatIndex >= _sessions.Length || !NetworkServer.active ||
+                !NetworkServer.connections.TryGetValue(_sessions[seatIndex].ConnectionId, out var connection)) return null;
+            return connection.authenticationData is JoinConnectionIdentity identity && IsCurrentActorConnection(connection, identity) ? connection : null;
         }
         public override void Update()
         {

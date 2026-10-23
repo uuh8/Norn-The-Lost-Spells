@@ -19,6 +19,16 @@ namespace Game.Character
         private Vector3 _dashDirection; // 进入瞬间锁定的世界空间冲刺方向（已去 y、归一化）
         private float _elapsed;         // 本次冲刺已过时间（秒）
 
+        public Vector3 Direction => _dashDirection;
+        public float Elapsed => _elapsed;
+
+        /// <summary>恢复正在进行的 Dash，不重新起手、消费 Buffer 或修改垂直动量。</summary>
+        public void RestoreSnapshot(Vector3 direction, float elapsed)
+        {
+            _dashDirection = direction;
+            _elapsed = Mathf.Max(0f, elapsed);
+        }
+
         public PlayerDashState(PlayerControllerBase player) : base(player) { }
 
         #region 状态机函数
@@ -47,7 +57,8 @@ namespace Game.Character
             int stateHash = _player.IsAirborneForDash
                 ? _player.AirDashStateHash
                 : _player.DashStateHash;
-            if (stateHash != 0)
+            if (stateHash != 0 && _player.CanPlayMovementFeedback && _player.Animator != null &&
+                _player.Animator.runtimeAnimatorController != null)
             {
                 _player.Animator.CrossFadeInFixedTime(stateHash, CrossFadeDuration, 0);
             }
@@ -57,7 +68,7 @@ namespace Game.Character
         {
             HandleDashMovement();
 
-            _elapsed += Time.deltaTime;
+            _elapsed += _player.SimulationDeltaTime;
             // 总时长 = 启动延迟 + 位移时长：延迟段只播动画/贴地，位移段保持原距离（DashSpeed × DashDuration）
             if (_elapsed >= _player.DashMoveDelay + _player.DashDuration)
                 TransitionToMovement();
@@ -91,7 +102,7 @@ namespace Game.Character
             Vector3 velocity = _dashDirection * horizontalSpeed;
             // 空中 Dash 暂停垂直速度但不清零，结束后继续原有抛物线；地面 Dash 保留贴地压力。
             velocity.y = _player.IsAirborneForDash ? 0f : _player.VerticalVelocity;
-            _player.MoveCharacter(velocity * Time.deltaTime);
+            _player.MoveCharacter(velocity * _player.SimulationDeltaTime);
         }
 
         #endregion

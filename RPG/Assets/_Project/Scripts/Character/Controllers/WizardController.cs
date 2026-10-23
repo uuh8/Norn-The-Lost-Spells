@@ -81,6 +81,7 @@ namespace Game.Character
         /// <summary>Scene-local工作区在角色Awake后就绪，显式更新缓存，避免新背包仍走旧Library施法。</summary>
         public void BindOwnedInventory(OwnedWandCastAdapter adapter)
         {
+            if (ExecutionMode != PlayerExecutionMode.SinglePlayer) return;
             _ownedWands?.CancelOutstanding();
             AttackBufferCounter=0;_pendingProgram=_activeProgram=default;_pendingSource=_activeSource=default;
             _ownedWands=adapter;_usesOwnedWands=true;
@@ -111,6 +112,7 @@ namespace Game.Character
         protected override void Start()
         {
             base.Start();
+            if (ExecutionMode != PlayerExecutionMode.SinglePlayer) return;
             // 远程角色屏幕中间显示准心
             EventBus<CrosshairVisibilityEvent>.Publish(new CrosshairVisibilityEvent { Visible = true });
         }
@@ -118,6 +120,7 @@ namespace Game.Character
         protected override void OnEnable()
         {
             base.OnEnable();
+            if (ExecutionMode != PlayerExecutionMode.SinglePlayer) return;
             EventBus<RaidStateChangedEvent>.Subscribe(OnRaidStateChanged);
             EventBus<HeldItemUseResetEvent>.Subscribe(OnHeldUseReset);
             EventBus<CrosshairVisibilityEvent>.Publish(new CrosshairVisibilityEvent { Visible = true });
@@ -125,6 +128,11 @@ namespace Game.Character
 
         protected override void OnDisable()
         {
+            if (ExecutionMode != PlayerExecutionMode.SinglePlayer)
+            {
+                base.OnDisable();
+                return;
+            }
             _fireScheduler.Reset(); AttackBufferCounter = 0;_awaitAttackRelease=true;
             _pendingProgram=_activeProgram=default;_pendingSource=_activeSource=default;
             EventBus<RaidStateChangedEvent>.Unsubscribe(OnRaidStateChanged);
@@ -134,6 +142,7 @@ namespace Game.Character
         }
         private void OnRaidStateChanged(RaidStateChangedEvent change)
         {
+            if (ExecutionMode != PlayerExecutionMode.SinglePlayer) return;
             if (!_usesOwnedWands || _ownedWands?.ReadOnly == null || change.InventoryId != _ownedWands.ReadOnly.InventoryId
                 || (change.Phase != RaidPhase.Departing && change.Phase != RaidPhase.Settling)) return;
             // 跨局资源/场景切换不能让旧动画稍后释放排队施法；只清本角色攻击，不削弱其它角色控制能力。
@@ -142,6 +151,7 @@ namespace Game.Character
         }
         private void OnHeldUseReset(HeldItemUseResetEvent change)
         {
+            if (ExecutionMode != PlayerExecutionMode.SinglePlayer) return;
             if (!_usesOwnedWands || _ownedWands?.ReadOnly == null || change.InventoryId != _ownedWands.ReadOnly.InventoryId) return;
             // 清掉尚未释放的动画来源；已发Trigger持有自己的冻结上下文，不受这里清缓存影响。
             AttackBufferCounter = 0; _pendingProgram = default; _pendingSource = default;
@@ -158,6 +168,8 @@ namespace Game.Character
         /// </summary>
         protected override void OnAttackPerformed(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
         {
+            // N3 只开放运动；线上施法必须经后续权威请求，不能落回单机无限资源路径。
+            if (ExecutionMode != PlayerExecutionMode.SinglePlayer) return;
             // 暂停时 UI 也会使用鼠标，不能把 UI 点击记录成恢复游戏后的施法。
             if (Time.timeScale == 0f)
             {
@@ -237,6 +249,8 @@ namespace Game.Character
         /// </summary>
         public override void PlayJumpStartAnimation()
         {
+            if (ExecutionMode == PlayerExecutionMode.Authority || Animator == null ||
+                Animator.runtimeAnimatorController == null) return;
             ClearPendingJumpAnimation();
             Animator.CrossFadeInFixedTime(
                 JumpStartHash,
@@ -251,6 +265,7 @@ namespace Game.Character
         /// </summary>
         protected override void PlayJumpVfx()
         {
+            if (!CanPlayMovementFeedback) return;
             if (_jumpVfxPrefab == null) return;
 
             Vector3 spawnPosition = JumpVfxPlacement.ResolveFootPosition(
@@ -292,6 +307,7 @@ namespace Game.Character
         /// </summary>
         public override bool TryStartAttack()
         {
+            if (ExecutionMode != PlayerExecutionMode.SinglePlayer) return false;
             if (_usesOwnedWands && _ownedWands != null && _ownedWands.IsV2) return TryBeginV2Cast();
             if (AttackBufferCounter <= 0f || (_usesOwnedWands ? _ownedWands == null || !_ownedWands.CanStart(_pendingProgram) : AttackCooldownCounter > 0f))
                 return false;
@@ -303,6 +319,7 @@ namespace Game.Character
         /// <summary>空中状态的平行入口；复用同一个攻击缓存，只由攻击 State 选择空中动画。</summary>
         public override bool TryStartAirAttack()
         {
+            if (ExecutionMode != PlayerExecutionMode.SinglePlayer) return false;
             if (_usesOwnedWands && _ownedWands != null && _ownedWands.IsV2) return TryBeginV2Cast();
             if (AttackBufferCounter <= 0f || (_usesOwnedWands ? _ownedWands == null || !_ownedWands.CanStart(_pendingProgram) : AttackCooldownCounter > 0f))
                 return false;
@@ -354,6 +371,7 @@ namespace Game.Character
         }
         public int ReleaseActiveCast(Vector3 spawn, Vector3 aim, byte team, int attacker, Collider collider)
         {
+            if (ExecutionMode != PlayerExecutionMode.SinglePlayer) return 0;
             if (_spellCaster == null) return 0;
             // 动画等待期间可能换杖/换持物/开始转场；只能释放仍被玩家持有且版本一致的来源。
             if (_usesOwnedWands && _ownedWands == null) return 0;

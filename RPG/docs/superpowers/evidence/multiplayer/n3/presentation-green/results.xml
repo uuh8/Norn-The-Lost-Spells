@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="13" result="Passed" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-23 02:22:42Z" end-time="2026-10-23 02:22:43Z" duration="1.4068087">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2244" result="Passed" start-time="2026-10-23 02:22:42Z" end-time="2026-10-23 02:22:43Z" duration="1.406809" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2241" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="16" result="Passed" start-time="2026-10-23 02:22:42Z" end-time="2026-10-23 02:22:43Z" duration="0.673207" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28156" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2242" name="Game" fullname="Game" runstate="Runnable" testcasecount="16" result="Passed" start-time="2026-10-23 02:22:42Z" end-time="2026-10-23 02:22:43Z" duration="0.601238" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2243" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="16" result="Passed" start-time="2026-10-23 02:22:42Z" end-time="2026-10-23 02:22:43Z" duration="0.502577" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="2244" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="16" result="Passed" start-time="2026-10-23 02:22:42Z" end-time="2026-10-23 02:22:43Z" duration="0.407773" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="2221" name="MovementCorrectionBlendTests" fullname="Game.Multiplayer.Tests.MovementCorrectionBlendTests" classname="Game.Multiplayer.Tests.MovementCorrectionBlendTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-23 02:22:42Z" end-time="2026-10-23 02:22:43Z" duration="0.169775" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2222" name="CorrectionKeepsPreviousVisualThenFinishesInFiniteTime" fullname="Game.Multiplayer.Tests.MovementCorrectionBlendTests.CorrectionKeepsPreviousVisualThenFinishesInFiniteTime" methodname="CorrectionKeepsPreviousVisualThenFinishesInFiniteTime" classname="Game.Multiplayer.Tests.MovementCorrectionBlendTests" runstate="Runnable" seed="773113822" result="Passed" start-time="2026-10-23 02:22:43Z" end-time="2026-10-23 02:22:43Z" duration="0.047350" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2223" name="NewCorrectionStartsFromCurrentVisualError_NotAnUnboundedOldOffset" fullname="Game.Multiplayer.Tests.MovementCorrectionBlendTests.NewCorrectionStartsFromCurrentVisualError_NotAnUnboundedOldOffset" methodname="NewCorrectionStartsFromCurrentVisualError_NotAnUnboundedOldOffset" classname="Game.Multiplayer.Tests.MovementCorrectionBlendTests" runstate="Runnable" seed="1575361733" result="Passed" start-time="2026-10-23 02:22:43Z" end-time="2026-10-23 02:22:43Z" duration="0.000927" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2224" name="TeleportOrNonfiniteErrorCannotLeaveVisualOutsideAuthorityWorld" fullname="Game.Multiplayer.Tests.MovementCorrectionBlendTests.TeleportOrNonfiniteErrorCannotLeaveVisualOutsideAuthorityWorld" methodname="TeleportOrNonfiniteErrorCannotLeaveVisualOutsideAuthorityWorld" classname="Game.Multiplayer.Tests.MovementCorrectionBlendTests" runstate="Runnable" seed="1163848906" result="Passed" start-time="2026-10-23 02:22:43Z" end-time="2026-10-23 02:22:43Z" duration="0.000473" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="2225" name="MovementFaultQueueTests" fullname="Game.Multiplayer.Tests.MovementFaultQueueTests" classname="Game.Multiplayer.Tests.MovementFaultQueueTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-23 02:22:43Z" end-time="2026-10-23 02:22:43Z" duration="0.051474" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2226" name="HalfRttEachDirection_HoldsThenReleasesWithoutChangingPayload" fullname="Game.Multiplayer.Tests.MovementFaultQueueTests.HalfRttEachDirection_HoldsThenReleasesWithoutChangingPayload" methodname="HalfRttEachDirection_HoldsThenReleasesWithoutChangingPayload" classname="Game.Multiplayer.Tests.MovementFaultQueueTests" runstate="Runnable" seed="482261511" result="Passed" start-time="2026-10-23 02:22:43Z" end-time="2026-10-23 02:22:43Z" duration="0.003285" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2228" name="LossAndJitter_AreRepeatableAndNeverGrowPastCapacity" fullname="Game.Multiplayer.Tests.MovementFaultQueueTests.LossAndJitter_AreRepeatableAndNeverGrowPastCapacity" methodname="LossAndJitter_AreRepeatableAndNeverGrowPastCapacity" classname="Game.Multiplayer.Tests.MovementFaultQueueTests" runstate="Runnable" seed="2097655216" result="Passed" start-time="2026-10-23 02:22:43Z" end-time="2026-10-23 02:22:43Z" duration="0.018196" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2227" name="QueueIsBounded_AndReconfigurationClearsOldEpochPayloads" fullname="Game.Multiplayer.Tests.MovementFaultQueueTests.QueueIsBounded_AndReconfigurationClearsOldEpochPayloads" methodname="QueueIsBounded_AndReconfigurationClearsOldEpochPayloads" classname="Game.Multiplayer.Tests.MovementFaultQueueTests" runstate="Runnable" seed="1719608141" result="Passed" start-time="2026-10-23 02:22:43Z" end-time="2026-10-23 02:22:43Z" duration="0.000666" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="2235" name="PredictionInterpolationTests" fullname="Game.Multiplayer.Tests.PredictionInterpolationTests" classname="Game.Multiplayer.Tests.PredictionInterpolationTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-23 02:22:43Z" end-time="2026-10-23 02:22:43Z" duration="0.084181" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2238" name="HistoryOverflow_HardCorrectsInsteadOfReplayingAnIncompletePast" fullname="Game.Multiplayer.Tests.PredictionInterpolationTests.HistoryOverflow_HardCorrectsInsteadOfReplayingAnIncompletePast" methodname="HistoryOverflow_HardCorrectsInsteadOfReplayingAnIncompletePast" classname="Game.Multiplayer.Tests.PredictionInterpolationTests" runstate="Runnable" seed="1430086370" result="Passed" start-time="2026-10-23 02:22:43Z" end-time="2026-10-23 02:22:43Z" duration="0.002775" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2240" name="Interpolation_ResumesBufferedTimelineAfterAuthorityFreeze" fullname="Game.Multiplayer.Tests.PredictionInterpolationTests.Interpolation_ResumesBufferedTimelineAfterAuthorityFreeze" methodname="Interpolation_ResumesBufferedTimelineAfterAuthorityFreeze" classname="Game.Multiplayer.Tests.PredictionInterpolationTests" runstate="Runnable" seed="840638667" result="Passed" start-time="2026-10-23 02:22:43Z" end-time="2026-10-23 02:22:43Z" duration="0.001417" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2239" name="Interpolation_UsesServerTimeAndStopsAtNewestInsteadOfRunningForever" fullname="Game.Multiplayer.Tests.PredictionInterpolationTests.Interpolation_UsesServerTimeAndStopsAtNewestInsteadOfRunningForever" methodname="Interpolation_UsesServerTimeAndStopsAtNewestInsteadOfRunningForever" classname="Game.Multiplayer.Tests.PredictionInterpolationTests" runstate="Runnable" seed="1751690266" result="Passed" start-time="2026-10-23 02:22:43Z" end-time="2026-10-23 02:22:43Z" duration="0.000401" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2236" name="Reconcile_ReplaysOnlyUnacknowledgedInputs" fullname="Game.Multiplayer.Tests.PredictionInterpolationTests.Reconcile_ReplaysOnlyUnacknowledgedInputs" methodname="Reconcile_ReplaysOnlyUnacknowledgedInputs" classname="Game.Multiplayer.Tests.PredictionInterpolationTests" runstate="Runnable" seed="584767222" result="Passed" start-time="2026-10-23 02:22:43Z" end-time="2026-10-23 02:22:43Z" duration="0.001986" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2237" name="Reconcile_WrongEpochOrFutureAckNeverChangesMotor" fullname="Game.Multiplayer.Tests.PredictionInterpolationTests.Reconcile_WrongEpochOrFutureAckNeverChangesMotor" methodname="Reconcile_WrongEpochOrFutureAckNeverChangesMotor" classname="Game.Multiplayer.Tests.PredictionInterpolationTests" runstate="Runnable" seed="1048167058" result="Passed" start-time="2026-10-23 02:22:43Z" end-time="2026-10-23 02:22:43Z" duration="0.000480" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="3772" name="Game.UI.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.UI.Tests.dll" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-23 02:22:43Z" end-time="2026-10-23 02:22:43Z" duration="0.613391" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28156" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="3773" name="Game" fullname="Game" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-23 02:22:43Z" end-time="2026-10-23 02:22:43Z" duration="0.523939" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3774" name="UI" fullname="Game.UI" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-23 02:22:43Z" end-time="2026-10-23 02:22:43Z" duration="0.424014" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="3775" name="Tests" fullname="Game.UI.Tests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-23 02:22:43Z" end-time="2026-10-23 02:22:43Z" duration="0.323771" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="3757" name="OnlineMovementCursorTests" fullname="Game.UI.Tests.OnlineMovementCursorTests" classname="Game.UI.Tests.OnlineMovementCursorTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-23 02:22:43Z" end-time="2026-10-23 02:22:43Z" duration="0.221178" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="ParameterizedMethod" id="3760" name="OnlineMenuOrDisconnectUnlocksCursorForActualButtons" fullname="Game.UI.Tests.OnlineMovementCursorTests.OnlineMenuOrDisconnectUnlocksCursorForActualButtons" classname="Game.UI.Tests.OnlineMovementCursorTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-23 02:22:43Z" end-time="2026-10-23 02:22:43Z" duration="0.121229" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="3758" name="OnlineMenuOrDisconnectUnlocksCursorForActualButtons(True,True)" fullname="Game.UI.Tests.OnlineMovementCursorTests.OnlineMenuOrDisconnectUnlocksCursorForActualButtons(True,True)" methodname="OnlineMenuOrDisconnectUnlocksCursorForActualButtons" classname="Game.UI.Tests.OnlineMovementCursorTests" runstate="Runnable" seed="700932613" result="Passed" start-time="2026-10-23 02:22:43Z" end-time="2026-10-23 02:22:43Z" duration="0.017223" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="3759" name="OnlineMenuOrDisconnectUnlocksCursorForActualButtons(False,False)" fullname="Game.UI.Tests.OnlineMovementCursorTests.OnlineMenuOrDisconnectUnlocksCursorForActualButtons(False,False)" methodname="OnlineMenuOrDisconnectUnlocksCursorForActualButtons" classname="Game.UI.Tests.OnlineMovementCursorTests" runstate="Runnable" seed="1079486690" result="Passed" start-time="2026-10-23 02:22:43Z" end-time="2026-10-23 02:22:43Z" duration="0.003384" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

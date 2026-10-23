@@ -42,7 +42,7 @@ namespace Game.Character
 
             // 空中攻击（角色子类决定是否支持）。放在落地检测之前，
             // Coyote 跳之后：保留跳跃宽限优先级，攻击则替代本帧的重力/移动/落地处理。
-            if (_player.TryStartAirAttack())
+            if (_player.ExecutionMode == Game.Core.PlayerExecutionMode.SinglePlayer && _player.TryStartAirAttack())
                 return;
 
             HandleGravity();
@@ -67,7 +67,7 @@ namespace Game.Character
             // _gravityMultiplier 让下落比物理重力更快，手感更"脆"
             _player.VerticalVelocity += Physics.gravity.y   // Physics 是 Unity 提供的一个全局物理配置类。Physics.gravity 默认值(0, -9.81, 0)
                                         * multiplier
-                                        * Time.deltaTime;
+                                        * _player.SimulationDeltaTime;
         }
 
         private void HandleMovement()
@@ -77,7 +77,7 @@ namespace Game.Character
             Vector3 velocity = _player.MoveDirection * _player.MoveSpeed * _player.StatusMoveSpeedMultiplier;
             velocity.y = _player.VerticalVelocity;
             // Move 仍在 Update 调用；CharacterController 不是 Rigidbody，不由 FixedUpdate 的 Physics Step 自动推进。
-            _player.MoveCharacter(velocity * Time.deltaTime);
+            _player.MoveCharacter(velocity * _player.SimulationDeltaTime);
         }
 
         private void CheckTransition()

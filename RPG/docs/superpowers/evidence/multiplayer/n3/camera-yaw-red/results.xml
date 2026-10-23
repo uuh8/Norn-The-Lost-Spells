@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-23 02:33:13Z" end-time="2026-10-23 02:33:14Z" duration="0.6654664">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2245" result="Failed" site="Child" start-time="2026-10-23 02:33:13Z" end-time="2026-10-23 02:33:14Z" duration="0.665466" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1207" name="Game.Character.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.Tests.dll" runstate="Runnable" testcasecount="167" result="Failed" site="Child" start-time="2026-10-23 02:33:13Z" end-time="2026-10-23 02:33:14Z" duration="0.554680" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28156" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1208" name="Game" fullname="Game" runstate="Runnable" testcasecount="167" result="Failed" site="Child" start-time="2026-10-23 02:33:14Z" end-time="2026-10-23 02:33:14Z" duration="0.455721" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1209" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="167" result="Failed" site="Child" start-time="2026-10-23 02:33:14Z" end-time="2026-10-23 02:33:14Z" duration="0.374474" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1210" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="167" result="Failed" site="Child" start-time="2026-10-23 02:33:14Z" end-time="2026-10-23 02:33:14Z" duration="0.275838" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1170" name="OnlinePlayerMovementTests" fullname="Game.Character.Tests.OnlinePlayerMovementTests" classname="Game.Character.Tests.OnlinePlayerMovementTests" runstate="Runnable" testcasecount="11" result="Failed" site="Child" start-time="2026-10-23 02:33:14Z" end-time="2026-10-23 02:33:14Z" duration="0.173881" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1171" name="PredictionInputUsesOwnedOrbitYawAfterConnectionCameraIsDisabled" fullname="Game.Character.Tests.OnlinePlayerMovementTests.PredictionInputUsesOwnedOrbitYawAfterConnectionCameraIsDisabled" methodname="PredictionInputUsesOwnedOrbitYawAfterConnectionCameraIsDisabled" classname="Game.Character.Tests.OnlinePlayerMovementTests" runstate="Runnable" seed="530795879" result="Failed" start-time="2026-10-23 02:33:14Z" end-time="2026-10-23 02:33:14Z" duration="0.061797" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  在线W前进应跟随自己的轨道相机，不能沿用已禁用连接相机的朝向。
+  Expected: 90
+  But was:  0.0f
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlinePlayerMovementTests.PredictionInputUsesOwnedOrbitYawAfterConnectionCameraIsDisabled () [0x00074] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlinePlayerMovementTests.cs:54
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-23 02:20:15Z" end-time="2026-10-23 02:20:16Z" duration="0.2342888">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2244" result="Failed" site="Child" start-time="2026-10-23 02:20:15Z" end-time="2026-10-23 02:20:16Z" duration="0.234289" total="5" passed="1" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2241" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="16" result="Failed" site="Child" start-time="2026-10-23 02:20:16Z" end-time="2026-10-23 02:20:16Z" duration="0.121773" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28156" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2242" name="Game" fullname="Game" runstate="Runnable" testcasecount="16" result="Failed" site="Child" start-time="2026-10-23 02:20:16Z" end-time="2026-10-23 02:20:16Z" duration="0.103276" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2243" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="16" result="Failed" site="Child" start-time="2026-10-23 02:20:16Z" end-time="2026-10-23 02:20:16Z" duration="0.097417" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2244" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="16" result="Failed" site="Child" start-time="2026-10-23 02:20:16Z" end-time="2026-10-23 02:20:16Z" duration="0.088632" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2221" name="MovementCorrectionBlendTests" fullname="Game.Multiplayer.Tests.MovementCorrectionBlendTests" classname="Game.Multiplayer.Tests.MovementCorrectionBlendTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-23 02:20:16Z" end-time="2026-10-23 02:20:16Z" duration="0.080439" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2222" name="CorrectionKeepsPreviousVisualThenFinishesInFiniteTime" fullname="Game.Multiplayer.Tests.MovementCorrectionBlendTests.CorrectionKeepsPreviousVisualThenFinishesInFiniteTime" methodname="CorrectionKeepsPreviousVisualThenFinishesInFiniteTime" classname="Game.Multiplayer.Tests.MovementCorrectionBlendTests" runstate="Runnable" seed="1304017860" result="Failed" start-time="2026-10-23 02:20:16Z" end-time="2026-10-23 02:20:16Z" duration="0.043973" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: (1.00, 0.00, 0.00)
+  But was:  (0.00, 0.00, 0.00)
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.MovementCorrectionBlendTests.CorrectionKeepsPreviousVisualThenFinishesInFiniteTime () [0x00016] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\MovementCorrectionBlendTests.cs:11
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2223" name="NewCorrectionStartsFromCurrentVisualError_NotAnUnboundedOldOffset" fullname="Game.Multiplayer.Tests.MovementCorrectionBlendTests.NewCorrectionStartsFromCurrentVisualError_NotAnUnboundedOldOffset" methodname="NewCorrectionStartsFromCurrentVisualError_NotAnUnboundedOldOffset" classname="Game.Multiplayer.Tests.MovementCorrectionBlendTests" runstate="Runnable" seed="1524316826" result="Failed" start-time="2026-10-23 02:20:16Z" end-time="2026-10-23 02:20:16Z" duration="0.001713" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: (0.00, 0.00, 1.00)
+  But was:  (0.00, 0.00, 0.00)
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.MovementCorrectionBlendTests.NewCorrectionStartsFromCurrentVisualError_NotAnUnboundedOldOffset () [0x00030] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\MovementCorrectionBlendTests.cs:19
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2224" name="TeleportOrNonfiniteErrorCannotLeaveVisualOutsideAuthorityWorld" fullname="Game.Multiplayer.Tests.MovementCorrectionBlendTests.TeleportOrNonfiniteErrorCannotLeaveVisualOutsideAuthorityWorld" methodname="TeleportOrNonfiniteErrorCannotLeaveVisualOutsideAuthorityWorld" classname="Game.Multiplayer.Tests.MovementCorrectionBlendTests" runstate="Runnable" seed="479852570" result="Passed" start-time="2026-10-23 02:20:16Z" end-time="2026-10-23 02:20:16Z" duration="0.003800" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="3772" name="Game.UI.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.UI.Tests.dll" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-23 02:20:16Z" end-time="2026-10-23 02:20:16Z" duration="0.058195" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28156" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3773" name="Game" fullname="Game" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-23 02:20:16Z" end-time="2026-10-23 02:20:16Z" duration="0.051213" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3774" name="UI" fullname="Game.UI" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-23 02:20:16Z" end-time="2026-10-23 02:20:16Z" duration="0.046033" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3775" name="Tests" fullname="Game.UI.Tests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-10-23 02:20:16Z" end-time="2026-10-23 02:20:16Z" duration="0.040163" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3757" name="OnlineMovementCursorTests" fullname="Game.UI.Tests.OnlineMovementCursorTests" classname="Game.UI.Tests.OnlineMovementCursorTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-23 02:20:16Z" end-time="2026-10-23 02:20:16Z" duration="0.034064" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="3760" name="OnlineMenuOrDisconnectUnlocksCursorForActualButtons" fullname="Game.UI.Tests.OnlineMovementCursorTests.OnlineMenuOrDisconnectUnlocksCursorForActualButtons" classname="Game.UI.Tests.OnlineMovementCursorTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-23 02:20:16Z" end-time="2026-10-23 02:20:16Z" duration="0.026980" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="3758" name="OnlineMenuOrDisconnectUnlocksCursorForActualButtons(True,True)" fullname="Game.UI.Tests.OnlineMovementCursorTests.OnlineMenuOrDisconnectUnlocksCursorForActualButtons(True,True)" methodname="OnlineMenuOrDisconnectUnlocksCursorForActualButtons" classname="Game.UI.Tests.OnlineMovementCursorTests" runstate="Runnable" seed="930799208" result="Failed" start-time="2026-10-23 02:20:16Z" end-time="2026-10-23 02:20:16Z" duration="0.014103" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: None
+  But was:  Locked
+]]></message>
+                    <stack-trace><![CDATA[at Game.UI.Tests.OnlineMovementCursorTests.OnlineMenuOrDisconnectUnlocksCursorForActualButtons (System.Boolean menuOpen, System.Boolean connected) [0x000a2] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineMovementCursorTests.cs:25
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3759" name="OnlineMenuOrDisconnectUnlocksCursorForActualButtons(False,False)" fullname="Game.UI.Tests.OnlineMovementCursorTests.OnlineMenuOrDisconnectUnlocksCursorForActualButtons(False,False)" methodname="OnlineMenuOrDisconnectUnlocksCursorForActualButtons" classname="Game.UI.Tests.OnlineMovementCursorTests" runstate="Runnable" seed="1679327121" result="Failed" start-time="2026-10-23 02:20:16Z" end-time="2026-10-23 02:20:16Z" duration="0.004538" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: None
+  But was:  Locked
+]]></message>
+                    <stack-trace><![CDATA[at Game.UI.Tests.OnlineMovementCursorTests.OnlineMenuOrDisconnectUnlocksCursorForActualButtons (System.Boolean menuOpen, System.Boolean connected) [0x000a2] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineMovementCursorTests.cs:25
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

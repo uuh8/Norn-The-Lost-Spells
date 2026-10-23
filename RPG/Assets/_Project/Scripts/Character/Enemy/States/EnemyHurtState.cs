@@ -19,7 +19,7 @@ namespace Game.Character
         public override void Update()
         {
             _enemy.StayGrounded();
-            _timer -= Time.deltaTime;
+            _timer -= _enemy.SimulationDeltaTime;
             if (_timer <= 0f)
             {
                 EnemyPerception p = _enemy.Perception;

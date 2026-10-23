@@ -42,6 +42,13 @@ namespace Game.Character
         private void Awake()=>_controller=GetComponent<CharacterController>();
         public void UseControllerSampling()=>_controllerDriven=true;
         public void Refresh()=>CheckGround();
+        /// <summary>恢复服务器已观察到的支撑结果；校正时不额外 Move，也不把本机即时查询覆盖进 Snapshot。</summary>
+        public void RestoreSnapshot(bool isGrounded, Vector3 groundNormal, float groundAngle)
+        {
+            IsGrounded = isGrounded;
+            GroundNormal = groundNormal.sqrMagnitude > 1e-6f ? groundNormal.normalized : Vector3.up;
+            GroundAngle = Mathf.Max(0f, groundAngle);
+        }
         private void Update(){if(!_controllerDriven && Time.timeScale>0)CheckGround();}
 
         private void CheckGround()

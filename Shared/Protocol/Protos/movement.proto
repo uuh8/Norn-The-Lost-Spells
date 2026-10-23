@@ -1,0 +1,71 @@
+syntax = "proto3";
+package norn.protocol;
+option csharp_namespace = "Game.NetworkProtocol";
+
+////////////////////////////////////////////////////////////////
+//  N3 输入 / Client intention，身份由已认证连接绑定
+////////////////////////////////////////////////////////////////
+
+// 只有输入意图，不含ActorId/位置；服务器不能把客户端提交值当作权威运动结果。
+message MovementInputMessage
+{
+    uint32 protocol_version = 1;  // 应用协议版本，缺省0拒绝；沿用双方一致的N3 Build版本。
+    uint32 connection_epoch = 2;  // 当前连接代次，非零；重连后旧包必须由连接绑定层拒绝。
+    uint32 sequence         = 3;  // 非零输入序号；回绕与去重由有界输入队列处理。
+    float move_x            = 4;  // 相机平面输入X，有限数且范围[-1,1]。
+    float move_y            = 5;  // 相机平面输入Y，有限数且范围[-1,1]。
+    float view_yaw          = 6;  // 相机水平朝向，单位degree；不包含客户端位置。
+    bool jump_pressed       = 7;  // 本次输入的Jump按下边沿；wire只接受0/1。
+    bool jump_held          = 8;  // Jump持续按住状态，用于Jump Cut。
+    bool dash_pressed       = 9;  // 本次输入的Dash按下边沿，不是已执行冲刺结果。
+    bool input_suppressed   = 10; // UI/暂停等原因屏蔽输入，由服务器规则再次裁决。
+    fixed64 simulation_hash = 11; // 非零运动配置/Prefab/地图依赖摘要；不同配置不能静默同局。
+}
+
+////////////////////////////////////////////////////////////////
+//  N3 状态 / Server authoritative result，每个Actor独立平铺编码
+////////////////////////////////////////////////////////////////
+
+// 无repeated/嵌套对象；复用同一消息承载单个Actor，避免每Tick建立对象图。
+message MovementStateMessage
+{
+    uint32 protocol_version       = 1;  // 应用协议版本，不是Google.Protobuf版本。
+    uint64 actor_id               = 2;  // 服务器分配的Actor，范围1..8；客户端输入不得自报身份。
+    uint32 connection_epoch       = 3;  // 当前Actor连接代次，非零。
+    uint32 server_tick            = 4;  // 非零服务器模拟Tick；回绕比较由接收层处理。
+    uint32 acknowledged_input     = 5;  // 此状态已执行的输入序号；尚无输入时为0。
+    bool is_enemy                 = 6;  // 服务器标记的敌人身份，不是客户端权限声明。
+    bool connected                = 7;  // 当前Actor连接状态；离线仍可能有最后权威位置。
+    bool targetable               = 8;  // 当前是否可被选为目标，由服务器规则决定。
+    float position_x              = 9;  // 世界坐标X，单位meter，必须是有限数。
+    float position_y              = 10; // 世界坐标Y，单位meter，必须是有限数。
+    float position_z              = 11; // 世界坐标Z，单位meter，必须是有限数。
+    float yaw                     = 12; // 世界水平朝向，单位degree。
+    float vertical_velocity       = 13; // 竖直速度，单位meter/second。
+    float target_facing_x         = 14; // 期望朝向向量X；运动规则决定其归一化语义。
+    float target_facing_y         = 15; // 期望朝向向量Y，不是Euler角。
+    float target_facing_z         = 16; // 期望朝向向量Z。
+    uint32 locomotion             = 17; // 运动状态编号0..3；具体枚举属于运动规则，协议不引用角色程序集。
+    bool is_grounded              = 18; // 此Tick的权威接地结果。
+    float ground_normal_x         = 19; // 接触面法线X，使用世界坐标空间。
+    float ground_normal_y         = 20; // 接触面法线Y，平地通常接近1。
+    float ground_normal_z         = 21; // 接触面法线Z。
+    float ground_angle            = 22; // 地面坡度，单位degree，范围0..180。
+    float coyote_time_counter      = 23; // 离地容错计时，单位second；减dt后可微负，绝对值不超过86400。
+    float jump_buffer_counter      = 24; // Jump输入缓冲计时，单位second；可微负，绝对值不超过86400。
+    float attack_buffer_counter    = 25; // Attack输入缓冲计时，单位second；可微负，绝对值不超过86400。
+    float attack_cooldown_counter  = 26; // Attack冷却计时，单位second；可微负，绝对值不超过86400。
+    float dash_cooldown_counter    = 27; // Dash冷却计时，单位second；可微负，绝对值不超过86400。
+    float dash_buffer_counter      = 28; // Dash输入缓冲计时，单位second；可微负，绝对值不超过86400。
+    bool is_airborne_for_dash      = 29; // 本次Dash是否从空中开始，用于预算与落地判定。
+    float dash_direction_x        = 30; // 本次Dash锁定方向X，使用世界坐标空间。
+    float dash_direction_y        = 31; // 本次Dash锁定方向Y。
+    float dash_direction_z        = 32; // 本次Dash锁定方向Z。
+    float dash_elapsed            = 33; // 本次Dash已执行时间，单位second，非负。
+    uint32 extra_jumps_remaining   = 34; // 剩余额外跳跃次数，范围0..8。
+    uint32 air_dashes_remaining    = 35; // 剩余空中Dash次数，范围0..8。
+    bool jump_cut_armed            = 36; // 松开Jump时是否仍可执行Jump Cut。
+    fixed64 simulation_hash       = 37; // 非零运动/碰撞配置摘要；接收层必须与本地一致值比较。
+    bool frozen                   = 38; // 实例冻结时客户端停止预测；不把控制快照误当作模拟Tick已推进。
+    uint32 snapshot_sequence      = 39; // 非零快照序号；冻结期间仍递增，接收方先据此拒绝乱序。
+}

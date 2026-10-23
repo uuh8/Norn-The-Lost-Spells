@@ -37,7 +37,7 @@ namespace Game.Character
             // 保留向下的微小压力，确保 CC 能持续检测到坡面（防止反复离地）
             // velocity.y = _player.VerticalVelocity;
 
-            _player.MoveCharacter(velocity * Time.deltaTime);
+            _player.MoveCharacter(velocity * _player.SimulationDeltaTime);
         }
 
         private void CheckTransition()

@@ -59,6 +59,8 @@ namespace Game.Character
         private bool _initialOffsetConsumed;
         private bool _warnedAgentUnavailable;
         private bool _warnedTargetUnavailable;
+        private bool _replicaSuspended;
+        private bool _agentEnabledBeforeReplica;
         private EnemyNavigationFailureSignal _failureSignal;
 
         public EnemyNavigationMotor(NavMeshAgent agent, EnemyDefinition definition, Transform owner)
@@ -185,6 +187,39 @@ namespace Game.Character
             StopNavigation(true);
             if (_agent != null)
                 _agent.enabled = false;
+        }
+
+        /// <summary>
+        /// Replica 不做本机寻路或 Local Avoidance。恢复 Authority 时仅恢复本方法主动关闭的 Agent，
+        /// 避免把 Authoring 原本禁用的组件擅自打开；角色位置始终由 CharacterController 或快照表现写入。
+        /// </summary>
+        public void SetReplicaSuspended(bool suspended)
+        {
+            if (_replicaSuspended == suspended)
+                return;
+            _replicaSuspended = suspended;
+            if (suspended)
+            {
+                StopNavigation(true);
+                _agentEnabledBeforeReplica = _agent != null && _agent.enabled;
+                if (_agentEnabledBeforeReplica)
+                    _agent.enabled = false;
+            }
+            else if (_agent != null && _agentEnabledBeforeReplica)
+            {
+                _agent.enabled = true;
+                _agentEnabledBeforeReplica = false;
+            }
+        }
+
+        /// <summary>站定时保留已求出的路径，下一 Tick 恢复追击不必重新 BeginNavigation/强制重算路径。</summary>
+        public void HoldPosition()
+        {
+            _desiredVelocity = Vector3.zero;
+            if (!IsReady)
+                return;
+            _agent.isStopped = true;
+            _agent.nextPosition = _owner.position;
         }
 
         public EnemyNavigationResult NavigateTo(
@@ -353,8 +388,8 @@ namespace Game.Character
             float queryRadius = Mathf.Max(0.05f, sampleRadius);
             float expandedRadius = Mathf.Max(
                 MinimumExpandedTargetSampleRadius,
-                queryRadius * 2f,
-                _agent.radius * 4f);
+                Mathf.Max(queryRadius * 2f, _agent.radius * 4f));
+            // 三参数Max会选择params float[]重载，编译器隐式new数组；嵌套双参数保持结果且无分配。
             int queryCount = EnemyNavigationMath.FillTargetSampleQueries(
                 worldTarget,
                 _owner.position.y,

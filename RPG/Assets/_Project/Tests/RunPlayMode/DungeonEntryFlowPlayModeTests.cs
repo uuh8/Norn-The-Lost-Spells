@@ -126,13 +126,41 @@ namespace Game.Run.Tests
             Assert.That(_hubSession.GetInstanceID(), Is.EqualTo(localSession)); Assert.That(_hubSession.ReadOnly.Version, Is.EqualTo(localVersion));
             var client = OnlineAccountClient.ApplicationSession.GetComponent<OnlineRoomClient>(); ulong actor = client.ActorId; uint epoch = client.ConnectionEpoch;
             Assert.That(actor, Is.GreaterThan(0)); Assert.That(Time.timeScale, Is.EqualTo(1));
+            yield return VerifyOnlineMovement();
             NetworkClient.Disconnect(); yield return WaitRoomPhase(OnlineRoomPhase.Disconnected, 10); yield return new WaitForSecondsRealtime(5.1f);
             dialog.transform.Find("Backdrop/Panel/Reconnect").GetComponent<Button>().onClick.Invoke(); yield return WaitRoomPhase(OnlineRoomPhase.Connected, 20);
             Assert.That(client.ActorId, Is.EqualTo(actor)); Assert.That(client.ConnectionEpoch, Is.GreaterThan(epoch));
+            double movementDeadline = Time.realtimeSinceStartupAsDouble + 10;
+            while (OnlineWorldBootstrap.Active == null || !OnlineWorldBootstrap.Active.MovementReady)
+            { Assert.That(Time.realtimeSinceStartupAsDouble, Is.LessThan(movementDeadline)); yield return null; }
+            // 实际Epoch更替后的本机角色不重复创建Input；退出前用真实菜单事件重新打开返回入口。
+            EventBus<OnlineMovementMenuRequestEvent>.Publish(new OnlineMovementMenuRequestEvent { Open = true }); yield return null;
             dialog.transform.Find("Backdrop/Panel/Cancel").GetComponent<Button>().onClick.Invoke(); yield return WaitScene(Hub); yield return null; yield return null;
             Assert.That(_hubSession.GetInstanceID(), Is.EqualTo(localSession)); Assert.That(_hubSession.gameObject.activeInHierarchy, Is.True);
             Assert.That(_hubSession.ReadOnly.Version, Is.EqualTo(localVersion)); Assert.That(Time.timeScale, Is.EqualTo(1));
             Assert.That(Cursor.lockState, Is.EqualTo(CursorLockMode.Locked)); Assert.That(HubPracticeSession.Current, Is.Null);
+            Assert.That(OnlineWorldBootstrap.Active, Is.Null); Assert.That(Physics.simulationMode, Is.EqualTo(SimulationMode.FixedUpdate));
+        }
+        private IEnumerator VerifyOnlineMovement()
+        {
+            Assert.That(OnlineWorldBootstrap.Active, Is.Not.Null);
+            Assert.That(OnlineWorldBootstrap.Active.IsAuthority, Is.False, "本测试Editor是Client，Authority必须是实际独立DS。");
+            double until = Time.realtimeSinceStartupAsDouble + 15;
+            while (OnlineWorldBootstrap.Active == null || !OnlineWorldBootstrap.Active.MovementReady)
+            { Assert.That(Time.realtimeSinceStartupAsDouble, Is.LessThan(until), "真实Server尚未发回运动Snapshot。"); yield return null; }
+            var world = OnlineWorldBootstrap.Active; var local = world.LocalPlayer;
+            Assert.That(local.ExecutionMode, Is.EqualTo(PlayerExecutionMode.Prediction)); Assert.That(local.OwnsLocalInput, Is.True);
+            Assert.That(local.Animator.applyRootMotion, Is.False); Assert.That(world.Registry[4].Enemy.IsOnlineReplica, Is.True);
+            Vector3 before = local.transform.position;
+            InputSystem.QueueStateEvent(_keyboard, new KeyboardState(Key.W)); InputSystem.Update();
+            yield return new WaitForSecondsRealtime(.65f);
+            InputSystem.QueueStateEvent(_keyboard, new KeyboardState()); InputSystem.Update(); yield return null;
+            Assert.That(Vector3.Distance(before, local.transform.position), Is.GreaterThan(.5f), "Input→预测CC→Server确认必须实际移动。");
+            uint tick = world.ServerTick;
+            EventBus<OnlineMovementMenuRequestEvent>.Publish(new OnlineMovementMenuRequestEvent { Open = true }); yield return null;
+            Assert.That(world.LocalInputSuppressed, Is.True); Assert.That(Time.timeScale, Is.EqualTo(1));
+            yield return new WaitForSecondsRealtime(.25f); Assert.That(world.ServerTick, Is.GreaterThan(tick), "菜单不能暂停网络世界。");
+            EventBus<OnlineMovementMenuRequestEvent>.Publish(new OnlineMovementMenuRequestEvent { Open = false }); yield return null;
         }
         [UnityTest] public IEnumerator PortalMatch_UnknownHttpOutcome_KeepsChoiceUntilCancellationConfirmed()
         {

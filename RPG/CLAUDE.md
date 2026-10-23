@@ -27,7 +27,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | Game.Materials | None |
 | Game.NetworkProtocol | None; pure shared contracts from the sibling Shared/Protocol local UPM package; Google.Protobuf is third-party |
 | Game.Networking | Core, NetworkProtocol; Mirror / Mirror.Transports / kcp2k; transport and bounded codecs only |
-| Game.Multiplayer | Core, NetworkProtocol, Networking; Mirror for current local experimental composition |
+| Game.Multiplayer | Core, NetworkProtocol, Networking, Character, Combat; N3 authority/prediction/replica composition; Character remains network-agnostic |
 | Game.Combat | Core, Materials |
 | Game.Skills | Core, Combat |
 | Game.Run | Core, Combat, Skills |

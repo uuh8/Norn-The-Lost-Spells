@@ -50,7 +50,7 @@ namespace Game.Character
             _player.transform.rotation = Quaternion.Slerp(
                 _player.transform.rotation,                   // 当前旋转
                 targetRotation,                               // 目标旋转
-                _player.RotationSpeed * Time.deltaTime      // 插值比例，这里使用了 RotationSpeed * Time.deltaTime，使得转向速度与帧率无关
+                _player.RotationSpeed * _player.SimulationDeltaTime // 同一规则接受单机帧时间或线上固定步长，重放不读取当前 Rendering 帧时间。
             );
         }
 
@@ -77,7 +77,7 @@ namespace Game.Character
             _player.transform.rotation = Quaternion.Slerp(
                 _player.transform.rotation,
                 target,
-                _player.RotationSpeed * Time.deltaTime);
+                _player.RotationSpeed * _player.SimulationDeltaTime);
         }
     }
 }

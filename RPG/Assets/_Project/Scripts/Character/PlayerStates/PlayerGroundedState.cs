@@ -65,7 +65,7 @@ namespace Game.Character
             velocity.y = _player.VerticalVelocity;  // velocity.y 替换为独立维护的垂直速度
             // CharacterController.Move 接收“本帧位移”而不是速度，所以速度必须乘 deltaTime。
             // Move 会执行胶囊体碰撞约束，但不会像 Rigidbody 一样自动施加重力；垂直速度由 Gameplay 自己维护。
-            _player.MoveCharacter(velocity * Time.deltaTime);
+            _player.MoveCharacter(velocity * _player.SimulationDeltaTime);
         }
 
         private void CheckTransition()
@@ -82,7 +82,7 @@ namespace Game.Character
             }
 
             // 2. Attack：由具体角色决定
-            if (_player.TryStartAttack())
+            if (_player.ExecutionMode == Game.Core.PlayerExecutionMode.SinglePlayer && _player.TryStartAttack())
                 return;
 
             // 3. Jump：消费跳跃缓冲

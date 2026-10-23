@@ -1,6 +1,6 @@
 # Norn: The Lost Spells
 
-Unity单机RPG与2–4人独立副本联机工程。当前N0–N2本机阶段完成：账户/线上资产、房间匹配/准备、独立Dedicated Server、一次性入场票和重连；权威角色运动/AI进入N3开发，联机战斗/共享材料/可靠结算仍在后续阶段。Windows loopback验收不能视为公网/Linux兼容。
+Unity单机RPG与2–4人独立副本联机工程。当前N0–N3本机阶段完成：账户/线上资产、房间匹配/准备、独立Dedicated Server、一次性入场票、重连，以及权威角色运动/预测/插值/多人AI。联机战斗、共享材料和可靠结算仍在后续阶段。Windows loopback验收不能视为公网/Linux兼容。
 
 ## 仓库结构
 
@@ -19,8 +19,8 @@ Unity6000.3.16f1/URP17.3.0；Mirror96.11.3；SDK10.0.402/.NET及ASP.NET Core10.0
 1. GitHub Desktop Clone整个仓库；确保Git LFS已经安装、所需模型/纹理/DLL是实际文件而非pointer文本。迁移前旧历史仍可查看，当前目录以本README为准。
 2. Unity Hub添加内层RPG工程，安装对应Editor和Windows Dedicated Server Build Support，等待导入；不要同时导入第二份相同工作区。Packages中的Shared相对路径依赖兄弟目录布局。
 3. 按[双端基础指南](RPG/Assets/_Project/Docs/2026-10-21%20双端开发基础指南（是什么、为什么、怎么操作）.md)与[无秘密本机配置模板](RPG/Tools/Networking/Templates/README.md)配置工具、独立MySQL开发/测试Schema、自己的凭据与VS发布目标。
-4. Visual Studio Publish业务服；Unity菜单构建Dedicated Server，依次Start Local Database/Start Local Business Server；浏览器检查`http://127.0.0.1:5080/health/ready`。具体点击步骤和Tests配置见上述指南，不能直接复制旧电脑的PID或秘密文件。
-5. 由主菜单注册/登录后进入据点，在副本入口按F选单机/匹配。线上资产与单机存档隔离。N2匹配目前进入连接测试区，后续阶段逐步添加权威玩法。
+4. Visual Studio Publish业务服；Unity菜单构建Dedicated Server，依次选择`Start Local Database`与`Start Local Room Business Server (Diagnostic)`；浏览器检查`http://127.0.0.1:5080/health/ready`。后一个本机入口才开启房间实例启动；具体点击步骤和Tests配置见上述指南，不能直接复制旧电脑的PID或秘密文件。
+5. 由主菜单注册/登录后进入据点，在副本入口按F选单机/匹配。线上资产与单机存档隔离。N3匹配进入明确标识的移动与AI验证副本；角色、碰撞、坡道与寻路已接入，合作施法/伤害由N4继续。
 
 数据库迁移属于源码，实际MySQL数据与密码不在Git中；需要长期保存的数据库应另外私有备份。`.tools`、Library/Temp、编译/发布输出与原始Profiler大文件可重建，不上传。第三方运行依赖及其License随Assets保留，不采用全局忽略DLL的规则。
 
@@ -29,6 +29,7 @@ Unity6000.3.16f1/URP17.3.0；Mirror96.11.3；SDK10.0.402/.NET及ASP.NET Core10.0
 - [总体执行方案](RPG/docs/superpowers/plans/2026-10-20%20Norn多人联机系统总体执行方案.md)
 - [联机系统开发解析](RPG/Assets/_Project/Docs/2026-10-20%20联机系统开发解析（更新中）.md)
 - [N2最终本机验收](RPG/docs/superpowers/evidence/multiplayer/n2-final/README.md)
+- [N3最终本机验收与边界](RPG/docs/superpowers/evidence/multiplayer/n3/README.md)
 
 已有N2记录：58真实MySQL业务、91相关EditMode、6玩家路径PlayMode；最终可见双Client/F/UGUI入场、返回/重连/队长退出、真实业务中断后同DS恢复通过。各120帧校准连接稳态GC峰0B只覆盖该窗口；两条已知native启动错误、公网加密分配、Linux/IL2CPP/D3D12保持未通过。
 

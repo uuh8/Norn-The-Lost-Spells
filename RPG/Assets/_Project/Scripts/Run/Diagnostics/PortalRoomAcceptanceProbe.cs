@@ -31,6 +31,7 @@ namespace Game.Run
         private OnlineRoomChangedEvent _view;
         private double _next;
         private bool _measuring, _calibrated, _recorderValid;
+        private bool _externalSampling;
         private int _idleFrames;
         private long _idlePeak;
         private readonly MemoryFiles _files = new MemoryFiles();
@@ -53,6 +54,7 @@ namespace Game.Run
             EventBus<OnlineRoomChangedEvent>.Subscribe(OnRoom);
             EventBus<DungeonEntryChoiceRequestedEvent>.Subscribe(OnChoice);
             EventBus<DungeonEntryChoiceClosedEvent>.Subscribe(OnClosed);
+            EventBus<OnlineDiagnosticSamplingEvent>.Subscribe(OnSampling);
         }
         private void OnDisable()
         {
@@ -61,7 +63,9 @@ namespace Game.Run
             EventBus<OnlineRoomChangedEvent>.Unsubscribe(OnRoom);
             EventBus<DungeonEntryChoiceRequestedEvent>.Unsubscribe(OnChoice);
             EventBus<DungeonEntryChoiceClosedEvent>.Unsubscribe(OnClosed);
+            EventBus<OnlineDiagnosticSamplingEvent>.Unsubscribe(OnSampling);
         }
+        private void OnSampling(OnlineDiagnosticSamplingEvent e) => _externalSampling = e.Active;
         private void OnIdentity(OnlineLobbyChangedEvent e) => _authenticated = e.Authenticated;
         private void OnRoom(OnlineRoomChangedEvent e) => _view = e;
         private void OnChoice(DungeonEntryChoiceRequestedEvent e) { _choice = true; _view.PortalId = e.PortalId; }
@@ -78,7 +82,7 @@ namespace Game.Run
         }
         private void Update()
         {
-            if (_config == null || _measuring || Time.realtimeSinceStartupAsDouble < _next) return;
+            if (_config == null || _measuring || _externalSampling || Time.realtimeSinceStartupAsDouble < _next) return;
             _next = Time.realtimeSinceStartupAsDouble + 1;
             if (File.Exists(_config.Command))
             {

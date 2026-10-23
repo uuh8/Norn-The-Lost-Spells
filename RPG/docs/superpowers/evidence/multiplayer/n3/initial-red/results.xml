@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="33" result="Failed(Child)" total="33" passed="6" failed="27" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:13Z" duration="0.4950018">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2221" result="Failed" site="Child" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:13Z" duration="0.495002" total="33" passed="6" failed="27" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1206" name="Game.Character.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.Tests.dll" runstate="Runnable" testcasecount="166" result="Failed" site="Child" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.258940" total="25" passed="4" failed="21" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28156" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1207" name="Game" fullname="Game" runstate="Runnable" testcasecount="166" result="Failed" site="Child" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.250573" total="25" passed="4" failed="21" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1208" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="166" result="Failed" site="Child" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.242864" total="25" passed="4" failed="21" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1209" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="166" result="Failed" site="Child" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.232053" total="25" passed="4" failed="21" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1100" name="EnemyOnlineAuthorityTests" fullname="Game.Character.Tests.EnemyOnlineAuthorityTests" classname="Game.Character.Tests.EnemyOnlineAuthorityTests" runstate="Runnable" testcasecount="15" result="Failed" site="Child" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.130793" total="15" passed="3" failed="12" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1114" name="Authority_ExplicitStepUsesProvidedDelta_AndRejectsDuplicateOrOlderTick" fullname="Game.Character.Tests.EnemyOnlineAuthorityTests.Authority_ExplicitStepUsesProvidedDelta_AndRejectsDuplicateOrOlderTick" methodname="Authority_ExplicitStepUsesProvidedDelta_AndRejectsDuplicateOrOlderTick" classname="Game.Character.Tests.EnemyOnlineAuthorityTests" runstate="Runnable" seed="1607563117" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.046750" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 0.899999976f +/- 9.99999975E-05f
+  But was:  1.0f
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.EnemyOnlineAuthorityTests.Authority_ExplicitStepUsesProvidedDelta_AndRejectsDuplicateOrOlderTick () [0x0005c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\EnemyOnlineAuthorityTests.cs:170
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1115" name="Authority_OrdinaryUpdateDoesNotRunPerceptionBetweenExplicitTicks" fullname="Game.Character.Tests.EnemyOnlineAuthorityTests.Authority_OrdinaryUpdateDoesNotRunPerceptionBetweenExplicitTicks" methodname="Authority_OrdinaryUpdateDoesNotRunPerceptionBetweenExplicitTicks" classname="Game.Character.Tests.EnemyOnlineAuthorityTests" runstate="Runnable" seed="1866174196" result="Passed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.005501" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1112" name="Perception_BoundEmptyRosterDoesNotUseLastEnabledSinglePlayer" fullname="Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_BoundEmptyRosterDoesNotUseLastEnabledSinglePlayer" methodname="Perception_BoundEmptyRosterDoesNotUseLastEnabledSinglePlayer" classname="Game.Character.Tests.EnemyOnlineAuthorityTests" runstate="Runnable" seed="1143549965" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.004699" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_BoundEmptyRosterDoesNotUseLastEnabledSinglePlayer () [0x0003a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\EnemyOnlineAuthorityTests.cs:140
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Enemy] 发现玩家 → 进入战斗
+]]></output>
+              </test-case>
+              <test-case id="1102" name="Perception_EqualDistanceUsesSmallerActorId_IndependentlyOfRosterOrder" fullname="Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_EqualDistanceUsesSmallerActorId_IndependentlyOfRosterOrder" methodname="Perception_EqualDistanceUsesSmallerActorId_IndependentlyOfRosterOrder" classname="Game.Character.Tests.EnemyOnlineAuthorityTests" runstate="Runnable" seed="41360924" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.002778" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 10
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_EqualDistanceUsesSmallerActorId_IndependentlyOfRosterOrder () [0x0006d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\EnemyOnlineAuthorityTests.cs:59
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1110" name="Perception_InvalidLockedActorIsReplacedImmediately" fullname="Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_InvalidLockedActorIsReplacedImmediately" classname="Game.Character.Tests.EnemyOnlineAuthorityTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.023088" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1104" name="Perception_InvalidLockedActorIsReplacedImmediately(&quot;dead&quot;)" fullname="Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_InvalidLockedActorIsReplacedImmediately(&quot;dead&quot;)" methodname="Perception_InvalidLockedActorIsReplacedImmediately" classname="Game.Character.Tests.EnemyOnlineAuthorityTests" runstate="Runnable" seed="2014761" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.002450" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: 9
+  But was:  0
+]]></message>
+                    <stack-trace><![CDATA[at Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_InvalidLockedActorIsReplacedImmediately (System.String invalidReason) [0x0013c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\EnemyOnlineAuthorityTests.cs:105
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1105" name="Perception_InvalidLockedActorIsReplacedImmediately(&quot;disconnected&quot;)" fullname="Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_InvalidLockedActorIsReplacedImmediately(&quot;disconnected&quot;)" methodname="Perception_InvalidLockedActorIsReplacedImmediately" classname="Game.Character.Tests.EnemyOnlineAuthorityTests" runstate="Runnable" seed="1660046317" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.001169" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: 9
+  But was:  0
+]]></message>
+                    <stack-trace><![CDATA[at Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_InvalidLockedActorIsReplacedImmediately (System.String invalidReason) [0x0013c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\EnemyOnlineAuthorityTests.cs:105
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1106" name="Perception_InvalidLockedActorIsReplacedImmediately(&quot;untargetable&quot;)" fullname="Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_InvalidLockedActorIsReplacedImmediately(&quot;untargetable&quot;)" methodname="Perception_InvalidLockedActorIsReplacedImmediately" classname="Game.Character.Tests.EnemyOnlineAuthorityTests" runstate="Runnable" seed="1205721570" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.000873" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: 9
+  But was:  0
+]]></message>
+                    <stack-trace><![CDATA[at Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_InvalidLockedActorIsReplacedImmediately (System.String invalidReason) [0x0013c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\EnemyOnlineAuthorityTests.cs:105
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1107" name="Perception_InvalidLockedActorIsReplacedImmediately(&quot;same-team&quot;)" fullname="Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_InvalidLockedActorIsReplacedImmediately(&quot;same-team&quot;)" methodname="Perception_InvalidLockedActorIsReplacedImmediately" classname="Game.Character.Tests.EnemyOnlineAuthorityTests" runstate="Runnable" seed="148632974" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.000639" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: 9
+  But was:  0
+]]></message>
+                    <stack-trace><![CDATA[at Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_InvalidLockedActorIsReplacedImmediately (System.String invalidReason) [0x0013c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\EnemyOnlineAuthorityTests.cs:105
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1108" name="Perception_InvalidLockedActorIsReplacedImmediately(&quot;height&quot;)" fullname="Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_InvalidLockedActorIsReplacedImmediately(&quot;height&quot;)" methodname="Perception_InvalidLockedActorIsReplacedImmediately" classname="Game.Character.Tests.EnemyOnlineAuthorityTests" runstate="Runnable" seed="576204953" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.001721" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: 9
+  But was:  0
+]]></message>
+                    <stack-trace><![CDATA[at Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_InvalidLockedActorIsReplacedImmediately (System.String invalidReason) [0x0013c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\EnemyOnlineAuthorityTests.cs:105
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1109" name="Perception_InvalidLockedActorIsReplacedImmediately(&quot;radius&quot;)" fullname="Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_InvalidLockedActorIsReplacedImmediately(&quot;radius&quot;)" methodname="Perception_InvalidLockedActorIsReplacedImmediately" classname="Game.Character.Tests.EnemyOnlineAuthorityTests" runstate="Runnable" seed="12157683" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.000725" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: 9
+  But was:  0
+]]></message>
+                    <stack-trace><![CDATA[at Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_InvalidLockedActorIsReplacedImmediately (System.String invalidReason) [0x0013c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\EnemyOnlineAuthorityTests.cs:105
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="1103" name="Perception_KeepsValidLockWithinLoseCylinder_DespiteCloserNewActor" fullname="Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_KeepsValidLockWithinLoseCylinder_DespiteCloserNewActor" methodname="Perception_KeepsValidLockWithinLoseCylinder_DespiteCloserNewActor" classname="Game.Character.Tests.EnemyOnlineAuthorityTests" runstate="Runnable" seed="700490195" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.001562" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 40
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_KeepsValidLockWithinLoseCylinder_DespiteCloserNewActor () [0x000a6] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\EnemyOnlineAuthorityTests.cs:74
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1111" name="Perception_RejectsNewActorOutsideDetectCylinder_AndClearsLostLock" fullname="Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_RejectsNewActorOutsideDetectCylinder_AndClearsLostLock" methodname="Perception_RejectsNewActorOutsideDetectCylinder_AndClearsLostLock" classname="Game.Character.Tests.EnemyOnlineAuthorityTests" runstate="Runnable" seed="204526143" result="Passed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.005818" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1101" name="Perception_SelectsNearestHorizontalActor_AndUsesSnapshotPosition" fullname="Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_SelectsNearestHorizontalActor_AndUsesSnapshotPosition" methodname="Perception_SelectsNearestHorizontalActor_AndUsesSnapshotPosition" classname="Game.Character.Tests.EnemyOnlineAuthorityTests" runstate="Runnable" seed="1100048258" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.001503" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 30
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_SelectsNearestHorizontalActor_AndUsesSnapshotPosition () [0x0008d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\EnemyOnlineAuthorityTests.cs:43
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1113" name="Perception_UnboundRosterPreservesSinglePlayerFallback" fullname="Game.Character.Tests.EnemyOnlineAuthorityTests.Perception_UnboundRosterPreservesSinglePlayerFallback" methodname="Perception_UnboundRosterPreservesSinglePlayerFallback" classname="Game.Character.Tests.EnemyOnlineAuthorityTests" runstate="Runnable" seed="1165813568" result="Passed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.002205" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Enemy] 发现玩家 → 进入战斗
+]]></output>
+              </test-case>
+              <test-case id="1116" name="Replica_NeitherOrdinaryUpdateNorAuthorityStepRunsAiOrMovement" fullname="Game.Character.Tests.EnemyOnlineAuthorityTests.Replica_NeitherOrdinaryUpdateNorAuthorityStepRunsAiOrMovement" methodname="Replica_NeitherOrdinaryUpdateNorAuthorityStepRunsAiOrMovement" classname="Game.Character.Tests.EnemyOnlineAuthorityTests" runstate="Runnable" seed="1959613554" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.001833" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1.0f
+  But was:  0.849177003f
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.EnemyOnlineAuthorityTests.Replica_NeitherOrdinaryUpdateNorAuthorityStepRunsAiOrMovement () [0x000a8] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\EnemyOnlineAuthorityTests.cs:202
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1170" name="OnlinePlayerMovementTests" fullname="Game.Character.Tests.OnlinePlayerMovementTests" classname="Game.Character.Tests.OnlinePlayerMovementTests" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.093780" total="10" passed="1" failed="9" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1174" name="Authority_UsesSuppliedYawAndDeltaTimeWithoutCamera" fullname="Game.Character.Tests.OnlinePlayerMovementTests.Authority_UsesSuppliedYawAndDeltaTimeWithoutCamera" methodname="Authority_UsesSuppliedYawAndDeltaTimeWithoutCamera" classname="Game.Character.Tests.OnlinePlayerMovementTests" runstate="Runnable" seed="238413793" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.018514" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1000.5f +/- 0.00999999978f
+  But was:  1000.0f
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlinePlayerMovementTests.Authority_UsesSuppliedYawAndDeltaTimeWithoutCamera () [0x00048] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlinePlayerMovementTests.cs:61
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1180" name="ClearOnlineInput_DiscardsPendingJumpDashAndAttack" fullname="Game.Character.Tests.OnlinePlayerMovementTests.ClearOnlineInput_DiscardsPendingJumpDashAndAttack" methodname="ClearOnlineInput_DiscardsPendingJumpDashAndAttack" classname="Game.Character.Tests.OnlinePlayerMovementTests" runstate="Runnable" seed="1075818129" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.005342" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: (1000.00, 100.00, 1000.00)
+  But was:  (0.00, 0.00, 0.00)
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlinePlayerMovementTests.ClearOnlineInput_DiscardsPendingJumpDashAndAttack () [0x0008c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlinePlayerMovementTests.cs:162
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1175" name="OnlineAutomaticUpdate_DoesNotAdvanceAnExplicitTickAgain" fullname="Game.Character.Tests.OnlinePlayerMovementTests.OnlineAutomaticUpdate_DoesNotAdvanceAnExplicitTickAgain" methodname="OnlineAutomaticUpdate_DoesNotAdvanceAnExplicitTickAgain" classname="Game.Character.Tests.OnlinePlayerMovementTests" runstate="Runnable" seed="1796766011" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.009078" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: greater than 1000
+  But was:  1000.0f
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlinePlayerMovementTests.OnlineAutomaticUpdate_DoesNotAdvanceAnExplicitTickAgain () [0x0009d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlinePlayerMovementTests.cs:76
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Animator is not playing an AnimatorController
+Animator is not playing an AnimatorController
+]]></output>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1173" name="RemoteActor_DoesNotCreateLocalInputOrRegisterCurrent" fullname="Game.Character.Tests.OnlinePlayerMovementTests.RemoteActor_DoesNotCreateLocalInputOrRegisterCurrent" classname="Game.Character.Tests.OnlinePlayerMovementTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.028476" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1171" name="RemoteActor_DoesNotCreateLocalInputOrRegisterCurrent(Authority)" fullname="Game.Character.Tests.OnlinePlayerMovementTests.RemoteActor_DoesNotCreateLocalInputOrRegisterCurrent(Authority)" methodname="RemoteActor_DoesNotCreateLocalInputOrRegisterCurrent" classname="Game.Character.Tests.OnlinePlayerMovementTests" runstate="Runnable" seed="2024299963" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.004486" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: Authority
+  But was:  SinglePlayer
+]]></message>
+                    <stack-trace><![CDATA[at Game.Character.Tests.OnlinePlayerMovementTests.RemoteActor_DoesNotCreateLocalInputOrRegisterCurrent (Game.Core.PlayerExecutionMode mode) [0x00009] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlinePlayerMovementTests.cs:48
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1172" name="RemoteActor_DoesNotCreateLocalInputOrRegisterCurrent(Replica)" fullname="Game.Character.Tests.OnlinePlayerMovementTests.RemoteActor_DoesNotCreateLocalInputOrRegisterCurrent(Replica)" methodname="RemoteActor_DoesNotCreateLocalInputOrRegisterCurrent" classname="Game.Character.Tests.OnlinePlayerMovementTests" runstate="Runnable" seed="112659110" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.002285" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: Replica
+  But was:  SinglePlayer
+]]></message>
+                    <stack-trace><![CDATA[at Game.Character.Tests.OnlinePlayerMovementTests.RemoteActor_DoesNotCreateLocalInputOrRegisterCurrent (Game.Core.PlayerExecutionMode mode) [0x00009] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlinePlayerMovementTests.cs:48
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="1179" name="Replay_DoesNotRepeatJumpPresentation" fullname="Game.Character.Tests.OnlinePlayerMovementTests.Replay_DoesNotRepeatJumpPresentation" methodname="Replay_DoesNotRepeatJumpPresentation" classname="Game.Character.Tests.OnlinePlayerMovementTests" runstate="Runnable" seed="543121742" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.003833" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  真实二段跳规则仍需执行
+  Expected: greater than 0
+  But was:  0.0f
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlinePlayerMovementTests.Replay_DoesNotRepeatJumpPresentation () [0x00048] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlinePlayerMovementTests.cs:146
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1176" name="Replica_SimulateDoesNotMoveEvenWithValidInput" fullname="Game.Character.Tests.OnlinePlayerMovementTests.Replica_SimulateDoesNotMoveEvenWithValidInput" methodname="Replica_SimulateDoesNotMoveEvenWithValidInput" classname="Game.Character.Tests.OnlinePlayerMovementTests" runstate="Runnable" seed="1718359355" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.002451" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: Replica
+  But was:  SinglePlayer
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlinePlayerMovementTests.Replica_SimulateDoesNotMoveEvenWithValidInput () [0x0006e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlinePlayerMovementTests.cs:88
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1178" name="RestoreExhaustedAirBudget_DoesNotGrantAnotherJump" fullname="Game.Character.Tests.OnlinePlayerMovementTests.RestoreExhaustedAirBudget_DoesNotGrantAnotherJump" methodname="RestoreExhaustedAirBudget_DoesNotGrantAnotherJump" classname="Game.Character.Tests.OnlinePlayerMovementTests" runstate="Runnable" seed="112832995" result="Passed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.002784" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1177" name="Snapshot_RoundTripsDashTimersBudgetAndJumpCutWithoutEnterExit" fullname="Game.Character.Tests.OnlinePlayerMovementTests.Snapshot_RoundTripsDashTimersBudgetAndJumpCutWithoutEnterExit" methodname="Snapshot_RoundTripsDashTimersBudgetAndJumpCutWithoutEnterExit" classname="Game.Character.Tests.OnlinePlayerMovementTests" runstate="Runnable" seed="230574524" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.003390" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: Dash
+  But was:  Grounded
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlinePlayerMovementTests.Snapshot_RoundTripsDashTimersBudgetAndJumpCutWithoutEnterExit () [0x000bd] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlinePlayerMovementTests.cs:112
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1181" name="SuppressedInput_StillAppliesGravityButCannotSpendAirActions" fullname="Game.Character.Tests.OnlinePlayerMovementTests.SuppressedInput_StillAppliesGravityButCannotSpendAirActions" methodname="SuppressedInput_StillAppliesGravityButCannotSpendAirActions" classname="Game.Character.Tests.OnlinePlayerMovementTests" runstate="Runnable" seed="474414875" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.002000" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1000 +/- 0.00100000005f
+  But was:  0.0f
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlinePlayerMovementTests.SuppressedInput_StillAppliesGravityButCannotSpendAirActions () [0x00054] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlinePlayerMovementTests.cs:173
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="2293" name="Game.Networking.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Networking.Tests.dll" runstate="Runnable" testcasecount="59" result="Failed" site="Child" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:13Z" duration="0.189399" total="8" passed="2" failed="6" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="28156" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2294" name="Game" fullname="Game" runstate="Runnable" testcasecount="59" result="Failed" site="Child" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:13Z" duration="0.171214" total="8" passed="2" failed="6" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2295" name="Networking" fullname="Game.Networking" runstate="Runnable" testcasecount="59" result="Failed" site="Child" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:13Z" duration="0.158439" total="8" passed="2" failed="6" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2296" name="Tests" fullname="Game.Networking.Tests" runstate="Runnable" testcasecount="59" result="Failed" site="Child" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:13Z" duration="0.149640" total="8" passed="2" failed="6" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2256" name="MovementProtocolTests" fullname="Game.Networking.Tests.MovementProtocolTests" classname="Game.Networking.Tests.MovementProtocolTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:13Z" duration="0.144729" total="8" passed="2" failed="6" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2261" name="Codec_RejectsLengthsVersionsAndInvalidNumericBoundaries" fullname="Game.Networking.Tests.MovementProtocolTests.Codec_RejectsLengthsVersionsAndInvalidNumericBoundaries" methodname="Codec_RejectsLengthsVersionsAndInvalidNumericBoundaries" classname="Game.Networking.Tests.MovementProtocolTests" runstate="Runnable" seed="716208139" result="Passed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.014115" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2259" name="Decode_ReusesObjectsAndClearsFieldsOmittedByNextPacket" fullname="Game.Networking.Tests.MovementProtocolTests.Decode_ReusesObjectsAndClearsFieldsOmittedByNextPacket" methodname="Decode_ReusesObjectsAndClearsFieldsOmittedByNextPacket" classname="Game.Networking.Tests.MovementProtocolTests" runstate="Runnable" seed="225926001" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.001102" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.MovementProtocolTests.Decode_ReusesObjectsAndClearsFieldsOmittedByNextPacket () [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\MovementProtocolTests.cs:36
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2257" name="InputRoundtrip_PreservesAllFieldsAndSegmentOffsets" fullname="Game.Networking.Tests.MovementProtocolTests.InputRoundtrip_PreservesAllFieldsAndSegmentOffsets" methodname="InputRoundtrip_PreservesAllFieldsAndSegmentOffsets" classname="Game.Networking.Tests.MovementProtocolTests" runstate="Runnable" seed="229116255" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.000605" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.MovementProtocolTests.InputRoundtrip_PreservesAllFieldsAndSegmentOffsets () [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\MovementProtocolTests.cs:17
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2263" name="MovementEnvelope_RejectsOversizeAndTruncationAndBorrowsReadBuffer" fullname="Game.Networking.Tests.MovementProtocolTests.MovementEnvelope_RejectsOversizeAndTruncationAndBorrowsReadBuffer" methodname="MovementEnvelope_RejectsOversizeAndTruncationAndBorrowsReadBuffer" classname="Game.Networking.Tests.MovementProtocolTests" runstate="Runnable" seed="1929947630" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.007872" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: <System.IO.InvalidDataException>
+  But was:  <System.NotImplementedException: The method or operation is not implemented.
+  at Game.Networking.MovementEnvelopeSerialization.ReadMovementInputEnvelope (Mirror.NetworkReader reader) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Networking\Protocol\MovementEnvelope.cs:14 
+  at Game.Networking.Tests.MovementProtocolTests+<>c__DisplayClass6_0.<MovementEnvelope_RejectsOversizeAndTruncationAndBorrowsReadBuffer>b__0 () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\MovementProtocolTests.cs:96 
+  at NUnit.Framework.Assert.Throws (NUnit.Framework.Constraints.IResolveConstraint expression, NUnit.Framework.TestDelegate code, System.String message, System.Object[] args) [0x0002f] in <f577cd9686154d6ab10efd7e65e64366>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.MovementProtocolTests.MovementEnvelope_RejectsOversizeAndTruncationAndBorrowsReadBuffer () [0x0002a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\MovementProtocolTests.cs:96
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2264" name="MovementMessageIds_AreDistinctFromAllMirrorJoinAndRoomMessages" fullname="Game.Networking.Tests.MovementProtocolTests.MovementMessageIds_AreDistinctFromAllMirrorJoinAndRoomMessages" methodname="MovementMessageIds_AreDistinctFromAllMirrorJoinAndRoomMessages" classname="Game.Networking.Tests.MovementProtocolTests" runstate="Runnable" seed="979972077" result="Passed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:12Z" duration="0.006484" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2260" name="Reset_ClearsEveryFieldAndUnknownFields" fullname="Game.Networking.Tests.MovementProtocolTests.Reset_ClearsEveryFieldAndUnknownFields" methodname="Reset_ClearsEveryFieldAndUnknownFields" classname="Game.Networking.Tests.MovementProtocolTests" runstate="Runnable" seed="21040579" result="Failed" start-time="2026-10-22 18:14:12Z" end-time="2026-10-22 18:14:13Z" duration="0.105146" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: <{ }>
+  But was:  <{ "protocolVersion": 1, "connectionEpoch": 3, "sequence": 4294967295, "moveX": -0.75, "moveY": 0.5, "viewYaw": 123, "jumpPressed": true, "jumpHeld": true, "dashPressed": true, "inputSuppressed": true, "simulationHash": "1" }>
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.MovementProtocolTests.Reset_ClearsEveryFieldAndUnknownFields () [0x0003d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\MovementProtocolTests.cs:53
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2258" name="StateRoundtrip_PreservesEveryMotorField" fullname="Game.Networking.Tests.MovementProtocolTests.StateRoundtrip_PreservesEveryMotorField" methodname="StateRoundtrip_PreservesEveryMotorField" classname="Game.Networking.Tests.MovementProtocolTests" runstate="Runnable" seed="1540314567" result="Failed" start-time="2026-10-22 18:14:13Z" end-time="2026-10-22 18:14:13Z" duration="0.000591" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.MovementProtocolTests.StateRoundtrip_PreservesEveryMotorField () [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\MovementProtocolTests.cs:26
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2262" name="WirePreflight_RejectsUnknownDuplicateWrongWireAndNonBooleanValues" fullname="Game.Networking.Tests.MovementProtocolTests.WirePreflight_RejectsUnknownDuplicateWrongWireAndNonBooleanValues" methodname="WirePreflight_RejectsUnknownDuplicateWrongWireAndNonBooleanValues" classname="Game.Networking.Tests.MovementProtocolTests" runstate="Runnable" seed="1785463248" result="Failed" start-time="2026-10-22 18:14:13Z" end-time="2026-10-22 18:14:13Z" duration="0.000804" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.MovementProtocolTests.WirePreflight_RejectsUnknownDuplicateWrongWireAndNonBooleanValues () [0x000f3] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\MovementProtocolTests.cs:87
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

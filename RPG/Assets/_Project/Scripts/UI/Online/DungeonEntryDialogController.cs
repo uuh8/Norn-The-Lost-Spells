@@ -1,6 +1,7 @@
 using Game.Core;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 namespace Game.UI
 {
@@ -18,6 +19,7 @@ namespace Game.UI
         private Font _font;
         private bool _roomMode;
         private int _roomPortal;
+        private bool _gameplayActive, _gameplayMenu;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void Reset() => _instance = null;
@@ -49,6 +51,7 @@ namespace Game.UI
             EventBus<DungeonMatchStatusEvent>.Subscribe(OnMatchStatus);
             EventBus<OnlineLobbyChangedEvent>.Subscribe(OnIdentity);
             EventBus<OnlineRoomChangedEvent>.Subscribe(OnRoom);
+            EventBus<OnlineMovementPresentationEvent>.Subscribe(OnGameplay);
         }
         private void OnDisable()
         {
@@ -58,6 +61,27 @@ namespace Game.UI
             EventBus<DungeonMatchStatusEvent>.Unsubscribe(OnMatchStatus);
             EventBus<OnlineLobbyChangedEvent>.Unsubscribe(OnIdentity);
             EventBus<OnlineRoomChangedEvent>.Unsubscribe(OnRoom);
+            EventBus<OnlineMovementPresentationEvent>.Unsubscribe(OnGameplay);
+        }
+        private void OnGameplay(OnlineMovementPresentationEvent view)
+        {
+            _gameplayActive = view.Active; _gameplayMenu = view.MenuOpen;
+            if (view.Active)
+            {
+                bool open = view.MenuOpen || !view.Connected;
+                _panel.SetActive(open);
+                // 断线也会从事件打开UI，不能只在Escape分支解锁，否则按钮可见却点不到。
+                Cursor.lockState = open ? CursorLockMode.None : CursorLockMode.Locked; Cursor.visible = open;
+            }
+        }
+        private void Update()
+        {
+            if (!_gameplayActive || Keyboard.current == null || !Keyboard.current.escapeKey.wasPressedThisFrame) return;
+            _gameplayMenu = !_gameplayMenu;
+            EventBus<OnlineMovementMenuRequestEvent>.Publish(new OnlineMovementMenuRequestEvent { Open = _gameplayMenu });
+            _panel.SetActive(_gameplayMenu);
+            Cursor.lockState = _gameplayMenu ? CursorLockMode.None : CursorLockMode.Locked; Cursor.visible = _gameplayMenu;
+            // 只暂停本机意图；从不修改Time.timeScale，其他玩家/AI与网络继续。
         }
         private void OnDestroy() { if (_instance == this) _instance = null; if (_font != null) Destroy(_font); }
         private void OnRequested(DungeonEntryChoiceRequestedEvent request)
@@ -102,7 +126,7 @@ namespace Game.UI
                 return;
             }
             if (_request.PortalId != view.PortalId && view.Phase != OnlineRoomPhase.Connected && view.Phase != OnlineRoomPhase.Disconnected) return;
-            _roomMode = true; _roomPortal = view.PortalId; _panel.SetActive(true);
+            _roomMode = true; _roomPortal = view.PortalId; _panel.SetActive(!_gameplayActive || _gameplayMenu || view.Phase == OnlineRoomPhase.Disconnected);
             bool lobby = view.Phase == OnlineRoomPhase.Lobby;
             bool connected = view.Phase == OnlineRoomPhase.Connected || view.Phase == OnlineRoomPhase.Disconnected;
             _title.text = connected ? "独立副本连接" : "副本匹配与准备";

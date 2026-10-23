@@ -34,7 +34,7 @@ namespace Game.Character
         public override void Update()
         {
             _enemy.StayGrounded();
-            _elapsed += Time.deltaTime;
+            _elapsed += _enemy.SimulationDeltaTime;
 
             Animator anim = _enemy.Animator;
             AttackDefinition atk = _enemy.Definition != null ? _enemy.Definition.Attack : null;

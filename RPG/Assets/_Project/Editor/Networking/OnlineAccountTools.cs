@@ -218,6 +218,8 @@ namespace Game.Project.Editor
         [MenuItem("Tools/Norn/Online/Build Online Main Menu Windows Client")]
         public static void BuildMenu()
         {
+            // 角色、SO或碰撞几何改变后必须重新生成同一Hash，再构建两端；不能静默发送不兼容运动状态。
+            OnlineMovementTools.Verify();
             var scenes = new List<string> { MainMenu };
             foreach (var scene in EditorBuildSettings.scenes) if (scene.enabled && !scenes.Contains(scene.path)) scenes.Add(scene.path);
             if (!scenes.Contains(RoomLifecycleTools.PortalScenePath)) scenes.Add(RoomLifecycleTools.PortalScenePath);

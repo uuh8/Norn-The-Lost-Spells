@@ -22,7 +22,7 @@ namespace Game.EditorTools
         private const string StateKey = "Norn.SinglePlayer.Tests.";
         private static double _nextPoll;
         private static readonly string[] EditAssemblies={"Game.Core.Tests","Game.Combat.Tests","Game.Skills.Tests","Game.Character.Tests",
-            "Game.Run.Tests","Game.ElementField.Tests","Game.Materials.Tests","Game.Rendering.Tests","Game.UI.Tests","Game.Networking.Tests"};
+            "Game.Run.Tests","Game.ElementField.Tests","Game.Materials.Tests","Game.Rendering.Tests","Game.UI.Tests","Game.Networking.Tests","Game.Multiplayer.Tests"};
 
         static ProjectTestRunner()
         {

@@ -23,7 +23,7 @@ namespace Game.Project.Editor
             File.WriteAllText(Root + "/targets.json", JsonUtility.ToJson(new Targets { Items = list }, true));
             GameLog.Info("已列出Profiler目标，尚未切换连接或录制。", "OnlineProfiler");
         }
-        [Serializable] private sealed class Request { public int TargetId, ProcessId; public long StartTicks; public uint PlayerGuid; }
+        [Serializable] private sealed class Request { public int TargetId, ProcessId; public long StartTicks; public uint PlayerGuid; public bool DedicatedServer; }
         [MenuItem("Tools/Norn/Online/Capture Selected Native Allocations")]
         public static void Capture()
         {
@@ -32,9 +32,9 @@ namespace Game.Project.Editor
             string name = ProfilerDriver.GetConnectionIdentifier(request.TargetId);
             using (var process = System.Diagnostics.Process.GetProcessById(request.ProcessId))
             {
-                string expected = Path.GetFullPath("Builds/OnlineAccounts/Menu/NornMenuClient.exe");
+                string expected = Path.GetFullPath(request.DedicatedServer ? RoomLifecycleTools.ServerPath : "Builds/OnlineAccounts/Menu/NornMenuClient.exe");
                 if (process.StartTime.ToUniversalTime().Ticks != request.StartTicks || !string.Equals(Path.GetFullPath(process.MainModule.FileName), expected, StringComparison.OrdinalIgnoreCase)
-                    || name.IndexOf("WindowsPlayer", StringComparison.Ordinal) < 0 || unchecked((uint)request.TargetId) != request.PlayerGuid)
+                    || name.IndexOf(request.DedicatedServer ? "WindowsServer" : "WindowsPlayer", StringComparison.Ordinal) < 0 || unchecked((uint)request.TargetId) != request.PlayerGuid)
                     throw new InvalidOperationException("Profiler Guid与明确登记的原生Client进程身份不匹配。");
             }
             int previousTarget = ProfilerDriver.connectedProfiler;

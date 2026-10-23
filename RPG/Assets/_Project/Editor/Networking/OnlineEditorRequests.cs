@@ -27,6 +27,14 @@ namespace Game.Project.Editor
             File.Delete(path);
             try
             {
+                // Refresh本身用于修复尚未导入的外部Shared源码；不能先以旧编译失败标记将它锁死。
+                // 它不保存/切换Scene。构建、资产装配及测试仍须通过下方严格干净检查。
+                if (command == "refresh-source")
+                {
+                    AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+                    WriteResult(command, true, null);
+                    return;
+                }
                 OnlineSceneSetup.RequireCleanEditor();
                 // 固定白名单，只调用与菜单相同的正式工具，不接受任意方法或路径。
                 switch (command)
@@ -34,6 +42,8 @@ namespace Game.Project.Editor
                     case "create-lab": OnlineSceneSetup.CreateLab(); break;
                     case "create-room-lab": RoomLifecycleTools.Create(); break;
                     case "setup-portal-room": RoomLifecycleTools.SetupPortal(); break;
+                    case "setup-online-movement": OnlineMovementTools.Setup(); break;
+                    case "verify-online-movement": OnlineMovementTools.Verify(); break;
                     case "list-native-profilers": PortalProfilerTools.List(); break;
                     case "capture-native-allocations": PortalProfilerTools.Capture(); break;
                     case "build-room-server": RoomLifecycleTools.BuildServer(); break;
