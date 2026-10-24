@@ -10,7 +10,7 @@ namespace Game.Combat
     /// Game.Character 只读取 MoveSpeedMultiplier，不需要理解元素反应内部规则。
     /// </summary>
     [DisallowMultipleComponent]
-    public class StatusController : MonoBehaviour
+    public class StatusController : MonoBehaviour, ICombatSimulationParticipant
     {
         // 当前实现依赖 StatusKind 连续映射到 0..3，从而用定长数组取代 Dictionary 的查找与分配成本。
         private const int StatusCount = 4;
@@ -30,6 +30,46 @@ namespace Game.Combat
         private int _targetId;
         private ElementReactionRuntime _reactionRuntime;
         private AreaReactionDamageResolver _areaReactionDamageResolver;
+        private CombatExecutionState _execution;
+        private bool _replicaPresentationRetired;
+        public CombatExecutionMode ExecutionMode => _execution.Mode;
+
+        /// <summary>在线尸体到期后只退休纯表现；迟到快照仍安装强度读模型，但不能重新创建身体特效。</summary>
+        public void RetireReplicaPresentation()
+        {
+            if (_execution.Mode != CombatExecutionMode.Replica || _replicaPresentationRetired) return;
+            _replicaPresentationRetired = true;
+            for (int i = 0; i < StatusCount; i++)
+                if (_vfxInstances[i] != null) _vfxInstances[i].SetActive(false);
+        }
+
+        public void ConfigureExecutionMode(CombatExecutionMode mode, CombatSimulationWorld world = null)
+        {
+            _execution.Configure(this, mode, world, CombatTickPhase.AfterPhysics);
+            // Replica 不保留可继续产生命令的 Process；安装状态只服务读模型和表现。
+            if (mode == CombatExecutionMode.Replica) _reactionRuntime = null;
+        }
+
+        public void StepAuthority(float deltaTime, uint serverTick)
+        { if (_execution.TryStep(deltaTime, serverTick)) Tick(deltaTime); }
+
+        public void ApplyReplicatedState(in StatusReplicaSnapshot snapshot)
+        {
+            if (_execution.Mode != CombatExecutionMode.Replica || !float.IsFinite(snapshot.Burning)
+                || !float.IsFinite(snapshot.Wet) || !float.IsFinite(snapshot.Poisoned)
+                || !float.IsFinite(snapshot.Sticky) || !float.IsFinite(snapshot.MoveSpeedMultiplier)) return;
+            ApplyReplicaIntensity(0, snapshot.Burning); ApplyReplicaIntensity(1, snapshot.Wet);
+            ApplyReplicaIntensity(2, snapshot.Poisoned); ApplyReplicaIntensity(3, snapshot.Sticky);
+            MoveSpeedMultiplier = Mathf.Clamp01(snapshot.MoveSpeedMultiplier);
+        }
+
+        private void ApplyReplicaIntensity(int index, float intensity)
+        {
+            intensity = Mathf.Clamp(intensity, 0f, 100f);
+            _instances[index] = new StatusInstance { Active = intensity > 0f, Intensity = intensity };
+            if (intensity > 0f) EnsureVfx((StatusKind)index); else DestroyVfx((StatusKind)index);
+            PublishStatusChangedIfNeeded((StatusKind)index);
+        }
 
         public float MoveSpeedMultiplier { get; private set; } = 1f;
 
@@ -47,6 +87,7 @@ namespace Game.Combat
 
         private void OnEnable()
         {
+            _execution.Resume(this, CombatTickPhase.AfterPhysics);
             EventBus<DeathEvent>.Subscribe(OnDeath);
             EventBus<WorldActivitySourceEvent>.Publish(new WorldActivitySourceEvent
                 { Source = transform, Kind = WorldActivitySourceKind.Unit, Enabled = true });
@@ -54,6 +95,7 @@ namespace Game.Combat
 
         private void OnDisable()
         {
+            _execution.Suspend(this);
             EventBus<WorldActivitySourceEvent>.Publish(new WorldActivitySourceEvent
                 { Source = transform, Kind = WorldActivitySourceKind.Unit, Enabled = false });
             // OnEnable/OnDisable 成对订阅，防止 EventBus 留下指向已禁用组件的 delegate。
@@ -63,6 +105,7 @@ namespace Game.Combat
 
         private void Update()
         {
+            if (_execution.Mode != CombatExecutionMode.SinglePlayer) return;
             Tick(Time.deltaTime);
         }
 
@@ -99,7 +142,8 @@ namespace Game.Combat
             // Invulnerability 是 Gameplay Effect 的统一权限门：保护期既不能扣血，也不能提前堆积
             // Burning/Poison 等状态，避免解除保护后的第一帧由预埋 DoT 或 Reaction 突然结算。
             // 已存在的状态仍可自然衰减；其伤害 Tick 继续由 HealthComponent 的 Damage Gate 拒绝。
-            if (amount <= 0f || (_health != null && _health.IsInvulnerable))
+            if (_execution.Mode == CombatExecutionMode.Replica || !float.IsFinite(amount)
+                || amount <= 0f || (_health != null && (!_health.IsAlive || _health.IsInvulnerable)))
                 return;
 
             int index = ToIndex(kind);
@@ -186,8 +230,18 @@ namespace Game.Combat
 
         private void Tick(float deltaTime)
         {
-            if (deltaTime <= 0f)
+            if (_execution.Mode == CombatExecutionMode.Replica || deltaTime <= 0f)
                 return;
+
+            if (_health != null && !_health.IsAlive)
+            {
+                // 死亡动画期间 Collider 仍在。旧强度可以衰减并清理表现，但尸体不能重新启动反应或造成 DoT。
+                CancelReactions();
+                ApplyNaturalDecay(deltaTime, StatusMask.None);
+                FinalizeStatusesAndPublish();
+                RecalculateMoveSpeedMultiplier();
+                return;
+            }
 
             StatusMask suppressed = StatusMask.None;
             if (_reactionRuntime != null)
@@ -298,6 +352,7 @@ namespace Game.Combat
 
         private void ApplyReactionFrame(in ElementReactionFrame frame)
         {
+            if (_execution.Mode == CombatExecutionMode.Replica) return;
             // 先统一应用四通道 Delta，再发布离散信号和执行命令；Runtime 从不持有 MonoBehaviour 引用。
             AddIntensityDelta(StatusKind.Burning, frame.FireDelta);
             AddIntensityDelta(StatusKind.Wet, frame.WaterDelta);
@@ -337,7 +392,7 @@ namespace Game.Combat
             // Profile 或 Definitions 改变时丢弃旧 Process，再用新快照创建 Runtime；
             // 不在运行中的 Process 内热切参数，避免反应前后半程使用不同规则。
             CancelReactions();
-            if (_reactionProfile == null)
+            if (_execution.Mode == CombatExecutionMode.Replica || _reactionProfile == null)
             {
                 _reactionRuntime = null;
                 return;
@@ -370,6 +425,7 @@ namespace Game.Combat
         /// <summary>复用同一角色开始新生命时，旧局DoT/反应/状态呈现不能跨入据点；仍由Status Owner清理。</summary>
         public void ResetForNewLife()
         {
+            if (_execution.Mode == CombatExecutionMode.Replica) return;
             CancelReactions();
             for(int i=0;i<StatusCount;i++)
             {
@@ -450,6 +506,7 @@ namespace Game.Combat
         private void EnsureVfx(StatusKind kind)
         {
             // VFX 只在状态首次激活时 Instantiate；不会在每个 Tick 重复创建。
+            if (_replicaPresentationRetired) return;
             int index = ToIndex(kind);
             if (_vfxInstances[index] != null)
                 return;

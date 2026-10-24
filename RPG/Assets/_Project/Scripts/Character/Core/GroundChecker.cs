@@ -65,6 +65,8 @@ namespace Game.Character
                 var hit=_hits[i];
                 // 球扫可能先碰自身/侧墙；不能让最近的一面墙遮掉真正的脚底支撑。
                 if(hit.collider==null||hit.collider.transform.IsChildOf(transform)||hit.normal.y<=.05f||hit.distance>=nearest)continue;
+                // 全局 SphereCast 不继承 CC.Move 的 IgnoreCollision 关系；合作角色虽能互穿，也不能成为假地面。
+                if(_controller!=null&&Physics.GetIgnoreCollision(_controller,hit.collider))continue;
                 nearest=hit.distance;normal=hit.normal;
                 // SphereCast在薄物体边缘返回球面接触Normal；短竖直Ray获取支撑表面自身的Normal，避免平栏杆误滑坡。
                 if(hit.collider.Raycast(new Ray(hit.point+Vector3.up*.08f,Vector3.down),out var surface,.16f)&&surface.normal.y>.05f)normal=surface.normal;

@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="47" result="Failed(Child)" total="47" passed="38" failed="9" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-23 11:48:20Z" end-time="2026-10-23 11:48:22Z" duration="1.9815733">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2295" result="Failed" site="Child" start-time="2026-10-23 11:48:20Z" end-time="2026-10-23 11:48:22Z" duration="1.981573" total="47" passed="38" failed="9" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1232" name="Game.Character.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.Tests.dll" runstate="Runnable" testcasecount="188" result="Failed" site="Child" start-time="2026-10-23 11:48:20Z" end-time="2026-10-23 11:48:21Z" duration="0.808313" total="21" passed="15" failed="6" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12532" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1233" name="Game" fullname="Game" runstate="Runnable" testcasecount="188" result="Failed" site="Child" start-time="2026-10-23 11:48:20Z" end-time="2026-10-23 11:48:21Z" duration="0.719013" total="21" passed="15" failed="6" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1234" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="188" result="Failed" site="Child" start-time="2026-10-23 11:48:20Z" end-time="2026-10-23 11:48:21Z" duration="0.621341" total="21" passed="15" failed="6" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1235" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="188" result="Failed" site="Child" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.520669" total="21" passed="15" failed="6" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1001" name="AuthorityActionTimelineTests" fullname="Game.Character.Tests.AuthorityActionTimelineTests" classname="Game.Character.Tests.AuthorityActionTimelineTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.154691" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1004" name="Cancel_PreventsFutureReleaseAndAllowsNextAction" fullname="Game.Character.Tests.AuthorityActionTimelineTests.Cancel_PreventsFutureReleaseAndAllowsNextAction" methodname="Cancel_PreventsFutureReleaseAndAllowsNextAction" classname="Game.Character.Tests.AuthorityActionTimelineTests" runstate="Runnable" seed="648980677" result="Passed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.025207" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1002" name="CatchUpThreeTicks_ReleaseThresholdOnlyFiresOnce" fullname="Game.Character.Tests.AuthorityActionTimelineTests.CatchUpThreeTicks_ReleaseThresholdOnlyFiresOnce" methodname="CatchUpThreeTicks_ReleaseThresholdOnlyFiresOnce" classname="Game.Character.Tests.AuthorityActionTimelineTests" runstate="Runnable" seed="1743414358" result="Passed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.006708" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1003" name="DuplicateOrOlderTick_DoesNotAdvanceTimeOrReleaseAgain" fullname="Game.Character.Tests.AuthorityActionTimelineTests.DuplicateOrOlderTick_DoesNotAdvanceTimeOrReleaseAgain" methodname="DuplicateOrOlderTick_DoesNotAdvanceTimeOrReleaseAgain" classname="Game.Character.Tests.AuthorityActionTimelineTests" runstate="Runnable" seed="689108545" result="Passed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.003509" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1005" name="InvalidTimesOrCommand_AreRejectedWithoutStarting" fullname="Game.Character.Tests.AuthorityActionTimelineTests.InvalidTimesOrCommand_AreRejectedWithoutStarting" methodname="InvalidTimesOrCommand_AreRejectedWithoutStarting" classname="Game.Character.Tests.AuthorityActionTimelineTests" runstate="Runnable" seed="859449014" result="Passed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.000709" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1006" name="NoStepDuringFrozen_DoesNotDependOnWallClockOrUnityDelta" fullname="Game.Character.Tests.AuthorityActionTimelineTests.NoStepDuringFrozen_DoesNotDependOnWallClockOrUnityDelta" methodname="NoStepDuringFrozen_DoesNotDependOnWallClockOrUnityDelta" classname="Game.Character.Tests.AuthorityActionTimelineTests" runstate="Runnable" seed="1565273225" result="Passed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.000684" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1007" name="AuthorityCastSchedulerTests" fullname="Game.Character.Tests.AuthorityCastSchedulerTests" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.151745" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1010" name="CallbackReceivesCapturedRootCommandAfterAnotherCommandIsScheduled" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.CallbackReceivesCapturedRootCommandAfterAnotherCommandIsScheduled" methodname="CallbackReceivesCapturedRootCommandAfterAnotherCommandIsScheduled" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" seed="245943563" result="Passed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.003388" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1014" name="CallbackScheduledDuringTickWaitsUntilNextAuthorityTick" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.CallbackScheduledDuringTickWaitsUntilNextAuthorityTick" methodname="CallbackScheduledDuringTickWaitsUntilNextAuthorityTick" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" seed="301346657" result="Passed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.001733" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1013" name="CancelAllRemovesPendingCallbacksBeforeLaterAuthorityTick" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.CancelAllRemovesPendingCallbacksBeforeLaterAuthorityTick" methodname="CancelAllRemovesPendingCallbacksBeforeLaterAuthorityTick" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" seed="1391959809" result="Passed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.000779" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1011" name="CancelledHandleCannotReleaseOrCancelNewOccupantOfSameSlot" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.CancelledHandleCannotReleaseOrCancelNewOccupantOfSameSlot" methodname="CancelledHandleCannotReleaseOrCancelNewOccupantOfSameSlot" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" seed="184086840" result="Passed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.001695" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1008" name="FrozenWithoutAuthoritySteps_DoesNotReleasePendingCast" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.FrozenWithoutAuthoritySteps_DoesNotReleasePendingCast" methodname="FrozenWithoutAuthoritySteps_DoesNotReleasePendingCast" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" seed="83358599" result="Passed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.000556" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1012" name="FullCapacityRejectsNewCastWithoutOverwritingAlreadyAcceptedCast" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.FullCapacityRejectsNewCastWithoutOverwritingAlreadyAcceptedCast" methodname="FullCapacityRejectsNewCastWithoutOverwritingAlreadyAcceptedCast" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" seed="426606773" result="Passed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.001395" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1018" name="InvalidDelayDoesNotReserveQueueSlot" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.InvalidDelayDoesNotReserveQueueSlot" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.092763" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1015" name="InvalidDelayDoesNotReserveQueueSlot(float.NaN)" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.InvalidDelayDoesNotReserveQueueSlot(float.NaN)" methodname="InvalidDelayDoesNotReserveQueueSlot" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" seed="834498787" result="Passed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.001320" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1016" name="InvalidDelayDoesNotReserveQueueSlot(float.PositiveInfinity)" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.InvalidDelayDoesNotReserveQueueSlot(float.PositiveInfinity)" methodname="InvalidDelayDoesNotReserveQueueSlot" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" seed="1439604944" result="Passed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.000177" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1017" name="InvalidDelayDoesNotReserveQueueSlot(-1.0f)" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.InvalidDelayDoesNotReserveQueueSlot(-1.0f)" methodname="InvalidDelayDoesNotReserveQueueSlot" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" seed="769881923" result="Passed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.000272" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="1009" name="RepeatedAndOlderTick_DoesNotCountDelayTwice" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.RepeatedAndOlderTick_DoesNotCountDelayTwice" methodname="RepeatedAndOlderTick_DoesNotCountDelayTwice" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" seed="1943704731" result="Passed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.000942" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1188" name="OnlineCastIntentRulesTests" fullname="Game.Character.Tests.OnlineCastIntentRulesTests" classname="Game.Character.Tests.OnlineCastIntentRulesTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.112724" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1193" name="AimBeyondGameplayRange_IsRejected" fullname="Game.Character.Tests.OnlineCastIntentRulesTests.AimBeyondGameplayRange_IsRejected" methodname="AimBeyondGameplayRange_IsRejected" classname="Game.Character.Tests.OnlineCastIntentRulesTests" runstate="Runnable" seed="580305609" result="Failed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.011707" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少 Server 施法瞄准校验，Client 坐标不能直接用作生成位置。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastIntentRulesTests.Validate (UnityEngine.Vector3 authority, UnityEngine.Vector3 claimed, UnityEngine.Vector3 aim) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastIntentRulesTests.cs:12
+at Game.Character.Tests.OnlineCastIntentRulesTests.AimBeyondGameplayRange_IsRejected () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastIntentRulesTests.cs:25
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1190" name="ClaimedDistantOrigin_IsRejected" fullname="Game.Character.Tests.OnlineCastIntentRulesTests.ClaimedDistantOrigin_IsRejected" methodname="ClaimedDistantOrigin_IsRejected" classname="Game.Character.Tests.OnlineCastIntentRulesTests" runstate="Runnable" seed="1282725802" result="Failed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.001183" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少 Server 施法瞄准校验，Client 坐标不能直接用作生成位置。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastIntentRulesTests.Validate (UnityEngine.Vector3 authority, UnityEngine.Vector3 claimed, UnityEngine.Vector3 aim) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastIntentRulesTests.cs:12
+at Game.Character.Tests.OnlineCastIntentRulesTests.ClaimedDistantOrigin_IsRejected () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastIntentRulesTests.cs:19
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1189" name="NearbyClickOriginAndFiniteAim_AreAccepted" fullname="Game.Character.Tests.OnlineCastIntentRulesTests.NearbyClickOriginAndFiniteAim_AreAccepted" methodname="NearbyClickOriginAndFiniteAim_AreAccepted" classname="Game.Character.Tests.OnlineCastIntentRulesTests" runstate="Runnable" seed="198831067" result="Failed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.000910" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少 Server 施法瞄准校验，Client 坐标不能直接用作生成位置。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastIntentRulesTests.Validate (UnityEngine.Vector3 authority, UnityEngine.Vector3 claimed, UnityEngine.Vector3 aim) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastIntentRulesTests.cs:12
+at Game.Character.Tests.OnlineCastIntentRulesTests.NearbyClickOriginAndFiniteAim_AreAccepted () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastIntentRulesTests.cs:17
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1191" name="NonFiniteAim_IsRejected" fullname="Game.Character.Tests.OnlineCastIntentRulesTests.NonFiniteAim_IsRejected" methodname="NonFiniteAim_IsRejected" classname="Game.Character.Tests.OnlineCastIntentRulesTests" runstate="Runnable" seed="80509140" result="Failed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.000848" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少 Server 施法瞄准校验，Client 坐标不能直接用作生成位置。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastIntentRulesTests.Validate (UnityEngine.Vector3 authority, UnityEngine.Vector3 claimed, UnityEngine.Vector3 aim) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastIntentRulesTests.cs:12
+at Game.Character.Tests.OnlineCastIntentRulesTests.NonFiniteAim_IsRejected () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastIntentRulesTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1192" name="NonFiniteClaimedOrigin_IsRejected" fullname="Game.Character.Tests.OnlineCastIntentRulesTests.NonFiniteClaimedOrigin_IsRejected" methodname="NonFiniteClaimedOrigin_IsRejected" classname="Game.Character.Tests.OnlineCastIntentRulesTests" runstate="Runnable" seed="1636140131" result="Failed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.000726" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少 Server 施法瞄准校验，Client 坐标不能直接用作生成位置。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastIntentRulesTests.Validate (UnityEngine.Vector3 authority, UnityEngine.Vector3 claimed, UnityEngine.Vector3 aim) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastIntentRulesTests.cs:12
+at Game.Character.Tests.OnlineCastIntentRulesTests.NonFiniteClaimedOrigin_IsRejected () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastIntentRulesTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1194" name="ZeroDirection_IsRejected" fullname="Game.Character.Tests.OnlineCastIntentRulesTests.ZeroDirection_IsRejected" methodname="ZeroDirection_IsRejected" classname="Game.Character.Tests.OnlineCastIntentRulesTests" runstate="Runnable" seed="1054938382" result="Failed" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:21Z" duration="0.000683" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少 Server 施法瞄准校验，Client 坐标不能直接用作生成位置。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastIntentRulesTests.Validate (UnityEngine.Vector3 authority, UnityEngine.Vector3 claimed, UnityEngine.Vector3 aim) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastIntentRulesTests.cs:12
+at Game.Character.Tests.OnlineCastIntentRulesTests.ZeroDirection_IsRejected () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastIntentRulesTests.cs:27
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="1376" name="Game.Combat.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Combat.Tests.dll" runstate="Runnable" testcasecount="116" result="Failed" site="Child" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:22Z" duration="0.531104" total="14" passed="11" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12532" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1377" name="Game" fullname="Game" runstate="Runnable" testcasecount="116" result="Failed" site="Child" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:22Z" duration="0.449537" total="14" passed="11" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1378" name="Combat" fullname="Game.Combat" runstate="Runnable" testcasecount="116" result="Failed" site="Child" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:22Z" duration="0.351415" total="14" passed="11" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1379" name="Tests" fullname="Game.Combat.Tests" runstate="Runnable" testcasecount="116" result="Failed" site="Child" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:22Z" duration="0.248339" total="14" passed="11" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1241" name="CombatExecutionModeTests" fullname="Game.Combat.Tests.CombatExecutionModeTests" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" testcasecount="14" result="Failed" site="Child" start-time="2026-10-23 11:48:21Z" end-time="2026-10-23 11:48:22Z" duration="0.149844" total="14" passed="11" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1249" name="Authority_AreaFirstHitBelongsToWorldAndEachServerTickRunsOnce" fullname="Game.Combat.Tests.CombatExecutionModeTests.Authority_AreaFirstHitBelongsToWorldAndEachServerTickRunsOnce" methodname="Authority_AreaFirstHitBelongsToWorldAndEachServerTickRunsOnce" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="274558856" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.010874" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1252" name="Authority_CancelDoesNotBecomeLifetimeExpiryOrTriggerPayload" fullname="Game.Combat.Tests.CombatExecutionModeTests.Authority_CancelDoesNotBecomeLifetimeExpiryOrTriggerPayload" methodname="Authority_CancelDoesNotBecomeLifetimeExpiryOrTriggerPayload" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="1378974872" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.007749" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1254" name="Authority_CapacityRejectionRollsBackRegistrationAndAllowsExplicitRetry" fullname="Game.Combat.Tests.CombatExecutionModeTests.Authority_CapacityRejectionRollsBackRegistrationAndAllowsExplicitRetry" methodname="Authority_CapacityRejectionRollsBackRegistrationAndAllowsExplicitRetry" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="317239957" result="Failed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.007570" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  容量拒绝不能留下已标记Authority却未登记的幽灵组件。
+  Expected: 25.0f
+  But was:  20.0f
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatExecutionModeTests.Authority_CapacityRejectionRollsBackRegistrationAndAllowsExplicitRetry () [0x0011f] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:254
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1250" name="Authority_ManaAndStatusExplicitStepAreIdempotent" fullname="Game.Combat.Tests.CombatExecutionModeTests.Authority_ManaAndStatusExplicitStepAreIdempotent" methodname="Authority_ManaAndStatusExplicitStepAreIdempotent" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="189133383" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.005554" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1248" name="Authority_WorldAndAutomaticCallbacksDoNotDoubleAdvanceProjectileLifetime" fullname="Game.Combat.Tests.CombatExecutionModeTests.Authority_WorldAndAutomaticCallbacksDoNotDoubleAdvanceProjectileLifetime" methodname="Authority_WorldAndAutomaticCallbacksDoNotDoubleAdvanceProjectileLifetime" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="89022129" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.003300" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1253" name="BeginTick_NewProjectileWaitsUntilNextTickButNewAreaResolvesFirstHitAfterPhysics" fullname="Game.Combat.Tests.CombatExecutionModeTests.BeginTick_NewProjectileWaitsUntilNextTickButNewAreaResolvesFirstHitAfterPhysics" methodname="BeginTick_NewProjectileWaitsUntilNextTickButNewAreaResolvesFirstHitAfterPhysics" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="463676153" result="Failed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.001733" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Driver必须在角色/ActionTimeline产生对象前宣告BirthTick。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatExecutionModeTests.Begin (System.Object world, System.UInt32 tick) [0x00025] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:273
+at Game.Combat.Tests.CombatExecutionModeTests.BeginTick_NewProjectileWaitsUntilNextTickButNewAreaResolvesFirstHitAfterPhysics () [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:219
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1255" name="BeginTick_OlderAnnouncementCannotMakeNewObjectsConsumeCurrentTick" fullname="Game.Combat.Tests.CombatExecutionModeTests.BeginTick_OlderAnnouncementCannotMakeNewObjectsConsumeCurrentTick" methodname="BeginTick_OlderAnnouncementCannotMakeNewObjectsConsumeCurrentTick" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="1535406801" result="Failed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.000722" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Driver必须在角色/ActionTimeline产生对象前宣告BirthTick。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatExecutionModeTests.Begin (System.Object world, System.UInt32 tick) [0x00025] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:273
+at Game.Combat.Tests.CombatExecutionModeTests.BeginTick_OlderAnnouncementCannotMakeNewObjectsConsumeCurrentTick () [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:261
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1251" name="ConfigureHierarchy_IncludesInactiveChildrenBeforeTheirFirstStart" fullname="Game.Combat.Tests.CombatExecutionModeTests.ConfigureHierarchy_IncludesInactiveChildrenBeforeTheirFirstStart" methodname="ConfigureHierarchy_IncludesInactiveChildrenBeforeTheirFirstStart" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="1209862997" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.001829" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1242" name="DefaultSinglePlayer_ReceiveHitStillUsesDamageFunnel" fullname="Game.Combat.Tests.CombatExecutionModeTests.DefaultSinglePlayer_ReceiveHitStillUsesDamageFunnel" methodname="DefaultSinglePlayer_ReceiveHitStillUsesDamageFunnel" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="321498305" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.000507" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1246" name="Replica_AreaStartCannotApplyItsImmediateFirstHit" fullname="Game.Combat.Tests.CombatExecutionModeTests.Replica_AreaStartCannotApplyItsImmediateFirstHit" methodname="Replica_AreaStartCannotApplyItsImmediateFirstHit" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="292696045" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.000611" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1245" name="Replica_DirectAndSustainedStatusDoNotActivateReactionState" fullname="Game.Combat.Tests.CombatExecutionModeTests.Replica_DirectAndSustainedStatusDoNotActivateReactionState" methodname="Replica_DirectAndSustainedStatusDoNotActivateReactionState" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="1183677128" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.000945" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1244" name="Replica_ManaSpendAndAutomaticRegenAreRejected" fullname="Game.Combat.Tests.CombatExecutionModeTests.Replica_ManaSpendAndAutomaticRegenAreRejected" methodname="Replica_ManaSpendAndAutomaticRegenAreRejected" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="1845828428" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.001120" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1243" name="Replica_ReceiveHitDoesNotChangeHpOrPublishDamage" fullname="Game.Combat.Tests.CombatExecutionModeTests.Replica_ReceiveHitDoesNotChangeHpOrPublishDamage" methodname="Replica_ReceiveHitDoesNotChangeHpOrPublishDamage" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="1909477036" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.000612" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1247" name="Replica_ShieldTriggerCannotInitializeOrReflectProjectile" fullname="Game.Combat.Tests.CombatExecutionModeTests.Replica_ShieldTriggerCannotInitializeOrReflectProjectile" methodname="Replica_ShieldTriggerCannotInitializeOrReflectProjectile" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="2081332464" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.003995" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="3593" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="679" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.543196" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12532" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="3594" name="Game" fullname="Game" runstate="Runnable" testcasecount="679" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.494629" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3595" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="679" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.394963" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="3596" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="679" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.296037" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="3079" name="OnlineOwnedWorkspaceTests" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.197087" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="3081" name="DifferentGameplayConfigHash_IsRejectedBeforeWorkspacePublication" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.DifferentGameplayConfigHash_IsRejectedBeforeWorkspacePublication" methodname="DifferentGameplayConfigHash_IsRejectedBeforeWorkspacePublication" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="911468749" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.021361" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3089" name="DuplicateComplete_ConsumesManaAndFiniteUsesOnce" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.DuplicateComplete_ConsumesManaAndFiniteUsesOnce" methodname="DuplicateComplete_ConsumesManaAndFiniteUsesOnce" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="201413162" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.054869" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3091" name="EventBusOnlyMatchingInventoryHandlesRequestAndPublishesReceipt" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.EventBusOnlyMatchingInventoryHandlesRequestAndPublishesReceipt" methodname="EventBusOnlyMatchingInventoryHandlesRequestAndPublishesReceipt" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1138352146" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.003513" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3086" name="FiniteZeroChargeSpell_PreparesNoGameplayOutputOrFreeMana" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.FiniteZeroChargeSpell_PreparesNoGameplayOutputOrFreeMana" methodname="FiniteZeroChargeSpell_PreparesNoGameplayOutputOrFreeMana" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="266565223" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.002539" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3088" name="ForeignWandRequest_IsRejectedWithoutSpendingOwnedResources" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.ForeignWandRequest_IsRejectedWithoutSpendingOwnedResources" methodname="ForeignWandRequest_IsRejectedWithoutSpendingOwnedResources" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1224490772" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.001338" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3085" name="ImportPreservesIdentityFiniteChargesAndSelectedWandWithoutReadingLocalProfile" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.ImportPreservesIdentityFiniteChargesAndSelectedWandWithoutReadingLocalProfile" methodname="ImportPreservesIdentityFiniteChargesAndSelectedWandWithoutReadingLocalProfile" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1364973600" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.001747" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3082" name="InstalledSpellWithMissingParent_IsRejectedAtomically" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InstalledSpellWithMissingParent_IsRejectedAtomically" methodname="InstalledSpellWithMissingParent_IsRejectedAtomically" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="470151576" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.001048" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3087" name="InstanceWandStatsOverrideTemplateWithoutMutatingSharedDefinition" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InstanceWandStatsOverrideTemplateWithoutMutatingSharedDefinition" methodname="InstanceWandStatsOverrideTemplateWithoutMutatingSharedDefinition" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1572282284" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.001848" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3080" name="OldSnapshotWithoutOwnedSchema_IsRejectedInsteadOfGrantingUnlimitedUses" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.OldSnapshotWithoutOwnedSchema_IsRejectedInsteadOfGrantingUnlimitedUses" methodname="OldSnapshotWithoutOwnedSchema_IsRejectedInsteadOfGrantingUnlimitedUses" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="461162020" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.001771" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3090" name="RepeatedOrOlderAuthorityTick_DoesNotRegenerateManaTwice" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.RepeatedOrOlderAuthorityTick_DoesNotRegenerateManaTwice" methodname="RepeatedOrOlderAuthorityTick_DoesNotRegenerateManaTwice" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="2117750395" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.002398" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3083" name="SelectedWandMustBelongToImportedEquippedSlots" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.SelectedWandMustBelongToImportedEquippedSlots" methodname="SelectedWandMustBelongToImportedEquippedSlots" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1504032140" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.001413" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3084" name="WandWithoutExplicitTemplateMarkerOrInstanceStats_IsRejected" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.WandWithoutExplicitTemplateMarkerOrInstanceStats_IsRejected" methodname="WandWithoutExplicitTemplateMarkerOrInstanceStats_IsRejected" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="181359000" result="Passed" start-time="2026-10-23 11:48:22Z" end-time="2026-10-23 11:48:22Z" duration="0.001077" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,4 +1,5 @@
 using UnityEngine;
+using Game.Core;
 
 namespace Game.Combat
 {
@@ -17,16 +18,39 @@ namespace Game.Combat
 
         protected override void OnImpact(Collision collision, IDamageable target, Vector3 hitPoint, bool damaged)
         {
-            // 命中任何东西都放爆炸
-            if (_explosionPrefab != null)
+            if (ExecutionMode == CombatExecutionMode.Replica) return;
+            GameObject fx = null;
+            try
             {
-                GameObject fx = Instantiate(_explosionPrefab, hitPoint, Quaternion.identity);
-                Destroy(fx, _explosionLifetime);
+                if (_explosionPrefab != null)
+                {
+                    fx = Instantiate(_explosionPrefab, hitPoint, Quaternion.identity);
+                    if (SimulationWorld != null) SimulationWorld.ConfigureHierarchy(fx, ExecutionMode);
+                    // 生产 Fireball 的爆炸以 VFX 为主；若后续配置增加 AreaDamage，也必须继承阵营与 Tick 寿命。
+                    AreaDamage[] areas = fx.GetComponentsInChildren<AreaDamage>(true);
+                    for (int i = 0; i < areas.Length; i++)
+                    {
+                        areas[i].Init(_attackerId, _attackerTeam);
+                        if (ExecutionMode == CombatExecutionMode.Authority)
+                            areas[i].ConfigureAuthorityLifetime(_explosionLifetime, fx);
+                    }
+                    // 纯 VFX 的视觉寿命不参与 Gameplay 判定；EditMode 由调用方 Owner 清理，不能调用延迟 Destroy。
+                    if (Application.isPlaying && (ExecutionMode != CombatExecutionMode.Authority || areas.Length == 0))
+                        Destroy(fx, _explosionLifetime);
+                }
+                if (damaged) ApplyBurn(collision.collider);
+                if (fx != null && ExecutionMode == CombatExecutionMode.Authority)
+                {
+                    CombatOutputIdentity source = GetComponent<CombatOutputIdentity>();
+                    if (source != null) EventBus<CombatOutputSpawnedEvent>.Publish(source.CreateChildFact(fx, _explosionPrefab));
+                }
             }
-
-            // 仅对结算了伤害的角色附加燃烧
-            if (damaged)
-                ApplyBurn(collision.collider);
+            catch
+            {
+                // 这层子产出发生在命中时，已经离开根施法的 SpawnTransaction，必须自行回滚。
+                CancelSpawnedEffect(fx);
+                throw;
+            }
         }
 
         /// <summary>在被命中目标承载 StatusController 的根物体上施加 Burning。</summary>

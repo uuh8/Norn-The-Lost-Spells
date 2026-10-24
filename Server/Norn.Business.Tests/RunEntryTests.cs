@@ -50,7 +50,7 @@ public sealed class RunEntryTests
     [Fact, Trait("Category", "DatabaseIntegration")]
     public async Task LeasedInventoryRejectsNewMoves_ButReturnsAlreadyCommittedReceipt()
     {
-        await using var f = new OnlineFactory(); var p = await Pair(f);
+        await using var f = new OnlineFactory(); var p = await Pair(f, true);
         var old = OnlineFactory.Move(p.A); using var moved = await p.ClientA.PostAsJsonAsync("/api/online/inventory/move", old, OnlineFactory.Json); Assert.Equal(HttpStatusCode.OK, moved.StatusCode);
         p.Room = await RoomAdmissionTests.Ready(p.ClientA, p.Room, 2);
         var run = await f.Services.GetRequiredService<RunEntryService>().PrepareAsync(p.A.PlayerId, p.Room.RoomId, p.Room.ReadyRevision, default);
@@ -64,7 +64,7 @@ public sealed class RunEntryTests
     [Fact, Trait("Category", "DatabaseIntegration")]
     public async Task AssetChangedAfterReady_DoesNotReserveAnyMember()
     {
-        await using var f = new OnlineFactory(); var p = await Pair(f);
+        await using var f = new OnlineFactory(); var p = await Pair(f, true);
         using var moved = await p.ClientB.PostAsJsonAsync("/api/online/inventory/move", OnlineFactory.Move(p.B), OnlineFactory.Json); Assert.Equal(HttpStatusCode.OK, moved.StatusCode);
         await Failure("ProfileVersionConflict", () => f.Services.GetRequiredService<RunEntryService>().PrepareAsync(p.A.PlayerId, p.Room.RoomId, p.Room.ReadyRevision, default));
         Assert.Equal(0, await Count(f, "SELECT COUNT(*) FROM Runs WHERE RoomId=@Id", p.Room.RoomId));
@@ -75,7 +75,7 @@ public sealed class RunEntryTests
     [Fact, Trait("Category", "DatabaseIntegration")]
     public async Task StartFailure_ReleasesOnlyMatchingEpochLease()
     {
-        await using var f = new OnlineFactory(); var p = await Pair(f); var entries = f.Services.GetRequiredService<RunEntryService>();
+        await using var f = new OnlineFactory(); var p = await Pair(f, true); var entries = f.Services.GetRequiredService<RunEntryService>();
         var first = await entries.PrepareAsync(p.A.PlayerId, p.Room.RoomId, p.Room.ReadyRevision, default);
         Assert.False(await entries.FailStartAsync(first.RunId, first.RoomEpoch + 1, "LaunchFailed", default));
         Assert.Equal(2, await Count(f, "SELECT COUNT(*) FROM AssetLeases WHERE RunId=@Id", first.RunId));
@@ -112,7 +112,7 @@ public sealed class RunEntryTests
     [Fact, Trait("Category", "DatabaseIntegration")]
     public async Task ConcurrentInventoryMoveAndStart_NeverSnapshotWrongVersion()
     {
-        await using var f = new OnlineFactory(); var p = await Pair(f); var entries = f.Services.GetRequiredService<RunEntryService>();
+        await using var f = new OnlineFactory(); var p = await Pair(f, true); var entries = f.Services.GetRequiredService<RunEntryService>();
         async Task<RunReservation?> Start() { try { return await entries.PrepareAsync(p.A.PlayerId, p.Room.RoomId, p.Room.ReadyRevision, default); } catch (OnlineFailure failure) { Assert.Equal("ProfileVersionConflict", failure.Code); return null; } }
         var start = Start(); var move = p.ClientA.PostAsJsonAsync("/api/online/inventory/move", OnlineFactory.Move(p.A), OnlineFactory.Json);
         await Task.WhenAll(start, move); using var moved = await move;
@@ -159,9 +159,10 @@ public sealed class RunEntryTests
         Assert.Equal(0, await Count(f, "SELECT COUNT(*) FROM AssetLeases WHERE RunId=@Id", run.RunId));
     }
     private static async Task<int> Count(OnlineFactory f, string sql, string id) { await using var db = new MySqlConnection(f.Connection); return await db.ExecuteScalarAsync<int>(sql, new { Id = id }); }
-    private static async Task<PairData> Pair(OnlineFactory f)
+    private static async Task<PairData> Pair(OnlineFactory f, bool movableInventory = false)
     {
-        var a = await f.NewPlayerAsync(); var b = await f.NewPlayerAsync(); var room = await RoomAdmissionTests.Create(a.Client);
+        var a = movableInventory ? await f.NewInventoryPlayerAsync() : await f.NewPlayerAsync();
+        var b = movableInventory ? await f.NewInventoryPlayerAsync() : await f.NewPlayerAsync(); var room = await RoomAdmissionTests.Create(a.Client);
         using var joined = await RoomAdmissionTests.Join(b.Client, room.RoomId); Assert.Equal(HttpStatusCode.OK, joined.StatusCode); room = await RoomAdmissionTests.View(a.Client, room.RoomId);
         room = await RoomAdmissionTests.Ready(a.Client, room, a.Profile.Version); room = await RoomAdmissionTests.Ready(b.Client, room, b.Profile.Version);
         return new PairData { ClientA = a.Client, ClientB = b.Client, A = a.Profile, B = b.Profile, UsernameA = a.Username, Room = room };

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Game.Core;
 
 namespace Game.Combat
 {
@@ -10,7 +11,7 @@ namespace Game.Combat
     /// </summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(BoxCollider))]
-    public sealed class StatusVolume : MonoBehaviour
+    public sealed class StatusVolume : MonoBehaviour, ICombatSimulationParticipant
     {
         private const int MaxCollidersPerTick = 32;
         private const float MinimumTickInterval = 0.01f;
@@ -29,6 +30,14 @@ namespace Game.Combat
         private BoxCollider _box;
         private float _elapsedTime;
         private int _sourceId;
+        private CombatExecutionState _execution;
+        public CombatExecutionMode ExecutionMode => _execution.Mode;
+        public void ConfigureExecutionMode(CombatExecutionMode mode, CombatSimulationWorld world = null)
+        { _execution.Configure(this, mode, world, CombatTickPhase.AfterPhysics); }
+        public void StepAuthority(float deltaTime, uint serverTick)
+        { if (_execution.TryStep(deltaTime, serverTick)) Tick(deltaTime); }
+        private void OnEnable() => _execution.Resume(this, CombatTickPhase.AfterPhysics);
+        private void OnDisable() => _execution.Suspend(this);
 
         private void Awake()
         {
@@ -53,6 +62,7 @@ namespace Game.Combat
 
         private void Update()
         {
+            if (_execution.Mode != CombatExecutionMode.SinglePlayer) return;
             Tick(Time.deltaTime);
         }
 
@@ -72,7 +82,7 @@ namespace Game.Combat
 
         private void Tick(float deltaTime)
         {
-            if (deltaTime <= 0f || _applyAmount <= 0f)
+            if (_execution.Mode == CombatExecutionMode.Replica || deltaTime <= 0f || _applyAmount <= 0f)
                 return;
 
             _elapsedTime += deltaTime;

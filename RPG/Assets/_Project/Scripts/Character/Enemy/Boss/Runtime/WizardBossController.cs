@@ -18,7 +18,7 @@ namespace Game.Character
     [RequireComponent(typeof(HealthComponent))]
     [RequireComponent(typeof(StatusController))]
     [RequireComponent(typeof(SpellCaster))]
-    public sealed class WizardBossController : MonoBehaviour
+    public sealed class WizardBossController : MonoBehaviour, IAuthorityTickParticipant
     {
         private const int TeleportOverlapCapacity = 32;
         private const float FailedTeleportRetryDelay = 1f;
@@ -72,6 +72,12 @@ namespace Game.Character
         private int _teleportSampleSequence;
         private Vector3 _teleportSourcePosition;
         private Vector3 _teleportDestination;
+        private CombatExecutionMode _executionMode;
+        private ICombatActorRosterReadOnly _onlineRoster;
+        private CombatSimulationWorld _combatWorld;
+        private ulong _authorityActorId, _targetActorId, _authorityCommandSequence;
+        private bool _hasAuthorityTick;
+        private uint _lastAuthorityTick;
 
         private static readonly int SpeedHash =
             Animator.StringToHash("speed");
@@ -83,6 +89,8 @@ namespace Game.Character
         public BossDefinition Definition => _definition;
         public HealthComponent Health => _health;
         public Transform Target => _target;
+        public ulong TargetActorId => _targetActorId;
+        public CombatExecutionMode ExecutionMode => _executionMode;
         public bool HasTarget => _target != null;
         public bool IsEncounterActive => _isEncounterActive;
         public bool IsActionLocked => _isActionLocked;
@@ -211,6 +219,101 @@ namespace Game.Character
                     : null);
             CacheOptionalAnimatorParameters();
             _stateMachine.ChangeState(_inactiveState);
+            ConfigureOnlineComponents();
+        }
+
+        /// <summary>只安装服务器职责，参战仍需入口显式批准；不把 Safe Zone 的惰性 Boss 自动激活。</summary>
+        public void ConfigureAuthority(ICombatActorRosterReadOnly roster, CombatSimulationWorld world, ulong actorId)
+        {
+            if (roster == null || world == null || actorId == 0)
+                throw new System.ArgumentException("Boss Authority 需要有效 Roster、Combat World 与 ActorId。");
+            _executionMode = CombatExecutionMode.Authority; _onlineRoster = roster;
+            _combatWorld = world; _authorityActorId = actorId; _hasAuthorityTick = false;
+            ConfigureOnlineComponents();
+        }
+        public void ConfigureReplica()
+        {
+            _executionMode = CombatExecutionMode.Replica; _onlineRoster = null;
+            _targetActorId = 0; _isEncounterActive = false;
+            _stateMachine?.ChangeState(null); _navigation?.SetReplicaSuspended(true);
+            if (_spellCaster != null) _spellCaster.ConfigureReplica();
+        }
+        private void ConfigureOnlineComponents()
+        {
+            if (_executionMode == CombatExecutionMode.Authority && _combatWorld != null)
+            {
+                _combatWorld.ConfigureHierarchy(gameObject, CombatExecutionMode.Authority);
+                if (_spellCaster != null) _spellCaster.ConfigureAuthority(_combatWorld, _authorityActorId);
+                _navigation?.SetReplicaSuspended(false);
+                // Boss 的出手时序不依赖 Animator；骨骼挂点仍需要每 Tick 的受控姿态采样。
+                if (_animator != null)
+                { _animator.applyRootMotion = false; _animator.cullingMode = AnimatorCullingMode.AlwaysAnimate; _animator.enabled = false; }
+            }
+            else if (_executionMode == CombatExecutionMode.Replica)
+            {
+                _navigation?.SetReplicaSuspended(true);
+                if (_spellCaster != null) _spellCaster.ConfigureReplica();
+            }
+        }
+
+        public bool TryActivateAuthorityEncounter()
+        {
+            if (_executionMode != CombatExecutionMode.Authority || _isEncounterActive) return false;
+            if (!RefreshAuthorityTarget()) return false;
+            return TryActivate(_target);
+        }
+
+        public void StepAuthority(float deltaTime, uint serverTick)
+        {
+            if (_executionMode != CombatExecutionMode.Authority || !isActiveAndEnabled || !float.IsFinite(deltaTime)
+                || deltaTime <= 0 || _hasAuthorityTick && unchecked((int)(serverTick - _lastAuthorityTick)) <= 0) return;
+            _hasAuthorityTick = true; _lastAuthorityTick = serverTick;
+            if (_health == null || !_health.IsAlive)
+            { _spellCaster?.CancelAuthorityPending(); _navigation?.StopNavigation(true); return; }
+            if (!_isEncounterActive) return;
+            if (!RefreshAuthorityTarget())
+            {
+                // 全部目标失效时释放动作锁和延迟输出，不重建 Boss、更不重置 HP/Phase/已用程序冷却。
+                _stateMachine.ChangeState(null); _spellCaster?.CancelAuthorityPending(); StopNavigation(); return;
+            }
+            if (CurrentStateKind == BossRuntimeStateKind.None) RouteAfterAction();
+            // 本 Tick 新出手的 Skyfall 从当前逻辑时刻开始等待；不能先释放再把整段旧 dt 扣在新预警上。
+            if (_spellCaster != null) _spellCaster.StepAuthority(deltaTime, serverTick);
+            // 只给 _castOrigin 所在的武器骨骼求姿态，不读取 normalizedTime、不允许动画事件授予 Gameplay 出手。
+            if (_animator != null && _animator.runtimeAnimatorController != null) _animator.Update(deltaTime);
+            StepSimulation(deltaTime);
+        }
+
+        private bool RefreshAuthorityTarget()
+        {
+            if (_onlineRoster == null) return false;
+            bool found = false; CombatActorSnapshot selected = default;
+            float nearest = float.PositiveInfinity;
+            for (int i = 0; i < _onlineRoster.Count; i++)
+            {
+                if (!_onlineRoster.TryGetActor(i, out var actor) || actor.ActorId == 0 || actor.Transform == null
+                    || !actor.IsAlive || !actor.IsConnected || !actor.Targetable || _health != null && actor.TeamId == _health.TeamId) continue;
+                // Boss 不使用普通怪物的 Lose Radius；合法旧目标优先，失效后按水平距离/稳定 ActorId 重选。
+                if (actor.ActorId == _targetActorId) { selected = actor; found = true; break; }
+                Vector3 delta = actor.Position - transform.position;
+                float distance = delta.x * delta.x + delta.z * delta.z;
+                if (!found || distance < nearest || distance == nearest && actor.ActorId < selected.ActorId)
+                { selected = actor; nearest = distance; found = true; }
+            }
+            if (!found) { _target = null; _targetActorId = 0; return false; }
+            if (_target != selected.Transform)
+            {
+                _target = selected.Transform;
+                _targetCharacterController = _target.GetComponent<CharacterController>();
+                _targetStatus = _target.GetComponent<StatusController>(); _targetHealth = _target.GetComponent<HealthComponent>();
+            }
+            _targetActorId = selected.ActorId; return true;
+        }
+
+        internal void PrepareAuthorityCast()
+        {
+            if (_executionMode == CombatExecutionMode.Authority && _spellCaster != null)
+                _spellCaster.SetAuthorityCommand(++_authorityCommandSequence);
         }
 
         private void OnEnable()
@@ -226,6 +329,7 @@ namespace Game.Character
 
         private void OnDisable()
         {
+            if (_executionMode == CombatExecutionMode.Authority && _spellCaster != null) _spellCaster.CancelAuthorityPending();
             EventBus<BossEncounterStartedEvent>.Unsubscribe(
                 OnBossEncounterStarted);
             _stateMachine?.ChangeState(null);
@@ -236,7 +340,7 @@ namespace Game.Character
 
         private void Update()
         {
-            if (Time.timeScale == 0f ||
+            if (_executionMode != CombatExecutionMode.SinglePlayer || Time.timeScale == 0f ||
                 !_isEncounterActive ||
                 _health == null ||
                 !_health.IsAlive)
@@ -245,6 +349,11 @@ namespace Game.Character
             }
 
             float deltaTime = Time.deltaTime;
+            StepSimulation(deltaTime);
+        }
+
+        private void StepSimulation(float deltaTime)
+        {
             _lastHorizontalVelocity = Vector3.zero;
             _programRuntime.TickCooldowns(deltaTime);
             _teleportRuntime.Tick(deltaTime);
@@ -271,12 +380,12 @@ namespace Game.Character
         }
 
         /// <summary>
-        /// 第一次有效调用永久锁定 Target；之后拒绝 Retarget。
+        /// 首次有效调用批准参战；单机继续锁定该目标，Authority 则由 Roster 在后续 Tick 复核/重选。
         /// Event 入口和直接 Scene Bootstrap 共用该方法，因此它不是测试专用 API。
         /// </summary>
         public bool TryActivate(Transform target)
         {
-            if (_isEncounterActive ||
+            if (_executionMode == CombatExecutionMode.Replica || _isEncounterActive ||
                 target == null ||
                 _definition == null)
             {
@@ -706,6 +815,7 @@ namespace Game.Character
 
         internal void ReleaseSelectedProgram()
         {
+            if (_executionMode == CombatExecutionMode.Replica) return;
             if (!IsValidProgram(_selectedProgramIndex))
             {
                 return;
@@ -764,6 +874,7 @@ namespace Game.Character
             {
                 _animator.SetTrigger(_castTriggerHash);
             }
+            PublishAuthorityAnimation(_castTriggerHash);
         }
 
         internal void TriggerPhaseTransitionAnimation()
@@ -774,6 +885,32 @@ namespace Game.Character
                 _animator.SetTrigger(
                     _phaseTransitionTriggerHash);
             }
+            PublishAuthorityAnimation(_phaseTransitionTriggerHash);
+        }
+
+        private void PublishAuthorityAnimation(int hash)
+        {
+            if (_executionMode != CombatExecutionMode.Authority || hash == 0) return;
+            EventBus<OnlineCharacterActionEvent>.Publish(new OnlineCharacterActionEvent
+            { ActorId = _authorityActorId, AnimationHash = hash, ActionKind = 2, FadeSeconds = 0 });
+        }
+
+        /// <summary>Replica 动画入口不触碰 Boss FSM、目标、Action Lock 和 SpellCaster。</summary>
+        public void ApplyReplicaAction(int animationHash, uint kind, float fadeSeconds)
+        {
+            if (_executionMode != CombatExecutionMode.Replica || _animator == null || animationHash == 0) return;
+            if (kind == 1) _animator.CrossFadeInFixedTime(animationHash, Mathf.Clamp(fadeSeconds, 0, 1), 0, 0);
+            else if (kind == 2) _animator.SetTrigger(animationHash);
+        }
+
+        /// <summary>阶段由 Server 单调推进；Client 只安装读数并通知表现，不重新执行阶段无敌/程序解锁。</summary>
+        public void ApplyReplicatedPhase(uint phase)
+        {
+            if (_executionMode != CombatExecutionMode.Replica || phase < (uint)BossPhase.Phase1 || phase > (uint)BossPhase.Phase3
+                || phase <= (uint)_currentPhase) return;
+            BossPhase previous = _currentPhase;
+            _currentPhase = _pendingPhase = (BossPhase)phase;
+            PublishPhaseChanged(previous, _currentPhase);
         }
 
         /// <summary>
@@ -933,11 +1070,15 @@ namespace Game.Character
         private void OnBossEncounterStarted(
             BossEncounterStartedEvent startedEvent)
         {
+            if (_executionMode == CombatExecutionMode.Replica) return;
             if (_health == null ||
                 startedEvent.BossId != _health.Id)
             {
                 return;
             }
+
+            if (_executionMode == CombatExecutionMode.Authority)
+            { TryActivateAuthorityEncounter(); return; }
 
             PlayerControllerBase player =
                 PlayerControllerBase.Current;
@@ -1000,7 +1141,22 @@ namespace Game.Character
                     SourcePosition = _teleportSourcePosition,
                     DestinationPosition = _teleportDestination,
                 });
+            if (_executionMode == CombatExecutionMode.Authority)
+                EventBus<OnlineBossTeleportPresentationEvent>.Publish(new OnlineBossTeleportPresentationEvent
+                { ActorId = _authorityActorId, Stage = (uint)stage, SourcePosition = _teleportSourcePosition, DestinationPosition = _teleportDestination });
         }
+
+        /// <summary>只把权威事实交给已有 VFX 消费者；Boss 位移仍从 Movement Snapshot 安装，绝不再执行 Teleport Gameplay。</summary>
+        public void ApplyReplicatedTeleport(uint stage, Vector3 source, Vector3 destination)
+        {
+            if (_executionMode != CombatExecutionMode.Replica || stage > (uint)BossTeleportStage.Cancelled
+                || !FinitePosition(source) || !FinitePosition(destination)) return;
+            EventBus<BossTeleportEvent>.Publish(new BossTeleportEvent
+            { BossId = _health != null ? _health.Id : 0, Stage = (BossTeleportStage)stage, SourcePosition = source, DestinationPosition = destination });
+        }
+
+        private static bool FinitePosition(Vector3 position) =>
+            float.IsFinite(position.x) && float.IsFinite(position.y) && float.IsFinite(position.z);
 
         private static int HashOptionalTrigger(string triggerName)
         {

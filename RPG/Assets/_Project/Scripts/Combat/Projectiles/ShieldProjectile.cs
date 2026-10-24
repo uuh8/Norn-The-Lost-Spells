@@ -1,4 +1,5 @@
 using UnityEngine;
+using Game.Core;
 
 namespace Game.Combat
 {
@@ -10,6 +11,13 @@ namespace Game.Combat
         [SerializeField] private ProjectileShield _shield;
 
         private int _reflectCount;
+
+        public override void ConfigureExecutionMode(CombatExecutionMode mode, CombatSimulationWorld world = null)
+        {
+            base.ConfigureExecutionMode(mode, world);
+            if (_shield == null) _shield = GetComponentInChildren<ProjectileShield>(true);
+            if (_shield != null) _shield.ConfigureExecutionMode(mode, world);
+        }
 
         protected override void Awake()
         {

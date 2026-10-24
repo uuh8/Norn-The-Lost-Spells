@@ -43,6 +43,69 @@ namespace Game.Character
         private readonly HashSet<AudioClip> _playedSfx = new HashSet<AudioClip>();
         // RaycastNonAlloc 由调用方提供数组接收结果，避免每次落点检测创建新数组。
         private readonly RaycastHit[] _landingHits = new RaycastHit[8];
+        private CombatExecutionMode _combatMode;
+        private CombatSimulationWorld _combatWorld;
+        private readonly AuthorityCastScheduler _authorityScheduler = new AuthorityCastScheduler();
+        private ulong _authorityActor;
+        private uint _authorityGeneration;
+        private AuthorityCastContext _authorityContext;
+        private sealed class AuthorityCastContext
+        {
+            internal ulong Actor, Command;
+            internal uint Generation;
+            internal uint NextSoundOrdinal;
+            internal CombatOutputIdentity.CommandScope OutputScope;
+        }
+
+        public void ConfigureAuthority(CombatSimulationWorld world, ulong actorId)
+        {
+            if (world == null || actorId == 0) throw new System.ArgumentException("权威施法缺少 World 或 Actor。");
+            CancelAuthorityPending(); _combatMode = CombatExecutionMode.Authority;
+            _combatWorld = world; _authorityActor = actorId;
+        }
+        public void ConfigureReplica()
+        { CancelAuthorityPending(); _combatMode = CombatExecutionMode.Replica; _combatWorld = null; }
+        public void SetAuthorityCommand(ulong commandId)
+        {
+            if (_combatMode != CombatExecutionMode.Authority || commandId == 0)
+                throw new System.InvalidOperationException("只有已配置 Authority 的非零命令可以创建 Gameplay 输出。");
+            // 每个根命令单独持有上下文；旧 Trigger 不会读取后来这根法杖的 CommandId。
+            _authorityContext = new AuthorityCastContext { Actor = _authorityActor, Command = commandId,
+                Generation = _authorityGeneration, OutputScope = new CombatOutputIdentity.CommandScope(_authorityActor, commandId) };
+        }
+        public void StepAuthority(float deltaTime, uint serverTick)
+        { if (_combatMode == CombatExecutionMode.Authority) _authorityScheduler.StepAuthority(deltaTime, serverTick); }
+        public void CancelAuthorityPending()
+        { _authorityScheduler.CancelAll(); _authorityGeneration++; _authorityContext = null; }
+        private void OnDisable()
+        { if (_combatMode != CombatExecutionMode.SinglePlayer) CancelAuthorityPending(); }
+
+        private bool CanRunAuthorityContext(AuthorityCastContext context) =>
+            _combatMode == CombatExecutionMode.SinglePlayer || _combatMode == CombatExecutionMode.Authority
+                && context != null && context.Generation == _authorityGeneration;
+
+        private void ConfigureOutput(GameObject output)
+        { if (_combatWorld != null) _combatWorld.ConfigureHierarchy(output, _combatMode); }
+        private void PublishOutput(GameObject output, GameObject prefab, in OwnedWandCastContext source)
+        {
+            if (_combatMode != CombatExecutionMode.Authority || !CanRunAuthorityContext(_authorityContext)) return;
+            // 在根事务提交前就绑定身份；将来命中的子效果继承这个 Scope，不读取已被下一次施法替换的上下文。
+            var fact = CombatOutputIdentity.Configure(output, _authorityContext.OutputScope).CreateSpawnFact(prefab);
+            // Owned 组合在资源提交后才公开出生，Rollback 不留下客户端的半份法术。
+            if (source.SpawnTransaction != null) source.SpawnTransaction.PublishOutput(fact);
+            else EventBus<CombatOutputSpawnedEvent>.Publish(fact);
+        }
+        private void PublishCastSound(AudioClip clip, Vector3 position, in OwnedWandCastContext source)
+        {
+            if (clip == null || _combatMode != CombatExecutionMode.Authority || !CanRunAuthorityContext(_authorityContext)) return;
+            if (_authorityContext.NextSoundOrdinal == uint.MaxValue)
+                throw new System.InvalidOperationException("单次根施法的声音序号已耗尽。");
+            var sound = new CombatCastSoundEvent { ActorId = _authorityContext.Actor, CommandId = _authorityContext.Command,
+                SoundOrdinal = ++_authorityContext.NextSoundOrdinal, Clip = clip, Position = position };
+            // Dedicated Server 只公开事实，不创建 AudioSource；客户端从受控音频表播放。
+            if (source.SpawnTransaction != null) source.SpawnTransaction.PublishSound(sound);
+            else EventBus<CombatCastSoundEvent>.Publish(sound);
+        }
         /// <summary>
         /// 返回 NPC/独立程序的只读模板；玩家由 OwnedWandCastAdapter 运行携带配置。
         /// 这里按需解析而不在 Awake 缓存，避免依赖不同 GameObject 之间不可保证的 Awake 执行顺序。
@@ -64,6 +127,7 @@ namespace Game.Character
         }
         private void OnDestroy()
         {
+            CancelAuthorityPending();
             // 组件单独销毁也会停止其 Coroutine；必须主动取消仍在 Session 中的未来预算。
             OwnedWandCastAdapter adapter = GetComponent<OwnedWandCastAdapter>();
             if (adapter != null) adapter.CancelOutstanding();
@@ -129,6 +193,7 @@ namespace Game.Character
             SpellManaPolicy manaPolicy,
             OwnedWandCastContext ownedSource = default)
         {
+            if (!CanRunAuthorityContext(_authorityContext)) return 0;
             if (ownedSource.Enabled)
                 return RunOwnedCast(ownedSource, spawnPos, aimPoint, baseDir, aimMode, team, attackerId, casterCollider, castId, depth, manaPolicy);
             if (depth >= MaxRuntimeTriggerDepth)
@@ -194,7 +259,7 @@ namespace Game.Character
                     // 如果音效为空 ➡️ 不播放。
                     // 如果音效不为空，且是第一次遇到这个音效 ➡️ Add 返回 true，条件成立 ➡️ 播放音效。
                     // 如果音效不为空，但已经播放过了 ➡️ Add 返回 false，条件不成立 ➡️ 不播放
-                    if (cmd.CastSfx != null && _playedSfx.Add(cmd.CastSfx))
+                    if (_combatMode != CombatExecutionMode.Authority && cmd.CastSfx != null && _playedSfx.Add(cmd.CastSfx))
                         AudioSource.PlayClipAtPoint(cmd.CastSfx, spawnPos);
 
                     if (cmd.ProjectilePrefab == null)
@@ -221,6 +286,8 @@ namespace Game.Character
                                 casterCollider, castId, depth, manaPolicy, ownedSource);
                             break;
                     }
+                    if (_combatMode == CombatExecutionMode.Authority && cmd.CastSfx != null && _playedSfx.Add(cmd.CastSfx))
+                        PublishCastSound(cmd.CastSfx, spawnPos, ownedSource);
                 }
             }
 
@@ -237,6 +304,7 @@ namespace Game.Character
             try
             {
                 prepared = prepared.PrepareMaterials(this, spawn);
+                _playedSfx.Clear();
                 using (s_runtimeSpawnMarker.Auto())
                     for (int i = 0; i < layer.CommandCount; i++)
                     {
@@ -252,6 +320,8 @@ namespace Game.Character
                             default:
                                 SpawnForwardProjectile(cmd, spawn, aim, direction, aimMode, i, layer.CommandCount, team, attacker, collider, castId, depth, policy, prepared); break;
                         }
+                        if (_combatMode == CombatExecutionMode.Authority && cmd.CastSfx != null && _playedSfx.Add(cmd.CastSfx))
+                            PublishCastSound(cmd.CastSfx, spawn, prepared);
                     }
                 if (!prepared.Finish(true))
                 { prepared.SpawnTransaction.Rollback(this); prepared.Finish(false); return 0; }
@@ -268,7 +338,7 @@ namespace Game.Character
             prepared.ActivateMaterials();
             _playedSfx.Clear();
             for (int i = 0; i < layer.CommandCount; i++)
-            { AudioClip clip = layer.GetCommand(i).CastSfx; if (clip != null && _playedSfx.Add(clip)) AudioSource.PlayClipAtPoint(clip, spawn); }
+            { AudioClip clip = layer.GetCommand(i).CastSfx; if (_combatMode != CombatExecutionMode.Authority && clip != null && _playedSfx.Add(clip)) AudioSource.PlayClipAtPoint(clip, spawn); }
             return layer.CommandCount;
         }
 
@@ -417,6 +487,7 @@ namespace Game.Character
 
             // Instantiate 根据 Prefab 在运行时创建一个独立 GameObject；LookRotation 让其 forward 朝向发射方向。
             GameObject go = Object.Instantiate(cmd.ProjectilePrefab, spawnPos, Quaternion.LookRotation(launchForward));
+            ConfigureOutput(go);
             ownedSource.Track(go);
             ProjectileBase proj = go.GetComponent<ProjectileBase>();
             if (proj == null)
@@ -449,6 +520,7 @@ namespace Game.Character
             proj.Init(team, attackerId, cmd.Damage, cmd.DamageType, launchVelocity, casterCollider, useGravity: cmd.UseGravity);
             ownedSource.LinkMaterial(index, proj);
             ownedSource.ObserveOutput(index);
+            PublishOutput(go, cmd.ProjectilePrefab, ownedSource);
         }
 
         /// <summary>
@@ -469,6 +541,7 @@ namespace Game.Character
 
             // 静态对象依然通过 Instantiate 创建独立场景实例，但不会调用 ProjectileBase.Init。
             GameObject go = Object.Instantiate(cmd.ProjectilePrefab, spawnPos, rotation);
+            ConfigureOutput(go);
             ownedSource.Track(go);
             ProjectileShield shield = go.GetComponent<ProjectileShield>();
             if (shield == null)
@@ -478,6 +551,7 @@ namespace Game.Character
             {
                 // 静态护盾自己持有阵营、归属、剩余反射次数与 Collider 忽略规则，因此走专用 Init。
                 shield.Init(team, attackerId, cmd.ShieldReflectCount, casterCollider);
+                PublishOutput(go, cmd.ProjectilePrefab, ownedSource);
                 return;
             }
 
@@ -514,12 +588,44 @@ namespace Game.Character
                 Quaternion markerRotation = cmd.LandingSitePrefab.transform.rotation;
                 GameObject marker = Object.Instantiate(cmd.LandingSitePrefab, landingPoint, markerRotation);
                 ownedSource.Track(marker);
-                // Destroy(Object, delay) 延迟销毁落点提示；额外 0.5 秒给结束动画留出时间。
-                Object.Destroy(marker, Mathf.Max(0.05f, cmd.LandingSiteDuration + 0.5f));
+                try
+                {
+                    ConfigureOutput(marker);
+                    float markerLifetime = Mathf.Max(0.05f, cmd.LandingSiteDuration + 0.5f);
+                    if (_combatMode == CombatExecutionMode.Authority)
+                    {
+                        // Frozen 不推进 Combat Tick，也不应让落点预警在真实时间里消失。
+                        // Timer 隶属 marker，不放入 caster 的 CancelAll；施法者离场后残留表现也能按有限寿命结束。
+                        marker.AddComponent<CombatVisualLifetime>().ConfigureAuthority(_combatWorld, markerLifetime);
+                    }
+                    else Object.Destroy(marker, markerLifetime); // 单机仍使用原始 Unity 表现时钟。
+                    PublishOutput(marker, cmd.LandingSitePrefab, ownedSource);
+                }
+                catch
+                {
+                    // NPC 没有 Owned SpawnTransaction，也必须在权限/容量注入失败时撤销克隆，不能遗留未登记预警。
+                    marker.SetActive(false);
+                    if (Application.isPlaying) Object.Destroy(marker); else Object.DestroyImmediate(marker);
+                    throw;
+                }
             }
 
             if (cmd.LandingSiteDuration > 0f)
             {
+                if (_combatMode == CombatExecutionMode.Authority)
+                {
+                    AuthorityCastContext context = _authorityContext;
+                    if (!_authorityScheduler.TrySchedule(cmd.LandingSiteDuration, context.Command, _ =>
+                    {
+                        if (!CanRunAuthorityContext(context)) return;
+                        var previous = _authorityContext; _authorityContext = context;
+                        try { SpawnSkyfallProjectileNow(cmd, landingPoint, baseDir, index, count, team, attackerId,
+                            casterCollider, castId, depth, manaPolicy, ownedSource); }
+                        finally { _authorityContext = previous; }
+                    }, out uint handle)) throw new System.InvalidOperationException("权威延迟施法队列已满。");
+                    ownedSource.SpawnTransaction?.Track(_authorityScheduler, handle);
+                    return;
+                }
                 // Coroutine 可跨多帧暂停并恢复该流程，不会阻塞主线程；StartCoroutine 负责交给 Unity 调度。
                 ownedSource.Track(StartCoroutine(SpawnSkyfallProjectileAfterDelay(
                     cmd, landingPoint, baseDir, index, count, team, attackerId,
@@ -550,6 +656,8 @@ namespace Game.Character
             SpellManaPolicy manaPolicy,
             OwnedWandCastContext ownedSource = default)
         {
+            if (_combatMode == CombatExecutionMode.Replica) return;
+            AuthorityCastContext capturedContext = _authorityContext;
             // 如果这枚投射物根本没有携带后续法术，那么什么都不用绑定
             if (!cmd.HasPayload && !(ownedSource.Enabled && ownedSource.V2 && ownedSource.LayerIndex >= 0))
                 return;
@@ -568,7 +676,7 @@ namespace Game.Character
                     proj.Terminated += (reason,position,direction) =>
                     {
                         if(reason!=ProjectileTerminationReason.Impact && reason!=ProjectileTerminationReason.LifetimeExpired)return;
-                        RunCast(payload,1,payloadMods,position,position+direction,direction,SpellAimMode.Direct,
+                        RunPayload(capturedContext,payload,payloadMods,position,direction,
                             team,attackerId,casterCollider,castId,depth+1,manaPolicy,ownedSource);
                     };
                     break;
@@ -576,43 +684,30 @@ namespace Game.Character
                     // += 向 C# event 订阅回调；ProjectileBase 在完成碰撞处理后 Invoke，命中点成为下一层发射点。
                     // Payload 表示一个 Action，因此新层的基础 Draw Budget 重置为 1；depth + 1 记录递归层级。
                     proj.Impacted += (hitPoint, hitDir) =>
-                        RunCast(
-                            payload,
-                            1,
-                            payloadMods,
-                            hitPoint,
-                            hitPoint + hitDir,
-                            hitDir,
-                            SpellAimMode.Direct,
-                            team,
-                            attackerId,
-                            casterCollider,
-                            castId,
-                            depth + 1,
-                            manaPolicy, ownedSource);
+                        RunPayload(capturedContext,payload,payloadMods,hitPoint,hitDir,
+                            team,attackerId,casterCollider,castId,depth+1,manaPolicy,ownedSource);
                     break;
 
                 case PayloadTriggerMode.AfterDelay:
                     // 定时模式订阅另一个实例事件，再由 ArmTimedTrigger 开始投射物内部倒计时。
                     // position/direction 取触发瞬间的投射物状态，不重新读取角色或 Camera，因此转镜头不会改变后续方向。
                     proj.TimedTriggerElapsed += (position, direction) =>
-                        RunCast(
-                            payload,
-                            1,
-                            payloadMods,
-                            position,
-                            position + direction,
-                            direction,
-                            SpellAimMode.Direct,
-                            team,
-                            attackerId,
-                            casterCollider,
-                            castId,
-                            depth + 1,
-                            manaPolicy, ownedSource);
+                        RunPayload(capturedContext,payload,payloadMods,position,direction,
+                            team,attackerId,casterCollider,castId,depth+1,manaPolicy,ownedSource);
                     proj.ArmTimedTrigger(cmd.PayloadDelaySeconds);
                     break;
             }
+        }
+
+        private void RunPayload(AuthorityCastContext context, IReadOnlyList<SpellDefinition> payload,
+            CastModifierState modifiers, Vector3 point, Vector3 direction, byte team, int attacker,
+            Collider caster, int castId, int depth, SpellManaPolicy policy, OwnedWandCastContext source)
+        {
+            if (!CanRunAuthorityContext(context)) return;
+            var previous = _authorityContext; _authorityContext = context;
+            try { RunCast(payload, 1, modifiers, point, point + direction, direction, SpellAimMode.Direct,
+                team, attacker, caster, castId, depth, policy, source); }
+            finally { _authorityContext = previous; }
         }
 
         /// <summary>
@@ -710,6 +805,7 @@ namespace Game.Character
 
             // LookRotation 让 Prefab 的 forward 指向“出生点 → 落点”，后续 Rigidbody 初速度沿同一方向。
             GameObject go = Object.Instantiate(cmd.ProjectilePrefab, spawnPos, Quaternion.LookRotation(fallDir));
+            ConfigureOutput(go);
             ownedSource.Track(go);
             ProjectileBase proj = go.GetComponent<ProjectileBase>();
             if (proj == null)
@@ -732,6 +828,7 @@ namespace Game.Character
             ConfigureCompositeDamage(proj, in cmd);
             ConfigureProjectileMotion(proj, cmd, index, count);
             proj.Init(team, attackerId, cmd.Damage, cmd.DamageType, fallDir * cmd.Speed, casterCollider, useGravity: cmd.UseGravity);
+            PublishOutput(go, cmd.ProjectilePrefab, ownedSource);
             ownedSource.LinkMaterial(index, proj);
             // Skyfall 在预警结束后才出生；资源预付不等于世界已经释放。
             ownedSource.ObserveOutput(index);

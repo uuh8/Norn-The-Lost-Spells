@@ -31,7 +31,7 @@ public sealed class OnlineProfileTests
         string username, id, instance;
         await using (var first = new OnlineFactory())
         {
-            var player = await first.NewPlayerAsync(); username = player.Username; id = player.Profile.PlayerId;
+            var player = await first.NewInventoryPlayerAsync(); username = player.Username; id = player.Profile.PlayerId;
             instance = player.Profile.Items[0].InstanceId;
             using var response = await player.Client.PostAsJsonAsync("/api/online/inventory/move", OnlineFactory.Move(player.Profile), OnlineFactory.Json);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);

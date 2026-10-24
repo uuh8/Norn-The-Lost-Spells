@@ -54,7 +54,7 @@ public sealed class JoinTicketBudgetTests
         using var p = Process.GetCurrentProcess(); var identity = new InstanceProcessIdentity(p.Id, p.StartTime.ToUniversalTime().Ticks, p.MainModule!.FileName!);
         await s.RecordProcessAsync(g.Descriptor.InstanceId, identity, default);
         await s.ReadyAsync(g.Descriptor.InstanceId, g.Secret!, new InstanceReadyRequest { ProcessId = identity.ProcessId, ProcessStartTicks = identity.StartTicks, RoomEpoch = run.Run.RoomEpoch,
-            ProtocolVersion = f.Manifest.ProtocolVersion, BuildVersion = f.Manifest.BuildVersion, ManifestHash = f.Manifest.Hash }, default);
+            ProtocolVersion = f.Manifest.ProtocolVersion, BuildVersion = f.Manifest.BuildVersion, ManifestHash = f.Manifest.Hash, GameplayConfigHash = OnlineFactory.GameplayHash }, default);
         return (s, g);
     }
 }

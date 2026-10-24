@@ -6,6 +6,7 @@ using Game.NetworkProtocol;
 using MySqlConnector;
 using Norn.Business.Content;
 using Norn.Business.Features.Accounts;
+using Norn.Business.Features.Inventory;
 using Norn.Business.Features.Runs;
 using Norn.Business.Infrastructure;
 
@@ -51,7 +52,8 @@ public sealed class RoomInstanceService(OnlineDatabase database, RoomTransaction
     public Task<InstanceReadyReply> ReadyAsync(string instance, string secret, InstanceReadyRequest request, CancellationToken ct) => transactions.MutateAsync(async (db, tx) =>
     {
         var row = await Credential(db, tx, instance, secret, ct); content.RequireVersion(request.ProtocolVersion, request.ManifestHash);
-        if (request.BuildVersion != content.Manifest.BuildVersion) throw new OnlineFailure(409, "ContentVersionMismatch");
+        if (request.BuildVersion != content.Manifest.BuildVersion || string.IsNullOrEmpty(content.GameplayConfigHash) || request.GameplayConfigHash != content.GameplayConfigHash)
+            throw new OnlineFailure(409, "ContentVersionMismatch");
         await RequireCurrent(db, tx, row, request.RoomEpoch, false, ct);
         if (row.State == "Launching" && Now >= row.ReadyDeadlineUtc) throw new OnlineFailure(409, "InstanceEpochExpired");
         if (row.ProcessId != request.ProcessId || row.ProcessStartTicks != request.ProcessStartTicks || !InstanceProcesses.Matches(new InstanceProcessIdentity(request.ProcessId, request.ProcessStartTicks, row.Executable))) throw new OnlineFailure(409, "InstanceProcessMismatch");
@@ -63,6 +65,13 @@ public sealed class RoomInstanceService(OnlineDatabase database, RoomTransaction
         var entries = await db.QueryAsync<EntryRow>(new CommandDefinition("SELECT r.EntrySnapshot,m.Seat FROM RunMembers r JOIN PartyMembers m ON m.CharacterId=r.CharacterId AND m.RoomId=@Room WHERE r.RunId=@Run ORDER BY m.Seat", new { Run = row.RunId, Room = row.RoomId }, tx, cancellationToken: ct));
         var profiles = entries.Select(e => new InstanceEntryMember { ActorId = (ulong)e.Seat + 1, Profile = JsonSerializer.Deserialize<OnlineProfileReply>(e.EntrySnapshot, ContentManifestValidator.Json)! }).ToArray();
         if (profiles.Length is < 2 or > 4 || profiles.Any(p => p.Profile.ContentManifestHash != content.Manifest.Hash)) throw new OnlineFailure(409, "EntrySnapshotMismatch");
+        foreach (var member in profiles)
+        {
+            var assets = member.Profile.CombatAssets;
+            OwnedCombatAssetRules.Require(assets, member.Profile.PlayerId, content.GameplayConfigHash, content, true);
+            if (assets.RunId != row.RunId || assets.ActorId != member.ActorId || assets.InventoryVersion != member.Profile.Version)
+                throw new OnlineFailure(409, "EntrySnapshotMismatch");
+        }
         return new InstanceReadyReply { LeaseExpiresUnixMilliseconds = Unix(until), Members = profiles };
     }, ct);
     public Task<InstanceLeaseReply> HeartbeatAsync(string instance, string secret, uint epoch, CancellationToken ct) => transactions.MutateAsync(async (db, tx) =>
@@ -147,7 +156,7 @@ public sealed class RoomInstanceService(OnlineDatabase database, RoomTransaction
         var row = await db.QuerySingleOrDefaultAsync<InstanceRow>(new CommandDefinition("SELECT * FROM ServerInstances WHERE RunId=@Run", new { Run = party.ActiveRunId }, tx, cancellationToken: ct)) ?? throw new OnlineFailure(404, "InstanceNotFound");
         return new RoomInstanceReply { InstanceId = row.InstanceId, RunId = row.RunId, RoomEpoch = row.RoomEpoch, Port = row.UdpPort, State = row.State };
     }, ct);
-    private InstanceLaunchDescriptor Descriptor(InstanceRow r) => new() { InstanceId = r.InstanceId, RoomId = r.RoomId, RunId = r.RunId, RoomEpoch = r.RoomEpoch, Port = r.UdpPort, BusinessBaseUrl = Config.BusinessBaseUrl, ProtocolVersion = content.Manifest.ProtocolVersion, BuildVersion = content.Manifest.BuildVersion, ManifestHash = content.Manifest.Hash, HeartbeatSeconds = Config.HeartbeatSeconds, FreezeAfterSeconds = Config.FreezeAfterSeconds, IdleShutdownSeconds = Config.IdleShutdownSeconds };
+    private InstanceLaunchDescriptor Descriptor(InstanceRow r) => new() { InstanceId = r.InstanceId, RoomId = r.RoomId, RunId = r.RunId, RoomEpoch = r.RoomEpoch, Port = r.UdpPort, BusinessBaseUrl = Config.BusinessBaseUrl, ProtocolVersion = content.Manifest.ProtocolVersion, BuildVersion = content.Manifest.BuildVersion, ManifestHash = content.Manifest.Hash, GameplayConfigHash = content.GameplayConfigHash, HeartbeatSeconds = Config.HeartbeatSeconds, FreezeAfterSeconds = Config.FreezeAfterSeconds, IdleShutdownSeconds = Config.IdleShutdownSeconds };
     private static async Task<InstanceRow> Get(MySqlConnection db, MySqlTransaction tx, string id, CancellationToken ct) => await db.QuerySingleOrDefaultAsync<InstanceRow>(new CommandDefinition("SELECT * FROM ServerInstances WHERE InstanceId=@Id", new { Id = id }, tx, cancellationToken: ct)) ?? throw new OnlineFailure(404, "InstanceNotFound");
     private static async Task<InstanceRow> Credential(MySqlConnection db, MySqlTransaction tx, string id, string secret, CancellationToken ct)
     {
@@ -159,6 +168,12 @@ public sealed class RoomInstanceService(OnlineDatabase database, RoomTransaction
         if (row.RoomEpoch != epoch || row.State == "Failed" || ready && row.State != "Ready" || row.State == "Ready" && (row.LeaseExpiresUtc == null || Now >= row.LeaseExpiresUtc)) throw new OnlineFailure(409, "InstanceEpochExpired");
         var party = await RoomTransactions.Party(db, tx, row.RoomId, ct);
         if (party.ActiveRunId != row.RunId || party.RoomEpoch != row.RoomEpoch || party.State is not ("Starting" or "Running")) throw new OnlineFailure(409, "InstanceEpochExpired");
+        // 规则升级后，旧 DS 不能只靠旧密钥续租。复用唯一冻结 JSON，不在重启时把旧规则重新标成新 Hash。
+        int mismatched = await db.ExecuteScalarAsync<int>(new CommandDefinition("""
+            SELECT COUNT(*) FROM RunMembers WHERE RunId=@Run
+            AND COALESCE(JSON_UNQUOTE(JSON_EXTRACT(EntrySnapshot,'$.CombatAssets.GameplayConfigHash')),'')<>@Hash
+            """, new { Run = row.RunId, Hash = content.GameplayConfigHash }, tx, cancellationToken: ct));
+        if (!IsToken(content.GameplayConfigHash) || mismatched != 0) throw new OnlineFailure(409, "ContentVersionMismatch");
     }
     private static bool IsToken(string? s) => s != null && s.Length == 64 && s.All(c => c is >= '0' and <= '9' or >= 'a' and <= 'f');
     private static long Unix(DateTime utc) => new DateTimeOffset(DateTime.SpecifyKind(utc, DateTimeKind.Utc)).ToUnixTimeMilliseconds();

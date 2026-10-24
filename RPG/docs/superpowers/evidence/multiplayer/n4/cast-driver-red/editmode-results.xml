@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-23 12:10:22Z" end-time="2026-10-23 12:10:22Z" duration="0.658746">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2322" result="Failed" site="Child" start-time="2026-10-23 12:10:22Z" end-time="2026-10-23 12:10:22Z" duration="0.658746" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1247" name="Game.Character.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.Tests.dll" runstate="Runnable" testcasecount="200" result="Failed" site="Child" start-time="2026-10-23 12:10:22Z" end-time="2026-10-23 12:10:22Z" duration="0.558632" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12532" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1248" name="Game" fullname="Game" runstate="Runnable" testcasecount="200" result="Failed" site="Child" start-time="2026-10-23 12:10:22Z" end-time="2026-10-23 12:10:22Z" duration="0.467322" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1249" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="200" result="Failed" site="Child" start-time="2026-10-23 12:10:22Z" end-time="2026-10-23 12:10:22Z" duration="0.364514" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1250" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="200" result="Failed" site="Child" start-time="2026-10-23 12:10:22Z" end-time="2026-10-23 12:10:22Z" duration="0.266838" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1198" name="OnlineCastDriverTests" fullname="Game.Character.Tests.OnlineCastDriverTests" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-23 12:10:22Z" end-time="2026-10-23 12:10:22Z" duration="0.128241" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1200" name="DuplicateRootCommand_OnlyCommitsOneRealOwnedCast" fullname="Game.Character.Tests.OnlineCastDriverTests.DuplicateRootCommand_OnlyCommitsOneRealOwnedCast" methodname="DuplicateRootCommand_OnlyCommitsOneRealOwnedCast" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="334202394" result="Failed" start-time="2026-10-23 12:10:22Z" end-time="2026-10-23 12:10:22Z" duration="0.042030" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少正式角色的权威施法装配，不能解除单机 guard 代替。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.Create (Game.Core.OnlineOwnedAssetSnapshot& assets, System.Boolean insufficient) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:32
+at Game.Character.Tests.OnlineCastDriverTests.DuplicateRootCommand_OnlyCommitsOneRealOwnedCast () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:66
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1199" name="ForeignWandAndInvalidOrigin_AreRejectedWithoutOutputOrCharge" fullname="Game.Character.Tests.OnlineCastDriverTests.ForeignWandAndInvalidOrigin_AreRejectedWithoutOutputOrCharge" methodname="ForeignWandAndInvalidOrigin_AreRejectedWithoutOutputOrCharge" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="1816669509" result="Failed" start-time="2026-10-23 12:10:22Z" end-time="2026-10-23 12:10:22Z" duration="0.001354" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少正式角色的权威施法装配，不能解除单机 guard 代替。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.Create (Game.Core.OnlineOwnedAssetSnapshot& assets, System.Boolean insufficient) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:32
+at Game.Character.Tests.OnlineCastDriverTests.ForeignWandAndInvalidOrigin_AreRejectedWithoutOutputOrCharge () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:60
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1201" name="InsufficientMana_DoesNotSpawnOrConsumeFiniteCharge" fullname="Game.Character.Tests.OnlineCastDriverTests.InsufficientMana_DoesNotSpawnOrConsumeFiniteCharge" methodname="InsufficientMana_DoesNotSpawnOrConsumeFiniteCharge" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="1534128519" result="Failed" start-time="2026-10-23 12:10:22Z" end-time="2026-10-23 12:10:22Z" duration="0.001561" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少正式角色的权威施法装配，不能解除单机 guard 代替。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.Create (Game.Core.OnlineOwnedAssetSnapshot& assets, System.Boolean insufficient) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:32
+at Game.Character.Tests.OnlineCastDriverTests.InsufficientMana_DoesNotSpawnOrConsumeFiniteCharge () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:75
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1202" name="ReinitializingSameRunAndNewEpoch_DoesNotRefillOwnedWorkspace" fullname="Game.Character.Tests.OnlineCastDriverTests.ReinitializingSameRunAndNewEpoch_DoesNotRefillOwnedWorkspace" methodname="ReinitializingSameRunAndNewEpoch_DoesNotRefillOwnedWorkspace" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="2103437234" result="Failed" start-time="2026-10-23 12:10:22Z" end-time="2026-10-23 12:10:22Z" duration="0.001848" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少正式角色的权威施法装配，不能解除单机 guard 代替。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.Create (Game.Core.OnlineOwnedAssetSnapshot& assets, System.Boolean insufficient) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:32
+at Game.Character.Tests.OnlineCastDriverTests.ReinitializingSameRunAndNewEpoch_DoesNotRefillOwnedWorkspace () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:82
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

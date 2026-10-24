@@ -13,4 +13,6 @@ public sealed class OnlineOptions
     public int SessionMinutes { get; set; } = 30;
     public int AuthRequestsPerMinute { get; set; } = 30;
     public string[] StarterContentIds { get; set; } = ["wandtest.wand.a", "wandtest.fire"];
+    public int StarterSpellCharges { get; set; } = 30; // 显式注册授权：有限火球次数，不授予永久无限资格。
+    public string GameplayConfigHash { get; set; } = ""; // 受控导出配置；未部署规则摘要时不能冻结可执行入局资产。
 }

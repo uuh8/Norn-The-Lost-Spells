@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-23 18:08:56Z" end-time="2026-10-23 18:08:56Z" duration="0.1244303">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2365" result="Failed" site="Child" start-time="2026-10-23 18:08:56Z" end-time="2026-10-23 18:08:56Z" duration="0.124430" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1266" name="Game.Character.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.Tests.dll" runstate="Runnable" testcasecount="216" result="Failed" site="Child" start-time="2026-10-23 18:08:56Z" end-time="2026-10-23 18:08:56Z" duration="0.095394" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12720" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1267" name="Game" fullname="Game" runstate="Runnable" testcasecount="216" result="Failed" site="Child" start-time="2026-10-23 18:08:56Z" end-time="2026-10-23 18:08:56Z" duration="0.084789" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1268" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="216" result="Failed" site="Child" start-time="2026-10-23 18:08:56Z" end-time="2026-10-23 18:08:56Z" duration="0.074246" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1269" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="216" result="Failed" site="Child" start-time="2026-10-23 18:08:56Z" end-time="2026-10-23 18:08:56Z" duration="0.065558" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1065" name="CombatCastSoundTests" fullname="Game.Character.Tests.CombatCastSoundTests" classname="Game.Character.Tests.CombatCastSoundTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-23 18:08:56Z" end-time="2026-10-23 18:08:56Z" duration="0.057983" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1066" name="AuthorityProgram_PublishesOncePerClipWithOriginalCommandAndPosition" fullname="Game.Character.Tests.CombatCastSoundTests.AuthorityProgram_PublishesOncePerClipWithOriginalCommandAndPosition" methodname="AuthorityProgram_PublishesOncePerClipWithOriginalCommandAndPosition" classname="Game.Character.Tests.CombatCastSoundTests" runstate="Runnable" seed="1187505172" result="Failed" start-time="2026-10-23 18:08:56Z" end-time="2026-10-23 18:08:56Z" duration="0.025622" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   Authority 的 CastSfx 需要提交后的表现事实，禁用服务器声音并不能替代客户端播放。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.CombatCastSoundTests.Setup () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\CombatCastSoundTests.cs:24
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1069" name="Replica_CannotExecuteProgramOrPublishAuthoritySound" fullname="Game.Character.Tests.CombatCastSoundTests.Replica_CannotExecuteProgramOrPublishAuthoritySound" methodname="Replica_CannotExecuteProgramOrPublishAuthoritySound" classname="Game.Character.Tests.CombatCastSoundTests" runstate="Runnable" seed="453062705" result="Failed" start-time="2026-10-23 18:08:56Z" end-time="2026-10-23 18:08:56Z" duration="0.000798" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   Authority 的 CastSfx 需要提交后的表现事实，禁用服务器声音并不能替代客户端播放。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.CombatCastSoundTests.Setup () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\CombatCastSoundTests.cs:24
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1067" name="SpawnTransaction_QueuesSoundUntilSuccessfulCommit" fullname="Game.Character.Tests.CombatCastSoundTests.SpawnTransaction_QueuesSoundUntilSuccessfulCommit" methodname="SpawnTransaction_QueuesSoundUntilSuccessfulCommit" classname="Game.Character.Tests.CombatCastSoundTests" runstate="Runnable" seed="692067616" result="Failed" start-time="2026-10-23 18:08:56Z" end-time="2026-10-23 18:08:56Z" duration="0.000615" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   Authority 的 CastSfx 需要提交后的表现事实，禁用服务器声音并不能替代客户端播放。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.CombatCastSoundTests.Setup () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\CombatCastSoundTests.cs:24
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1068" name="SpawnTransaction_RollbackSuppressesQueuedAndLaterSounds" fullname="Game.Character.Tests.CombatCastSoundTests.SpawnTransaction_RollbackSuppressesQueuedAndLaterSounds" methodname="SpawnTransaction_RollbackSuppressesQueuedAndLaterSounds" classname="Game.Character.Tests.CombatCastSoundTests" runstate="Runnable" seed="1619866202" result="Failed" start-time="2026-10-23 18:08:56Z" end-time="2026-10-23 18:08:56Z" duration="0.000553" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   Authority 的 CastSfx 需要提交后的表现事实，禁用服务器声音并不能替代客户端播放。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.CombatCastSoundTests.Setup () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\CombatCastSoundTests.cs:24
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -66,6 +66,7 @@ namespace Game.Character
         private Vector3 _pendingCastAimPoint;     // 下一次待处理施法的点击瞬间瞄准点；新点击可以覆盖它
         private Vector3 _activeCastAimPoint;      // 本次攻击已消费的瞄准点；动画出手前保持不变
         private readonly RaycastHit[] _aimHits = new RaycastHit[16]; // 点按锁存瞄准用射线缓冲（预分配，零每帧 GC）
+        private bool _onlineActionPresentation;
 
         private int _airAttackStateHash;
 
@@ -77,6 +78,19 @@ namespace Game.Character
 
         public float AimMaxDistance => _aimMaxDistance;
         public int AirAttackStateHash => _airAttackStateHash;
+        public bool IsOnlineActionPresentationActive => _onlineActionPresentation;
+
+        /// <summary>线上移动 FSM 继续模拟走跳，但活跃施法 Overlay 暂时拥有 Animator，避免空中逻辑覆盖攻击动画。</summary>
+        public void SetOnlineActionPresentation(bool active)
+        {
+            if (ExecutionMode == PlayerExecutionMode.SinglePlayer || _onlineActionPresentation == active) return;
+            _onlineActionPresentation = active;
+            if (active || Animator == null || Animator.runtimeAnimatorController == null || Health != null && !Health.IsAlive) return;
+            // 攻击被拒绝、释放或菜单取消后，显式交还实际 locomotion；不能等待不存在的 FSM 攻击态 Exit。
+            int target = GroundChecker != null && GroundChecker.IsGrounded
+                ? MoveInput.sqrMagnitude >= .01f ? RunHash : IdleHash : JumpAirHash;
+            Animator.CrossFadeInFixedTime(target, Mathf.Max(0, _jumpOtherBlendDuration), 0, 0);
+        }
 
         /// <summary>Scene-local工作区在角色Awake后就绪，显式更新缓存，避免新背包仍走旧Library施法。</summary>
         public void BindOwnedInventory(OwnedWandCastAdapter adapter)
@@ -168,6 +182,8 @@ namespace Game.Character
         /// </summary>
         protected override void OnAttackPerformed(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
         {
+            if (ExecutionMode == PlayerExecutionMode.Prediction)
+            { GetComponent<OnlineCastDriver>()?.CaptureAttackPress(); return; }
             // N3 只开放运动；线上施法必须经后续权威请求，不能落回单机无限资源路径。
             if (ExecutionMode != PlayerExecutionMode.SinglePlayer) return;
             // 暂停时 UI 也会使用鼠标，不能把 UI 点击记录成恢复游戏后的施法。
@@ -193,12 +209,16 @@ namespace Game.Character
             AttackBufferCounter = queueLifetime;
         }
 
+        /// <summary>在线与单机使用相同的屏幕中心 NonAlloc Raycast；锁存的是按键瞬间的点。</summary>
+        public Vector3 CaptureOnlineCastAim() => ResolveAimTargetPoint(_aimMask, _aimMaxDistance, _aimHits);
+
         /// <summary>
         /// Wizard 的跳跃动画由 Gameplay FSM 与垂直速度共同驱动，并使用 Inspector 中可调的
         /// CrossFade 时长。Animator Controller 不再保存一套无法在 Runtime 调参的重复时序。
         /// </summary>
         protected override void SyncCharacterAnimatorParameters(bool animIsGrounded)
         {
+            if (ExecutionMode != PlayerExecutionMode.SinglePlayer && _onlineActionPresentation) return;
             bool isAirborneLocomotion = ReferenceEquals(StateMachine.CurrentState, AirborneState);
             bool isGroundedLocomotion = ReferenceEquals(StateMachine.CurrentState, GroundedState) ||
                                         ReferenceEquals(StateMachine.CurrentState, SlidingState);

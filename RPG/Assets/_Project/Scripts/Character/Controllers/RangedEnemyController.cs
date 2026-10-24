@@ -92,6 +92,7 @@ namespace Game.Character
         /// </summary>
         public bool CastSelectedProgram()
         {
+            if (IsOnlineReplica || IsOnlineAuthority && !IsOnlineCombatAuthority) return false;
             if (_validPrograms == null || _validPrograms.Length == 0)
             {
                 GameLog.Warn("远程敌人没有可执行的法术程序，已跳过本次释放", "Enemy");
@@ -122,6 +123,8 @@ namespace Game.Character
 
             byte team = _health != null ? _health.TeamId : (byte)0;
             int attackerId = _health != null ? _health.Id : gameObject.GetInstanceID();
+            // NPC 与玩家共用输出身份，但命令由服务器递增生成；客户端动画没有授予出手的权限。
+            PrepareAuthorityCast();
             _spellCaster.CastProgram(
                 _validPrograms[selectedIndex],
                 _castOrigin.position,

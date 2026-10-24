@@ -12,11 +12,14 @@ namespace Game.Character
     public sealed class OwnedWandCastAdapter : MonoBehaviour
     {
         [SerializeField] private SinglePlayerInventorySession _session;
+        private IOwnedCastWorkspace _boundWorkspace;
+        // 未显式绑定时保留原 Inspector 单机会话。绑定的工作区失效不能回退为单机无限资源施法。
+        private IOwnedCastWorkspace Workspace => _boundWorkspace != null ? _boundWorkspace : _session != null ? _session : null;
         [SerializeField] private bool _useV2;
-        public bool IsV2 => _useV2 || _session != null && _session.UseSpellProgrammingV2;
+        public bool IsV2 => _useV2 || Workspace != null && Workspace.UseSpellProgrammingV2;
         public bool LastRootCommitted { get; private set; }
-        public bool WorldCastingAllowed=>_session!=null && _session.WorldActionsAllowed;
-        public bool HasExecutableV2Program(string id) => _session != null && _session.TryGetWandExecution(id, out var state) && state.Program.Count > 0;
+        public bool WorldCastingAllowed=>Workspace!=null && Workspace.WorldActionsAllowed;
+        public bool HasExecutableV2Program(string id) => Workspace != null && Workspace.TryGetWandExecution(id, out var state) && state.Program.Count > 0;
         [SerializeField] private InputActionReference _select1, _select2, _select3;
         [SerializeField] private string _materialWorldId = "container-world";
         [SerializeField] private Material _materialWaitingMaterial;
@@ -28,14 +31,20 @@ namespace Game.Character
         private bool _received, _success;
         private HeldItemInputController _heldInput;
         private void Awake() { _heldInput = GetComponent<HeldItemInputController>(); }
-        public IWandLoadoutReadOnly ReadOnly => _session != null && _session.isActiveAndEnabled ? _session.WandsReadOnly : null;
+        public IWandLoadoutReadOnly ReadOnly => Workspace != null && Workspace.IsActiveAndEnabled ? Workspace.WandsReadOnly : null;
         public OwnedWandFailureReason LastFailure { get; private set; }
+        public void BindWorkspace(IOwnedCastWorkspace workspace)
+        {
+            if (workspace == null) throw new ArgumentNullException(nameof(workspace));
+            CancelOutstanding();
+            _boundWorkspace = workspace;
+        }
         public void ConfigurePractice(SinglePlayerInventorySession session,InputActionReference one,InputActionReference two,
             InputActionReference three,Material waiting)
         {
             CancelOutstanding();
             if(isActiveAndEnabled){Unbind(_select1,Select1);Unbind(_select2,Select2);Unbind(_select3,Select3);}
-            _session=session;_select1=one;_select2=two;_select3=three;_materialWaitingMaterial=waiting;
+            _boundWorkspace=null;_session=session;_select1=one;_select2=two;_select3=three;_materialWaitingMaterial=waiting;
             _heldInput=GetComponent<HeldItemInputController>();
             if(isActiveAndEnabled){Bind(_select1,Select1);Bind(_select2,Select2);Bind(_select3,Select3);}
         }
@@ -56,7 +65,7 @@ namespace Game.Character
         }
         private void OnRaidResult(RaidResultEvent result)
         {
-            if (_session?.ReadOnly == null || result.InventoryId != _session.ReadOnly.InventoryId) return;
+            if (Workspace == null || result.InventoryId != Workspace.InventoryId) return;
             // 世界只有可靠结算后才结束；停止已提交Skyfall等延迟创建，防止稍后生成在据点Scene。
             var caster = GetComponent<SpellCaster>(); if (caster != null) caster.StopAllCoroutines();
         }
@@ -92,7 +101,7 @@ namespace Game.Character
         {
             prepared = default;
             if (!Request(context, context.TicketId == null ? CastResourceOperation.PrepareRoot : CastResourceOperation.PrepareLayer)) return false;
-            ICastResourceReadOnly resources = context.V2 ? _session.V2CastResourcesReadOnly : _session.CastResourcesReadOnly;
+            ICastResourceReadOnly resources = context.V2 ? Workspace.V2CastResourcesReadOnly : Workspace.CastResourcesReadOnly;
             if (resources == null || !resources.TryGetLayer(_lastResult.TicketId, context.LayerIndex, out CastExecutionLayer layer))
             { Request(context.WithTicket(_lastResult.TicketId), CastResourceOperation.Cancel); return false; }
             var supplies = new SpellMaterialOutputSnapshot[layer.CommandCount];
@@ -109,9 +118,9 @@ namespace Game.Character
                 CallerId = _callerId, RequestId = ++_sequence, ProgramRevision = context.ProgramRevision,
                 TicketId = context.TicketId, LayerIndex = context.LayerIndex, Operation = operation, MaterialWorldId = _materialWorldId };
             _waiting.UseV2 = context.V2;
-            if (context.V2 && _session.TryGetWandExecution(context.SourceWandId, out var snapshot))
+            if (context.V2 && Workspace.TryGetWandExecution(context.SourceWandId, out var snapshot))
             { _waiting.ExecutionRevision = snapshot.Draw.ExecutionRevision; _waiting.ResourceVersion = snapshot.ResourceVersion;
-                _waiting.InventoryVersion = _session.ReadOnly.Version; }
+                _waiting.InventoryVersion = Workspace.InventoryVersion; }
             if (operation == CastResourceOperation.PrepareRoot) LastRootCommitted = false;
             _received = false; _success = false; LastFailure = OwnedWandFailureReason.NoReceiver;
             EventBus<CastResourceRequestedEvent>.Publish(_waiting);

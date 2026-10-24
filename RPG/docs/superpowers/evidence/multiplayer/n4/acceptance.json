@@ -1,0 +1,92 @@
+{
+  "Stage": "N4",
+  "RecordedAtUtc": "2026-10-24T14:46:01.9803950Z",
+  "TechnicalAcceptancePassed": true,
+  "FormalOnlineExperienceAccepted": false,
+  "ReleaseReady": false,
+  "Scope": "Windows loopback / D3D11 / Mono / 2 visible Clients / independent Unity Dedicated Server; technical fixture only",
+  "GameplayConfigHash": "66d9c7a9ea335d373e8442b8c4b95a21ac424d3f4581dcc3ade35c95300a8f37",
+  "FormalExperienceRequirement": "Reuse original P7/P8 scene content, Tab inventory, item/quick bar, crosshair, status Icons, HP/MP styling and character/camera feel through data/command adapters. MovementWorld/OnlineCombatHud are Development fixtures, not release UI.",
+  "Tests": {
+    "FocusedEditMode": {
+      "Failed": 0,
+      "Passed": 50
+    },
+    "PhysicsAnimationGroundingPlayMode": {
+      "Failed": 0,
+      "Passed": 9
+    },
+    "RealMySqlBusiness": {
+      "Skipped": 0,
+      "Passed": 72,
+      "Failed": 0
+    },
+    "GeneratedProtocolFiles": 5,
+    "CountsOverlapWithEarlierRounds": true
+  },
+  "Native": {
+    "BothAuthenticatedOwnedCasts": true,
+    "FinalBothReturnOriginalHub": true,
+    "MeleeEnemyHpBoth": 0,
+    "ActualBusinessOutageFreezeAndSameProcessRecovery": true,
+    "BossHpBoth": 986.7374267578125,
+    "LivingPeerContinuesAfterLeaderReturns": true,
+    "NoDirectHpResourceOrOnlineTransformInjection": true,
+    "SameRunActor1Epoch2Charges29": true
+  },
+  "Allocation": {
+    "WarmMovingClientA": {
+      "PeakBytesEach": 0,
+      "Windows": 2,
+      "FramesEach": 240,
+      "AllocationEventsEach": 0,
+      "TicksEach": 120
+    },
+    "PositiveCalibrationRequired": true,
+    "BirthHitDeathFirstUseAllocationsKept": true,
+    "IdleClientAAndB": {
+      "TickAllocationEvents": 0,
+      "TickSamplesEach": 120,
+      "PeakBytes": 0,
+      "FramesEach": 240
+    },
+    "ActiveCombatRaw": {
+      "NonzeroFrames": 6,
+      "PeakBytes": 1260,
+      "Frames": 240,
+      "PredictionTickAllocationEvents": 0
+    },
+    "DedicatedServerIdle": {
+      "Ticks": 120,
+      "AllocationEvents": 0,
+      "CounterValid": true
+    },
+    "WholeCombatZeroAllocationClaim": false,
+    "ColdMovingObserved": {
+      "TickAllocationEvents": 2,
+      "PeakBytes": 48,
+      "Frames": 240,
+      "RootCauseNotClaimed": true
+    }
+  },
+  "Evidence": {
+    "BossFreezeContinuationAndReentry": "native-boss-final",
+    "WarmMovingAndFinalReturn": "native-final",
+    "MeleeAndCombatProfiler": "native-melee-final",
+    "Builds": "final-builds",
+    "FinalFocused": "final-combat-regression-green",
+    "SourceAudit": "source-audit.json",
+    "Cleanup": "cleanup.json",
+    "SinglePlayerSaves": "singleplayer-save-audit.json",
+    "FinalPhysics": "final-player-physics-green"
+  },
+  "Limits": [
+    "Formal P7/P8 content and full shared UI integration not yet accepted",
+    "N5 material world, N6 settlement and N7 crash/revival flow remain separate",
+    "Linux/public network/IL2CPP/D3D12/encryption performance not accepted",
+    "Two inherited native Built-in Resource startup errors unresolved",
+    "Broad Combat regression retained 269 passed / 2 MaterialReaction failures matching N3; not a full-project green claim",
+    "Actual idle outage freeze plus focused deadline tests; no claim of every Skyfall/Trigger/DoT combination exercised through GUI",
+    "No complete clean-clone/reimport validation in this stage"
+  ]
+}

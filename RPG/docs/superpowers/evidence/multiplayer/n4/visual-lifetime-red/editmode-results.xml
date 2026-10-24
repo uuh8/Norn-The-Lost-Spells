@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-23 17:59:14Z" end-time="2026-10-23 17:59:14Z" duration="0.0983283">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2361" result="Failed" site="Child" start-time="2026-10-23 17:59:14Z" end-time="2026-10-23 17:59:14Z" duration="0.098328" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1433" name="Game.Combat.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Combat.Tests.dll" runstate="Runnable" testcasecount="135" result="Failed" site="Child" start-time="2026-10-23 17:59:14Z" end-time="2026-10-23 17:59:14Z" duration="0.077856" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12720" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1434" name="Game" fullname="Game" runstate="Runnable" testcasecount="135" result="Failed" site="Child" start-time="2026-10-23 17:59:14Z" end-time="2026-10-23 17:59:14Z" duration="0.071770" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1435" name="Combat" fullname="Game.Combat" runstate="Runnable" testcasecount="135" result="Failed" site="Child" start-time="2026-10-23 17:59:14Z" end-time="2026-10-23 17:59:14Z" duration="0.066861" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1436" name="Tests" fullname="Game.Combat.Tests" runstate="Runnable" testcasecount="135" result="Failed" site="Child" start-time="2026-10-23 17:59:14Z" end-time="2026-10-23 17:59:14Z" duration="0.062176" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1304" name="CombatVisualLifetimeTests" fullname="Game.Combat.Tests.CombatVisualLifetimeTests" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-23 17:59:14Z" end-time="2026-10-23 17:59:14Z" duration="0.056776" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1305" name="BirthTick_DoesNotConsumeTimeBeforeMarkerExisted" fullname="Game.Combat.Tests.CombatVisualLifetimeTests.BirthTick_DoesNotConsumeTimeBeforeMarkerExisted" methodname="BirthTick_DoesNotConsumeTimeBeforeMarkerExisted" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" seed="1831742185" result="Failed" start-time="2026-10-23 17:59:14Z" end-time="2026-10-23 17:59:14Z" duration="0.023987" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  预警不能再用真实时间 Destroy，而应登记到已有固定容量的 Combat World。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatVisualLifetimeTests.Create (Game.Combat.CombatSimulationWorld world, System.Single seconds) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatVisualLifetimeTests.cs:77
+at Game.Combat.Tests.CombatVisualLifetimeTests.BirthTick_DoesNotConsumeTimeBeforeMarkerExisted () [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatVisualLifetimeTests.cs:26
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1306" name="DuplicateTick_DoesNotConsumeMarkerLifetimeAgain" fullname="Game.Combat.Tests.CombatVisualLifetimeTests.DuplicateTick_DoesNotConsumeMarkerLifetimeAgain" methodname="DuplicateTick_DoesNotConsumeMarkerLifetimeAgain" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" seed="932103744" result="Failed" start-time="2026-10-23 17:59:14Z" end-time="2026-10-23 17:59:14Z" duration="0.000972" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  预警不能再用真实时间 Destroy，而应登记到已有固定容量的 Combat World。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatVisualLifetimeTests.Create (Game.Combat.CombatSimulationWorld world, System.Single seconds) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatVisualLifetimeTests.cs:77
+at Game.Combat.Tests.CombatVisualLifetimeTests.DuplicateTick_DoesNotConsumeMarkerLifetimeAgain () [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatVisualLifetimeTests.cs:36
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1308" name="Expiry_DeactivatesBeforeDestroyAndHappensExactlyOnce" fullname="Game.Combat.Tests.CombatVisualLifetimeTests.Expiry_DeactivatesBeforeDestroyAndHappensExactlyOnce" methodname="Expiry_DeactivatesBeforeDestroyAndHappensExactlyOnce" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" seed="1219526708" result="Failed" start-time="2026-10-23 17:59:14Z" end-time="2026-10-23 17:59:14Z" duration="0.000981" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  预警不能再用真实时间 Destroy，而应登记到已有固定容量的 Combat World。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatVisualLifetimeTests.Create (Game.Combat.CombatSimulationWorld world, System.Single seconds) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatVisualLifetimeTests.cs:77
+at Game.Combat.Tests.CombatVisualLifetimeTests.Expiry_DeactivatesBeforeDestroyAndHappensExactlyOnce () [0x0001a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatVisualLifetimeTests.cs:61
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1307" name="NoSimulationDuringFreeze_LeavesRemainingTimeAndMarkerIntact" fullname="Game.Combat.Tests.CombatVisualLifetimeTests.NoSimulationDuringFreeze_LeavesRemainingTimeAndMarkerIntact" methodname="NoSimulationDuringFreeze_LeavesRemainingTimeAndMarkerIntact" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" seed="746745230" result="Failed" start-time="2026-10-23 17:59:14Z" end-time="2026-10-23 17:59:14Z" duration="0.000646" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  预警不能再用真实时间 Destroy，而应登记到已有固定容量的 Combat World。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatVisualLifetimeTests.Create (Game.Combat.CombatSimulationWorld world, System.Single seconds) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatVisualLifetimeTests.cs:77
+at Game.Combat.Tests.CombatVisualLifetimeTests.NoSimulationDuringFreeze_LeavesRemainingTimeAndMarkerIntact () [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatVisualLifetimeTests.cs:48
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

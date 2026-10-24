@@ -36,6 +36,19 @@ namespace Game.Character
             _enemy.StayGrounded();
             _elapsed += _enemy.SimulationDeltaTime;
 
+            if (_enemy.IsOnlineCombatAuthority)
+            {
+                AttackDefinition definition = _enemy.Definition != null ? _enemy.Definition.Attack : null;
+                if (definition == null) { Finish(); return; }
+                // Timeline 决定权限，手动采样的骨骼只提供几何；保留原 OverlapBox 与每 swing 去重。
+                float duration = _enemy.AttackClipDurationSeconds;
+                bool active = _elapsed >= duration * definition.HitActiveStart && _elapsed < duration * definition.HitActiveEnd;
+                if (active && !_windowOpen) { _melee.OpenAttackWindow(); _windowOpen = true; }
+                if (!active && _windowOpen) { _melee.CloseAttackWindow(); _windowOpen = false; }
+                if (_elapsed >= duration * EndThreshold) Finish();
+                return;
+            }
+
             Animator anim = _enemy.Animator;
             AttackDefinition atk = _enemy.Definition != null ? _enemy.Definition.Attack : null;
             if (anim == null || atk == null) { Finish(); return; }

@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="15" result="Failed(Child)" total="15" passed="1" failed="14" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-23 12:06:22Z" end-time="2026-10-23 12:06:24Z" duration="1.4915952">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2318" result="Failed" site="Child" start-time="2026-10-23 12:06:22Z" end-time="2026-10-23 12:06:24Z" duration="1.491595" total="15" passed="1" failed="14" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1242" name="Game.Character.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.Tests.dll" runstate="Runnable" testcasecount="196" result="Failed" site="Child" start-time="2026-10-23 12:06:22Z" end-time="2026-10-23 12:06:23Z" duration="0.653377" total="8" passed="1" failed="7" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12532" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1243" name="Game" fullname="Game" runstate="Runnable" testcasecount="196" result="Failed" site="Child" start-time="2026-10-23 12:06:23Z" end-time="2026-10-23 12:06:23Z" duration="0.560873" total="8" passed="1" failed="7" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1244" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="196" result="Failed" site="Child" start-time="2026-10-23 12:06:23Z" end-time="2026-10-23 12:06:23Z" duration="0.463749" total="8" passed="1" failed="7" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1245" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="196" result="Failed" site="Child" start-time="2026-10-23 12:06:23Z" end-time="2026-10-23 12:06:23Z" duration="0.363054" total="8" passed="1" failed="7" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1188" name="N4EnemyCombatAuthorityTests" fullname="Game.Character.Tests.N4EnemyCombatAuthorityTests" classname="Game.Character.Tests.N4EnemyCombatAuthorityTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-23 12:06:23Z" end-time="2026-10-23 12:06:23Z" duration="0.262867" total="8" passed="1" failed="7" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1196" name="BossAuthorityOrdinaryUpdateAndDuplicateTickDoNotAdvanceCooldown" fullname="Game.Character.Tests.N4EnemyCombatAuthorityTests.BossAuthorityOrdinaryUpdateAndDuplicateTickDoNotAdvanceCooldown" methodname="BossAuthorityOrdinaryUpdateAndDuplicateTickDoNotAdvanceCooldown" classname="Game.Character.Tests.N4EnemyCombatAuthorityTests" runstate="Runnable" seed="35192045" result="Failed" start-time="2026-10-23 12:06:23Z" end-time="2026-10-23 12:06:23Z" duration="0.046303" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少 N4 敌人权威入口：ConfigureAuthority
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.N4EnemyCombatAuthorityTests.Invoke (System.Object owner, System.String method, System.Object[] args) [0x0004d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\N4EnemyCombatAuthorityTests.cs:145
+at Game.Character.Tests.N4EnemyCombatAuthorityTests.BossAuthorityOrdinaryUpdateAndDuplicateTickDoNotAdvanceCooldown () [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\N4EnemyCombatAuthorityTests.cs:86
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1195" name="BossAuthorityReplacesDeadOrDisconnectedTargetWithoutResettingEncounter" fullname="Game.Character.Tests.N4EnemyCombatAuthorityTests.BossAuthorityReplacesDeadOrDisconnectedTargetWithoutResettingEncounter" classname="Game.Character.Tests.N4EnemyCombatAuthorityTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-23 12:06:23Z" end-time="2026-10-23 12:06:23Z" duration="0.050215" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1193" name="BossAuthorityReplacesDeadOrDisconnectedTargetWithoutResettingEncounter(False)" fullname="Game.Character.Tests.N4EnemyCombatAuthorityTests.BossAuthorityReplacesDeadOrDisconnectedTargetWithoutResettingEncounter(False)" methodname="BossAuthorityReplacesDeadOrDisconnectedTargetWithoutResettingEncounter" classname="Game.Character.Tests.N4EnemyCombatAuthorityTests" runstate="Runnable" seed="1708305238" result="Failed" start-time="2026-10-23 12:06:23Z" end-time="2026-10-23 12:06:23Z" duration="0.002729" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少 N4 敌人权威入口：ConfigureAuthority
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Character.Tests.N4EnemyCombatAuthorityTests.Invoke (System.Object owner, System.String method, System.Object[] args) [0x0004d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\N4EnemyCombatAuthorityTests.cs:145
+at Game.Character.Tests.N4EnemyCombatAuthorityTests.BossAuthorityReplacesDeadOrDisconnectedTargetWithoutResettingEncounter (System.Boolean disconnected) [0x00054] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\N4EnemyCombatAuthorityTests.cs:73
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1194" name="BossAuthorityReplacesDeadOrDisconnectedTargetWithoutResettingEncounter(True)" fullname="Game.Character.Tests.N4EnemyCombatAuthorityTests.BossAuthorityReplacesDeadOrDisconnectedTargetWithoutResettingEncounter(True)" methodname="BossAuthorityReplacesDeadOrDisconnectedTargetWithoutResettingEncounter" classname="Game.Character.Tests.N4EnemyCombatAuthorityTests" runstate="Runnable" seed="1269263990" result="Failed" start-time="2026-10-23 12:06:23Z" end-time="2026-10-23 12:06:23Z" duration="0.001031" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少 N4 敌人权威入口：ConfigureAuthority
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Character.Tests.N4EnemyCombatAuthorityTests.Invoke (System.Object owner, System.String method, System.Object[] args) [0x0004d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\N4EnemyCombatAuthorityTests.cs:145
+at Game.Character.Tests.N4EnemyCombatAuthorityTests.BossAuthorityReplacesDeadOrDisconnectedTargetWithoutResettingEncounter (System.Boolean disconnected) [0x00054] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\N4EnemyCombatAuthorityTests.cs:73
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="1197" name="BossReplicaCannotActivateGameplayEncounter" fullname="Game.Character.Tests.N4EnemyCombatAuthorityTests.BossReplicaCannotActivateGameplayEncounter" methodname="BossReplicaCannotActivateGameplayEncounter" classname="Game.Character.Tests.N4EnemyCombatAuthorityTests" runstate="Runnable" seed="806568463" result="Failed" start-time="2026-10-23 12:06:23Z" end-time="2026-10-23 12:06:23Z" duration="0.002092" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少 N4 敌人权威入口：ConfigureReplica
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.N4EnemyCombatAuthorityTests.Invoke (System.Object owner, System.String method, System.Object[] args) [0x0004d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\N4EnemyCombatAuthorityTests.cs:145
+at Game.Character.Tests.N4EnemyCombatAuthorityTests.BossReplicaCannotActivateGameplayEncounter () [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\N4EnemyCombatAuthorityTests.cs:98
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1189" name="ConfiguredOnlineCombatRunsFullFsmOncePerAuthorityTick" fullname="Game.Character.Tests.N4EnemyCombatAuthorityTests.ConfiguredOnlineCombatRunsFullFsmOncePerAuthorityTick" methodname="ConfiguredOnlineCombatRunsFullFsmOncePerAuthorityTick" classname="Game.Character.Tests.N4EnemyCombatAuthorityTests" runstate="Runnable" seed="368339127" result="Failed" start-time="2026-10-23 12:06:23Z" end-time="2026-10-23 12:06:23Z" duration="0.006519" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少 N4 敌人权威入口：ConfigureOnlineCombat
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.N4EnemyCombatAuthorityTests.Invoke (System.Object owner, System.String method, System.Object[] args) [0x0004d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\N4EnemyCombatAuthorityTests.cs:145
+at Game.Character.Tests.N4EnemyCombatAuthorityTests.ConfiguredOnlineCombatRunsFullFsmOncePerAuthorityTick () [0x00019] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\N4EnemyCombatAuthorityTests.cs:25
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1190" name="N3LocomotionModeRemainsUntilCombatIsExplicitlyConfigured" fullname="Game.Character.Tests.N4EnemyCombatAuthorityTests.N3LocomotionModeRemainsUntilCombatIsExplicitlyConfigured" methodname="N3LocomotionModeRemainsUntilCombatIsExplicitlyConfigured" classname="Game.Character.Tests.N4EnemyCombatAuthorityTests" runstate="Runnable" seed="1453980093" result="Passed" start-time="2026-10-23 12:06:23Z" end-time="2026-10-23 12:06:23Z" duration="0.015391" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1191" name="RangedAuthorityReleasesAtExportedTimelineWithoutAnimatorAndOnlyOnce" fullname="Game.Character.Tests.N4EnemyCombatAuthorityTests.RangedAuthorityReleasesAtExportedTimelineWithoutAnimatorAndOnlyOnce" methodname="RangedAuthorityReleasesAtExportedTimelineWithoutAnimatorAndOnlyOnce" classname="Game.Character.Tests.N4EnemyCombatAuthorityTests" runstate="Runnable" seed="1051449414" result="Failed" start-time="2026-10-23 12:06:23Z" end-time="2026-10-23 12:06:23Z" duration="0.004334" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少 N4 敌人权威入口：ConfigureOnlineCombat
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.N4EnemyCombatAuthorityTests.Invoke (System.Object owner, System.String method, System.Object[] args) [0x0004d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\N4EnemyCombatAuthorityTests.cs:145
+at Game.Character.Tests.N4EnemyCombatAuthorityTests.RangedAuthorityReleasesAtExportedTimelineWithoutAnimatorAndOnlyOnce () [0x00026] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\N4EnemyCombatAuthorityTests.cs:45
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1192" name="RangedReplicaCannotSubmitNpcProgramDirectly" fullname="Game.Character.Tests.N4EnemyCombatAuthorityTests.RangedReplicaCannotSubmitNpcProgramDirectly" methodname="RangedReplicaCannotSubmitNpcProgramDirectly" classname="Game.Character.Tests.N4EnemyCombatAuthorityTests" runstate="Runnable" seed="1149588619" result="Failed" start-time="2026-10-23 12:06:23Z" end-time="2026-10-23 12:06:23Z" duration="0.024705" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.N4EnemyCombatAuthorityTests.RangedReplicaCannotSubmitNpcProgramDirectly () [0x0000f] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\N4EnemyCombatAuthorityTests.cs:64
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="1396" name="Game.Combat.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Combat.Tests.dll" runstate="Runnable" testcasecount="123" result="Failed" site="Child" start-time="2026-10-23 12:06:23Z" end-time="2026-10-23 12:06:24Z" duration="0.739279" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12532" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1397" name="Game" fullname="Game" runstate="Runnable" testcasecount="123" result="Failed" site="Child" start-time="2026-10-23 12:06:23Z" end-time="2026-10-23 12:06:24Z" duration="0.704087" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1398" name="Combat" fullname="Game.Combat" runstate="Runnable" testcasecount="123" result="Failed" site="Child" start-time="2026-10-23 12:06:23Z" end-time="2026-10-23 12:06:24Z" duration="0.604167" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1399" name="Tests" fullname="Game.Combat.Tests" runstate="Runnable" testcasecount="123" result="Failed" site="Child" start-time="2026-10-23 12:06:23Z" end-time="2026-10-23 12:06:24Z" duration="0.503994" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1251" name="CombatAuthorityFailureTests" fullname="Game.Combat.Tests.CombatAuthorityFailureTests" classname="Game.Combat.Tests.CombatAuthorityFailureTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-23 12:06:23Z" end-time="2026-10-23 12:06:24Z" duration="0.320048" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="1256" name="DeadActor_CannotReceiveNewDirectOrSustainedStatus" fullname="Game.Combat.Tests.CombatAuthorityFailureTests.DeadActor_CannotReceiveNewDirectOrSustainedStatus" classname="Game.Combat.Tests.CombatAuthorityFailureTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-23 12:06:24Z" end-time="2026-10-23 12:06:24Z" duration="0.112211" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1254" name="DeadActor_CannotReceiveNewDirectOrSustainedStatus(SinglePlayer)" fullname="Game.Combat.Tests.CombatAuthorityFailureTests.DeadActor_CannotReceiveNewDirectOrSustainedStatus(SinglePlayer)" methodname="DeadActor_CannotReceiveNewDirectOrSustainedStatus" classname="Game.Combat.Tests.CombatAuthorityFailureTests" runstate="Runnable" seed="304754945" result="Failed" start-time="2026-10-23 12:06:24Z" end-time="2026-10-23 12:06:24Z" duration="0.013016" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                    <stack-trace><![CDATA[at Game.Combat.Tests.CombatAuthorityFailureTests.DeadActor_CannotReceiveNewDirectOrSustainedStatus (Game.Core.CombatExecutionMode mode) [0x00056] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatAuthorityFailureTests.cs:124
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1255" name="DeadActor_CannotReceiveNewDirectOrSustainedStatus(Authority)" fullname="Game.Combat.Tests.CombatAuthorityFailureTests.DeadActor_CannotReceiveNewDirectOrSustainedStatus(Authority)" methodname="DeadActor_CannotReceiveNewDirectOrSustainedStatus" classname="Game.Combat.Tests.CombatAuthorityFailureTests" runstate="Runnable" seed="551556538" result="Failed" start-time="2026-10-23 12:06:24Z" end-time="2026-10-23 12:06:24Z" duration="0.001206" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                    <stack-trace><![CDATA[at Game.Combat.Tests.CombatAuthorityFailureTests.DeadActor_CannotReceiveNewDirectOrSustainedStatus (Game.Core.CombatExecutionMode mode) [0x00056] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatAuthorityFailureTests.cs:124
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="1253" name="ImpactEffectFailure_CancelsExactlyOnceWithoutPublishingSuccessfulPayload" fullname="Game.Combat.Tests.CombatAuthorityFailureTests.ImpactEffectFailure_CancelsExactlyOnceWithoutPublishingSuccessfulPayload" methodname="ImpactEffectFailure_CancelsExactlyOnceWithoutPublishingSuccessfulPayload" classname="Game.Combat.Tests.CombatAuthorityFailureTests" runstate="Runnable" seed="1468765006" result="Failed" start-time="2026-10-23 12:06:24Z" end-time="2026-10-23 12:06:24Z" duration="0.006027" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  接触后的事务需要统一完成/取消入口，不能因子效果异常跳过终止。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatAuthorityFailureTests.ImpactEffectFailure_CancelsExactlyOnceWithoutPublishingSuccessfulPayload () [0x0006d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatAuthorityFailureTests.cs:105
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1259" name="LethalHit_FollowupBurnCannotRestartCancelledCorpseReaction" fullname="Game.Combat.Tests.CombatAuthorityFailureTests.LethalHit_FollowupBurnCannotRestartCancelledCorpseReaction" classname="Game.Combat.Tests.CombatAuthorityFailureTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-23 12:06:24Z" end-time="2026-10-23 12:06:24Z" duration="0.088963" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1257" name="LethalHit_FollowupBurnCannotRestartCancelledCorpseReaction(SinglePlayer)" fullname="Game.Combat.Tests.CombatAuthorityFailureTests.LethalHit_FollowupBurnCannotRestartCancelledCorpseReaction(SinglePlayer)" methodname="LethalHit_FollowupBurnCannotRestartCancelledCorpseReaction" classname="Game.Combat.Tests.CombatAuthorityFailureTests" runstate="Runnable" seed="1031160298" result="Failed" start-time="2026-10-23 12:06:24Z" end-time="2026-10-23 12:06:24Z" duration="0.007450" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  OnDeath 已取消的Toxic不能被同次命中的附加燃烧重新启动。
+  Expected: 0
+  But was:  1
+]]></message>
+                    <stack-trace><![CDATA[at Game.Combat.Tests.CombatAuthorityFailureTests.LethalHit_FollowupBurnCannotRestartCancelledCorpseReaction (Game.Core.CombatExecutionMode mode) [0x0007a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatAuthorityFailureTests.cs:142
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1258" name="LethalHit_FollowupBurnCannotRestartCancelledCorpseReaction(Authority)" fullname="Game.Combat.Tests.CombatAuthorityFailureTests.LethalHit_FollowupBurnCannotRestartCancelledCorpseReaction(Authority)" methodname="LethalHit_FollowupBurnCannotRestartCancelledCorpseReaction" classname="Game.Combat.Tests.CombatAuthorityFailureTests" runstate="Runnable" seed="1530444769" result="Failed" start-time="2026-10-23 12:06:24Z" end-time="2026-10-23 12:06:24Z" duration="0.001375" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  OnDeath 已取消的Toxic不能被同次命中的附加燃烧重新启动。
+  Expected: 0
+  But was:  1
+]]></message>
+                    <stack-trace><![CDATA[at Game.Combat.Tests.CombatAuthorityFailureTests.LethalHit_FollowupBurnCannotRestartCancelledCorpseReaction (Game.Core.CombatExecutionMode mode) [0x0007a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatAuthorityFailureTests.cs:142
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="1252" name="NovaCapacityRejection_DoesNotLeaveActiveSinglePlayerAreaOrApplyFreeDamage" fullname="Game.Combat.Tests.CombatAuthorityFailureTests.NovaCapacityRejection_DoesNotLeaveActiveSinglePlayerAreaOrApplyFreeDamage" methodname="NovaCapacityRejection_DoesNotLeaveActiveSinglePlayerAreaOrApplyFreeDamage" classname="Game.Combat.Tests.CombatAuthorityFailureTests" runstate="Runnable" seed="2127065836" result="Failed" start-time="2026-10-23 12:06:24Z" end-time="2026-10-23 12:06:24Z" duration="0.010959" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  容量拒绝后必须先停用新实例，再安排销毁。
+  Expected: 0
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatAuthorityFailureTests.NovaCapacityRejection_DoesNotLeaveActiveSinglePlayerAreaOrApplyFreeDamage () [0x00167] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatAuthorityFailureTests.cs:79
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1260" name="CombatExecutionModeTests" fullname="Game.Combat.Tests.CombatExecutionModeTests" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" testcasecount="15" result="Failed" site="Child" start-time="2026-10-23 12:06:24Z" end-time="2026-10-23 12:06:24Z" duration="0.083541" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1275" name="MovingAreaToAnotherWorld_OldWorldCannotResolveItsFirstHit" fullname="Game.Combat.Tests.CombatExecutionModeTests.MovingAreaToAnotherWorld_OldWorldCannotResolveItsFirstHit" methodname="MovingAreaToAnotherWorld_OldWorldCannotResolveItsFirstHit" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="1009516098" result="Failed" start-time="2026-10-23 12:06:24Z" end-time="2026-10-23 12:06:24Z" duration="0.007196" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  旧世界不能越过新世界的 Frozen/Tick 权限提前首跳。
+  Expected: 100
+  But was:  90.0f
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatExecutionModeTests.MovingAreaToAnotherWorld_OldWorldCannotResolveItsFirstHit () [0x000a4] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:286
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

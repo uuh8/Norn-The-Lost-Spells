@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="10" result="Failed(Child)" total="10" passed="0" failed="10" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-23 07:58:43Z" end-time="2026-10-23 07:58:44Z" duration="0.6927538">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2286" result="Failed" site="Child" start-time="2026-10-23 07:58:43Z" end-time="2026-10-23 07:58:44Z" duration="0.692754" total="10" passed="0" failed="10" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1225" name="Game.Character.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.Tests.dll" runstate="Runnable" testcasecount="182" result="Failed" site="Child" start-time="2026-10-23 07:58:43Z" end-time="2026-10-23 07:58:44Z" duration="0.595972" total="10" passed="0" failed="10" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12532" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1226" name="Game" fullname="Game" runstate="Runnable" testcasecount="182" result="Failed" site="Child" start-time="2026-10-23 07:58:43Z" end-time="2026-10-23 07:58:44Z" duration="0.503144" total="10" passed="0" failed="10" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1227" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="182" result="Failed" site="Child" start-time="2026-10-23 07:58:43Z" end-time="2026-10-23 07:58:44Z" duration="0.404411" total="10" passed="0" failed="10" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1228" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="182" result="Failed" site="Child" start-time="2026-10-23 07:58:43Z" end-time="2026-10-23 07:58:44Z" duration="0.304666" total="10" passed="0" failed="10" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1007" name="AuthorityCastSchedulerTests" fullname="Game.Character.Tests.AuthorityCastSchedulerTests" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-10-23 07:58:43Z" end-time="2026-10-23 07:58:44Z" duration="0.206592" total="10" passed="0" failed="10" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1010" name="CallbackReceivesCapturedRootCommandAfterAnotherCommandIsScheduled" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.CallbackReceivesCapturedRootCommandAfterAnotherCommandIsScheduled" methodname="CallbackReceivesCapturedRootCommandAfterAnotherCommandIsScheduled" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" seed="1241814758" result="Failed" start-time="2026-10-23 07:58:43Z" end-time="2026-10-23 07:58:43Z" duration="0.019341" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少有界 AuthorityCastScheduler；线上 Skyfall 不能由 Coroutine 墙钟推进
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.AuthorityCastSchedulerTests.Scheduler (System.Int32 capacity) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\AuthorityCastSchedulerTests.cs:13
+at Game.Character.Tests.AuthorityCastSchedulerTests.CallbackReceivesCapturedRootCommandAfterAnotherCommandIsScheduled () [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\AuthorityCastSchedulerTests.cs:52
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1014" name="CallbackScheduledDuringTickWaitsUntilNextAuthorityTick" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.CallbackScheduledDuringTickWaitsUntilNextAuthorityTick" methodname="CallbackScheduledDuringTickWaitsUntilNextAuthorityTick" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" seed="933205191" result="Failed" start-time="2026-10-23 07:58:43Z" end-time="2026-10-23 07:58:43Z" duration="0.000588" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少有界 AuthorityCastScheduler；线上 Skyfall 不能由 Coroutine 墙钟推进
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.AuthorityCastSchedulerTests.Scheduler (System.Int32 capacity) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\AuthorityCastSchedulerTests.cs:13
+at Game.Character.Tests.AuthorityCastSchedulerTests.CallbackScheduledDuringTickWaitsUntilNextAuthorityTick () [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\AuthorityCastSchedulerTests.cs:92
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1013" name="CancelAllRemovesPendingCallbacksBeforeLaterAuthorityTick" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.CancelAllRemovesPendingCallbacksBeforeLaterAuthorityTick" methodname="CancelAllRemovesPendingCallbacksBeforeLaterAuthorityTick" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" seed="115897516" result="Failed" start-time="2026-10-23 07:58:43Z" end-time="2026-10-23 07:58:43Z" duration="0.000473" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少有界 AuthorityCastScheduler；线上 Skyfall 不能由 Coroutine 墙钟推进
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.AuthorityCastSchedulerTests.Scheduler (System.Int32 capacity) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\AuthorityCastSchedulerTests.cs:13
+at Game.Character.Tests.AuthorityCastSchedulerTests.CancelAllRemovesPendingCallbacksBeforeLaterAuthorityTick () [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\AuthorityCastSchedulerTests.cs:82
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1011" name="CancelledHandleCannotReleaseOrCancelNewOccupantOfSameSlot" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.CancelledHandleCannotReleaseOrCancelNewOccupantOfSameSlot" methodname="CancelledHandleCannotReleaseOrCancelNewOccupantOfSameSlot" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" seed="1553774855" result="Failed" start-time="2026-10-23 07:58:43Z" end-time="2026-10-23 07:58:43Z" duration="0.000489" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少有界 AuthorityCastScheduler；线上 Skyfall 不能由 Coroutine 墙钟推进
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.AuthorityCastSchedulerTests.Scheduler (System.Int32 capacity) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\AuthorityCastSchedulerTests.cs:13
+at Game.Character.Tests.AuthorityCastSchedulerTests.CancelledHandleCannotReleaseOrCancelNewOccupantOfSameSlot () [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\AuthorityCastSchedulerTests.cs:62
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1008" name="FrozenWithoutAuthoritySteps_DoesNotReleasePendingCast" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.FrozenWithoutAuthoritySteps_DoesNotReleasePendingCast" methodname="FrozenWithoutAuthoritySteps_DoesNotReleasePendingCast" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" seed="1550741029" result="Failed" start-time="2026-10-23 07:58:43Z" end-time="2026-10-23 07:58:43Z" duration="0.000438" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少有界 AuthorityCastScheduler；线上 Skyfall 不能由 Coroutine 墙钟推进
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.AuthorityCastSchedulerTests.Scheduler (System.Int32 capacity) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\AuthorityCastSchedulerTests.cs:13
+at Game.Character.Tests.AuthorityCastSchedulerTests.FrozenWithoutAuthoritySteps_DoesNotReleasePendingCast () [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\AuthorityCastSchedulerTests.cs:31
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1012" name="FullCapacityRejectsNewCastWithoutOverwritingAlreadyAcceptedCast" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.FullCapacityRejectsNewCastWithoutOverwritingAlreadyAcceptedCast" methodname="FullCapacityRejectsNewCastWithoutOverwritingAlreadyAcceptedCast" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" seed="1903683256" result="Failed" start-time="2026-10-23 07:58:43Z" end-time="2026-10-23 07:58:43Z" duration="0.000440" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少有界 AuthorityCastScheduler；线上 Skyfall 不能由 Coroutine 墙钟推进
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.AuthorityCastSchedulerTests.Scheduler (System.Int32 capacity) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\AuthorityCastSchedulerTests.cs:13
+at Game.Character.Tests.AuthorityCastSchedulerTests.FullCapacityRejectsNewCastWithoutOverwritingAlreadyAcceptedCast () [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\AuthorityCastSchedulerTests.cs:73
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1018" name="InvalidDelayDoesNotReserveQueueSlot" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.InvalidDelayDoesNotReserveQueueSlot" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-23 07:58:43Z" end-time="2026-10-23 07:58:44Z" duration="0.071148" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1015" name="InvalidDelayDoesNotReserveQueueSlot(float.NaN)" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.InvalidDelayDoesNotReserveQueueSlot(float.NaN)" methodname="InvalidDelayDoesNotReserveQueueSlot" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" seed="1433555465" result="Failed" start-time="2026-10-23 07:58:43Z" end-time="2026-10-23 07:58:43Z" duration="0.001539" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少有界 AuthorityCastScheduler；线上 Skyfall 不能由 Coroutine 墙钟推进
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Character.Tests.AuthorityCastSchedulerTests.Scheduler (System.Int32 capacity) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\AuthorityCastSchedulerTests.cs:13
+at Game.Character.Tests.AuthorityCastSchedulerTests.InvalidDelayDoesNotReserveQueueSlot (System.Single delay) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\AuthorityCastSchedulerTests.cs:105
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1016" name="InvalidDelayDoesNotReserveQueueSlot(float.PositiveInfinity)" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.InvalidDelayDoesNotReserveQueueSlot(float.PositiveInfinity)" methodname="InvalidDelayDoesNotReserveQueueSlot" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" seed="902882499" result="Failed" start-time="2026-10-23 07:58:43Z" end-time="2026-10-23 07:58:43Z" duration="0.000482" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少有界 AuthorityCastScheduler；线上 Skyfall 不能由 Coroutine 墙钟推进
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Character.Tests.AuthorityCastSchedulerTests.Scheduler (System.Int32 capacity) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\AuthorityCastSchedulerTests.cs:13
+at Game.Character.Tests.AuthorityCastSchedulerTests.InvalidDelayDoesNotReserveQueueSlot (System.Single delay) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\AuthorityCastSchedulerTests.cs:105
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1017" name="InvalidDelayDoesNotReserveQueueSlot(-1.0f)" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.InvalidDelayDoesNotReserveQueueSlot(-1.0f)" methodname="InvalidDelayDoesNotReserveQueueSlot" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" seed="2011098594" result="Failed" start-time="2026-10-23 07:58:44Z" end-time="2026-10-23 07:58:44Z" duration="0.000405" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少有界 AuthorityCastScheduler；线上 Skyfall 不能由 Coroutine 墙钟推进
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Character.Tests.AuthorityCastSchedulerTests.Scheduler (System.Int32 capacity) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\AuthorityCastSchedulerTests.cs:13
+at Game.Character.Tests.AuthorityCastSchedulerTests.InvalidDelayDoesNotReserveQueueSlot (System.Single delay) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\AuthorityCastSchedulerTests.cs:105
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="1009" name="RepeatedAndOlderTick_DoesNotCountDelayTwice" fullname="Game.Character.Tests.AuthorityCastSchedulerTests.RepeatedAndOlderTick_DoesNotCountDelayTwice" methodname="RepeatedAndOlderTick_DoesNotCountDelayTwice" classname="Game.Character.Tests.AuthorityCastSchedulerTests" runstate="Runnable" seed="666539808" result="Failed" start-time="2026-10-23 07:58:44Z" end-time="2026-10-23 07:58:44Z" duration="0.000974" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少有界 AuthorityCastScheduler；线上 Skyfall 不能由 Coroutine 墙钟推进
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.AuthorityCastSchedulerTests.Scheduler (System.Int32 capacity) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\AuthorityCastSchedulerTests.cs:13
+at Game.Character.Tests.AuthorityCastSchedulerTests.RepeatedAndOlderTick_DoesNotCountDelayTwice () [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\AuthorityCastSchedulerTests.cs:41
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

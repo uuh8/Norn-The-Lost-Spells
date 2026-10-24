@@ -42,6 +42,9 @@ namespace Game.Project.Editor
             start.EnvironmentVariables["ConnectionStrings__Online"] = secrets.Development;
             start.EnvironmentVariables["Online__MigrationConnectionString"] = secrets.DevelopmentMigration;
             start.EnvironmentVariables["Online__ManifestPath"] = Path.GetFullPath(ContentManifestExporter.Output);
+            var combat = Resources.Load<Game.Character.OnlineCombatDefinition>("Online/CombatDefinition");
+            if (combat == null || combat.WireHash == 0) throw new InvalidOperationException("请先 Setup Online Combat 导出真实玩法 Hash。");
+            start.EnvironmentVariables["Online__GameplayConfigHash"] = combat.GameplayConfigHash;
             // N2本机入口显式启用，不依赖机器环境；部署默认值仍是false，远端另有独立Gate。
             start.EnvironmentVariables["Online__RoomsEnabled"] = roomInstances ? "true" : "false";
             start.EnvironmentVariables["Online__Instances__Enabled"] = roomInstances ? "true" : "false";

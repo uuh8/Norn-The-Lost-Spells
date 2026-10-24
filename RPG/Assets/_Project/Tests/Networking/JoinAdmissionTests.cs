@@ -24,7 +24,7 @@ namespace Game.Networking.Tests
                 if (type.IsValueType && !type.ContainsGenericParameters && typeof(NetworkMessage).IsAssignableFrom(type)) ids[type.FullName.GetStableHashCode16()] = type;
             // 从实际接收处理器取得Envelope类型，避免测试手写另一个安全类型却漏掉生产注册的类型。
             var payloadType = typeof(RoomNetworkManager).GetMethod("OnPing", BindingFlags.Instance | BindingFlags.NonPublic).GetParameters()[1].ParameterType;
-            foreach (var type in new[] { payloadType, typeof(JoinTicketRequestEnvelope), typeof(JoinTicketReplyEnvelope) })
+            foreach (var type in new[] { payloadType, typeof(JoinTicketRequestEnvelope), typeof(JoinTicketReplyEnvelope), typeof(CombatIntentEnvelope), typeof(CombatFactEnvelope), typeof(MovementInputEnvelope), typeof(MovementStateEnvelope) })
             {
                 ushort id = type.FullName.GetStableHashCode16();
                 Assert.False(ids.TryGetValue(id, out var existing), type.FullName + " conflicts with " + existing?.FullName + " at " + id);

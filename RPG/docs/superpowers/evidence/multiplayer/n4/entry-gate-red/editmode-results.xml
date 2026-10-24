@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-24 02:45:39Z" end-time="2026-10-24 02:45:39Z" duration="0.7271091">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2373" result="Failed" site="Child" start-time="2026-10-24 02:45:39Z" end-time="2026-10-24 02:45:39Z" duration="0.727109" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2371" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="34" result="Failed" site="Child" start-time="2026-10-24 02:45:39Z" end-time="2026-10-24 02:45:39Z" duration="0.623325" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12720" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2372" name="Game" fullname="Game" runstate="Runnable" testcasecount="34" result="Failed" site="Child" start-time="2026-10-24 02:45:39Z" end-time="2026-10-24 02:45:39Z" duration="0.532377" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2373" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="34" result="Failed" site="Child" start-time="2026-10-24 02:45:39Z" end-time="2026-10-24 02:45:39Z" duration="0.429249" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2374" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="34" result="Failed" site="Child" start-time="2026-10-24 02:45:39Z" end-time="2026-10-24 02:45:39Z" duration="0.331967" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2349" name="OnlineEncounterEntryTests" fullname="Game.Multiplayer.Tests.OnlineEncounterEntryTests" classname="Game.Multiplayer.Tests.OnlineEncounterEntryTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-24 02:45:39Z" end-time="2026-10-24 02:45:39Z" duration="0.231121" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="2353" name="LoadedActorMustEnterActivationRadius" fullname="Game.Multiplayer.Tests.OnlineEncounterEntryTests.LoadedActorMustEnterActivationRadius" classname="Game.Multiplayer.Tests.OnlineEncounterEntryTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-24 02:45:39Z" end-time="2026-10-24 02:45:39Z" duration="0.128997" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2350" name="LoadedActorMustEnterActivationRadius(0.0f,False,False)" fullname="Game.Multiplayer.Tests.OnlineEncounterEntryTests.LoadedActorMustEnterActivationRadius(0.0f,False,False)" methodname="LoadedActorMustEnterActivationRadius" classname="Game.Multiplayer.Tests.OnlineEncounterEntryTests" runstate="Runnable" seed="373135869" result="Failed" start-time="2026-10-24 02:45:39Z" end-time="2026-10-24 02:45:39Z" duration="0.021916" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  需要显式入场/战斗区门，不能在账户认证完成时直接开 Boss。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineEncounterEntryTests.LoadedActorMustEnterActivationRadius (System.Single distance, System.Boolean ready, System.Boolean expected) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineEncounterEntryTests.cs:23
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2351" name="LoadedActorMustEnterActivationRadius(20.0f,True,False)" fullname="Game.Multiplayer.Tests.OnlineEncounterEntryTests.LoadedActorMustEnterActivationRadius(20.0f,True,False)" methodname="LoadedActorMustEnterActivationRadius" classname="Game.Multiplayer.Tests.OnlineEncounterEntryTests" runstate="Runnable" seed="1579307231" result="Failed" start-time="2026-10-24 02:45:39Z" end-time="2026-10-24 02:45:39Z" duration="0.000508" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  需要显式入场/战斗区门，不能在账户认证完成时直接开 Boss。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineEncounterEntryTests.LoadedActorMustEnterActivationRadius (System.Single distance, System.Boolean ready, System.Boolean expected) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineEncounterEntryTests.cs:23
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2352" name="LoadedActorMustEnterActivationRadius(8.0f,True,True)" fullname="Game.Multiplayer.Tests.OnlineEncounterEntryTests.LoadedActorMustEnterActivationRadius(8.0f,True,True)" methodname="LoadedActorMustEnterActivationRadius" classname="Game.Multiplayer.Tests.OnlineEncounterEntryTests" runstate="Runnable" seed="263168015" result="Failed" start-time="2026-10-24 02:45:39Z" end-time="2026-10-24 02:45:39Z" duration="0.000429" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  需要显式入场/战斗区门，不能在账户认证完成时直接开 Boss。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineEncounterEntryTests.LoadedActorMustEnterActivationRadius (System.Single distance, System.Boolean ready, System.Boolean expected) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineEncounterEntryTests.cs:23
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

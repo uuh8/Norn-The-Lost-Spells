@@ -30,6 +30,8 @@ namespace Game.Run.Tests
             UnityEngine.Object.Instantiate(profile.WorldPrefab, _root.transform);
             _registry = new NetworkActorRegistry(profile, _root.transform);
             var slot = _registry.EnsurePlayer(0, PlayerExecutionMode.Authority); slot.Connected = true; slot.Epoch = 1;
+            // 此夹具直接驱动已入场角色，不启动认证；显式声明玩法就绪，避免把 Connected 当作 AI 目标资格。
+            slot.SimulationReady = true;
             _player = slot.Player; _sequence = 0; _maxY = _maxAngle = _maxSide = 0;
             Physics.SyncTransforms(); yield return null;
         }

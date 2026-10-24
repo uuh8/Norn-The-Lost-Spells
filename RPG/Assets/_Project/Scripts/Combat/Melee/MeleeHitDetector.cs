@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Game.Core;
 
 namespace Game.Combat
 {
@@ -8,7 +9,7 @@ namespace Game.Combat
     /// 在"攻击激活窗口"开启期间，每帧在武器位置做一次盒形重叠检测，找出碰到的所有可受击目标，过滤掉不该打的（自己/队友/已死/本次已打过的）
     /// 给每个合法目标提交一次伤害请求
     /// </summary>
-    public class MeleeHitDetector : MonoBehaviour
+    public class MeleeHitDetector : MonoBehaviour, ICombatSimulationParticipant
     {
         [SerializeField] private AttackDefinition _attack;
         [SerializeField] private Transform _weaponPivot; // 命中体积中心；为空时退回本 Transform
@@ -22,7 +23,18 @@ namespace Game.Combat
         // 单帧 OverlapBox 命中上限。重叠 collider 超过此数时多余者被静默丢弃；如需更多请调大。
         private const int MaxHitsPerFrame = 16;
         private readonly Collider[] _buf = new Collider[MaxHitsPerFrame];
-        private readonly HashSet<int> _hitSet = new HashSet<int>(); // per-swing 去重，预分配复用
+        private readonly HashSet<int> _hitSet = new HashSet<int>(MaxHitsPerFrame); // per-swing 去重，预分配复用
+        private CombatExecutionState _execution;
+        public CombatExecutionMode ExecutionMode => _execution.Mode;
+        public void ConfigureExecutionMode(CombatExecutionMode mode, CombatSimulationWorld world = null)
+        {
+            _execution.Configure(this, mode, world, CombatTickPhase.AfterPhysics);
+            if (mode == CombatExecutionMode.Replica) CloseHitWindow();
+        }
+        public void StepAuthority(float deltaTime, uint serverTick)
+        { if (_execution.TryStep(deltaTime, serverTick) && _windowActive && _attack != null) DoOverlap(); }
+        private void OnEnable() => _execution.Resume(this, CombatTickPhase.AfterPhysics);
+        private void OnDisable() { _execution.Suspend(this); CloseHitWindow(); }
 
         private bool _windowActive;
         private int _attackerId;
@@ -46,6 +58,7 @@ namespace Game.Combat
         /// <summary>
         public void OpenHitWindow()
         {
+            if (_execution.Mode == CombatExecutionMode.Replica) return;
             if (_windowActive) return;
             _windowActive = true;
             _hitSet.Clear();
@@ -60,6 +73,7 @@ namespace Game.Combat
 
         private void Update()
         {
+            if (_execution.Mode != CombatExecutionMode.SinglePlayer) return;
             if (!_windowActive || _attack == null) return;
             DoOverlap();
         }
@@ -69,6 +83,7 @@ namespace Game.Combat
         /// </summary>
         private void DoOverlap()
         {
+            if (_execution.Mode == CombatExecutionMode.Replica) return;
             // 获取武器枢轴点，如果未设置则使用自身Transform
             Transform pivot = _weaponPivot != null ? _weaponPivot : transform;
             // Physics.OverlapBoxNonAlloc：Unity 物理系统的"重叠查询"——问引擎 "这个盒子区域里现在有哪些碰撞体"

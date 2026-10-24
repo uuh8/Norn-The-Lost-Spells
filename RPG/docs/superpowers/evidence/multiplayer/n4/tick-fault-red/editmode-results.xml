@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-24 02:55:53Z" end-time="2026-10-24 02:55:54Z" duration="0.8680347">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2375" result="Failed" site="Child" start-time="2026-10-24 02:55:53Z" end-time="2026-10-24 02:55:54Z" duration="0.868035" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2374" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="36" result="Failed" site="Child" start-time="2026-10-24 02:55:53Z" end-time="2026-10-24 02:55:54Z" duration="0.767815" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12720" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2375" name="Game" fullname="Game" runstate="Runnable" testcasecount="36" result="Failed" site="Child" start-time="2026-10-24 02:55:53Z" end-time="2026-10-24 02:55:54Z" duration="0.676680" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2376" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="36" result="Failed" site="Child" start-time="2026-10-24 02:55:53Z" end-time="2026-10-24 02:55:54Z" duration="0.577045" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2377" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="36" result="Failed" site="Child" start-time="2026-10-24 02:55:53Z" end-time="2026-10-24 02:55:54Z" duration="0.475142" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2324" name="AuthorityTickFailureTests" fullname="Game.Multiplayer.Tests.AuthorityTickFailureTests" classname="Game.Multiplayer.Tests.AuthorityTickFailureTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-24 02:55:53Z" end-time="2026-10-24 02:55:54Z" duration="0.375084" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2325" name="OutputFaultDuringFirstCatchupTick_StopsPhysicsAndRemainingCatchupTicks" fullname="Game.Multiplayer.Tests.AuthorityTickFailureTests.OutputFaultDuringFirstCatchupTick_StopsPhysicsAndRemainingCatchupTicks" methodname="OutputFaultDuringFirstCatchupTick_StopsPhysicsAndRemainingCatchupTicks" classname="Game.Multiplayer.Tests.AuthorityTickFailureTests" runstate="Runnable" seed="1975559763" result="Failed" start-time="2026-10-24 02:55:53Z" end-time="2026-10-24 02:55:54Z" duration="0.262789" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  失败后的同帧补步应立即停止。
+  Expected: 1
+  But was:  3
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.AuthorityTickFailureTests.OutputFaultDuringFirstCatchupTick_StopsPhysicsAndRemainingCatchupTicks () [0x00325] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AuthorityTickFailureTests.cs:79
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+[OnlineCombat] 输出超出受控 Prefab 表或复制容量，权威世界已停止。
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

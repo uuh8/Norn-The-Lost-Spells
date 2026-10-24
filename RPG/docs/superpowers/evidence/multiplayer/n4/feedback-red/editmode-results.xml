@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-23 16:58:36Z" end-time="2026-10-23 16:58:37Z" duration="0.733069">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2334" result="Failed" site="Child" start-time="2026-10-23 16:58:36Z" end-time="2026-10-23 16:58:37Z" duration="0.733069" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1414" name="Game.Combat.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Combat.Tests.dll" runstate="Runnable" testcasecount="128" result="Failed" site="Child" start-time="2026-10-23 16:58:36Z" end-time="2026-10-23 16:58:37Z" duration="0.633305" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12532" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1415" name="Game" fullname="Game" runstate="Runnable" testcasecount="128" result="Failed" site="Child" start-time="2026-10-23 16:58:36Z" end-time="2026-10-23 16:58:37Z" duration="0.540881" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1416" name="Combat" fullname="Game.Combat" runstate="Runnable" testcasecount="128" result="Failed" site="Child" start-time="2026-10-23 16:58:36Z" end-time="2026-10-23 16:58:37Z" duration="0.443495" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1417" name="Tests" fullname="Game.Combat.Tests" runstate="Runnable" testcasecount="128" result="Failed" site="Child" start-time="2026-10-23 16:58:36Z" end-time="2026-10-23 16:58:37Z" duration="0.344255" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1369" name="OnlineFeedbackLifecycleTests" fullname="Game.Combat.Tests.OnlineFeedbackLifecycleTests" classname="Game.Combat.Tests.OnlineFeedbackLifecycleTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-23 16:58:36Z" end-time="2026-10-23 16:58:37Z" duration="0.243802" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="1372" name="OnlineDeathDoesNotDisableNetworkOwnedComponents" fullname="Game.Combat.Tests.OnlineFeedbackLifecycleTests.OnlineDeathDoesNotDisableNetworkOwnedComponents" classname="Game.Combat.Tests.OnlineFeedbackLifecycleTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-23 16:58:37Z" end-time="2026-10-23 16:58:37Z" duration="0.142158" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1370" name="OnlineDeathDoesNotDisableNetworkOwnedComponents(Authority)" fullname="Game.Combat.Tests.OnlineFeedbackLifecycleTests.OnlineDeathDoesNotDisableNetworkOwnedComponents(Authority)" methodname="OnlineDeathDoesNotDisableNetworkOwnedComponents" classname="Game.Combat.Tests.OnlineFeedbackLifecycleTests" runstate="Runnable" seed="2024938239" result="Failed" start-time="2026-10-23 16:58:37Z" end-time="2026-10-23 16:58:37Z" duration="0.027653" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  表现组件缺少在线权限配置；单机延迟 Destroy 不能接管网络角色。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Combat.Tests.OnlineFeedbackLifecycleTests.OnlineDeathDoesNotDisableNetworkOwnedComponents (Game.Core.CombatExecutionMode mode) [0x00057] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\OnlineFeedbackLifecycleTests.cs:23
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1371" name="OnlineDeathDoesNotDisableNetworkOwnedComponents(Replica)" fullname="Game.Combat.Tests.OnlineFeedbackLifecycleTests.OnlineDeathDoesNotDisableNetworkOwnedComponents(Replica)" methodname="OnlineDeathDoesNotDisableNetworkOwnedComponents" classname="Game.Combat.Tests.OnlineFeedbackLifecycleTests" runstate="Runnable" seed="867690787" result="Failed" start-time="2026-10-23 16:58:37Z" end-time="2026-10-23 16:58:37Z" duration="0.000945" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  表现组件缺少在线权限配置；单机延迟 Destroy 不能接管网络角色。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Combat.Tests.OnlineFeedbackLifecycleTests.OnlineDeathDoesNotDisableNetworkOwnedComponents (Game.Core.CombatExecutionMode mode) [0x00057] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\OnlineFeedbackLifecycleTests.cs:23
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

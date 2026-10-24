@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Failed(Child)" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-24 08:05:05Z" end-time="2026-10-24 08:05:06Z" duration="1.0799999">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2386" result="Failed" site="Child" start-time="2026-10-24 08:05:05Z" end-time="2026-10-24 08:05:06Z" duration="1.080000" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2389" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="44" result="Failed" site="Child" start-time="2026-10-24 08:05:05Z" end-time="2026-10-24 08:05:06Z" duration="0.982459" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12136" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2390" name="Game" fullname="Game" runstate="Runnable" testcasecount="44" result="Failed" site="Child" start-time="2026-10-24 08:05:05Z" end-time="2026-10-24 08:05:06Z" duration="0.889396" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2391" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="44" result="Failed" site="Child" start-time="2026-10-24 08:05:05Z" end-time="2026-10-24 08:05:06Z" duration="0.790098" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2392" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="44" result="Failed" site="Child" start-time="2026-10-24 08:05:05Z" end-time="2026-10-24 08:05:06Z" duration="0.688219" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2378" name="ReplicaAimQueryTests" fullname="Game.Multiplayer.Tests.ReplicaAimQueryTests" classname="Game.Multiplayer.Tests.ReplicaAimQueryTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-24 08:05:05Z" end-time="2026-10-24 08:05:06Z" duration="0.587583" total="8" passed="4" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="2383" name="ActualReplicaBody_RemainsQueryableAndCrosshairChoosesNearTarget" fullname="Game.Multiplayer.Tests.ReplicaAimQueryTests.ActualReplicaBody_RemainsQueryableAndCrosshairChoosesNearTarget" classname="Game.Multiplayer.Tests.ReplicaAimQueryTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-24 08:05:05Z" end-time="2026-10-24 08:05:06Z" duration="0.435893" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2379" name="ActualReplicaBody_RemainsQueryableAndCrosshairChoosesNearTarget(2)" fullname="Game.Multiplayer.Tests.ReplicaAimQueryTests.ActualReplicaBody_RemainsQueryableAndCrosshairChoosesNearTarget(2)" methodname="ActualReplicaBody_RemainsQueryableAndCrosshairChoosesNearTarget" classname="Game.Multiplayer.Tests.ReplicaAimQueryTests" runstate="Runnable" seed="1589375097" result="Failed" start-time="2026-10-24 08:05:06Z" end-time="2026-10-24 08:05:06Z" duration="0.293094" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  远端人体胶囊必须进入真实 Physics Query，不能只剩武器/背景参与瞄准。
+  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.ReplicaAimQueryTests.ActualReplicaBody_RemainsQueryableAndCrosshairChoosesNearTarget (System.Int32 actorId) [0x0015c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\ReplicaAimQueryTests.cs:81
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2380" name="ActualReplicaBody_RemainsQueryableAndCrosshairChoosesNearTarget(5)" fullname="Game.Multiplayer.Tests.ReplicaAimQueryTests.ActualReplicaBody_RemainsQueryableAndCrosshairChoosesNearTarget(5)" methodname="ActualReplicaBody_RemainsQueryableAndCrosshairChoosesNearTarget" classname="Game.Multiplayer.Tests.ReplicaAimQueryTests" runstate="Runnable" seed="1191321714" result="Failed" start-time="2026-10-24 08:05:06Z" end-time="2026-10-24 08:05:06Z" duration="0.016776" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  远端人体胶囊必须进入真实 Physics Query，不能只剩武器/背景参与瞄准。
+  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.ReplicaAimQueryTests.ActualReplicaBody_RemainsQueryableAndCrosshairChoosesNearTarget (System.Int32 actorId) [0x0015c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\ReplicaAimQueryTests.cs:81
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2381" name="ActualReplicaBody_RemainsQueryableAndCrosshairChoosesNearTarget(6)" fullname="Game.Multiplayer.Tests.ReplicaAimQueryTests.ActualReplicaBody_RemainsQueryableAndCrosshairChoosesNearTarget(6)" methodname="ActualReplicaBody_RemainsQueryableAndCrosshairChoosesNearTarget" classname="Game.Multiplayer.Tests.ReplicaAimQueryTests" runstate="Runnable" seed="40493085" result="Failed" start-time="2026-10-24 08:05:06Z" end-time="2026-10-24 08:05:06Z" duration="0.008204" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  远端人体胶囊必须进入真实 Physics Query，不能只剩武器/背景参与瞄准。
+  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.ReplicaAimQueryTests.ActualReplicaBody_RemainsQueryableAndCrosshairChoosesNearTarget (System.Int32 actorId) [0x0015c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\ReplicaAimQueryTests.cs:81
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2382" name="ActualReplicaBody_RemainsQueryableAndCrosshairChoosesNearTarget(7)" fullname="Game.Multiplayer.Tests.ReplicaAimQueryTests.ActualReplicaBody_RemainsQueryableAndCrosshairChoosesNearTarget(7)" methodname="ActualReplicaBody_RemainsQueryableAndCrosshairChoosesNearTarget" classname="Game.Multiplayer.Tests.ReplicaAimQueryTests" runstate="Runnable" seed="1445951732" result="Failed" start-time="2026-10-24 08:05:06Z" end-time="2026-10-24 08:05:06Z" duration="0.008344" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  远端人体胶囊必须进入真实 Physics Query，不能只剩武器/背景参与瞄准。
+  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.ReplicaAimQueryTests.ActualReplicaBody_RemainsQueryableAndCrosshairChoosesNearTarget (System.Int32 actorId) [0x0015c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\ReplicaAimQueryTests.cs:81
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="2388" name="CollisionIgnoredCoopActor_DoesNotBecomeGroundThroughSphereQuery" fullname="Game.Multiplayer.Tests.ReplicaAimQueryTests.CollisionIgnoredCoopActor_DoesNotBecomeGroundThroughSphereQuery" methodname="CollisionIgnoredCoopActor_DoesNotBecomeGroundThroughSphereQuery" classname="Game.Multiplayer.Tests.ReplicaAimQueryTests" runstate="Runnable" seed="1512347377" result="Passed" start-time="2026-10-24 08:05:06Z" end-time="2026-10-24 08:05:06Z" duration="0.016713" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="2386" name="OnlineSnapshotRestore_PreservesExistingActorCollisionIgnore" fullname="Game.Multiplayer.Tests.ReplicaAimQueryTests.OnlineSnapshotRestore_PreservesExistingActorCollisionIgnore" classname="Game.Multiplayer.Tests.ReplicaAimQueryTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-24 08:05:06Z" end-time="2026-10-24 08:05:06Z" duration="0.026609" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="2384" name="OnlineSnapshotRestore_PreservesExistingActorCollisionIgnore(Prediction)" fullname="Game.Multiplayer.Tests.ReplicaAimQueryTests.OnlineSnapshotRestore_PreservesExistingActorCollisionIgnore(Prediction)" methodname="OnlineSnapshotRestore_PreservesExistingActorCollisionIgnore" classname="Game.Multiplayer.Tests.ReplicaAimQueryTests" runstate="Runnable" seed="494522211" result="Passed" start-time="2026-10-24 08:05:06Z" end-time="2026-10-24 08:05:06Z" duration="0.015190" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="2385" name="OnlineSnapshotRestore_PreservesExistingActorCollisionIgnore(Replica)" fullname="Game.Multiplayer.Tests.ReplicaAimQueryTests.OnlineSnapshotRestore_PreservesExistingActorCollisionIgnore(Replica)" methodname="OnlineSnapshotRestore_PreservesExistingActorCollisionIgnore" classname="Game.Multiplayer.Tests.ReplicaAimQueryTests" runstate="Runnable" seed="1419212199" result="Passed" start-time="2026-10-24 08:05:06Z" end-time="2026-10-24 08:05:06Z" duration="0.005226" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="2387" name="QueryableReplica_StillHasNoLocalMovementAuthority" fullname="Game.Multiplayer.Tests.ReplicaAimQueryTests.QueryableReplica_StillHasNoLocalMovementAuthority" methodname="QueryableReplica_StillHasNoLocalMovementAuthority" classname="Game.Multiplayer.Tests.ReplicaAimQueryTests" runstate="Runnable" seed="1577047213" result="Passed" start-time="2026-10-24 08:05:06Z" end-time="2026-10-24 08:05:06Z" duration="0.007346" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

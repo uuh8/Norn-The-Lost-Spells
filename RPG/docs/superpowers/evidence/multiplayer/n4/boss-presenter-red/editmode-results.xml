@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-23 17:58:21Z" end-time="2026-10-23 17:58:21Z" duration="0.0920727">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2357" result="Failed" site="Child" start-time="2026-10-23 17:58:21Z" end-time="2026-10-23 17:58:21Z" duration="0.092073" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3911" name="Game.UI.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.UI.Tests.dll" runstate="Runnable" testcasecount="16" result="Failed" site="Child" start-time="2026-10-23 17:58:21Z" end-time="2026-10-23 17:58:21Z" duration="0.066406" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12720" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3912" name="Game" fullname="Game" runstate="Runnable" testcasecount="16" result="Failed" site="Child" start-time="2026-10-23 17:58:21Z" end-time="2026-10-23 17:58:21Z" duration="0.057304" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3913" name="UI" fullname="Game.UI" runstate="Runnable" testcasecount="16" result="Failed" site="Child" start-time="2026-10-23 17:58:21Z" end-time="2026-10-23 17:58:21Z" duration="0.052337" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3914" name="Tests" fullname="Game.UI.Tests" runstate="Runnable" testcasecount="16" result="Failed" site="Child" start-time="2026-10-23 17:58:21Z" end-time="2026-10-23 17:58:21Z" duration="0.048134" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3887" name="BossTeleportPresentationOwnershipTests" fullname="Game.UI.Tests.BossTeleportPresentationOwnershipTests" classname="Game.UI.Tests.BossTeleportPresentationOwnershipTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-23 17:58:21Z" end-time="2026-10-23 17:58:21Z" duration="0.043453" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3890" name="ExistingScenePresenterDoesNotYieldToPreferredPrefabPresenter" fullname="Game.UI.Tests.BossTeleportPresentationOwnershipTests.ExistingScenePresenterDoesNotYieldToPreferredPrefabPresenter" methodname="ExistingScenePresenterDoesNotYieldToPreferredPrefabPresenter" classname="Game.UI.Tests.BossTeleportPresentationOwnershipTests" runstate="Runnable" seed="544187827" result="Failed" start-time="2026-10-23 17:58:21Z" end-time="2026-10-23 17:58:21Z" duration="0.018954" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少新旧 Presenter 所有权门禁字段。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.BossTeleportPresentationOwnershipTests.Set (System.Object owner, System.String field, System.Object value) [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\BossTeleportPresentationOwnershipTests.cs:61
+at Game.UI.Tests.BossTeleportPresentationOwnershipTests.ExistingScenePresenterDoesNotYieldToPreferredPrefabPresenter () [0x00028] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\BossTeleportPresentationOwnershipTests.cs:45
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3888" name="PreferredPrefabPresenterYieldsToInactiveScenePresenterForTheSameHealth" fullname="Game.UI.Tests.BossTeleportPresentationOwnershipTests.PreferredPrefabPresenterYieldsToInactiveScenePresenterForTheSameHealth" methodname="PreferredPrefabPresenterYieldsToInactiveScenePresenterForTheSameHealth" classname="Game.UI.Tests.BossTeleportPresentationOwnershipTests" runstate="Runnable" seed="411398835" result="Failed" start-time="2026-10-23 17:58:21Z" end-time="2026-10-23 17:58:21Z" duration="0.001014" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少新旧 Presenter 所有权门禁字段。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.BossTeleportPresentationOwnershipTests.Set (System.Object owner, System.String field, System.Object value) [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\BossTeleportPresentationOwnershipTests.cs:61
+at Game.UI.Tests.BossTeleportPresentationOwnershipTests.PreferredPrefabPresenterYieldsToInactiveScenePresenterForTheSameHealth () [0x00028] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\BossTeleportPresentationOwnershipTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3889" name="UnrelatedBossPresenterDoesNotSuppressOnlineBossPresentation" fullname="Game.UI.Tests.BossTeleportPresentationOwnershipTests.UnrelatedBossPresenterDoesNotSuppressOnlineBossPresentation" methodname="UnrelatedBossPresenterDoesNotSuppressOnlineBossPresentation" classname="Game.UI.Tests.BossTeleportPresentationOwnershipTests" runstate="Runnable" seed="1509113251" result="Failed" start-time="2026-10-23 17:58:21Z" end-time="2026-10-23 17:58:21Z" duration="0.000718" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少新旧 Presenter 所有权门禁字段。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.BossTeleportPresentationOwnershipTests.Set (System.Object owner, System.String field, System.Object value) [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\BossTeleportPresentationOwnershipTests.cs:61
+at Game.UI.Tests.BossTeleportPresentationOwnershipTests.UnrelatedBossPresenterDoesNotSuppressOnlineBossPresentation () [0x00039] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\BossTeleportPresentationOwnershipTests.cs:35
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

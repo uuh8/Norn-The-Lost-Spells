@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="11" result="Failed(Child)" total="11" passed="1" failed="10" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-23 07:48:32Z" end-time="2026-10-23 07:48:32Z" duration="0.6543386">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2259" result="Failed" site="Child" start-time="2026-10-23 07:48:32Z" end-time="2026-10-23 07:48:32Z" duration="0.654339" total="11" passed="1" failed="10" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1348" name="Game.Combat.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Combat.Tests.dll" runstate="Runnable" testcasecount="113" result="Failed" site="Child" start-time="2026-10-23 07:48:32Z" end-time="2026-10-23 07:48:32Z" duration="0.558837" total="11" passed="1" failed="10" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12532" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1349" name="Game" fullname="Game" runstate="Runnable" testcasecount="113" result="Failed" site="Child" start-time="2026-10-23 07:48:32Z" end-time="2026-10-23 07:48:32Z" duration="0.464970" total="11" passed="1" failed="10" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1350" name="Combat" fullname="Game.Combat" runstate="Runnable" testcasecount="113" result="Failed" site="Child" start-time="2026-10-23 07:48:32Z" end-time="2026-10-23 07:48:32Z" duration="0.363804" total="11" passed="1" failed="10" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1351" name="Tests" fullname="Game.Combat.Tests" runstate="Runnable" testcasecount="113" result="Failed" site="Child" start-time="2026-10-23 07:48:32Z" end-time="2026-10-23 07:48:32Z" duration="0.266265" total="11" passed="1" failed="10" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1216" name="CombatExecutionModeTests" fullname="Game.Combat.Tests.CombatExecutionModeTests" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" testcasecount="11" result="Failed" site="Child" start-time="2026-10-23 07:48:32Z" end-time="2026-10-23 07:48:32Z" duration="0.166170" total="11" passed="1" failed="10" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1224" name="Authority_AreaFirstHitBelongsToWorldAndEachServerTickRunsOnce" fullname="Game.Combat.Tests.CombatExecutionModeTests.Authority_AreaFirstHitBelongsToWorldAndEachServerTickRunsOnce" methodname="Authority_AreaFirstHitBelongsToWorldAndEachServerTickRunsOnce" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="2124035762" result="Failed" start-time="2026-10-23 07:48:32Z" end-time="2026-10-23 07:48:32Z" duration="0.021069" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少唯一固定步协调器 CombatSimulationWorld。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatExecutionModeTests.World () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:251
+at Game.Combat.Tests.CombatExecutionModeTests.Authority_AreaFirstHitBelongsToWorldAndEachServerTickRunsOnce () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:129
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1227" name="Authority_CancelDoesNotBecomeLifetimeExpiryOrTriggerPayload" fullname="Game.Combat.Tests.CombatExecutionModeTests.Authority_CancelDoesNotBecomeLifetimeExpiryOrTriggerPayload" methodname="Authority_CancelDoesNotBecomeLifetimeExpiryOrTriggerPayload" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="967506987" result="Failed" start-time="2026-10-23 07:48:32Z" end-time="2026-10-23 07:48:32Z" duration="0.001056" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少唯一固定步协调器 CombatSimulationWorld。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatExecutionModeTests.World () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:251
+at Game.Combat.Tests.CombatExecutionModeTests.Authority_CancelDoesNotBecomeLifetimeExpiryOrTriggerPayload () [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:200
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1225" name="Authority_ManaAndStatusExplicitStepAreIdempotent" fullname="Game.Combat.Tests.CombatExecutionModeTests.Authority_ManaAndStatusExplicitStepAreIdempotent" methodname="Authority_ManaAndStatusExplicitStepAreIdempotent" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="383969085" result="Failed" start-time="2026-10-23 07:48:32Z" end-time="2026-10-23 07:48:32Z" duration="0.002364" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少 Gameplay 战斗权限契约 CombatExecutionMode；当前组件仍默认具备本地伤害权限。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatExecutionModeTests.ModeType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:244
+at Game.Combat.Tests.CombatExecutionModeTests.Configure (System.Object component, System.String modeName, System.Object world) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:257
+at Game.Combat.Tests.CombatExecutionModeTests.Authority_ManaAndStatusExplicitStepAreIdempotent () [0x0003e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:155
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1223" name="Authority_WorldAndAutomaticCallbacksDoNotDoubleAdvanceProjectileLifetime" fullname="Game.Combat.Tests.CombatExecutionModeTests.Authority_WorldAndAutomaticCallbacksDoNotDoubleAdvanceProjectileLifetime" methodname="Authority_WorldAndAutomaticCallbacksDoNotDoubleAdvanceProjectileLifetime" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="1010576392" result="Failed" start-time="2026-10-23 07:48:32Z" end-time="2026-10-23 07:48:32Z" duration="0.000622" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少唯一固定步协调器 CombatSimulationWorld。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatExecutionModeTests.World () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:251
+at Game.Combat.Tests.CombatExecutionModeTests.Authority_WorldAndAutomaticCallbacksDoNotDoubleAdvanceProjectileLifetime () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:115
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1226" name="ConfigureHierarchy_IncludesInactiveChildrenBeforeTheirFirstStart" fullname="Game.Combat.Tests.CombatExecutionModeTests.ConfigureHierarchy_IncludesInactiveChildrenBeforeTheirFirstStart" methodname="ConfigureHierarchy_IncludesInactiveChildrenBeforeTheirFirstStart" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="213181434" result="Failed" start-time="2026-10-23 07:48:32Z" end-time="2026-10-23 07:48:32Z" duration="0.001378" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少唯一固定步协调器 CombatSimulationWorld。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatExecutionModeTests.World () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:251
+at Game.Combat.Tests.CombatExecutionModeTests.ConfigureHierarchy_IncludesInactiveChildrenBeforeTheirFirstStart () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:179
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1217" name="DefaultSinglePlayer_ReceiveHitStillUsesDamageFunnel" fullname="Game.Combat.Tests.CombatExecutionModeTests.DefaultSinglePlayer_ReceiveHitStillUsesDamageFunnel" methodname="DefaultSinglePlayer_ReceiveHitStillUsesDamageFunnel" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="1954817567" result="Passed" start-time="2026-10-23 07:48:32Z" end-time="2026-10-23 07:48:32Z" duration="0.010500" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1221" name="Replica_AreaStartCannotApplyItsImmediateFirstHit" fullname="Game.Combat.Tests.CombatExecutionModeTests.Replica_AreaStartCannotApplyItsImmediateFirstHit" methodname="Replica_AreaStartCannotApplyItsImmediateFirstHit" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="1260826532" result="Failed" start-time="2026-10-23 07:48:32Z" end-time="2026-10-23 07:48:32Z" duration="0.003106" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少 Gameplay 战斗权限契约 CombatExecutionMode；当前组件仍默认具备本地伤害权限。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatExecutionModeTests.ModeType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:244
+at Game.Combat.Tests.CombatExecutionModeTests.Configure (System.Object component, System.String modeName, System.Object world) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:257
+at Game.Combat.Tests.CombatExecutionModeTests.Replica_AreaStartCannotApplyItsImmediateFirstHit () [0x00053] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:93
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1220" name="Replica_DirectAndSustainedStatusDoNotActivateReactionState" fullname="Game.Combat.Tests.CombatExecutionModeTests.Replica_DirectAndSustainedStatusDoNotActivateReactionState" methodname="Replica_DirectAndSustainedStatusDoNotActivateReactionState" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="889649458" result="Failed" start-time="2026-10-23 07:48:32Z" end-time="2026-10-23 07:48:32Z" duration="0.001033" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少 Gameplay 战斗权限契约 CombatExecutionMode；当前组件仍默认具备本地伤害权限。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatExecutionModeTests.ModeType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:244
+at Game.Combat.Tests.CombatExecutionModeTests.Configure (System.Object component, System.String modeName, System.Object world) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:257
+at Game.Combat.Tests.CombatExecutionModeTests.Replica_DirectAndSustainedStatusDoNotActivateReactionState () [0x00012] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:77
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1219" name="Replica_ManaSpendAndAutomaticRegenAreRejected" fullname="Game.Combat.Tests.CombatExecutionModeTests.Replica_ManaSpendAndAutomaticRegenAreRejected" methodname="Replica_ManaSpendAndAutomaticRegenAreRejected" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="1298253677" result="Failed" start-time="2026-10-23 07:48:32Z" end-time="2026-10-23 07:48:32Z" duration="0.001137" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少 Gameplay 战斗权限契约 CombatExecutionMode；当前组件仍默认具备本地伤害权限。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatExecutionModeTests.ModeType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:244
+at Game.Combat.Tests.CombatExecutionModeTests.Configure (System.Object component, System.String modeName, System.Object world) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:257
+at Game.Combat.Tests.CombatExecutionModeTests.Replica_ManaSpendAndAutomaticRegenAreRejected () [0x00028] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:67
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1218" name="Replica_ReceiveHitDoesNotChangeHpOrPublishDamage" fullname="Game.Combat.Tests.CombatExecutionModeTests.Replica_ReceiveHitDoesNotChangeHpOrPublishDamage" methodname="Replica_ReceiveHitDoesNotChangeHpOrPublishDamage" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="1192953286" result="Failed" start-time="2026-10-23 07:48:32Z" end-time="2026-10-23 07:48:32Z" duration="0.001337" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少 Gameplay 战斗权限契约 CombatExecutionMode；当前组件仍默认具备本地伤害权限。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatExecutionModeTests.ModeType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:244
+at Game.Combat.Tests.CombatExecutionModeTests.Configure (System.Object component, System.String modeName, System.Object world) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:257
+at Game.Combat.Tests.CombatExecutionModeTests.Replica_ReceiveHitDoesNotChangeHpOrPublishDamage () [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:55
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1222" name="Replica_ShieldTriggerCannotInitializeOrReflectProjectile" fullname="Game.Combat.Tests.CombatExecutionModeTests.Replica_ShieldTriggerCannotInitializeOrReflectProjectile" methodname="Replica_ShieldTriggerCannotInitializeOrReflectProjectile" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="103373339" result="Failed" start-time="2026-10-23 07:48:32Z" end-time="2026-10-23 07:48:32Z" duration="0.003892" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少 Gameplay 战斗权限契约 CombatExecutionMode；当前组件仍默认具备本地伤害权限。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatExecutionModeTests.ModeType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:244
+at Game.Combat.Tests.CombatExecutionModeTests.Configure (System.Object component, System.String modeName, System.Object world) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:257
+at Game.Combat.Tests.CombatExecutionModeTests.Replica_ShieldTriggerCannotInitializeOrReflectProjectile () [0x00012] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:103
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Adding component failed. Add required component of type 'BoxCollider' or 'CapsuleCollider' or 'CharacterController' or 'MeshCollider' or 'SphereCollider' or 'TerrainCollider' or 'WheelCollider' to the game object 'Combat Execution Shield' first.
+Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

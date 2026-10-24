@@ -49,6 +49,7 @@ public sealed class RunEntryService(RoomTransactions transactions, InventoryServ
             {
                 // 当前N1最多24个位置，快照有界；包含仓库但全部原位保留，后续副本只获得携带区域的Gameplay权限。
                 var snapshot = await inventory.ReadSnapshotAsync(db, tx, member.PlayerId, ct);
+                inventory.FreezeCombatAssets(snapshot, run, (ulong)member.Seat + 1);
                 await db.ExecuteAsync(new CommandDefinition("""
                     INSERT INTO RunMembers(RunId,CharacterId,InventoryVersion,EntrySnapshot,State) VALUES(@Run,@Player,@Version,@Snapshot,'Reserved');
                     INSERT INTO AssetLeases(CharacterId,RunId,RoomEpoch) VALUES(@Player,@Run,@Epoch)

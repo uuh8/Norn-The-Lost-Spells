@@ -21,6 +21,8 @@ namespace Game.UI
         [SerializeField] private float _visualHeightOffset = 1.5f;
         [SerializeField, Min(0f)] private float _openDuration = 0.35f;
         [SerializeField, Min(0f)] private float _closeDuration = 0.35f;
+        [Tooltip("仅共享 Boss Prefab 自动补装的 Presenter 开启；原 P8 Scene 的专有配置优先，避免重复播放两套 Portal。")]
+        [SerializeField] private bool _preferExistingPresenter;
 
         private GameObject _sourceOpen;
         private GameObject _sourceIdle;
@@ -35,6 +37,18 @@ namespace Game.UI
 
         private void Awake()
         {
+#if UNITY_SERVER && !UNITY_EDITOR
+            // Dedicated Server 仍保留 Boss Gameplay / Teleport 事件，但不实例化两端共六套纯显示 Portal。
+            // 显式排除 Editor，避免切换构建目标后 UNITY_SERVER 影响单机 PlayMode 的原表现。
+            enabled = false;
+            return;
+#else
+            if (_preferExistingPresenter && HasExistingScenePresenter())
+            {
+                // P8 早于在线 Prefab 装配，已经有独立 Presenter。优先原配置，且不依赖两者 Awake 的先后。
+                enabled = false;
+                return;
+            }
             _sourceOpen = CreateVisual(_openPrefab, "Source Open");
             _sourceIdle = CreateVisual(_idlePrefab, "Source Idle");
             _sourceClose = CreateVisual(_closePrefab, "Source Close");
@@ -51,6 +65,22 @@ namespace Game.UI
             ConfigureUnscaledParticles(_destinationIdle);
             ConfigureUnscaledParticles(_destinationClose);
             HideAll();
+#endif
+        }
+
+        private bool HasExistingScenePresenter()
+        {
+            if (_bossHealth == null) return false;
+            // 初始化边界允许一次性扫描/数组。包含 inactive，避免旧 Presenter 尚未启用时新 Presenter 抢占 Owner。
+            // 同 Scene + 同 Health 限制让不同副本/不同 Boss 互不干扰；稳态事件处理不再执行全场景搜索。
+            var presenters = FindObjectsByType<BossTeleportVfxController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < presenters.Length; i++)
+            {
+                var other = presenters[i];
+                if (other != this && other.gameObject.scene == gameObject.scene && !other._preferExistingPresenter
+                    && other._bossHealth == _bossHealth) return true;
+            }
+            return false;
         }
 
         private void OnEnable()

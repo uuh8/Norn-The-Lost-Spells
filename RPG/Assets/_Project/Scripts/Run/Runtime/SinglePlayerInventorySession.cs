@@ -9,13 +9,17 @@ namespace Game.Run
     /// <summary>单机整备的唯一写持有者。只读数据向 UI 开放，动作/保存通过带库存范围的 Core 命令。</summary>
     // 资源先走上一帧delta，再由角色支付本帧新施法；反序会在提交帧立刻减掉一帧冷却。
     [DefaultExecutionOrder(-100)]
-    public sealed class SinglePlayerInventorySession : MonoBehaviour, IWalletReadOnly
+    public sealed class SinglePlayerInventorySession : MonoBehaviour, IWalletReadOnly, IOwnedCastWorkspace
     {
         [SerializeField] private ItemCatalog _catalog;
         [SerializeField] private SinglePlayerStartingInventory _startingInventory;
         [SerializeField,Tooltip("Owned法杖使用Draw V2；作者SO、敌人与Boss仍走各自Legacy入口。")]
         private bool _useSpellProgrammingV2;
         public bool UseSpellProgrammingV2 => _useSpellProgrammingV2;
+        // 窄接口只投影已有会话能力；单机加载、保存与原资源流程不因联机装配而改变。
+        bool IOwnedCastWorkspace.IsActiveAndEnabled => this != null && isActiveAndEnabled;
+        string IOwnedCastWorkspace.InventoryId => _read != null ? _read.InventoryId : null;
+        uint IOwnedCastWorkspace.InventoryVersion => _read != null ? _read.Version : 0;
         [SerializeField, Tooltip("独立 Sandbox 必须保持启用，避免测试动作写正式资产目录。")]
         private bool _sandboxProfile = true;
         [SerializeField,Tooltip("稳定世界键；Hub为hub.map1。仅保存据点地面资产，不保存元素世界。")] private string _worldSceneKey="";

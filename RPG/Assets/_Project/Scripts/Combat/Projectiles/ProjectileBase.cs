@@ -15,7 +15,7 @@ namespace Game.Combat
     // RequireComponent 告诉 Unity：挂载该脚本时必须同时存在 Rigidbody 与 Collider；Editor 会自动补齐缺失组件。
     [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(Collider))]
-    public abstract class ProjectileBase : MonoBehaviour
+    public abstract class ProjectileBase : MonoBehaviour, ICombatSimulationParticipant
     {
         [Header("飞行 (基类通用)")]
         [SerializeField] protected float _maxLifetime = 5f; // 超时自毁，防漏网投射物累积
@@ -71,6 +71,57 @@ namespace Game.Combat
         private float _lastDebugCollisionTime;
         private bool _debugMissingRigidbodyWarned;
         private bool _initialized;
+        private CombatExecutionState _execution;
+        private float _authorityLingerRemaining;
+        private bool _authorityLingering;
+        private bool _replicaPhysicsDisabled, _replicaWasKinematic, _replicaColliderWasEnabled;
+        private Collider[] _physicsColliders;
+        public CombatExecutionMode ExecutionMode => _execution.Mode;
+        protected CombatSimulationWorld SimulationWorld => _execution.World;
+
+        public virtual void ConfigureExecutionMode(CombatExecutionMode mode, CombatSimulationWorld world = null)
+        {
+            _execution.Configure(this, mode, world, CombatTickPhase.BeforePhysics);
+            if (_rb == null) _rb = GetComponent<Rigidbody>();
+            if (_collider == null) _collider = GetComponent<Collider>();
+            CachePhysicsColliders();
+            if (mode == CombatExecutionMode.Replica)
+            {
+                Unregister();
+                if (!_replicaPhysicsDisabled)
+                {
+                    _replicaWasKinematic = _rb != null && _rb.isKinematic;
+                    _replicaColliderWasEnabled = _collider != null && _collider.enabled;
+                    _replicaPhysicsDisabled = true;
+                }
+                if (_rb != null) _rb.isKinematic = true;
+                if (_collider != null) _collider.enabled = false;
+            }
+            else if (_replicaPhysicsDisabled)
+            {
+                if (_rb != null) _rb.isKinematic = _replicaWasKinematic;
+                if (_collider != null) _collider.enabled = _replicaColliderWasEnabled;
+                _replicaPhysicsDisabled = false;
+                if (_initialized) RegisterAndIgnoreSameTeamProjectiles();
+            }
+            // 直接命中状态组件不一定由外层装配单独访问；与 Projectile 的权限保持一致。
+            var statusEffects = GetComponentsInChildren<ProjectileStatusOnImpact>(true);
+            for (int i = 0; i < statusEffects.Length; i++) statusEffects[i].ConfigureExecutionMode(mode, world);
+        }
+
+        public void StepAuthority(float deltaTime, uint serverTick)
+        {
+            if (!_execution.TryStep(deltaTime, serverTick)) return;
+            if (_authorityLingering)
+            {
+                _authorityLingerRemaining -= deltaTime;
+                if (_authorityLingerRemaining <= 0f) { _execution.Suspend(this); Destroy(gameObject); }
+                return;
+            }
+            if (!TickLifetime(deltaTime)) return;
+            TickTimedTrigger(deltaTime);
+            if (!_consumed) StepMotion(deltaTime);
+        }
 
         /// <summary>
         /// 命中真实目标/环境的瞬间触发（命中点, 命中方向）。上层（法术触发）据此在命中点再施放载荷，
@@ -107,12 +158,14 @@ namespace Game.Combat
             // Awake 在 Prefab 实例创建后调用一次；GetComponent 只搜索当前 GameObject。
             _rb = GetComponent<Rigidbody>();
             _collider = GetComponent<Collider>();
+            CachePhysicsColliders();
         }
 
         protected virtual void OnDestroy()
         {
+            _execution.Suspend(this);
             NotifyTermination(ProjectileTerminationReason.Cancelled,transform.position,ResolveCurrentDirection());
-            Finished?.Invoke();
+            if (_execution.Mode != CombatExecutionMode.Replica) Finished?.Invoke();
             Unregister(); // 从在场表注销（命中销毁 / 超时自毁 / 场景卸载）
         }
 
@@ -121,14 +174,16 @@ namespace Game.Combat
 
         protected virtual void OnEnable()
         {
+            _execution.Resume(this, CombatTickPhase.BeforePhysics);
             EventBus<WorldActivitySourceEvent>.Publish(new WorldActivitySourceEvent
                 { Source = transform, Kind = WorldActivitySourceKind.Projectile, Enabled = true });
-            if (_initialized)
+            if (_initialized && _execution.Mode != CombatExecutionMode.Replica)
                 RegisterAndIgnoreSameTeamProjectiles();
         }
 
         protected virtual void OnDisable()
         {
+            _execution.Suspend(this);
             // 禁用/回滚/Scene清理都属于Cancel，不能借OnDestroy伪装正常寿命到点。
             if(_initialized)NotifyTermination(ProjectileTerminationReason.Cancelled,transform.position,ResolveCurrentDirection());
             EventBus<WorldActivitySourceEvent>.Publish(new WorldActivitySourceEvent
@@ -138,18 +193,38 @@ namespace Game.Combat
 
         private void Update()
         {
-            if(_initialized && !_consumed && !_terminated)
-            {
-                _lifetimeRemaining-=Time.deltaTime;
-                if(_lifetimeRemaining<=0)
-                {_consumed=true;NotifyTermination(ProjectileTerminationReason.LifetimeExpired,transform.position,ResolveCurrentDirection());Destroy(gameObject);return;}
-            }
-            // 定时触发使用渲染帧时间，适合“经过若干游戏秒触发”的玩法计时；实际物理运动仍在 FixedUpdate。
-            TickTimedTrigger();
+            if (_execution.Mode != CombatExecutionMode.SinglePlayer) return;
+            if (!TickLifetime(Time.deltaTime)) return;
+            TickTimedTrigger(Time.deltaTime);
             OnProjectileUpdate();
         }
 
+        private bool TickLifetime(float deltaTime)
+        {
+            if(_initialized && !_consumed && !_terminated)
+            {
+                _lifetimeRemaining-=deltaTime;
+                if(_lifetimeRemaining<=0)
+                {
+                    Vector3 point = transform.position, direction = ResolveCurrentDirection();
+                    _consumed = true;
+                    StopPhysicsImmediately();
+                    _execution.Suspend(this);
+                    try { NotifyTermination(ProjectileTerminationReason.LifetimeExpired, point, direction); }
+                    finally { Destroy(gameObject); }
+                    return false;
+                }
+            }
+            return true;
+        }
+
         protected virtual void FixedUpdate()
+        {
+            if (_execution.Mode != CombatExecutionMode.SinglePlayer) return;
+            StepMotion(Time.fixedDeltaTime);
+        }
+
+        private void StepMotion(float deltaTime)
         {
             if (_consumed || _rb == null) return;
 
@@ -157,9 +232,9 @@ namespace Game.Combat
             using (s_motionMarker.Auto())
             {
                 if (_orbitEnabled)
-                    TickOrbit(Time.fixedDeltaTime);
+                    TickOrbit(deltaTime);
                 else
-                    TickHoming(Time.fixedDeltaTime);    // 追踪行为放在 `FixedUpdate` 中执行，因为它修改的是 `Rigidbody.linearVelocity`，属于 Physics Step 使用的运动数据
+                    TickHoming(deltaTime); // Authority 在手动 Simulate 前准备 Rigidbody 速度；SinglePlayer 由 FixedUpdate 调用。
 
                 // 非抛物线投射物不更新模型朝向；命中冻结(velocity≈0)时自动停止，保留命中姿态
                 if (!FaceVelocityInFlight) return;
@@ -174,19 +249,25 @@ namespace Game.Combat
 
         protected virtual void OnProjectileUpdate() { }
 
-        private void TickTimedTrigger()
+        private void TickTimedTrigger(float deltaTime)
         {
             if (_consumed || !_timedTriggerArmed) return;
 
             // Time.deltaTime 是上一渲染帧消耗的缩放后游戏时间，因此倒计时基本不受帧率影响。
-            _timedTriggerRemaining -= Time.deltaTime;
+            _timedTriggerRemaining -= deltaTime;
             if (_timedTriggerRemaining > 0f) return;
 
+            Vector3 point = transform.position, direction = ResolveCurrentDirection();
             _consumed = true;
-            // ?.Invoke 表示有订阅者才调用；没有 Payload 监听时不会产生 NullReferenceException。
-            TimedTriggerElapsed?.Invoke(transform.position, ResolveCurrentDirection());
-            NotifyTermination(ProjectileTerminationReason.TimedTrigger,transform.position,ResolveCurrentDirection());
-            Destroy(gameObject);
+            // 父弹先退出 Physics，再允许 Payload 生成子弹；方向先缓存，不能从清零后的 Rigidbody 重新推导。
+            StopPhysicsImmediately();
+            _execution.Suspend(this);
+            try
+            {
+                TimedTriggerElapsed?.Invoke(point, direction);
+                NotifyTermination(ProjectileTerminationReason.TimedTrigger, point, direction);
+            }
+            finally { Destroy(gameObject); }
         }
 
         /// <summary>
@@ -207,6 +288,16 @@ namespace Game.Combat
             // 正常情况下 Awake 已缓存；再次兜底可兼容测试或特殊初始化顺序。
             if (_rb == null) _rb = GetComponent<Rigidbody>();
             if (_collider == null) _collider = GetComponent<Collider>();
+            CachePhysicsColliders();
+
+            if (_execution.Mode == CombatExecutionMode.Replica)
+            {
+                // Replica 可以保存身份/表现读数，但没有动态刚体、真实碰撞和 Gameplay 事件权限。
+                _initialized = true; _consumed = false; _terminated = false; ResetLifetime();
+                if (_rb != null) _rb.isKinematic = true;
+                if (_collider != null) _collider.enabled = false;
+                return;
+            }
 
             // IgnoreCollision 只关闭这一对 Collider 之间的碰撞，不会影响它们与其他对象的碰撞。
             // 忽略施法者自身可避免投射物在出膛瞬间因重叠而自毁。
@@ -230,7 +321,7 @@ namespace Game.Combat
                 transform.rotation = Quaternion.LookRotation(velocity) * Quaternion.Euler(_modelForwardOffsetEuler);
 
             // 明确倒计时才能区分正常寿命和取消；不再安排无法撤回/辨识原因的延迟Destroy。
-            _consumed=false;_terminated=false;ResetLifetime();
+            _consumed=false;_terminated=false;_authorityLingering=false;ResetLifetime();
         }
         public void ConfigureLifetime(float seconds,float additive=0,float multiplier=1)
         { _lifetimeOverride=seconds;_lifetimeDelta=additive;_lifetimeMultiplier=multiplier;if(_initialized)ResetLifetime(); }
@@ -238,7 +329,7 @@ namespace Game.Combat
         { // 先以真实Prefab/覆盖值为基数加秒，再乘倍率；仅最终结果钳制，保持叠加可预测。
             _lifetimeRemaining=(float)System.Math.Clamp(((double)(_lifetimeOverride<0?_maxLifetime:_lifetimeOverride)+_lifetimeDelta)*_lifetimeMultiplier,.01,600); }
         private void NotifyTermination(ProjectileTerminationReason reason,Vector3 point,Vector3 direction)
-        { if(_terminated)return;_terminated=true;Terminated?.Invoke(reason,point,direction); }
+        { if(_terminated)return;_terminated=true;if(_execution.Mode!=CombatExecutionMode.Replica)Terminated?.Invoke(reason,point,direction); }
 
         /// <summary>配置本次投射物可用的环境弹跳次数。由 SpellCaster 从 EmitCommand 注入。</summary>
         public void ConfigureBounce(int bounceCount)
@@ -280,7 +371,7 @@ namespace Game.Combat
         /// </summary>
         public bool ReflectByShield(Vector3 shieldNormal, byte newTeam, int newAttackerId)
         {
-            if (_consumed || _rb == null)
+            if (_execution.Mode == CombatExecutionMode.Replica || _consumed || _rb == null)
                 return false;
 
             Vector3 velocity = _rb.linearVelocity;
@@ -343,6 +434,7 @@ namespace Game.Combat
         /// </summary>
         public void ArmTimedTrigger(float delaySeconds)
         {
+            if (_execution.Mode == CombatExecutionMode.Replica) return;
             _timedTriggerArmed = true;
             _timedTriggerRemaining = Mathf.Max(0f, delaySeconds);
         }
@@ -351,7 +443,7 @@ namespace Game.Combat
         {
             // OnCollisionEnter 由 Unity Physics 在刚体开始接触另一个 Collider 时调用，参数包含碰撞体和接触点。
             // _consumed 保证复杂碰撞在同一物理步产生多个回调时，伤害与 Payload 仍只结算一次。
-            if (_consumed) return;
+            if (_execution.Mode == CombatExecutionMode.Replica || _consumed || _terminated) return;
 
             // GetComponentInParent 从发生接触的 Collider 开始向父节点查找接口，兼容“子节点碰撞体、根节点生命组件”。
             IDamageable target = collision.collider.GetComponentInParent<IDamageable>();
@@ -379,34 +471,111 @@ namespace Game.Combat
             Vector3 vel = _rb != null ? _rb.linearVelocity : Vector3.zero;
             Vector3 hitDir = vel.sqrMagnitude > 1e-6f ? vel.normalized : transform.forward;
             bool damaged = false;
-
-            // 敌方且存活 → 结算一次伤害
-            if (target != null && target.IsAlive)
-            {
-                // DamageRequest 是一次命中的值快照；in 以只读引用传递，避免接收方修改请求，也避免较大 struct 拷贝。
-                var req = new DamageRequest(_attackerId, _attackerTeam, _damage, _type, hitPoint, hitDir);
-                target.ReceiveHit(in req);
-                damaged = true;
-            }
-
-            // 子类扩展点：命中敌方或环境都会走到（撞地也爆炸/插在目标上残留）
-            OnImpact(collision, target, hitPoint, damaged);
-
-            // 命中通知：法术触发据此在命中点跑载荷（普通投射物无监听者，空触发无开销）
+            // Damage EventBus 也是同步回调，必须在扣血前消费接触，不能只在 OnImpact 前防重入。
             _consumed = true;
-            SurfaceImpacted?.Invoke(new ProjectileImpactContext(
-                hitPoint,
-                hitDir,
-                contact.normal,
-                target,
-                _attackerId,
-                _attackerTeam));
-            // SpellCaster 若为该投射物绑定了 Payload，会在这个同步回调里以命中点运行下一层法术序列。
-            Impacted?.Invoke(hitPoint, hitDir);
-            NotifyTermination(ProjectileTerminationReason.Impact,hitPoint,hitDir);
+            try
+            {
+                if (target != null && target.IsAlive)
+                {
+                    var req = new DamageRequest(_attackerId, _attackerTeam, _damage, _type, hitPoint, hitDir);
+                    target.ReceiveHit(in req);
+                    damaged = true;
+                }
+                ResolveImpact(collision, target, hitPoint, hitDir, contact.normal, damaged);
+            }
+            catch
+            {
+                CancelFailedImpact(hitPoint, hitDir);
+                throw;
+            }
+        }
 
+        /// <summary>
+        /// 接触几何已经确认后的唯一完成入口。子效果预算不足可能抛异常；失败必须取消，不能把尚未完成的
+        /// OnImpact 伪装成正常 Impact，随后展开 Payload。独立于 Collision 的几何采集也便于隔离事务回归。
+        /// </summary>
+        protected void ResolveImpact(Collision collision, IDamageable target, Vector3 hitPoint, Vector3 hitDir, Vector3 normal, bool damaged)
+        {
+            if (_execution.Mode == CombatExecutionMode.Replica || _terminated) return;
+            _consumed = true;
+            StopPhysicsImmediately();
+            try
+            {
+                OnImpact(collision, target, hitPoint, damaged);
+                SurfaceImpacted?.Invoke(new ProjectileImpactContext(hitPoint, hitDir, normal, target, _attackerId, _attackerTeam));
+                Impacted?.Invoke(hitPoint, hitDir);
+            }
+            catch
+            {
+                CancelFailedImpact(hitPoint, hitDir);
+                throw;
+            }
+            try { NotifyTermination(ProjectileTerminationReason.Impact, hitPoint, hitDir); }
+            finally { DisposeAfterImpact(); }
+        }
+
+        private void DisposeAfterImpact()
+        {
             // impactLingerTime 允许箭矢等命中后短暂停留；Destroy 的实际移除发生在当前帧稍后阶段。
-            Destroy(gameObject, _impactLingerTime);
+            if (_execution.Mode == CombatExecutionMode.Authority && _impactLingerTime > 0f)
+            {
+                _authorityLingering = true; _authorityLingerRemaining = _impactLingerTime;
+                // 物理已经在发布命中前停止；这里仅保留箭矢姿态和 Tick 残留，不重复写入可能已变成 kinematic 的刚体。
+            }
+            else
+            {
+                _execution.Suspend(this);
+                Destroy(gameObject, _impactLingerTime);
+            }
+        }
+
+        private void CancelFailedImpact(Vector3 point, Vector3 direction)
+        {
+            _consumed = true;
+            try { NotifyTermination(ProjectileTerminationReason.Cancelled, point, direction); }
+            finally
+            {
+                // Destroy 在帧尾才移除；立即停用才能阻止本 Rendering frame 后续补跑的 Physics Tick。
+                _execution.Suspend(this);
+                StopPhysicsImmediately();
+                gameObject.SetActive(false);
+                if (Application.isPlaying) Destroy(gameObject);
+                // EditMode 的隔离调用保留停用对象，交由工具/fixture 的 Owner 销毁，避免调用非法延迟 Destroy。
+            }
+        }
+
+        /// <summary>先撤销活实例的所有自动生命周期，再释放。Prefab 来源本身从不传入这个入口。</summary>
+        protected static void CancelSpawnedEffect(GameObject effect)
+        {
+            if (effect == null) return;
+            effect.SetActive(false);
+            if (Application.isPlaying) Destroy(effect); else DestroyImmediate(effect);
+        }
+
+        private void CachePhysicsColliders()
+        {
+            // 层级查询只在 Awake/Init/模式装配时做一次；终止 Tick 不分配数组。
+            if (_physicsColliders == null) _physicsColliders = GetComponentsInChildren<Collider>(true);
+        }
+
+        private void StopPhysicsImmediately()
+        {
+            // Destroy 延迟到 Rendering frame 末尾，Script Simulation 可能先补跑多个 Tick。
+            // 必须包括子物体护盾 Trigger，否则根 Collider 关闭后，已终止的盾仍能反射别的投射物。
+            if (_physicsColliders != null)
+            {
+                for (int i = 0; i < _physicsColliders.Length; i++)
+                    if (_physicsColliders[i] != null) _physicsColliders[i].enabled = false;
+            }
+            else if (_collider != null) _collider.enabled = false;
+            if (_rb == null) return;
+            _rb.useGravity = false;
+            if (!_rb.isKinematic)
+            {
+                _rb.linearVelocity = Vector3.zero; _rb.angularVelocity = Vector3.zero;
+                // Sleep 与关闭重力一起保持终止姿态；不提前切 kinematic，保留 Arrow.OnImpact 原有挂接流程。
+                _rb.Sleep();
+            }
         }
 
         protected virtual bool TryHandleCollisionBeforeDefault(Collision collision, IDamageable target)

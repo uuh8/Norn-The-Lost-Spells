@@ -126,6 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a406db20e672cc5438c5a0c127510765, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.Character::WizardController
+  _executionMode: 0
   _moveSpeed: 8
   _rotationSpeed: 17
   _gravityMultiplier: 3
@@ -159,7 +160,7 @@ MonoBehaviour:
   _combo: {fileID: 11400000, guid: 1132d5698b014594ba2b8613ece95ecf, type: 2}
   _fireballSpawnPoint: {fileID: 6318963051049183416}
   _airAttackStateName: JumpAttack_MagicWand
-  _fireballAimMask:
+  _aimMask:
     serializedVersion: 2
     m_Bits: 4294967295
   _aimMaxDistance: 100
@@ -219,7 +220,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b71d53b750a96b14d8c0b91369309296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.Character::Game.Character.SpellCaster
-  _runSpellSession: {fileID: 0}
   _wand: {fileID: 11400000, guid: 0cf330fcb9e847a4fabbea8d9c7b65eb, type: 2}
   _mana: {fileID: 3987539793705208710}
   _traceLevel: 0
@@ -14986,7 +14986,7 @@ Transform:
   m_GameObject: {fileID: 7659679196294698418}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.01, y: 0.1, z: -0.02}
+  m_LocalPosition: {x: 0.01, y: -0.08, z: -0.02}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

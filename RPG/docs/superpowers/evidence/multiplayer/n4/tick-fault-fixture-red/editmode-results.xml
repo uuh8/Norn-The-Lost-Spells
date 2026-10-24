@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-24 02:53:22Z" end-time="2026-10-24 02:53:23Z" duration="0.8407126">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2375" result="Failed" site="Child" start-time="2026-10-24 02:53:22Z" end-time="2026-10-24 02:53:23Z" duration="0.840713" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2374" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="36" result="Failed" site="Child" start-time="2026-10-24 02:53:22Z" end-time="2026-10-24 02:53:23Z" duration="0.738275" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12720" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2375" name="Game" fullname="Game" runstate="Runnable" testcasecount="36" result="Failed" site="Child" start-time="2026-10-24 02:53:22Z" end-time="2026-10-24 02:53:23Z" duration="0.647916" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2376" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="36" result="Failed" site="Child" start-time="2026-10-24 02:53:22Z" end-time="2026-10-24 02:53:23Z" duration="0.548309" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2377" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="36" result="Failed" site="Child" start-time="2026-10-24 02:53:22Z" end-time="2026-10-24 02:53:23Z" duration="0.451218" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2324" name="AuthorityTickFailureTests" fullname="Game.Multiplayer.Tests.AuthorityTickFailureTests" classname="Game.Multiplayer.Tests.AuthorityTickFailureTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-24 02:53:22Z" end-time="2026-10-24 02:53:23Z" duration="0.347426" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2325" name="OutputFaultDuringFirstCatchupTick_StopsPhysicsAndRemainingCatchupTicks" fullname="Game.Multiplayer.Tests.AuthorityTickFailureTests.OutputFaultDuringFirstCatchupTick_StopsPhysicsAndRemainingCatchupTicks" methodname="OutputFaultDuringFirstCatchupTick_StopsPhysicsAndRemainingCatchupTicks" classname="Game.Multiplayer.Tests.AuthorityTickFailureTests" runstate="Runnable" seed="687508195" result="Failed" label="Error" start-time="2026-10-24 02:53:22Z" end-time="2026-10-24 02:53:23Z" duration="0.232315" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[System.NullReferenceException : Object reference not set to an instance of an object]]></message>
+                  <stack-trace><![CDATA[  at Game.Multiplayer.Tests.AuthorityTickFailureTests.OutputFaultDuringFirstCatchupTick_StopsPhysicsAndRemainingCatchupTicks () [0x0021b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AuthorityTickFailureTests.cs:60 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 ]]></stack-trace>
+                </failure>
+                <output><![CDATA[Can't add script behaviour 'ProjectileBase'. The script class can't be abstract!
+Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

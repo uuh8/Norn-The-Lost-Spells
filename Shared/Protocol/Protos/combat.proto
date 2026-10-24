@@ -1,0 +1,78 @@
+syntax = "proto3";
+package norn.protocol;
+option csharp_namespace = "Game.NetworkProtocol";
+
+////////////////////////////////////////////////////////////////
+// N4 Client intention：身份由认证连接绑定，绝不提交伤害或生成位置
+////////////////////////////////////////////////////////////////
+
+// 一次按键/自动连发的根命令；重试沿用 command_id，不能重新扣资源。
+message CombatCastIntentMessage
+{
+    uint32 protocol_version = 1;   // 应用协议版本，0拒绝。
+    uint32 connection_epoch = 2;   // 连接代次，必须与认证身份一致。
+    fixed64 command_id = 3;        // 非零命令ID，同Epoch严格递增；重复命令返回原收据。
+    string wand_instance_id = 4;   // 已持有实例，UTF-8最多64字节，不是ContentId。
+    uint32 program_revision = 5;   // Client看到的程序版本，Server再次核对真实Owned来源。
+    float origin_x = 6;            // 点击瞬间玩家根坐标X（meter），只供容差检查，不能用作出生点。
+    float origin_y = 7;            // 点击瞬间玩家根坐标Y（meter）。
+    float origin_z = 8;            // 点击瞬间玩家根坐标Z（meter）。
+    float aim_x = 9;               // 点击瞬间锁存目标点X（meter），不是朝向角。
+    float aim_y = 10;              // 点击瞬间锁存目标点Y（meter）。
+    float aim_z = 11;              // 点击瞬间锁存目标点Z（meter）。
+    fixed64 gameplay_hash = 12;    // 非零玩法配置摘要；完整SHA256在入局控制面核对。
+}
+
+////////////////////////////////////////////////////////////////
+// N4 Server facts：平铺复用消息；Kind决定有效字段，不传任意Prefab路径
+////////////////////////////////////////////////////////////////
+
+// 所有值已经由Server裁决；Client只安装事实/播放表现，不能再次计算伤害。
+message CombatFactMessage
+{
+    uint32 protocol_version = 1;   // 应用协议版本。
+    fixed64 gameplay_hash = 2;     // 两端共同玩法配置摘要。
+    uint32 sequence = 3;           // 单通道事实序号，用于去重；对象快照另保留各自最后序号。
+    uint32 server_tick = 4;        // 权威逻辑Tick，不是Client Rendering frame。
+    uint32 kind = 5;               // 1=Setup,2=Receipt,3=Action,4=Spawn,5=OutputState,6=Terminate,7=ActorState,8=Damage,9=Death,10=Teleport,11=CastSound。
+    uint64 actor_id = 6;           // 服务器Actor身份；玩家1..4，敌人从5开始。
+    uint32 connection_epoch = 7;   // 玩家当前代次；敌人使用1。
+    fixed64 command_id = 8;        // 关联根命令；非命令状态可为0。
+    fixed64 output_id = 9;         // 此副本内唯一输出身份；Unity InstanceID不能跨进程使用。
+    uint32 prefab_key = 10;        // 受共同Hash保护的Prefab表索引，从1开始；0不生成。
+    uint32 output_ordinal = 11;    // 同根命令中输出序号，Trigger沿用根命令。
+    float position_x = 12;         // 权威世界位置X（meter）。
+    float position_y = 13;         // 权威世界位置Y（meter）。
+    float position_z = 14;         // 权威世界位置Z（meter）。
+    float rotation_x = 15;         // 世界Quaternion X，非Euler。
+    float rotation_y = 16;         // 世界Quaternion Y。
+    float rotation_z = 17;         // 世界Quaternion Z。
+    float rotation_w = 18;         // 世界Quaternion W。
+    float velocity_x = 19;         // 服务器速度X（meter/second），Client只外推表现。
+    float velocity_y = 20;         // 服务器速度Y（meter/second）。
+    float velocity_z = 21;         // 服务器速度Z（meter/second）。
+    float current_hp = 22;         // 已裁决HP，Client安装时不重新Resolve。
+    float max_hp = 23;             // HP上限。
+    float current_mana = 24;       // 选中Owned法杖Mana，不等同旧ManaComponent。
+    float max_mana = 25;           // 选中法杖Mana上限。
+    float cooldown = 26;           // 权威剩余射速/Reload间隔（second）。
+    float burning = 27;            // Burning强度。
+    float wet = 28;                // Wet强度。
+    float poisoned = 29;           // Poisoned强度。
+    float sticky = 30;             // Sticky强度。
+    float move_multiplier = 31;    // 权威状态计算后的移动倍率，默认字段0需由Kind校验。
+    uint32 result = 32;            // 收据/终止原因稳定编号，0不表示默认接受。
+    uint32 phase = 33;             // ActorState的Boss：0=未参战，1..3=阶段；其余Kind表示动作环境，不授予改阶段权限。
+    uint64 target_actor_id = 34;   // 受击者/当前目标，0表示环境或无目标。
+    float amount = 35;             // 按Kind复用：Setup射速秒、Action混合秒、Damage伤害量、Death/死亡ActorState的尸体剩余秒。
+    uint32 team = 36;              // 权威阵营，范围0..255。
+    string wand_instance_id = 37;  // 仅Setup/离散换杖发送，UTF-8最多64字节；稳态状态不重复传字符串。
+    uint32 program_revision = 38;  // 当前程序版本。
+    uint32 remaining_charges = 39; // 当前首个可执行Emit的有限次数；无限由flags显式声明。
+    uint32 flags = 40;             // bit0=无限次数，bit1=存活，bit2=空中动作；其余位必须0。
+    uint64 attacker_actor_id = 41; // 伤害来源Actor，0表示环境；不使用跨进程无效的Unity InstanceID。
+    uint32 damage_type = 42;       // Physical=0、Magical=1、True=2；只安装表现事实。
+    uint32 animation_hash = 43;    // NPC/Boss已批准动作的Animator Hash，按原始32位保存。
+    uint32 action_kind = 44;       // 1=CrossFade State、2=Trigger；不是客户端任意执行请求。
+    uint32 sound_key = 45;         // 受控AudioClip表索引；Setup提供本机预测声，声音事实确认相同Command不重播。
+}

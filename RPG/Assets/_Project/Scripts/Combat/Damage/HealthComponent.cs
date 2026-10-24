@@ -22,6 +22,20 @@ namespace Game.Combat
         [SerializeField] private float _currentHp;
         private int _id;                                 // 实例唯一 Id，供事件系统精准寻址
         private bool _isInvulnerable;                    // 无敌状态开关
+        private CombatExecutionState _execution;
+        public CombatExecutionMode ExecutionMode => _execution.Mode;
+
+        public void ConfigureExecutionMode(CombatExecutionMode mode, CombatSimulationWorld world = null)
+        { _execution.Configure(this, mode, world, CombatTickPhase.AfterPhysics); }
+
+        /// <summary>安装服务器事实只更新读模型；命中/死亡表现由已去重的网络事实另行驱动，不能再算一次伤害。</summary>
+        public void ApplyReplicatedState(in HealthReplicaSnapshot snapshot)
+        {
+            if (_execution.Mode != CombatExecutionMode.Replica || !float.IsFinite(snapshot.MaxHp)
+                || !float.IsFinite(snapshot.CurrentHp) || snapshot.MaxHp <= 0f) return;
+            _maxHp = snapshot.MaxHp; _currentHp = Mathf.Clamp(snapshot.CurrentHp, 0f, _maxHp);
+            _teamId = snapshot.TeamId; _isInvulnerable = snapshot.IsInvulnerable;
+        }
 
         // ──────────────────────────────────────────────
         // 公开只读属性 (IDamageable 接口实现及状态暴露)
@@ -46,7 +60,7 @@ namespace Game.Combat
         public void ReceiveHit(in DamageRequest req)
         {
             // ── 1. 入口拦截 ──
-            if (!IsAlive || _isInvulnerable) return;
+            if (_execution.Mode == CombatExecutionMode.Replica || !IsAlive || _isInvulnerable) return;
 
             // ── 2. 纯计算 ──
             // DamagePipeline 是无副作用的静态工具：只根据 req 和 defenseProfile 算出最终伤害结果，不直接碰 MonoBehaviour 状态。
@@ -91,11 +105,13 @@ namespace Game.Combat
         /// </summary>
         public void SetInvulnerable(bool value)
         {
+            if (_execution.Mode == CombatExecutionMode.Replica) return;
             _isInvulnerable = value;
         }
         /// <summary>新生命的离散入口：M4复用玩家对象回据点，需要由HP Owner重置并通知现有HUD。</summary>
         public void ResetForNewLife()
         {
+            if (_execution.Mode == CombatExecutionMode.Replica) return;
             _currentHp = _maxHp; _isInvulnerable = false;
             GetComponent<StatusController>()?.ResetForNewLife();
             EventBus<DamageReceivedEvent>.Publish(new DamageReceivedEvent { TargetId = _id, RemainingHp = _currentHp });

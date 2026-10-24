@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using Game.Character;
 using Game.Core;
 using Game.Networking;
 using Mirror;
@@ -16,13 +17,20 @@ namespace Game.Multiplayer
         [Serializable] private sealed class Report
         {
             public string RecordedAtUtc, PhysicsMode;
-            public bool Ready, Frozen, Suppressed, Grounded, Calibrated, RecorderValid, TickCounterValid;
+            public bool Ready, Frozen, Suppressed, Grounded, Calibrated, RecorderValid, TickCounterValid, AttackHeld;
             public uint ServerTick, InputSequence, Epoch;
             public ulong ActorId, EnemyTarget;
             public Vector3 Position, RemotePosition, EnemyPosition;
+            public Vector3 ViewDirection, AimPoint, EnemyAimCenter, BossPosition, BossAimCenter;
             public int RemoteCount, ReplayCount, Frames, Rtt, Jitter, Loss, MeasuredTicks;
             public long PeakFrameBytes, DroppedMessages, TickAllocationEvents;
             public float TimeScale, CorrectionDistance;
+            public float[] ActorHp, ActorMana;
+            public int[] ActorCharges;
+            public int ActiveOutputs;
+            public long SpawnedOutputs, DamageFacts;
+            public long[] FrameGcBytes, FrameSpawnTotals, FrameDamageTotals;
+            public int[] FrameActiveOutputs;
         }
         private Config _config;
         private double _next;
@@ -30,6 +38,9 @@ namespace Game.Multiplayer
         private int _frames, _rtt, _jitter, _loss;
         private long _peak;
         private MovementNetworkChannel _configured;
+        // 仅显式QA进程创建；保留原始逐帧数据，便于分开核对持续热路径与出生/命中等离散生命周期分配。
+        private readonly long[] _frameBytes = new long[240], _frameSpawns = new long[240], _frameDamages = new long[240];
+        private readonly int[] _frameActive = new int[240];
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Install()
         {
@@ -66,6 +77,8 @@ namespace Game.Multiplayer
                 ActorId = actor, Epoch = auth != null && auth.ClientIdentity != null ? auth.ClientIdentity.ConnectionEpoch : 0,
                 Calibrated = _calibrated, RecorderValid = _valid, Frames = _frames, PeakFrameBytes = _peak, Rtt = _rtt, Jitter = _jitter, Loss = _loss,
                 DroppedMessages = channel != null ? channel.DiagnosticDropped : 0 };
+            report.FrameGcBytes = _frameBytes; report.FrameSpawnTotals = _frameSpawns;
+            report.FrameDamageTotals = _frameDamages; report.FrameActiveOutputs = _frameActive;
             if (world != null && world.Registry != null)
             {
                 report.Ready = world.MovementReady; report.Frozen = world.Frozen; report.Suppressed = world.LocalInputSuppressed;
@@ -73,11 +86,39 @@ namespace Game.Multiplayer
                 report.CorrectionDistance = world.LastCorrectionDistance;
                 var driver = world.GetComponent<AuthorityTickDriver>();
                 if (driver != null) { report.TickCounterValid = driver.TickCounterValid; report.MeasuredTicks = driver.MeasuredTicks; report.TickAllocationEvents = driver.TickAllocationEvents; }
-                if (world.LocalPlayer != null) { var pose = world.LocalPlayer.CaptureMovementSnapshot(); report.Position = pose.Position; report.Grounded = pose.IsGrounded; }
+                if (world.LocalPlayer != null)
+                {
+                    var pose = world.LocalPlayer.CaptureMovementSnapshot(); report.Position = pose.Position; report.Grounded = pose.IsGrounded;
+                    // 只读当前真实输入/瞄准结果，用于区分自动化松键与实际瞄偏；绝不替玩家设置镜头或目标。
+                    report.AttackHeld = world.LocalPlayer.IsOnlineAttackHeld;
+                    if (world.LocalPlayer.CameraRoot != null) report.ViewDirection = world.LocalPlayer.CameraRoot.forward;
+                    if (world.LocalPlayer is WizardController wizard) report.AimPoint = wizard.CaptureOnlineCastAim();
+                }
                 for (int i = 0; i < 4; i++) if ((ulong)(i + 1) != actor && world.Registry[i].Connected)
                 { report.RemoteCount++; report.RemotePosition = world.Registry[i].Player.transform.position; }
                 var enemy = world.Registry[4].Enemy;
-                if (enemy != null) { report.EnemyPosition = enemy.transform.position; report.EnemyTarget = enemy.Perception != null ? enemy.Perception.TargetActorId : 0; }
+                if (enemy != null)
+                {
+                    report.EnemyPosition = enemy.transform.position; report.EnemyTarget = enemy.Perception != null ? enemy.Perception.TargetActorId : 0;
+                    var collider = enemy.GetComponent<CharacterController>();
+                    report.EnemyAimCenter = collider != null ? enemy.transform.TransformPoint(collider.center) : enemy.transform.position + Vector3.up;
+                }
+                var boss = world.Registry[6].Boss;
+                if (boss != null)
+                {
+                    report.BossPosition = boss.transform.position;
+                    var collider = boss.GetComponent<CharacterController>();
+                    report.BossAimCenter = collider != null ? boss.transform.TransformPoint(collider.center) : boss.transform.position + Vector3.up;
+                }
+                // 仅诊断写报告时分配数组；Measure 窗口完全停写，不把该 IO 成本混进稳态性能结论。
+                report.ActorHp = new float[8]; report.ActorMana = new float[8]; report.ActorCharges = new int[8];
+                for (int i = 0; i < world.Registry.Capacity; i++)
+                {
+                    if (world.Registry[i].Health != null) report.ActorHp[i] = world.Registry[i].Health.CurrentHp;
+                    if (world.Combat != null && world.Combat.TryGetResources((ulong)i + 1, out var resources))
+                    { report.ActorMana[i] = resources.CurrentMana; report.ActorCharges[i] = resources.RemainingCharges; }
+                }
+                if (world.Combat != null) { report.ActiveOutputs = world.Combat.ActiveOutputs; report.SpawnedOutputs = world.Combat.SpawnedOutputs; report.DamageFacts = world.Combat.DamageFacts; }
             }
             // JSON/磁盘IO是每秒一次的诊断分配；正式Profiler窗口期间完全停写。
             File.WriteAllText(_config.MovementOutput, JsonUtility.ToJson(report, true));
@@ -95,7 +136,19 @@ namespace Game.Multiplayer
             var world = OnlineWorldBootstrap.Active;
             if (world != null) world.GetComponent<AuthorityTickDriver>().StartDiagnosticMeasurement();
             var recorder = ProfilerRecorder.StartNew(ProfilerCategory.Memory, "GC Allocated In Frame", 1);
-            for (int i = 0; i < 240; i++) { yield return null; if (recorder.Valid && recorder.Count > 0) { _frames++; _peak = Math.Max(_peak, recorder.LastValue); } }
+            for (int i = 0; i < 240; i++)
+            {
+                yield return null;
+                if (recorder.Valid && recorder.Count > 0)
+                {
+                    _frameBytes[_frames] = recorder.LastValue; _peak = Math.Max(_peak, recorder.LastValue);
+                    var combat = world != null ? world.Combat : null;
+                    _frameSpawns[_frames] = combat != null ? combat.SpawnedOutputs : 0;
+                    _frameDamages[_frames] = combat != null ? combat.DamageFacts : 0;
+                    _frameActive[_frames] = combat != null ? combat.ActiveOutputs : 0;
+                    _frames++;
+                }
+            }
             _valid = recorder.Valid; recorder.Dispose(); _measuring = false;
             EventBus<OnlineDiagnosticSamplingEvent>.Publish(new OnlineDiagnosticSamplingEvent { Active = false });
         }

@@ -29,15 +29,25 @@ public sealed class AccountService(OnlineDatabase database, ContentManifestValid
             await connection.ExecuteAsync(new CommandDefinition("INSERT INTO Accounts VALUES(@Account,@Username,@Normalized,@Hash,@Now)",
                 new { Account = account, request.Username, Normalized = request.Username.ToUpperInvariant(), Hash = hash, Now = clock.GetUtcNow().UtcDateTime }, transaction, cancellationToken: ct));
             await connection.ExecuteAsync(new CommandDefinition("INSERT INTO Characters VALUES(@Player,@Account,1,'online.hub.spawn'); INSERT INTO Wallets VALUES(@Player,0)", new { Player = player, Account = account }, transaction, cancellationToken: ct));
+            string wand = Guid.NewGuid().ToString("N"), spell = Guid.NewGuid().ToString("N");
             for (int i = 0; i < options.StarterContentIds.Length; i++)
             {
                 string id = options.StarterContentIds[i]; content.RequireItem(id);
-                string instance = Guid.NewGuid().ToString("N");
+                string instance = i == 0 ? wand : spell;
                 await connection.ExecuteAsync(new CommandDefinition("""
-                    INSERT INTO Items VALUES(@Instance,@Player,@Content,1);
-                    INSERT INTO ItemLocations VALUES(@Instance,@Player,'Backpack',@Slot)
-                    """, new { Instance = instance, Player = player, Content = id, Slot = i }, transaction, cancellationToken: ct));
+                    INSERT INTO Items(InstanceId,OwnerCharacterId,ContentId,Revision,RemainingCharges,HasUnlimitedCharges)
+                    VALUES(@Instance,@Player,@Content,1,@Charges,FALSE);
+                    INSERT INTO ItemLocations(InstanceId,OwnerCharacterId,Area,Slot,CombatLocationKind,ParentInstanceId)
+                    VALUES(@Instance,@Player,NULL,0,@Kind,@Parent)
+                    """, new { Instance = instance, Player = player, Content = id, Charges = i == 1 ? options.StarterSpellCharges : 0,
+                    Kind = i == 0 ? 3 : 2, Parent = i == 0 ? null : wand }, transaction, cancellationToken: ct));
             }
+            // 注册是明确业务授权点；DS 只读取冻结结果，不补发、复制或推导无限资格。
+            await connection.ExecuteAsync(new CommandDefinition("""
+                INSERT INTO CharacterCombatLoadouts(CharacterId,SelectedWandInstanceId) VALUES(@Player,@Wand);
+                INSERT INTO OwnedCombatStarterAudits(CharacterId,GrantVersion,Status,WandInstanceId,SpellInstanceId,BeforeJson,RecordedAtUtc)
+                VALUES(@Player,1,'Applied',@Wand,@Spell,JSON_OBJECT('Reason','RegistrationV1','Charges',@Charges),UTC_TIMESTAMP(6))
+                """, new { Player = player, Wand = wand, Spell = spell, Charges = options.StarterSpellCharges }, transaction, cancellationToken: ct));
             await transaction.CommitAsync(ct);
             return new RegisterAccountReply { Username = request.Username };
         }

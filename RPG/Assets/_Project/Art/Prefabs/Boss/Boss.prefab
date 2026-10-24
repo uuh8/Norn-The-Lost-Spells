@@ -4065,6 +4065,58 @@ Transform:
   - {fileID: 6579114665808145638}
   m_Father: {fileID: 940424197792543705}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2030574718895543580
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1630172977367143211}
+  - component: {fileID: 8812722622090886760}
+  m_Layer: 0
+  m_Name: OnlineBossTeleportPresentation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1630172977367143211
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2030574718895543580}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7940037871327440175}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8812722622090886760
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2030574718895543580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ef9751c4cac89a4684440b943f5fc5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI::Game.UI.BossTeleportVfxController
+  _bossHealth: {fileID: 7398128447007756495}
+  _openPrefab: {fileID: 149916, guid: 0d88d744afc3db74fa2ca22ee4cdc6bd, type: 3}
+  _idlePrefab: {fileID: 104922, guid: 95ad8f0ab7272cd40964f3aa95f68eac, type: 3}
+  _closePrefab: {fileID: 148590, guid: ebc51851bf9215b48b032682b03557cb, type: 3}
+  _visualHeightOffset: 1.5
+  _openDuration: 0.35
+  _closeDuration: 0.35
+  _preferExistingPresenter: 1
 --- !u!1 &2087609143541033362
 GameObject:
   m_ObjectHideFlags: 0
@@ -10625,6 +10677,7 @@ Transform:
   m_Children:
   - {fileID: 7062935998844531640}
   - {fileID: 223803713547464271}
+  - {fileID: 1630172977367143211}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &3956887702129054430
@@ -10770,7 +10823,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b71d53b750a96b14d8c0b91369309296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Game.Character::Game.Character.SpellCaster
-  _runSpellSession: {fileID: 0}
   _wand: {fileID: 0}
   _mana: {fileID: 0}
   _traceLevel: 0

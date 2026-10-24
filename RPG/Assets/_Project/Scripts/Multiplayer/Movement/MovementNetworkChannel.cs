@@ -26,6 +26,8 @@ namespace Game.Multiplayer
             _delayedInputs.Configure(rtt, jitter, loss, 1307); _delayedStates.Configure(rtt, jitter, loss, 2701);
         }
         public ulong SimulationHash { get; set; }
+        /// <summary>合法运动输入证明 Client 已处理认证回复；其他复制通道沿用这道跨通道竞争栅栏。</summary>
+        public bool IsActorReady(ulong actorId, uint epoch) => actorId >= 1 && actorId <= 4 && _readyEpochs[(int)actorId - 1] == epoch;
         public long RejectedInputs { get; private set; }
         public event Action<JoinConnectionIdentity, PlayerSimulationFrame> InputReceived;
         public event Action<MovementStateFrame> StateReceived;

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="9" result="Failed(Child)" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-24 08:17:46Z" end-time="2026-10-24 08:18:05Z" duration="19.6969989">
+  <test-suite type="TestSuite" id="1910" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="827" result="Failed" site="Child" start-time="2026-10-24 08:17:46Z" end-time="2026-10-24 08:18:05Z" duration="19.696999" total="9" passed="8" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1026" name="Game.Character.PlayMode.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.PlayMode.Tests.dll" runstate="Runnable" testcasecount="21" result="Passed" start-time="2026-10-24 08:17:46Z" end-time="2026-10-24 08:17:47Z" duration="1.496593" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12136" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1027" name="Game" fullname="Game" runstate="Runnable" testcasecount="21" result="Passed" start-time="2026-10-24 08:17:46Z" end-time="2026-10-24 08:17:47Z" duration="1.473279" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1028" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="21" result="Passed" start-time="2026-10-24 08:17:46Z" end-time="2026-10-24 08:17:47Z" duration="1.467699" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1029" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="21" result="Passed" start-time="2026-10-24 08:17:46Z" end-time="2026-10-24 08:17:47Z" duration="1.448251" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1008" name="N4ServerAnimationPlayModeTests" fullname="Game.Character.Tests.N4ServerAnimationPlayModeTests" classname="Game.Character.Tests.N4ServerAnimationPlayModeTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-24 08:17:46Z" end-time="2026-10-24 08:17:47Z" duration="1.118562" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1011" name="ActualSwordSwingDamagesOneHealthTargetAtMostOnce" fullname="Game.Character.Tests.N4ServerAnimationPlayModeTests.ActualSwordSwingDamagesOneHealthTargetAtMostOnce" methodname="ActualSwordSwingDamagesOneHealthTargetAtMostOnce" classname="Game.Character.Tests.N4ServerAnimationPlayModeTests" runstate="Runnable" seed="1313640209" result="Passed" start-time="2026-10-24 08:17:46Z" end-time="2026-10-24 08:17:46Z" duration="0.733652" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+]]></output>
+              </test-case>
+              <test-case id="1010" name="MagicWeaponPoseMatchesAcrossThreeFramesAndOneCatchUpFrame" fullname="Game.Character.Tests.N4ServerAnimationPlayModeTests.MagicWeaponPoseMatchesAcrossThreeFramesAndOneCatchUpFrame" methodname="MagicWeaponPoseMatchesAcrossThreeFramesAndOneCatchUpFrame" classname="Game.Character.Tests.N4ServerAnimationPlayModeTests" runstate="Runnable" seed="1252905149" result="Passed" start-time="2026-10-24 08:17:46Z" end-time="2026-10-24 08:17:47Z" duration="0.183650" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1009" name="SwordWeaponPoseMatchesAcrossThreeFramesAndOneCatchUpFrame" fullname="Game.Character.Tests.N4ServerAnimationPlayModeTests.SwordWeaponPoseMatchesAcrossThreeFramesAndOneCatchUpFrame" methodname="SwordWeaponPoseMatchesAcrossThreeFramesAndOneCatchUpFrame" classname="Game.Character.Tests.N4ServerAnimationPlayModeTests" runstate="Runnable" seed="1403709114" result="Passed" start-time="2026-10-24 08:17:47Z" end-time="2026-10-24 08:17:47Z" duration="0.179333" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1023" name="WizardBossTeleportTests" fullname="Game.Character.Tests.WizardBossTeleportTests" classname="Game.Character.Tests.WizardBossTeleportTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-24 08:17:47Z" end-time="2026-10-24 08:17:47Z" duration="0.313762" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1024" name="Teleport_LocksDestinationUntilTelegraphThenMovesAndStartsCooldown" fullname="Game.Character.Tests.WizardBossTeleportTests.Teleport_LocksDestinationUntilTelegraphThenMovesAndStartsCooldown" methodname="Teleport_LocksDestinationUntilTelegraphThenMovesAndStartsCooldown" classname="Game.Character.Tests.WizardBossTeleportTests" runstate="Runnable" seed="2000525562" result="Passed" start-time="2026-10-24 08:17:47Z" end-time="2026-10-24 08:17:47Z" duration="0.205526" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Failed to create agent because there is no valid NavMesh
+[EnemyNavigation] Enemy 'Teleport Boss' 的 NavMeshAgent 未贴合已烘焙 NavMesh；请检查出生点和 Agent Type
+]]></output>
+              </test-case>
+              <test-case id="1025" name="Teleport_WhenNoCandidateIsSafe_StaysAndReleasesActionLock" fullname="Game.Character.Tests.WizardBossTeleportTests.Teleport_WhenNoCandidateIsSafe_StaysAndReleasesActionLock" methodname="Teleport_WhenNoCandidateIsSafe_StaysAndReleasesActionLock" classname="Game.Character.Tests.WizardBossTeleportTests" runstate="Runnable" seed="1932915761" result="Passed" start-time="2026-10-24 08:17:47Z" end-time="2026-10-24 08:17:47Z" duration="0.096257" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Failed to create agent because there is no valid NavMesh
+[EnemyNavigation] Enemy 'Teleport Boss' 的 NavMeshAgent 未贴合已烘焙 NavMesh；请检查出生点和 Agent Type
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="1903" name="Game.Run.PlayMode.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.PlayMode.Tests.dll" runstate="Runnable" testcasecount="806" result="Failed" site="Child" start-time="2026-10-24 08:17:47Z" end-time="2026-10-24 08:18:05Z" duration="18.184775" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12136" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1904" name="Game" fullname="Game" runstate="Runnable" testcasecount="806" result="Failed" site="Child" start-time="2026-10-24 08:17:47Z" end-time="2026-10-24 08:18:05Z" duration="18.162876" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1905" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="806" result="Failed" site="Child" start-time="2026-10-24 08:17:47Z" end-time="2026-10-24 08:18:05Z" duration="18.152572" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1906" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="806" result="Failed" site="Child" start-time="2026-10-24 08:17:47Z" end-time="2026-10-24 08:18:05Z" duration="18.131449" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1496" name="OnlineMovementPhysicsPlayModeTests" fullname="Game.Run.Tests.OnlineMovementPhysicsPlayModeTests" classname="Game.Run.Tests.OnlineMovementPhysicsPlayModeTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-24 08:17:47Z" end-time="2026-10-24 08:17:54Z" duration="6.411971" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1497" name="ActualControllerClimbsStepsAndWalkableThirtyDegreeRamp" fullname="Game.Run.Tests.OnlineMovementPhysicsPlayModeTests.ActualControllerClimbsStepsAndWalkableThirtyDegreeRamp" methodname="ActualControllerClimbsStepsAndWalkableThirtyDegreeRamp" classname="Game.Run.Tests.OnlineMovementPhysicsPlayModeTests" runstate="Runnable" seed="142784548" result="Passed" start-time="2026-10-24 08:17:47Z" end-time="2026-10-24 08:17:48Z" duration="1.138864" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1498" name="ActualControllerDoesNotWalkUpFiftyFiveDegreeRamp" fullname="Game.Run.Tests.OnlineMovementPhysicsPlayModeTests.ActualControllerDoesNotWalkUpFiftyFiveDegreeRamp" methodname="ActualControllerDoesNotWalkUpFiftyFiveDegreeRamp" classname="Game.Run.Tests.OnlineMovementPhysicsPlayModeTests" runstate="Runnable" seed="1087398970" result="Passed" start-time="2026-10-24 08:17:48Z" end-time="2026-10-24 08:17:49Z" duration="1.150409" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1499" name="AuthorityEnemyUsesNavMeshDetourInsteadOfCrossingCentralWall" fullname="Game.Run.Tests.OnlineMovementPhysicsPlayModeTests.AuthorityEnemyUsesNavMeshDetourInsteadOfCrossingCentralWall" methodname="AuthorityEnemyUsesNavMeshDetourInsteadOfCrossingCentralWall" classname="Game.Run.Tests.OnlineMovementPhysicsPlayModeTests" runstate="Runnable" seed="1453683394" result="Failed" start-time="2026-10-24 08:17:49Z" end-time="2026-10-24 08:17:54Z" duration="4.106692" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: greater than 3.0999999f
+  But was:  0.0f
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineMovementPhysicsPlayModeTests+<AuthorityEnemyUsesNavMeshDetourInsteadOfCrossingCentralWall>d__14.MoveNext () [0x00252] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\RunPlayMode\OnlineMovementPhysicsPlayModeTests.cs:81
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in .\Library\PackageCache\com.unity.test-framework@aebcb98460c6\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1815" name="WizardGroundingPlayModeTests" fullname="Game.Run.Tests.WizardGroundingPlayModeTests" classname="Game.Run.Tests.WizardGroundingPlayModeTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-24 08:17:54Z" end-time="2026-10-24 08:18:05Z" duration="11.705531" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1816" name="Idle_ActualShoeMeshStaysCloseToGround" fullname="Game.Run.Tests.WizardGroundingPlayModeTests.Idle_ActualShoeMeshStaysCloseToGround" methodname="Idle_ActualShoeMeshStaysCloseToGround" classname="Game.Run.Tests.WizardGroundingPlayModeTests" runstate="Runnable" seed="718819478" result="Passed" start-time="2026-10-24 08:17:54Z" end-time="2026-10-24 08:18:05Z" duration="11.687220" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/playmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

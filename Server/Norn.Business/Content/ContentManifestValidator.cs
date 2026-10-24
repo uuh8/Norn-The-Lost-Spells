@@ -10,14 +10,18 @@ public sealed class ContentManifestValidator
     public static readonly JsonSerializerOptions Json = new() { IncludeFields = true };
     private readonly Dictionary<string, ContentManifestEntry> _items;
     public ContentManifest Manifest { get; }
+    public string GameplayConfigHash { get; }
     public ContentManifestValidator(OnlineOptions options)
     {
         Manifest = JsonSerializer.Deserialize<ContentManifest>(File.ReadAllText(options.ManifestPath), Json) ?? throw new InvalidOperationException("Manifest 为空。");
         if (Manifest.Hash != ContentManifestRules.CalculateHash(Manifest)) throw new InvalidOperationException("Manifest 摘要不符。");
         _items = Manifest.Items.ToDictionary(i => i.ContentId, StringComparer.Ordinal);
-        if (options.StarterContentIds.Length > OnlineInventoryAreas.BackpackCapacity || options.StarterContentIds.Distinct(StringComparer.Ordinal).Count() != options.StarterContentIds.Length)
-            throw new InvalidOperationException("初始物品超出容量或重复。");
+        GameplayConfigHash = options.GameplayConfigHash;
+        if (options.StarterContentIds.Length != 2 || options.StarterSpellCharges is < 1 or > 1000000)
+            throw new InvalidOperationException("初始战斗资产必须明确配置一杖一卡和有限次数。");
         foreach (string id in options.StarterContentIds) RequireItem(id);
+        if (RequireItem(options.StarterContentIds[0]).Kind != 1 || RequireItem(options.StarterContentIds[1]).Kind != 0)
+            throw new InvalidOperationException("初始资产顺序必须为 Wand、Spell，不允许用未知物品兜底。");
     }
     public ContentManifestEntry RequireItem(string id) => _items.TryGetValue(id, out var entry) ? entry : throw new OnlineFailure(409, "UnknownContent");
     public void RequireVersion(uint protocol, string? hash)

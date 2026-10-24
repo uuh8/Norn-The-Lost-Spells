@@ -28,6 +28,8 @@ namespace Game.Character
             _elapsed = 0f;
             _released = false;
             _programIndex = Boss.SelectedProgramIndex;
+            // 每个权威动作先冻结自己的 CommandId；旧弹体/预警的 Payload 保留其原命令，不读取下一次动作。
+            Boss.PrepareAuthorityCast();
             Boss.TriggerCastAnimation();
         }
 

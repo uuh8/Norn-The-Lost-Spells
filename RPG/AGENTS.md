@@ -91,6 +91,12 @@ Production assets are grouped by responsibility, never by development phase/vers
 - Final evidence is `docs/superpowers/evidence/multiplayer/n2-final`; previous n2-1/n2-2 remain historical. Living explainer Task N2-2B and foundation section28 contain implementation and GUI steps. Join.cs is non-pooled handshake; keep field comments in join.proto and never hand-edit generated code.
 - Formal RoomManager and Transport useGUILayout=false (UGUI presentation); enabled inherited OnGUI automatic layout previously caused736B/frame. Prefab/test-lab DualMode=false must be serialized before Awake for Windows IPv4 Raw IO. Final Client NativeSocket=true and calibrated full-frame120-frame connected windows peak0B; this excludes control HTTP/diagnostic IO and Server heartbeat, and proves no Linux/public/IL2CPP/D3D12/encryption acceptance. Preserve failed native-before-layout-fix and diagnostic callstacks rather than replacing them with green data.
 
+### Formal online experience and diagnostic UI boundary
+
+- The user explicitly required on 2026-10-24 that single-player and online use the same P7/P8 scene content, Tab inventory, top-left item/quick bar, crosshair, status Icons, health/mana styles, interaction and character feel. Reuse the existing views/assets; adapt their data sources and authorized commands. Do not maintain a separate production online UI/skin or duplicate inventory implementation.
+- `MovementWorld` and `OnlineCombatHud` currently serve N3/N4 Development technical acceptance. They are not final P7/P8 content and must not be presented as the release experience. Matching/admission/combat acceptance in this fixture does not establish formal UI or level integration.
+- Before formal online release, verify the complete shared P7/P8 player experience separately. Keep `FormalOnlineExperienceAccepted=false` until those shared scenes and views are integrated and tested; production Rooms remain disabled by default. Record this boundary in plans, learning docs and acceptance evidence.
+
 ## Code Conventions
 
 | Category | Style | Example |

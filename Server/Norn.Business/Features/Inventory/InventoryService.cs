@@ -26,20 +26,43 @@ public sealed class InventoryService(OnlineDatabase database, ContentManifestVal
     internal async Task<OnlineProfileReply> ReadSnapshotAsync(MySqlConnection connection, MySqlTransaction tx, string player, CancellationToken ct)
     {
         var row = await connection.QuerySingleOrDefaultAsync<ProfileRow>(new CommandDefinition("""
-            SELECT c.CharacterId,a.Username,c.Version,c.SafeHub,w.Balance FROM Characters c
+            SELECT c.CharacterId,a.Username,c.Version,c.SafeHub,w.Balance,e.SelectedWandInstanceId FROM Characters c
             JOIN Accounts a ON a.AccountId=c.AccountId JOIN Wallets w ON w.CharacterId=c.CharacterId
+            LEFT JOIN CharacterCombatLoadouts e ON e.CharacterId=c.CharacterId
             WHERE c.CharacterId=@Player
             """, new { Player = player }, tx, cancellationToken: ct)) ?? throw new OnlineFailure(404, "ProfileNotFound");
         var items = await connection.QueryAsync<ItemRow>(new CommandDefinition("""
-            SELECT i.InstanceId,i.ContentId,i.Revision,l.Area,l.Slot FROM Items i
-            JOIN ItemLocations l ON l.InstanceId=i.InstanceId AND l.OwnerCharacterId=i.OwnerCharacterId
-            WHERE i.OwnerCharacterId=@Player ORDER BY l.Area,l.Slot,i.InstanceId
+            SELECT i.InstanceId,i.ContentId,i.Revision,i.RemainingCharges,i.HasUnlimitedCharges,l.Area,l.Slot,l.LocationKind,l.ParentInstanceId FROM Items i
+            LEFT JOIN ItemLocations l ON l.InstanceId=i.InstanceId AND l.OwnerCharacterId=i.OwnerCharacterId
+            WHERE i.OwnerCharacterId=@Player ORDER BY l.LocationKind,l.Slot,i.InstanceId
             """, new { Player = player }, tx, cancellationToken: ct));
-        OnlineItemReply[] view = items.Select(i => new OnlineItemReply { InstanceId = i.InstanceId, ContentId = i.ContentId,
-            DisplayName = content.RequireItem(i.ContentId).DisplayName, Area = i.Area, Slot = i.Slot, Revision = i.Revision }).ToArray();
+        ItemRow[] rows = items.ToArray();
+        if (rows.Any(i => i.LocationKind == null)) throw new OnlineFailure(409, "LocationMissing");
+        OnlineItemReply[] view = rows.Select(i => new OnlineItemReply { InstanceId = i.InstanceId, ContentId = i.ContentId,
+            DisplayName = content.RequireItem(i.ContentId).DisplayName, Area = Area(i), Slot = i.Slot, Revision = i.Revision,
+            LocationKind = i.LocationKind!.Value, ParentInstanceId = i.ParentInstanceId ?? "", RemainingCharges = i.RemainingCharges, HasUnlimitedCharges = i.HasUnlimitedCharges }).ToArray();
+        OnlineOwnedAssetSnapshot? combat = null;
+        if (row.SelectedWandInstanceId != null)
+        {
+            // 只投影装备闭包。旧业务 Backpack 是平面槽位，不能在 DS 冒充真实 Bag 父实例或给玩家补包。
+            combat = new OnlineOwnedAssetSnapshot { SchemaVersion = 1, PlayerId = player, InventoryId = player,
+                InventoryVersion = row.Version, GameplayConfigHash = content.GameplayConfigHash, SelectedWandInstanceId = row.SelectedWandInstanceId,
+                Items = rows.Where(i => i.LocationKind is 2 or 3).Select(i => new OnlineOwnedItemSnapshot
+                { InstanceId = i.InstanceId, ContentId = i.ContentId, ParentInstanceId = i.ParentInstanceId ?? "", Revision = i.Revision,
+                    LocationKind = i.LocationKind!.Value, Slot = i.Slot, RemainingCharges = i.RemainingCharges, HasUnlimitedCharges = i.HasUnlimitedCharges,
+                    UseTemplateWandStats = content.RequireItem(i.ContentId).Kind == 1 }).ToArray() };
+        }
         return new OnlineProfileReply { PlayerId = row.CharacterId, Username = row.Username, Version = row.Version, Gold = row.Balance,
             SafeHub = row.SafeHub, BackpackSlots = OnlineInventoryAreas.BackpackCapacity, WarehouseSlots = OnlineInventoryAreas.WarehouseCapacity,
-            ContentManifestHash = content.Manifest.Hash, Items = view };
+            ContentManifestHash = content.Manifest.Hash, Items = view, CombatAssets = combat };
+    }
+
+    internal void FreezeCombatAssets(OnlineProfileReply profile, string run, ulong actor)
+    {
+        var assets = profile.CombatAssets;
+        if (assets == null) throw new OnlineFailure(409, "CombatAssetsUnavailable");
+        assets.RunId = run; assets.ActorId = actor; assets.InventoryId = run + "/" + profile.PlayerId;
+        OwnedCombatAssetRules.Require(assets, profile.PlayerId, content.GameplayConfigHash, content, true);
     }
 
     public async Task<InventoryMoveReply> TryApplyInventoryAsync(string player, InventoryMoveRequest request, CancellationToken ct)
@@ -68,6 +91,9 @@ public sealed class InventoryService(OnlineDatabase database, ContentManifestVal
         string? id = await connection.QuerySingleOrDefaultAsync<string>(new CommandDefinition("SELECT ContentId FROM Items WHERE InstanceId=@Instance AND OwnerCharacterId=@Player", new { Instance = request.InstanceId, Player = player }, tx, cancellationToken: ct));
         if (id == null) throw new OnlineFailure(404, "ItemNotOwned");
         content.RequireItem(id);
+        // 整备 Move 只搬平面背包/仓库项；装着程序的 Wand 不得通过旧端点脱离装备闭包。
+        int? sourceKind = await connection.QuerySingleOrDefaultAsync<int?>(new CommandDefinition("SELECT LocationKind FROM ItemLocations WHERE InstanceId=@Instance AND OwnerCharacterId=@Player", new { Instance = request.InstanceId, Player = player }, tx, cancellationToken: ct));
+        if (sourceKind is not (0 or 1)) throw new OnlineFailure(409, "EquippedItemMoveUnsupported");
         if (await connection.ExecuteScalarAsync<int>(new CommandDefinition("SELECT COUNT(*) FROM ItemLocations WHERE OwnerCharacterId=@Player AND Area=@Area AND Slot=@Slot", new { Player = player, Area = request.Destination, request.Slot }, tx, cancellationToken: ct)) > 0)
             throw new OnlineFailure(409, "SlotOccupied");
         int moved = await connection.ExecuteAsync(new CommandDefinition("UPDATE ItemLocations SET Area=@Area,Slot=@Slot WHERE InstanceId=@Instance AND OwnerCharacterId=@Player", new { Player = player, Area = request.Destination, request.Slot, Instance = request.InstanceId }, tx, cancellationToken: ct));
@@ -81,7 +107,8 @@ public sealed class InventoryService(OnlineDatabase database, ContentManifestVal
     }
 
     private static bool IsId(string? id) => id != null && Guid.TryParseExact(id, "N", out var value) && value.ToString("N") == id;
-    private sealed class ProfileRow { public string CharacterId { get; set; } = ""; public string Username { get; set; } = ""; public uint Version { get; set; } public string SafeHub { get; set; } = ""; public long Balance { get; set; } }
-    private sealed class ItemRow { public string InstanceId { get; set; } = ""; public string ContentId { get; set; } = ""; public uint Revision { get; set; } public string Area { get; set; } = ""; public int Slot { get; set; } }
+    private static string Area(ItemRow item) => item.LocationKind == 3 ? "EquippedWand" : item.LocationKind == 2 ? "WandSlot" : item.Area ?? "";
+    private sealed class ProfileRow { public string CharacterId { get; set; } = ""; public string Username { get; set; } = ""; public uint Version { get; set; } public string SafeHub { get; set; } = ""; public long Balance { get; set; } public string? SelectedWandInstanceId { get; set; } }
+    private sealed class ItemRow { public string InstanceId { get; set; } = ""; public string ContentId { get; set; } = ""; public uint Revision { get; set; } public string? Area { get; set; } public int Slot { get; set; } public int? LocationKind { get; set; } public string? ParentInstanceId { get; set; } public int RemainingCharges { get; set; } public bool HasUnlimitedCharges { get; set; } }
     private sealed class ReceiptRow { public string RequestHash { get; set; } = ""; public string ResultJson { get; set; } = ""; }
 }

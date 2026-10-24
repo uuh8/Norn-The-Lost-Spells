@@ -37,6 +37,18 @@ namespace Game.Character
             _enemy.StayGrounded(); // 施法原地不动
             _elapsed += _enemy.SimulationDeltaTime;
 
+            if (_enemy.IsOnlineCombatAuthority)
+            {
+                AttackDefinition definition = _enemy.Definition != null ? _enemy.Definition.Attack : null;
+                if (definition == null) { Finish(); return; }
+                // Clip 时长是 Editor 导出的 Authoring 秒数；Headless 没有 Animator 也必须按同一出手窗口释放。
+                float duration = _enemy.AttackClipDurationSeconds;
+                if (!_released && _elapsed >= duration * definition.ArrowSpawnTime)
+                { _released = true; _ranged.CastSelectedProgram(); }
+                if (_elapsed >= duration * EndThreshold) Finish();
+                return;
+            }
+
             Animator anim = _enemy.Animator;
             AttackDefinition atk = _enemy.Definition != null ? _enemy.Definition.Attack : null;
             if (anim == null || atk == null) { Finish(); return; }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using Game.Core;
 
 namespace Game.Combat
 {
@@ -7,12 +8,27 @@ namespace Game.Combat
     /// Inspector 中的字段是初始配置（Authoring Data），_currentMana 才是一局游戏中持续变化的 Runtime State。
     /// 挂在施法者身上，由 SpellCaster 查询并扣费，由 UI 只读显示。
     /// </summary>
-    public class ManaComponent : MonoBehaviour
+    public class ManaComponent : MonoBehaviour, ICombatSimulationParticipant
     {
         [SerializeField, Min(1f)] private float _maxMana = 100f;
         [SerializeField, Min(0f)] private float _manaRegenPerSecond = 20f;
         [SerializeField] private float _currentMana;
         [SerializeField] private bool _startFull = true;
+        private CombatExecutionState _execution;
+        public CombatExecutionMode ExecutionMode => _execution.Mode;
+
+        public void ConfigureExecutionMode(CombatExecutionMode mode, CombatSimulationWorld world = null)
+        { _execution.Configure(this, mode, world, CombatTickPhase.AfterPhysics); }
+        public void StepAuthority(float deltaTime, uint serverTick)
+        { if (_execution.TryStep(deltaTime, serverTick)) Regenerate(deltaTime); }
+        public void ApplyReplicatedState(in ManaReplicaSnapshot snapshot)
+        {
+            if (_execution.Mode != CombatExecutionMode.Replica || !float.IsFinite(snapshot.CurrentMana)
+                || !float.IsFinite(snapshot.MaxMana) || snapshot.MaxMana <= 0f) return;
+            _maxMana = snapshot.MaxMana; _currentMana = Mathf.Clamp(snapshot.CurrentMana, 0f, _maxMana);
+        }
+        private void OnEnable() => _execution.Resume(this, CombatTickPhase.AfterPhysics);
+        private void OnDisable() => _execution.Suspend(this);
 
         // 不使用 ScriptableObject 保存当前法力，否则多个角色可能会意外共享同一份可变状态。
 
@@ -33,12 +49,18 @@ namespace Game.Combat
 
         private void Update()
         {
+            if (_execution.Mode != CombatExecutionMode.SinglePlayer) return;
+            Regenerate(Time.deltaTime);
+        }
+
+        private void Regenerate(float deltaTime)
+        {
             if (_currentMana >= _maxMana || _manaRegenPerSecond <= 0f)
                 return;
 
             // Update 每帧执行；“每秒恢复量 × deltaTime”可消除帧率差异。
             // Mathf.Min 保证恢复后的数值不会超过最大法力。
-            _currentMana = Mathf.Min(_maxMana, _currentMana + _manaRegenPerSecond * Time.deltaTime);
+            _currentMana = Mathf.Min(_maxMana, _currentMana + _manaRegenPerSecond * deltaTime);
         }
 
         /// <summary>只查询当前是否支付得起，不修改法力；便于施法前先做完整性检查。</summary>
@@ -54,6 +76,7 @@ namespace Game.Combat
         /// </summary>
         public bool Spend(float amount)
         {
+            if (_execution.Mode == CombatExecutionMode.Replica || !float.IsFinite(amount)) return false;
             float cost = Mathf.Max(0f, amount);
             if (_currentMana < cost)
                 return false;

@@ -129,7 +129,7 @@ namespace Game.Multiplayer
                         // 只有真实认证成功才释放门暂停；UI没有LoadScene权，也不把本地资产带进去。
                         EventBus<DungeonOnlineEntryConfirmedEvent>.Publish(new DungeonOnlineEntryConfirmedEvent { PortalId = _portal });
                         yield return EnterConnectionScene(); _inConnectionScene = true;
-            _phase = OnlineRoomPhase.Connected; Status("已进入联机移动与AI验证副本；可移动、跳跃、冲刺和重连，合作战斗尚未开放。");
+            _phase = OnlineRoomPhase.Connected; Status("已进入合作副本。");
                         yield return Connected();
                         break;
                     }

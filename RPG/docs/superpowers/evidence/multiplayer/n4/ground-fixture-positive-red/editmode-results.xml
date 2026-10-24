@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-24 08:07:43Z" end-time="2026-10-24 08:07:44Z" duration="0.7910264">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2386" result="Failed" site="Child" start-time="2026-10-24 08:07:43Z" end-time="2026-10-24 08:07:44Z" duration="0.791026" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2389" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="44" result="Failed" site="Child" start-time="2026-10-24 08:07:43Z" end-time="2026-10-24 08:07:44Z" duration="0.690276" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12136" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2390" name="Game" fullname="Game" runstate="Runnable" testcasecount="44" result="Failed" site="Child" start-time="2026-10-24 08:07:44Z" end-time="2026-10-24 08:07:44Z" duration="0.596577" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2391" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="44" result="Failed" site="Child" start-time="2026-10-24 08:07:44Z" end-time="2026-10-24 08:07:44Z" duration="0.497344" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2392" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="44" result="Failed" site="Child" start-time="2026-10-24 08:07:44Z" end-time="2026-10-24 08:07:44Z" duration="0.396696" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2378" name="ReplicaAimQueryTests" fullname="Game.Multiplayer.Tests.ReplicaAimQueryTests" classname="Game.Multiplayer.Tests.ReplicaAimQueryTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-24 08:07:44Z" end-time="2026-10-24 08:07:44Z" duration="0.297431" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2388" name="CollisionIgnoredCoopActor_DoesNotBecomeGroundThroughSphereQuery" fullname="Game.Multiplayer.Tests.ReplicaAimQueryTests.CollisionIgnoredCoopActor_DoesNotBecomeGroundThroughSphereQuery" methodname="CollisionIgnoredCoopActor_DoesNotBecomeGroundThroughSphereQuery" classname="Game.Multiplayer.Tests.ReplicaAimQueryTests" runstate="Runnable" seed="1006471274" result="Failed" start-time="2026-10-24 08:07:44Z" end-time="2026-10-24 08:07:44Z" duration="0.187929" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  正控：相同真实几何必须能把未忽略的角色顶部检测为支撑，否则后续false只是空查询。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.ReplicaAimQueryTests.CollisionIgnoredCoopActor_DoesNotBecomeGroundThroughSphereQuery () [0x0012b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\ReplicaAimQueryTests.cs:135
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

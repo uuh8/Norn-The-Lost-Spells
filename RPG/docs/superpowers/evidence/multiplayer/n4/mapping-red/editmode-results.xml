@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Failed(Child)" total="7" passed="4" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-23 12:20:39Z" end-time="2026-10-23 12:20:40Z" duration="1.6601667">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2332" result="Failed" site="Child" start-time="2026-10-23 12:20:39Z" end-time="2026-10-23 12:20:40Z" duration="1.660167" total="7" passed="4" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1251" name="Game.Character.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.Tests.dll" runstate="Runnable" testcasecount="204" result="Passed" start-time="2026-10-23 12:20:39Z" end-time="2026-10-23 12:20:40Z" duration="1.124276" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12532" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1252" name="Game" fullname="Game" runstate="Runnable" testcasecount="204" result="Passed" start-time="2026-10-23 12:20:39Z" end-time="2026-10-23 12:20:40Z" duration="1.031570" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1253" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="204" result="Passed" start-time="2026-10-23 12:20:39Z" end-time="2026-10-23 12:20:40Z" duration="0.934164" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1254" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="204" result="Passed" start-time="2026-10-23 12:20:39Z" end-time="2026-10-23 12:20:40Z" duration="0.833936" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1202" name="OnlineCastDriverTests" fullname="Game.Character.Tests.OnlineCastDriverTests" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-23 12:20:39Z" end-time="2026-10-23 12:20:40Z" duration="0.730774" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1204" name="DuplicateRootCommand_OnlyCommitsOneRealOwnedCast" fullname="Game.Character.Tests.OnlineCastDriverTests.DuplicateRootCommand_OnlyCommitsOneRealOwnedCast" methodname="DuplicateRootCommand_OnlyCommitsOneRealOwnedCast" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="1283735594" result="Passed" start-time="2026-10-23 12:20:39Z" end-time="2026-10-23 12:20:40Z" duration="0.594660" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1203" name="ForeignWandAndInvalidOrigin_AreRejectedWithoutOutputOrCharge" fullname="Game.Character.Tests.OnlineCastDriverTests.ForeignWandAndInvalidOrigin_AreRejectedWithoutOutputOrCharge" methodname="ForeignWandAndInvalidOrigin_AreRejectedWithoutOutputOrCharge" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="885625705" result="Passed" start-time="2026-10-23 12:20:40Z" end-time="2026-10-23 12:20:40Z" duration="0.006761" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1205" name="InsufficientMana_DoesNotSpawnOrConsumeFiniteCharge" fullname="Game.Character.Tests.OnlineCastDriverTests.InsufficientMana_DoesNotSpawnOrConsumeFiniteCharge" methodname="InsufficientMana_DoesNotSpawnOrConsumeFiniteCharge" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="1937057418" result="Passed" start-time="2026-10-23 12:20:40Z" end-time="2026-10-23 12:20:40Z" duration="0.006250" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1206" name="ReinitializingSameRunAndNewEpoch_DoesNotRefillOwnedWorkspace" fullname="Game.Character.Tests.OnlineCastDriverTests.ReinitializingSameRunAndNewEpoch_DoesNotRefillOwnedWorkspace" methodname="ReinitializingSameRunAndNewEpoch_DoesNotRefillOwnedWorkspace" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="50210608" result="Passed" start-time="2026-10-23 12:20:40Z" end-time="2026-10-23 12:20:40Z" duration="0.007746" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="2325" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="22" result="Failed" site="Child" start-time="2026-10-23 12:20:40Z" end-time="2026-10-23 12:20:40Z" duration="0.439010" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12532" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2326" name="Game" fullname="Game" runstate="Runnable" testcasecount="22" result="Failed" site="Child" start-time="2026-10-23 12:20:40Z" end-time="2026-10-23 12:20:40Z" duration="0.428161" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2327" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="22" result="Failed" site="Child" start-time="2026-10-23 12:20:40Z" end-time="2026-10-23 12:20:40Z" duration="0.328788" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2328" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="22" result="Failed" site="Child" start-time="2026-10-23 12:20:40Z" end-time="2026-10-23 12:20:40Z" duration="0.230978" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2296" name="CombatMessageMappingTests" fullname="Game.Multiplayer.Tests.CombatMessageMappingTests" classname="Game.Multiplayer.Tests.CombatMessageMappingTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-23 12:20:40Z" end-time="2026-10-23 12:20:40Z" duration="0.129935" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2297" name="Intent_RoundTripsExactCommandAndClickInstantWorldCoordinates" fullname="Game.Multiplayer.Tests.CombatMessageMappingTests.Intent_RoundTripsExactCommandAndClickInstantWorldCoordinates" methodname="Intent_RoundTripsExactCommandAndClickInstantWorldCoordinates" classname="Game.Multiplayer.Tests.CombatMessageMappingTests" runstate="Runnable" seed="1863828935" result="Failed" start-time="2026-10-23 12:20:40Z" end-time="2026-10-23 12:20:40Z" duration="0.014778" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少 Core 施法意图到正式协议的映射。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.CombatMessageMappingTests.MappingType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\CombatMessageMappingTests.cs:18
+at Game.Multiplayer.Tests.CombatMessageMappingTests.Write (Game.Core.OnlineCastIntent& intent, System.UInt64 hash, Game.NetworkProtocol.CombatCastIntentMessage message) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\CombatMessageMappingTests.cs:24
+at Game.Multiplayer.Tests.CombatMessageMappingTests.Intent_RoundTripsExactCommandAndClickInstantWorldCoordinates () [0x0000d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\CombatMessageMappingTests.cs:48
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2298" name="Read_CopiesValuesBeforeBorrowedProtobufObjectIsReused" fullname="Game.Multiplayer.Tests.CombatMessageMappingTests.Read_CopiesValuesBeforeBorrowedProtobufObjectIsReused" methodname="Read_CopiesValuesBeforeBorrowedProtobufObjectIsReused" classname="Game.Multiplayer.Tests.CombatMessageMappingTests" runstate="Runnable" seed="79148839" result="Failed" start-time="2026-10-23 12:20:40Z" end-time="2026-10-23 12:20:40Z" duration="0.001605" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少 Core 施法意图到正式协议的映射。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.CombatMessageMappingTests.MappingType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\CombatMessageMappingTests.cs:18
+at Game.Multiplayer.Tests.CombatMessageMappingTests.Write (Game.Core.OnlineCastIntent& intent, System.UInt64 hash, Game.NetworkProtocol.CombatCastIntentMessage message) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\CombatMessageMappingTests.cs:24
+at Game.Multiplayer.Tests.CombatMessageMappingTests.Read_CopiesValuesBeforeBorrowedProtobufObjectIsReused () [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\CombatMessageMappingTests.cs:66
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2299" name="Write_ClearsUnknownAuthorityFieldsInsteadOfForwardingThem" fullname="Game.Multiplayer.Tests.CombatMessageMappingTests.Write_ClearsUnknownAuthorityFieldsInsteadOfForwardingThem" methodname="Write_ClearsUnknownAuthorityFieldsInsteadOfForwardingThem" classname="Game.Multiplayer.Tests.CombatMessageMappingTests" runstate="Runnable" seed="2020064943" result="Failed" start-time="2026-10-23 12:20:40Z" end-time="2026-10-23 12:20:40Z" duration="0.015025" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少 Core 施法意图到正式协议的映射。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.CombatMessageMappingTests.MappingType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\CombatMessageMappingTests.cs:18
+at Game.Multiplayer.Tests.CombatMessageMappingTests.Write (Game.Core.OnlineCastIntent& intent, System.UInt64 hash, Game.NetworkProtocol.CombatCastIntentMessage message) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\CombatMessageMappingTests.cs:24
+at Game.Multiplayer.Tests.CombatMessageMappingTests.Write_ClearsUnknownAuthorityFieldsInsteadOfForwardingThem () [0x00043] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\CombatMessageMappingTests.cs:83
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

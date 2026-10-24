@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-24 07:53:01Z" end-time="2026-10-24 07:53:01Z" duration="0.9488394">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2378" result="Failed" site="Child" start-time="2026-10-24 07:53:01Z" end-time="2026-10-24 07:53:01Z" duration="0.948839" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1270" name="Game.Character.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.Tests.dll" runstate="Runnable" testcasecount="218" result="Failed" site="Child" start-time="2026-10-24 07:53:01Z" end-time="2026-10-24 07:53:01Z" duration="0.850688" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12136" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1271" name="Game" fullname="Game" runstate="Runnable" testcasecount="218" result="Failed" site="Child" start-time="2026-10-24 07:53:01Z" end-time="2026-10-24 07:53:01Z" duration="0.758205" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1272" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="218" result="Failed" site="Child" start-time="2026-10-24 07:53:01Z" end-time="2026-10-24 07:53:01Z" duration="0.658049" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1273" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="218" result="Failed" site="Child" start-time="2026-10-24 07:53:01Z" end-time="2026-10-24 07:53:01Z" duration="0.559076" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1222" name="OnlineCastFocusTests" fullname="Game.Character.Tests.OnlineCastFocusTests" classname="Game.Character.Tests.OnlineCastFocusTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-24 07:53:01Z" end-time="2026-10-24 07:53:01Z" duration="0.458051" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="1225" name="NegativeLifecycleEdgeCancelsImmediately_AndPositiveEdgeWaitsForWorldGate" fullname="Game.Character.Tests.OnlineCastFocusTests.NegativeLifecycleEdgeCancelsImmediately_AndPositiveEdgeWaitsForWorldGate" classname="Game.Character.Tests.OnlineCastFocusTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-24 07:53:01Z" end-time="2026-10-24 07:53:01Z" duration="0.356617" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1223" name="NegativeLifecycleEdgeCancelsImmediately_AndPositiveEdgeWaitsForWorldGate(&quot;OnApplicationFocus&quot;,False,True)" fullname="Game.Character.Tests.OnlineCastFocusTests.NegativeLifecycleEdgeCancelsImmediately_AndPositiveEdgeWaitsForWorldGate(&quot;OnApplicationFocus&quot;,False,True)" methodname="NegativeLifecycleEdgeCancelsImmediately_AndPositiveEdgeWaitsForWorldGate" classname="Game.Character.Tests.OnlineCastFocusTests" runstate="Runnable" seed="675414336" result="Failed" start-time="2026-10-24 07:53:01Z" end-time="2026-10-24 07:53:01Z" duration="0.239641" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  失焦/挂起消息本身必须清除施法队列。
+  Expected: False
+  But was:  True
+]]></message>
+                    <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastFocusTests.NegativeLifecycleEdgeCancelsImmediately_AndPositiveEdgeWaitsForWorldGate (System.String callback, System.Boolean blockedValue, System.Boolean resumedValue) [0x00056] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastFocusTests.cs:58
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Game object with animator is inactive
+Game object with animator is inactive
+]]></output>
+                </test-case>
+                <test-case id="1224" name="NegativeLifecycleEdgeCancelsImmediately_AndPositiveEdgeWaitsForWorldGate(&quot;OnApplicationPause&quot;,True,False)" fullname="Game.Character.Tests.OnlineCastFocusTests.NegativeLifecycleEdgeCancelsImmediately_AndPositiveEdgeWaitsForWorldGate(&quot;OnApplicationPause&quot;,True,False)" methodname="NegativeLifecycleEdgeCancelsImmediately_AndPositiveEdgeWaitsForWorldGate" classname="Game.Character.Tests.OnlineCastFocusTests" runstate="Runnable" seed="1714621810" result="Failed" start-time="2026-10-24 07:53:01Z" end-time="2026-10-24 07:53:01Z" duration="0.006233" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  失焦/挂起消息本身必须清除施法队列。
+  Expected: False
+  But was:  True
+]]></message>
+                    <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastFocusTests.NegativeLifecycleEdgeCancelsImmediately_AndPositiveEdgeWaitsForWorldGate (System.String callback, System.Boolean blockedValue, System.Boolean resumedValue) [0x00056] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastFocusTests.cs:58
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Game object with animator is inactive
+Game object with animator is inactive
+Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

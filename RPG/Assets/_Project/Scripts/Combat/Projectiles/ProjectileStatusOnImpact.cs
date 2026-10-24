@@ -1,4 +1,5 @@
 using UnityEngine;
+using Game.Core;
 
 namespace Game.Combat
 {
@@ -13,6 +14,10 @@ namespace Game.Combat
         [SerializeField, Min(0f)] private float _amount = 15f;
 
         private ProjectileBase _projectile;
+        private CombatExecutionMode _executionMode;
+        public CombatExecutionMode ExecutionMode => _executionMode;
+        public void ConfigureExecutionMode(CombatExecutionMode mode, CombatSimulationWorld world = null)
+        { _executionMode = mode; }
 
         private void Awake()
         {
@@ -45,14 +50,14 @@ namespace Game.Combat
         /// </summary>
         public bool TryApply(in ProjectileImpactContext context)
         {
-            if (_amount <= 0f || context.Target == null)
+            if (_executionMode == CombatExecutionMode.Replica || _amount <= 0f || context.Target == null)
                 return false;
 
             Component targetComponent = context.Target as Component;
             StatusController controller = targetComponent != null
                 ? targetComponent.GetComponent<StatusController>()
                 : null;
-            if (controller == null)
+            if (controller == null || controller.ExecutionMode == CombatExecutionMode.Replica)
                 return false;
 
             controller.ApplyStatus(

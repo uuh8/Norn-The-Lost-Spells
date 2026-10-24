@@ -1,4 +1,5 @@
 using UnityEngine;
+using Game.Core;
 
 namespace Game.Combat
 {
@@ -48,29 +49,37 @@ namespace Game.Combat
 
         protected override void OnImpact(Collision collision, IDamageable target, Vector3 hitPoint, bool damaged)
         {
-            SpawnEffect(
-                _explosionPrefab,
-                hitPoint,
-                _explosionRotationEuler,
-                _explosionLifetime,
-                _explosionDamage,
-                0f);
-
-            // Duration=0 明确表示本次法术关闭持续火场；不再偷偷回退到 Prefab 的旧时长。
-            if (_configuredFireFieldDuration > 0f)
+            if (ExecutionMode == CombatExecutionMode.Replica) return;
+            GameObject explosion = null, field = null;
+            try
             {
-                SpawnEffect(
-                    _fireFieldPrefab,
-                    hitPoint,
-                    _fireFieldRotationEuler,
-                    _configuredFireFieldDuration,
-                    _fireFieldDamagePerTick,
-                    _fireFieldTickInterval);
+                explosion = SpawnEffect(_explosionPrefab, hitPoint, _explosionRotationEuler,
+                    _explosionLifetime, _explosionDamage, 0f);
+                if (_configuredFireFieldDuration > 0f)
+                    field = SpawnEffect(_fireFieldPrefab, hitPoint, _fireFieldRotationEuler,
+                        _configuredFireFieldDuration, _fireFieldDamagePerTick, _fireFieldTickInterval);
+                if (ExecutionMode == CombatExecutionMode.Authority)
+                {
+                    CombatOutputIdentity source = GetComponent<CombatOutputIdentity>();
+                    if (source != null)
+                    {
+                        // 先配置并取得两个事实，最后才同步公开；第二个实例失败时客户端不会先收到半份爆炸。
+                        CombatOutputSpawnedEvent explosionFact = explosion != null ? source.CreateChildFact(explosion, _explosionPrefab) : default;
+                        CombatOutputSpawnedEvent fieldFact = field != null ? source.CreateChildFact(field, _fireFieldPrefab) : default;
+                        if (explosion != null) EventBus<CombatOutputSpawnedEvent>.Publish(explosionFact);
+                        if (field != null) EventBus<CombatOutputSpawnedEvent>.Publish(fieldFact);
+                    }
+                }
+            }
+            catch
+            {
+                // 爆炸与火场属于同次命中的产出事务；第二个预算失败时，第一个也不能留着等待自动首跳。
+                CancelSpawnedEffect(explosion); CancelSpawnedEffect(field); throw;
             }
         }
 
         /// <summary>生成一个特效实例，若其上有 AreaDamage 则注入本陨石的阵营，按 lifetime 延时销毁。</summary>
-        private void SpawnEffect(
+        private GameObject SpawnEffect(
             GameObject prefab,
             Vector3 position,
             Vector3 rotationEuler,
@@ -78,19 +87,31 @@ namespace Game.Combat
             float damagePerHit,
             float tickInterval)
         {
-            if (prefab == null) return;
+            if (prefab == null) return null;
             GameObject go = Instantiate(prefab, position, Quaternion.Euler(rotationEuler));
-            // 注入阵营/攻击者，使 AOE 跳过施法者一方、只伤敌人（须在该物体 Start 之前，同帧 Instantiate 后调用即满足）。
-            // 用 GetComponentsInChildren：特效预制体常把 AreaDamage 挂在子物体上，只查根会漏掉 → 漏注入则阵营默认 0 会误伤。
-            AreaDamage[] areas = go.GetComponentsInChildren<AreaDamage>(true);
-            for (int i = 0; i < areas.Length; i++)
+            try
             {
-                areas[i].Init(_attackerId, _attackerTeam);
-                areas[i].ConfigureDamage(damagePerHit, _type);
-                areas[i].ConfigureTickInterval(tickInterval);
-                areas[i].ConfigureDuration(tickInterval > 0f ? lifetime : 0f);
+                if (SimulationWorld != null) SimulationWorld.ConfigureHierarchy(go, ExecutionMode);
+                // 必须在 Start 首跳前注入本次快照；常见 VFX 把 AreaDamage 挂在子物体上，不能只查根节点。
+                AreaDamage[] areas = go.GetComponentsInChildren<AreaDamage>(true);
+                for (int i = 0; i < areas.Length; i++)
+                {
+                    areas[i].ConfigureExecutionMode(ExecutionMode, SimulationWorld);
+                    areas[i].Init(_attackerId, _attackerTeam);
+                    areas[i].ConfigureDamage(damagePerHit, _type);
+                    areas[i].ConfigureTickInterval(tickInterval);
+                    areas[i].ConfigureDuration(tickInterval > 0f ? lifetime : 0f);
+                    if (ExecutionMode == CombatExecutionMode.Authority) areas[i].ConfigureAuthorityLifetime(lifetime, go);
+                }
+                // Authority 火场与 Gameplay Tick 一起冻结；纯表现继续采用 Unity 的延迟销毁。
+                if (ExecutionMode != CombatExecutionMode.Authority || areas.Length == 0) Destroy(go, lifetime);
+                return go;
             }
-            Destroy(go, lifetime);
+            catch
+            {
+                // 容量预检拒绝发生在权限注入之前；若不先停用，克隆体会以默认 SinglePlayer 跑 Start。
+                CancelSpawnedEffect(go); throw;
+            }
         }
     }
 }

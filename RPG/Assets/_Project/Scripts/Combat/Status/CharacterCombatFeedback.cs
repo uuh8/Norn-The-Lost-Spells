@@ -16,6 +16,11 @@ namespace Game.Combat
     [RequireComponent(typeof(HealthComponent))]
     public class CharacterCombatFeedback : MonoBehaviour
     {
+        private CombatExecutionMode _executionMode;
+
+        /// <summary>在线对象的存亡由权威世界管理；表现不能用真实时间 Destroy 偷跑 Frozen。</summary>
+        public void ConfigureExecutionMode(CombatExecutionMode mode)
+        { _executionMode = mode; }
         [Header("引用")]
         [Tooltip("角色 Animator；留空则 Awake 自动在子物体上找")]
         [SerializeField] private Animator _animator;
@@ -29,6 +34,8 @@ namespace Game.Combat
         [SerializeField] private float _dieCrossFade = 0.1f;
         [Tooltip("播放死亡动画后多久销毁本对象（秒）；设成略大于死亡动画时长")]
         [SerializeField] private float _destroyDelay = 2f;
+        /// <summary>在线组合层复用同一份 Prefab 死亡移除时长；只读配置不授予表现组件网络对象的销毁权。</summary>
+        public float DeathRemovalDelay => float.IsFinite(_destroyDelay) ? Mathf.Max(0f, _destroyDelay) : 0f;
         [Tooltip("死亡瞬间禁用的组件（拖入角色控制器 / 输入 / 敌人 AI），防止死后仍能行动")]
         [SerializeField] private Behaviour[] _disableOnDeath;
 
@@ -107,7 +114,7 @@ namespace Game.Combat
 
         private void OnDamageReceived(DamageReceivedEvent e)
         {
-            if (e.TargetId != _id || _dead) return;
+            if (_executionMode == CombatExecutionMode.Authority || e.TargetId != _id || _dead) return;
 
             StartFlash(); // 闪红始终触发（含 DoT，作为"正在受伤"的轻量反馈）
 
@@ -123,13 +130,16 @@ namespace Game.Combat
 
         private void OnDeath(DeathEvent e)
         {
-            if (e.TargetId != _id || _dead) return;
+            if (_executionMode == CombatExecutionMode.Authority || e.TargetId != _id || _dead) return;
             _dead = true;
 
             // 死亡动画
             // CrossFadeInFixedTime是Unity Animator的API，作用是在固定的时间（秒）内，从当前动画平滑过渡到目标动画。
             if (_dieHash != 0 && _animator != null)
                 _animator.CrossFadeInFixedTime(_dieHash, _dieCrossFade, 0);
+
+            // Replica 只播死亡表现；保留身份与同步组件，由网络生命周期统一清理。
+            if (_executionMode == CombatExecutionMode.Replica) return;
 
             // 禁用控制/输入/AI，防止死后仍能行动
             if (_disableOnDeath != null)

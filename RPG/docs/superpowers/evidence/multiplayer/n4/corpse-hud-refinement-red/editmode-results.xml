@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-24 08:31:29Z" end-time="2026-10-24 08:31:30Z" duration="1.1934194">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2398" result="Failed" site="Child" start-time="2026-10-24 08:31:29Z" end-time="2026-10-24 08:31:30Z" duration="1.193419" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2402" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="55" result="Failed" site="Child" start-time="2026-10-24 08:31:29Z" end-time="2026-10-24 08:31:30Z" duration="0.725467" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12136" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2403" name="Game" fullname="Game" runstate="Runnable" testcasecount="55" result="Failed" site="Child" start-time="2026-10-24 08:31:29Z" end-time="2026-10-24 08:31:30Z" duration="0.653031" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2404" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="55" result="Failed" site="Child" start-time="2026-10-24 08:31:29Z" end-time="2026-10-24 08:31:30Z" duration="0.553016" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2405" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="55" result="Failed" site="Child" start-time="2026-10-24 08:31:29Z" end-time="2026-10-24 08:31:30Z" duration="0.455381" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2355" name="OnlineCorpseLifecycleTests" fullname="Game.Multiplayer.Tests.OnlineCorpseLifecycleTests" classname="Game.Multiplayer.Tests.OnlineCorpseLifecycleTests" runstate="Runnable" testcasecount="11" result="Failed" site="Child" start-time="2026-10-24 08:31:30Z" end-time="2026-10-24 08:31:30Z" duration="0.353772" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2366" name="AuthoritativeShorterRemainingWindow_CanShortenButNeverRestartExistingDeadline" fullname="Game.Multiplayer.Tests.OnlineCorpseLifecycleTests.AuthoritativeShorterRemainingWindow_CanShortenButNeverRestartExistingDeadline" methodname="AuthoritativeShorterRemainingWindow_CanShortenButNeverRestartExistingDeadline" classname="Game.Multiplayer.Tests.OnlineCorpseLifecycleTests" runstate="Runnable" seed="941363288" result="Failed" start-time="2026-10-24 08:31:30Z" end-time="2026-10-24 08:31:30Z" duration="0.226336" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  WizardPlayer(Clone)
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineCorpseLifecycleTests.AssertBodyRetired (Game.Multiplayer.NetworkActorRegistry+Slot slot) [0x00026] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineCorpseLifecycleTests.cs:229
+at Game.Multiplayer.Tests.OnlineCorpseLifecycleTests.AuthoritativeShorterRemainingWindow_CanShortenButNeverRestartExistingDeadline () [0x00089] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineCorpseLifecycleTests.cs:195
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2365" name="NewerExpiredActorState_RetiresImmediatelyEvenWhenMovementTickIsStillBehind" fullname="Game.Multiplayer.Tests.OnlineCorpseLifecycleTests.NewerExpiredActorState_RetiresImmediatelyEvenWhenMovementTickIsStillBehind" methodname="NewerExpiredActorState_RetiresImmediatelyEvenWhenMovementTickIsStillBehind" classname="Game.Multiplayer.Tests.OnlineCorpseLifecycleTests" runstate="Runnable" seed="799070257" result="Failed" start-time="2026-10-24 08:31:30Z" end-time="2026-10-24 08:31:30Z" duration="0.011930" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  WizardPlayer(Clone)
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineCorpseLifecycleTests.AssertBodyRetired (Game.Multiplayer.NetworkActorRegistry+Slot slot) [0x00026] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineCorpseLifecycleTests.cs:229
+at Game.Multiplayer.Tests.OnlineCorpseLifecycleTests.NewerExpiredActorState_RetiresImmediatelyEvenWhenMovementTickIsStillBehind () [0x000c4] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineCorpseLifecycleTests.cs:184
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2367" name="RendererCreatedAfterActorBirth_IsIncludedWhenDeathDeadlineRetiresVisuals" fullname="Game.Multiplayer.Tests.OnlineCorpseLifecycleTests.RendererCreatedAfterActorBirth_IsIncludedWhenDeathDeadlineRetiresVisuals" methodname="RendererCreatedAfterActorBirth_IsIncludedWhenDeathDeadlineRetiresVisuals" classname="Game.Multiplayer.Tests.OnlineCorpseLifecycleTests" runstate="Runnable" seed="1187528489" result="Failed" start-time="2026-10-24 08:31:30Z" end-time="2026-10-24 08:31:30Z" duration="0.006117" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  不能只隐藏出生时的模型，留下后来添加的子表现悬空。
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineCorpseLifecycleTests.RendererCreatedAfterActorBirth_IsIncludedWhenDeathDeadlineRetiresVisuals () [0x00090] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineCorpseLifecycleTests.cs:211
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="3967" name="Game.UI.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.UI.Tests.dll" runstate="Runnable" testcasecount="18" result="Failed" site="Child" start-time="2026-10-24 08:31:30Z" end-time="2026-10-24 08:31:30Z" duration="0.351319" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12136" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3968" name="Game" fullname="Game" runstate="Runnable" testcasecount="18" result="Failed" site="Child" start-time="2026-10-24 08:31:30Z" end-time="2026-10-24 08:31:30Z" duration="0.330478" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3969" name="UI" fullname="Game.UI" runstate="Runnable" testcasecount="18" result="Failed" site="Child" start-time="2026-10-24 08:31:30Z" end-time="2026-10-24 08:31:30Z" duration="0.323243" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3970" name="Tests" fullname="Game.UI.Tests" runstate="Runnable" testcasecount="18" result="Failed" site="Child" start-time="2026-10-24 08:31:30Z" end-time="2026-10-24 08:31:30Z" duration="0.224578" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3945" name="OnlineCombatHudTests" fullname="Game.UI.Tests.OnlineCombatHudTests" classname="Game.UI.Tests.OnlineCombatHudTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-24 08:31:30Z" end-time="2026-10-24 08:31:30Z" duration="0.123923" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3949" name="DeadBossHidesHudEvenWhenItsPreviousPhaseIsStillPresent" fullname="Game.UI.Tests.OnlineCombatHudTests.DeadBossHidesHudEvenWhenItsPreviousPhaseIsStillPresent" methodname="DeadBossHidesHudEvenWhenItsPreviousPhaseIsStillPresent" classname="Game.UI.Tests.OnlineCombatHudTests" runstate="Runnable" seed="1184518131" result="Failed" start-time="2026-10-24 08:31:30Z" end-time="2026-10-24 08:31:30Z" duration="0.024318" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Boss 已死亡后，不能永久留下空的 BossBar。
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.OnlineCombatHudTests.DeadBossHidesHudEvenWhenItsPreviousPhaseIsStillPresent () [0x00084] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineCombatHudTests.cs:104
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

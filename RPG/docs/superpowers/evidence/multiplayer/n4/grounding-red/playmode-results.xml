@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-23 07:50:23Z" end-time="2026-10-23 07:50:35Z" duration="11.1213256">
+  <test-suite type="TestSuite" id="1906" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="824" result="Failed" site="Child" start-time="2026-10-23 07:50:23Z" end-time="2026-10-23 07:50:35Z" duration="11.121326" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1899" name="Game.Run.PlayMode.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.PlayMode.Tests.dll" runstate="Runnable" testcasecount="806" result="Failed" site="Child" start-time="2026-10-23 07:50:23Z" end-time="2026-10-23 07:50:35Z" duration="11.099882" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12532" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1900" name="Game" fullname="Game" runstate="Runnable" testcasecount="806" result="Failed" site="Child" start-time="2026-10-23 07:50:23Z" end-time="2026-10-23 07:50:35Z" duration="11.088648" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1901" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="806" result="Failed" site="Child" start-time="2026-10-23 07:50:23Z" end-time="2026-10-23 07:50:35Z" duration="11.078349" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1902" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="806" result="Failed" site="Child" start-time="2026-10-23 07:50:24Z" end-time="2026-10-23 07:50:35Z" duration="11.051307" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1811" name="WizardGroundingPlayModeTests" fullname="Game.Run.Tests.WizardGroundingPlayModeTests" classname="Game.Run.Tests.WizardGroundingPlayModeTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-23 07:50:24Z" end-time="2026-10-23 07:50:35Z" duration="11.039067" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1812" name="Idle_ActualShoeMeshStaysCloseToGround" fullname="Game.Run.Tests.WizardGroundingPlayModeTests.Idle_ActualShoeMeshStaysCloseToGround" methodname="Idle_ActualShoeMeshStaysCloseToGround" classname="Game.Run.Tests.WizardGroundingPlayModeTests" runstate="Runnable" seed="1300343655" result="Failed" start-time="2026-10-23 07:50:24Z" end-time="2026-10-23 07:50:35Z" duration="11.009282" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Idle 鞋底距真实地面的间隙超标；见 Temp/SinglePlayer/wizard-grounding.json sample 0
+  Expected: in range (-0.045,0.045)
+  But was:  0.177760109f
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.WizardGroundingPlayModeTests+<Idle_ActualShoeMeshStaysCloseToGround>d__7.MoveNext () [0x00618] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\RunPlayMode\WizardGroundingPlayModeTests.cs:112
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in .\Library\PackageCache\com.unity.test-framework@aebcb98460c6\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/playmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

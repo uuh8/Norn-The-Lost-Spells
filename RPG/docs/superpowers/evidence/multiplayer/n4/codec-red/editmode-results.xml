@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Failed(Child)" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-23 11:58:26Z" end-time="2026-10-23 11:58:27Z" duration="0.6313103">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2303" result="Failed" site="Child" start-time="2026-10-23 11:58:26Z" end-time="2026-10-23 11:58:27Z" duration="0.631310" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2377" name="Game.Networking.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Networking.Tests.dll" runstate="Runnable" testcasecount="72" result="Failed" site="Child" start-time="2026-10-23 11:58:26Z" end-time="2026-10-23 11:58:27Z" duration="0.534644" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12532" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2378" name="Game" fullname="Game" runstate="Runnable" testcasecount="72" result="Failed" site="Child" start-time="2026-10-23 11:58:26Z" end-time="2026-10-23 11:58:27Z" duration="0.442487" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2379" name="Networking" fullname="Game.Networking" runstate="Runnable" testcasecount="72" result="Failed" site="Child" start-time="2026-10-23 11:58:26Z" end-time="2026-10-23 11:58:27Z" duration="0.341282" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2380" name="Tests" fullname="Game.Networking.Tests" runstate="Runnable" testcasecount="72" result="Failed" site="Child" start-time="2026-10-23 11:58:26Z" end-time="2026-10-23 11:58:27Z" duration="0.244609" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2304" name="CombatCodecTests" fullname="Game.Networking.Tests.CombatCodecTests" classname="Game.Networking.Tests.CombatCodecTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-23 11:58:27Z" end-time="2026-10-23 11:58:27Z" duration="0.143480" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2307" name="DuplicateCommandField_IsRejectedInsteadOfLastWins" fullname="Game.Networking.Tests.CombatCodecTests.DuplicateCommandField_IsRejectedInsteadOfLastWins" methodname="DuplicateCommandField_IsRejectedInsteadOfLastWins" classname="Game.Networking.Tests.CombatCodecTests" runstate="Runnable" seed="358154199" result="Failed" start-time="2026-10-23 11:58:27Z" end-time="2026-10-23 11:58:27Z" duration="0.024360" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少有界战斗协议解码器。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.CombatCodecTests.Create () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\CombatCodecTests.cs:14
+at Game.Networking.Tests.CombatCodecTests.DuplicateCommandField_IsRejectedInsteadOfLastWins () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\CombatCodecTests.cs:41
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2309" name="MissingEpochOrVersion_IsRejected" fullname="Game.Networking.Tests.CombatCodecTests.MissingEpochOrVersion_IsRejected" methodname="MissingEpochOrVersion_IsRejected" classname="Game.Networking.Tests.CombatCodecTests" runstate="Runnable" seed="1839097600" result="Failed" start-time="2026-10-23 11:58:27Z" end-time="2026-10-23 11:58:27Z" duration="0.000616" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少有界战斗协议解码器。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.CombatCodecTests.Create () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\CombatCodecTests.cs:14
+at Game.Networking.Tests.CombatCodecTests.MissingEpochOrVersion_IsRejected () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\CombatCodecTests.cs:52
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2308" name="NonFiniteAim_IsRejected" fullname="Game.Networking.Tests.CombatCodecTests.NonFiniteAim_IsRejected" methodname="NonFiniteAim_IsRejected" classname="Game.Networking.Tests.CombatCodecTests" runstate="Runnable" seed="1100565424" result="Failed" start-time="2026-10-23 11:58:27Z" end-time="2026-10-23 11:58:27Z" duration="0.000468" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少有界战斗协议解码器。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.CombatCodecTests.Create () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\CombatCodecTests.cs:14
+at Game.Networking.Tests.CombatCodecTests.NonFiniteAim_IsRejected () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\CombatCodecTests.cs:47
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2310" name="OversizedOrNonIdentityString_IsRejected" fullname="Game.Networking.Tests.CombatCodecTests.OversizedOrNonIdentityString_IsRejected" methodname="OversizedOrNonIdentityString_IsRejected" classname="Game.Networking.Tests.CombatCodecTests" runstate="Runnable" seed="535404055" result="Failed" start-time="2026-10-23 11:58:27Z" end-time="2026-10-23 11:58:27Z" duration="0.000499" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少有界战斗协议解码器。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.CombatCodecTests.Create () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\CombatCodecTests.cs:14
+at Game.Networking.Tests.CombatCodecTests.OversizedOrNonIdentityString_IsRejected () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\CombatCodecTests.cs:59
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2312" name="Reuse_ClearsFieldsOmittedFromNextFact" fullname="Game.Networking.Tests.CombatCodecTests.Reuse_ClearsFieldsOmittedFromNextFact" methodname="Reuse_ClearsFieldsOmittedFromNextFact" classname="Game.Networking.Tests.CombatCodecTests" runstate="Runnable" seed="2029841828" result="Failed" start-time="2026-10-23 11:58:27Z" end-time="2026-10-23 11:58:27Z" duration="0.000572" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少有界战斗协议解码器。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.CombatCodecTests.Create () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\CombatCodecTests.cs:14
+at Game.Networking.Tests.CombatCodecTests.Reuse_ClearsFieldsOmittedFromNextFact () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\CombatCodecTests.cs:73
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2311" name="SpawnWithoutWhitelistedPrefabKey_IsRejected" fullname="Game.Networking.Tests.CombatCodecTests.SpawnWithoutWhitelistedPrefabKey_IsRejected" methodname="SpawnWithoutWhitelistedPrefabKey_IsRejected" classname="Game.Networking.Tests.CombatCodecTests" runstate="Runnable" seed="906565444" result="Failed" start-time="2026-10-23 11:58:27Z" end-time="2026-10-23 11:58:27Z" duration="0.000540" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少有界战斗协议解码器。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.CombatCodecTests.Create () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\CombatCodecTests.cs:14
+at Game.Networking.Tests.CombatCodecTests.SpawnWithoutWhitelistedPrefabKey_IsRejected () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\CombatCodecTests.cs:66
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2306" name="UnknownField_IsRejectedBeforeItAllocatesUnknownFields" fullname="Game.Networking.Tests.CombatCodecTests.UnknownField_IsRejectedBeforeItAllocatesUnknownFields" methodname="UnknownField_IsRejectedBeforeItAllocatesUnknownFields" classname="Game.Networking.Tests.CombatCodecTests" runstate="Runnable" seed="446157993" result="Failed" start-time="2026-10-23 11:58:27Z" end-time="2026-10-23 11:58:27Z" duration="0.000634" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少有界战斗协议解码器。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.CombatCodecTests.Create () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\CombatCodecTests.cs:14
+at Game.Networking.Tests.CombatCodecTests.UnknownField_IsRejectedBeforeItAllocatesUnknownFields () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\CombatCodecTests.cs:35
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2305" name="ValidIntent_RoundTripsWithoutTrustingActorOrDamageFields" fullname="Game.Networking.Tests.CombatCodecTests.ValidIntent_RoundTripsWithoutTrustingActorOrDamageFields" methodname="ValidIntent_RoundTripsWithoutTrustingActorOrDamageFields" classname="Game.Networking.Tests.CombatCodecTests" runstate="Runnable" seed="1449015201" result="Failed" start-time="2026-10-23 11:58:27Z" end-time="2026-10-23 11:58:27Z" duration="0.000420" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少有界战斗协议解码器。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.CombatCodecTests.Create () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\CombatCodecTests.cs:14
+at Game.Networking.Tests.CombatCodecTests.ValidIntent_RoundTripsWithoutTrustingActorOrDamageFields () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\CombatCodecTests.cs:30
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

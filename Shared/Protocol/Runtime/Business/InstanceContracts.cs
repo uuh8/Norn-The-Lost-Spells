@@ -11,6 +11,7 @@ namespace Game.NetworkProtocol
         public string BusinessBaseUrl = "";
         public uint ProtocolVersion;
         public string BuildVersion = "", ManifestHash = "";
+        public string GameplayConfigHash = ""; // 玩法规则摘要，与物品身份清单分开；旧描述缺失时拒绝战斗入局。
         public int HeartbeatSeconds = 15;
         public int FreezeAfterSeconds = 60;
         public int IdleShutdownSeconds = 180;
@@ -26,6 +27,7 @@ namespace Game.NetworkProtocol
     {
         public uint RoomEpoch, ProtocolVersion;
         public string BuildVersion = "", ManifestHash = "";
+        public string GameplayConfigHash = ""; // DS 必须证明加载了冻结资产对应的规则版本。
         public int ProcessId;
         public long ProcessStartTicks; // UTC DateTime ticks，用来拒绝被复用的PID。
     }

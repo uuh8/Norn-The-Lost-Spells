@@ -33,8 +33,9 @@ namespace Game.Multiplayer
             _launch = JsonUtility.FromJson<InstanceLaunchDescriptor>(File.ReadAllText(path)); _statePath = Path.Combine(Path.GetDirectoryName(path), "state.json");
             _secret = Environment.GetEnvironmentVariable("NORN_INSTANCE_SECRET"); Environment.SetEnvironmentVariable("NORN_INSTANCE_SECRET", null);
             var asset = Resources.Load<TextAsset>("Online/ContentManifest");
+            var combat = Resources.Load<Game.Character.OnlineCombatDefinition>("Online/CombatDefinition");
             var manifest = asset == null ? null : JsonUtility.FromJson<ContentManifest>(asset.text);
-            if (_launch == null || manifest == null || manifest.Hash != ContentManifestRules.CalculateHash(manifest) || _launch.ManifestHash != manifest.Hash || _launch.BuildVersion != manifest.BuildVersion || _launch.ProtocolVersion != manifest.ProtocolVersion || _secret == null || _secret.Length != 64)
+            if (_launch == null || combat == null || combat.WireHash == 0 || _launch.GameplayConfigHash != combat.GameplayConfigHash || manifest == null || manifest.Hash != ContentManifestRules.CalculateHash(manifest) || _launch.ManifestHash != manifest.Hash || _launch.BuildVersion != manifest.BuildVersion || _launch.ProtocolVersion != manifest.ProtocolVersion || _secret == null || _secret.Length != 64)
             { Fail("LaunchCompatibilityMismatch"); yield break; }
             GetComponent<JoinTicketAuthenticator>().ConfigureServer(_launch, _secret); _manager.Configure(_launch.Port); _manager.StartServer();
             yield return null;
@@ -44,6 +45,7 @@ namespace Game.Multiplayer
             if (!NetworkServer.active || !_manager.transport.ServerActive()) { Fail("TransportNotListening"); yield break; }
             using var process = Process.GetCurrentProcess();
             var request = new InstanceReadyRequest { RoomEpoch = _launch.RoomEpoch, ProtocolVersion = manifest.ProtocolVersion, BuildVersion = manifest.BuildVersion, ManifestHash = manifest.Hash,
+                GameplayConfigHash = combat.GameplayConfigHash,
                 ProcessId = process.Id, ProcessStartTicks = process.StartTime.ToUniversalTime().Ticks };
             // 正常父进程先登记PID；小概率竞争时重试Ready，而不是跳过PID校验。
             double deadline = Time.realtimeSinceStartupAsDouble + 35; var retry = new WaitForSecondsRealtime(.5f);

@@ -44,6 +44,9 @@ namespace Game.Project.Editor
                     case "setup-portal-room": RoomLifecycleTools.SetupPortal(); break;
                     case "setup-online-movement": OnlineMovementTools.Setup(); break;
                     case "verify-online-movement": OnlineMovementTools.Verify(); break;
+                    case "align-wizard-feet": CharacterGroundingTools.AlignWizardFeet(); break;
+                    case "setup-online-combat": OnlineCombatTools.Setup(); break;
+                    case "verify-online-combat": OnlineCombatTools.Verify(); break;
                     case "list-native-profilers": PortalProfilerTools.List(); break;
                     case "capture-native-allocations": PortalProfilerTools.Capture(); break;
                     case "build-room-server": RoomLifecycleTools.BuildServer(); break;

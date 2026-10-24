@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-24 02:28:24Z" end-time="2026-10-24 02:28:25Z" duration="0.6347469">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2370" result="Failed" site="Child" start-time="2026-10-24 02:28:24Z" end-time="2026-10-24 02:28:25Z" duration="0.634747" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2366" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="31" result="Failed" site="Child" start-time="2026-10-24 02:28:24Z" end-time="2026-10-24 02:28:25Z" duration="0.533167" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12720" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2367" name="Game" fullname="Game" runstate="Runnable" testcasecount="31" result="Failed" site="Child" start-time="2026-10-24 02:28:24Z" end-time="2026-10-24 02:28:25Z" duration="0.444672" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2368" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="31" result="Failed" site="Child" start-time="2026-10-24 02:28:24Z" end-time="2026-10-24 02:28:25Z" duration="0.343391" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2369" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="31" result="Failed" site="Child" start-time="2026-10-24 02:28:24Z" end-time="2026-10-24 02:28:25Z" duration="0.244052" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2353" name="OnlineOwnedAssetMappingTests" fullname="Game.Multiplayer.Tests.OnlineOwnedAssetMappingTests" classname="Game.Multiplayer.Tests.OnlineOwnedAssetMappingTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-24 02:28:24Z" end-time="2026-10-24 02:28:25Z" duration="0.142383" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2356" name="ExplicitWandStatsAndArrayAreCopiedWithoutChangingSchemaDefault" fullname="Game.Multiplayer.Tests.OnlineOwnedAssetMappingTests.ExplicitWandStatsAndArrayAreCopiedWithoutChangingSchemaDefault" methodname="ExplicitWandStatsAndArrayAreCopiedWithoutChangingSchemaDefault" classname="Game.Multiplayer.Tests.OnlineOwnedAssetMappingTests" runstate="Runnable" seed="2000664420" result="Failed" start-time="2026-10-24 02:28:25Z" end-time="2026-10-24 02:28:25Z" duration="0.022490" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Shared→Core 不得用 JsonUtility 二次转换丢失 nullable 语义。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineOwnedAssetMappingTests.Map (Game.NetworkProtocol.OnlineOwnedAssetSnapshot source) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineOwnedAssetMappingTests.cs:14
+at Game.Multiplayer.Tests.OnlineOwnedAssetMappingTests.ExplicitWandStatsAndArrayAreCopiedWithoutChangingSchemaDefault () [0x0005e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineOwnedAssetMappingTests.cs:38
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2355" name="NonDefaultSpellStatsRemainPresentForFactoryToReject" fullname="Game.Multiplayer.Tests.OnlineOwnedAssetMappingTests.NonDefaultSpellStatsRemainPresentForFactoryToReject" methodname="NonDefaultSpellStatsRemainPresentForFactoryToReject" classname="Game.Multiplayer.Tests.OnlineOwnedAssetMappingTests" runstate="Runnable" seed="968518214" result="Failed" start-time="2026-10-24 02:28:25Z" end-time="2026-10-24 02:28:25Z" duration="0.001338" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Shared→Core 不得用 JsonUtility 二次转换丢失 nullable 语义。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineOwnedAssetMappingTests.Map (Game.NetworkProtocol.OnlineOwnedAssetSnapshot source) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineOwnedAssetMappingTests.cs:14
+at Game.Multiplayer.Tests.OnlineOwnedAssetMappingTests.NonDefaultSpellStatsRemainPresentForFactoryToReject () [0x0003a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineOwnedAssetMappingTests.cs:30
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2354" name="UnityInlineEmptyStatsShellMapsBackToAbsentStats" fullname="Game.Multiplayer.Tests.OnlineOwnedAssetMappingTests.UnityInlineEmptyStatsShellMapsBackToAbsentStats" methodname="UnityInlineEmptyStatsShellMapsBackToAbsentStats" classname="Game.Multiplayer.Tests.OnlineOwnedAssetMappingTests" runstate="Runnable" seed="619595810" result="Failed" start-time="2026-10-24 02:28:25Z" end-time="2026-10-24 02:28:25Z" duration="0.002602" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Shared→Core 不得用 JsonUtility 二次转换丢失 nullable 语义。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineOwnedAssetMappingTests.Map (Game.NetworkProtocol.OnlineOwnedAssetSnapshot source) [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineOwnedAssetMappingTests.cs:14
+at Game.Multiplayer.Tests.OnlineOwnedAssetMappingTests.UnityInlineEmptyStatsShellMapsBackToAbsentStats () [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineOwnedAssetMappingTests.cs:23
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

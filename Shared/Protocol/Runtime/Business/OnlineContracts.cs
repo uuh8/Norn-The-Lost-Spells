@@ -33,6 +33,7 @@ namespace Game.NetworkProtocol
         public int WarehouseSlots;
         public string ContentManifestHash = "";
         public OnlineItemReply[] Items = Array.Empty<OnlineItemReply>();
+        public OnlineOwnedAssetSnapshot CombatAssets; // 旧 JSON 缺失时保持 null；不能凭默认值授予可执行装备。
     }
     [Serializable] public sealed class OnlineItemReply
     {
@@ -42,6 +43,10 @@ namespace Game.NetworkProtocol
         public string Area = "";
         public int Slot;
         public uint Revision;
+        public int LocationKind; // 与 Game.Run.ItemLocationKind 的稳定编号一致；Shared 不引用 Game.Run。
+        public string ParentInstanceId = ""; // WandSlot 指向同一角色真实持有的 Wand；根位置为空。
+        public int RemainingCharges;
+        public bool HasUnlimitedCharges; // 必须由业务授权显式保存，不能从 ContentId 或负数次数推导。
     }
     [Serializable] public sealed class InventoryMoveRequest
     {

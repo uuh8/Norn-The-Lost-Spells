@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-24 13:22:06Z" end-time="2026-10-24 13:22:07Z" duration="0.9631327">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2400" result="Failed" site="Child" start-time="2026-10-24 13:22:06Z" end-time="2026-10-24 13:22:07Z" duration="0.963133" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2404" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="57" result="Failed" site="Child" start-time="2026-10-24 13:22:06Z" end-time="2026-10-24 13:22:07Z" duration="0.862931" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12136" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2405" name="Game" fullname="Game" runstate="Runnable" testcasecount="57" result="Failed" site="Child" start-time="2026-10-24 13:22:06Z" end-time="2026-10-24 13:22:07Z" duration="0.770420" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2406" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="57" result="Failed" site="Child" start-time="2026-10-24 13:22:07Z" end-time="2026-10-24 13:22:07Z" duration="0.673151" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2407" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="57" result="Failed" site="Child" start-time="2026-10-24 13:22:07Z" end-time="2026-10-24 13:22:07Z" duration="0.572743" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2355" name="OnlineCorpseLifecycleTests" fullname="Game.Multiplayer.Tests.OnlineCorpseLifecycleTests" classname="Game.Multiplayer.Tests.OnlineCorpseLifecycleTests" runstate="Runnable" testcasecount="13" result="Failed" site="Child" start-time="2026-10-24 13:22:07Z" end-time="2026-10-24 13:22:07Z" duration="0.469816" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2369" name="BurningSnapshotAfterCorpseAlreadyRetired_UpdatesIntensityWithoutCreatingNewVfx" fullname="Game.Multiplayer.Tests.OnlineCorpseLifecycleTests.BurningSnapshotAfterCorpseAlreadyRetired_UpdatesIntensityWithoutCreatingNewVfx" methodname="BurningSnapshotAfterCorpseAlreadyRetired_UpdatesIntensityWithoutCreatingNewVfx" classname="Game.Multiplayer.Tests.OnlineCorpseLifecycleTests" runstate="Runnable" seed="868757622" result="Failed" start-time="2026-10-24 13:22:07Z" end-time="2026-10-24 13:22:07Z" duration="0.349671" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  已退休角色的重复15Hz死态快照不能再Instantiate状态VFX；保留HP/Intensity等只读事实。
+  Expected: null
+  But was:  <OnFire(Clone) (UnityEngine.GameObject)>
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineCorpseLifecycleTests.BurningSnapshotAfterCorpseAlreadyRetired_UpdatesIntensityWithoutCreatingNewVfx () [0x000d0] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineCorpseLifecycleTests.cs:242
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2368" name="BurningSnapshotAfterDeathBeforeDeadline_IsHiddenWhenCorpseRetiresWithoutDroppingStatusReadModel" fullname="Game.Multiplayer.Tests.OnlineCorpseLifecycleTests.BurningSnapshotAfterDeathBeforeDeadline_IsHiddenWhenCorpseRetiresWithoutDroppingStatusReadModel" methodname="BurningSnapshotAfterDeathBeforeDeadline_IsHiddenWhenCorpseRetiresWithoutDroppingStatusReadModel" classname="Game.Multiplayer.Tests.OnlineCorpseLifecycleTests" runstate="Runnable" seed="142529012" result="Failed" start-time="2026-10-24 13:22:07Z" end-time="2026-10-24 13:22:07Z" duration="0.006025" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  死亡后才收到状态事实所创建的OnFire，也不能越过尸体Deadline继续悬空。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineCorpseLifecycleTests.BurningSnapshotAfterDeathBeforeDeadline_IsHiddenWhenCorpseRetiresWithoutDroppingStatusReadModel () [0x000e8] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineCorpseLifecycleTests.cs:227
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

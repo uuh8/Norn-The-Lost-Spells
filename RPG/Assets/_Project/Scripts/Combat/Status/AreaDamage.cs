@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Game.Core;
 
 namespace Game.Combat
 {
@@ -14,7 +15,7 @@ namespace Game.Combat
     ///
     /// 阵营：生成方用 Init 注入"攻击者是谁/哪一队"，结算时跳过同阵营（友军/自己）。未 Init 则用默认队号 0。
     /// </summary>
-    public class AreaDamage : MonoBehaviour
+    public class AreaDamage : MonoBehaviour, ICombatSimulationParticipant
     {
         [Header("范围伤害")]
         [Tooltip("结算半径（米）")]
@@ -34,7 +35,41 @@ namespace Game.Combat
 
         private const int MaxTargets = 32; // 单次球形检测命中上限（预分配，零 GC）
         private readonly Collider[] _buf = new Collider[MaxTargets];
-        private readonly HashSet<int> _tickHitSet = new HashSet<int>(); // 单次结算内去重（一个角色多碰撞体不重复挨打）
+        private readonly HashSet<int> _tickHitSet = new HashSet<int>(MaxTargets); // 单次结算内去重（一个角色多碰撞体不重复挨打）
+        private CombatExecutionState _execution;
+        private bool _activated;
+        private float _authorityLifetime = -1f;
+        private GameObject _authorityLifetimeOwner;
+        public CombatExecutionMode ExecutionMode => _execution.Mode;
+        public void ConfigureExecutionMode(CombatExecutionMode mode, CombatSimulationWorld world = null)
+        { _execution.Configure(this, mode, world, CombatTickPhase.AfterPhysics); }
+        private void OnEnable() => _execution.Resume(this, CombatTickPhase.AfterPhysics);
+        private void OnDisable() => _execution.Suspend(this);
+        /// <summary>生命周期由权威 Tick 控制；Frozen 不因 Unity 的延迟 Destroy 让火场提前消失。</summary>
+        public void ConfigureAuthorityLifetime(float lifetime, GameObject owner = null)
+        { _authorityLifetime = Mathf.Max(0f, lifetime); _authorityLifetimeOwner = owner; }
+        internal void ActivateAuthority(uint serverTick)
+        {
+            if (_execution.Mode != CombatExecutionMode.Authority || _activated) return;
+            if (_execution.TryStep(float.Epsilon, serverTick)) Activate();
+        }
+        public void StepAuthority(float deltaTime, uint serverTick)
+        {
+            if (!_execution.TryStep(deltaTime, serverTick)) return;
+            // 出生首跳不扣掉整 Tick 的寿命或 DoT 间隔；否则短命爆炸可能在命中前就被清理。
+            if (!_activated) { Activate(); return; }
+            if (_authorityLifetime >= 0f)
+            {
+                _authorityLifetime -= deltaTime;
+                if (_authorityLifetime <= 0f)
+                {
+                    _execution.Suspend(this);
+                    GameObject target = _authorityLifetimeOwner != null ? _authorityLifetimeOwner : gameObject;
+                    target.SetActive(false); Destroy(target); return;
+                }
+            }
+            Tick(deltaTime);
+        }
 
         // 攻击者快照（Init 注入；未注入则默认 0 队）
         private int _attackerId;
@@ -96,6 +131,14 @@ namespace Game.Combat
 
         private void Start()
         {
+            if (_execution.Mode != CombatExecutionMode.SinglePlayer) return;
+            Activate();
+        }
+
+        private void Activate()
+        {
+            if (_activated || _execution.Mode == CombatExecutionMode.Replica) return;
+            _activated = true;
             // 一次性与持续都在此打出第一跳（爆炸的瞬间炸开 / 火场的第一跳）
             ApplyOnce();
             if (_remainingTicks > 0)
@@ -105,10 +148,16 @@ namespace Game.Combat
 
         private void Update()
         {
+            if (_execution.Mode != CombatExecutionMode.SinglePlayer) return;
+            Tick(Time.deltaTime);
+        }
+
+        private void Tick(float deltaTime)
+        {
             if (_tickInterval <= 0f || _remainingTicks == 0)
                 return; // 一次性或已用完有限 Tick Budget：不再处理
 
-            _tickTimer -= Time.deltaTime;
+            _tickTimer -= deltaTime;
             if (_tickTimer <= 0f)
             {
                 _tickTimer += _tickInterval;
@@ -121,6 +170,7 @@ namespace Game.Combat
         /// <summary>对当前半径内所有敌方存活目标各结算一次伤害（单次内去重）。</summary>
         private void ApplyOnce()
         {
+            if (_execution.Mode == CombatExecutionMode.Replica) return;
             _tickHitSet.Clear();
             int count = Physics.OverlapSphereNonAlloc(
                 transform.position, _radius, _buf, _hitMask, QueryTriggerInteraction.Ignore);

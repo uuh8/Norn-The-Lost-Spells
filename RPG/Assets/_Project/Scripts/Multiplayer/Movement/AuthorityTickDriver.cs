@@ -41,10 +41,18 @@ namespace Game.Multiplayer
             int steps = _clock.Advance(Time.unscaledDeltaTime, _world.CanAdvance);
             for (int i = 0; i < steps; i++)
             {
+                // steps 只是帧开始时的预算；上一个 Tick 的出生/命中回调可能使世界 Faulted 或停止。
+                // 必须重新取得推进资格，不能把旧预算当成继续运行 Gameplay 的授权。
+                if (_world == null || !_world.CanAdvance) break;
                 bool sample = _meter != null && MeasuredTicks < 120;
                 if (sample) _meter.Begin();
                 Tick++; _world.Step(FixedStepClock.DeltaTime, Tick);
-                if (_authority) { Physics.SyncTransforms(); Physics.Simulate(FixedStepClock.DeltaTime); }
+                if (_authority && _world != null && _world.CanAdvance)
+                {
+                    // BeforePhysics 内也可能拒绝产出；这种失败必须连本 Tick 的物理推进一起撤销。
+                    Physics.SyncTransforms(); Physics.Simulate(FixedStepClock.DeltaTime);
+                    if (_world != null && _world.CanAdvance) _world.AfterPhysics(FixedStepClock.DeltaTime, Tick);
+                }
                 if (sample)
                 {
                     long count = _meter.End(); MeasuredTicks++;
@@ -52,7 +60,7 @@ namespace Game.Multiplayer
                     if (count >= 0) TickAllocationEvents += count;
                 }
             }
-            _world.PumpSnapshots(Time.realtimeSinceStartupAsDouble);
+            if (_world != null) _world.PumpSnapshots(Time.realtimeSinceStartupAsDouble);
         }
         public void StopDriver()
         {

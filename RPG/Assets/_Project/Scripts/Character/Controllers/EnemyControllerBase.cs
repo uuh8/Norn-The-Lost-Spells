@@ -21,6 +21,8 @@ namespace Game.Character
         [Header("调参")]
         [SerializeField] private float _rotationSpeed = 10f;
         [SerializeField] private float _gravity = -20f;
+        [SerializeField, Min(0f), Tooltip("Editor 从实际 Attack State Clip 导出的秒数；在线时序不读取 Animator.normalizedTime。")]
+        private float _onlineAttackClipDurationSeconds;
 
         protected CharacterController _cc;
         protected Animator _animator;
@@ -41,6 +43,11 @@ namespace Game.Character
         private ICombatActorRosterReadOnly _onlineRoster;
         private bool _hasAuthorityTick;
         private uint _lastAuthorityTick;
+        private bool _onlineCombatConfigured;
+        private CombatSimulationWorld _combatWorld;
+        private SpellCaster _onlineSpellCaster;
+        private ulong _authorityActorId;
+        private ulong _authorityCastSequence;
 
         private float _verticalVelocity;
 
@@ -59,6 +66,10 @@ namespace Game.Character
         public int TeamId => _health != null ? _health.TeamId : 0;
         public bool IsOnlineAuthority => _isOnlineAuthority;
         public bool IsOnlineReplica => _isOnlineReplica;
+        public bool IsOnlineCombatAuthority => _isOnlineAuthority && _onlineCombatConfigured;
+        public ulong AuthorityActorId => _authorityActorId;
+        public uint AuthorityTick => _lastAuthorityTick;
+        public float AttackClipDurationSeconds => _onlineAttackClipDurationSeconds;
         /// <summary>本次领域推进的步长；单机由 Update 注入，在线由统一 Authority Driver 注入。</summary>
         public float SimulationDeltaTime { get; private set; }
 
@@ -73,11 +84,48 @@ namespace Game.Character
             _navigation?.SetReplicaSuspended(false);
         }
 
+        /// <summary>只有完成 N4 装配才开放战斗；原 N3 ConfigureOnlineAuthority 仍只推进运动。</summary>
+        public void ConfigureOnlineCombat(CombatSimulationWorld world, ulong actorId, float attackClipDurationSeconds)
+        {
+            if (!_isOnlineAuthority) throw new System.InvalidOperationException("必须先安装 Authority Roster 再开放敌人战斗。");
+            if (world == null || actorId == 0 || !float.IsFinite(attackClipDurationSeconds) || attackClipDurationSeconds <= 0)
+                throw new System.ArgumentException("敌人权威战斗需要 World、ActorId 与实际 Clip 时长。");
+            _combatWorld = world; _authorityActorId = actorId;
+            _onlineAttackClipDurationSeconds = attackClipDurationSeconds; _onlineCombatConfigured = true;
+            ConfigureCombatComponents();
+            if (_stateMachine != null && _stateMachine.CurrentState == null) _stateMachine.ChangeState(_idleState);
+        }
+        public void ConfigureOnlineCombat(CombatSimulationWorld world, ulong actorId)
+            => ConfigureOnlineCombat(world, actorId, _onlineAttackClipDurationSeconds);
+
+        private void ConfigureCombatComponents()
+        {
+            if (!IsOnlineCombatAuthority) return;
+            _combatWorld.ConfigureHierarchy(gameObject, CombatExecutionMode.Authority);
+            _onlineSpellCaster = GetComponent<SpellCaster>();
+            if (_onlineSpellCaster != null) _onlineSpellCaster.ConfigureAuthority(_combatWorld, _authorityActorId);
+            if (_animator != null)
+            {
+                // 停掉 Rendering 帧的自动采样，每个权威 Tick 手动求值一次；骨骼仍是原武器几何的来源。
+                _animator.applyRootMotion = false; _animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+                _animator.enabled = false;
+            }
+        }
+
+        protected void PrepareAuthorityCast()
+        {
+            if (IsOnlineCombatAuthority && _onlineSpellCaster != null)
+                _onlineSpellCaster.SetAuthorityCommand(++_authorityCastSequence);
+        }
+
         /// <summary>Replica 仅消费快照表现，不执行本机 Enemy AI。</summary>
         public void ConfigureOnlineReplica()
         {
             _isOnlineAuthority = false;
             _isOnlineReplica = true;
+            _onlineCombatConfigured = false;
+            _onlineSpellCaster = GetComponent<SpellCaster>();
+            if (_onlineSpellCaster != null) _onlineSpellCaster.ConfigureReplica();
             _onlineRoster = null;
             ResetOnlineExecution();
             _perception?.BindRoster(null);
@@ -104,7 +152,16 @@ namespace Game.Character
             SimulationDeltaTime = deltaTime;
             StepCooldown();
             _perception.Tick();
-            StepOnlineLocomotion();
+            if (IsOnlineCombatAuthority)
+            {
+                // 先把旧预警推进到当前 Tick，再让 FSM 释放本 Tick 的新施法；新 deadline 不能偷算释放前的 dt。
+                if (_onlineSpellCaster != null) _onlineSpellCaster.StepAuthority(deltaTime, serverTick);
+                // 状态按逻辑时钟开关窗口；先求武器姿态，再由 Combat World 在 Physics 后使用真实 OverlapBox。
+                if (_animator != null && _animator.runtimeAnimatorController != null) _animator.Update(deltaTime);
+                if (_stateMachine.CurrentState == null) _stateMachine.ChangeState(_idleState);
+                _stateMachine.Update();
+            }
+            else StepOnlineLocomotion();
             SyncAnimator();
         }
 
@@ -141,7 +198,11 @@ namespace Game.Character
             if (_isOnlineAuthority || _isOnlineReplica)
                 _perception.BindRoster(_onlineRoster);
             if (_isOnlineReplica)
+            {
                 _navigation.SetReplicaSuspended(true);
+                _onlineSpellCaster = GetComponent<SpellCaster>();
+                if (_onlineSpellCaster != null) _onlineSpellCaster.ConfigureReplica();
+            }
 
             // 攻击/施法动画状态名取自攻击数据(数据驱动)；空 → 0 → CrossFade 不切动画
             string atkStateName = (_definition != null && _definition.Attack != null)
@@ -156,6 +217,7 @@ namespace Game.Character
 
             if (_definition == null)
                 GameLog.Warn("EnemyControllerBase 未配置 EnemyDefinition", "Enemy");
+            if (_onlineCombatConfigured) ConfigureCombatComponents();
         }
 
         private void Start()
@@ -172,14 +234,15 @@ namespace Game.Character
 
         protected virtual void OnDisable()
         {
+            if (IsOnlineCombatAuthority && _onlineSpellCaster != null) _onlineSpellCaster.CancelAuthorityPending();
             EventBus<DamageReceivedEvent>.Unsubscribe(OnDamageReceived);
             EventBus<DeathEvent>.Unsubscribe(OnDeath);
         }
 
         private void OnDamageReceived(DamageReceivedEvent e)
         {
-            // N3 尚未接权威战斗；在线不让本地 Combat 事件切入旧攻击/硬直 FSM。
-            if (_isOnlineAuthority || _isOnlineReplica) return;
+            // Replica 只播放事实；N3 未开放战斗时也保持原运动验收边界。
+            if (_isOnlineReplica || _isOnlineAuthority && !_onlineCombatConfigured) return;
             if (_dead || e.TargetId != _id) return;
             if (e.RemainingHp <= 0f) return;        // 致死那一击交给 OnDeath，不进硬直
             if (!e.TriggerHitReaction) return;      // DoT/环境跳伤：不进硬直，避免被持续伤害锁死
@@ -191,6 +254,7 @@ namespace Game.Character
             if (_isOnlineReplica) return;
             if (_dead || e.TargetId != _id) return;
             _dead = true;
+            if (_onlineSpellCaster != null) _onlineSpellCaster.CancelAuthorityPending();
             _navigation?.DisableNavigation();
             OnDied(); // 子类收尾(如关近战命中窗口)；死亡动画+销毁由 CharacterCombatFeedback 负责
         }
@@ -362,8 +426,20 @@ namespace Game.Character
         /// <summary>数据驱动 CrossFade 进入指定 Animator 状态（hash 为 0 静默跳过）。</summary>
         public void CrossFade(int stateHash)
         {
+            // Replica 的 AI 状态没有播放动画的权限；仅 ApplyReplicaAction 消费权威批准的动作。
+            if (_isOnlineReplica || stateHash == 0) return;
             if (_animator != null && stateHash != 0)
                 _animator.CrossFadeInFixedTime(stateHash, _definition.CrossFadeDuration, 0);
+            if (IsOnlineCombatAuthority) EventBus<OnlineCharacterActionEvent>.Publish(new OnlineCharacterActionEvent
+            { ActorId = _authorityActorId, AnimationHash = stateHash, ActionKind = 1, FadeSeconds = _definition.CrossFadeDuration });
+        }
+
+        /// <summary>只切表现 State，不进入 FSM、打开近战窗口或运行 CastSelectedProgram。</summary>
+        public void ApplyReplicaAction(int animationHash, uint kind, float fadeSeconds)
+        {
+            if (!_isOnlineReplica || _animator == null || animationHash == 0) return;
+            if (kind == 1) _animator.CrossFadeInFixedTime(animationHash, Mathf.Clamp(fadeSeconds, 0, 1), 0, 0);
+            else if (kind == 2) _animator.SetTrigger(animationHash);
         }
 
         private void ApplyGravity()

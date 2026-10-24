@@ -128,6 +128,11 @@ namespace Game.Character
             finally { _isSimulating = false; _isReplaying = false; }
         }
 
+        /// <summary>在线相机晚于角色 Awake 创建；显式替换旧连接界面 Camera，准心射线才与玩家所见一致。</summary>
+        public void BindOnlineCamera(Camera camera)
+        {
+            if (ExecutionMode == PlayerExecutionMode.Prediction && camera != null && camera.isActiveAndEnabled) _mainCamera = camera;
+        }
         public PlayerMovementSnapshot CaptureMovementSnapshot()
         {
             return new PlayerMovementSnapshot
@@ -424,6 +429,8 @@ namespace Game.Character
         // WasReleasedThisFrame用于检测“松开”的下降沿。核心特性：只在松开的那个帧返回 true
         // ReadValue<>()用于读取当前输入的值。例如 moveAction.ReadValue<Vector2>() 读取摇杆偏移。
         public bool IsAttackHeld => _executionMode == PlayerExecutionMode.SinglePlayer && _inputActions != null && _inputActions.Player.Attack.IsPressed();
+        // 在线只暴露本机输入读口；Replay 从不经过 OnlineCastDriver.StepPrediction，因此不会重发施法。
+        public bool IsOnlineAttackHeld => OwnsLocalInput && !_inputSuppressed && _hasFocus && _inputActions != null && _inputActions.Player.Attack.IsPressed();
         public bool AttackPressedThisFrame => _executionMode == PlayerExecutionMode.SinglePlayer && _inputActions != null && _inputActions.Player.Attack.WasPressedThisFrame();
 
         /// <summary>

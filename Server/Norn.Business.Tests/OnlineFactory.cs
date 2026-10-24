@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Dapper;
 using Game.NetworkProtocol;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -17,7 +18,9 @@ public sealed class OnlineFactory : WebApplicationFactory<Program>
     public static readonly JsonSerializerOptions Json = new() { IncludeFields = true };
     public readonly MutableOnlineClock Clock = new();
     public string Connection { get; }
+    internal string MigrationConnection => _migration; // 仅受 guard 保护的测试 Schema；迁移隔离测试不公开/输出凭据。
     public ContentManifest Manifest { get; }
+    public const string GameplayHash = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
     private readonly string _migration, _manifestPath;
     private readonly int _authLimit;
     private readonly bool _rooms, _instances;
@@ -42,6 +45,7 @@ public sealed class OnlineFactory : WebApplicationFactory<Program>
         {
             ["Online:Enabled"] = "true", ["Online:AutoMigrate"] = "true", ["ConnectionStrings:Online"] = Connection,
             ["Online:MigrationConnectionString"] = _migration, ["Online:ManifestPath"] = _manifestPath,
+            ["Online:GameplayConfigHash"] = GameplayHash,
             ["Online:SessionMinutes"] = "30", ["Online:AuthRequestsPerMinute"] = _authLimit.ToString(System.Globalization.CultureInfo.InvariantCulture),
             ["Online:RoomsEnabled"] = _rooms.ToString(), ["Online:Instances:Enabled"] = _instances.ToString()
         }));
@@ -74,8 +78,21 @@ public sealed class OnlineFactory : WebApplicationFactory<Program>
         return login.Token;
     }
     public LoginAccountRequest LoginRequest(string username) => new() { Username = username, Password = Password, ProtocolVersion = Manifest.ProtocolVersion, ContentManifestHash = Manifest.Hash };
+    public async Task<(HttpClient Client, OnlineProfileReply Profile, string Username, string Token)> NewInventoryPlayerAsync()
+    {
+        var player = await NewPlayerAsync();
+        // Move 回归显式构建普通背包测试物品；产品注册仍只有真实装备的一杖一卡，不能反向迁就旧测试赠送副本。
+        await using var db = new MySqlConnector.MySqlConnection(Connection);
+        for (int slot = 0; slot < 2; slot++)
+            await db.ExecuteAsync("""
+                INSERT INTO Items(InstanceId,OwnerCharacterId,ContentId,Revision,RemainingCharges,HasUnlimitedCharges)
+                VALUES(@Instance,@Player,'wandtest.fire',1,5,FALSE);
+                INSERT INTO ItemLocations(InstanceId,OwnerCharacterId,Area,Slot) VALUES(@Instance,@Player,'Backpack',@Slot)
+                """, new { Instance = Guid.NewGuid().ToString("N"), Player = player.Profile.PlayerId, Slot = slot });
+        return (player.Client, (await player.Client.GetFromJsonAsync<OnlineProfileReply>("/api/online/profile", Json))!, player.Username, player.Token);
+    }
     public static InventoryMoveRequest Move(OnlineProfileReply profile, int item = 0, int slot = 0) => new()
-    { CommandId = Guid.NewGuid().ToString("N"), ExpectedVersion = profile.Version, InstanceId = profile.Items[item].InstanceId, Destination = OnlineInventoryAreas.Warehouse, Slot = slot };
+    { CommandId = Guid.NewGuid().ToString("N"), ExpectedVersion = profile.Version, InstanceId = profile.Items.Where(i => i.Area is "Backpack" or "Warehouse").ElementAt(item).InstanceId, Destination = OnlineInventoryAreas.Warehouse, Slot = slot };
     public const string Password = "Norn_test_password_2026!"; // 仅测试账号使用，不是开发库或任何真实用户密码。
 }
 public sealed class MutableOnlineClock : TimeProvider

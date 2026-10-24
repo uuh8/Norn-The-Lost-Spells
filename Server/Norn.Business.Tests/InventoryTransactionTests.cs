@@ -12,7 +12,7 @@ public sealed class InventoryTransactionTests
     [Fact, Trait("Category", "DatabaseIntegration")]
     public async Task ConcurrentMove_OnlyOneVersionCommits()
     {
-        await using var factory = new OnlineFactory(); var player = await factory.NewPlayerAsync();
+        await using var factory = new OnlineFactory(); var player = await factory.NewInventoryPlayerAsync();
         var a = OnlineFactory.Move(player.Profile, 0, 0); var b = OnlineFactory.Move(player.Profile, 1, 1);
         HttpResponseMessage[] replies = await Task.WhenAll(player.Client.PostAsJsonAsync("/api/online/inventory/move", a, OnlineFactory.Json), player.Client.PostAsJsonAsync("/api/online/inventory/move", b, OnlineFactory.Json));
         Assert.Single(replies, r => r.StatusCode == HttpStatusCode.OK);
@@ -28,7 +28,7 @@ public sealed class InventoryTransactionTests
     [Fact, Trait("Category", "DatabaseIntegration")]
     public async Task RepeatedCommand_ReturnsOriginalResult()
     {
-        await using var factory = new OnlineFactory(); var player = await factory.NewPlayerAsync();
+        await using var factory = new OnlineFactory(); var player = await factory.NewInventoryPlayerAsync();
         var move = OnlineFactory.Move(player.Profile);
         using var first = await player.Client.PostAsJsonAsync("/api/online/inventory/move", move, OnlineFactory.Json);
         Assert.Equal(HttpStatusCode.OK, first.StatusCode);
@@ -42,7 +42,7 @@ public sealed class InventoryTransactionTests
     [Fact, Trait("Category", "DatabaseIntegration")]
     public async Task ReusedCommandWithDifferentBody_AndStaleVersion_AreRejected()
     {
-        await using var factory = new OnlineFactory(); var player = await factory.NewPlayerAsync();
+        await using var factory = new OnlineFactory(); var player = await factory.NewInventoryPlayerAsync();
         var move = OnlineFactory.Move(player.Profile);
         Assert.Equal(HttpStatusCode.OK, (await player.Client.PostAsJsonAsync("/api/online/inventory/move", move, OnlineFactory.Json)).StatusCode);
         move.Slot = 1;
@@ -55,7 +55,7 @@ public sealed class InventoryTransactionTests
     [Fact, Trait("Category", "DatabaseIntegration")]
     public async Task OtherPlayersItem_IsNeverWritable()
     {
-        await using var factory = new OnlineFactory(); var a = await factory.NewPlayerAsync(); var b = await factory.NewPlayerAsync();
+        await using var factory = new OnlineFactory(); var a = await factory.NewInventoryPlayerAsync(); var b = await factory.NewInventoryPlayerAsync();
         var move = OnlineFactory.Move(a.Profile); move.InstanceId = b.Profile.Items[0].InstanceId;
         Assert.Equal(HttpStatusCode.NotFound, (await a.Client.PostAsJsonAsync("/api/online/inventory/move", move, OnlineFactory.Json)).StatusCode);
         Assert.Equal(1u, (await b.Client.GetFromJsonAsync<OnlineProfileReply>("/api/online/profile", OnlineFactory.Json))!.Version);
@@ -64,7 +64,7 @@ public sealed class InventoryTransactionTests
     [Fact, Trait("Category", "DatabaseIntegration")]
     public async Task UnknownContent_IsRejectedWithoutChangingLocationOrVersion()
     {
-        await using var factory = new OnlineFactory(); var player = await factory.NewPlayerAsync(); var move = OnlineFactory.Move(player.Profile);
+        await using var factory = new OnlineFactory(); var player = await factory.NewInventoryPlayerAsync(); var move = OnlineFactory.Move(player.Profile);
         await using var connection = new MySqlConnection(factory.Connection); await connection.OpenAsync();
         await connection.ExecuteAsync("UPDATE Items SET ContentId='invalid.not_in_manifest' WHERE InstanceId=@Id", new { Id = move.InstanceId });
         Assert.Equal(HttpStatusCode.Conflict, (await player.Client.PostAsJsonAsync("/api/online/inventory/move", move, OnlineFactory.Json)).StatusCode);
@@ -75,7 +75,7 @@ public sealed class InventoryTransactionTests
     [Fact, Trait("Category", "DatabaseIntegration")]
     public async Task SqlFailureAfterLocationUpdate_RollsBackAllChanges()
     {
-        await using var factory = new OnlineFactory(); var player = await factory.NewPlayerAsync(); var move = OnlineFactory.Move(player.Profile);
+        await using var factory = new OnlineFactory(); var player = await factory.NewInventoryPlayerAsync(); var move = OnlineFactory.Move(player.Profile);
         await using var connection = new MySqlConnection(factory.Connection); await connection.OpenAsync();
         // 用真实 UNSIGNED 溢出在第二步 UPDATE 触发 SQL 错误，检查此前的位置改动确实被回滚。
         await connection.ExecuteAsync("UPDATE Items SET Revision=4294967295 WHERE InstanceId=@Id", new { Id = move.InstanceId });
@@ -88,7 +88,7 @@ public sealed class InventoryTransactionTests
     [Fact, Trait("Category", "DatabaseIntegration")]
     public async Task OccupiedSlot_RejectsWithoutConsumingVersion()
     {
-        await using var factory = new OnlineFactory(); var player = await factory.NewPlayerAsync();
+        await using var factory = new OnlineFactory(); var player = await factory.NewInventoryPlayerAsync();
         Assert.Equal(HttpStatusCode.OK, (await player.Client.PostAsJsonAsync("/api/online/inventory/move", OnlineFactory.Move(player.Profile), OnlineFactory.Json)).StatusCode);
         var second = OnlineFactory.Move(player.Profile, 1); second.ExpectedVersion = 2;
         Assert.Equal(HttpStatusCode.Conflict, (await player.Client.PostAsJsonAsync("/api/online/inventory/move", second, OnlineFactory.Json)).StatusCode);

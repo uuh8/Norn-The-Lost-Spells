@@ -106,7 +106,7 @@ public sealed class RoomInstanceTests
 
     private static InstanceProcessIdentity Identity()
     { using var p = Process.GetCurrentProcess(); return new InstanceProcessIdentity(p.Id, p.StartTime.ToUniversalTime().Ticks, p.MainModule!.FileName!); }
-    private static InstanceReadyRequest Ready(OnlineFactory f, RunData run, InstanceProcessIdentity p) => new() { RoomEpoch = run.Run.RoomEpoch, ProtocolVersion = f.Manifest.ProtocolVersion, BuildVersion = f.Manifest.BuildVersion, ManifestHash = f.Manifest.Hash, ProcessId = p.ProcessId, ProcessStartTicks = p.StartTicks };
+    private static InstanceReadyRequest Ready(OnlineFactory f, RunData run, InstanceProcessIdentity p) => new() { RoomEpoch = run.Run.RoomEpoch, ProtocolVersion = f.Manifest.ProtocolVersion, BuildVersion = f.Manifest.BuildVersion, ManifestHash = f.Manifest.Hash, GameplayConfigHash = OnlineFactory.GameplayHash, ProcessId = p.ProcessId, ProcessStartTicks = p.StartTicks };
     private static async Task<(RoomInstanceService, InstanceLaunchGrant)> MakeReady(OnlineFactory f, RunData run)
     {
         var service = f.Services.GetRequiredService<RoomInstanceService>(); var grant = await service.AllocateAsync(run.Run, default); var p = Identity();

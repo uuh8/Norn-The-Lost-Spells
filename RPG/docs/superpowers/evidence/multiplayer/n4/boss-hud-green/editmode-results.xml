@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="14" result="Passed" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-24 03:12:43Z" end-time="2026-10-24 03:12:45Z" duration="1.6452334">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2376" result="Passed" start-time="2026-10-24 03:12:43Z" end-time="2026-10-24 03:12:45Z" duration="1.645233" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="2374" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="36" result="Passed" start-time="2026-10-24 03:12:43Z" end-time="2026-10-24 03:12:44Z" duration="1.009956" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12720" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="2375" name="Game" fullname="Game" runstate="Runnable" testcasecount="36" result="Passed" start-time="2026-10-24 03:12:43Z" end-time="2026-10-24 03:12:44Z" duration="0.919194" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="2376" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="36" result="Passed" start-time="2026-10-24 03:12:43Z" end-time="2026-10-24 03:12:44Z" duration="0.819975" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="2377" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="36" result="Passed" start-time="2026-10-24 03:12:43Z" end-time="2026-10-24 03:12:44Z" duration="0.720482" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="2324" name="AuthorityTickFailureTests" fullname="Game.Multiplayer.Tests.AuthorityTickFailureTests" classname="Game.Multiplayer.Tests.AuthorityTickFailureTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-24 03:12:44Z" end-time="2026-10-24 03:12:44Z" duration="0.435803" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2325" name="OutputFaultDuringFirstCatchupTick_StopsPhysicsAndRemainingCatchupTicks" fullname="Game.Multiplayer.Tests.AuthorityTickFailureTests.OutputFaultDuringFirstCatchupTick_StopsPhysicsAndRemainingCatchupTicks" methodname="OutputFaultDuringFirstCatchupTick_StopsPhysicsAndRemainingCatchupTicks" classname="Game.Multiplayer.Tests.AuthorityTickFailureTests" runstate="Runnable" seed="1405439314" result="Passed" start-time="2026-10-24 03:12:44Z" end-time="2026-10-24 03:12:44Z" duration="0.325006" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+[OnlineCombat] 输出超出受控 Prefab 表或复制容量，权威世界已停止。
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="2346" name="OnlineCombatReplicationTests" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-24 03:12:44Z" end-time="2026-10-24 03:12:44Z" duration="0.074378" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2350" name="ActorEpochs_AreIndependentAndRejectOnlyTheirOwnStaleGeneration" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests.ActorEpochs_AreIndependentAndRejectOnlyTheirOwnStaleGeneration" methodname="ActorEpochs_AreIndependentAndRejectOnlyTheirOwnStaleGeneration" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" seed="338868590" result="Passed" start-time="2026-10-24 03:12:44Z" end-time="2026-10-24 03:12:44Z" duration="0.025342" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2348" name="DeathFact_OlderLivingSnapshotCannotReviveActorOrRepeatDeath" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests.DeathFact_OlderLivingSnapshotCannotReviveActorOrRepeatDeath" methodname="DeathFact_OlderLivingSnapshotCannotReviveActorOrRepeatDeath" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" seed="1899073325" result="Passed" start-time="2026-10-24 03:12:44Z" end-time="2026-10-24 03:12:44Z" duration="0.004048" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2347" name="NewerHpSnapshot_OlderReliableDamageKeepsInstalledHpAndFeedbackReadModel" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests.NewerHpSnapshot_OlderReliableDamageKeepsInstalledHpAndFeedbackReadModel" methodname="NewerHpSnapshot_OlderReliableDamageKeepsInstalledHpAndFeedbackReadModel" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" seed="1515668218" result="Passed" start-time="2026-10-24 03:12:44Z" end-time="2026-10-24 03:12:44Z" duration="0.003409" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2349" name="OutputStateAfterTermination_CannotRecreateTerminatedOutput" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests.OutputStateAfterTermination_CannotRecreateTerminatedOutput" methodname="OutputStateAfterTermination_CannotRecreateTerminatedOutput" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" seed="1746960731" result="Passed" start-time="2026-10-24 03:12:44Z" end-time="2026-10-24 03:12:44Z" duration="0.015083" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="2351" name="OnlineEncounterEntryTests" fullname="Game.Multiplayer.Tests.OnlineEncounterEntryTests" classname="Game.Multiplayer.Tests.OnlineEncounterEntryTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-24 03:12:44Z" end-time="2026-10-24 03:12:44Z" duration="0.109835" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2356" name="AuthenticationDoesNotGrantTargetEligibility" fullname="Game.Multiplayer.Tests.OnlineEncounterEntryTests.AuthenticationDoesNotGrantTargetEligibility" methodname="AuthenticationDoesNotGrantTargetEligibility" classname="Game.Multiplayer.Tests.OnlineEncounterEntryTests" runstate="Runnable" seed="533131711" result="Passed" start-time="2026-10-24 03:12:44Z" end-time="2026-10-24 03:12:44Z" duration="0.000896" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="2355" name="LoadedActorMustEnterActivationRadius" fullname="Game.Multiplayer.Tests.OnlineEncounterEntryTests.LoadedActorMustEnterActivationRadius" classname="Game.Multiplayer.Tests.OnlineEncounterEntryTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-24 03:12:44Z" end-time="2026-10-24 03:12:44Z" duration="0.100056" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="2352" name="LoadedActorMustEnterActivationRadius(0.0f,False,False)" fullname="Game.Multiplayer.Tests.OnlineEncounterEntryTests.LoadedActorMustEnterActivationRadius(0.0f,False,False)" methodname="LoadedActorMustEnterActivationRadius" classname="Game.Multiplayer.Tests.OnlineEncounterEntryTests" runstate="Runnable" seed="1334468643" result="Passed" start-time="2026-10-24 03:12:44Z" end-time="2026-10-24 03:12:44Z" duration="0.001575" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="2353" name="LoadedActorMustEnterActivationRadius(20.0f,True,False)" fullname="Game.Multiplayer.Tests.OnlineEncounterEntryTests.LoadedActorMustEnterActivationRadius(20.0f,True,False)" methodname="LoadedActorMustEnterActivationRadius" classname="Game.Multiplayer.Tests.OnlineEncounterEntryTests" runstate="Runnable" seed="69988326" result="Passed" start-time="2026-10-24 03:12:44Z" end-time="2026-10-24 03:12:44Z" duration="0.000197" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="2354" name="LoadedActorMustEnterActivationRadius(8.0f,True,True)" fullname="Game.Multiplayer.Tests.OnlineEncounterEntryTests.LoadedActorMustEnterActivationRadius(8.0f,True,True)" methodname="LoadedActorMustEnterActivationRadius" classname="Game.Multiplayer.Tests.OnlineEncounterEntryTests" runstate="Runnable" seed="761271463" result="Passed" start-time="2026-10-24 03:12:44Z" end-time="2026-10-24 03:12:44Z" duration="0.000139" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="3938" name="Game.UI.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.UI.Tests.dll" runstate="Runnable" testcasecount="17" result="Passed" start-time="2026-10-24 03:12:44Z" end-time="2026-10-24 03:12:45Z" duration="0.533576" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12720" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="3939" name="Game" fullname="Game" runstate="Runnable" testcasecount="17" result="Passed" start-time="2026-10-24 03:12:44Z" end-time="2026-10-24 03:12:45Z" duration="0.438148" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3940" name="UI" fullname="Game.UI" runstate="Runnable" testcasecount="17" result="Passed" start-time="2026-10-24 03:12:44Z" end-time="2026-10-24 03:12:45Z" duration="0.427531" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="3941" name="Tests" fullname="Game.UI.Tests" runstate="Runnable" testcasecount="17" result="Passed" start-time="2026-10-24 03:12:44Z" end-time="2026-10-24 03:12:45Z" duration="0.326142" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="3917" name="OnlineCombatHudTests" fullname="Game.UI.Tests.OnlineCombatHudTests" classname="Game.UI.Tests.OnlineCombatHudTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-10-24 03:12:44Z" end-time="2026-10-24 03:12:45Z" duration="0.226749" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="3919" name="BossFactsAndLocalFactsHaveIndependentLabelsAndFractionalCooldown" fullname="Game.UI.Tests.OnlineCombatHudTests.BossFactsAndLocalFactsHaveIndependentLabelsAndFractionalCooldown" methodname="BossFactsAndLocalFactsHaveIndependentLabelsAndFractionalCooldown" classname="Game.UI.Tests.OnlineCombatHudTests" runstate="Runnable" seed="1064902490" result="Passed" start-time="2026-10-24 03:12:45Z" end-time="2026-10-24 03:12:45Z" duration="0.033704" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3922" name="DisableReleasesEventSubscriptionInsteadOfUpdatingHiddenOldScene" fullname="Game.UI.Tests.OnlineCombatHudTests.DisableReleasesEventSubscriptionInsteadOfUpdatingHiddenOldScene" methodname="DisableReleasesEventSubscriptionInsteadOfUpdatingHiddenOldScene" classname="Game.UI.Tests.OnlineCombatHudTests" runstate="Runnable" seed="783236212" result="Passed" start-time="2026-10-24 03:12:45Z" end-time="2026-10-24 03:12:45Z" duration="0.022342" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3920" name="InactiveBossFactsStayHiddenAndDoNotReplaceEncounterLabels" fullname="Game.UI.Tests.OnlineCombatHudTests.InactiveBossFactsStayHiddenAndDoNotReplaceEncounterLabels" methodname="InactiveBossFactsStayHiddenAndDoNotReplaceEncounterLabels" classname="Game.UI.Tests.OnlineCombatHudTests" runstate="Runnable" seed="477947258" result="Passed" start-time="2026-10-24 03:12:45Z" end-time="2026-10-24 03:12:45Z" duration="0.025696" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3918" name="RemotePlayerSnapshotDoesNotReplaceLocalHealthOrResources" fullname="Game.UI.Tests.OnlineCombatHudTests.RemotePlayerSnapshotDoesNotReplaceLocalHealthOrResources" methodname="RemotePlayerSnapshotDoesNotReplaceLocalHealthOrResources" classname="Game.UI.Tests.OnlineCombatHudTests" runstate="Runnable" seed="971052457" result="Passed" start-time="2026-10-24 03:12:45Z" end-time="2026-10-24 03:12:45Z" duration="0.023009" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3921" name="UnchangedRoundedValuesReuseTheSameDigitObjectsAndStrings" fullname="Game.UI.Tests.OnlineCombatHudTests.UnchangedRoundedValuesReuseTheSameDigitObjectsAndStrings" methodname="UnchangedRoundedValuesReuseTheSameDigitObjectsAndStrings" classname="Game.UI.Tests.OnlineCombatHudTests" runstate="Runnable" seed="1356683972" result="Passed" start-time="2026-10-24 03:12:45Z" end-time="2026-10-24 03:12:45Z" duration="0.020378" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

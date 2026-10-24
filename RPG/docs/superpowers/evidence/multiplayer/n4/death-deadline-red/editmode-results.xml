@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-23 17:47:05Z" end-time="2026-10-23 17:47:05Z" duration="0.3206031">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2342" result="Failed" site="Child" start-time="2026-10-23 17:47:05Z" end-time="2026-10-23 17:47:05Z" duration="0.320603" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1252" name="Game.Character.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.Tests.dll" runstate="Runnable" testcasecount="205" result="Failed" site="Child" start-time="2026-10-23 17:47:05Z" end-time="2026-10-23 17:47:05Z" duration="0.288128" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12720" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1253" name="Game" fullname="Game" runstate="Runnable" testcasecount="205" result="Failed" site="Child" start-time="2026-10-23 17:47:05Z" end-time="2026-10-23 17:47:05Z" duration="0.279833" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1254" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="205" result="Failed" site="Child" start-time="2026-10-23 17:47:05Z" end-time="2026-10-23 17:47:05Z" duration="0.272913" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1255" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="205" result="Failed" site="Child" start-time="2026-10-23 17:47:05Z" end-time="2026-10-23 17:47:05Z" duration="0.266350" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1202" name="OnlineCastDriverTests" fullname="Game.Character.Tests.OnlineCastDriverTests" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-23 17:47:05Z" end-time="2026-10-23 17:47:05Z" duration="0.261436" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1207" name="DeadActorCancelsDueSchedulerBeforeItCanRelease" fullname="Game.Character.Tests.OnlineCastDriverTests.DeadActorCancelsDueSchedulerBeforeItCanRelease" methodname="DeadActorCancelsDueSchedulerBeforeItCanRelease" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="1547015667" result="Failed" start-time="2026-10-23 17:47:05Z" end-time="2026-10-23 17:47:05Z" duration="0.238022" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  先检查死亡再推进 deadline；上一 Physics Tick 死亡不能留下最后一发。
+  Expected: 0
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.DeadActorCancelsDueSchedulerBeforeItCanRelease () [0x000c3] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:116
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
