@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-28 17:52:10Z" end-time="2026-10-28 17:52:10Z" duration="0.257445">
+  <test-suite type="TestSuite" id="1940" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="848" result="Failed" site="Child" start-time="2026-10-28 17:52:10Z" end-time="2026-10-28 17:52:10Z" duration="0.257445" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1933" name="Game.Run.PlayMode.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.PlayMode.Tests.dll" runstate="Runnable" testcasecount="827" result="Failed" site="Child" start-time="2026-10-28 17:52:10Z" end-time="2026-10-28 17:52:10Z" duration="0.234399" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27148" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1934" name="Game" fullname="Game" runstate="Runnable" testcasecount="827" result="Failed" site="Child" start-time="2026-10-28 17:52:10Z" end-time="2026-10-28 17:52:10Z" duration="0.225560" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1935" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="827" result="Failed" site="Child" start-time="2026-10-28 17:52:10Z" end-time="2026-10-28 17:52:10Z" duration="0.209433" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1936" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="827" result="Failed" site="Child" start-time="2026-10-28 17:52:10Z" end-time="2026-10-28 17:52:10Z" duration="0.189851" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1110" name="CombatHudResolutionPlayModeTests" fullname="Game.Run.Tests.CombatHudResolutionPlayModeTests" classname="Game.Run.Tests.CombatHudResolutionPlayModeTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-28 17:52:10Z" end-time="2026-10-28 17:52:10Z" duration="0.176511" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1111" name="OriginalSharedHudKeepsItsScreenEdgesAndScaleInThreeActualViewports" fullname="Game.Run.Tests.CombatHudResolutionPlayModeTests.OriginalSharedHudKeepsItsScreenEdgesAndScaleInThreeActualViewports" methodname="OriginalSharedHudKeepsItsScreenEdgesAndScaleInThreeActualViewports" classname="Game.Run.Tests.CombatHudResolutionPlayModeTests" runstate="Runnable" seed="1275159940" result="Failed" start-time="2026-10-28 17:52:10Z" end-time="2026-10-28 17:52:10Z" duration="0.140926" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  隔离截图中存在夹具之外的Canvas；必须先查明来源，不能把重叠当作布局通过。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.CombatHudResolutionPlayModeTests.BuildIsolatedOriginalHud () [0x003d6] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\RunPlayMode\CombatHudResolutionPlayModeTests.cs:173
+at Game.Run.Tests.CombatHudResolutionPlayModeTests+<OriginalSharedHudKeepsItsScreenEdgesAndScaleInThreeActualViewports>d__14.MoveNext () [0x0004a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\RunPlayMode\CombatHudResolutionPlayModeTests.cs:61
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in .\Library\PackageCache\com.unity.test-framework@aebcb98460c6\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/playmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

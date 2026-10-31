@@ -4,6 +4,7 @@ using Game.Core;
 using Game.Run;
 using Game.Skills;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Game.Character
 {
@@ -19,6 +20,8 @@ namespace Game.Character
         private OwnedWandCastAdapter _adapter;
         private OnlineCombatDefinition _definition;
         private OnlineOwnedWorkspace _workspace;
+        private OnlineInventoryReplica _inventoryReplica;
+        private ItemCatalogIndex _inventoryCatalog;
         private CombatSimulationWorld _world;
         private readonly AuthorityActionTimeline _timeline = new AuthorityActionTimeline();
         private readonly OnlineCastReceipt[] _receipts = new OnlineCastReceipt[128];
@@ -39,7 +42,125 @@ namespace Game.Character
         private Transform _presentationVisual;
         private Quaternion _baseVisualLocalRotation;
         private bool _ownsVisualFacing;
+        private InputAction _select1, _select2, _select3;
         public bool IsAuthority => _authority;
+        // Multiplayer 只见 Core 值与基础身份，不从这里取得 Run 的可变库存/事务对象。
+        public uint OwnedInventoryVersion => _workspace != null ? _workspace.InventoryVersion : 0;
+        public string SelectedOwnedWandId => _workspace != null ? _workspace.WandsReadOnly.SelectedWandId : null;
+        public uint SelectedOwnedWandSlotPlusOne => _workspace != null &&
+            _workspace.WandsReadOnly.TryGetState(_workspace.WandsReadOnly.SelectedWandId, out var state) ? (uint)state.SlotIndex + 1 : 0;
+        public bool ClientInventoryReady => _inventoryReplica != null && _inventoryReplica.HasSnapshot && _inventoryReplica.ConnectionEpoch == _epoch;
+        public int ClientInventoryCount => ClientInventoryReady ? _inventoryReplica.Source.ReadOnly.Count : 0;
+        public uint ClientInventoryVersion => ClientInventoryReady ? _inventoryReplica.InventoryVersion : 0;
+        public ulong ClientInventorySequence => ClientInventoryReady ? _inventoryReplica.SnapshotSequence : 0;
+        public float ClientInventoryMana
+        {
+            get
+            {
+                if (!ClientInventoryReady) return 0;
+                var read = _inventoryReplica.Source.WandsReadOnly;
+                return read.TryGetState(read.SelectedWandId, out var state) ? state.CurrentMana : 0;
+            }
+        }
+
+        /// <summary>离散导出当前权威值；重连沿用存活工作区，不从业务 EntrySnapshot 重新发放资源。</summary>
+        public bool TryCaptureInventory(uint epoch, ulong sequence, uint serverTick, out OnlineInventoryPresentationSnapshot snapshot)
+        {
+            snapshot = null;
+            return _authority && epoch == _epoch && _workspace != null &&
+                _workspace.TryCapturePresentation(epoch, sequence, serverTick, out snapshot);
+        }
+
+        /// <summary>
+        /// 网络已验证Owner后，再由Character阻止死亡、施法Timeline及排队输入期间编辑。
+        /// Busy/冻结/限流也经过Workspace的同一去重账本，不能让同ID在稍后的状态下获得第二种结果。
+        /// </summary>
+        public OnlineInventoryCommandReceipt ExecuteInventoryCommand(in OnlineInventoryCommandIntent intent,
+            OnlineInventoryCommandFailure forcedFailure = OnlineInventoryCommandFailure.None)
+        {
+            if (!_authority || _workspace == null || intent.ConnectionEpoch != _epoch)
+                return new OnlineInventoryCommandReceipt { CommandId = intent.CommandId, ConnectionEpoch = intent.ConnectionEpoch,
+                    InventoryVersion = OwnedInventoryVersion, Failure = OnlineInventoryCommandFailure.NotReady };
+            if (!_connected || _wizard.Health == null || !_wizard.Health.IsAlive) forcedFailure = OnlineInventoryCommandFailure.NotReady;
+            else if (forcedFailure == OnlineInventoryCommandFailure.None && (_timeline.IsActive || _queued))
+                forcedFailure = OnlineInventoryCommandFailure.Busy;
+            return forcedFailure == OnlineInventoryCommandFailure.None ? _workspace.ExecuteInventoryCommand(intent)
+                : _workspace.RejectInventoryCommand(intent, forcedFailure);
+        }
+
+        private void BindSelectionInput()
+        {
+            UnbindSelectionInput();
+            if (_authority || !_clientOwner || _definition == null || !isActiveAndEnabled) return;
+            _select1 = _definition.GetWandSelectionAction(0)?.action;
+            _select2 = _definition.GetWandSelectionAction(1)?.action;
+            _select3 = _definition.GetWandSelectionAction(2)?.action;
+            if (_select1 != null) { _select1.performed += SelectFirst; _select1.Enable(); }
+            if (_select2 != null) { _select2.performed += SelectSecond; _select2.Enable(); }
+            if (_select3 != null) { _select3.performed += SelectThird; _select3.Enable(); }
+        }
+        private void UnbindSelectionInput()
+        {
+            // InputActionReference指向共享Asset，不在此Disable整个Action，避免移除一个订阅者时关掉其他原控件。
+            if (_select1 != null) _select1.performed -= SelectFirst;
+            if (_select2 != null) _select2.performed -= SelectSecond;
+            if (_select3 != null) _select3.performed -= SelectThird;
+            _select1 = _select2 = _select3 = null;
+        }
+        private void SelectFirst(InputAction.CallbackContext _) => RequestWandSelection(0);
+        private void SelectSecond(InputAction.CallbackContext _) => RequestWandSelection(1);
+        private void SelectThird(InputAction.CallbackContext _) => RequestWandSelection(2);
+        public bool RequestWandSelection(int slot)
+        {
+            if (_authority || !_clientOwner || !Ready || _suppressed || Time.timeScale <= 0 || !Application.isFocused ||
+                !ClientInventoryReady || _wizard.Health == null || !_wizard.Health.IsAlive) return false;
+            var read = _inventoryReplica.Source.WandsReadOnly;
+            if (!read.TryGetSlot(slot, out var state) || string.IsNullOrEmpty(state.InstanceId) || state.InstanceId == read.SelectedWandId) return false;
+            EventBus<OnlineInventoryCommandRequestedEvent>.Publish(new OnlineInventoryCommandRequestedEvent
+            { ActorId = _actor, CallerId = GetInstanceID(), Intent = new OnlineInventoryCommandIntent
+                { CommandId = OnlineInventoryCommandIds.Next(), ConnectionEpoch = _epoch,
+                    ExpectedInventoryVersion = _inventoryReplica.InventoryVersion, Kind = OnlineInventoryCommandKind.SelectWand,
+                    ItemId = state.InstanceId, TargetSlot = slot } });
+            return true;
+        }
+
+        /// <summary>
+        /// 网络层的 Core DTO 在 Character 内转成 Run 只读模型，CatalogIndex 也在此创建并缓存。
+        /// 这条路径不绑定 OwnedWandCastAdapter 的 Authority Workspace，不会在 Client 扣费或回蓝。
+        /// </summary>
+        public bool InstallClientInventory(in OnlineInventoryPresentationIdentity expected,
+            OnlineInventoryPresentationSnapshot snapshot, out string error)
+        {
+            error = null;
+            if (_authority || !_clientOwner || _definition == null || expected.ActorId != _actor || expected.ConnectionEpoch != _epoch)
+            { error = "库存快照不属于当前本机角色。"; return false; }
+            if (_inventoryCatalog == null && !_definition.Catalog.TryCreateIndex(out _inventoryCatalog, out error)) return false;
+            EnsureInventoryReplica();
+            if (!_inventoryReplica.Install(expected, snapshot, _inventoryCatalog, out error)) return false;
+            var read = _inventoryReplica.Source.WandsReadOnly;
+            if (read.TryGetProgram(read.SelectedWandId, out var program) && read.TryGetState(read.SelectedWandId, out var state))
+            {
+                // 次数变化不等于换程序；相同来源不重置攻击缓冲/按住连续施法的手感。
+                if (_clientWand != read.SelectedWandId || _clientProgramRevision != program.ProgramRevision)
+                    InstallClientSetup(read.SelectedWandId, program.ProgramRevision, state.CastCooldown);
+            }
+            return true;
+        }
+
+        /// <summary>ActorState 高频事实只写固定大小的资源值；不重建物品数组，也不从Render deltaTime推算权威余额。</summary>
+        public void InstallClientInventoryResources(uint epoch, uint serverTick, uint slotPlusOne, uint revision, float mana, float cooldown)
+        {
+            if (_authority || !_clientOwner || epoch != _epoch || serverTick == 0 || revision == 0 ||
+                slotPlusOne < 1 || slotPlusOne > 3) return;
+            EnsureInventoryReplica();
+            _inventoryReplica.ApplySlotResources(epoch, serverTick, slotPlusOne, revision, mana, cooldown);
+        }
+        private void EnsureInventoryReplica()
+        {
+            if (_inventoryReplica != null) return;
+            _inventoryReplica = GetComponent<OnlineInventoryReplica>();
+            if (_inventoryReplica == null) _inventoryReplica = gameObject.AddComponent<OnlineInventoryReplica>();
+        }
         public bool Ready => _definition != null && _connected && (_authority ? _workspace != null : _clientOwner && _clientProgramRevision != 0);
         public ulong ActorId => _actor;
         public event Action<OnlineCastIntent> IntentProduced;
@@ -98,6 +219,7 @@ namespace Game.Character
         {
             Cache(); _actor = actorId; _definition = definition; _clientOwner = localOwner; _authority = false;
             _caster.ConfigureReplica(); SetConnection(epoch, true);
+            BindSelectionInput();
         }
         public void SetConnection(uint epoch, bool connected)
         {
@@ -291,7 +413,7 @@ namespace Game.Character
             _wizard?.SetOnlineActionPresentation(false);
             if (_authority) { _adapter?.CancelOutstanding(); _caster?.CancelAuthorityPending(); }
         }
-        private void OnEnable() => EventBus<DeathEvent>.Subscribe(OnActorDeath);
+        private void OnEnable() { EventBus<DeathEvent>.Subscribe(OnActorDeath); BindSelectionInput(); }
         private void OnApplicationFocus(bool focused)
         {
             // 必须保留失焦边沿；若同一轮 Update 前失焦又回焦，只轮询最终值会漏掉取消。
@@ -327,7 +449,7 @@ namespace Game.Character
             // 在同步 DeathEvent 内取消，与该 Tick 后续角色推进之间没有可出手的空隙。
             if (fact.TargetId == gameObject.GetInstanceID()) { CancelPending(); if (!_authority) SetBlocked(true); }
         }
-        private void OnDisable() { EventBus<DeathEvent>.Unsubscribe(OnActorDeath); CancelPending(); }
+        private void OnDisable() { EventBus<DeathEvent>.Unsubscribe(OnActorDeath); UnbindSelectionInput(); CancelPending(); }
         private void OnDestroy() { CancelPending(); _workspace?.Dispose(); _workspace = null; }
     }
 }

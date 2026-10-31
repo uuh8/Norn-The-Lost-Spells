@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-25 00:12:10Z" end-time="2026-10-25 00:12:10Z" duration="0.6337052">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2421" result="Failed" site="Child" start-time="2026-10-25 00:12:10Z" end-time="2026-10-25 00:12:10Z" duration="0.633705" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3740" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="687" result="Failed" site="Child" start-time="2026-10-25 00:12:10Z" end-time="2026-10-25 00:12:10Z" duration="0.533493" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12136" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3741" name="Game" fullname="Game" runstate="Runnable" testcasecount="687" result="Failed" site="Child" start-time="2026-10-25 00:12:10Z" end-time="2026-10-25 00:12:10Z" duration="0.444238" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3742" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="687" result="Failed" site="Child" start-time="2026-10-25 00:12:10Z" end-time="2026-10-25 00:12:10Z" duration="0.344257" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3743" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="687" result="Failed" site="Child" start-time="2026-10-25 00:12:10Z" end-time="2026-10-25 00:12:10Z" duration="0.245423" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3338" name="SharedInventoryPresentationTests" fullname="Game.Run.Tests.SharedInventoryPresentationTests" classname="Game.Run.Tests.SharedInventoryPresentationTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-25 00:12:10Z" end-time="2026-10-25 00:12:10Z" duration="0.142661" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3346" name="UnboundInventoryDoesNotSuppressSharedCanvasAndCrosshair" fullname="Game.Run.Tests.SharedInventoryPresentationTests.UnboundInventoryDoesNotSuppressSharedCanvasAndCrosshair" methodname="UnboundInventoryDoesNotSuppressSharedCanvasAndCrosshair" classname="Game.Run.Tests.SharedInventoryPresentationTests" runstate="Runnable" seed="524996495" result="Failed" start-time="2026-10-25 00:12:10Z" end-time="2026-10-25 00:12:10Z" duration="0.030371" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  可信库存尚未到达只影响物品内容，不能连同原Canvas/准心一起隐藏；Visibility与数据Ready是两个责任。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.SharedInventoryPresentationTests.UnboundInventoryDoesNotSuppressSharedCanvasAndCrosshair () [0x00062] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\SharedInventoryPresentationTests.cs:172
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

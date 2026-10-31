@@ -9,7 +9,8 @@ namespace Game.Run
     /// <summary>单机整备的唯一写持有者。只读数据向 UI 开放，动作/保存通过带库存范围的 Core 命令。</summary>
     // 资源先走上一帧delta，再由角色支付本帧新施法；反序会在提交帧立刻减掉一帧冷却。
     [DefaultExecutionOrder(-100)]
-    public sealed class SinglePlayerInventorySession : MonoBehaviour, IWalletReadOnly, IOwnedCastWorkspace
+    // UI 只读取共享 Presentation 接口；单机 Session 继续独占原存档与事务生命周期。
+    public sealed class SinglePlayerInventorySession : MonoBehaviour, IWalletReadOnly, IOwnedCastWorkspace, IInventoryPresentationSource
     {
         [SerializeField] private ItemCatalog _catalog;
         [SerializeField] private SinglePlayerStartingInventory _startingInventory;

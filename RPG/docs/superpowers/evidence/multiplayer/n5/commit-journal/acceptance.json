@@ -1,0 +1,74 @@
+{
+  "Stage": "N5-1C-chunk-metadata-journal-and-world-transaction-isolation",
+  "Date": "2026-10-29",
+  "MetadataJournalComplete": true,
+  "FormalInventoryTransactionIsolationComplete": true,
+  "N5_1C_ActualMaterialDiffIntegrated": false,
+  "N5Complete": false,
+  "Tests": {
+    "Targeted": {"Passed": 105, "Failed": 0, "Evidence": "final-targeted-green.xml"},
+    "NewCases": {"Journal": 22, "TransactionIncludingHealthyControl": 21, "AllocationCalibration": 1, "Total": 44},
+    "PriorN5CasesRepeated": 61,
+    "RelatedMaterialRegression": {"Fixtures": 24, "Passed": 253, "Failed": 0, "Evidence": "final-material-regression-green.xml"},
+    "Overlap": 20,
+    "DistinctCases": 338,
+    "FullProjectRunAll": false
+  },
+  "RedEvidence": [
+    {"File": "red.xml", "JournalMissingContractCases": 22, "TransactionFixtureFailuresMixedIn": true},
+    {"File": "transaction-red-valid.xml", "HealthyCollectionControlPassed": 1, "RealTransactionIsolationFailures": 8},
+    {"File": "adapter-cleanup-red.xml", "PriorTransactionCasesPassed": 9, "FormalCleanupAndDoubleExceptionFailures": 12}
+  ],
+  "Journal": {
+    "FixedWorldEpoch": true,
+    "Key": "Native material Domain and Chunk XYZ; current GridId equals Domain",
+    "Lifecycle": "Create 1/1; Update same generation revision+1; Remove revision+1 tombstone; Recreate generation+1 revision1",
+    "AtomicPreflight": "Input, duplicate key, legal transition, metadata/record capacity, inspection budget, version exhaustion and full-batch eviction plan before installed state changes",
+    "MetadataTombstonesRetained": true,
+    "HistoryEviction": "Complete CommitSequence batches only; cursor below HistoryFloorSequence requires a new baseline",
+    "Read": "All records after the supplied cursor, atomic caller-buffer failure, no automatic cursor advance",
+    "ContainsMaterialPayload": false,
+    "AutomaticallyObservesStores": false,
+    "IsClientAck": false
+  },
+  "Transactions": {
+    "Fixture": "Actual P7 Grid profile clones and four real CPU owners, real initialization and real activity refresh; isolated world position",
+    "FenceAcquiredBeforeScratchOrExternalGetters": true,
+    "RejectsReentry": ["SourceCapture", "AuthorityClock", "AutomaticUpdate", "TestClock", "PendingWrites", "SamePort", "OtherPort"],
+    "FormalEventBusAdaptersCovered": true,
+    "ExternalCleanup": "Port-only once in finally, while World fence remains held; Adapter resets its own executing flag without Cancel",
+    "Exceptions": "Faulted latch without claiming rollback; preserve the same primary exception and attach secondary cleanup exception in Data[Norn.MaterialCleanupException]; innermost finally releases fence",
+    "OrdinaryFailure": "Original staged-quantity Undo followed by protected cleanup; healthy World remains healthy",
+    "FailureCanRearrangeStableDynamicRepresentation": true,
+    "FailureByteForByteSnapshotIdentityAccepted": false,
+    "RuntimeCommitSequenceIntroduced": false
+  },
+  "AllocationEvidence": {
+    "Test": "WorldChunkJournalAllocationTests.WarmCommitLookupAndWrappedHistoryCopyHaveZeroPositivelyCalibratedAllocationEvents",
+    "PositiveControlBytes": 1024,
+    "CalibrationGcAllocEvents": 1,
+    "MeasuredGcAllocEvents": 0,
+    "Iterations": 256,
+    "Scope": "Prewarmed journal update, lookup and wrapped complete history copy, fixed caller arrays; excludes construction, assertions, material simulation, inventory ports and Native full frames",
+    "Unit": "Events, not bytes",
+    "GcByteZeroCountersAccepted": false,
+    "NativeFullFrameAccepted": false
+  },
+  "IndependentReadOnlyReview": {
+    "InitialFinding": "P2: Adapter finally called external Cancel after Port had released the World fence, including a duplicate cleanup on normal failure",
+    "FixedAndRegressionTested": true,
+    "FinalFinding": "No remaining definite blocking P1/P2 in reviewed journal, world fence, two Port wrappers and two Adapter cleanup paths",
+    "ReviewerRanEditorOrTests": false
+  },
+  "Preservation": {"Files": 12, "Unchanged": 12, "Evidence": "preservation-after.json"},
+  "EditorHandoff": {"Playing": false, "Compiling": false, "Dirty": false, "Scene": "Assets/_Project/Scenes/P7_MainMenu.unity", "Evidence": "editor-handoff.json"},
+  "ServerOrSharedChangedByThisTask": false,
+  "VersionsOrAsmdefChanged": false,
+  "ServicesRestartedByThisTask": false,
+  "NewBuildCommitOrPush": false,
+  "N4FormalExperienceGatePreserved": true,
+  "FrozenBaselineDeltaOrReplicaInstalled": false,
+  "WorldTransportOrFourPlayerInterestIntegrated": false,
+  "NativeLinuxPublicNetworkIl2CppAccepted": false,
+  "NextTask": "Connect actual committed material occupancy/Pending differences to the metadata journal, handling Stable/Dynamic representation handoff and failed-stage preparation; then freeze independent baselines and implement atomic Replica/Delta"
+}

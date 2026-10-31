@@ -1,4 +1,5 @@
 using System;
+using Game.Core;
 using Game.NetworkProtocol;
 using Google.Protobuf;
 
@@ -87,7 +88,7 @@ namespace Game.Networking
             Finite(m.MoveX) && m.MoveX >= -1 && m.MoveX <= 1 && Finite(m.MoveY) && m.MoveY >= -1 && m.MoveY <= 1 && Finite(m.ViewYaw);
 
         private static bool Validate(MovementStateMessage m) => m != null &&
-            ProtocolCompatibility.IsSupported(m.ProtocolVersion) && m.ActorId >= 1 && m.ActorId <= 8 && m.ConnectionEpoch != 0 &&
+            ProtocolCompatibility.IsSupported(m.ProtocolVersion) && m.ActorId >= 1 && m.ActorId <= OnlineActorLimits.MaximumActors && m.ConnectionEpoch != 0 &&
             m.ServerTick != 0 && m.SnapshotSequence != 0 && m.SimulationHash != 0 && m.Locomotion <= 3 && m.ExtraJumpsRemaining <= 8 && m.AirDashesRemaining <= 8 &&
             Finite(m.PositionX) && Finite(m.PositionY) && Finite(m.PositionZ) && Finite(m.Yaw) && Finite(m.VerticalVelocity) &&
             Finite(m.TargetFacingX) && Finite(m.TargetFacingY) && Finite(m.TargetFacingZ) &&

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-27 13:47:58Z" end-time="2026-10-27 13:48:48Z" duration="50.6898699">
+  <test-suite type="TestSuite" id="1928" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="839" result="Passed" start-time="2026-10-27 13:47:58Z" end-time="2026-10-27 13:48:48Z" duration="50.689870" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1921" name="Game.Run.PlayMode.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.PlayMode.Tests.dll" runstate="Runnable" testcasecount="818" result="Passed" start-time="2026-10-27 13:47:58Z" end-time="2026-10-27 13:48:48Z" duration="50.667175" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23424" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <test-suite type="TestSuite" id="1922" name="Game" fullname="Game" runstate="Runnable" testcasecount="818" result="Passed" start-time="2026-10-27 13:47:58Z" end-time="2026-10-27 13:48:48Z" duration="50.658948" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1923" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="818" result="Passed" start-time="2026-10-27 13:47:58Z" end-time="2026-10-27 13:48:48Z" duration="50.642773" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1924" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="818" result="Passed" start-time="2026-10-27 13:47:58Z" end-time="2026-10-27 13:48:48Z" duration="50.604945" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1170" name="DungeonEntryFlowPlayModeTests" fullname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" classname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-10-27 13:47:58Z" end-time="2026-10-27 13:48:48Z" duration="50.593725" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1173" name="PortalMatch_AuthenticatedAdmissionReconnectAndReturn_PreservesLocalHub" fullname="Game.Run.Tests.DungeonEntryFlowPlayModeTests.PortalMatch_AuthenticatedAdmissionReconnectAndReturn_PreservesLocalHub" methodname="PortalMatch_AuthenticatedAdmissionReconnectAndReturn_PreservesLocalHub" classname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" runstate="Runnable" seed="1577207573" result="Passed" start-time="2026-10-27 13:47:58Z" end-time="2026-10-27 13:48:48Z" duration="50.568061" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UI] Scene Transition Controller 'SceneFade' subscribed; activeInHierarchy=True.
+[OnlineAccounts] 业务 Client 初始化：Ready
+[OnlineAccounts] 业务 HTTP 发起：POST /api/online/sessions
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[UI] Scene Transition Controller starting LoadSceneAsync('SinglePlayer_Hub').
+[UI] Scene Transition Controller 'SceneFade' unsubscribed; transitioning=True.
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/match
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/3266a6ef2f5e42fab793d9e4b0feaa13/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/3266a6ef2f5e42fab793d9e4b0feaa13/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：GET /api/online/profile
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/3266a6ef2f5e42fab793d9e4b0feaa13/ready
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/3266a6ef2f5e42fab793d9e4b0feaa13/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/3266a6ef2f5e42fab793d9e4b0feaa13/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/3266a6ef2f5e42fab793d9e4b0feaa13/start
+[OnlineRooms] 房间HTTP完成：202
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/3266a6ef2f5e42fab793d9e4b0feaa13/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/3266a6ef2f5e42fab793d9e4b0feaa13/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/3266a6ef2f5e42fab793d9e4b0feaa13/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/3266a6ef2f5e42fab793d9e4b0feaa13/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/3266a6ef2f5e42fab793d9e4b0feaa13/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/3266a6ef2f5e42fab793d9e4b0feaa13/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/3266a6ef2f5e42fab793d9e4b0feaa13/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/3266a6ef2f5e42fab793d9e4b0feaa13/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/3266a6ef2f5e42fab793d9e4b0feaa13/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/3266a6ef2f5e42fab793d9e4b0feaa13/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/3266a6ef2f5e42fab793d9e4b0feaa13/ticket
+[OnlineRooms] 房间HTTP完成：200
+[UI] PlayerHealthBar 未指定玩家 HealthComponent，血条不会更新
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/3266a6ef2f5e42fab793d9e4b0feaa13/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/3266a6ef2f5e42fab793d9e4b0feaa13/ticket
+[OnlineRooms] 房间HTTP完成：200
+Saving results to: Temp/SinglePlayer/playmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

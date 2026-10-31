@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-26 17:05:54Z" end-time="2026-10-26 17:05:55Z" duration="0.6581417">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2599" result="Failed" site="Child" start-time="2026-10-26 17:05:54Z" end-time="2026-10-26 17:05:55Z" duration="0.658142" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2505" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="115" result="Failed" site="Child" start-time="2026-10-26 17:05:54Z" end-time="2026-10-26 17:05:55Z" duration="0.562296" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27688" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2506" name="Game" fullname="Game" runstate="Runnable" testcasecount="115" result="Failed" site="Child" start-time="2026-10-26 17:05:54Z" end-time="2026-10-26 17:05:55Z" duration="0.470646" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2507" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="115" result="Failed" site="Child" start-time="2026-10-26 17:05:54Z" end-time="2026-10-26 17:05:55Z" duration="0.370484" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2508" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="115" result="Failed" site="Child" start-time="2026-10-26 17:05:54Z" end-time="2026-10-26 17:05:55Z" duration="0.270817" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2495" name="TrustedDungeonInitializationTests" fullname="Game.Multiplayer.Tests.TrustedDungeonInitializationTests" classname="Game.Multiplayer.Tests.TrustedDungeonInitializationTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-26 17:05:54Z" end-time="2026-10-26 17:05:55Z" duration="0.170207" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2503" name="RejectedIdentityInStateCallbackCannotCreateAnotherActorAfterCleanup" fullname="Game.Multiplayer.Tests.TrustedDungeonInitializationTests.RejectedIdentityInStateCallbackCannotCreateAnotherActorAfterCleanup" methodname="RejectedIdentityInStateCallbackCannotCreateAnotherActorAfterCleanup" classname="Game.Multiplayer.Tests.TrustedDungeonInitializationTests" runstate="Runnable" seed="167377202" result="Failed" start-time="2026-10-26 17:05:55Z" end-time="2026-10-26 17:05:55Z" duration="0.048875" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.NullReferenceException: Object reference not set to an instance of an object
+  at Game.Multiplayer.OnlineWorldBootstrap.OnState (Game.Multiplayer.MovementStateFrame state) [0x00217] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Multiplayer\Movement\OnlineWorldBootstrap.cs:431 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+   --- End of inner exception stack trace ---
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at Game.Multiplayer.Tests.TrustedDungeonInitializationTests+<>c__DisplayClass13_0.<RejectedIdentityInStateCallbackCannotCreateAnotherActorAfterCleanup>b__0 () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\TrustedDungeonInitializationTests.cs:83 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00000] in <f577cd9686154d6ab10efd7e65e64366>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00041] in <f577cd9686154d6ab10efd7e65e64366>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.TrustedDungeonInitializationTests.RejectedIdentityInStateCallbackCannotCreateAnotherActorAfterCleanup () [0x00073] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\TrustedDungeonInitializationTests.cs:83
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[OnlineDungeon] 存活世界拒绝跨Run/副本身份替换。
+]]></output>
+              </test-case>
+              <test-case id="2504" name="RejectedIdentityInUpdateCannotResumeTheStoppedWorldTail" fullname="Game.Multiplayer.Tests.TrustedDungeonInitializationTests.RejectedIdentityInUpdateCannotResumeTheStoppedWorldTail" methodname="RejectedIdentityInUpdateCannotResumeTheStoppedWorldTail" classname="Game.Multiplayer.Tests.TrustedDungeonInitializationTests" runstate="Runnable" seed="211010280" result="Failed" start-time="2026-10-26 17:05:55Z" end-time="2026-10-26 17:05:55Z" duration="0.006113" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  已停止世界不得继续执行断线分支或写入表现状态。
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.TrustedDungeonInitializationTests.RejectedIdentityInUpdateCannotResumeTheStoppedWorldTail () [0x0005c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\TrustedDungeonInitializationTests.cs:97
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[OnlineDungeon] 存活世界拒绝跨Run/副本身份替换。
+Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

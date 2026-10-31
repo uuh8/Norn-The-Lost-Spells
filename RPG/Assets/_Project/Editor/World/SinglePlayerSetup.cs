@@ -95,7 +95,8 @@ namespace Game.EditorTools
                 var session = systems.AddComponent<SinglePlayerInventorySession>();
                 Set(session, "_catalog", catalog); Set(session, "_startingInventory", seeds);
                 var pause = systems.AddComponent<RunPauseCoordinator>();
-                var events = new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
+                // 与保留/恢复 Hub 的联机路径共用焦点恢复规则，重建场景不能退回旧缓存行为。
+                var events = new GameObject("EventSystem", typeof(FocusAwareEventSystem), typeof(InputSystemUIInputModule));
                 events.GetComponent<InputSystemUIInputModule>().AssignDefaultActions();
                 var camera = new GameObject("Main Camera", typeof(Camera)); camera.tag = "MainCamera";
                 camera.transform.position = new Vector3(5, 10, -2); camera.transform.rotation = Quaternion.Euler(90, 0, 0);

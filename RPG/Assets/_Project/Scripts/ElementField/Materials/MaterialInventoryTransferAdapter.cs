@@ -88,7 +88,8 @@ namespace Game.ElementField
             exchange.Handled = true;
             var request = exchange.Request; var result = exchange.Result;
             if (_executing) { result.Failure = MaterialTransferFailure.ResourceBusy; exchange.Result = result; return; }
-            if (_world == null || !_world.IsInitialized || _port == null || exchange.Destination == null)
+            // 故障锁存之后不再把旧世界当作有效来源；失败响应必须早于目标预约、扣世界量与库存 Commit。
+            if (_world == null || !_world.CanAcceptWorldWrites || _port == null || exchange.Destination == null)
             { result.Failure = MaterialTransferFailure.WorldUnavailable; exchange.Result = result; return; }
             if (!Finite(request.SampleCenter) || !Finite(request.CollectorPosition) || float.IsNaN(request.Radius)
                 || request.Radius <= 0 || request.Radius > _maximumSampleRadius
@@ -96,7 +97,8 @@ namespace Game.ElementField
             { result.Failure = MaterialTransferFailure.InvalidRequest; exchange.Result = result; return; }
             _executing = true;
             try { result.Failure = _port.Transfer(request, exchange.Destination, out result.Transferred); exchange.Result = result; }
-            finally { _executing = false; exchange.Destination.Cancel(); }
+            // 目标清理仍属于同一个 World 事务；不能在 Port 已解锁后由 Adapter 再次执行外部 Cancel。
+            finally { _executing = false; }
         }
         private static bool Finite(Vector3 point) => float.IsFinite(point.x) && float.IsFinite(point.y) && float.IsFinite(point.z);
     }

@@ -1,0 +1,103 @@
+{
+  "SchemaVersion": 1,
+  "Scope": "N4 retained-world reconnect channels, cast ownership, frozen animator release, Esc input priority and bounded UI diagnostics",
+  "RecordedAtLocal": "2026-10-27 Asia/Shanghai",
+  "ApplicationProtocolVersion": 2,
+  "GameplayConfigHash": "6145e22ef1d63b44c07ed43e3a50150c5c10bdebe64be74ee129d2690c20921b",
+  "VersionsChanged": false,
+  "CodeIncrementComplete": true,
+  "ApproximateOverallN4ProgressPercent": 90,
+  "ProgressIsEngineeringEstimateNotMeasurement": true,
+  "Implemented": {
+    "DiscoveredAndBoundManagerHaveSeparateState": true,
+    "MovementCombatProgressRebindTogether": true,
+    "ProgressConfiguredFromExistingTrustedRunDungeonHash": true,
+    "RetainedRegistryDungeonRuntimeAndOwnedResources": true,
+    "OldProgressInboxAndHandlerReleased": true,
+    "CastSubscriptionsOwnedByActualDriverReferences": true,
+    "DuplicateBindDoesNotDuplicateHandler": true,
+    "RemoteCastCannotSendLocalIntent": true,
+    "DisposedOwnerCannotSendCapturedLateIntent": true,
+    "FrozenOwnerRestoresCapturedAnimatorSpeed": true,
+    "AlreadyThawedOwnerDoesNotOverwriteLaterSpeed": true,
+    "InventoryEscCannotOpenConnectionMenuInSameFrame": true,
+    "ConnectionMenuStillTogglesNormally": true,
+    "DiagnosticUiGeometryReadOnlyAndBounded": true
+  },
+  "EditMode": {
+    "Passed": 47, "Failed": 0, "Evidence": "editmode-green",
+    "IncludesPriorHudCases": true,
+    "Fixtures": [
+      "Game.Multiplayer.Tests.TrustedDungeonInitializationTests",
+      "Game.UI.Tests.OnlineMovementCursorTests",
+      "Game.UI.Tests.DungeonHudSourceTests",
+      "Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests",
+      "Game.Run.Tests.CombatPresentationLifecycleTests"
+    ]
+  },
+  "BasicPlayMode": { "Passed": 9, "Failed": 0, "Evidence": "playmode-green", "TwoNativeClients": false, "FullFrameProfiler": false },
+  "RealBusinessSceneFlow": {
+    "Passed": 1, "Failed": 0,
+    "UniqueTestCountAcrossEnhancedReruns": 1,
+    "Evidence": "real-business-flow-cast-green",
+    "EarlierPassingVersion": "real-business-flow-green",
+    "UsesRealBusinessAccountsMySqlAndOneUseTickets": true,
+    "UsesIndependentWindowsDedicatedServer": true,
+    "UsesOneActualMirrorKcpClient": true,
+    "SecondMemberViaBusinessApiOnly": true,
+    "UsesInputSystemFAndMovement": true,
+    "SomeUguiButtonsInvokedByTest": true,
+    "UsesFreshAuthoritativelySeededPrimaryAccount": true,
+    "SameRunWithHigherConnectionEpoch": true,
+    "SameWorldRegistryAndCastAfterManagerReplacement": true,
+    "AnimatorSpeedRecovered": true,
+    "MovementAfterReconnect": true,
+    "ActualMouseInputCastAfterReconnect": true,
+    "DedicatedServerConfirmedOwnedChargesDecrease": true,
+    "ReturnsSameLocalHubSessionAndVersion": true,
+    "SinglePlayerFilesystemIsolatedInMemory": true,
+    "TwoVisibleNativeClientAcceptance": false,
+    "CombatKillOrP8VisibleAcceptance": false,
+    "FormalFullFrameProfilerAcceptance": false
+  },
+  "ObservedFailuresPreserved": {
+    "ManagerAndProgressRealRed": "logic-red-initial",
+    "InitialEscInputPreconditionFailuresAreNotProductRed": true,
+    "InventoryEscProductRed": "escape-red",
+    "FrozenSpeedRealRed": "animator-red-escape-green",
+    "IntermediateFixtureErrorsNotHidden": true,
+    "LegacyAccountStart409BeforeDsCreation": "real-business-flow-first",
+    "LegacyProfileWandWasInWarehouse": true,
+    "FreshAccountFEntryPreconditionFailure": "real-business-flow-second",
+    "NoAdmissionRuleOrAssetAuthorityBypass": true
+  },
+  "Builds": {
+    "Client": { "Result": "Succeeded", "Errors": 0, "Evidence": "builds-final/account-menu-client-build.json" },
+    "DedicatedServer": { "Result": "Succeeded", "Errors": 0, "Evidence": "builds-final/room-server-build.json" },
+    "ExpectedHashFoundInBothActualResourcesAssets": true,
+    "NormalRenderingAndResourcesPreserved": true,
+    "OnlyTestAndDocumentationEditsAfterPairedBuild": true
+  },
+  "IndependentReview": { "Kind": "ReadOnlyStatic", "ConfirmedCriticalOrImportantFindings": 0, "RuntimeOrGuiAcceptanceClaimedByReview": false },
+  "GuiDiagnostic": {
+    "ActualOriginalUguiRectsCaptured": true,
+    "CredentialInputTextCaptured": false,
+    "PointerMismatchBlockedClick": true,
+    "MismatchRootCauseConfirmed": false,
+    "Evidence": "../formal-dungeons/native-p7-player7e-geometry",
+    "GuiLoginDragOrP8PassedThisRun": false
+  },
+  "Preservation": { "Count": 12, "Unchanged": 12, "Evidence": "preservation-final.json", "OnlyKnownQualitySettingsSerializationMigrationRestored": true },
+  "Cleanup": { "Evidence": "cleanup.json", "SystemMySqlAndEditorNotStopped": true },
+  "NewGitCommitOrPush": false,
+  "FormalOnlineExperienceAccepted": false,
+  "N4Complete": false,
+  "ReleaseReady": false,
+  "Remaining": [
+    "Latest paired build needs two visible Native Clients with original UI, card drag and single-copy cross-scene presentation",
+    "Formal P7/P8 visible combat, movement/camera/feet and status/Boss VFX feel remain separate from this one-client scene flow",
+    "Actual formal-world full-frame positively calibrated GC evidence remains unexecuted",
+    "Two inherited native Built-in Resource startup errors, encryption allocation and Linux/public/IL2CPP/D3D12 remain independent gates",
+    "Material replication, persistent settlement/rewards and later recovery phases retain their approved scope"
+  ]
+}

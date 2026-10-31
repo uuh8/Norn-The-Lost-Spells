@@ -1,0 +1,92 @@
+{
+  "Stage": "N4-final-code-audit-and-remediation",
+  "Date": "2026-10-29",
+  "Status": "CodeAuditAndLocalDeliveryCompleteManualExperiencePending",
+  "N5ExplicitlyAuthorizedByUser": true,
+  "ImplementationComplete": true,
+  "LocalRegressionPassed": true,
+  "PairedBuildsComplete": true,
+  "GameplayHash": "4b90cc71567b404d27186d5d20283c79d6fe52ea6731860dd28469b8bef72390",
+  "Builds": {
+    "Client": "builds/client.json",
+    "Server": "builds/server.json",
+    "BothSucceeded": true,
+    "ErrorsEach": 0,
+    "ActualResourceGameplayHashesMatch": true,
+    "HashEvidence": "builds/hash-verification.json"
+  },
+  "N4Complete": false,
+  "FormalOnlineExperienceAccepted": false,
+  "ReleaseReady": false,
+  "VersionUpgrades": false,
+  "ProtocolSchemaChanged": false,
+  "DatabaseSourceChanged": false,
+  "FixedFindings": [
+    "Late nonlethal Damage cannot shorten an already installed death deadline",
+    "Late Action cannot reclaim a dead actor's Animator; living late actions remain eligible",
+    "Combat 15Hz snapshot clock retains deadline remainder and skips catchup bursts",
+    "Replica Boss phase read model installs independently of HUD/Health readiness",
+    "Frozen local state installs the complete authority pose and discards prediction history",
+    "UI release immediately permits fresh Jump/Dash while held keys still require release",
+    "Inventory/menu Esc consumes one layer and restores capture after late enable/restart",
+    "Inventory status completes only when the successful receipt version is installed in the actual source"
+  ],
+  "Tests": {
+    "InitialBaselinePassed": 246,
+    "InitialBaselineFailed": 1,
+    "ExpandedEditModePassed": 464,
+    "ExpandedEditModeFailed": 0,
+    "ExpandedEditModeSkipped": 0,
+    "InputPlayModePassed": 13,
+    "WorldPresentationPlayModePassed": 16,
+    "SharedInventoryPlayModePassed": 1,
+    "RealP7BusinessPlayModePassed": 1,
+    "DifferentPlayModeCasesAcrossSessions": 31,
+    "FullProjectRunAllClaimed": false,
+    "RealMySqlBusinessSuiteRerun": false,
+    "RealBusinessDungeonFlowRerun": true,
+    "RealBusinessFlowScope": "P7 login/F-portal/match/real DS admission/movement/original Tab drag/reconnect/cast/return; companion uses HTTP, not a second Native Client",
+    "RealP8BusinessFlowRerun": false,
+    "FirstP7DragAttemptFailed": true,
+    "SecondP7IsolatedAttemptPassedWithOnlyFailureDiagnosticsAdded": true,
+    "IntermittentFirstDragCauseConfirmed": false,
+    "Evidence": ["green-expanded-editmode.xml", "green-input-playmode.xml", "green-world-presentation-playmode.xml", "green-shared-inventory-playmode.xml"],
+    "RetainedAttempts": ["baseline-editmode.xml", "red-editmode.xml", "red-input-playmode.xml", "red-clock-valid.xml", "red-ui-late-binding.xml", "blocked-test-attribute.json", "blocked-test-namespace.json", "import-order-attempt.json"],
+    "OldAssemblyAttemptExcluded": "red-clock-and-partial-green.xml"
+  },
+  "Review": {
+    "IndependentReadOnlyReviewCompleted": true,
+    "NewBlockingFinding": false,
+    "Evidence": "review.md",
+    "StaticHotPathFinding": "No new hot-path allocation found; not a Native Profiler measurement"
+  },
+  "MovementRates": {
+    "AuthoritySimulationHz": 30,
+    "MovementSnapshotHzConfigured": 30,
+    "CombatStateSnapshotHzConfigured": 15,
+    "NetworkPumpHzConfigured": 60,
+    "MinimumPlaybackBufferSeconds": 0.05,
+    "MaximumPlaybackBufferSeconds": 0.2,
+    "RealEndToEndLatencyMilliseconds": null
+  },
+  "Native": {
+    "LatestPairSubjectiveAcceptancePending": true,
+    "PreviousWindowFocusLimitNotRetriedIndefinitely": true,
+    "NewNativeFullFrameOrSustainedCombatGcClaimed": false
+  },
+  "Preservation": {
+    "ProtectedFiles": 12,
+    "FinalUnchanged": 12,
+    "Evidence": "preservation-final.json",
+    "KnownPhysicsAndQualityAutomaticSerializationRestoredToVerifiedBaseline": true,
+    "OwnedTestDsExited": true,
+    "BusinessAndPrivateDatabaseLeftReady": true
+  },
+  "Limits": [
+    "Full P7 clearance, later Boss phases/kill and latest paired Native subjective feel remain manual N4 gates",
+    "Input-edge redundancy, N5 shared material simulation, N6 settlement and N7/N8 remote recovery/security remain separate work",
+    "Linux/public network/IL2CPP/D3D12/encryption acceptance is not established",
+    "The two inherited native Built-in Resource startup errors remain unresolved"
+  ],
+  "NewGitCommitOrPush": false
+}

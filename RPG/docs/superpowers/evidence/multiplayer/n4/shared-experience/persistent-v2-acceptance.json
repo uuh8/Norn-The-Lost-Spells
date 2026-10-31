@@ -1,0 +1,36 @@
+{
+  "SchemaVersion": 1,
+  "Scope": "N4 incremental common combat HUD, trusted admission identity, read-only inventory foundation",
+  "RecordedAtLocal": "2026-10-26 Asia/Shanghai",
+  "ApplicationProtocolVersion": 2,
+  "GameplayConfigHash": "ee8f3ff819f99a0d51b11fe7855b632e6ae5bd86515d8c3598136c5e0c7c258f",
+  "ContentManifestHash": "80f84176ed3b987340236f6cdc273328e8a9ec07a34176ea3426b594a779ba28",
+  "EditMode": { "Passed": 77, "Failed": 0, "Evidence": "persistent-identity-inventory-green" },
+  "RuntimeLifecyclePlayMode": { "Passed": 3, "Failed": 0, "Evidence": "persistent-hud-runtime-green" },
+  "PlayerPaths": [
+    { "Name": "Hub F choice to P7 and return", "Passed": true, "Evidence": "persistent-hud-player-path-first" },
+    { "Name": "Hub F choice to P8, actual Boss HUD, and return", "Passed": true, "Evidence": "persistent-hud-player-path-first" },
+    { "Name": "Full backpack arrangement and original ground item identity", "Passed": true, "Evidence": "persistent-hud-player-path-green" },
+    { "Name": "Formal Run departure, original Tab, abandon, same Hub restore", "Passed": true, "Evidence": "persistent-hud-player-path-green" }
+  ],
+  "BusinessTests": { "Passed": 91, "Failed": 0, "Skipped": 0, "DatabasePort": 13384, "Schema": "norn_online_test", "Evidence": "../dungeon-identity/mysql/n4-dungeon-v2.trx" },
+  "PairedBuilds": { "ServerPassed": true, "ClientPassed": true, "Errors": 0, "Evidence": "builds/*persistent-v2-build.json", "RenderingInputsIsolated": false, "ClientResourcesExcluded": false },
+  "BusinessPublished": true,
+  "OriginalSettingsAndSavesPreserved": true,
+  "LatestNativeGameplayAccepted": false,
+  "LatestFullFrameZeroAllocationAccepted": false,
+  "OwnerOnlyInventoryWireConnected": false,
+  "OnlineInventoryCommandGatewayImplemented": false,
+  "FormalDungeonContentCompositionImplemented": false,
+  "FormalOnlineExperienceAccepted": false,
+  "N4Complete": false,
+  "ReleaseReady": false,
+  "Notes": [
+    "The 29 pure business tests overlap with the 91-test business suite and are not added to it.",
+    "The first four-path PlayMode run was 2 passed and 2 failed. Screenshot IO was separated from gameplay testing, a Unity unassigned-reference guard was fixed, and only the two failed paths were rerun successfully.",
+    "Previous native-focus-fixed evidence belongs to an earlier gameplay hash and is retained separately.",
+    "Difficult visible attack, status and feel checks remain explicit manual checks; they are not marked passed.",
+    "The stable online read source currently supports owned wand/card closure only. It does not manufacture a bag, local authority or a connection to the network.",
+    "DungeonId is trusted through business and admission; actual World selection and formal P7/P8 encounter composition remain pending."
+  ]
+}

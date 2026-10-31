@@ -1,0 +1,23 @@
+{
+  "Stage": "N5-1A-revision-metadata-fence",
+  "Date": "2026-10-29",
+  "TaskComplete": true,
+  "N5Complete": false,
+  "Source": "Scripts/Core/Online/WorldReplicaRevisionState.cs",
+  "Assembly": "Game.Core",
+  "Tests": {"NewCases": 9, "ExistingCoreCases": 5, "Passed": 14, "Failed": 0, "RedCasesMissingContract": 9},
+  "Evidence": ["red.xml", "green.xml"],
+  "IndependentStaticReview": "No blocking metadata-state logic finding; no independent test run by reviewer",
+  "Boundary": "Per-fixed-chunk version metadata only; caller must validate complete payload and prepare atomic installation before accepting a version",
+  "MaterialSnapshotImplemented": false,
+  "AuthorityRuntimeIntegrated": false,
+  "TransportOrProtoImplemented": false,
+  "NativeOrFullFrameGcAccepted": false,
+  "VersionsOrAsmdefChanged": false,
+  "ScenesOrLocalSavesChanged": false,
+  "N4FormalExperienceGatePreserved": true,
+  "UserExplicitlyAuthorizedN5": true,
+  "NextTask": "N5-1B all-material read-only contracts and CPU single-writer tick ownership",
+  "UnmeasuredNonblockingBoundaryCases": ["last legal MaxValue-1 to MaxValue delta", "same-generation update when Generation is MaxValue and Revision is low"],
+  "NewCommitOrPush": false
+}

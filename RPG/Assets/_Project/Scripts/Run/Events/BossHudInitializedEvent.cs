@@ -10,6 +10,7 @@ namespace Game.Run
     public struct BossHudInitializedEvent : IGameEvent
     {
         public int BossId;
+        public int WorldSceneHandle; // 本机Scene句柄，不跨网络或持久化；Host过滤旧区域重放，0仅兼容未限定的旧UI。
         public string DisplayName;
         public float CurrentHp;
         public float MaxHp;

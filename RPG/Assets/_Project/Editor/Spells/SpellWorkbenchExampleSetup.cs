@@ -56,7 +56,7 @@ namespace Game.EditorTools
             var scene=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);
             var host=new GameObject("Spell Programming V2 Sandbox");var presenter=host.AddComponent<WandProgramWorkbenchPresenter>();
             AssignSamples(presenter,false);
-            var input=new GameObject("EventSystem",typeof(EventSystem),typeof(InputSystemUIInputModule));
+            var input=new GameObject("EventSystem",typeof(FocusAwareEventSystem),typeof(InputSystemUIInputModule));
             input.GetComponent<InputSystemUIInputModule>().AssignDefaultActions();
             var camera=new GameObject("Sandbox Camera",typeof(Camera));camera.tag="MainCamera";
             camera.GetComponent<Camera>().clearFlags=CameraClearFlags.SolidColor;camera.GetComponent<Camera>().backgroundColor=new Color(.94f,.93f,.89f);

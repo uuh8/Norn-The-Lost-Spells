@@ -53,7 +53,7 @@ namespace Game.Project.Editor
                     new GameObject("ExplicitAccountProbe").AddComponent<OnlineAccountProbe>();
                     var camera = new GameObject("AccountLabCamera").AddComponent<Camera>(); camera.clearFlags = CameraClearFlags.SolidColor;
                     camera.backgroundColor = new Color(.025f, .04f, .065f);
-                    var events = new GameObject("EventSystem", typeof(EventSystem));
+                    var events = new GameObject("EventSystem", typeof(FocusAwareEventSystem));
                     events.AddComponent<InputSystemUIInputModule>().AssignDefaultActions();
                     EditorSceneManager.SaveScene(lab, ScenePath);
                 }

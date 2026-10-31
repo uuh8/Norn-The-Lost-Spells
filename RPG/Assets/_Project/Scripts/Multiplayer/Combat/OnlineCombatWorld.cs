@@ -34,25 +34,34 @@ namespace Game.Multiplayer
         private readonly RoomNetworkManager _manager;
         private readonly RoomInstanceBootstrap _instance;
         private readonly MovementNetworkChannel _movementChannel;
+        private readonly InventoryNetworkChannel _inventoryChannel;
+        private readonly uint[] _inventoryEpochs = new uint[4], _inventoryVersions = new uint[4];
+        private readonly ulong[] _inventorySequences = new ulong[4];
+        private readonly string[] _inventorySelections = new string[4], _setupWands = new string[4];
+        private readonly uint[] _setupRevisions = new uint[4];
+        // Cast属于同Run的角色，可比一次Manager/CombatWorld活得更久。按真正订阅过的Driver记录所有权，
+        // Dispose只移除本实例的委托，不从已换代的可变Registry猜测应当解绑谁。
+        private readonly OnlineCastDriver[] _intentDrivers = new OnlineCastDriver[OnlineActorLimits.PlayerCount];
+        private readonly OnlineCastDriver[] _receiptDrivers = new OnlineCastDriver[OnlineActorLimits.PlayerCount];
         private readonly CombatFactMessage _out = new CombatFactMessage();
         private readonly Output[] _outputs = new Output[1024];
-        private readonly uint[] _bootstrappedEpoch = new uint[4], _actorSequence = new uint[8];
-        private readonly bool[] _deadPresented = new bool[8];
-        private readonly OnlineCastResourceSnapshot[] _resources = new OnlineCastResourceSnapshot[8];
+        private readonly uint[] _bootstrappedEpoch = new uint[4], _actorSequence = new uint[OnlineActorLimits.MaximumActors];
+        private readonly bool[] _deadPresented = new bool[OnlineActorLimits.MaximumActors];
+        private readonly OnlineCastResourceSnapshot[] _resources = new OnlineCastResourceSnapshot[OnlineActorLimits.MaximumActors];
         private readonly Dictionary<int, ulong> _instanceActors = new Dictionary<int, ulong>(2048);
         private ulong _nextOutput;
         private uint _sequence, _lastReliable;
-        private double _nextSnapshot;
+        private readonly SnapshotSendClock _snapshotClock = new SnapshotSendClock();
         private bool _disposed, _presentationFrozen;
-        private readonly Animator[] _actorAnimators = new Animator[8];
-        private readonly float[] _actorAnimationSpeeds = new float[8];
+        private readonly Animator[] _actorAnimators = new Animator[OnlineActorLimits.MaximumActors];
+        private readonly float[] _actorAnimationSpeeds = new float[OnlineActorLimits.MaximumActors];
         public bool Faulted { get; private set; }
         public int ActiveOutputs { get; private set; }
         public long SpawnedOutputs { get; private set; }
         public long DamageFacts { get; private set; }
         public bool TryGetResources(ulong actor, out OnlineCastResourceSnapshot resources)
         {
-            resources = default; if (actor < 1 || actor > 8) return false;
+            resources = default; if (actor < 1 || actor > OnlineActorLimits.MaximumActors) return false;
             var slot = _world.Registry[(int)actor - 1];
             if (_world.IsAuthority) return slot.Cast != null && slot.Cast.TryGetAuthorityResources(out resources);
             resources = _resources[(int)actor - 1]; return resources.MaxMana > 0;
@@ -62,6 +71,11 @@ namespace Game.Multiplayer
         {
             _world = world; _definition = definition; _simulation = simulation; _channel = channel; _manager = manager; _instance = instance;
             _movementChannel = manager.GetComponent<MovementNetworkChannel>();
+            _inventoryChannel = manager.GetComponent<InventoryNetworkChannel>();
+            if (_inventoryChannel == null) _inventoryChannel = manager.gameObject.AddComponent<InventoryNetworkChannel>();
+            _inventoryChannel.GameplayConfigHash = definition.GameplayConfigHash;
+            _inventoryChannel.GameplayHash = definition.WireHash;
+            _inventoryChannel.CommandReceived += OnInventoryCommand;
             for (int i = 0; i < _outputs.Length; i++) _outputs[i] = new Output();
             _channel.GameplayHash = definition.WireHash; _channel.IntentReceived += OnIntent; _channel.FactReceived += OnFact;
             EventBus<CombatOutputSpawnedEvent>.Subscribe(OnBorn);
@@ -76,10 +90,11 @@ namespace Game.Multiplayer
             // 显式边界保留 nullable 语义，Run 仍不引用网络程序集；分配只发生在离散入局。
             var assets = OnlineOwnedAssetMapping.ToCore(source);
             var cast = slot.Cast;
-            if (cast == null) { cast = slot.Player.gameObject.AddComponent<OnlineCastDriver>(); slot.Cast = cast; cast.ReceiptProduced += OnReceipt; }
+            if (cast == null) { cast = slot.Player.gameObject.AddComponent<OnlineCastDriver>(); slot.Cast = cast; }
             if (!cast.InitializeAuthority(assets, _definition, _simulation, out string error))
             { GameLog.Error("入局战斗资产被拒绝：" + error, "OnlineCombat"); return false; }
             cast.SetConnection(identity.ConnectionEpoch, true);
+            BindReceiptDriver((int)identity.ActorId - 1, cast);
             RegisterActorHierarchy(slot, identity.ActorId);
             return true;
         }
@@ -88,13 +103,92 @@ namespace Game.Multiplayer
             if (slot.Cast == null)
             {
                 slot.Cast = slot.Player.gameObject.AddComponent<OnlineCastDriver>();
-                if (local) slot.Cast.IntentProduced += OnLocalIntent;
             }
             slot.Cast.InitializeClient(actor, epoch, _definition, local);
+            BindIntentDriver((int)actor - 1, local ? slot.Cast : null);
+        }
+        private void BindIntentDriver(int index, OnlineCastDriver driver)
+        {
+            var previous = _intentDrivers[index];
+            if (ReferenceEquals(previous, driver)) return;
+            if (previous != null) previous.IntentProduced -= OnLocalIntent;
+            _intentDrivers[index] = driver;
+            if (driver != null) driver.IntentProduced += OnLocalIntent;
+        }
+        private void BindReceiptDriver(int index, OnlineCastDriver driver)
+        {
+            var previous = _receiptDrivers[index];
+            if (ReferenceEquals(previous, driver)) return;
+            if (previous != null) previous.ReceiptProduced -= OnReceipt;
+            _receiptDrivers[index] = driver;
+            if (driver != null) driver.ReceiptProduced += OnReceipt;
         }
         public void ActorLeft(ulong actor, uint epoch)
         { _world.Registry[(int)actor - 1].Cast?.SetConnection(epoch, false); }
-        private void OnLocalIntent(OnlineCastIntent intent) => _channel.SendIntent(intent);
+
+        /// <summary>
+        /// 完整值可早于角色或UI就绪到达；通道先保存最新整份，只有当前本机Prediction Actor就绪后才取走。
+        /// Run类型由Character包装，Multiplayer仍只使用Core值合同，不取得库存写权限。
+        /// </summary>
+        public void PumpClientInventory()
+        {
+            if (_disposed || _world.IsAuthority || _world.LocalPlayer == null ||
+                !_inventoryChannel.TryTakeClientSnapshot(out var snapshot)) return;
+            var auth = _manager.GetComponent<JoinTicketAuthenticator>();
+            var identity = auth != null ? auth.ClientIdentity : null;
+            if (!InventorySnapshotInbox.Matches(identity, snapshot, _definition.GameplayConfigHash)) return;
+            var slot = _world.Registry[(int)identity.ActorId - 1];
+            if (slot.Player != _world.LocalPlayer || slot.Cast == null || slot.Epoch != identity.ConnectionEpoch) return;
+            var expected = new OnlineInventoryPresentationIdentity(identity.RunId, identity.PlayerId, identity.ActorId,
+                identity.RunId + "/" + identity.PlayerId, _definition.GameplayConfigHash, identity.ConnectionEpoch,
+                _world.gameObject.scene.path);
+            if (!slot.Cast.InstallClientInventory(expected, snapshot, out var error))
+                GameLog.Warn("当前线上库存快照被拒绝，保留上一份一致读数：" + error, "OnlineInventory");
+        }
+
+        private void PumpOwnerInventories()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                var slot = _world.Registry[i]; var connection = _manager.ActorConnection(i);
+                var identity = connection != null ? connection.authenticationData as JoinConnectionIdentity : null;
+                if (identity == null || slot.Cast == null || !slot.SimulationReady ||
+                    !_movementChannel.IsActorReady(identity.ActorId, identity.ConnectionEpoch)) continue;
+                uint version = slot.Cast.OwnedInventoryVersion;
+                string selection = slot.Cast.SelectedOwnedWandId;
+                if (version == 0 || _inventoryEpochs[i] == identity.ConnectionEpoch &&
+                    _inventoryVersions[i] == version && _inventorySelections[i] == selection) continue;
+                // 每帧仅比较基础值。只有入场/重连/资产或选择离散变化才构造完整值；Mana恢复不走此路径。
+                ulong next = _inventorySequences[i] + 1;
+                if (next == 0 || !slot.Cast.TryCaptureInventory(identity.ConnectionEpoch, next, _world.ServerTick, out var snapshot) ||
+                    !_inventoryChannel.SendToOwner(identity, snapshot))
+                {
+                    // 已就绪的权威数据仍无法导出/编码是确定的组合错误；停止而非每帧分配失败候选并刷日志。
+                    Faulted = true; GameLog.Error("权威库存无法发布，已停止该副本模拟以保留当前资产。", "OnlineInventory"); return;
+                }
+                _inventorySequences[i] = next; _inventoryEpochs[i] = identity.ConnectionEpoch;
+                _inventoryVersions[i] = version; _inventorySelections[i] = selection;
+            }
+        }
+        private void OnLocalIntent(OnlineCastIntent intent)
+        {
+            // 与EventBus相同，C#事件本次Invoke可能已捕获旧委托；退订后仍拒绝向上一代通道发送。
+            if (!_disposed) _channel.SendIntent(intent);
+        }
+        private void OnInventoryCommand(JoinConnectionIdentity identity, OnlineInventoryCommandIntent intent,
+            OnlineInventoryCommandFailure preflightFailure)
+        {
+            if (_disposed || !_world.IsAuthority || identity == null || identity.ActorId < 1 || identity.ActorId > 4) return;
+            int index = (int)identity.ActorId - 1;
+            var slot = _world.Registry[index];
+            if (slot.Cast == null || slot.Epoch != identity.ConnectionEpoch || intent.ConnectionEpoch != identity.ConnectionEpoch) return;
+            if (!_world.CanAdvance || Faulted || !slot.SimulationReady) preflightFailure = OnlineInventoryCommandFailure.NotReady;
+            var receipt = slot.Cast.ExecuteInventoryCommand(intent, preflightFailure);
+            _inventoryChannel.SendReceipt(identity, receipt);
+            // 真正成功的写入由版本/选中实例变化触发发布；只为未限流的版本冲突补发，重放旧成功不放大。
+            if (InventoryCommandDeliveryPolicy.ShouldResynchronize(preflightFailure, receipt.Failure))
+                _inventoryVersions[index] = 0;
+        }
         private void OnIntent(JoinConnectionIdentity identity, OnlineCastIntent intent)
         {
             if (!_world.CanAdvance || Faulted) return;
@@ -131,14 +225,14 @@ namespace Game.Multiplayer
         }
         private void OnAction(OnlineCharacterActionEvent action)
         {
-            if (_disposed || !_world.IsAuthority || action.ActorId == 0 || action.ActorId > 7) return;
+            if (_disposed || !_world.IsAuthority || !_world.IsConfiguredActor(action.ActorId)) return;
             var fact = NewFact(3, action.ActorId);
             fact.AnimationHash = unchecked((uint)action.AnimationHash); fact.ActionKind = action.ActionKind; fact.Amount = action.FadeSeconds;
             _channel.SendFact(fact);
         }
         private void OnTeleport(OnlineBossTeleportPresentationEvent teleport)
         {
-            if (_disposed || !_world.IsAuthority || teleport.ActorId != 7) return;
+            if (_disposed || !_world.IsAuthority || !_world.IsConfiguredActor(teleport.ActorId) || _world.Registry[(int)teleport.ActorId - 1].Boss == null) return;
             var fact = NewFact(10, teleport.ActorId); fact.Phase = teleport.Stage;
             fact.PositionX = teleport.DestinationPosition.x; fact.PositionY = teleport.DestinationPosition.y; fact.PositionZ = teleport.DestinationPosition.z;
             fact.VelocityX = teleport.SourcePosition.x; fact.VelocityY = teleport.SourcePosition.y; fact.VelocityZ = teleport.SourcePosition.z;
@@ -146,7 +240,7 @@ namespace Game.Multiplayer
         }
         private void OnCastSound(CombatCastSoundEvent sound)
         {
-            if (_disposed || !_world.IsAuthority || sound.ActorId == 0 || sound.ActorId > 7) return;
+            if (_disposed || !_world.IsAuthority || !_world.IsConfiguredActor(sound.ActorId)) return;
             uint key = _definition.FindSoundKey(sound.Clip); if (key == 0) return;
             var fact = NewFact(11, sound.ActorId); fact.SoundKey = key; fact.CommandId = sound.CommandId; fact.OutputOrdinal = sound.SoundOrdinal;
             fact.PositionX = sound.Position.x; fact.PositionY = sound.Position.y; fact.PositionZ = sound.Position.z;
@@ -211,18 +305,23 @@ namespace Game.Multiplayer
         {
             if (_disposed || !_world.IsAuthority || !_world.CanAdvance) return;
             AdvanceActorBodies(_world.ServerTick);
+            PumpOwnerInventories();
+            if (Faulted) return;
             for (int i = 0; i < 4; i++)
             {
                 var slot = _world.Registry[i]; var connection = _manager.ActorConnection(i);
-                if (connection == null || slot.Cast == null || !slot.SimulationReady || !_movementChannel.IsActorReady((ulong)i + 1, slot.Epoch)
-                    || _bootstrappedEpoch[i] == slot.Epoch) continue;
+                if (connection == null || slot.Cast == null || !slot.SimulationReady || !_movementChannel.IsActorReady((ulong)i + 1, slot.Epoch)) continue;
                 if (!slot.Cast.TryGetAuthorityResources(out var resources)) continue;
+                if (_bootstrappedEpoch[i] == slot.Epoch && _setupWands[i] == resources.WandInstanceId &&
+                    _setupRevisions[i] == resources.ProgramRevision) continue;
                 var setup = NewFact(1, (ulong)i + 1); setup.WandInstanceId = resources.WandInstanceId;
                 setup.ProgramRevision = resources.ProgramRevision; setup.Amount = resources.CastInterval;
                 setup.SoundKey = resources.PredictionSoundKey;
                 _channel.SendFact(setup, connection);
-                for (int o = 0; o < _outputs.Length; o++) if (_outputs[o].Id != 0) SendBirth(_outputs[o], connection);
+                if (_bootstrappedEpoch[i] != slot.Epoch)
+                    for (int o = 0; o < _outputs.Length; o++) if (_outputs[o].Id != 0) SendBirth(_outputs[o], connection);
                 _bootstrappedEpoch[i] = slot.Epoch;
+                _setupWands[i] = resources.WandInstanceId; _setupRevisions[i] = resources.ProgramRevision;
             }
             // Unity 帧尾销毁的纯表现对象也有显式终止；正常弹体终止由上面的真实事件先行记录。
             for (int i = 0; i < _outputs.Length; i++)
@@ -231,7 +330,9 @@ namespace Game.Multiplayer
                 if (!output.Terminated) Terminate(output, ProjectileTerminationReason.Cancelled, output.LastPosition);
                 output.Id = 0; output.Body = null; output.Projectile = null; ActiveOutputs--;
             }
-            if (now < _nextSnapshot) return; _nextSnapshot = now + 1d / 15d;
+            // 与移动共用同一发送时钟：沿已有 deadline 保留晚帧余数，避免 50FPS 时把 15Hz 降成 12.5Hz。
+            // hitch 后只取得一次当前状态的发送资格；不补发没有保存过的历史状态，也不扩大每帧带宽预算。
+            if (!_snapshotClock.TrySend(now, 1f / 15f)) return;
             for (int i = 0; i < _world.Registry.Capacity; i++)
             {
                 var slot = _world.Registry[i]; if (slot.Body == null || slot.Health == null) continue;
@@ -249,6 +350,9 @@ namespace Game.Multiplayer
                 if (slot.Cast != null && slot.Cast.TryGetAuthorityResources(out var resources))
                 {
                     fact.CurrentMana = resources.CurrentMana; fact.MaxMana = resources.MaxMana; fact.Cooldown = resources.CooldownRemaining;
+                    // 槽标识与资源同包：可靠Setup和非可靠ActorState没有跨通道先后保证，Revision也不是物品身份。
+                    fact.WandSlotPlusOne = slot.Cast.SelectedOwnedWandSlotPlusOne;
+                    fact.ProgramRevision = resources.ProgramRevision;
                     fact.RemainingCharges = (uint)Math.Max(0, resources.RemainingCharges); if (resources.Unlimited) fact.Flags |= 1;
                 }
                 // 0 表示尚未进入 encounter；不能仅因 Boss 实体出生就提前显示整屏 BossBar。
@@ -282,8 +386,9 @@ namespace Game.Multiplayer
             // 远程首击也代表主动参战，不能站在触发半径外把未激活 Boss 当木桩。
             // 先发送 Damage 再激活，避免激活事件复用同一消息缓存覆盖尚未发送的事实。
             ulong attacker = ActorForInstance(damage.AttackerId);
-            if (target == 7 && attacker >= 1 && attacker <= 4 && _world.Registry[(int)attacker - 1].Targetable)
-                _world.Registry[6].Boss?.TryActivateAuthorityEncounter();
+            // 正式P8保留“先进入再离开安全区”的单一启动门，不让旧灰盒的Actor7远程首击分支绕过它。
+            if (_world.DungeonId == null && attacker >= 1 && attacker <= 4 && _world.Registry[(int)attacker - 1].Targetable)
+                _world.Registry[(int)target - 1].Boss?.TryActivateAuthorityEncounter();
         }
         private void OnDeath(DeathEvent death)
         {
@@ -297,6 +402,7 @@ namespace Game.Multiplayer
         }
         private NetworkActorRegistry.Slot EnsureActor(ulong actor)
         {
+            if (!_world.IsConfiguredActor(actor)) return null;
             if (actor >= 5) return _world.Registry.EnsureEnemy(actor, false);
             var slot = _world.Registry[(int)actor - 1];
             if (slot.Player == null) _world.Registry.EnsurePlayer((int)actor - 1, PlayerExecutionMode.Replica);
@@ -304,7 +410,8 @@ namespace Game.Multiplayer
         }
         private void OnFact(CombatFactMessage fact)
         {
-            if (_disposed || _world.IsAuthority || fact.ActorId > 7) return;
+            if (_disposed || _world.IsAuthority || !_world.IsConfiguredActor(fact.ActorId) ||
+                fact.AttackerActorId != 0 && !_world.IsConfiguredActor(fact.AttackerActorId)) return;
             bool snapshot = fact.Kind == 5 || fact.Kind == 7;
             if (!snapshot)
             {
@@ -331,7 +438,7 @@ namespace Game.Multiplayer
             if (fact.Kind == 10)
             {
                 if (slot.Boss != null) slot.Boss.ApplyReplicatedTeleport(fact.Phase,
-                    new Vector3(fact.VelocityX, fact.VelocityY, fact.VelocityZ), new Vector3(fact.PositionX, fact.PositionY, fact.PositionZ));
+                    new Vector3(fact.VelocityX, fact.VelocityY, fact.VelocityZ), new Vector3(fact.PositionX, fact.PositionY, fact.PositionZ), fact.ServerTick);
                 return;
             }
             if (fact.Kind == 1)
@@ -349,6 +456,10 @@ namespace Game.Multiplayer
             }
             if (fact.Kind == 3)
             {
+                // 不可靠完整状态可能先确认死亡，随后旧可靠动作才到达。此时死亡已拥有 Animator，
+                // 不能让旧 CrossFade 覆盖它；之后的可靠 Death 又会被去重，无法替我们恢复死亡动画。
+                // 这里只封住已死亡角色，活人的 HP 状态较新并不代表旧动作已播放，仍保留可靠动作资格。
+                if (slot.Health != null && !slot.Health.IsAlive) return;
                 // 本机已经预测过同命令动画；远端只消费服务器接受事实。
                 int hash = unchecked((int)fact.AnimationHash);
                 if (slot.Enemy != null) slot.Enemy.ApplyReplicaAction(hash, fact.ActionKind, fact.Amount);
@@ -380,6 +491,7 @@ namespace Game.Multiplayer
                 if (status != null) status.ApplyReplicatedState(new StatusReplicaSnapshot { Burning = fact.Burning, Wet = fact.Wet,
                     Poisoned = fact.Poisoned, Sticky = fact.Sticky, MoveSpeedMultiplier = fact.MoveMultiplier });
                 slot.Cast?.InstallClientCooldown(fact.Cooldown);
+                slot.Cast?.InstallClientInventoryResources(fact.ConnectionEpoch, fact.ServerTick, fact.WandSlotPlusOne, fact.ProgramRevision, fact.CurrentMana, fact.Cooldown);
                 _resources[index] = new OnlineCastResourceSnapshot { CurrentMana = fact.CurrentMana, MaxMana = fact.MaxMana,
                     CooldownRemaining = fact.Cooldown, RemainingCharges = (int)fact.RemainingCharges, Unlimited = (fact.Flags & 1) != 0 };
                 if (slot.Boss != null) slot.Boss.ApplyReplicatedPhase(fact.Phase);
@@ -407,7 +519,9 @@ namespace Game.Multiplayer
                     AttackerId = source != null && source.Body != null ? source.Body.gameObject.GetInstanceID() : 0, Type = (DamageType)fact.DamageType,
                     Amount = fact.Amount, RemainingHp = slot.Health.CurrentHp, TriggerHitReaction = (fact.Flags & 2) != 0,
                     HitPoint = new Vector3(fact.PositionX, fact.PositionY, fact.PositionZ), HitDirection = new Vector3(fact.VelocityX, fact.VelocityY, fact.VelocityZ) });
-                if (!slot.Health.IsAlive)
+                // 当前读模型死亡与“这次伤害致死”是两件事。较新的死亡状态先到时，
+                // 旧非致死 Damage 仍可呈现反馈，但其 ServerTick 不能被误用为死亡起点、提前缩短尸体期限。
+                if (fact.CurrentHp <= 0f && !slot.Health.IsAlive)
                     PresentDeath(slot, index, fact.ServerTick, slot.BodyLifetime != null ? slot.BodyLifetime.PrefabDelay : 0f);
             }
             if (fact.Kind == 9)
@@ -502,7 +616,19 @@ namespace Game.Multiplayer
         public void Dispose()
         {
             if (_disposed) return; _disposed = true;
+            // Animator属于保留的Scene角色，冻结速度只是本CombatOwner暂时接管的表现状态。
+            // 换Manager会创建默认未冻结的新Owner；若旧Owner不交还速度，新实例没有true→false边沿可恢复。
+            // 仅在当前仍持有冻结权限时恢复自己缓存的原值，不能在已恢复后覆盖角色后来设置的新速度。
+            if (_presentationFrozen)
+                for (int i = 0; i < _actorAnimators.Length; i++)
+                    if (_actorAnimators[i] != null) _actorAnimators[i].speed = _actorAnimationSpeeds[i];
+            _presentationFrozen = false;
+            Array.Clear(_actorAnimators, 0, _actorAnimators.Length);
+            Array.Clear(_actorAnimationSpeeds, 0, _actorAnimationSpeeds.Length);
+            for (int i = 0; i < _intentDrivers.Length; i++)
+            { BindIntentDriver(i, null); BindReceiptDriver(i, null); }
             _channel.IntentReceived -= OnIntent; _channel.FactReceived -= OnFact;
+            _inventoryChannel.CommandReceived -= OnInventoryCommand;
             EventBus<CombatOutputSpawnedEvent>.Unsubscribe(OnBorn); EventBus<DamageReceivedEvent>.Unsubscribe(OnDamage); EventBus<DeathEvent>.Unsubscribe(OnDeath);
             EventBus<OnlineCharacterActionEvent>.Unsubscribe(OnAction);
             EventBus<OnlineBossTeleportPresentationEvent>.Unsubscribe(OnTeleport);

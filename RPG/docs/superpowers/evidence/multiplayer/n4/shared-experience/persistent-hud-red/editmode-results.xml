@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-25 13:47:48Z" end-time="2026-10-25 13:47:49Z" duration="0.6314801">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2436" result="Failed" site="Child" start-time="2026-10-25 13:47:48Z" end-time="2026-10-25 13:47:49Z" duration="0.631480" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3757" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="691" result="Failed" site="Child" start-time="2026-10-25 13:47:48Z" end-time="2026-10-25 13:47:49Z" duration="0.537812" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26116" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3758" name="Game" fullname="Game" runstate="Runnable" testcasecount="691" result="Failed" site="Child" start-time="2026-10-25 13:47:48Z" end-time="2026-10-25 13:47:49Z" duration="0.445241" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3759" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="691" result="Failed" site="Child" start-time="2026-10-25 13:47:49Z" end-time="2026-10-25 13:47:49Z" duration="0.345273" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3760" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="691" result="Failed" site="Child" start-time="2026-10-25 13:47:49Z" end-time="2026-10-25 13:47:49Z" duration="0.246157" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2943" name="CombatPresentationLifecycleTests" fullname="Game.Run.Tests.CombatPresentationLifecycleTests" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-25 13:47:49Z" end-time="2026-10-25 13:47:49Z" duration="0.144294" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2947" name="DestroyedOldScopeReleasesOnlyItsOwnLease" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.DestroyedOldScopeReleasesOnlyItsOwnLease" methodname="DestroyedOldScopeReleasesOnlyItsOwnLease" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="929467983" result="Failed" start-time="2026-10-25 13:47:49Z" end-time="2026-10-25 13:47:49Z" duration="0.025732" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少按需常驻的共用 HUD Host，不能继续给每张地图复制一份界面。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.CombatPresentationLifecycleTests.RequireLifecycleContract () [0x0005e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\CombatPresentationLifecycleTests.cs:31
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2944" name="DifferentCombatAreasReuseHostAndHudWithoutMovingGameplayObjects" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.DifferentCombatAreasReuseHostAndHudWithoutMovingGameplayObjects" methodname="DifferentCombatAreasReuseHostAndHudWithoutMovingGameplayObjects" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="1565575464" result="Failed" start-time="2026-10-25 13:47:49Z" end-time="2026-10-25 13:47:49Z" duration="0.000833" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少按需常驻的共用 HUD Host，不能继续给每张地图复制一份界面。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.CombatPresentationLifecycleTests.RequireLifecycleContract () [0x0005e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\CombatPresentationLifecycleTests.cs:31
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2945" name="OldLeaseCannotUpdateOrReleaseNewOwner" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.OldLeaseCannotUpdateOrReleaseNewOwner" methodname="OldLeaseCannotUpdateOrReleaseNewOwner" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="1489906199" result="Failed" start-time="2026-10-25 13:47:49Z" end-time="2026-10-25 13:47:49Z" duration="0.000844" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少按需常驻的共用 HUD Host，不能继续给每张地图复制一份界面。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.CombatPresentationLifecycleTests.RequireLifecycleContract () [0x0005e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\CombatPresentationLifecycleTests.cs:31
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2946" name="ReleaseClearsActorAndSceneReadReferencesButKeepsReusableHud" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.ReleaseClearsActorAndSceneReadReferencesButKeepsReusableHud" methodname="ReleaseClearsActorAndSceneReadReferencesButKeepsReusableHud" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="600203776" result="Failed" start-time="2026-10-25 13:47:49Z" end-time="2026-10-25 13:47:49Z" duration="0.000676" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少按需常驻的共用 HUD Host，不能继续给每张地图复制一份界面。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.CombatPresentationLifecycleTests.RequireLifecycleContract () [0x0005e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\CombatPresentationLifecycleTests.cs:31
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

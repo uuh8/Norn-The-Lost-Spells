@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="12" result="Failed(Child)" total="12" passed="11" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-28 07:32:04Z" end-time="2026-10-28 07:33:15Z" duration="71.142753">
+  <test-suite type="TestSuite" id="1929" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="840" result="Failed" site="Child" start-time="2026-10-28 07:32:04Z" end-time="2026-10-28 07:33:15Z" duration="71.142753" total="12" passed="11" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1922" name="Game.Run.PlayMode.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.PlayMode.Tests.dll" runstate="Runnable" testcasecount="819" result="Failed" site="Child" start-time="2026-10-28 07:32:04Z" end-time="2026-10-28 07:33:15Z" duration="71.120084" total="12" passed="11" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27148" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1923" name="Game" fullname="Game" runstate="Runnable" testcasecount="819" result="Failed" site="Child" start-time="2026-10-28 07:32:04Z" end-time="2026-10-28 07:33:15Z" duration="71.110799" total="12" passed="11" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1924" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="819" result="Failed" site="Child" start-time="2026-10-28 07:32:04Z" end-time="2026-10-28 07:33:15Z" duration="71.090715" total="12" passed="11" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1925" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="819" result="Failed" site="Child" start-time="2026-10-28 07:32:04Z" end-time="2026-10-28 07:33:15Z" duration="71.076299" total="12" passed="11" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1110" name="CombatPresentationBossTests" fullname="Game.Run.Tests.CombatPresentationBossTests" classname="Game.Run.Tests.CombatPresentationBossTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-28 07:32:04Z" end-time="2026-10-28 07:32:04Z" duration="0.199787" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1111" name="SameWorldInventoryReplacementKeepsLiveBossInitialization" fullname="Game.Run.Tests.CombatPresentationBossTests.SameWorldInventoryReplacementKeepsLiveBossInitialization" methodname="SameWorldInventoryReplacementKeepsLiveBossInitialization" classname="Game.Run.Tests.CombatPresentationBossTests" runstate="Runnable" seed="1533351987" result="Passed" start-time="2026-10-28 07:32:04Z" end-time="2026-10-28 07:32:04Z" duration="0.172596" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1112" name="CombatPresentationRuntimeTests" fullname="Game.Run.Tests.CombatPresentationRuntimeTests" classname="Game.Run.Tests.CombatPresentationRuntimeTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-10-28 07:32:04Z" end-time="2026-10-28 07:32:04Z" duration="0.445269" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1114" name="DestroyedOldScopeAndWorldCannotClearNewWorldOrMoveItsActors" fullname="Game.Run.Tests.CombatPresentationRuntimeTests.DestroyedOldScopeAndWorldCannotClearNewWorldOrMoveItsActors" methodname="DestroyedOldScopeAndWorldCannotClearNewWorldOrMoveItsActors" classname="Game.Run.Tests.CombatPresentationRuntimeTests" runstate="Runnable" seed="339289111" result="Passed" start-time="2026-10-28 07:32:04Z" end-time="2026-10-28 07:32:04Z" duration="0.160762" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1115" name="RealLifecycleBindsLateDungeonSourceAndReleaseDropsItsReference" fullname="Game.Run.Tests.CombatPresentationRuntimeTests.RealLifecycleBindsLateDungeonSourceAndReleaseDropsItsReference" methodname="RealLifecycleBindsLateDungeonSourceAndReleaseDropsItsReference" classname="Game.Run.Tests.CombatPresentationRuntimeTests" runstate="Runnable" seed="1299572218" result="Passed" start-time="2026-10-28 07:32:04Z" end-time="2026-10-28 07:32:04Z" duration="0.139640" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1113" name="RealWorldUnloadKeepsSingleDdOlHudAndDropsSceneReferences" fullname="Game.Run.Tests.CombatPresentationRuntimeTests.RealWorldUnloadKeepsSingleDdOlHudAndDropsSceneReferences" methodname="RealWorldUnloadKeepsSingleDdOlHudAndDropsSceneReferences" classname="Game.Run.Tests.CombatPresentationRuntimeTests" runstate="Runnable" seed="1723728414" result="Passed" start-time="2026-10-28 07:32:04Z" end-time="2026-10-28 07:32:04Z" duration="0.131889" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1161" name="DormantNpcRegistryPlayModeTests" fullname="Game.Run.Tests.DormantNpcRegistryPlayModeTests" classname="Game.Run.Tests.DormantNpcRegistryPlayModeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-28 07:32:04Z" end-time="2026-10-28 07:32:05Z" duration="0.512588" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1162" name="InactivePrefabWarmsAwakeBeforeReplicaFactsAndLaterActivationNeverRefillsHp" fullname="Game.Run.Tests.DormantNpcRegistryPlayModeTests.InactivePrefabWarmsAwakeBeforeReplicaFactsAndLaterActivationNeverRefillsHp" methodname="InactivePrefabWarmsAwakeBeforeReplicaFactsAndLaterActivationNeverRefillsHp" classname="Game.Run.Tests.DormantNpcRegistryPlayModeTests" runstate="Runnable" seed="1341493333" result="Passed" start-time="2026-10-28 07:32:04Z" end-time="2026-10-28 07:32:05Z" duration="0.403762" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+]]></output>
+              </test-case>
+              <test-case id="1163" name="VisibleBossAtActorFiveDoesNotBecomeEncounterActiveDuringWarmup" fullname="Game.Run.Tests.DormantNpcRegistryPlayModeTests.VisibleBossAtActorFiveDoesNotBecomeEncounterActiveDuringWarmup" methodname="VisibleBossAtActorFiveDoesNotBecomeEncounterActiveDuringWarmup" classname="Game.Run.Tests.DormantNpcRegistryPlayModeTests" runstate="Runnable" seed="615555570" result="Passed" start-time="2026-10-28 07:32:05Z" end-time="2026-10-28 07:32:05Z" duration="0.092710" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1170" name="DungeonEntryFlowPlayModeTests" fullname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" classname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-28 07:32:05Z" end-time="2026-10-28 07:33:13Z" duration="68.503800" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1173" name="PortalMatch_AuthenticatedAdmissionReconnectAndReturn_PreservesLocalHub" fullname="Game.Run.Tests.DungeonEntryFlowPlayModeTests.PortalMatch_AuthenticatedAdmissionReconnectAndReturn_PreservesLocalHub" methodname="PortalMatch_AuthenticatedAdmissionReconnectAndReturn_PreservesLocalHub" classname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" runstate="Runnable" seed="191473843" result="Passed" start-time="2026-10-28 07:32:05Z" end-time="2026-10-28 07:32:39Z" duration="34.405062" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UI] Scene Transition Controller 'SceneFade' subscribed; activeInHierarchy=True.
+[OnlineAccounts] 业务 Client 初始化：Ready
+[OnlineAccounts] 业务 HTTP 发起：POST /api/online/sessions
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[UI] Scene Transition Controller starting LoadSceneAsync('SinglePlayer_Hub').
+[UI] Scene Transition Controller 'SceneFade' unsubscribed; transitioning=True.
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/match
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/cd9b6dc575654776989cc3e0f14946ff/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/cd9b6dc575654776989cc3e0f14946ff/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：GET /api/online/profile
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/cd9b6dc575654776989cc3e0f14946ff/ready
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/cd9b6dc575654776989cc3e0f14946ff/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/cd9b6dc575654776989cc3e0f14946ff/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/cd9b6dc575654776989cc3e0f14946ff/start
+[OnlineRooms] 房间HTTP完成：202
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/cd9b6dc575654776989cc3e0f14946ff/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/cd9b6dc575654776989cc3e0f14946ff/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/cd9b6dc575654776989cc3e0f14946ff/ticket
+[OnlineRooms] 房间HTTP完成：200
+[UI] PlayerHealthBar 未指定玩家 HealthComponent，血条不会更新
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/cd9b6dc575654776989cc3e0f14946ff/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/cd9b6dc575654776989cc3e0f14946ff/ticket
+[OnlineRooms] 房间HTTP完成：200
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+              </test-case>
+              <test-case id="1174" name="PortalMatch_P8OriginalTabDragReconnectAndReturn_PreservesLocalHub" fullname="Game.Run.Tests.DungeonEntryFlowPlayModeTests.PortalMatch_P8OriginalTabDragReconnectAndReturn_PreservesLocalHub" methodname="PortalMatch_P8OriginalTabDragReconnectAndReturn_PreservesLocalHub" classname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" runstate="Runnable" seed="1573460873" result="Passed" start-time="2026-10-28 07:32:39Z" end-time="2026-10-28 07:33:13Z" duration="34.084926" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[UI] Scene Transition Controller 'SceneFade' subscribed; activeInHierarchy=True.
+[OnlineAccounts] 业务 Client 初始化：Ready
+[OnlineAccounts] 业务 HTTP 发起：POST /api/online/sessions
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[UI] Scene Transition Controller starting LoadSceneAsync('SinglePlayer_Hub').
+[UI] Scene Transition Controller 'SceneFade' unsubscribed; transitioning=True.
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/match
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/1d66586e1b434cd9ab5c91dc59741a1f/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/1d66586e1b434cd9ab5c91dc59741a1f/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：GET /api/online/profile
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/1d66586e1b434cd9ab5c91dc59741a1f/ready
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/1d66586e1b434cd9ab5c91dc59741a1f/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/1d66586e1b434cd9ab5c91dc59741a1f/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/1d66586e1b434cd9ab5c91dc59741a1f/start
+[OnlineRooms] 房间HTTP完成：202
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/1d66586e1b434cd9ab5c91dc59741a1f/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/1d66586e1b434cd9ab5c91dc59741a1f/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/1d66586e1b434cd9ab5c91dc59741a1f/ticket
+[OnlineRooms] 房间HTTP完成：200
+[UI] PlayerHealthBar 未指定玩家 HealthComponent，血条不会更新
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/1d66586e1b434cd9ab5c91dc59741a1f/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/1d66586e1b434cd9ab5c91dc59741a1f/ticket
+[OnlineRooms] 房间HTTP完成：200
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1190" name="EarlyCombatPresentationLifecycleTests" fullname="Game.Run.Tests.EarlyCombatPresentationLifecycleTests" classname="Game.Run.Tests.EarlyCombatPresentationLifecycleTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-28 07:33:13Z" end-time="2026-10-28 07:33:14Z" duration="0.358282" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1191" name="AwakeActorBeforeSceneLoadedStillComposesOriginalTabAndVisiblePanel" fullname="Game.Run.Tests.EarlyCombatPresentationLifecycleTests.AwakeActorBeforeSceneLoadedStillComposesOriginalTabAndVisiblePanel" methodname="AwakeActorBeforeSceneLoadedStillComposesOriginalTabAndVisiblePanel" classname="Game.Run.Tests.EarlyCombatPresentationLifecycleTests" runstate="Runnable" seed="1868331892" result="Passed" start-time="2026-10-28 07:33:14Z" end-time="2026-10-28 07:33:14Z" duration="0.333626" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1196" name="FormalDungeonWorldPlayModeTests" fullname="Game.Run.Tests.FormalDungeonWorldPlayModeTests" classname="Game.Run.Tests.FormalDungeonWorldPlayModeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-28 07:33:14Z" end-time="2026-10-28 07:33:15Z" duration="0.738837" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1197" name="P7OriginalEntryActivatesOnlyTheFirstTwoOfTwelveAuthoredEnemies" fullname="Game.Run.Tests.FormalDungeonWorldPlayModeTests.P7OriginalEntryActivatesOnlyTheFirstTwoOfTwelveAuthoredEnemies" methodname="P7OriginalEntryActivatesOnlyTheFirstTwoOfTwelveAuthoredEnemies" classname="Game.Run.Tests.FormalDungeonWorldPlayModeTests" runstate="Runnable" seed="85792086" result="Passed" start-time="2026-10-28 07:33:14Z" end-time="2026-10-28 07:33:14Z" duration="0.229773" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+]]></output>
+              </test-case>
+              <test-case id="1198" name="P8VisibleBossStartsOnlyAfterRealSafetyVolumeExit" fullname="Game.Run.Tests.FormalDungeonWorldPlayModeTests.P8VisibleBossStartsOnlyAfterRealSafetyVolumeExit" methodname="P8VisibleBossStartsOnlyAfterRealSafetyVolumeExit" classname="Game.Run.Tests.FormalDungeonWorldPlayModeTests" runstate="Runnable" seed="1449996525" result="Passed" start-time="2026-10-28 07:33:14Z" end-time="2026-10-28 07:33:15Z" duration="0.476725" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1517" name="OnlineSharedInventoryPlayModeTests" fullname="Game.Run.Tests.OnlineSharedInventoryPlayModeTests" classname="Game.Run.Tests.OnlineSharedInventoryPlayModeTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-28 07:33:15Z" end-time="2026-10-28 07:33:15Z" duration="0.302395" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1518" name="OriginalTabUsesOnlineSourceWithoutPausingAndIsReleasedWithItsScene" fullname="Game.Run.Tests.OnlineSharedInventoryPlayModeTests.OriginalTabUsesOnlineSourceWithoutPausingAndIsReleasedWithItsScene" methodname="OriginalTabUsesOnlineSourceWithoutPausingAndIsReleasedWithItsScene" classname="Game.Run.Tests.OnlineSharedInventoryPlayModeTests" runstate="Runnable" seed="754164795" result="Failed" start-time="2026-10-28 07:33:15Z" end-time="2026-10-28 07:33:15Z" duration="0.276936" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[Unhandled log message: '[Error] Cached unprocessed value unexpectedly became outdated for unknown reason, new value '1' old value '0'.'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                  <stack-trace><![CDATA[UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr)
+
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Cached unprocessed value unexpectedly became outdated for unknown reason, new value '1' old value '0'.
+Saving results to: Temp/SinglePlayer/playmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

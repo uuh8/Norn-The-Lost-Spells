@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Game.Core;
 
 namespace Game.Run
@@ -82,8 +83,12 @@ namespace Game.Run
                 return Fail("无法选择入局法杖。", out error);
             var casts = new WandExecutionTransactionService(profile, wands, eligibility, snapshot.InventoryId,
                 new WandExecutionReplayArchive());
+            // RuntimeItemState 不保存数据库 Revision。为完整导出保留已校验的冻结修订，不能拿 Store
+            // 全局 Version 冒充某一物品的数据库版本；当前余额与位置仍从存活工作区实时读取。
+            var revisions = new Dictionary<string, uint>(snapshot.Items.Length, StringComparer.Ordinal);
+            for (int i = 0; i < snapshot.Items.Length; i++) revisions.Add(snapshot.Items[i].InstanceId, snapshot.Items[i].Revision);
             workspace = new OnlineOwnedWorkspace(snapshot.RunId, snapshot.PlayerId, snapshot.ActorId,
-                snapshot.InventoryId, profile, wands, casts);
+                snapshot.InventoryId, profile, wands, casts, eligibility, snapshot.GameplayConfigHash, revisions);
             return true;
         }
 

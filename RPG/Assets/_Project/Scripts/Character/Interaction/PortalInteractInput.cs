@@ -16,7 +16,13 @@ namespace Game.Character
             && PortalInteractionRegistry.TryGetNearest(Current._actor, out _);
         private void Awake()
         { _actor = GetComponent<CharacterController>(); _interact = new InputAction("PortalInteract", InputActionType.Button, "<Keyboard>/f"); _interact.performed += OnInteract; }
-        private void OnEnable() { Current = this; _waitRelease = true; _interact.Enable(); }
+        private void OnEnable()
+        {
+            Current = this;
+            // Hub 在联机期间停用，可能错过窗口的 Focus 回调；恢复时重采真实状态，不能沿用停用前的 false。
+            // 同时仍等 F 释放，避免按住键跨 Scene 或恢复窗口时直接触发另一道门。
+            _focused = Application.isFocused; _waitRelease = true; _interact.Enable();
+        }
         private void OnDisable() { if (Current == this) Current = null; _interact.Disable(); _waitRelease = true; }
         private void OnDestroy() { _interact.performed -= OnInteract; _interact.Dispose(); }
         private void OnApplicationFocus(bool focus) { _focused = focus; _waitRelease = true; }

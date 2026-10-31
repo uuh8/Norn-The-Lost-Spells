@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-26 06:49:48Z" end-time="2026-10-26 06:49:48Z" duration="0.6253256">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2545" result="Failed" site="Child" start-time="2026-10-26 06:49:48Z" end-time="2026-10-26 06:49:48Z" duration="0.625326" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2457" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="85" result="Failed" site="Child" start-time="2026-10-26 06:49:48Z" end-time="2026-10-26 06:49:48Z" duration="0.532729" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27688" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2458" name="Game" fullname="Game" runstate="Runnable" testcasecount="85" result="Failed" site="Child" start-time="2026-10-26 06:49:48Z" end-time="2026-10-26 06:49:48Z" duration="0.438760" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2459" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="85" result="Failed" site="Child" start-time="2026-10-26 06:49:48Z" end-time="2026-10-26 06:49:48Z" duration="0.339379" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2460" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="85" result="Failed" site="Child" start-time="2026-10-26 06:49:48Z" end-time="2026-10-26 06:49:48Z" duration="0.240292" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2422" name="OnlineInventoryInputCaptureTests" fullname="Game.Multiplayer.Tests.OnlineInventoryInputCaptureTests" classname="Game.Multiplayer.Tests.OnlineInventoryInputCaptureTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-26 06:49:48Z" end-time="2026-10-26 06:49:48Z" duration="0.138578" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2424" name="UiCaptureSynchronouslyBlocksCastDriverBeforeAnotherInputCallback" fullname="Game.Multiplayer.Tests.OnlineInventoryInputCaptureTests.UiCaptureSynchronouslyBlocksCastDriverBeforeAnotherInputCallback" methodname="UiCaptureSynchronouslyBlocksCastDriverBeforeAnotherInputCallback" classname="Game.Multiplayer.Tests.OnlineInventoryInputCaptureTests" runstate="Runnable" seed="1290026381" result="Failed" start-time="2026-10-26 06:49:48Z" end-time="2026-10-26 06:49:48Z" duration="0.027155" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  同一轮Tab→数字键回调不能等Update才阻塞选杖。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineInventoryInputCaptureTests.UiCaptureSynchronouslyBlocksCastDriverBeforeAnotherInputCallback () [0x00096] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineInventoryInputCaptureTests.cs:49
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -17,7 +17,7 @@ namespace Game.Rendering
         private static readonly ProfilerMarker CrownMarker=new ProfilerMarker("GridLiquid.Field.Crown");
         private static readonly ProfilerMarker BoundsMarker=new ProfilerMarker("GridLiquid.Field.ShapeBounds");
         private static readonly ProfilerMarker OwnersMarker=new ProfilerMarker("GridLiquid.Field.OutputOwners");
-        private readonly LiquidWorldRuntime _source;
+        private readonly ILiquidPresentationReadOnly _source;
         private readonly bool _snapshotOnly;
         private readonly Dictionary<int,LiquidCellPresentationSample> _rowMotion;
         private readonly int _maximumRowMotion;
@@ -110,7 +110,7 @@ namespace Game.Rendering
         private int K => _source.ChunkSize;
         public int ChunkEdge=>K;
         private int Cells => K * K * K;
-        public GridLiquidFieldFrame(LiquidWorldRuntime source, int inputCapacity, int lookupSlots,float crownStrength=.15f,float cartoonVolumeScale=1.8f,bool snapshotOnly=false)
+        public GridLiquidFieldFrame(ILiquidPresentationReadOnly source, int inputCapacity, int lookupSlots,float crownStrength=.15f,float cartoonVolumeScale=1.8f,bool snapshotOnly=false)
         {
             // EditMode没有BeforeSceneLoad；构造快照时也预热，保证Capture热路径不首次分配解码表。
             GridLiquidPackedCell.WarmDecodeTable();

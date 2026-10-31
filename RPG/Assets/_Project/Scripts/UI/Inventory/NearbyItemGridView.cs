@@ -64,7 +64,9 @@ namespace Game.UI
         {
             if(_fitWidthToViewport && transform.parent is RectTransform widthViewport)_cellSize=Mathf.Max(24,widthViewport.rect.width/8);
             _controller=controller;_prefab=prefab;_items=items;_count=count;_nearby=nearby;
-            string inventory=controller.Session.ReadOnly.InventoryId,scene=controller.Session.WorldSceneKey;
+            // Identity 与世界键均来自同一源，换局时不能继续使用旧单机地面布局缓存。
+            var source=controller.PresentationSource;
+            string inventory=source?.ReadOnly?.InventoryId,scene=source?.WorldSceneKey;
             if(_inventoryId!=inventory || _sceneKey!=scene){_placements.Clear();_known.Clear();_spareColumns=_spareRows=0;_hasLayout=false;_inventoryId=inventory;_sceneKey=scene;}
             for(int k=_known.Count-1;k>=0;k--)
             {bool exists=false;for(int i=0;i<count;i++)if(items[i].InstanceId==_known[k] && items[i].Location.Kind==ItemLocationKind.WorldItem){exists=true;break;}

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-26 02:29:11Z" end-time="2026-10-26 02:29:11Z" duration="0.6328735">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2487" result="Failed" site="Child" start-time="2026-10-26 02:29:11Z" end-time="2026-10-26 02:29:11Z" duration="0.632874" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2435" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="72" result="Failed" site="Child" start-time="2026-10-26 02:29:11Z" end-time="2026-10-26 02:29:11Z" duration="0.534671" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26116" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2436" name="Game" fullname="Game" runstate="Runnable" testcasecount="72" result="Failed" site="Child" start-time="2026-10-26 02:29:11Z" end-time="2026-10-26 02:29:11Z" duration="0.441516" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2437" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="72" result="Failed" site="Child" start-time="2026-10-26 02:29:11Z" end-time="2026-10-26 02:29:11Z" duration="0.340704" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2438" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="72" result="Failed" site="Child" start-time="2026-10-26 02:29:11Z" end-time="2026-10-26 02:29:11Z" duration="0.226391" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2345" name="InventorySnapshotInboxTests" fullname="Game.Multiplayer.Tests.InventorySnapshotInboxTests" classname="Game.Multiplayer.Tests.InventorySnapshotInboxTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-26 02:29:11Z" end-time="2026-10-26 02:29:11Z" duration="0.138690" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2350" name="ActualInventoryEnvelopeDoesNotCollideWithMirrorOrExistingMessages" fullname="Game.Multiplayer.Tests.InventorySnapshotInboxTests.ActualInventoryEnvelopeDoesNotCollideWithMirrorOrExistingMessages" methodname="ActualInventoryEnvelopeDoesNotCollideWithMirrorOrExistingMessages" classname="Game.Multiplayer.Tests.InventorySnapshotInboxTests" runstate="Runnable" seed="786292661" result="Failed" start-time="2026-10-26 02:29:11Z" end-time="2026-10-26 02:29:11Z" duration="0.024422" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少独立的库存Owner/连接代次/完整快照去重入口。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventorySnapshotInboxTests.RequireOwnerInbox () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventorySnapshotInboxTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2348" name="DuplicateOutOfOrderAndConsumedPacketsNeverReappear" fullname="Game.Multiplayer.Tests.InventorySnapshotInboxTests.DuplicateOutOfOrderAndConsumedPacketsNeverReappear" methodname="DuplicateOutOfOrderAndConsumedPacketsNeverReappear" classname="Game.Multiplayer.Tests.InventorySnapshotInboxTests" runstate="Runnable" seed="922766222" result="Failed" start-time="2026-10-26 02:29:11Z" end-time="2026-10-26 02:29:11Z" duration="0.000396" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少独立的库存Owner/连接代次/完整快照去重入口。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventorySnapshotInboxTests.RequireOwnerInbox () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventorySnapshotInboxTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2351" name="EnvelopeRejectsOversizeAndTruncatedPayloadBeforeBorrowingBytes" fullname="Game.Multiplayer.Tests.InventorySnapshotInboxTests.EnvelopeRejectsOversizeAndTruncatedPayloadBeforeBorrowingBytes" methodname="EnvelopeRejectsOversizeAndTruncatedPayloadBeforeBorrowingBytes" classname="Game.Multiplayer.Tests.InventorySnapshotInboxTests" runstate="Runnable" seed="1430815797" result="Failed" start-time="2026-10-26 02:29:11Z" end-time="2026-10-26 02:29:11Z" duration="0.000796" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少独立的库存Owner/连接代次/完整快照去重入口。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventorySnapshotInboxTests.RequireOwnerInbox () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventorySnapshotInboxTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2349" name="InventoryIdentityCannotBeTakenFromTheUntrustedPayload" fullname="Game.Multiplayer.Tests.InventorySnapshotInboxTests.InventoryIdentityCannotBeTakenFromTheUntrustedPayload" methodname="InventoryIdentityCannotBeTakenFromTheUntrustedPayload" classname="Game.Multiplayer.Tests.InventorySnapshotInboxTests" runstate="Runnable" seed="1571793503" result="Failed" start-time="2026-10-26 02:29:11Z" end-time="2026-10-26 02:29:11Z" duration="0.000421" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少独立的库存Owner/连接代次/完整快照去重入口。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventorySnapshotInboxTests.RequireOwnerInbox () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventorySnapshotInboxTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2347" name="OldEpochWrongActorOrWrongRulesCannotReplacePendingSnapshot" fullname="Game.Multiplayer.Tests.InventorySnapshotInboxTests.OldEpochWrongActorOrWrongRulesCannotReplacePendingSnapshot" methodname="OldEpochWrongActorOrWrongRulesCannotReplacePendingSnapshot" classname="Game.Multiplayer.Tests.InventorySnapshotInboxTests" runstate="Runnable" seed="524329698" result="Failed" start-time="2026-10-26 02:29:11Z" end-time="2026-10-26 02:29:11Z" duration="0.000363" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少独立的库存Owner/连接代次/完整快照去重入口。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventorySnapshotInboxTests.RequireOwnerInbox () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventorySnapshotInboxTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2346" name="OtherPlayerCannotConsumeTheCurrentOwnersFirstSequence" fullname="Game.Multiplayer.Tests.InventorySnapshotInboxTests.OtherPlayerCannotConsumeTheCurrentOwnersFirstSequence" methodname="OtherPlayerCannotConsumeTheCurrentOwnersFirstSequence" classname="Game.Multiplayer.Tests.InventorySnapshotInboxTests" runstate="Runnable" seed="1720872428" result="Failed" start-time="2026-10-26 02:29:11Z" end-time="2026-10-26 02:29:11Z" duration="0.000437" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少独立的库存Owner/连接代次/完整快照去重入口。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventorySnapshotInboxTests.RequireOwnerInbox () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventorySnapshotInboxTests.cs:23
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

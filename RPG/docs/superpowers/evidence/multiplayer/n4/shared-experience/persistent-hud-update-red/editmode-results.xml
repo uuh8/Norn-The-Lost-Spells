@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-25 14:06:54Z" end-time="2026-10-25 14:06:55Z" duration="0.8233362">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2437" result="Failed" site="Child" start-time="2026-10-25 14:06:54Z" end-time="2026-10-25 14:06:55Z" duration="0.823336" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3758" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="692" result="Failed" site="Child" start-time="2026-10-25 14:06:54Z" end-time="2026-10-25 14:06:55Z" duration="0.723417" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26116" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3759" name="Game" fullname="Game" runstate="Runnable" testcasecount="692" result="Failed" site="Child" start-time="2026-10-25 14:06:54Z" end-time="2026-10-25 14:06:55Z" duration="0.630950" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3760" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="692" result="Failed" site="Child" start-time="2026-10-25 14:06:54Z" end-time="2026-10-25 14:06:55Z" duration="0.531676" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3761" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="692" result="Failed" site="Child" start-time="2026-10-25 14:06:54Z" end-time="2026-10-25 14:06:55Z" duration="0.432486" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2943" name="CombatPresentationLifecycleTests" fullname="Game.Run.Tests.CombatPresentationLifecycleTests" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-25 14:06:54Z" end-time="2026-10-25 14:06:55Z" duration="0.331594" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2947" name="DestroyedOldScopeReleasesOnlyItsOwnLease" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.DestroyedOldScopeReleasesOnlyItsOwnLease" methodname="DestroyedOldScopeReleasesOnlyItsOwnLease" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="992067088" result="Failed" start-time="2026-10-25 14:06:54Z" end-time="2026-10-25 14:06:55Z" duration="0.142910" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[Unhandled log message: '[Error] Failed to call static function Reset because an object was provided'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                  <stack-trace><![CDATA[UnityEngine.GameObject:AddComponent<Game.UI.CombatPresentationHost> ()
+Game.UI.CombatPresentationHost:EnsureHost () (at Assets/_Project/Scripts/UI/Combat/CombatPresentationHost.cs:85)
+Game.UI.CombatPresentationHost:TryAcquire (UnityEngine.Object,Game.UI.CombatPresentationContext&,Game.UI.CombatPresentationLease&) (at Assets/_Project/Scripts/UI/Combat/CombatPresentationHost.cs:47)
+Game.UI.CombatPresentationScope:Bind (Game.UI.CombatPresentationContext&) (at Assets/_Project/Scripts/UI/Combat/CombatPresentationScope.cs:52)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Run.Tests.CombatPresentationLifecycleTests:DestroyedOldScopeReleasesOnlyItsOwnLease () (at Assets/_Project/Tests/Run/CombatPresentationLifecycleTests.cs:115)
+System.Reflection.MethodBase:Invoke (object,object[])
+NUnit.Framework.Internal.Reflect:InvokeMethod (System.Reflection.MethodInfo,object,object[])
+NUnit.Framework.Internal.MethodWrapper:Invoke (object,object[])
+NUnit.Framework.Internal.Commands.TestMethodCommand:RunNonAsyncTestMethod (NUnit.Framework.Internal.ITestExecutionContext)
+NUnit.Framework.Internal.Commands.TestMethodCommand:RunTestMethod (NUnit.Framework.Internal.ITestExecutionContext)
+NUnit.Framework.Internal.Commands.TestMethodCommand:Execute (NUnit.Framework.Internal.ITestExecutionContext)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Failed to call static function Reset because an object was provided
+]]></output>
+              </test-case>
+              <test-case id="2944" name="DifferentCombatAreasReuseHostAndHudWithoutMovingGameplayObjects" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.DifferentCombatAreasReuseHostAndHudWithoutMovingGameplayObjects" methodname="DifferentCombatAreasReuseHostAndHudWithoutMovingGameplayObjects" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="1220590471" result="Failed" start-time="2026-10-25 14:06:55Z" end-time="2026-10-25 14:06:55Z" duration="0.022454" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[Unhandled log message: '[Error] Failed to call static function Reset because an object was provided'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                  <stack-trace><![CDATA[UnityEngine.GameObject:AddComponent<Game.UI.CombatPresentationHost> ()
+Game.UI.CombatPresentationHost:EnsureHost () (at Assets/_Project/Scripts/UI/Combat/CombatPresentationHost.cs:85)
+Game.UI.CombatPresentationHost:TryAcquire (UnityEngine.Object,Game.UI.CombatPresentationContext&,Game.UI.CombatPresentationLease&) (at Assets/_Project/Scripts/UI/Combat/CombatPresentationHost.cs:47)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Run.Tests.CombatPresentationLifecycleTests:Acquire (UnityEngine.GameObject,object) (at Assets/_Project/Tests/Run/CombatPresentationLifecycleTests.cs:150)
+Game.Run.Tests.CombatPresentationLifecycleTests:DifferentCombatAreasReuseHostAndHudWithoutMovingGameplayObjects () (at Assets/_Project/Tests/Run/CombatPresentationLifecycleTests.cs:52)
+System.Reflection.MethodBase:Invoke (object,object[])
+NUnit.Framework.Internal.Reflect:InvokeMethod (System.Reflection.MethodInfo,object,object[])
+NUnit.Framework.Internal.MethodWrapper:Invoke (object,object[])
+NUnit.Framework.Internal.Commands.TestMethodCommand:RunNonAsyncTestMethod (NUnit.Framework.Internal.ITestExecutionContext)
+NUnit.Framework.Internal.Commands.TestMethodCommand:RunTestMethod (NUnit.Framework.Internal.ITestExecutionContext)
+NUnit.Framework.Internal.Commands.TestMethodCommand:Execute (NUnit.Framework.Internal.ITestExecutionContext)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Failed to call static function Reset because an object was provided
+]]></output>
+              </test-case>
+              <test-case id="2945" name="OldLeaseCannotUpdateOrReleaseNewOwner" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.OldLeaseCannotUpdateOrReleaseNewOwner" methodname="OldLeaseCannotUpdateOrReleaseNewOwner" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="2004582700" result="Failed" start-time="2026-10-25 14:06:55Z" end-time="2026-10-25 14:06:55Z" duration="0.015453" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[Unhandled log message: '[Error] Failed to call static function Reset because an object was provided'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                  <stack-trace><![CDATA[UnityEngine.GameObject:AddComponent<Game.UI.CombatPresentationHost> ()
+Game.UI.CombatPresentationHost:EnsureHost () (at Assets/_Project/Scripts/UI/Combat/CombatPresentationHost.cs:85)
+Game.UI.CombatPresentationHost:TryAcquire (UnityEngine.Object,Game.UI.CombatPresentationContext&,Game.UI.CombatPresentationLease&) (at Assets/_Project/Scripts/UI/Combat/CombatPresentationHost.cs:47)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Run.Tests.CombatPresentationLifecycleTests:Acquire (UnityEngine.GameObject,object) (at Assets/_Project/Tests/Run/CombatPresentationLifecycleTests.cs:150)
+Game.Run.Tests.CombatPresentationLifecycleTests:OldLeaseCannotUpdateOrReleaseNewOwner () (at Assets/_Project/Tests/Run/CombatPresentationLifecycleTests.cs:72)
+System.Reflection.MethodBase:Invoke (object,object[])
+NUnit.Framework.Internal.Reflect:InvokeMethod (System.Reflection.MethodInfo,object,object[])
+NUnit.Framework.Internal.MethodWrapper:Invoke (object,object[])
+NUnit.Framework.Internal.Commands.TestMethodCommand:RunNonAsyncTestMethod (NUnit.Framework.Internal.ITestExecutionContext)
+NUnit.Framework.Internal.Commands.TestMethodCommand:RunTestMethod (NUnit.Framework.Internal.ITestExecutionContext)
+NUnit.Framework.Internal.Commands.TestMethodCommand:Execute (NUnit.Framework.Internal.ITestExecutionContext)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Failed to call static function Reset because an object was provided
+]]></output>
+              </test-case>
+              <test-case id="2946" name="ReleaseClearsActorAndSceneReadReferencesButKeepsReusableHud" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.ReleaseClearsActorAndSceneReadReferencesButKeepsReusableHud" methodname="ReleaseClearsActorAndSceneReadReferencesButKeepsReusableHud" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="2031832028" result="Failed" start-time="2026-10-25 14:06:55Z" end-time="2026-10-25 14:06:55Z" duration="0.015650" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[Unhandled log message: '[Error] Failed to call static function Reset because an object was provided'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                  <stack-trace><![CDATA[UnityEngine.GameObject:AddComponent<Game.UI.CombatPresentationHost> ()
+Game.UI.CombatPresentationHost:EnsureHost () (at Assets/_Project/Scripts/UI/Combat/CombatPresentationHost.cs:85)
+Game.UI.CombatPresentationHost:TryAcquire (UnityEngine.Object,Game.UI.CombatPresentationContext&,Game.UI.CombatPresentationLease&) (at Assets/_Project/Scripts/UI/Combat/CombatPresentationHost.cs:47)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Run.Tests.CombatPresentationLifecycleTests:Acquire (UnityEngine.GameObject,object) (at Assets/_Project/Tests/Run/CombatPresentationLifecycleTests.cs:150)
+Game.Run.Tests.CombatPresentationLifecycleTests:ReleaseClearsActorAndSceneReadReferencesButKeepsReusableHud () (at Assets/_Project/Tests/Run/CombatPresentationLifecycleTests.cs:87)
+System.Reflection.MethodBase:Invoke (object,object[])
+NUnit.Framework.Internal.Reflect:InvokeMethod (System.Reflection.MethodInfo,object,object[])
+NUnit.Framework.Internal.MethodWrapper:Invoke (object,object[])
+NUnit.Framework.Internal.Commands.TestMethodCommand:RunNonAsyncTestMethod (NUnit.Framework.Internal.ITestExecutionContext)
+NUnit.Framework.Internal.Commands.TestMethodCommand:RunTestMethod (NUnit.Framework.Internal.ITestExecutionContext)
+NUnit.Framework.Internal.Commands.TestMethodCommand:Execute (NUnit.Framework.Internal.ITestExecutionContext)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Failed to call static function Reset because an object was provided
+]]></output>
+              </test-case>
+              <test-case id="2948" name="RepeatedIdenticalContextKeepsOriginalInventoryOpen" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.RepeatedIdenticalContextKeepsOriginalInventoryOpen" methodname="RepeatedIdenticalContextKeepsOriginalInventoryOpen" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="1896761126" result="Failed" start-time="2026-10-25 14:06:55Z" end-time="2026-10-25 14:06:55Z" duration="0.019431" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  完全相同 Context 只是重复事实，不应 Close 原背包或重绑纯表现树。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.CombatPresentationLifecycleTests.RepeatedIdenticalContextKeepsOriginalInventoryOpen () [0x00091] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\CombatPresentationLifecycleTests.cs:139
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Failed to call static function Reset because an object was provided
+Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -10,8 +10,9 @@ namespace Game.UI
     /// Inspector 拖入玩家 HealthComponent（拿 Max + 识别 id），订阅 DamageReceivedEvent 更新"目标填充"，
     /// Update 用 MoveTowards 平滑滑动到目标值（类原神掉血手感）。
     /// </summary>
-    public class PlayerHealthBar : MonoBehaviour
+    public class PlayerHealthBar : MonoBehaviour, ICombatHudElement
     {
+        public GameObject PresentationRoot => gameObject;
         [SerializeField] private Image _fill;                    // 红填充（HP_line，Image Type=Filled, Horizontal）
         [SerializeField] private HealthComponent _playerHealth;  // 玩家血量（Inspector 拖入）
         [SerializeField] private Text _valueLabel;               // 显示“当前值/最大值”的 UGUI Text
@@ -22,8 +23,33 @@ namespace Game.UI
         private int _lastCurrentValue = int.MinValue;
         private int _lastMaxValue = int.MinValue;
 
-        private void OnEnable()  => EventBus<DamageReceivedEvent>.Subscribe(OnDamageReceived);
-        private void OnDisable() => EventBus<DamageReceivedEvent>.Unsubscribe(OnDamageReceived);
+        /// <summary>换数据源而不换 UGUI：单机仍保留 Inspector 引用，在线绑定本机 Replica 的只读 HP。</summary>
+        public void Bind(HealthComponent health)
+        {
+            _playerHealth = health;
+            _lastCurrentValue = _lastMaxValue = int.MinValue;
+            RefreshFromSource(true);
+        }
+
+        private void RefreshFromSource(bool immediate)
+        {
+            _targetFill = _playerHealth != null && _playerHealth.MaxHp > 0f
+                ? Mathf.Clamp01(_playerHealth.CurrentHp / _playerHealth.MaxHp) : 0f;
+            RefreshValueLabel(_playerHealth != null ? _playerHealth.CurrentHp : 0f,
+                _playerHealth != null ? _playerHealth.MaxHp : 0f);
+            if (immediate) { _displayFill = _targetFill; ApplyFill(); }
+        }
+
+        private void OnEnable()
+        {
+            EventBus<DamageReceivedEvent>.Subscribe(OnDamageReceived);
+            EventBus<HealthStateChangedEvent>.Subscribe(OnHealthState);
+        }
+        private void OnDisable()
+        {
+            EventBus<DamageReceivedEvent>.Unsubscribe(OnDamageReceived);
+            EventBus<HealthStateChangedEvent>.Unsubscribe(OnHealthState);
+        }
 
         private void Start()
         {
@@ -47,8 +73,16 @@ namespace Game.UI
             RefreshValueLabel(e.RemainingHp, _playerHealth.MaxHp);
         }
 
+        private void OnHealthState(HealthStateChangedEvent state)
+        {
+            if (_playerHealth == null || state.TargetId != _playerHealth.Id || state.MaxHp <= 0f) return;
+            _targetFill = Mathf.Clamp01(state.CurrentHp / state.MaxHp);
+            RefreshValueLabel(state.CurrentHp, state.MaxHp);
+        }
+
         private void Update()
         {
+            // 数值标签在离散事实中刷新；每帧只平滑原 Image，不格式化 string 或建立另一套联机条。
             if (Mathf.Approximately(_displayFill, _targetFill)) return; // 到位后不再计算
             _displayFill = Mathf.MoveTowards(_displayFill, _targetFill, _lerpSpeed * Time.deltaTime);
             ApplyFill();

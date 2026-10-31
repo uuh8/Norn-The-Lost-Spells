@@ -68,7 +68,7 @@ namespace Game.Networking.Tests
             input = MinimalInput(); input.MoveX = 1.01f; Assert.False(codec.TryDecodeInput(new ArraySegment<byte>(input.ToByteArray()), out _));
             input = MinimalInput(); input.MoveY = float.NaN; Assert.False(codec.TryEncodeInput(input, bytes, out _));
             input = MinimalInput(); input.ViewYaw = float.PositiveInfinity; Assert.False(codec.TryEncodeInput(input, bytes, out _));
-            var state = MinimalState(); state.ActorId = 9; Assert.False(codec.TryEncodeState(state, bytes, out _));
+            var state = MinimalState(); state.ActorId = 17; Assert.False(codec.TryEncodeState(state, bytes, out _));
             state = MinimalState(); state.ServerTick = 0; Assert.False(codec.TryEncodeState(state, bytes, out _));
             state = MinimalState(); state.SnapshotSequence = 0; Assert.False(codec.TryEncodeState(state, bytes, out _));
             state = MinimalState(); state.Locomotion = 4; Assert.False(codec.TryEncodeState(state, bytes, out _));
@@ -148,7 +148,8 @@ namespace Game.Networking.Tests
             Assert.That(written, Is.Zero); Assert.False(codec.TryEncodeInput(input, default, out _));
             var state = MinimalState(); state.ActorId = 0; Assert.False(codec.TryEncodeState(state, bytes, out _));
             state = MinimalState(); state.ConnectionEpoch = 0; Assert.False(codec.TryEncodeState(state, bytes, out _));
-            state = MinimalState(); state.ProtocolVersion = 2; Assert.False(codec.TryDecodeState(new ArraySegment<byte>(state.ToByteArray()), out _));
+            // 应用协议已演进到2；用明确未支持的下一版本验证拒绝，不能继续把当前合法版本写成错误样本。
+            state = MinimalState(); state.ProtocolVersion = ProtocolCompatibility.CurrentVersion + 1; Assert.False(codec.TryDecodeState(new ArraySegment<byte>(state.ToByteArray()), out _));
             state = MinimalState(); state.SimulationHash = 0; Assert.False(codec.TryEncodeState(state, bytes, out _));
             Assert.That(MovementInputMessage.Descriptor.FindFieldByName("actor_id"), Is.Null, "输入身份必须来自认证连接。");
         }

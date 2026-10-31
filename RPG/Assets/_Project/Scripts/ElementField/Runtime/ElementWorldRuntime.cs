@@ -122,9 +122,9 @@ namespace Game.ElementField
         internal float ConfiguredTickRate => _profile != null ? _profile.TickRate : 0f;
         internal WaterSimulationMode ConfiguredWaterSimulationMode => _profile != null ? _profile.WaterSimulationMode : default;
         public Vector3 Origin => _origin;
-        public float CellSize => IsInitialized ? _settings.CellSize : 0f;
+        public float CellSize => IsInitialized ? (_executionMode == WorldExecutionMode.Replica ? _profile.CellSize : _settings.CellSize) : 0f;
         public int ChunkSize => IsInitialized ? _profile.ChunkSize : 0;
-        public int MaximumResidentChunkCount => IsInitialized ? _profile.MaximumResidentChunks : 0;
+        public int MaximumResidentChunkCount => IsInitialized ? (_replicaStore != null ? _replicaStore.MaximumChunks : _profile.MaximumResidentChunks) : 0;
         public long WorldTick => _worldTick;
         public ElementChunkKey InterestChunk => _interestChunk;
         public Vector3 InterestPosition=>_interestPoint!=null?_interestPoint.position:transform.position;
@@ -135,13 +135,13 @@ namespace Game.ElementField
         public ElementFieldSimulationStats LastStats => _lastStats;
         public WaterSimulationMode EffectiveWaterSimulationMode => _effectiveWaterSimulationMode;
         public IMaterialSimulationRouteReadOnly MaterialRoutes => _materialRoutes;
-        public IMaterialAmountReadOnly MaterialAmounts => _materialQuery;
+        public IMaterialAmountReadOnly MaterialAmounts => _executionMode == WorldExecutionMode.Replica ? this : _materialQuery;
         public IFluidDormantReadOnly DormantLiquids => _fluidChunkStreamingRuntime;
-        public ILiquidSurfaceReadOnly GridLiquids => _gridLiquidRuntime;
+        public ILiquidSurfaceReadOnly GridLiquids => _executionMode == WorldExecutionMode.Replica ? _replicaLiquids : _gridLiquidRuntime;
         public FixedSolidWorldRuntime FixedSolids => _fixedSolidRuntime;
         public GasWorldRuntime Gases => _gasRuntime;
-        public IFixedSolidSurfaceReadOnly SolidSurfaces => _fixedSolidRuntime;
-        public IGasVolumeReadOnly GasVolumes => _gasRuntime;
+        public IFixedSolidSurfaceReadOnly SolidSurfaces => _executionMode == WorldExecutionMode.Replica ? _replicaSolids : _fixedSolidRuntime;
+        public IGasVolumeReadOnly GasVolumes => _executionMode == WorldExecutionMode.Replica ? _replicaGases : _gasRuntime;
         public IMaterialQuantityReadOnly MaterialQuantities => this;
         public MaterialStatusProjectionSnapshot MaterialStatusProjection => _materialStatusProjection;
         public int LastFrameTickCount { get; private set; }
@@ -154,12 +154,15 @@ namespace Game.ElementField
 
         private void Awake()
         {
+            // Replica 不调用初始化：初始化会建立真实数量 Owner 与库存/反应写入口，不能把它当只读缓存。
+            if (_executionMode == WorldExecutionMode.Replica) return;
             if (!TryInitialize())
                 enabled = false;
         }
 
         private void OnEnable()
         {
+            if (_executionMode == WorldExecutionMode.Replica) return;
             if (!IsInitialized && !TryInitialize())
             {
                 enabled = false;
@@ -184,48 +187,46 @@ namespace Game.ElementField
 
         private void Update()
         {
+            if (_executionMode == WorldExecutionMode.Replica) { _replicaSolids?.PresentOneChunk(); return; }
+            // 只有时间 Owner 可以覆盖该次推进的诊断。Authority 的外部 Step 可能先于本 Update 执行，
+            // 若先清零再判 mode，会让真实推进数取决于 Script Execution Order。
+            if (_executionMode != WorldExecutionMode.SinglePlayer) return;
+            if (IsWorldStepInProgress) return;
             LastFrameTickCount = 0;
-            if (!IsInitialized || Time.timeScale <= 0f)
+            if (!IsInitialized || _simulationFaulted
+                || Time.timeScale <= 0f)
                 return;
-
-            RefreshInterestChunk();
-
-            RefreshWorldActivity();
-
-            if (SimulationPausedForDebug || SimulationSuspended) return;
-
-            int ticks = _tickAccumulator.Consume(Time.deltaTime);
-            LastFrameTickCount = ticks;
-            if (_tickAccumulator.DroppedDebtLastConsume)
-                _droppedDebtFrameCount++;
-            for (int i = 0; i < ticks; i++)
-                SimulateOneTick();
+            if (SimulationPausedForDebug || SimulationSuspended)
+            {
+                // 保留原单机暂停时刷新 Interest/Activity 的行为；暂停只停 Solver，不停场景绑定维护。
+                RefreshInterestChunk();
+                RefreshWorldActivity();
+                return;
+            }
+            AdvanceSimulationClock(Time.deltaTime);
         }
 
         /// <summary>
-        /// 测试与 Debug 使用显式 deltaTime；正常 Gameplay 仍由 Update 驱动。
+        /// 单机测试与 Debug 使用显式 deltaTime；Authority 必须用带 serverTick 栅栏的 StepAuthority，
+        /// Replica 不模拟。测试便利入口不能成为绕过真实所有权和冻结条件的第二条通路。
         /// </summary>
         public int TickForTests(float deltaTime)
         {
+            if (_executionMode != WorldExecutionMode.SinglePlayer) return 0;
+            if (IsWorldStepInProgress) return 0;
             LastFrameTickCount = 0;
-            if (!IsInitialized)
+            if (!IsInitialized || _simulationFaulted
+                || SimulationPausedForDebug || SimulationSuspended)
                 return 0;
-
-            RefreshInterestChunk();
-            RefreshWorldActivity();
-            int ticks = _tickAccumulator.Consume(deltaTime);
-            LastFrameTickCount = ticks;
-            if (_tickAccumulator.DroppedDebtLastConsume)
-                _droppedDebtFrameCount++;
-            for (int i = 0; i < ticks; i++)
-                SimulateOneTick();
-
-            return ticks;
+            return AdvanceSimulationClock(deltaTime);
         }
 
         public bool TryEnqueueWrite(in ElementWriteRequest request)
         {
-            return IsInitialized && RetainWriteActivity(in request) && ElementWorldWriteRouter.TryRoute(
+            // Reserve/Commit/Cancel 会同步调用外部实现，期间不允许另一条入队改变同一个数量世界。
+            // 内部 Stage/Undo 不经此门，仍由持有事务所有权的 Port 完成原有提交或回滚流程。
+            return CanAcceptWorldWrites && !IsMaterialTransactionInProgress
+                && RetainWriteActivity(in request) && ElementWorldWriteRouter.TryRoute(
                 _materialRoutes,
                 in request,
                 _writeQueue,
@@ -241,6 +242,7 @@ namespace Game.ElementField
         {
             if (destination == null)
                 throw new ArgumentNullException(nameof(destination));
+            if (_executionMode == WorldExecutionMode.Replica) return _replicaStore != null ? _replicaStore.CopyChunkKeys(WorldMaterialDomain.LegacyCell, destination) : 0;
             if (!IsInitialized || !_hasInterestChunk || _store == null || destination.Length == 0)
                 return 0;
 
@@ -287,6 +289,7 @@ namespace Game.ElementField
         /// </summary>
         public bool TryGetCell(Vector3Int globalCell, out ElementCell cell)
         {
+            if (_executionMode == WorldExecutionMode.Replica) return TryGetReplicaLegacyCell(globalCell, out cell);
             if (!TryResolveResidentCell(globalCell, out ElementWorldChunk chunk, out Vector3Int localCell))
             {
                 cell = default;
@@ -299,6 +302,7 @@ namespace Game.ElementField
 
         public int CopyChunkCells(ElementChunkKey key, ElementCell[] destination)
         {
+            if (_executionMode == WorldExecutionMode.Replica) return CopyReplicaLegacyChunk(key, destination);
             if (destination == null) throw new ArgumentNullException(nameof(destination));
             if (!IsInitialized || _store == null || !_store.TryGetChunk(key, out ElementWorldChunk chunk)) return 0;
             if (destination.Length < chunk.CellCount)
@@ -311,12 +315,15 @@ namespace Game.ElementField
 
         public bool IsSolid(Vector3Int globalCell)
         {
+            if (_executionMode == WorldExecutionMode.Replica) return _solidBaker != null && _solidBaker.SampleEnvironmentSolidWorldCell(globalCell, _origin, CellSize)
+                || _replicaSolids != null && _replicaSolids.HasBlockingVolume(_origin + ((Vector3)globalCell + Vector3.one * .5f) * CellSize);
             return TryResolveResidentCell(globalCell, out ElementWorldChunk chunk, out Vector3Int localCell)
                 && chunk.Grid.IsSolid(localCell);
         }
 
         public uint GetChunkVersion(ElementChunkKey key)
         {
+            if (_executionMode == WorldExecutionMode.Replica) return _replicaStore != null ? _replicaStore.GetChunkVersion(WorldMaterialDomain.LegacyCell, key) : 0;
             // 每个 ElementWorldChunk 内部复用一个单 Chunk ElementGrid，所以局部版本坐标固定为 0,0,0。
             return IsInitialized && _store != null && _store.TryGetChunk(key, out ElementWorldChunk chunk)
                 ? chunk.Grid.GetChunkVersion(0, 0, 0)
@@ -354,6 +361,14 @@ namespace Game.ElementField
 
         public bool TryGetAmount(Vector3Int globalCell, MaterialId material, out byte amount)
         {
+            if (_executionMode == WorldExecutionMode.Replica)
+            {
+                if (TryGetReplicaLegacyCell(globalCell, out var legacy) && legacy.MaterialKind == material) { amount = legacy.Amount; return true; }
+                if (_replicaSolids != null && _replicaSolids.TryGetAmount(globalCell, material, out amount)) return true;
+                if (_replicaGases != null && _replicaGases.TryGetAmount(globalCell, material, out amount)) return true;
+                if (_replicaLiquids != null && _replicaLiquids.TryGetAmount(_replicaVolumeSettings.WorldCellToLiquidCell(globalCell), material, out amount)) return true;
+                amount = 0; return false;
+            }
             if (TryGetActiveCell(globalCell, out ElementCell cell)
                 && cell.MaterialKind == material)
             {
@@ -390,11 +405,20 @@ namespace Game.ElementField
 
         private bool TryInitialize()
         {
+            if (_executionMode == WorldExecutionMode.Replica) return false;
             if (IsInitialized)
                 return true;
             if (_profile == null)
             {
                 GameLog.Error("ElementWorldRuntime requires an ElementWorldProfile.", "ElementField");
+                return false;
+            }
+            // CPU 权威必须由可信配置显式选择；headless 不支持 Compute 后降级为 LegacyCell
+            // 只是原单机兼容策略，不能作为 DS 材料数量权威的初始化依据。
+            if (_executionMode == WorldExecutionMode.Authority
+                && _profile.WaterSimulationMode != WaterSimulationMode.GridLiquid)
+            {
+                GameLog.Error("Authority requires an explicit CPU GridLiquid profile; hardware fallback is not authority configuration.", "ElementField");
                 return false;
             }
             if (_profile.MaterialCatalog == null
@@ -429,6 +453,8 @@ namespace Game.ElementField
                 return false;
             }
 
+            // 子 Runtime 可能在后续配置失败前已经建好数量 Store；部分初始化同样禁止换成 Replica。
+            _initializationStarted = true;
             try
             {
                 _origin = transform.position;
@@ -462,6 +488,12 @@ namespace Game.ElementField
                     catalog,
                     _profile.MaterialSimulationRouting,
                     in waterDecision);
+                // 水以外的 Poison/Sticky 同样可能配置 GPU 路由；CPU 权威不能只检查 Water 枚举。
+                if (_executionMode == WorldExecutionMode.Authority)
+                    for (int materialId = 1; materialId <= byte.MaxValue; materialId++)
+                        if (finalRoutes.TryResolve((MaterialId)materialId, out var authorityBackend)
+                            && authorityBackend == MaterialSimulationBackendKind.GpuPbfLiquid)
+                            throw new InvalidOperationException("Authority material routes must not contain a GPU backend.");
                 InitializeMaterialPhases(finalRoutes);
                 // Poison/Sticky 也可以单独选择 Grid；一次初始化只能指向同一个数量权威。
                 bool hasGridRoute = false;
@@ -633,6 +665,20 @@ namespace Game.ElementField
 
         private void SimulateOneTick()
         {
+            // 写入、Phase Solver 和反应必须作为同一提交边界：同步事件期间 Source 不得捕获其中一半。
+            // finally 只释放执行标志；异常前已经修改的 Cell/数量/Tick 并未回滚，所以 catch 还必须锁存故障。
+            _worldStepInProgress = true;
+            try { SimulateOneTickCore(); }
+            catch
+            {
+                _simulationFaulted = true;
+                throw;
+            }
+            finally { _worldStepInProgress = false; }
+        }
+
+        private void SimulateOneTickCore()
+        {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             // 包住写入、Grid Tick、材料反应及旧 Cell 模拟；与 Grid 自己的计量做差，
             // 可判断全局 GC 是否发生在液体路由上游，而不靠一次帧级曲线猜测。
@@ -674,7 +720,10 @@ namespace Game.ElementField
             {
                 // 沿用Gameplay活动域；镜头外的角色／投射物／反应仍可唤醒液体。
                 _gridLiquidRuntime.SetActivityDomain(LiquidActivityDomain());
-                _gridLiquidRuntime.Step(_tickInterval);
+                if (_executionMode == WorldExecutionMode.Authority)
+                    _gridLiquidRuntime.Step(_tickInterval, (float)(_worldTick * (double)_tickInterval));
+                else
+                    _gridLiquidRuntime.Step(_tickInterval);
                 using (GridFireReactionMarker.Auto())
                 {
                     int gridFireCount;
@@ -727,6 +776,7 @@ namespace Game.ElementField
 
         private void OnDestroy()
         {
+            _replicaSolids?.Dispose();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (_gcSampledWorldTicks > 0)
                 GameLog.Info($"Element World: GC {_gcAllocationWorldTicks}/{_gcSampledWorldTicks} ticks, "

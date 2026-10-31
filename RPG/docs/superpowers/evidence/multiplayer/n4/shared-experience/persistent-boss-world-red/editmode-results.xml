@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-25 14:32:55Z" end-time="2026-10-25 14:32:56Z" duration="0.125025">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2443" result="Failed" site="Child" start-time="2026-10-25 14:32:55Z" end-time="2026-10-25 14:32:56Z" duration="0.125025" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="4025" name="Game.UI.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.UI.Tests.dll" runstate="Runnable" testcasecount="31" result="Failed" site="Child" start-time="2026-10-25 14:32:56Z" end-time="2026-10-25 14:32:56Z" duration="0.100999" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26116" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="4026" name="Game" fullname="Game" runstate="Runnable" testcasecount="31" result="Failed" site="Child" start-time="2026-10-25 14:32:56Z" end-time="2026-10-25 14:32:56Z" duration="0.087458" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="4027" name="UI" fullname="Game.UI" runstate="Runnable" testcasecount="31" result="Failed" site="Child" start-time="2026-10-25 14:32:56Z" end-time="2026-10-25 14:32:56Z" duration="0.081223" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="4028" name="Tests" fullname="Game.UI.Tests" runstate="Runnable" testcasecount="31" result="Failed" site="Child" start-time="2026-10-25 14:32:56Z" end-time="2026-10-25 14:32:56Z" duration="0.075388" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3983" name="BossHudPersistentLifecycleTests" fullname="Game.UI.Tests.BossHudPersistentLifecycleTests" classname="Game.UI.Tests.BossHudPersistentLifecycleTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-25 14:32:56Z" end-time="2026-10-25 14:32:56Z" duration="0.071340" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3986" name="BoundWorldRejectsOldAndUnscopedBossInitialization" fullname="Game.UI.Tests.BossHudPersistentLifecycleTests.BoundWorldRejectsOldAndUnscopedBossInitialization" methodname="BoundWorldRejectsOldAndUnscopedBossInitialization" classname="Game.UI.Tests.BossHudPersistentLifecycleTests" runstate="Runnable" seed="1440336718" result="Failed" start-time="2026-10-25 14:32:56Z" end-time="2026-10-25 14:32:56Z" duration="0.026309" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  常驻 Boss HUD 必须绑定当前 World 的身份，不能订阅并接受所有区域初始化。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.BossHudPersistentLifecycleTests.BindWorld (System.Int32 handle) [0x0002d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\BossHudPersistentLifecycleTests.cs:98
+at Game.UI.Tests.BossHudPersistentLifecycleTests.BoundWorldRejectsOldAndUnscopedBossInitialization () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\BossHudPersistentLifecycleTests.cs:67
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3984" name="DisableHidesOldBossChildBeforePersistentHudIsReused" fullname="Game.UI.Tests.BossHudPersistentLifecycleTests.DisableHidesOldBossChildBeforePersistentHudIsReused" methodname="DisableHidesOldBossChildBeforePersistentHudIsReused" classname="Game.UI.Tests.BossHudPersistentLifecycleTests" runstate="Runnable" seed="2037626040" result="Passed" start-time="2026-10-25 14:32:56Z" end-time="2026-10-25 14:32:56Z" duration="0.013306" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3987" name="RebindingSameWorldPreservesBossWhileChangingWorldClearsItsIdentity" fullname="Game.UI.Tests.BossHudPersistentLifecycleTests.RebindingSameWorldPreservesBossWhileChangingWorldClearsItsIdentity" methodname="RebindingSameWorldPreservesBossWhileChangingWorldClearsItsIdentity" classname="Game.UI.Tests.BossHudPersistentLifecycleTests" runstate="Runnable" seed="1689270111" result="Failed" start-time="2026-10-25 14:32:56Z" end-time="2026-10-25 14:32:56Z" duration="0.002553" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  常驻 Boss HUD 必须绑定当前 World 的身份，不能订阅并接受所有区域初始化。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.BossHudPersistentLifecycleTests.BindWorld (System.Int32 handle) [0x0002d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\BossHudPersistentLifecycleTests.cs:98
+at Game.UI.Tests.BossHudPersistentLifecycleTests.RebindingSameWorldPreservesBossWhileChangingWorldClearsItsIdentity () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\BossHudPersistentLifecycleTests.cs:80
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3985" name="ReenableWithoutSecondStartWaitsForNewBossThenUsesItsSnapshot" fullname="Game.UI.Tests.BossHudPersistentLifecycleTests.ReenableWithoutSecondStartWaitsForNewBossThenUsesItsSnapshot" methodname="ReenableWithoutSecondStartWaitsForNewBossThenUsesItsSnapshot" classname="Game.UI.Tests.BossHudPersistentLifecycleTests" runstate="Runnable" seed="1914247261" result="Passed" start-time="2026-10-25 14:32:56Z" end-time="2026-10-25 14:32:56Z" duration="0.002862" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

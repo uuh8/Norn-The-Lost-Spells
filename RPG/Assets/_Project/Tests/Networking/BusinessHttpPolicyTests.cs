@@ -17,6 +17,15 @@ namespace Game.Networking.Tests
         public void CredentialEndpointPolicy(string endpoint, bool allowed) => Assert.That(BusinessHttpClient.IsAllowedBaseUrl(endpoint), Is.EqualTo(allowed));
 
         [Test]
+        public void BusinessHeaderUsesSameApplicationVersionAsJoinHandshake()
+        {
+            // 只检查真实 Request 构造结果，不发网络请求；避免 HTTP 仍发旧版而 KCP 握手已升新版。
+            using var request = BusinessHttpClient.Create("http://127.0.0.1:5080/", "GET", "/api/online/profile", null, null, "manifest");
+            Assert.That(request.GetRequestHeader("X-Norn-Protocol"),
+                Is.EqualTo(ProtocolCompatibility.CurrentVersion.ToString(System.Globalization.CultureInfo.InvariantCulture)));
+        }
+
+        [Test]
         public void ManifestHash_IsOrderIndependentAndDetectsContentChanges()
         {
             var a = new ContentManifestEntry { ContentId = "spell.a", Kind = 0, DisplayName = "法术" };

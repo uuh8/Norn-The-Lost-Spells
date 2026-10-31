@@ -33,7 +33,7 @@ namespace Game.Rendering
         private static readonly ProfilerMarker DrawMarker=new ProfilerMarker("GridLiquid.Field.Draw");
         private static readonly ProfilerMarker PageReuseMarker=new ProfilerMarker("GridLiquid.Field.PageReuse");
         private static readonly GridLiquidFieldSurfaceRenderer[] Registry=new GridLiquidFieldSurfaceRenderer[32];
-        private LiquidWorldRuntime _source;
+        private ILiquidPresentationReadOnly _source;
 #if UNITY_EDITOR
         private LiquidWorldRuntime _validationSource;
         private bool _validationFreezeDispatch,_validationHideDraw,_validationForceRebuild;
@@ -87,7 +87,7 @@ namespace Game.Rendering
         public float HybridDisplayLagMilliseconds=>_hybridDisplayLagMilliseconds;
         public bool HasVisibleHybridCache=>_overflowCpu!=null && _overflowCpu.HasVisibleSurface;
         public bool IsReady=>_valid;
-        public LiquidWorldRuntime Source=>_source;
+        public ILiquidPresentationReadOnly Source=>_source;
         public GridLiquidFieldFrame Frame=>_captured?_frame:null;
         public long GpuAllocatedBytes=>_gpuBytes;
         public bool CpuFallback=>_cpuFallback;
@@ -109,7 +109,8 @@ namespace Game.Rendering
         private void Start()
         {
             if(_valid)return;_started=true;
-            _source=_world!=null?_world.GridLiquids as LiquidWorldRuntime:null;
+            // 单机 Runtime 与只读网络 Replica 使用同一个 Renderer，不在此创建模拟 Owner。
+            _source=_world!=null?_world.GridLiquids as ILiquidPresentationReadOnly:null;
 #if UNITY_EDITOR
             if(_validationSource!=null)_source=_validationSource;
 #endif

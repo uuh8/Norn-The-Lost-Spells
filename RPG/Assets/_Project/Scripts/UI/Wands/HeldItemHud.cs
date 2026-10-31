@@ -8,8 +8,9 @@ using Unity.Profiling;
 namespace Game.UI
 {
     /// <summary>前三格法杖资源、后七格道具数量。接线允许作者删掉该类型不需要的Text/条。</summary>
-    public sealed class HeldItemHud : MonoBehaviour
+    public sealed class HeldItemHud : MonoBehaviour, ICombatHudElement
     {
+        public GameObject PresentationRoot => gameObject;
         [Serializable] public sealed class Cell
         {
             public Image Icon,Selection,Mana,Cooldown;
@@ -26,6 +27,22 @@ namespace Game.UI
             [NonSerialized] internal Color OriginalColor;
         }
         [SerializeField] private SinglePlayerInventorySession _session;
+        private IInventoryPresentationSource _presentationSource;
+        private bool _hasPresentationOverride, _readAvailable;
+        public IInventoryPresentationSource PresentationSource
+        {
+            get
+            {
+                var source = _hasPresentationOverride ? _presentationSource : _session;
+                return source is UnityEngine.Object value && value == null ? null : source;
+            }
+        }
+        /// <summary>复用原十格的 Renderer/布局，只更换只读数据，不建立第二套联机快捷栏。</summary>
+        public void BindPresentationSource(IInventoryPresentationSource source)
+        {
+            _hasPresentationOverride = true; _presentationSource = source;
+            ClearBindings(); RefreshBindings();
+        }
         [SerializeField] private Cell[] _cells=new Cell[Game.Core.HeldItemSlots.TotalCount];
         [SerializeField] private SinglePlayerInventoryController _backpack,_warehouse;
         [SerializeField] private ShopController _shop;
@@ -37,15 +54,16 @@ namespace Game.UI
         public void ConfigureVisibility(SinglePlayerInventoryController backpack,SinglePlayerInventoryController warehouse,ShopController shop,Canvas canvas)
         { _backpack=backpack;_warehouse=warehouse;_shop=shop;_canvas=canvas; }
         private static readonly ProfilerMarker UpdateMarker=new ProfilerMarker("Norn.HeldItemHud.Update");
-        public void Configure(SinglePlayerInventorySession session,Cell[] cells) { _session=session; _cells=cells; }
+        public void Configure(SinglePlayerInventorySession session,Cell[] cells)
+        { _hasPresentationOverride=false;_presentationSource=null;_session=session;_cells=cells;if(_ready){ClearBindings();RefreshBindings();} }
         private void OnEnable()
         { EventBus<InventoryChangedEvent>.Subscribe(OnInventoryChanged); EventBus<ToolbeltChangedEvent>.Subscribe(OnToolsChanged); RefreshBindings(); }
         private void OnDisable()
         { EventBus<InventoryChangedEvent>.Unsubscribe(OnInventoryChanged); EventBus<ToolbeltChangedEvent>.Unsubscribe(OnToolsChanged); }
         private void OnInventoryChanged(InventoryChangedEvent change)
-        { if (change.InventoryId == _session?.ReadOnly?.InventoryId) RefreshBindings(); }
+        { if (change.InventoryId == PresentationSource?.ReadOnly?.InventoryId) RefreshBindings(); }
         private void OnToolsChanged(ToolbeltChangedEvent change)
-        { if (change.InventoryId == _session?.ReadOnly?.InventoryId) RefreshBindings(); }
+        { if (change.InventoryId == PresentationSource?.ReadOnly?.InventoryId) RefreshBindings(); }
         private void Start()
         {
             _font=Font.CreateDynamicFontFromOSFont(new[]{"Microsoft YaHei UI","Microsoft YaHei","Arial"},16);
@@ -64,12 +82,16 @@ namespace Game.UI
                 if (cell.Frame != null) cell.DefaultFrame = cell.Frame.sprite;
                 cell.ContainerFill = ContainerIconFill.Ensure(cell.Icon);
             }
-            _ready = true; RefreshBindings();
+            // Editor 接线保留作者预览；Runtime 必须先隐藏占位物品，可信来源 Ready 后才重新显示。
+            _ready = true; ClearBindings(); RefreshBindings();
         }
         private void RefreshBindings()
         {
-            if (!_ready || _session?.ReadOnly == null) return;
-            var read = _session.ReadOnly; var tools = _session.ToolbeltReadOnly; var wands = _session.WandsReadOnly;
+            if (!_ready) return;
+            var source = PresentationSource;
+            if (source?.ReadOnly == null) { if(_readAvailable)ClearBindings(); return; }
+            _readAvailable = true;
+            var read = source.ReadOnly; var tools = source.ToolbeltReadOnly; var wands = source.WandsReadOnly;
             int count = -1;
             for (int i = 0; i < _cells.Length; i++)
             {
@@ -102,18 +124,22 @@ namespace Game.UI
         }
         private void Update()
         {
-            if (!_ready || _session?.ReadOnly==null) return;
+            if (!_ready) return;
             using var sample=UpdateMarker.Auto();
             // 独立HUD Canvas不依赖已停用的旧据点提示组件；关闭整备后必须能恢复显示。
             bool overlay=_backpack!=null && _backpack.IsOpen || _warehouse!=null && _warehouse.IsOpen || _shop!=null && _shop.IsOpen;
-            if(_canvas!=null && _canvas.enabled==overlay)_canvas.enabled=!overlay; var tools=_session.ToolbeltReadOnly; var wands=_session.WandsReadOnly;
+            if(_canvas!=null && _canvas.enabled==overlay)_canvas.enabled=!overlay;
+            // Canvas 还包含原准心与空槽框；库存 Ready 只决定物品内容，不能阻止独立的界面显隐。
+            var source=PresentationSource;
+            if(source?.ReadOnly==null){if(_readAvailable)ClearBindings();return;}
+            var tools=source.ToolbeltReadOnly; var wands=source.WandsReadOnly;
             for (int i=0;i<_cells.Length;i++)
             {
                 var cell=_cells[i]; if (cell == null) continue;
                 string id=null; double current=0,maximum=0; ulong amount=0; float cooldown=0,castCooldown=0;
                 if (i<HeldItemSlots.WandCount && wands != null && wands.TryGetSlot(i,out var state))
                 { id=state.InstanceId; current=state.CurrentMana; maximum=state.MaxMana; cooldown=state.CooldownRemaining; castCooldown=state.CastCooldown; }
-                else if (i>=HeldItemSlots.WandCount && tools != null && tools.TryGetBinding(i-HeldItemSlots.WandCount,out var tool) && _session.ReadOnly.TryGetView(tool,out var item))
+                else if (i>=HeldItemSlots.WandCount && tools != null && tools.TryGetBinding(i-HeldItemSlots.WandCount,out var tool) && source.ReadOnly.TryGetView(tool,out var item))
                 { id=tool; amount=item.ContainerTotal; }
                 if (cell.Frame != null)
                 {
@@ -129,6 +155,20 @@ namespace Game.UI
                 }
                 else if(cell.Container)ContainerIconFill.Set(cell.ContainerFill,cell.Icon,true,amount,cell.Maximum);
                 else cell.Display?.Set(amount);
+            }
+        }
+        private void ClearBindings()
+        {
+            _readAvailable = false;
+            // 换身份或清空来源时清掉旧 Icon/资源缓存，不能因新来源尚未 Ready 而泄露旧存档内容。
+            for(int i=0;i<_cells.Length;i++)
+            {
+                var cell=_cells[i];if(cell==null)continue;
+                cell.ItemId=null;cell.Initialized=false;cell.Maximum=0;cell.Quantity=0;cell.Container=false;
+                if(cell.Icon!=null){cell.Icon.sprite=null;cell.Icon.enabled=false;}
+                if(cell.Frame!=null && cell.Frame.sprite!=cell.DefaultFrame)cell.Frame.sprite=cell.DefaultFrame;
+                cell.Display?.Clear();SetFill(cell.Mana,0);SetFill(cell.Cooldown,0);
+                ContainerIconFill.Set(cell.ContainerFill,cell.Icon,false,0,0);
             }
         }
         private static void SetFill(Image image,float ratio)

@@ -1,0 +1,33 @@
+syntax = "proto3";
+package norn.protocol;
+option csharp_namespace = "Game.NetworkProtocol";
+
+////////////////////////////////////////////////////////////////
+// 世界材料分块页：数值平铺，可靠分页与应用ACK独立于Transport ACK
+////////////////////////////////////////////////////////////////
+
+// 每条业务消息上限900B。words为预热的packed fixed32，避免ByteString或嵌套对象解析分配。
+// 客户端必须完整校验身份、页集合、Checksum和数量后才安装/ACK；不能凭高Revision抢占合法候选。
+message WorldPageMessage
+{
+    uint32 protocol_version = 1;          // 当前应用协议版本，缺省0拒绝。
+    fixed64 gameplay_hash = 2;            // 可信Run的玩法指纹，不能以包内Hash创建信任。
+    uint32 connection_epoch = 3;          // 认证连接代次，重连后旧页/ACK全部拒绝。
+    fixed64 world_epoch = 4;              // 权威世界生命期，重连不重置。
+    fixed64 snapshot_id = 5;              // 本次冻结传输身份，非零；重发沿用原身份。
+    uint32 kind = 6;                      // 1=Baseline、2=Delta、3=安装ACK、4=Resync、5=删除。
+    uint32 domain = 7;                    // 原生网格域，0=LegacyCell、1=Liquid、2=Solid、3=Gas。
+    sint32 chunk_x = 8;                   // 原生Chunk的X地址，允许负坐标。
+    sint32 chunk_y = 9;                   // 原生Chunk的Y地址，不能按液体表面高度重算。
+    sint32 chunk_z = 10;                  // 原生Chunk的Z地址。
+    fixed64 generation = 11;             // 同坐标Chunk重建代次，旧代不得污染新数据。
+    fixed64 base_revision = 12;           // Delta依赖的已安装版本；Baseline为0。
+    fixed64 revision = 13;                // 本候选完整安装后的版本，未安装前不得推进水位。
+    uint32 page_index = 14;               // 从0开始的分页索引；控制消息为0。
+    uint32 page_count = 15;               // 同一冻结块的总页数，受本机固定容量限制。
+    uint32 server_tick = 16;              // 捕获时服务器步编号，不代替材料或网络版本。
+    fixed64 checksum = 17;                // 完整冻结数据校验值，不是客户端数量授权。
+    uint32 word_offset = 18;              // 本页在完整uint序列的偏移。
+    uint32 total_words = 19;              // 完整冻结块的uint数量，不能用于恶意动态扩容。
+    repeated fixed32 words = 20;          // 本页最多160个32bit字，浮点量按原始bit保存。
+}

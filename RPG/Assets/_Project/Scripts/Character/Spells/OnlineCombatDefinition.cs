@@ -1,5 +1,6 @@
 using Game.Run;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Game.Character
 {
@@ -8,6 +9,7 @@ namespace Game.Character
     public sealed class OnlineCombatDefinition : ScriptableObject
     {
         [SerializeField] private ItemCatalog _catalog;
+        [SerializeField] private InputActionReference _selectWand1, _selectWand2, _selectWand3;
         [SerializeField] private string _gameplayConfigHash;
         [SerializeField] private float _groundReleaseSeconds, _airReleaseSeconds;
         [SerializeField] private int _groundAnimationHash, _airAnimationHash;
@@ -21,6 +23,12 @@ namespace Game.Character
         private string _cachedHash;
         private ulong _wireHash;
         public ItemCatalog Catalog => _catalog;
+        /// <summary>
+        /// Editor从原单机WandActions导入同一引用，不在在线代码硬编码KeyCode。
+        /// Wizard生产Prefab本身没有库存Adapter；不能假定运行时AddComponent会自动取得场景里的Inspector字段。
+        /// </summary>
+        public InputActionReference GetWandSelectionAction(int slot)
+            => slot == 0 ? _selectWand1 : slot == 1 ? _selectWand2 : slot == 2 ? _selectWand3 : null;
         public GameObject RangedEnemyPrefab => _rangedEnemyPrefab;
         public GameObject BossPrefab => _bossPrefab;
         public float BossActivationRadius => _bossActivationRadius;

@@ -28,7 +28,8 @@ namespace Game.UI
         {
             if (_content == null) return;
             EnsureInnerClip();
-            int capacity = controller.Session.SpellStorageCapacity;
+            // 容量是资产读模型的配置，不根据单机 Inspector 或当前屏幕宽度补槽。
+            int capacity = controller.PresentationSource?.SpellStorageCapacity??0;
             // 初始化/离散库存变化扩池，持续拖拽不创建对象。窄屏可横滚，不能压到无法点击。
             while (_slots.Count < capacity)
             {

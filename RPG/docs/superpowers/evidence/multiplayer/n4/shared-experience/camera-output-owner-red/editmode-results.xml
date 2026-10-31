@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-25 08:00:07Z" end-time="2026-10-25 08:00:08Z" duration="0.6852855">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2429" result="Failed" site="Child" start-time="2026-10-25 08:00:07Z" end-time="2026-10-25 08:00:08Z" duration="0.685286" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2422" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="66" result="Failed" site="Child" start-time="2026-10-25 08:00:07Z" end-time="2026-10-25 08:00:08Z" duration="0.585973" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16108" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2423" name="Game" fullname="Game" runstate="Runnable" testcasecount="66" result="Failed" site="Child" start-time="2026-10-25 08:00:07Z" end-time="2026-10-25 08:00:08Z" duration="0.493922" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2424" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="66" result="Failed" site="Child" start-time="2026-10-25 08:00:07Z" end-time="2026-10-25 08:00:08Z" duration="0.395090" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2425" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="66" result="Failed" site="Child" start-time="2026-10-25 08:00:07Z" end-time="2026-10-25 08:00:08Z" duration="0.294197" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2355" name="OnlineCameraTargetTests" fullname="Game.Multiplayer.Tests.OnlineCameraTargetTests" classname="Game.Multiplayer.Tests.OnlineCameraTargetTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-25 08:00:07Z" end-time="2026-10-25 08:00:08Z" duration="0.193161" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2357" name="CameraFollowsVisualCorrectionWithoutMovingPhysicsOrOriginalPivot" fullname="Game.Multiplayer.Tests.OnlineCameraTargetTests.CameraFollowsVisualCorrectionWithoutMovingPhysicsOrOriginalPivot" methodname="CameraFollowsVisualCorrectionWithoutMovingPhysicsOrOriginalPivot" classname="Game.Multiplayer.Tests.OnlineCameraTargetTests" runstate="Runnable" seed="101298195" result="Passed" start-time="2026-10-25 08:00:08Z" end-time="2026-10-25 08:00:08Z" duration="0.065804" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2356" name="SharedCameraDisablesConnectionCameraAndListenerWithoutTouchingOtherScene" fullname="Game.Multiplayer.Tests.OnlineCameraTargetTests.SharedCameraDisablesConnectionCameraAndListenerWithoutTouchingOtherScene" methodname="SharedCameraDisablesConnectionCameraAndListenerWithoutTouchingOtherScene" classname="Game.Multiplayer.Tests.OnlineCameraTargetTests" runstate="Runnable" seed="1252896465" result="Failed" start-time="2026-10-25 08:00:08Z" end-time="2026-10-25 08:00:08Z" duration="0.012069" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Connection Camera 会在 depth=-1 的原镜头之后覆盖世界，必须在绑定时移交输出权。
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineCameraTargetTests.SharedCameraDisablesConnectionCameraAndListenerWithoutTouchingOtherScene () [0x00115] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineCameraTargetTests.cs:32
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

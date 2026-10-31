@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-25 00:13:18Z" end-time="2026-10-25 00:13:21Z" duration="3.0756534">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2422" result="Failed" site="Child" start-time="2026-10-25 00:13:18Z" end-time="2026-10-25 00:13:21Z" duration="3.075653" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2414" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="62" result="Failed" site="Child" start-time="2026-10-25 00:13:18Z" end-time="2026-10-25 00:13:21Z" duration="2.975875" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12136" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2415" name="Game" fullname="Game" runstate="Runnable" testcasecount="62" result="Failed" site="Child" start-time="2026-10-25 00:13:18Z" end-time="2026-10-25 00:13:21Z" duration="2.884152" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2416" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="62" result="Failed" site="Child" start-time="2026-10-25 00:13:18Z" end-time="2026-10-25 00:13:21Z" duration="2.784175" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2417" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="62" result="Failed" site="Child" start-time="2026-10-25 00:13:18Z" end-time="2026-10-25 00:13:21Z" duration="2.684732" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2409" name="SharedGameplayHudAuthoringTests" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-25 00:13:18Z" end-time="2026-10-25 00:13:21Z" duration="2.582144" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2413" name="SharedHeldHierarchyDoesNotDependOnRemovedSinglePlayerBootstrapActivation" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.SharedHeldHierarchyDoesNotDependOnRemovedSinglePlayerBootstrapActivation" methodname="SharedHeldHierarchyDoesNotDependOnRemovedSinglePlayerBootstrapActivation" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" seed="1440833006" result="Failed" start-time="2026-10-25 00:13:18Z" end-time="2026-10-25 00:13:21Z" duration="2.470948" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  纯表现路径不能保留原单机Bootstrap才会激活的inactive祖先：PracticeInventoryWorkspace
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.SharedHeldHierarchyDoesNotDependOnRemovedSinglePlayerBootstrapActivation () [0x00057] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:115
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

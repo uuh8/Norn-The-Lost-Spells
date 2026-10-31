@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-25 08:48:43Z" end-time="2026-10-25 08:48:44Z" duration="0.6398941">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2431" result="Failed" site="Child" start-time="2026-10-25 08:48:43Z" end-time="2026-10-25 08:48:44Z" duration="0.639894" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="4011" name="Game.UI.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.UI.Tests.dll" runstate="Runnable" testcasecount="26" result="Failed" site="Child" start-time="2026-10-25 08:48:43Z" end-time="2026-10-25 08:48:44Z" duration="0.548510" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16108" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="4012" name="Game" fullname="Game" runstate="Runnable" testcasecount="26" result="Failed" site="Child" start-time="2026-10-25 08:48:43Z" end-time="2026-10-25 08:48:44Z" duration="0.452372" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="4013" name="UI" fullname="Game.UI" runstate="Runnable" testcasecount="26" result="Failed" site="Child" start-time="2026-10-25 08:48:43Z" end-time="2026-10-25 08:48:44Z" duration="0.353537" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="4014" name="Tests" fullname="Game.UI.Tests" runstate="Runnable" testcasecount="26" result="Failed" site="Child" start-time="2026-10-25 08:48:43Z" end-time="2026-10-25 08:48:44Z" duration="0.252617" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3979" name="FocusAwareEventSystemTests" fullname="Game.UI.Tests.FocusAwareEventSystemTests" classname="Game.UI.Tests.FocusAwareEventSystemTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-25 08:48:43Z" end-time="2026-10-25 08:48:44Z" duration="0.151150" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3980" name="ReenabledEventSystemSamplesCurrentFocusInsteadOfStaleDisabledState" fullname="Game.UI.Tests.FocusAwareEventSystemTests.ReenabledEventSystemSamplesCurrentFocusInsteadOfStaleDisabledState" methodname="ReenabledEventSystemSamplesCurrentFocusInsteadOfStaleDisabledState" classname="Game.UI.Tests.FocusAwareEventSystemTests" runstate="Runnable" seed="1304455793" result="Passed" start-time="2026-10-25 08:48:44Z" end-time="2026-10-25 08:48:44Z" duration="0.024353" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3981" name="UpgradePreservesSerializedComponentIdentitySettingsAndInputActionBindings" fullname="Game.UI.Tests.FocusAwareEventSystemTests.UpgradePreservesSerializedComponentIdentitySettingsAndInputActionBindings" methodname="UpgradePreservesSerializedComponentIdentitySettingsAndInputActionBindings" classname="Game.UI.Tests.FocusAwareEventSystemTests" runstate="Runnable" seed="1627769159" result="Failed" label="Error" start-time="2026-10-25 08:48:44Z" end-time="2026-10-25 08:48:44Z" duration="0.013398" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[System.InvalidOperationException : Cannot create a new scene additively with an untitled scene unsaved.]]></message>
+                  <stack-trace><![CDATA[  at (wrapper managed-to-native) UnityEditor.SceneManagement.EditorSceneManager.NewScene_Injected(UnityEditor.SceneManagement.NewSceneSetup,UnityEditor.SceneManagement.NewSceneMode,UnityEngine.SceneManagement.Scene&)
+  at UnityEditor.SceneManagement.EditorSceneManager.NewScene (UnityEditor.SceneManagement.NewSceneSetup setup, UnityEditor.SceneManagement.NewSceneMode mode) [0x00000] in <61339efb240547e991d3aef546e3afd3>:0 
+  at Game.UI.Tests.FocusAwareEventSystemTests.UpgradePreservesSerializedComponentIdentitySettingsAndInputActionBindings () [0x000a1] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\FocusAwareEventSystemTests.cs:50 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 ]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

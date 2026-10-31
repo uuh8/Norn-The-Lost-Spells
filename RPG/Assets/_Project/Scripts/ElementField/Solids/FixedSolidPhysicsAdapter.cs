@@ -21,11 +21,13 @@ namespace Game.ElementField
         private readonly Vector3 _origin;
         private readonly float _cellSize;
         private readonly int _chunkSize;
+        public bool BuildsVisualMeshes { get; }
         public int Capacity => _visual.Length;
         public uint RebuildCount { get; private set; }
         public FixedSolidPhysicsAdapter(Transform parent, FixedSolidVolumeStore store,
-            Func<Game.Materials.MaterialId, bool> blocks, int boxes, Vector3 origin, float cellSize)
+            Func<Game.Materials.MaterialId, bool> blocks, int boxes, Vector3 origin, float cellSize, bool buildVisualMeshes = true)
         {
+            BuildsVisualMeshes = buildVisualMeshes;
             _origin = origin; _cellSize = cellSize; _chunkSize = store.ChunkSize; _boxes = boxes;
             int capacity = store.MaximumChunks;
             _visual = new Mesh[capacity]; _physics = new Mesh[capacity]; _colliders = new MeshCollider[capacity];
@@ -38,7 +40,8 @@ namespace Game.ElementField
                 root.layer = 8; root.transform.SetParent(parent, false); _roots[i] = root.transform;
                 root.AddComponent<GeneratedMaterialSolidCollider>();
                 _colliders[i] = root.AddComponent<MeshCollider>();
-                _visual[i] = new Mesh { name = "Fixed Solid Surface " + i, indexFormat = IndexFormat.UInt32 };
+                // Dedicated仍需要CPU碰撞Mesh和NavMesh障碍；无视觉Mesh是显式所有权配置，不靠Graphics fallback。
+                if (BuildsVisualMeshes) _visual[i] = new Mesh { name = "Fixed Solid Surface " + i, indexFormat = IndexFormat.UInt32 };
                 _physics[i] = new Mesh { name = "Fixed Solid Collision " + i, indexFormat = IndexFormat.UInt32 };
                 for (int box = 0; box < boxes; box++)
                 {
@@ -56,7 +59,7 @@ namespace Game.ElementField
             int slot = Find(key); if (slot < 0) throw new InvalidOperationException("固体几何池不足。");
             _keys[slot] = key; _bound[slot] = true;
             _roots[slot].position = _origin + new Vector3(key.X, key.Y, key.Z) * (_chunkSize * _cellSize);
-            _builder.Build(key, _cellSize, false); Fill(_visual[slot]);
+            if (BuildsVisualMeshes) { _builder.Build(key, _cellSize, false); Fill(_visual[slot]); }
             _builder.Build(key, _cellSize, true); Fill(_physics[slot]);
             _colliders[slot].sharedMesh = null;
             _colliders[slot].sharedMesh = _physics[slot].vertexCount > 0 ? _physics[slot] : null;
@@ -67,13 +70,14 @@ namespace Game.ElementField
                 if (enabled) { _obstacles[slot, i].center = _builder.NavigationBoxes[i].center; _obstacles[slot, i].size = _builder.NavigationBoxes[i].size; }
                 _obstacles[slot, i].enabled = enabled;
             }
-            _roots[slot].gameObject.SetActive(_visual[slot].vertexCount > 0);
+            // 跳过visual后必须按physics判断激活；否则Headless所有固体碰撞会被错误隐藏。
+            _roots[slot].gameObject.SetActive(BuildsVisualMeshes ? _visual[slot].vertexCount > 0 : _physics[slot].vertexCount > 0);
             RebuildCount++;
         }
         public bool TryGetSurface(int index, out Mesh mesh, out Vector3 position)
         {
             mesh = _visual[index]; position = _roots[index].position;
-            return _bound[index] && mesh.vertexCount > 0;
+            return BuildsVisualMeshes && _bound[index] && mesh != null && mesh.vertexCount > 0;
         }
         public void ReleaseUnused(SparseMaterialVolumeStore store)
         {

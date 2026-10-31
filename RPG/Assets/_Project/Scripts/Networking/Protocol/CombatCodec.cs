@@ -1,4 +1,5 @@
 using System;
+using Game.Core;
 using Game.NetworkProtocol;
 using Google.Protobuf;
 
@@ -56,8 +57,9 @@ namespace Game.Networking
         private static bool Valid(CombatFactMessage m)
         {
             if (m == null || !ProtocolCompatibility.IsSupported(m.ProtocolVersion) || m.GameplayHash == 0 || m.Sequence == 0
-                || m.ServerTick == 0 || m.Kind < 1 || m.Kind > 11 || m.ActorId < 1 || m.ActorId > 8 || m.TargetActorId > 8
-                || m.ConnectionEpoch == 0 || m.Team > 255 || m.Flags > 7 || m.Phase > 32 || m.AttackerActorId > 8 || m.DamageType > 2 || m.ActionKind > 2
+                || m.ServerTick == 0 || m.Kind < 1 || m.Kind > 11 || m.ActorId < 1 || m.ActorId > OnlineActorLimits.MaximumActors || m.TargetActorId > OnlineActorLimits.MaximumActors
+                || m.ConnectionEpoch == 0 || m.Team > 255 || m.Flags > 7 || m.Phase > 32 || m.AttackerActorId > OnlineActorLimits.MaximumActors || m.DamageType > 2 || m.ActionKind > 2
+                || m.WandSlotPlusOne > 3 || m.Kind != 7 && m.WandSlotPlusOne != 0
                 || !Finite(m.PositionX) || !Finite(m.PositionY) || !Finite(m.PositionZ) || !Finite(m.RotationX) || !Finite(m.RotationY)
                 || !Finite(m.RotationZ) || !Finite(m.RotationW) || !Finite(m.VelocityX) || !Finite(m.VelocityY) || !Finite(m.VelocityZ)
                 || !Finite(m.CurrentHp) || !Finite(m.MaxHp) || !Finite(m.CurrentMana) || !Finite(m.MaxMana) || !Finite(m.Cooldown)
@@ -84,7 +86,7 @@ namespace Game.Networking
             while (offset < bytes.Length)
             {
                 if (!Varint(bytes, ref offset, out ulong tag) || tag > uint.MaxValue) return false;
-                int field = (int)(tag >> 3), maximum = intent ? 12 : 45;
+                int field = (int)(tag >> 3), maximum = intent ? 12 : 46;
                 if (field < 1 || field > maximum) return false;
                 ulong bit = 1UL << field; if ((seen & bit) != 0) return false; seen |= bit;
                 bool text = field == (intent ? 4 : 37);
@@ -105,6 +107,9 @@ namespace Game.Networking
                 {
                     if (!Varint(bytes, ref offset, out ulong value)) return false;
                     if ((intent || field != 6 && field != 34 && field != 41) && value > uint.MaxValue) return false;
+                    // 高频余额只传稳定装备槽编号，避免15Hz字符串分配；槽是否真实存在由已认证Replica
+                    // 按完整库存映射。这里在MergeFrom前限制到0..3，不把此编号当成资产归属证明。
+                    if (!intent && field == 46 && value > 3) return false;
                 }
             }
             return true;

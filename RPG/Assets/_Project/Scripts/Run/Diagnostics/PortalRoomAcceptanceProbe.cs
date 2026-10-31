@@ -25,6 +25,9 @@ namespace Game.Run
             public bool FrameCounterCalibrated, IdleRecorderValid;
             public int IdleFrames;
             public long IdleGcPeakBytes;
+            public string CursorLock;
+            public bool CursorVisible, Focused;
+            public float TimeScale;
         }
         private Config _config;
         private bool _authenticated, _choice;
@@ -96,7 +99,9 @@ namespace Game.Run
             var report = new Report { Scene = SceneManager.GetActiveScene().path, Authenticated = _authenticated, ChoiceOpen = _choice,
                 Phase = _view.Phase.ToString(), RoomId = _view.RoomId, Status = _view.Status, CanStart = _view.CanStart, SelfReady = _view.SelfReady, Busy = _view.Busy,
                 PortalId = _view.PortalId, MemberCount = _view.Members?.Length ?? 0, ActorId = _view.ActorId, HubActive = active, RecordedAtUtc = DateTime.UtcNow.ToString("O"),
-                FrameCounterCalibrated = _calibrated, IdleRecorderValid = _recorderValid, IdleFrames = _idleFrames, IdleGcPeakBytes = _idlePeak, ConnectionEpoch = _view.ConnectionEpoch, Replies = _view.Replies, NativeSocket = _view.NativeSocket };
+                FrameCounterCalibrated = _calibrated, IdleRecorderValid = _recorderValid, IdleFrames = _idleFrames, IdleGcPeakBytes = _idlePeak, ConnectionEpoch = _view.ConnectionEpoch, Replies = _view.Replies, NativeSocket = _view.NativeSocket,
+                // 仅显式验收的只读状态，区分门状态已打开与鼠标仍被其他生命周期锁住；不代替真实按钮。
+                CursorLock = Cursor.lockState.ToString(), CursorVisible = Cursor.visible, Focused = Application.isFocused, TimeScale = Time.timeScale };
             File.WriteAllText(_config.Output, JsonUtility.ToJson(report, true)); // 诊断IO有分配，不是零GC测量。
         }
         private IEnumerator MeasureIdle()

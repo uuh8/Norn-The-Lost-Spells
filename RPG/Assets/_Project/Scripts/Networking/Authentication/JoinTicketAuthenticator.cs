@@ -9,14 +9,17 @@ using UnityEngine.Networking;
 
 namespace Game.Networking
 {
-    /// <summary>只存服务器确认的连接身份；没有角色控制或资产修改方法。</summary>
+    /// <summary>
+    /// 只存服务器确认的连接身份；DungeonId 来自业务兑换并经过两端比对，不接受本地 Portal 作为替代。
+    /// 数据在构造后只读，没有角色控制或资产修改方法；世界组合只能消费此身份，不能自行换图。
+    /// </summary>
     public sealed class JoinConnectionIdentity
     {
-        public readonly string PlayerId, RoomId, RunId;
+        public readonly string PlayerId, RoomId, RunId, DungeonId;
         public readonly uint RoomEpoch, ConnectionEpoch;
         public readonly ulong ActorId;
-        public JoinConnectionIdentity(string player, string room, string run, uint epoch, uint connection, ulong actor)
-        { PlayerId = player; RoomId = room; RunId = run; RoomEpoch = epoch; ConnectionEpoch = connection; ActorId = actor; }
+        public JoinConnectionIdentity(string player, string room, string run, uint epoch, uint connection, ulong actor, string dungeon)
+        { PlayerId = player; RoomId = room; RunId = run; DungeonId = dungeon; RoomEpoch = epoch; ConnectionEpoch = connection; ActorId = actor; }
     }
 
     /// <summary>Mirror只负责连接；Ticket由业务服原子兑换，通过之前只接受有界握手，不接Gameplay。</summary>
@@ -28,8 +31,8 @@ namespace Game.Networking
         private readonly byte[] _buffer = new byte[512];
         private readonly JoinConnectionEpochs _epochs = new JoinConnectionEpochs();
         private InstanceLaunchDescriptor _launch;
-        private string _secret, _ticket, _player, _room, _run;
-        private uint _roomEpoch;
+        private string _secret, _ticket;
+        private JoinTicketReply _expected;
         private ulong _nonce;
         public bool Frozen { get; set; }
         public bool ClientAuthenticated { get; private set; }
@@ -37,11 +40,20 @@ namespace Game.Networking
         public JoinConnectionIdentity ClientIdentity { get; private set; }
         public long Accepted { get; private set; }
         public long Rejected { get; private set; }
-        public void ConfigureServer(InstanceLaunchDescriptor launch, string secret) { _launch = launch; _secret = secret; }
+        public void ConfigureServer(InstanceLaunchDescriptor launch, string secret)
+        {
+            if (launch == null || !DungeonIdentityRules.IsValidId(launch.DungeonId))
+                throw new ArgumentException("受信启动描述缺少有效副本身份。");
+            _launch = launch; _secret = secret;
+        }
         public void ConfigureClient(JoinTicketReply ticket)
         {
-            if (ticket == null || ticket.Host != "127.0.0.1" || ticket.Ticket == null || ticket.Ticket.Length != 64) throw new ArgumentException("本阶段只允许loopback Ticket。");
-            _ticket = ticket.Ticket; _player = ticket.PlayerId; _room = ticket.RoomId; _run = ticket.RunId; _roomEpoch = ticket.RoomEpoch;
+            if (ticket == null || ticket.Host != "127.0.0.1" || ticket.Ticket == null || ticket.Ticket.Length != 64 || !DungeonIdentityRules.IsValidId(ticket.DungeonId))
+                throw new ArgumentException("本阶段只允许含有效副本身份的 loopback Ticket。");
+            _ticket = ticket.Ticket;
+            // 复制期望身份，避免外部随后复用/修改可变 DTO 影响在途握手；副本不保留 Ticket 密钥。
+            _expected = new JoinTicketReply { PlayerId = ticket.PlayerId, RoomId = ticket.RoomId,
+                RunId = ticket.RunId, RoomEpoch = ticket.RoomEpoch, DungeonId = ticket.DungeonId };
             _nonce = BitConverter.ToUInt64(Guid.NewGuid().ToByteArray(), 0); if (_nonce == 0) _nonce = 1;
         }
         public override void OnStartServer() => NetworkServer.RegisterHandler<JoinTicketRequestEnvelope>(OnTicket, false);
@@ -83,15 +95,17 @@ namespace Game.Networking
                 if (!ReferenceEquals(_pending[slot], connection) || !NetworkServer.connections.TryGetValue(connection.connectionId, out var current) || !ReferenceEquals(connection, current)) yield break;
                 // HTTP在途时可能进入Frozen；仍存活的未认证连接要明确拒绝，不能只释放Pending而漏掉断开。
                 if (Frozen) { Reject(connection); yield break; }
-                if (http.result != UnityWebRequest.Result.Success || !TryAdmission(http.downloadHandler.text, out var reply) || reply.PlayerId != request.PlayerId || reply.RunId != _launch.RunId || reply.RoomId != _launch.RoomId || reply.RoomEpoch != _launch.RoomEpoch || !_epochs.TryAdvance(reply.ActorId, reply.ConnectionEpoch))
+                if (http.result != UnityWebRequest.Result.Success || !TryAdmission(http.downloadHandler.text, out var reply) ||
+                    !JoinAdmissionRules.AcceptsServerReply(reply, _launch, request.PlayerId) || !_epochs.TryAdvance(reply.ActorId, reply.ConnectionEpoch))
                 { Reject(connection); yield break; }
                 int actor = (int)reply.ActorId - 1;
                 var previous = _actors[actor]; _actors[actor] = connection;
                 if (previous != null && !ReferenceEquals(previous, connection)) previous.Disconnect();
-                var identity = new JoinConnectionIdentity(reply.PlayerId, reply.RoomId, reply.RunId, reply.RoomEpoch, reply.ConnectionEpoch, reply.ActorId);
+                var identity = new JoinConnectionIdentity(reply.PlayerId, reply.RoomId, reply.RunId, reply.RoomEpoch, reply.ConnectionEpoch, reply.ActorId, reply.DungeonId);
                 connection.authenticationData = identity;
                 var response = new JoinTicketReplyMessage { ProtocolVersion = ProtocolCompatibility.CurrentVersion, Nonce = request.Nonce, PlayerId = identity.PlayerId,
-                    RoomId = identity.RoomId, RunId = identity.RunId, RoomEpoch = identity.RoomEpoch, ConnectionEpoch = identity.ConnectionEpoch, ActorId = identity.ActorId };
+                    RoomId = identity.RoomId, RunId = identity.RunId, DungeonId = identity.DungeonId,
+                    RoomEpoch = identity.RoomEpoch, ConnectionEpoch = identity.ConnectionEpoch, ActorId = identity.ActorId };
                 int count = response.CalculateSize(); response.WriteTo(new Span<byte>(_buffer, 0, count));
                 connection.Send(new JoinTicketReplyEnvelope { Payload = new ArraySegment<byte>(_buffer, 0, count) }); Accepted++; ServerAccept(connection);
             }
@@ -107,8 +121,8 @@ namespace Game.Networking
         public override void OnClientAuthenticate()
         {
             HandshakeAttempted = true;
-            if (_ticket == null) { ClientReject(); return; }
-            var request = new JoinTicketRequest { ProtocolVersion = ProtocolCompatibility.CurrentVersion, Ticket = _ticket, PlayerId = _player, Nonce = _nonce };
+            if (_ticket == null || _expected == null) { ClientReject(); return; }
+            var request = new JoinTicketRequest { ProtocolVersion = ProtocolCompatibility.CurrentVersion, Ticket = _ticket, PlayerId = _expected.PlayerId, Nonce = _nonce };
             int count = request.CalculateSize(); request.WriteTo(new Span<byte>(_buffer, 0, count));
             NetworkClient.Send(new JoinTicketRequestEnvelope { Payload = new ArraySegment<byte>(_buffer, 0, count) }); _ticket = null;
         }
@@ -117,16 +131,20 @@ namespace Game.Networking
             JoinTicketReplyMessage reply;
             try { reply = JoinTicketReplyMessage.Parser.ParseFrom(new ReadOnlySpan<byte>(envelope.Payload.Array, envelope.Payload.Offset, envelope.Payload.Count)); }
             catch (InvalidProtocolBufferException) { ClientReject(); return; }
-            if (!ProtocolCompatibility.IsSupported(reply.ProtocolVersion) || reply.Nonce != _nonce || reply.PlayerId != _player || reply.RunId != _run || reply.RoomId != _room || reply.RoomEpoch != _roomEpoch || reply.ActorId < 1 || reply.ActorId > 4 || reply.ConnectionEpoch == 0) { ClientReject(); return; }
-            ClientIdentity = new JoinConnectionIdentity(reply.PlayerId, reply.RoomId, reply.RunId, reply.RoomEpoch, reply.ConnectionEpoch, reply.ActorId);
+            if (!JoinAdmissionRules.AcceptsClientReply(reply, _expected, _nonce)) { ClientReject(); return; }
+            ClientIdentity = new JoinConnectionIdentity(reply.PlayerId, reply.RoomId, reply.RunId, reply.RoomEpoch, reply.ConnectionEpoch, reply.ActorId, reply.DungeonId);
             NetworkClient.connection.authenticationData = ClientIdentity; ClientAuthenticated = true; ClientAccept();
         }
         public override void OnStopServer()
         {
             NetworkServer.UnregisterHandler<JoinTicketRequestEnvelope>();
             for (int i = 0; i < _requests.Length; i++) { var request = _requests[i]; _requests[i] = null; request?.Abort(); request?.Dispose(); }
-            StopAllCoroutines(); Array.Clear(_pending, 0, _pending.Length); Array.Clear(_actors, 0, _actors.Length); _epochs.Clear(); _secret = null;
+            StopAllCoroutines(); Array.Clear(_pending, 0, _pending.Length); Array.Clear(_actors, 0, _actors.Length); _epochs.Clear(); _secret = null; _launch = null;
         }
-        public override void OnStopClient() { NetworkClient.UnregisterHandler<JoinTicketReplyEnvelope>(); _ticket = null; ClientAuthenticated = false; ClientIdentity = null; }
+        public override void OnStopClient()
+        {
+            NetworkClient.UnregisterHandler<JoinTicketReplyEnvelope>(); _ticket = null; _expected = null; _nonce = 0;
+            ClientAuthenticated = false; ClientIdentity = null;
+        }
     }
 }

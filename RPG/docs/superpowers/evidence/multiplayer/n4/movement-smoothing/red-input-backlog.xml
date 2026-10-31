@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-28 12:14:44Z" end-time="2026-10-28 12:14:44Z" duration="0.6863162">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2665" result="Failed" site="Child" start-time="2026-10-28 12:14:44Z" end-time="2026-10-28 12:14:44Z" duration="0.686316" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2553" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="153" result="Failed" site="Child" start-time="2026-10-28 12:14:44Z" end-time="2026-10-28 12:14:44Z" duration="0.584948" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27148" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2554" name="Game" fullname="Game" runstate="Runnable" testcasecount="153" result="Failed" site="Child" start-time="2026-10-28 12:14:44Z" end-time="2026-10-28 12:14:44Z" duration="0.497231" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2555" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="153" result="Failed" site="Child" start-time="2026-10-28 12:14:44Z" end-time="2026-10-28 12:14:44Z" duration="0.396036" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2556" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="153" result="Failed" site="Child" start-time="2026-10-28 12:14:44Z" end-time="2026-10-28 12:14:44Z" duration="0.296481" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2417" name="MovementSchedulingTests" fullname="Game.Multiplayer.Tests.MovementSchedulingTests" classname="Game.Multiplayer.Tests.MovementSchedulingTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-28 12:14:44Z" end-time="2026-10-28 12:14:44Z" duration="0.192707" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2424" name="Input_BacklogCompactionKeepsJumpDashAndJumpReleaseInChronologicalOrder" fullname="Game.Multiplayer.Tests.MovementSchedulingTests.Input_BacklogCompactionKeepsJumpDashAndJumpReleaseInChronologicalOrder" methodname="Input_BacklogCompactionKeepsJumpDashAndJumpReleaseInChronologicalOrder" classname="Game.Multiplayer.Tests.MovementSchedulingTests" runstate="Runnable" seed="1357337033" result="Failed" start-time="2026-10-28 12:14:44Z" end-time="2026-10-28 12:14:44Z" duration="0.061118" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 3
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.MovementSchedulingTests.Input_BacklogCompactionKeepsJumpDashAndJumpReleaseInChronologicalOrder () [0x000de] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\MovementSchedulingTests.cs:100
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2423" name="Input_ContinuousBacklogDoesNotRemainAsPermanentControlLatency" fullname="Game.Multiplayer.Tests.MovementSchedulingTests.Input_ContinuousBacklogDoesNotRemainAsPermanentControlLatency" methodname="Input_ContinuousBacklogDoesNotRemainAsPermanentControlLatency" classname="Game.Multiplayer.Tests.MovementSchedulingTests" runstate="Runnable" seed="1304368560" result="Failed" start-time="2026-10-28 12:14:44Z" end-time="2026-10-28 12:14:44Z" duration="0.002426" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  过期连续方向可由新方向替代，只保留两帧缓冲。
+  Expected: 9
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.MovementSchedulingTests.Input_ContinuousBacklogDoesNotRemainAsPermanentControlLatency () [0x00058] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\MovementSchedulingTests.cs:85
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

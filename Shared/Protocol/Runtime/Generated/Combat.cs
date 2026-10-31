@@ -30,7 +30,7 @@ namespace Game.NetworkProtocol {
             "bmRfaW5zdGFuY2VfaWQYBCABKAkSGAoQcHJvZ3JhbV9yZXZpc2lvbhgFIAEo",
             "DRIQCghvcmlnaW5feBgGIAEoAhIQCghvcmlnaW5feRgHIAEoAhIQCghvcmln",
             "aW5fehgIIAEoAhINCgVhaW1feBgJIAEoAhINCgVhaW1feRgKIAEoAhINCgVh",
-            "aW1fehgLIAEoAhIVCg1nYW1lcGxheV9oYXNoGAwgASgGIpsHChFDb21iYXRG",
+            "aW1fehgLIAEoAhIVCg1nYW1lcGxheV9oYXNoGAwgASgGIrcHChFDb21iYXRG",
             "YWN0TWVzc2FnZRIYChBwcm90b2NvbF92ZXJzaW9uGAEgASgNEhUKDWdhbWVw",
             "bGF5X2hhc2gYAiABKAYSEAoIc2VxdWVuY2UYAyABKA0SEwoLc2VydmVyX3Rp",
             "Y2sYBCABKA0SDAoEa2luZBgFIAEoDRIQCghhY3Rvcl9pZBgGIAEoBBIYChBj",
@@ -51,13 +51,13 @@ namespace Game.NetworkProtocol {
             "ZW1haW5pbmdfY2hhcmdlcxgnIAEoDRINCgVmbGFncxgoIAEoDRIZChFhdHRh",
             "Y2tlcl9hY3Rvcl9pZBgpIAEoBBITCgtkYW1hZ2VfdHlwZRgqIAEoDRIWCg5h",
             "bmltYXRpb25faGFzaBgrIAEoDRITCgthY3Rpb25fa2luZBgsIAEoDRIRCglz",
-            "b3VuZF9rZXkYLSABKA1CF6oCFEdhbWUuTmV0d29ya1Byb3RvY29sYgZwcm90",
-            "bzM="));
+            "b3VuZF9rZXkYLSABKA0SGgoSd2FuZF9zbG90X3BsdXNfb25lGC4gASgNQheq",
+            "AhRHYW1lLk5ldHdvcmtQcm90b2NvbGIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.CombatCastIntentMessage), global::Game.NetworkProtocol.CombatCastIntentMessage.Parser, new[]{ "ProtocolVersion", "ConnectionEpoch", "CommandId", "WandInstanceId", "ProgramRevision", "OriginX", "OriginY", "OriginZ", "AimX", "AimY", "AimZ", "GameplayHash" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.CombatFactMessage), global::Game.NetworkProtocol.CombatFactMessage.Parser, new[]{ "ProtocolVersion", "GameplayHash", "Sequence", "ServerTick", "Kind", "ActorId", "ConnectionEpoch", "CommandId", "OutputId", "PrefabKey", "OutputOrdinal", "PositionX", "PositionY", "PositionZ", "RotationX", "RotationY", "RotationZ", "RotationW", "VelocityX", "VelocityY", "VelocityZ", "CurrentHp", "MaxHp", "CurrentMana", "MaxMana", "Cooldown", "Burning", "Wet", "Poisoned", "Sticky", "MoveMultiplier", "Result", "Phase", "TargetActorId", "Amount", "Team", "WandInstanceId", "ProgramRevision", "RemainingCharges", "Flags", "AttackerActorId", "DamageType", "AnimationHash", "ActionKind", "SoundKey" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.CombatFactMessage), global::Game.NetworkProtocol.CombatFactMessage.Parser, new[]{ "ProtocolVersion", "GameplayHash", "Sequence", "ServerTick", "Kind", "ActorId", "ConnectionEpoch", "CommandId", "OutputId", "PrefabKey", "OutputOrdinal", "PositionX", "PositionY", "PositionZ", "RotationX", "RotationY", "RotationZ", "RotationW", "VelocityX", "VelocityY", "VelocityZ", "CurrentHp", "MaxHp", "CurrentMana", "MaxMana", "Cooldown", "Burning", "Wet", "Poisoned", "Sticky", "MoveMultiplier", "Result", "Phase", "TargetActorId", "Amount", "Team", "WandInstanceId", "ProgramRevision", "RemainingCharges", "Flags", "AttackerActorId", "DamageType", "AnimationHash", "ActionKind", "SoundKey", "WandSlotPlusOne" }, null, null, null, null)
           }));
     }
     #endregion
@@ -791,6 +791,7 @@ namespace Game.NetworkProtocol {
       animationHash_ = other.animationHash_;
       actionKind_ = other.actionKind_;
       soundKey_ = other.soundKey_;
+      wandSlotPlusOne_ = other.wandSlotPlusOne_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1475,6 +1476,21 @@ namespace Game.NetworkProtocol {
       }
     }
 
+    /// <summary>Field number for the "wand_slot_plus_one" field.</summary>
+    public const int WandSlotPlusOneFieldNumber = 46;
+    private uint wandSlotPlusOne_;
+    /// <summary>
+    /// 仅ActorState：0无Owned来源，1..3映射稳定装备槽0..2；乱序时不按当前Setup猜测余额归属。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint WandSlotPlusOne {
+      get { return wandSlotPlusOne_; }
+      set {
+        wandSlotPlusOne_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -1535,6 +1551,7 @@ namespace Game.NetworkProtocol {
       if (AnimationHash != other.AnimationHash) return false;
       if (ActionKind != other.ActionKind) return false;
       if (SoundKey != other.SoundKey) return false;
+      if (WandSlotPlusOne != other.WandSlotPlusOne) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1587,6 +1604,7 @@ namespace Game.NetworkProtocol {
       if (AnimationHash != 0) hash ^= AnimationHash.GetHashCode();
       if (ActionKind != 0) hash ^= ActionKind.GetHashCode();
       if (SoundKey != 0) hash ^= SoundKey.GetHashCode();
+      if (WandSlotPlusOne != 0) hash ^= WandSlotPlusOne.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1785,6 +1803,10 @@ namespace Game.NetworkProtocol {
         output.WriteRawTag(232, 2);
         output.WriteUInt32(SoundKey);
       }
+      if (WandSlotPlusOne != 0) {
+        output.WriteRawTag(240, 2);
+        output.WriteUInt32(WandSlotPlusOne);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1975,6 +1997,10 @@ namespace Game.NetworkProtocol {
         output.WriteRawTag(232, 2);
         output.WriteUInt32(SoundKey);
       }
+      if (WandSlotPlusOne != 0) {
+        output.WriteRawTag(240, 2);
+        output.WriteUInt32(WandSlotPlusOne);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -2119,6 +2145,9 @@ namespace Game.NetworkProtocol {
       }
       if (SoundKey != 0) {
         size += 2 + pb::CodedOutputStream.ComputeUInt32Size(SoundKey);
+      }
+      if (WandSlotPlusOne != 0) {
+        size += 2 + pb::CodedOutputStream.ComputeUInt32Size(WandSlotPlusOne);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -2266,6 +2295,9 @@ namespace Game.NetworkProtocol {
       }
       if (other.SoundKey != 0) {
         SoundKey = other.SoundKey;
+      }
+      if (other.WandSlotPlusOne != 0) {
+        WandSlotPlusOne = other.WandSlotPlusOne;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -2466,6 +2498,10 @@ namespace Game.NetworkProtocol {
             SoundKey = input.ReadUInt32();
             break;
           }
+          case 368: {
+            WandSlotPlusOne = input.ReadUInt32();
+            break;
+          }
         }
       }
     #endif
@@ -2663,6 +2699,10 @@ namespace Game.NetworkProtocol {
           }
           case 360: {
             SoundKey = input.ReadUInt32();
+            break;
+          }
+          case 368: {
+            WandSlotPlusOne = input.ReadUInt32();
             break;
           }
         }

@@ -115,5 +115,57 @@ namespace Game.Character.Tests
             Step(driver, 1);
             Assert.That(released, Is.Zero, "先检查死亡再推进 deadline；上一 Physics Tick 死亡不能留下最后一发。");
         }
+
+        [Test] public void QueuedCastRejectsInventoryEditAndRetryCannotBecomeSuccessfulLater()
+        {
+            var driver = Create(out _);
+            var method = driver.GetType().GetMethod("ExecuteInventoryCommand");
+            Assert.That(method, Is.Not.Null, "库存写入必须经过Character动作/生存状态门，不能只调用Run。 ");
+            object intent = InventoryIntent();
+            Assert.That(Queue(driver, Intent()), Is.True);
+            object result = method.Invoke(driver, new[] { intent, Enum.ToObject(method.GetParameters()[1].ParameterType, 0) });
+            Assert.That(result.GetType().GetField("Failure").GetValue(result).ToString(), Is.EqualTo("Busy"));
+            driver.GetType().GetMethod("CancelPending", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(driver, null);
+            object retry = method.Invoke(driver, new[] { intent, Enum.ToObject(method.GetParameters()[1].ParameterType, 0) });
+            Assert.That(retry.GetType().GetField("Failure").GetValue(retry).ToString(), Is.EqualTo("Busy"), "Busy也是本命令的最终回执；不能稍后用同ID更改程序。 ");
+        }
+
+        [Test] public void DeadAuthorityRejectsInventoryEditWithoutMovingOwnedCard()
+        {
+            var driver = Create(out _);
+            var method = driver.GetType().GetMethod("ExecuteInventoryCommand");
+            Assert.That(method, Is.Not.Null);
+            var health = _root.GetComponent<HealthComponent>();
+            var hit = new DamageRequest(99, 2, 10000, DamageType.True, _root.transform.position, Vector3.forward); health.ReceiveHit(in hit);
+            object result = method.Invoke(driver, new[] { InventoryIntent(), Enum.ToObject(method.GetParameters()[1].ParameterType, 0) });
+            Assert.That(result.GetType().GetField("Failure").GetValue(result).ToString(), Is.EqualTo("NotReady"));
+            Assert.That(Resources(driver).RemainingCharges, Is.EqualTo(30));
+        }
+
+        private static object InventoryIntent()
+        {
+            var type = typeof(OnlineOwnedAssetSnapshot).Assembly.GetType("Game.Core.OnlineInventoryCommandIntent");
+            Assert.That(type, Is.Not.Null);
+            object intent = Activator.CreateInstance(type);
+            type.GetField("CommandId").SetValue(intent, 1ul); type.GetField("ConnectionEpoch").SetValue(intent, 1u);
+            type.GetField("ExpectedInventoryVersion").SetValue(intent, 1u);
+            type.GetField("Kind").SetValue(intent, Enum.ToObject(type.GetField("Kind").FieldType, 2));
+            type.GetField("ItemId").SetValue(intent, Card); type.GetField("SourceWandId").SetValue(intent, Wand);
+            type.GetField("SourceProgramRevision").SetValue(intent, 1u); type.GetField("ToSpellStorage").SetValue(intent, true);
+            return intent;
+        }
+
+        [Test] public void OnlineSelectionReferencesReuseTheOriginalWandInputActions()
+        {
+            var definition = AssetDatabase.LoadAssetAtPath<OnlineCombatDefinition>("Assets/_Project/Resources/Online/CombatDefinition.asset");
+            var get = typeof(OnlineCombatDefinition).GetMethod("GetWandSelectionAction");
+            Assert.That(get, Is.Not.Null, "动态创建的OwnedAdapter没有Inspector引用，必须从原输入资产显式装配。");
+            for (int slot = 0; slot < 3; slot++)
+            {
+                var original = AssetDatabase.LoadMainAssetAtPath(
+                    "Assets/_Project/ScriptableObjects/Input/Wands/Action_Select" + (slot + 1) + ".asset");
+                Assert.That(get.Invoke(definition, new object[] { slot }), Is.SameAs(original));
+            }
+        }
     }
 }

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-24 15:03:53Z" end-time="2026-10-24 15:03:54Z" duration="0.3084659">
+  <test-suite type="TestSuite" id="3992" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2409" result="Failed" site="Child" start-time="2026-10-24 15:03:53Z" end-time="2026-10-24 15:03:54Z" duration="0.308466" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3725" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="683" result="Failed" site="Child" start-time="2026-10-24 15:03:53Z" end-time="2026-10-24 15:03:54Z" duration="0.239250" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12136" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3726" name="Game" fullname="Game" runstate="Runnable" testcasecount="683" result="Failed" site="Child" start-time="2026-10-24 15:03:53Z" end-time="2026-10-24 15:03:54Z" duration="0.155731" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3727" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="683" result="Failed" site="Child" start-time="2026-10-24 15:03:53Z" end-time="2026-10-24 15:03:54Z" duration="0.136256" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3728" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="683" result="Failed" site="Child" start-time="2026-10-24 15:03:53Z" end-time="2026-10-24 15:03:54Z" duration="0.115242" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3327" name="SharedInventoryPresentationTests" fullname="Game.Run.Tests.SharedInventoryPresentationTests" classname="Game.Run.Tests.SharedInventoryPresentationTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-24 15:03:53Z" end-time="2026-10-24 15:03:54Z" duration="0.107982" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3328" name="Controller_RebindingReplacesReadScopeAndClearsOldSelection" fullname="Game.Run.Tests.SharedInventoryPresentationTests.Controller_RebindingReplacesReadScopeAndClearsOldSelection" methodname="Controller_RebindingReplacesReadScopeAndClearsOldSelection" classname="Game.Run.Tests.SharedInventoryPresentationTests" runstate="Runnable" seed="316179053" result="Failed" start-time="2026-10-24 15:03:53Z" end-time="2026-10-24 15:03:53Z" duration="0.055205" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  正式 UI 还没有可替换的只读数据源入口。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.SharedInventoryPresentationTests.Bind (System.Object target, Game.Run.SinglePlayerInventorySession source) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\SharedInventoryPresentationTests.cs:122
+at Game.Run.Tests.SharedInventoryPresentationTests.Controller_RebindingReplacesReadScopeAndClearsOldSelection () [0x00044] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\SharedInventoryPresentationTests.cs:24
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3330" name="ExplicitlyClearingExternalSource_DoesNotFallbackToSavedSinglePlayerAssets" fullname="Game.Run.Tests.SharedInventoryPresentationTests.ExplicitlyClearingExternalSource_DoesNotFallbackToSavedSinglePlayerAssets" methodname="ExplicitlyClearingExternalSource_DoesNotFallbackToSavedSinglePlayerAssets" classname="Game.Run.Tests.SharedInventoryPresentationTests" runstate="Runnable" seed="1093649212" result="Failed" start-time="2026-10-24 15:03:53Z" end-time="2026-10-24 15:03:53Z" duration="0.002114" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  正式 UI 还没有可替换的只读数据源入口。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.SharedInventoryPresentationTests.Bind (System.Object target, Game.Run.SinglePlayerInventorySession source) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\SharedInventoryPresentationTests.cs:122
+at Game.Run.Tests.SharedInventoryPresentationTests.ExplicitlyClearingExternalSource_DoesNotFallbackToSavedSinglePlayerAssets () [0x00013] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\SharedInventoryPresentationTests.cs:68
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3329" name="ExternalReadSource_CannotSendInventorySaveOrToolCommandsToSinglePlayer" fullname="Game.Run.Tests.SharedInventoryPresentationTests.ExternalReadSource_CannotSendInventorySaveOrToolCommandsToSinglePlayer" methodname="ExternalReadSource_CannotSendInventorySaveOrToolCommandsToSinglePlayer" classname="Game.Run.Tests.SharedInventoryPresentationTests" runstate="Runnable" seed="1606139279" result="Failed" start-time="2026-10-24 15:03:53Z" end-time="2026-10-24 15:03:53Z" duration="0.002035" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  正式 UI 还没有可替换的只读数据源入口。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.SharedInventoryPresentationTests.Bind (System.Object target, Game.Run.SinglePlayerInventorySession source) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\SharedInventoryPresentationTests.cs:122
+at Game.Run.Tests.SharedInventoryPresentationTests.ExternalReadSource_CannotSendInventorySaveOrToolCommandsToSinglePlayer () [0x00027] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\SharedInventoryPresentationTests.cs:38
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3331" name="HeldItemHud_ReusesExistingCellsWithReplacementInventoryIdentity" fullname="Game.Run.Tests.SharedInventoryPresentationTests.HeldItemHud_ReusesExistingCellsWithReplacementInventoryIdentity" methodname="HeldItemHud_ReusesExistingCellsWithReplacementInventoryIdentity" classname="Game.Run.Tests.SharedInventoryPresentationTests" runstate="Runnable" seed="191414907" result="Failed" start-time="2026-10-24 15:03:53Z" end-time="2026-10-24 15:03:54Z" duration="0.012929" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  正式 UI 还没有可替换的只读数据源入口。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.SharedInventoryPresentationTests.Bind (System.Object target, Game.Run.SinglePlayerInventorySession source) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\SharedInventoryPresentationTests.cs:122
+at Game.Run.Tests.SharedInventoryPresentationTests.HeldItemHud_ReusesExistingCellsWithReplacementInventoryIdentity () [0x0009a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\SharedInventoryPresentationTests.cs:88
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

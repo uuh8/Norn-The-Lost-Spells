@@ -94,13 +94,13 @@ namespace Game.UI
                 {
                     if(!_equipment[slot].AuthoredLayout)PlaceView(_equipment[slot], new Vector2(_wideLayout?220:150,_wideLayout?100:52));
                     _equipment[slot].Bind(controller, equipped, InventoryItemDisplay.Row, 48);
-                    if(_wideLayout && controller.Session.WandsReadOnly.TryGetState(equipped.InstanceId,out var resource))
+                    if(_wideLayout && controller.PresentationSource.WandsReadOnly.TryGetState(equipped.InstanceId,out var resource))
                         _equipment[slot].SetCaption((slot+1)+" · "+equipped.DisplayName+"\nMana "+Mathf.RoundToInt(resource.MaxMana));
                     if (_selectorLayout)
                     {
                         if(!_equipment[slot].AuthoredLayout){PlaceView(_equipment[slot], new Vector2(cardWidth - 6, cardHeight - 6));_equipment[slot].Rect.anchoredPosition = new Vector2(3, -3);}
                         string resourceCaption = "";
-                        if (controller.Session.WandsReadOnly.TryGetState(equipped.InstanceId, out var cardState))
+                        if (controller.PresentationSource.WandsReadOnly.TryGetState(equipped.InstanceId, out var cardState))
                             resourceCaption = "Mana " + Mathf.RoundToInt(cardState.MaxMana);
                         _equipment[slot].ConfigureWandCard((slot + 1) + " · " + equipped.DisplayName, resourceCaption, controller.UiFont,controller.BuiltinUiFont);
                     }
@@ -112,15 +112,15 @@ namespace Game.UI
             int capacity = hasWand ? wand.Rules.WandProgramCapacity : 0;
             int occupied=0;for(int i=0;i<count;i++)if(items[i].Location.Kind==ItemLocationKind.WandSlot && items[i].Location.OwnerId==wand.InstanceId)occupied++;
             if (_programTitle != null) { _programTitle.fontSize=22;_programTitle.text = hasWand ? wand.DisplayName + " · 法术槽 "+occupied+" / " + capacity : "选择一根法杖查看法术"; }
-            if(_wideLayout && hasWand && _programTitle != null && controller.Session.WandsReadOnly.TryGetProgram(wand.InstanceId,out var program))_programTitle.text+=" · 基础抽取 "+program.BaseDraws;
+            if(_wideLayout && hasWand && _programTitle != null && controller.PresentationSource.WandsReadOnly.TryGetProgram(wand.InstanceId,out var program))_programTitle.text+=" · 基础抽取 "+program.BaseDraws;
             if(_stats!=null)
             {
                 _stats.text=hasWand?wand.DisplayName:"未装备法杖";
-                if(hasWand && controller.Session.WandsReadOnly.TryGetState(wand.InstanceId,out var state)
-                    && controller.Session.WandsReadOnly.TryGetProgram(wand.InstanceId,out var selectedProgram))
+                if(hasWand && controller.PresentationSource.WandsReadOnly.TryGetState(wand.InstanceId,out var state)
+                    && controller.PresentationSource.WandsReadOnly.TryGetProgram(wand.InstanceId,out var selectedProgram))
                 {
                     // 只在离散UI刷新中求根层预算，不提交资源；不能把整串成本相加冒充每次施法蓝耗。
-                    float mana=controller.Session.UseSpellProgrammingV2?V2ManaPreview(controller.Session,wand.InstanceId):
+                    float mana=controller.PresentationSource.UseSpellProgrammingV2?V2ManaPreview(controller.PresentationSource,wand.InstanceId):
                         CastEvaluator.Evaluate(selectedProgram.Program,selectedProgram.BaseDraws,float.MaxValue,CastModifierState.Default,_preview).ManaSpent;
                     _stats.supportRichText=true;_stats.fontSize=20;_stats.resizeTextForBestFit=false;
                     _stats.text=ResourceCaption(state)+" · "+ManaPreviewCaption(selectedProgram,mana);
@@ -163,7 +163,8 @@ namespace Game.UI
             float total=0;for(int i=0;i<program.Program.Count;i++)if(program.Program[i]!=null)total+=Mathf.Max(0,program.Program[i].ManaCost);
             return "本次预估蓝耗 "+Mathf.RoundToInt(immediate)+" · 槽内合计 "+Mathf.RoundToInt(total);
         }
-        internal static float V2ManaPreview(SinglePlayerInventorySession session,string wand)
+        // 预览只需构建输入快照，不需要单机存档/事务所有者。
+        internal static float V2ManaPreview(IInventoryPresentationSource session,string wand)
         {
             // 只在离散库存Refresh执行，与研究台同源；不再对Copy调用Legacy解释器。
             if(!session.TryCaptureWandResearch(wand,out var snapshot))return 0;

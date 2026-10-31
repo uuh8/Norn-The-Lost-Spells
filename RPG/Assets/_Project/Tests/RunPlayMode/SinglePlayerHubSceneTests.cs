@@ -398,6 +398,13 @@ namespace Game.Run.Tests
             float end = Time.realtimeSinceStartup + 15;
             while (_run.State.Phase == RaidPhase.Departing && Time.realtimeSinceStartup < end) yield return null;
             Assert.That(_run.State.Phase, Is.EqualTo(RaidPhase.Exploring));
+            var presentation = CombatPresentationHost.Active;
+            Assert.That(presentation, Is.Not.Null, "正式 Raid 也必须经共同入口装配 HUD，不能只支持练习地图。");
+            Assert.That(presentation.IsBound, Is.True);
+            Assert.That(presentation.Actor, Is.SameAs(_player.gameObject));
+            Assert.That(presentation.InventorySource, Is.SameAs(_session));
+            Assert.That(_player.gameObject.scene.path, Is.EqualTo(_run.Definition.WorldScenePath));
+            Assert.That(_ui.gameObject.scene, Is.EqualTo(_scene), "原 Tab Controller 留在 Hub，不能随 HUD 搬进 DDOL。");
             var keyboard=InputSystem.AddDevice<Keyboard>();
             try
             {
@@ -415,6 +422,8 @@ namespace Game.Run.Tests
             end = Time.realtimeSinceStartup + 15;
             while (_run.State.Phase != RaidPhase.HubReady && Time.realtimeSinceStartup < end) yield return null;
             Assert.That(_run.State.Phase, Is.EqualTo(RaidPhase.HubReady)); Assert.That(map.activeSelf, Is.True);
+            Assert.That(CombatPresentationHost.Active, Is.SameAs(presentation));
+            Assert.That(presentation.IsBound, Is.False); Assert.That(presentation.Actor, Is.Null);
             Assert.That(_player.gameObject.scene, Is.EqualTo(_scene)); Assert.That(_hub.TryGetStation(out var station), Is.True); Assert.That(station.Kind, Is.EqualTo(HubStationKind.Expedition));
             keyboard=InputSystem.AddDevice<Keyboard>();
             try{InputSystem.QueueStateEvent(keyboard,new KeyboardState(Key.Tab));InputSystem.Update();yield return null;Assert.That(_ui.IsOpen,Is.True);Assert.That(_ui.WarehouseMode,Is.False);}

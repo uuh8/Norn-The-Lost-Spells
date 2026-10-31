@@ -44,7 +44,11 @@ namespace Game.Networking
         {
             if (port < 1024 || port > 65535 || NetworkServer.active || NetworkClient.active) throw new ArgumentOutOfRangeException(nameof(port));
             var kcp = GetComponent<KcpTransport>(); kcp.Port = (ushort)port; kcp.DualMode = false;
-            networkAddress = "127.0.0.1"; maxConnections = 8; sendRate = 30;
+            networkAddress = "127.0.0.1"; maxConnections = 8; sendRate = 60;
+            // Mirror的sendRate同时控制Server批次flush和Headless目标帧率；60Hz让接收/发送有更细的调度机会。
+            // 这不是玩法Tick率：AuthorityTickDriver仍通过FixedStepClock按30Hz推进输入、AI与Physics，
+            // 运动Snapshot也仍由独立Profile按30Hz导出。成本是更多空闲主循环，不靠双倍模拟速度降低延迟。
+            // 实际节省多少相位等待取决于帧耗时与到包时刻，必须测量，不能把配置60Hz直接写成延迟减半。
             // 4个已认证席位之外暂留4个握手位置，以便满员时重连替换旧连接；不是允许8人入局。
         }
         public void SetFrozen(bool frozen) { Frozen = frozen; GetComponent<JoinTicketAuthenticator>().Frozen = frozen; }

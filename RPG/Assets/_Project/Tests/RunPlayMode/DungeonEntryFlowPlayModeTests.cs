@@ -13,6 +13,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
@@ -29,12 +30,14 @@ namespace Game.Run.Tests
         private const string Hub = "Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub.unity";
         private InputTestFixture _input;
         private Keyboard _keyboard;
+        private Mouse _mouse;
         private bool _seedHub, _background;
         private readonly List<Scene> _scenes = new List<Scene>();
         private SinglePlayerInventorySession _hubSession;
         private string _memoryPath;
         private readonly MemoryFiles _files = new MemoryFiles();
         [Serializable] private sealed class Credentials { public string Username, Password; }
+        private Credentials _admissionCredentials;
         [Serializable] private sealed class NativeInstanceState { public int ProcessId; public long ProcessStartTicks; public string InstanceId; }
         private string _ownInstance;
         private string _testRoomId, _testCompanionToken;
@@ -49,6 +52,7 @@ namespace Game.Run.Tests
             _memoryPath = "Temp/SinglePlayer/N1EntryMemory/" + Guid.NewGuid().ToString("N");
             SceneManager.sceneLoaded += OnLoaded;
             _ownInstance = _testRoomId = _testCompanionToken = _expiredLobbyRoom = null; _roomView = default; EventBus<OnlineRoomChangedEvent>.Subscribe(OnRoom);
+            _admissionCredentials = null; _mouse = null;
             EditorWindow.GetWindow(Type.GetType("UnityEditor.GameView,UnityEditor")).Focus();
             yield return EditorSceneManager.LoadSceneInPlayMode(Menu, new LoadSceneParameters(LoadSceneMode.Single));
             yield return null; yield return null;
@@ -70,10 +74,21 @@ namespace Game.Run.Tests
         }
         [UnityTest] public IEnumerator Login_P7ChoiceCancelMatchAndSinglePlayer_ReturnsWithSession() => RunPath("P7");
         [UnityTest] public IEnumerator Login_P8ChoiceCancelMatchAndSinglePlayer_ReturnsWithSession() => RunPath("P8");
-        [UnityTest] public IEnumerator PortalMatch_AuthenticatedAdmissionReconnectAndReturn_PreservesLocalHub()
+        [UnityTest] public IEnumerator PortalMatch_AuthenticatedAdmissionReconnectAndReturn_PreservesLocalHub() => RunOnlinePath("p7");
+        [UnityTest] public IEnumerator PortalMatch_P8OriginalTabDragReconnectAndReturn_PreservesLocalHub() => RunOnlinePath("p8");
+
+        // 两张正式地图复用同一条玩家链路；差异只来自可信 DungeonId 和原地图配置，
+        // 不能复制另一套“P8 专属 UI”或以 MovementWorld 灰盒替代正式内容。
+        private IEnumerator RunOnlinePath(string dungeonId)
         {
             var account = UnityEngine.Object.FindFirstObjectByType<AccountMenuController>();
-            var credentials = JsonUtility.FromJson<Credentials>(File.ReadAllText(".tools/local-online/account-probe.private.json"));
+            // N1的长期整备测试账号可能已把法杖移到仓库，不能拿它假定N4存在完整装备闭包。
+            // 每次用业务注册创建独立账号，获得同样经过服务端规则生成的起始装备，不改旧账号或绕过入局校验。
+            _admissionCredentials = new Credentials { Username = "pf_owner_" + Guid.NewGuid().ToString("N").Substring(0, 12),
+                Password = Guid.NewGuid().ToString("N") + "aA1!" };
+            var credentials = _admissionCredentials;
+            yield return Api("POST", "/api/online/accounts", JsonUtility.ToJson(new RegisterAccountRequest
+                { Username = credentials.Username, Password = credentials.Password }), null);
             account.transform.Find("Panel/Username").GetComponent<InputField>().text = credentials.Username;
             account.transform.Find("Panel/Password").GetComponent<InputField>().text = credentials.Password;
             Button(account, "Login").onClick.Invoke(); yield return WaitIdle(OnlineAccountClient.ApplicationSession);
@@ -82,10 +97,13 @@ namespace Game.Run.Tests
             int localSession = _hubSession.GetInstanceID(); uint localVersion = _hubSession.ReadOnly.Version;
             var hubScene = SceneManager.GetActiveScene(); var player = Find<PlayerControllerBase>(hubScene);
             HubPracticePortal portal = null;
-            foreach (var root in hubScene.GetRootGameObjects()) foreach (var p in root.GetComponentsInChildren<HubPracticePortal>(true)) if (p.ScenePath.Contains("P7")) portal = p;
+            foreach (var root in hubScene.GetRootGameObjects()) foreach (var p in root.GetComponentsInChildren<HubPracticePortal>(true))
+                if (p.ScenePath.IndexOf(dungeonId, StringComparison.OrdinalIgnoreCase) >= 0) portal = p;
             Assert.That(portal, Is.Not.Null); player.CharacterController.enabled = false; player.transform.position = portal.transform.position;
             player.CharacterController.enabled = true; Physics.SyncTransforms(); yield return PressF();
             var dialog = UnityEngine.Object.FindFirstObjectByType<DungeonEntryDialogController>();
+            Assert.That(dialog.transform.Find("Backdrop").gameObject.activeInHierarchy, Is.True,
+                "F选择框尚未打开；这是输入/焦点前置条件，不能通过直接Invoke隐藏的Match按钮伪造玩家入口。");
             dialog.transform.Find("Backdrop/Panel/Matchmaking").GetComponent<Button>().onClick.Invoke();
             yield return WaitRoomPhase(OnlineRoomPhase.Lobby, 20);
             string room = _roomView.RoomId;
@@ -98,7 +116,7 @@ namespace Game.Run.Tests
             string token = JsonUtility.FromJson<LoginAccountReply>(_apiBody).Token;
             _testCompanionToken = token;
             yield return Api("GET", "/api/online/profile", null, token); var profile = JsonUtility.FromJson<OnlineProfileReply>(_apiBody);
-            yield return Api("POST", "/api/online/rooms/match", JsonUtility.ToJson(new CreateRoomRequest { DungeonId = "p7" }), token);
+            yield return Api("POST", "/api/online/rooms/match", JsonUtility.ToJson(new CreateRoomRequest { DungeonId = dungeonId }), token);
             Assert.That(JsonUtility.FromJson<RoomReply>(_apiBody).RoomId, Is.EqualTo(room));
             double until = Time.realtimeSinceStartupAsDouble + 10; while ((_roomView.Members?.Length ?? 0) != 2 || _roomView.Busy) { Assert.That(Time.realtimeSinceStartupAsDouble, Is.LessThan(until)); yield return null; }
             dialog.transform.Find("Backdrop/Panel/Ready").GetComponent<Button>().onClick.Invoke();
@@ -127,12 +145,23 @@ namespace Game.Run.Tests
             var client = OnlineAccountClient.ApplicationSession.GetComponent<OnlineRoomClient>(); ulong actor = client.ActorId; uint epoch = client.ConnectionEpoch;
             Assert.That(actor, Is.GreaterThan(0)); Assert.That(Time.timeScale, Is.EqualTo(1));
             yield return VerifyOnlineMovement();
+            Assert.That(OnlineWorldBootstrap.Active.DungeonId, Is.EqualTo(dungeonId));
+            yield return VerifyOriginalTabMouseDrag();
+            var retainedWorld = OnlineWorldBootstrap.Active; var retainedRegistry = retainedWorld.Registry;
+            var retainedCast = retainedRegistry[(int)actor - 1].Cast;
             NetworkClient.Disconnect(); yield return WaitRoomPhase(OnlineRoomPhase.Disconnected, 10); yield return new WaitForSecondsRealtime(5.1f);
             dialog.transform.Find("Backdrop/Panel/Reconnect").GetComponent<Button>().onClick.Invoke(); yield return WaitRoomPhase(OnlineRoomPhase.Connected, 20);
             Assert.That(client.ActorId, Is.EqualTo(actor)); Assert.That(client.ConnectionEpoch, Is.GreaterThan(epoch));
             double movementDeadline = Time.realtimeSinceStartupAsDouble + 10;
             while (OnlineWorldBootstrap.Active == null || !OnlineWorldBootstrap.Active.MovementReady)
             { Assert.That(Time.realtimeSinceStartupAsDouble, Is.LessThan(movementDeadline)); yield return null; }
+            Assert.That(OnlineWorldBootstrap.Active, Is.SameAs(retainedWorld), "原地重连不应重建World掩盖通道交接问题。");
+            Assert.That(OnlineWorldBootstrap.Active.Registry, Is.SameAs(retainedRegistry));
+            Assert.That(retainedRegistry[(int)actor - 1].Cast, Is.SameAs(retainedCast));
+            Assert.That(OnlineWorldBootstrap.Active.LocalPlayer.Animator.speed, Is.GreaterThan(0), "旧连接的冻结权限必须交还，不能留下速度0。");
+            yield return VerifyOnlineMovement(); // 新Manager上的真实输入→DS事实也须继续工作，而不只显示Connected。
+            yield return VerifyOriginalTabMouseDrag(); // 原 UI 必须绑定新 Epoch 的 Source，仍可提交真实授权命令。
+            yield return VerifyReconnectedOwnedCast(actor);
             // 实际Epoch更替后的本机角色不重复创建Input；退出前用真实菜单事件重新打开返回入口。
             EventBus<OnlineMovementMenuRequestEvent>.Publish(new OnlineMovementMenuRequestEvent { Open = true }); yield return null;
             dialog.transform.Find("Backdrop/Panel/Cancel").GetComponent<Button>().onClick.Invoke(); yield return WaitScene(Hub); yield return null; yield return null;
@@ -150,7 +179,11 @@ namespace Game.Run.Tests
             { Assert.That(Time.realtimeSinceStartupAsDouble, Is.LessThan(until), "真实Server尚未发回运动Snapshot。"); yield return null; }
             var world = OnlineWorldBootstrap.Active; var local = world.LocalPlayer;
             Assert.That(local.ExecutionMode, Is.EqualTo(PlayerExecutionMode.Prediction)); Assert.That(local.OwnsLocalInput, Is.True);
-            Assert.That(local.Animator.applyRootMotion, Is.False); Assert.That(world.Registry[4].Enemy.IsOnlineReplica, Is.True);
+            Assert.That(local.Animator.applyRootMotion, Is.False);
+            // P7 Actor5 是普通敌人，P8 同一合法 NPC 槽是 Boss；校验各自已有的 Replica 合同。
+            var npc = world.Registry[4];
+            if (npc.Boss != null) Assert.That(npc.Boss.ExecutionMode, Is.EqualTo(CombatExecutionMode.Replica));
+            else { Assert.That(npc.Enemy, Is.Not.Null); Assert.That(npc.Enemy.IsOnlineReplica, Is.True); }
             Vector3 before = local.transform.position;
             InputSystem.QueueStateEvent(_keyboard, new KeyboardState(Key.W)); InputSystem.Update();
             yield return new WaitForSecondsRealtime(.65f);
@@ -161,6 +194,175 @@ namespace Game.Run.Tests
             Assert.That(world.LocalInputSuppressed, Is.True); Assert.That(Time.timeScale, Is.EqualTo(1));
             yield return new WaitForSecondsRealtime(.25f); Assert.That(world.ServerTick, Is.GreaterThan(tick), "菜单不能暂停网络世界。");
             EventBus<OnlineMovementMenuRequestEvent>.Publish(new OnlineMovementMenuRequestEvent { Open = false }); yield return null;
+        }
+        private IEnumerator VerifyReconnectedOwnedCast(ulong actor)
+        {
+            var world = OnlineWorldBootstrap.Active; var driver = world.Registry[(int)actor - 1].Cast;
+            double deadline = Time.realtimeSinceStartupAsDouble + 10;
+            while (!driver.ClientInventoryReady || !world.Combat.TryGetResources(actor, out var ready) || ready.RemainingCharges <= 0)
+            { Assert.That(Time.realtimeSinceStartupAsDouble, Is.LessThan(deadline), "重连后尚未安装真实Owned资源事实。"); yield return null; }
+            Assert.That(world.Combat.TryGetResources(actor, out var before), Is.True);
+            // 用真实Input System鼠标设备走Wizard输入→当前Driver→新CombatChannel→独立DS，
+            // 不直接调用Cast/命中/扣费API。安全位置向场景中施法，只验证Owner次数事实，不依赖击杀敌人。
+            var mouse = EnsureMouse();
+            var pointer = new Vector2(Screen.width * .5f, Screen.height * .5f);
+            InputSystem.QueueStateEvent(mouse, new MouseState { position = pointer }); InputSystem.Update(); yield return null;
+            InputSystem.QueueStateEvent(mouse, new MouseState { position = pointer }.WithButton(MouseButton.Left)); InputSystem.Update();
+            yield return new WaitForSecondsRealtime(.5f);
+            InputSystem.QueueStateEvent(mouse, new MouseState { position = pointer }); InputSystem.Update();
+            deadline = Time.realtimeSinceStartupAsDouble + 8;
+            while (!world.Combat.TryGetResources(actor, out var current) || current.RemainingCharges >= before.RemainingCharges)
+            { Assert.That(Time.realtimeSinceStartupAsDouble, Is.LessThan(deadline), "重连后施法未得到独立DS的次数扣减事实。"); yield return null; }
+        }
+
+        /// <summary>
+        /// 从真实 Input System 输入走原 UGUI 的 EventSystem，而非调用 BeginDrag/OnDrop/库存 Handler。
+        /// 每步先确认射线确实命中实际控件；最终以 DS 发回的版本、位置与次数为证据，
+        /// Ghost 移动、按钮回调或本地预测都不能单独作为资产移动成功。
+        /// </summary>
+        private IEnumerator VerifyOriginalTabMouseDrag()
+        {
+            var world = OnlineWorldBootstrap.Active;
+            var client = OnlineAccountClient.ApplicationSession.GetComponent<OnlineRoomClient>();
+            SinglePlayerInventoryController inventory = null;
+            double deadline = Time.realtimeSinceStartupAsDouble + 12;
+            // 新 Movement Snapshot 与完整库存不是同一个通道。重连后必须等新 Epoch 的库存源，
+            // 不能抓到保留旧源就开始拖动，再把正常的连接栅栏拒绝误诊为 Drop 失败。
+            while (inventory == null || inventory.PresentationSource?.ReadOnly == null
+                || !(inventory.PresentationSource is IOnlineInventoryCommandContext context)
+                || context.ActorId != client.ActorId || context.ConnectionEpoch != client.ConnectionEpoch)
+            {
+                foreach (var candidate in UnityEngine.Object.FindObjectsByType<SinglePlayerInventoryController>(FindObjectsSortMode.None))
+                    if (candidate.PresentationSource is IOnlineInventoryCommandContext) { inventory = candidate; break; }
+                Assert.That(Time.realtimeSinceStartupAsDouble, Is.LessThan(deadline), "正式角色未绑定原库存 UI 与线上 Source。");
+                yield return null;
+            }
+            var source = inventory.PresentationSource;
+            int onlineControllers = 0;
+            foreach (var candidate in UnityEngine.Object.FindObjectsByType<SinglePlayerInventoryController>(FindObjectsSortMode.None))
+                if (candidate.PresentationSource is IOnlineInventoryCommandContext) onlineControllers++;
+            Assert.That(onlineControllers, Is.EqualTo(1), "同一玩家只应保留一份原线上库存 Controller。");
+            Assert.That(inventory.gameObject.scene, Is.EqualTo(world.gameObject.scene), "Tab 的场景 Scope 必须随当前 World 释放。");
+            Assert.That(inventory.Session, Is.Null, "联机原 Tab 不应创建单机库存权威。");
+            Assert.That(inventory.IsOpen, Is.False);
+            yield return PressKey(Key.Tab);
+            Assert.That(inventory.IsOpen, Is.True); Assert.That(world.LocalInputSuppressed, Is.True);
+            Assert.That(Time.timeScale, Is.EqualTo(1));
+            Canvas.ForceUpdateCanvases(); yield return null; yield return null;
+            var items = new InventoryItemSnapshot[source.ReadOnly.Count];
+            int count = source.ReadOnly.CopyItemsTo(items);
+            InventoryItemSnapshot card = default; bool found = false;
+            for (int i = 0; i < count; i++) if (items[i].Kind == ItemKind.Spell && items[i].Location.Kind == ItemLocationKind.WandSlot)
+            { card = items[i]; found = true; break; }
+            Assert.That(found, Is.True, "独立起始账号应有可往返移动的真实已安装法术卡。");
+            string wand = card.Location.OwnerId; int programSlot = card.Location.SlotIndex;
+            uint before = source.ReadOnly.Version, tick = world.ServerTick;
+            var storage = FindDropTarget(inventory, InventoryDropKind.SpellStorage, source.ReadOnly.ActorId, 0);
+            yield return DragOriginalItem(inventory, card.InstanceId, storage);
+            yield return WaitCardLocation(source, card.InstanceId, ItemLocationKind.SpellStorage, source.ReadOnly.ActorId, 0, before);
+            Assert.That(source.ReadOnly.TryGetView(card.InstanceId, out var stored), Is.True);
+            Assert.That(stored.RemainingCharges, Is.EqualTo(card.RemainingCharges));
+            Assert.That(source.ReadOnly.Count, Is.EqualTo(count));
+            Assert.That(inventory.PresentationSource, Is.SameAs(source), "快照应刷新原 Source，不重建整套 UI。");
+
+            before = source.ReadOnly.Version; Canvas.ForceUpdateCanvases(); yield return null; yield return null;
+            var program = FindDropTarget(inventory, InventoryDropKind.ProgramSlot, wand, programSlot);
+            yield return DragOriginalItem(inventory, card.InstanceId, program);
+            yield return WaitCardLocation(source, card.InstanceId, ItemLocationKind.WandSlot, wand, programSlot, before);
+            Assert.That(source.ReadOnly.TryGetView(card.InstanceId, out var installed), Is.True);
+            Assert.That(installed.RemainingCharges, Is.EqualTo(card.RemainingCharges));
+            Assert.That(world.ServerTick, Is.GreaterThan(tick), "本机拖放时独立 DS 必须继续运行。");
+            Assert.That(inventory.IsDragging, Is.False);
+            yield return PressKey(Key.Escape); yield return null;
+            Assert.That(inventory.IsOpen, Is.False); Assert.That(world.LocalInputSuppressed, Is.False,
+                "关闭 Tab 的同次 Esc 不能穿透打开联机菜单。");
+            Assert.That(Time.timeScale, Is.EqualTo(1));
+        }
+
+        private IEnumerator WaitCardLocation(IInventoryPresentationSource source, string id, ItemLocationKind kind,
+            string owner, int slot, uint previousVersion)
+        {
+            double deadline = Time.realtimeSinceStartupAsDouble + 10;
+            while (true)
+            {
+                if (source.ReadOnly.Version > previousVersion && source.ReadOnly.TryGetView(id, out var view)
+                    && view.Location.Kind == kind && view.Location.OwnerId == owner && view.Location.SlotIndex == slot) yield break;
+                Assert.That(Time.realtimeSinceStartupAsDouble, Is.LessThan(deadline),
+                    "真实 Drop 未得到独立 DS 的新版库存位置事实：" + kind);
+                yield return null;
+            }
+        }
+
+        private IEnumerator DragOriginalItem(SinglePlayerInventoryController inventory, string id, InventoryDropTarget target)
+        {
+            InventoryItemView item = null;
+            foreach (var candidate in inventory.GetComponentsInChildren<InventoryItemView>(false))
+                if (candidate.Snapshot.InstanceId == id) { item = candidate; break; }
+            Assert.That(item, Is.Not.Null); Assert.That(target, Is.Not.Null);
+            Vector2 start = ScreenCenter(item.Rect), end = ScreenCenter((RectTransform)target.transform);
+            AssertRaycastBelongsTo(start, item.transform);
+            var mouse = EnsureMouse();
+            InputSystem.QueueStateEvent(mouse, new MouseState { position = start }); InputSystem.Update(); yield return null; yield return null;
+            InputSystem.QueueStateEvent(mouse, new MouseState { position = start }.WithButton(MouseButton.Left)); InputSystem.Update(); yield return null; yield return null;
+            // UGUI 在按下后超过 pixelDragThreshold 才派发 BeginDrag；先单独跨过阈值，
+            // 观察 IsDragging 再移向目标，避免一步瞬移把未开始的点击误记为拖动。
+            Vector2 threshold = start + Vector2.right * (EventSystem.current.pixelDragThreshold + 8);
+            InputSystem.QueueStateEvent(mouse, new MouseState { position = threshold }.WithButton(MouseButton.Left)); InputSystem.Update(); yield return null; yield return null;
+            if (!inventory.IsDragging)
+            {
+                // IsDragging=false也可能是BeginDrag进入后被权限/失焦取消，不能直接归因于EventSystem。
+                // 仅失败时记录只读状态，不调用handler、不伪造焦点，也不改生产InputModule的后台策略。
+                var events = EventSystem.current;
+                var module = events != null ? events.currentInputModule as UnityEngine.InputSystem.UI.InputSystemUIInputModule : null;
+                const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+                var status = (Text)typeof(SinglePlayerInventoryController).GetField("_status", flags).GetValue(inventory);
+                bool entered = (bool)typeof(InventoryItemView).GetField("_wasDragged", flags).GetValue(item);
+                TestContext.Progress.WriteLine($"DragDiagnostic: AppFocus={Application.isFocused}, EventFocus={events != null && events.isFocused}, Cursor={Cursor.lockState}, Open={inventory.IsOpen}, ItemActive={item.isActiveAndEnabled}, BeginEntered={entered}, MouseHeld={mouse.leftButton.isPressed}, Position={mouse.position.ReadValue()}, Expected={threshold}, UiPoint={module?.point?.action?.ReadValue<Vector2>()}, UiClick={module?.leftClick?.action?.ReadValue<float>()}, Status={status?.text}, Version={inventory.PresentationSource?.ReadOnly?.Version}");
+            }
+            Assert.That(inventory.IsDragging, Is.True, "真实 EventSystem 尚未派发 BeginDrag。");
+            for (int i = 1; i <= 4; i++)
+            {
+                InputSystem.QueueStateEvent(mouse, new MouseState { position = Vector2.Lerp(threshold, end, i / 4f) }.WithButton(MouseButton.Left));
+                InputSystem.Update(); yield return null;
+            }
+            AssertRaycastBelongsTo(end, target.transform);
+            InputSystem.QueueStateEvent(mouse, new MouseState { position = end }); InputSystem.Update(); yield return null; yield return null;
+        }
+
+        private static Vector2 ScreenCenter(RectTransform rect)
+        {
+            var canvas = rect.GetComponentInParent<Canvas>();
+            Camera camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+            return RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(rect.rect.center));
+        }
+
+        private static void AssertRaycastBelongsTo(Vector2 position, Transform expected)
+        {
+            var hits = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current) { position = position }, hits);
+            Assert.That(hits.Count, Is.GreaterThan(0), "目标不在实际可射线命中的 UGUI 区域。");
+            var hit = hits[0].gameObject.transform;
+            Assert.That(hit == expected || hit.IsChildOf(expected), Is.True,
+                "鼠标目标被其他 UI 遮挡：" + hit.name + "，预期：" + expected.name);
+        }
+
+        private static InventoryDropTarget FindDropTarget(SinglePlayerInventoryController inventory, InventoryDropKind kind, string owner, int slot)
+        {
+            // 仅读取既有目标语义来定位实际控件，不调用其事件、不创建测试专属生产 API。
+            const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            foreach (var candidate in inventory.GetComponentsInChildren<InventoryDropTarget>(false))
+                if ((InventoryDropKind)typeof(InventoryDropTarget).GetField("_kind", flags).GetValue(candidate) == kind
+                    && (string)typeof(InventoryDropTarget).GetField("_ownerId", flags).GetValue(candidate) == owner
+                    && (int)typeof(InventoryDropTarget).GetField("_slot", flags).GetValue(candidate) == slot) return candidate;
+            return null;
+        }
+
+        private Mouse EnsureMouse() => _mouse ?? (_mouse = InputSystem.AddDevice<Mouse>());
+        private IEnumerator PressKey(Key key)
+        {
+            InputSystem.QueueStateEvent(_keyboard, new KeyboardState()); InputSystem.Update(); yield return null;
+            InputSystem.QueueStateEvent(_keyboard, new KeyboardState(key)); InputSystem.Update(); yield return null; yield return null;
+            InputSystem.QueueStateEvent(_keyboard, new KeyboardState()); InputSystem.Update(); yield return null;
         }
         [UnityTest] public IEnumerator PortalMatch_UnknownHttpOutcome_KeepsChoiceUntilCancellationConfirmed()
         {
@@ -221,7 +423,7 @@ namespace Game.Run.Tests
                 request.downloadHandler = new DownloadHandlerBuffer(); request.timeout = 10;
                 if (json != null) { request.uploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(json)); request.SetRequestHeader("Content-Type", "application/json"); }
                 if (token != null) request.SetRequestHeader("Authorization", "Bearer " + token);
-                request.SetRequestHeader("X-Norn-Protocol", "1"); request.SetRequestHeader("X-Norn-Manifest", manifest.Hash);
+                request.SetRequestHeader("X-Norn-Protocol", ProtocolCompatibility.CurrentVersion.ToString()); request.SetRequestHeader("X-Norn-Manifest", manifest.Hash);
                 yield return request.SendWebRequest(); Assert.That(request.result, Is.EqualTo(UnityWebRequest.Result.Success), method + " " + path + " HTTP " + request.responseCode);
                 _apiBody = request.downloadHandler.text;
             }
@@ -318,6 +520,11 @@ namespace Game.Run.Tests
         private static Button Button(AccountMenuController menu, string name) => menu.transform.Find("Panel/" + name).GetComponent<Button>();
         private IEnumerator PressF()
         {
+            // 登录/Hub重载可能令GameView丢失焦点；生产Portal输入会正确拒绝失焦按键。
+            // 测试先恢复真实GameView并等待生命周期帧，不能给Portal私有focused字段强塞true。
+            EditorWindow.GetWindow(Type.GetType("UnityEditor.GameView,UnityEditor")).Focus();
+            yield return null; yield return null;
+            Assert.That(Application.isFocused, Is.True, "Player未取得焦点，不继续把未处理的F当作匹配故障。");
             InputSystem.QueueStateEvent(_keyboard, new KeyboardState()); InputSystem.Update(); yield return null; yield return null;
             InputSystem.QueueStateEvent(_keyboard, new KeyboardState(Key.F)); InputSystem.Update(); yield return null;
             InputSystem.QueueStateEvent(_keyboard, new KeyboardState()); InputSystem.Update();
@@ -368,23 +575,24 @@ namespace Game.Run.Tests
                     }
                     catch (ArgumentException) { } // 只允许该实例已经自行退出，不回退成按名字Kill。
                 }
-                if (_testCompanionToken != null && _testRoomId != null)
+            }
+            if (_testCompanionToken != null && _testRoomId != null)
+            {
+                // Start在创建DS之前被拒绝时也要释放本测试两席；不能把成员清理依赖于已经取得InstanceId。
+                double deadline = Time.realtimeSinceStartupAsDouble + 10; bool open = false;
+                do
                 {
-                    double deadline = Time.realtimeSinceStartupAsDouble + 10; bool open = false;
-                    do
-                    {
-                        yield return Api("GET", "/api/online/rooms/" + _testRoomId, null, _testCompanionToken);
-                        open = JsonUtility.FromJson<RoomReply>(_apiBody).State == "Open";
-                        if (!open) yield return new WaitForSecondsRealtime(.5f);
-                    } while (!open && Time.realtimeSinceStartupAsDouble < deadline);
-                    Assert.That(open, Is.True, "本测试DS退出后应恢复大厅，再清理自己的两个席位。");
-                    yield return Api("DELETE", "/api/online/rooms/" + _testRoomId + "/members/me", null, _testCompanionToken);
-                    var credentials = JsonUtility.FromJson<Credentials>(File.ReadAllText(".tools/local-online/account-probe.private.json"));
-                    var manifest = JsonUtility.FromJson<ContentManifest>(Resources.Load<TextAsset>("Online/ContentManifest").text);
-                    yield return Api("POST", "/api/online/sessions", JsonUtility.ToJson(new LoginAccountRequest { Username = credentials.Username, Password = credentials.Password, ProtocolVersion = manifest.ProtocolVersion, ContentManifestHash = manifest.Hash }), null);
-                    string token = JsonUtility.FromJson<LoginAccountReply>(_apiBody).Token;
-                    yield return Api("DELETE", "/api/online/rooms/" + _testRoomId + "/members/me", null, token);
-                }
+                    yield return Api("GET", "/api/online/rooms/" + _testRoomId, null, _testCompanionToken);
+                    open = JsonUtility.FromJson<RoomReply>(_apiBody).State == "Open";
+                    if (!open) yield return new WaitForSecondsRealtime(.5f);
+                } while (!open && Time.realtimeSinceStartupAsDouble < deadline);
+                Assert.That(open, Is.True, "本测试DS退出后应恢复大厅，再清理自己的两个席位。");
+                yield return Api("DELETE", "/api/online/rooms/" + _testRoomId + "/members/me", null, _testCompanionToken);
+                var credentials = _admissionCredentials ?? JsonUtility.FromJson<Credentials>(File.ReadAllText(".tools/local-online/account-probe.private.json"));
+                var manifest = JsonUtility.FromJson<ContentManifest>(Resources.Load<TextAsset>("Online/ContentManifest").text);
+                yield return Api("POST", "/api/online/sessions", JsonUtility.ToJson(new LoginAccountRequest { Username = credentials.Username, Password = credentials.Password, ProtocolVersion = manifest.ProtocolVersion, ContentManifestHash = manifest.Hash }), null);
+                string token = JsonUtility.FromJson<LoginAccountReply>(_apiBody).Token;
+                yield return Api("DELETE", "/api/online/rooms/" + _testRoomId + "/members/me", null, token);
             }
             SceneManager.sceneLoaded -= OnLoaded;
             if (OnlineAccountClient.ApplicationSession != null) UnityEngine.Object.Destroy(OnlineAccountClient.ApplicationSession.gameObject);

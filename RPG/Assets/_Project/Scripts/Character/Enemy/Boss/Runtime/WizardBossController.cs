@@ -78,6 +78,13 @@ namespace Game.Character
         private ulong _authorityActorId, _targetActorId, _authorityCommandSequence;
         private bool _hasAuthorityTick;
         private uint _lastAuthorityTick;
+        private bool _replicaHudInitialized;
+        // 阶段枚举保持单调，不能拿 CurrentPhase>=1 反推 Active；phase0 或死亡后必须记住最近确认已失活。
+        private bool _replicaHudActive;
+        // 这只是动画抑制区间，不是Gameplay Action Lock。用ServerTick对应的播放时间而非到包时间，
+        // 防止可靠Teleport事实先到，而插值还在播放跨传送段时，把大位移解释成高速跑步。
+        private bool _hasReplicaTeleportWindow;
+        private double _replicaTeleportStartTime, _replicaTeleportEndTime;
 
         private static readonly int SpeedHash =
             Animator.StringToHash("speed");
@@ -234,7 +241,8 @@ namespace Game.Character
         public void ConfigureReplica()
         {
             _executionMode = CombatExecutionMode.Replica; _onlineRoster = null;
-            _targetActorId = 0; _isEncounterActive = false;
+            _targetActorId = 0; _isEncounterActive = false; _replicaHudInitialized = false; _replicaHudActive = false;
+            ResetReplicaTeleportPresentation();
             _stateMachine?.ChangeState(null); _navigation?.SetReplicaSuspended(true);
             if (_spellCaster != null) _spellCaster.ConfigureReplica();
         }
@@ -320,6 +328,7 @@ namespace Game.Character
         {
             EventBus<BossEncounterStartedEvent>.Subscribe(
                 OnBossEncounterStarted);
+            EventBus<BossHudReplayRequestedEvent>.Subscribe(OnHudReplayRequested);
             if (_stateMachine != null &&
                 _stateMachine.CurrentKind == BossRuntimeStateKind.None)
             {
@@ -332,10 +341,12 @@ namespace Game.Character
             if (_executionMode == CombatExecutionMode.Authority && _spellCaster != null) _spellCaster.CancelAuthorityPending();
             EventBus<BossEncounterStartedEvent>.Unsubscribe(
                 OnBossEncounterStarted);
+            EventBus<BossHudReplayRequestedEvent>.Unsubscribe(OnHudReplayRequested);
             _stateMachine?.ChangeState(null);
             _navigation?.StopNavigation(true);
             _health?.SetInvulnerable(false);
             _isActionLocked = false;
+            ResetReplicaTeleportPresentation();
         }
 
         private void Update()
@@ -906,11 +917,24 @@ namespace Game.Character
         /// <summary>阶段由 Server 单调推进；Client 只安装读数并通知表现，不重新执行阶段无敌/程序解锁。</summary>
         public void ApplyReplicatedPhase(uint phase)
         {
-            if (_executionMode != CombatExecutionMode.Replica || phase < (uint)BossPhase.Phase1 || phase > (uint)BossPhase.Phase3
-                || phase <= (uint)_currentPhase) return;
+            if (_executionMode != CombatExecutionMode.Replica || phase > (uint)BossPhase.Phase3) return;
+            // 阶段是服务器已经确认的只读事实，不以 Health 缓存是否装配完成为前置。
+            // 0 只撤销当前 encounter/HUD 资格，不能把同一生命已经推进的阶段降回初始值。
             BossPhase previous = _currentPhase;
-            _currentPhase = _pendingPhase = (BossPhase)phase;
-            PublishPhaseChanged(previous, _currentPhase);
+            if (phase > (uint)_currentPhase) _currentPhase = _pendingPhase = (BossPhase)phase;
+            bool active = phase >= (uint)BossPhase.Phase1 && _health != null && _health.IsAlive;
+            _replicaHudActive = active;
+            if (active)
+            {
+                // 读数可提前安装，但阶段 VFX/HUD 仍需存活且处于有效 encounter；不启动 FSM、无敌或程序解锁。
+                if (previous != _currentPhase) PublishPhaseChanged(previous, _currentPhase);
+                // 默认 Runtime 阶段已经是1；首次有效 Phase1 仍需初始化原 P8 HUD，而非等到阶段变更。
+                if (!_replicaHudInitialized) { _replicaHudInitialized = true; PublishHudInitialized(); }
+            }
+            // 完整 HP 快照不代表一次命中，使用独立只读通知覆盖掉包/晚加入，避免重播血液、音效。
+            EventBus<BossHudStateChangedEvent>.Publish(new BossHudStateChangedEvent
+            { BossId = _health != null ? _health.Id : 0, CurrentHp = _health != null ? _health.CurrentHp : 0,
+                CurrentPhase = (byte)_currentPhase, Active = active });
         }
 
         /// <summary>
@@ -949,13 +973,38 @@ namespace Game.Character
 
         private void SyncAnimator()
         {
-            if (_animator == null ||
-                _characterController == null)
-            {
-                return;
-            }
+            if (_characterController == null) return;
+            SetMovementAnimatorParameters(_lastHorizontalVelocity);
+        }
 
-            Vector3 velocity = _lastHorizontalVelocity;
+        /// <summary>
+        /// Replica的纯表现入口：世界水平速度来自已收到的Snapshot段，playbackTime是同一插值时间轴的秒数。
+        /// 不写_lastHorizontalVelocity、不执行AI/FSM/导航，也不取Gameplay Action Lock。
+        /// Cast本来允许边走边施法；这里只更新原speed/moveX/moveZ，让UpperBodyCast层和原出口继续掌管动作。
+        /// </summary>
+        public void PresentReplicaMovement(Vector3 worldPlanarVelocity, double playbackTime)
+        {
+            if (_executionMode != CombatExecutionMode.Replica) return;
+            bool valid = FinitePosition(worldPlanarVelocity) && !double.IsNaN(playbackTime) && !double.IsInfinity(playbackTime);
+            if (!valid || _health != null && !_health.IsAlive)
+                worldPlanarVelocity = Vector3.zero;
+
+            if (valid && _hasReplicaTeleportWindow && playbackTime + .0000001 >= _replicaTeleportStartTime)
+            {
+                if (playbackTime <= _replicaTeleportEndTime + .0000001)
+                    worldPlanarVelocity = Vector3.zero;
+                else ResetReplicaTeleportPresentation();
+            }
+            SetMovementAnimatorParameters(worldPlanarVelocity);
+        }
+
+        private void SetMovementAnimatorParameters(Vector3 velocity)
+        {
+            if (_animator == null) return;
+            // 世界速度先投影到水平面，再转为Boss本地方向。moveX表示左右，moveZ表示前后，
+            // 以原Definition.MoveSpeed归一化；speed仍保留米/秒，沿用现有Controller的0.1阈值。
+            velocity.y = 0f;
+
             _animator.SetFloat(SpeedHash, velocity.magnitude);
             Vector3 localVelocity = transform.InverseTransformDirection(velocity);
             float denominator = _definition != null
@@ -1122,6 +1171,7 @@ namespace Game.Character
                 new BossHudInitializedEvent
                 {
                     BossId = _health.Id,
+                    WorldSceneHandle = gameObject.scene.handle,
                     DisplayName = _definition.DisplayName,
                     CurrentHp = _health.CurrentHp,
                     MaxHp = _health.MaxHp,
@@ -1129,6 +1179,19 @@ namespace Game.Character
                     Phase2Threshold = Phase2Threshold,
                     Phase3Threshold = Phase3Threshold,
                 });
+        }
+
+        private void OnHudReplayRequested(BossHudReplayRequestedEvent request)
+        {
+            // OnEnable/OnDisable 已限定本对象的订阅寿命；请求还必须指向同一本机场景和存活 Boss。
+            // DS Authority 不消费 Client HUD 请求，避免显示层重新触发开战、目标选择或任何模拟行为。
+            if (_executionMode == CombatExecutionMode.Authority || request.WorldSceneHandle != gameObject.scene.handle ||
+                _health == null || !_health.IsAlive) return;
+            bool active = _executionMode == CombatExecutionMode.SinglePlayer ? _isEncounterActive :
+                _executionMode == CombatExecutionMode.Replica && _replicaHudActive;
+            if (!active) return;
+            // 复用值快照 Publisher，绝不调用 TryActivate/ApplyReplicatedPhase 或重播 Phase/Teleport/VFX。
+            PublishHudInitialized();
         }
 
         private void PublishTeleportEvent(BossTeleportStage stage)
@@ -1146,13 +1209,51 @@ namespace Game.Character
                 { ActorId = _authorityActorId, Stage = (uint)stage, SourcePosition = _teleportSourcePosition, DestinationPosition = _teleportDestination });
         }
 
-        /// <summary>只把权威事实交给已有 VFX 消费者；Boss 位移仍从 Movement Snapshot 安装，绝不再执行 Teleport Gameplay。</summary>
-        public void ApplyReplicatedTeleport(uint stage, Vector3 source, Vector3 destination)
+        /// <summary>
+        /// 权威事实交给已有VFX消费者，Boss位置仍从Movement Snapshot安装，不执行Teleport Gameplay。
+        /// 生产组合层应传入事实原有ServerTick，使动画抑制跟随插值播放而非可靠包到达时间；
+        /// 默认0仅兼容旧调用，未提供模拟时间时不建立可能永久悬挂的动画门。
+        /// </summary>
+        public void ApplyReplicatedTeleport(uint stage, Vector3 source, Vector3 destination, uint serverTick = 0)
         {
             if (_executionMode != CombatExecutionMode.Replica || stage > (uint)BossTeleportStage.Cancelled
                 || !FinitePosition(source) || !FinitePosition(destination)) return;
+            if (stage == (uint)BossTeleportStage.Cancelled) ResetReplicaTeleportPresentation();
+            else if (serverTick != 0)
+            {
+                double time = serverTick / 30d;
+                if (stage == (uint)BossTeleportStage.Telegraph)
+                {
+                    _hasReplicaTeleportWindow = true;
+                    _replicaTeleportStartTime = time;
+                    // 正常Arrived会把终点精确缩到实际传送Tick。若重连错过末事件，
+                    // 共享SO给出的模拟时长提供有限退路；冻结时ServerTick不走，门不会靠真实时间偷跑。
+                    _replicaTeleportEndTime = time + (_definition != null
+                        ? Mathf.Max(1f / 30f, _definition.TeleportTelegraphDuration + _definition.TeleportRecoveryDuration)
+                        : 1f);
+                }
+                else if (stage == (uint)BossTeleportStage.Departed)
+                {
+                    if (!_hasReplicaTeleportWindow) _replicaTeleportStartTime = 0;
+                    _hasReplicaTeleportWindow = true;
+                    _replicaTeleportEndTime = time + (_definition != null
+                        ? Mathf.Max(1f / 30f, _definition.TeleportRecoveryDuration) : 1f);
+                }
+                else if (stage == (uint)BossTeleportStage.Arrived)
+                {
+                    if (!_hasReplicaTeleportWindow) _replicaTeleportStartTime = 0;
+                    _hasReplicaTeleportWindow = true;
+                    _replicaTeleportEndTime = time;
+                }
+            }
             EventBus<BossTeleportEvent>.Publish(new BossTeleportEvent
             { BossId = _health != null ? _health.Id : 0, Stage = (BossTeleportStage)stage, SourcePosition = source, DestinationPosition = destination });
+        }
+
+        private void ResetReplicaTeleportPresentation()
+        {
+            _hasReplicaTeleportWindow = false;
+            _replicaTeleportStartTime = _replicaTeleportEndTime = 0;
         }
 
         private static bool FinitePosition(Vector3 position) =>

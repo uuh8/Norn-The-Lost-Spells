@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="17" result="Failed(Child)" total="17" passed="15" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-26 17:14:12Z" end-time="2026-10-26 17:15:03Z" duration="50.3869175">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2602" result="Failed" site="Child" start-time="2026-10-26 17:14:12Z" end-time="2026-10-26 17:15:03Z" duration="50.386918" total="17" passed="15" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2509" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="118" result="Failed" site="Child" start-time="2026-10-26 17:14:13Z" end-time="2026-10-26 17:15:02Z" duration="49.640233" total="8" passed="6" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27688" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2510" name="Game" fullname="Game" runstate="Runnable" testcasecount="118" result="Failed" site="Child" start-time="2026-10-26 17:14:13Z" end-time="2026-10-26 17:15:02Z" duration="49.551084" total="8" passed="6" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2511" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="118" result="Failed" site="Child" start-time="2026-10-26 17:14:13Z" end-time="2026-10-26 17:15:02Z" duration="49.451528" total="8" passed="6" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2512" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="118" result="Failed" site="Child" start-time="2026-10-26 17:14:13Z" end-time="2026-10-26 17:15:02Z" duration="49.351092" total="8" passed="6" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2439" name="OnlineDungeonExportTests" fullname="Game.Multiplayer.Tests.OnlineDungeonExportTests" classname="Game.Multiplayer.Tests.OnlineDungeonExportTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-26 17:14:13Z" end-time="2026-10-26 17:15:02Z" duration="49.250692" total="8" passed="6" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="2449" name="FourPlayerSpawnsUseActualFloorAndCapsuleWithBoundedSearchEvenWithoutNpcNavMesh" fullname="Game.Multiplayer.Tests.OnlineDungeonExportTests.FourPlayerSpawnsUseActualFloorAndCapsuleWithBoundedSearchEvenWithoutNpcNavMesh" classname="Game.Multiplayer.Tests.OnlineDungeonExportTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-26 17:14:13Z" end-time="2026-10-26 17:14:29Z" duration="15.589122" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2447" name="FourPlayerSpawnsUseActualFloorAndCapsuleWithBoundedSearchEvenWithoutNpcNavMesh(&quot;p7&quot;)" fullname="Game.Multiplayer.Tests.OnlineDungeonExportTests.FourPlayerSpawnsUseActualFloorAndCapsuleWithBoundedSearchEvenWithoutNpcNavMesh(&quot;p7&quot;)" methodname="FourPlayerSpawnsUseActualFloorAndCapsuleWithBoundedSearchEvenWithoutNpcNavMesh" classname="Game.Multiplayer.Tests.OnlineDungeonExportTests" runstate="Runnable" seed="1969575561" result="Failed" label="Error" start-time="2026-10-26 17:14:13Z" end-time="2026-10-26 17:14:19Z" duration="5.477670" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.
+  ----> System.InvalidOperationException : This can only be used during play mode, please use EditorSceneManager.NewScene() instead.]]></message>
+                    <stack-trace><![CDATA[  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at Game.Multiplayer.Tests.OnlineDungeonExportTests.FourPlayerSpawnsUseActualFloorAndCapsuleWithBoundedSearchEvenWithoutNpcNavMesh (System.String id) [0x00091] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineDungeonExportTests.cs:104 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+--InvalidOperationException
+  at (wrapper managed-to-native) UnityEngine.SceneManagement.SceneManager.CreateScene_Injected(UnityEngine.Bindings.ManagedSpanWrapper&,UnityEngine.SceneManagement.CreateSceneParameters&,UnityEngine.SceneManagement.Scene&)
+  at UnityEngine.SceneManagement.SceneManager.CreateScene (System.String sceneName, UnityEngine.SceneManagement.CreateSceneParameters parameters) [0x00039] in <f14a369973b548758cab792edd81bcc6>:0 
+  at Game.Project.Editor.OnlineDungeonTools.DerivePlayerSpawns (Game.Project.Editor.OnlineDungeonTools+Preview preview) [0x001b8] in F:\Develop Project\RPG\RPG\Assets\_Project\Editor\Networking\OnlineDungeonTools.cs:382 
+  at Game.Project.Editor.OnlineDungeonTools.InspectPlayerSpawns (UnityEngine.GameObject preview) [0x00031] in F:\Develop Project\RPG\RPG\Assets\_Project\Editor\Networking\OnlineDungeonTools.cs:191 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 ]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2448" name="FourPlayerSpawnsUseActualFloorAndCapsuleWithBoundedSearchEvenWithoutNpcNavMesh(&quot;p8&quot;)" fullname="Game.Multiplayer.Tests.OnlineDungeonExportTests.FourPlayerSpawnsUseActualFloorAndCapsuleWithBoundedSearchEvenWithoutNpcNavMesh(&quot;p8&quot;)" methodname="FourPlayerSpawnsUseActualFloorAndCapsuleWithBoundedSearchEvenWithoutNpcNavMesh" classname="Game.Multiplayer.Tests.OnlineDungeonExportTests" runstate="Runnable" seed="65103980" result="Failed" label="Error" start-time="2026-10-26 17:14:19Z" end-time="2026-10-26 17:14:29Z" duration="10.001790" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.
+  ----> System.InvalidOperationException : This can only be used during play mode, please use EditorSceneManager.NewScene() instead.]]></message>
+                    <stack-trace><![CDATA[  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at Game.Multiplayer.Tests.OnlineDungeonExportTests.FourPlayerSpawnsUseActualFloorAndCapsuleWithBoundedSearchEvenWithoutNpcNavMesh (System.String id) [0x00091] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineDungeonExportTests.cs:104 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+--InvalidOperationException
+  at (wrapper managed-to-native) UnityEngine.SceneManagement.SceneManager.CreateScene_Injected(UnityEngine.Bindings.ManagedSpanWrapper&,UnityEngine.SceneManagement.CreateSceneParameters&,UnityEngine.SceneManagement.Scene&)
+  at UnityEngine.SceneManagement.SceneManager.CreateScene (System.String sceneName, UnityEngine.SceneManagement.CreateSceneParameters parameters) [0x00039] in <f14a369973b548758cab792edd81bcc6>:0 
+  at Game.Project.Editor.OnlineDungeonTools.DerivePlayerSpawns (Game.Project.Editor.OnlineDungeonTools+Preview preview) [0x001b8] in F:\Develop Project\RPG\RPG\Assets\_Project\Editor\Networking\OnlineDungeonTools.cs:382 
+  at Game.Project.Editor.OnlineDungeonTools.InspectPlayerSpawns (UnityEngine.GameObject preview) [0x00031] in F:\Develop Project\RPG\RPG\Assets\_Project\Editor\Networking\OnlineDungeonTools.cs:191 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 ]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="2445" name="InactiveWorldKeepsOriginalGeometryNavigationAndEntryBindingsButNoSinglePlayerAuthority" fullname="Game.Multiplayer.Tests.OnlineDungeonExportTests.InactiveWorldKeepsOriginalGeometryNavigationAndEntryBindingsButNoSinglePlayerAuthority" classname="Game.Multiplayer.Tests.OnlineDungeonExportTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-26 17:14:29Z" end-time="2026-10-26 17:14:36Z" duration="7.319513" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <output><![CDATA[Account API did not become accessible within 30 seconds. This may be due to network issues or editor focus.
+]]></output>
+                <test-case id="2443" name="InactiveWorldKeepsOriginalGeometryNavigationAndEntryBindingsButNoSinglePlayerAuthority(&quot;p7&quot;,4,7)" fullname="Game.Multiplayer.Tests.OnlineDungeonExportTests.InactiveWorldKeepsOriginalGeometryNavigationAndEntryBindingsButNoSinglePlayerAuthority(&quot;p7&quot;,4,7)" methodname="InactiveWorldKeepsOriginalGeometryNavigationAndEntryBindingsButNoSinglePlayerAuthority" classname="Game.Multiplayer.Tests.OnlineDungeonExportTests" runstate="Runnable" seed="2030891643" result="Passed" start-time="2026-10-26 17:14:29Z" end-time="2026-10-26 17:14:30Z" duration="1.001084" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="2444" name="InactiveWorldKeepsOriginalGeometryNavigationAndEntryBindingsButNoSinglePlayerAuthority(&quot;p8&quot;,1,0)" fullname="Game.Multiplayer.Tests.OnlineDungeonExportTests.InactiveWorldKeepsOriginalGeometryNavigationAndEntryBindingsButNoSinglePlayerAuthority(&quot;p8&quot;,1,0)" methodname="InactiveWorldKeepsOriginalGeometryNavigationAndEntryBindingsButNoSinglePlayerAuthority" classname="Game.Multiplayer.Tests.OnlineDungeonExportTests" runstate="Runnable" seed="1453009679" result="Passed" start-time="2026-10-26 17:14:30Z" end-time="2026-10-26 17:14:36Z" duration="6.212557" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="2450" name="MissingGroundRejectsSpawnWithoutOriginFallbackAndRestoresPreviewOwnership" fullname="Game.Multiplayer.Tests.OnlineDungeonExportTests.MissingGroundRejectsSpawnWithoutOriginFallbackAndRestoresPreviewOwnership" methodname="MissingGroundRejectsSpawnWithoutOriginFallbackAndRestoresPreviewOwnership" classname="Game.Multiplayer.Tests.OnlineDungeonExportTests" runstate="Runnable" seed="313524120" result="Passed" start-time="2026-10-26 17:14:36Z" end-time="2026-10-26 17:14:37Z" duration="0.594587" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="2442" name="SourceAuditKeepsActualNpcEncounterAndGateCountsWithoutChangingScene" fullname="Game.Multiplayer.Tests.OnlineDungeonExportTests.SourceAuditKeepsActualNpcEncounterAndGateCountsWithoutChangingScene" classname="Game.Multiplayer.Tests.OnlineDungeonExportTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-26 17:14:37Z" end-time="2026-10-26 17:15:02Z" duration="25.642406" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <output><![CDATA[Error after 1 attempt(s): UnavailableForLegalReasons -  -- Result type: PointsBalanceResult -- Url: https://generators.ai.unity.com -- Trace Id 9b5d7d0b-c68b-4bb3-b620-661c059e8eed => 
+Error after 1 attempt(s): UnavailableForLegalReasons -  -- Result type: SettingsResult -- Url: https://generators.ai.unity.com -- Trace Id 9b5d7d0b-c68b-4bb3-b620-661c059e8eed => 
+]]></output>
+                <test-case id="2440" name="SourceAuditKeepsActualNpcEncounterAndGateCountsWithoutChangingScene(&quot;p7&quot;,12,4,7)" fullname="Game.Multiplayer.Tests.OnlineDungeonExportTests.SourceAuditKeepsActualNpcEncounterAndGateCountsWithoutChangingScene(&quot;p7&quot;,12,4,7)" methodname="SourceAuditKeepsActualNpcEncounterAndGateCountsWithoutChangingScene" classname="Game.Multiplayer.Tests.OnlineDungeonExportTests" runstate="Runnable" seed="1738111354" result="Passed" start-time="2026-10-26 17:14:37Z" end-time="2026-10-26 17:14:38Z" duration="1.791423" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="2441" name="SourceAuditKeepsActualNpcEncounterAndGateCountsWithoutChangingScene(&quot;p8&quot;,1,1,0)" fullname="Game.Multiplayer.Tests.OnlineDungeonExportTests.SourceAuditKeepsActualNpcEncounterAndGateCountsWithoutChangingScene(&quot;p8&quot;,1,1,0)" methodname="SourceAuditKeepsActualNpcEncounterAndGateCountsWithoutChangingScene" classname="Game.Multiplayer.Tests.OnlineDungeonExportTests" runstate="Runnable" seed="995037662" result="Passed" start-time="2026-10-26 17:14:38Z" end-time="2026-10-26 17:15:02Z" duration="23.734712" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="2446" name="UnknownDungeonNeverBuildsAFallbackGraybox" fullname="Game.Multiplayer.Tests.OnlineDungeonExportTests.UnknownDungeonNeverBuildsAFallbackGraybox" methodname="UnknownDungeonNeverBuildsAFallbackGraybox" classname="Game.Multiplayer.Tests.OnlineDungeonExportTests" runstate="Runnable" seed="1000019441" result="Passed" start-time="2026-10-26 17:15:02Z" end-time="2026-10-26 17:15:02Z" duration="0.001970" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="3938" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="717" result="Passed" start-time="2026-10-26 17:15:02Z" end-time="2026-10-26 17:15:03Z" duration="0.646038" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27688" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="3939" name="Game" fullname="Game" runstate="Runnable" testcasecount="717" result="Passed" start-time="2026-10-26 17:15:02Z" end-time="2026-10-26 17:15:03Z" duration="0.566009" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3940" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="717" result="Passed" start-time="2026-10-26 17:15:02Z" end-time="2026-10-26 17:15:03Z" duration="0.480354" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="3941" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="717" result="Passed" start-time="2026-10-26 17:15:02Z" end-time="2026-10-26 17:15:03Z" duration="0.381528" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="3094" name="CombatPresentationLifecycleTests" fullname="Game.Run.Tests.CombatPresentationLifecycleTests" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" testcasecount="9" result="Passed" start-time="2026-10-26 17:15:03Z" end-time="2026-10-26 17:15:03Z" duration="0.282196" total="9" passed="9" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="3098" name="DestroyedOldScopeReleasesOnlyItsOwnLease" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.DestroyedOldScopeReleasesOnlyItsOwnLease" methodname="DestroyedOldScopeReleasesOnlyItsOwnLease" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="237025970" result="Passed" start-time="2026-10-26 17:15:03Z" end-time="2026-10-26 17:15:03Z" duration="0.066751" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3095" name="DifferentCombatAreasReuseHostAndHudWithoutMovingGameplayObjects" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.DifferentCombatAreasReuseHostAndHudWithoutMovingGameplayObjects" methodname="DifferentCombatAreasReuseHostAndHudWithoutMovingGameplayObjects" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="2048695415" result="Passed" start-time="2026-10-26 17:15:03Z" end-time="2026-10-26 17:15:03Z" duration="0.016055" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3103" name="DungeonHudAcceptsOnlyCurrentWorldSourceAndRefreshesOnLateBind" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.DungeonHudAcceptsOnlyCurrentWorldSourceAndRefreshesOnLateBind" methodname="DungeonHudAcceptsOnlyCurrentWorldSourceAndRefreshesOnLateBind" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="1454009428" result="Passed" start-time="2026-10-26 17:15:03Z" end-time="2026-10-26 17:15:03Z" duration="0.016415" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3102" name="DungeonHudReplaysLateAcquisitionAndClearsSceneSourceOnRelease" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.DungeonHudReplaysLateAcquisitionAndClearsSceneSourceOnRelease" methodname="DungeonHudReplaysLateAcquisitionAndClearsSceneSourceOnRelease" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="1442112545" result="Passed" start-time="2026-10-26 17:15:03Z" end-time="2026-10-26 17:15:03Z" duration="0.011308" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3101" name="FailedContextReplacementClearsLeaseButDoesNotCloseUnacquiredNewController" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.FailedContextReplacementClearsLeaseButDoesNotCloseUnacquiredNewController" methodname="FailedContextReplacementClearsLeaseButDoesNotCloseUnacquiredNewController" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="2035880042" result="Passed" start-time="2026-10-26 17:15:03Z" end-time="2026-10-26 17:15:03Z" duration="0.016943" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[CombatPresentation] 共用 HUD 更新被拒绝：HUD 根混入了角色、库存或交互生命周期，拒绝整体隐藏：ReplacementHudMixedWithGameplay
+]]></output>
+              </test-case>
+              <test-case id="3096" name="OldLeaseCannotUpdateOrReleaseNewOwner" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.OldLeaseCannotUpdateOrReleaseNewOwner" methodname="OldLeaseCannotUpdateOrReleaseNewOwner" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="268623612" result="Passed" start-time="2026-10-26 17:15:03Z" end-time="2026-10-26 17:15:03Z" duration="0.015444" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3097" name="ReleaseClearsActorAndSceneReadReferencesButKeepsReusableHud" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.ReleaseClearsActorAndSceneReadReferencesButKeepsReusableHud" methodname="ReleaseClearsActorAndSceneReadReferencesButKeepsReusableHud" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="416502670" result="Passed" start-time="2026-10-26 17:15:03Z" end-time="2026-10-26 17:15:03Z" duration="0.014361" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3099" name="RepeatedIdenticalContextKeepsOriginalInventoryOpen" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.RepeatedIdenticalContextKeepsOriginalInventoryOpen" methodname="RepeatedIdenticalContextKeepsOriginalInventoryOpen" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="919711448" result="Passed" start-time="2026-10-26 17:15:03Z" end-time="2026-10-26 17:15:03Z" duration="0.010844" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3100" name="UnsafeLegacyCompositionRejectsWithoutClosingUnacquiredInventoryOrKeepingLease" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.UnsafeLegacyCompositionRejectsWithoutClosingUnacquiredInventoryOrKeepingLease" methodname="UnsafeLegacyCompositionRejectsWithoutClosingUnacquiredInventoryOrKeepingLease" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="1658950585" result="Passed" start-time="2026-10-26 17:15:03Z" end-time="2026-10-26 17:15:03Z" duration="0.009460" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[CombatPresentation] 共用 HUD 接管被拒绝，已保留场景原界面：HUD 根混入了角色、库存或交互生命周期，拒绝整体隐藏：LegacyHudMixedWithGameplay
+Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

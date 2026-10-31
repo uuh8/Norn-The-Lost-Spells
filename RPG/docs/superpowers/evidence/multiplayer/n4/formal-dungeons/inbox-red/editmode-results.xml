@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="11" result="Failed(Child)" total="11" passed="8" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-26 17:02:21Z" end-time="2026-10-26 17:02:47Z" duration="25.293314">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2597" result="Failed" site="Child" start-time="2026-10-26 17:02:21Z" end-time="2026-10-26 17:02:47Z" duration="25.293314" total="11" passed="8" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1295" name="Game.Character.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.Tests.dll" runstate="Runnable" testcasecount="239" result="Failed" site="Child" start-time="2026-10-26 17:02:22Z" end-time="2026-10-26 17:02:22Z" duration="0.687691" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27688" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1296" name="Game" fullname="Game" runstate="Runnable" testcasecount="239" result="Failed" site="Child" start-time="2026-10-26 17:02:22Z" end-time="2026-10-26 17:02:22Z" duration="0.592337" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1297" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="239" result="Failed" site="Child" start-time="2026-10-26 17:02:22Z" end-time="2026-10-26 17:02:22Z" duration="0.493793" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1298" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="239" result="Failed" site="Child" start-time="2026-10-26 17:02:22Z" end-time="2026-10-26 17:02:22Z" duration="0.393235" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1242" name="OnlineDungeonRuntimeTests" fullname="Game.Character.Tests.OnlineDungeonRuntimeTests" classname="Game.Character.Tests.OnlineDungeonRuntimeTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-26 17:02:22Z" end-time="2026-10-26 17:02:22Z" duration="0.290796" total="7" passed="6" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1249" name="ActiveAreaCannotRegainDeadMembersOrConsumeRevisionOfRejectedProgress" fullname="Game.Character.Tests.OnlineDungeonRuntimeTests.ActiveAreaCannotRegainDeadMembersOrConsumeRevisionOfRejectedProgress" methodname="ActiveAreaCannotRegainDeadMembersOrConsumeRevisionOfRejectedProgress" classname="Game.Character.Tests.OnlineDungeonRuntimeTests" runstate="Runnable" seed="1020407222" result="Failed" start-time="2026-10-26 17:02:22Z" end-time="2026-10-26 17:02:22Z" duration="0.085939" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  静态遭遇没有复活路径；同区Active剩余数不能在更高Revision下回升。
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineDungeonRuntimeTests.ActiveAreaCannotRegainDeadMembersOrConsumeRevisionOfRejectedProgress () [0x0004f] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineDungeonRuntimeTests.cs:129
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1245" name="BossRequiresSameLivingPlayerToEnterThenLeaveAndDisconnectIsNotAnExit" fullname="Game.Character.Tests.OnlineDungeonRuntimeTests.BossRequiresSameLivingPlayerToEnterThenLeaveAndDisconnectIsNotAnExit" methodname="BossRequiresSameLivingPlayerToEnterThenLeaveAndDisconnectIsNotAnExit" classname="Game.Character.Tests.OnlineDungeonRuntimeTests" runstate="Runnable" seed="2123313458" result="Passed" start-time="2026-10-26 17:02:22Z" end-time="2026-10-26 17:02:22Z" duration="0.081606" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1248" name="EntryUsesActualColliderGeometryInsteadOfItsWorldAxisAlignedBounds" fullname="Game.Character.Tests.OnlineDungeonRuntimeTests.EntryUsesActualColliderGeometryInsteadOfItsWorldAxisAlignedBounds" methodname="EntryUsesActualColliderGeometryInsteadOfItsWorldAxisAlignedBounds" classname="Game.Character.Tests.OnlineDungeonRuntimeTests" runstate="Runnable" seed="1827574685" result="Passed" start-time="2026-10-26 17:02:22Z" end-time="2026-10-26 17:02:22Z" duration="0.002748" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1243" name="OnlyCurrentEntryAndTargetableLivingPlayerMayStartP7Encounter" fullname="Game.Character.Tests.OnlineDungeonRuntimeTests.OnlyCurrentEntryAndTargetableLivingPlayerMayStartP7Encounter" methodname="OnlyCurrentEntryAndTargetableLivingPlayerMayStartP7Encounter" classname="Game.Character.Tests.OnlineDungeonRuntimeTests" runstate="Runnable" seed="48547119" result="Passed" start-time="2026-10-26 17:02:22Z" end-time="2026-10-26 17:02:22Z" duration="0.001576" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1244" name="OwnedNpcDeathsAdvanceInOrderWithoutRepeatedOrFutureDeathsClearingAnotherArea" fullname="Game.Character.Tests.OnlineDungeonRuntimeTests.OwnedNpcDeathsAdvanceInOrderWithoutRepeatedOrFutureDeathsClearingAnotherArea" methodname="OwnedNpcDeathsAdvanceInOrderWithoutRepeatedOrFutureDeathsClearingAnotherArea" classname="Game.Character.Tests.OnlineDungeonRuntimeTests" runstate="Runnable" seed="32980113" result="Passed" start-time="2026-10-26 17:02:22Z" end-time="2026-10-26 17:02:22Z" duration="0.001780" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1246" name="PlayerDeathDoesNotTerminateThePartyOrClearItsCurrentEncounter" fullname="Game.Character.Tests.OnlineDungeonRuntimeTests.PlayerDeathDoesNotTerminateThePartyOrClearItsCurrentEncounter" methodname="PlayerDeathDoesNotTerminateThePartyOrClearItsCurrentEncounter" classname="Game.Character.Tests.OnlineDungeonRuntimeTests" runstate="Runnable" seed="389551353" result="Passed" start-time="2026-10-26 17:02:22Z" end-time="2026-10-26 17:02:22Z" duration="0.001592" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1247" name="ReplicaDoesNotInferDeathsAndOnlyInstallsBoundedMonotonicProgress" fullname="Game.Character.Tests.OnlineDungeonRuntimeTests.ReplicaDoesNotInferDeathsAndOnlyInstallsBoundedMonotonicProgress" methodname="ReplicaDoesNotInferDeathsAndOnlyInstallsBoundedMonotonicProgress" classname="Game.Character.Tests.OnlineDungeonRuntimeTests" runstate="Runnable" seed="117733708" result="Passed" start-time="2026-10-26 17:02:22Z" end-time="2026-10-26 17:02:22Z" duration="0.002228" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="2503" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="113" result="Failed" site="Child" start-time="2026-10-26 17:02:22Z" end-time="2026-10-26 17:02:47Z" duration="24.510884" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27688" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2504" name="Game" fullname="Game" runstate="Runnable" testcasecount="113" result="Failed" site="Child" start-time="2026-10-26 17:02:22Z" end-time="2026-10-26 17:02:47Z" duration="24.497188" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2505" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="113" result="Failed" site="Child" start-time="2026-10-26 17:02:22Z" end-time="2026-10-26 17:02:47Z" duration="24.397344" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2506" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="113" result="Failed" site="Child" start-time="2026-10-26 17:02:22Z" end-time="2026-10-26 17:02:47Z" duration="24.297718" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2366" name="DungeonProgressInboxTests" fullname="Game.Multiplayer.Tests.DungeonProgressInboxTests" classname="Game.Multiplayer.Tests.DungeonProgressInboxTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-26 17:02:23Z" end-time="2026-10-26 17:02:23Z" duration="0.105453" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2368" name="CapacityIsBoundedAndOverflowCannotEraseAcceptedCandidate" fullname="Game.Multiplayer.Tests.DungeonProgressInboxTests.CapacityIsBoundedAndOverflowCannotEraseAcceptedCandidate" methodname="CapacityIsBoundedAndOverflowCannotEraseAcceptedCandidate" classname="Game.Multiplayer.Tests.DungeonProgressInboxTests" runstate="Runnable" seed="406641295" result="Failed" start-time="2026-10-26 17:02:23Z" end-time="2026-10-26 17:02:23Z" duration="0.004035" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   需要有界候选Inbox，领域拒绝非法高Revision后仍可处理同帧其他合法包。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.DungeonProgressInboxTests.RequireBoundedInbox () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\DungeonProgressInboxTests.cs:16
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2367" name="HigherUnvalidatedRevisionDoesNotReplaceEarlierCandidate" fullname="Game.Multiplayer.Tests.DungeonProgressInboxTests.HigherUnvalidatedRevisionDoesNotReplaceEarlierCandidate" methodname="HigherUnvalidatedRevisionDoesNotReplaceEarlierCandidate" classname="Game.Multiplayer.Tests.DungeonProgressInboxTests" runstate="Runnable" seed="7147439" result="Failed" start-time="2026-10-26 17:02:23Z" end-time="2026-10-26 17:02:23Z" duration="0.000548" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   需要有界候选Inbox，领域拒绝非法高Revision后仍可处理同帧其他合法包。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.DungeonProgressInboxTests.RequireBoundedInbox () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\DungeonProgressInboxTests.cs:16
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="2492" name="SharedGameplayHudTests" fullname="Game.Multiplayer.Tests.SharedGameplayHudTests" classname="Game.Multiplayer.Tests.SharedGameplayHudTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-26 17:02:23Z" end-time="2026-10-26 17:02:47Z" duration="24.092166" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2493" name="PreviewContainsOneConfiguredStageAdapterWithOnlyStageLeavesUnderItsVisibilityRoots" fullname="Game.Multiplayer.Tests.SharedGameplayHudTests.PreviewContainsOneConfiguredStageAdapterWithOnlyStageLeavesUnderItsVisibilityRoots" methodname="PreviewContainsOneConfiguredStageAdapterWithOnlyStageLeavesUnderItsVisibilityRoots" classname="Game.Multiplayer.Tests.SharedGameplayHudTests" runstate="Runnable" seed="144060613" result="Passed" start-time="2026-10-26 17:02:23Z" end-time="2026-10-26 17:02:26Z" duration="2.957702" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2494" name="StageLeavesPreserveActualSourceLayoutFontColorAndReferencesWithoutChangingSourceBytes" fullname="Game.Multiplayer.Tests.SharedGameplayHudTests.StageLeavesPreserveActualSourceLayoutFontColorAndReferencesWithoutChangingSourceBytes" methodname="StageLeavesPreserveActualSourceLayoutFontColorAndReferencesWithoutChangingSourceBytes" classname="Game.Multiplayer.Tests.SharedGameplayHudTests" runstate="Runnable" seed="702108793" result="Passed" start-time="2026-10-26 17:02:26Z" end-time="2026-10-26 17:02:47Z" duration="21.040822" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Account API did not become accessible within 30 seconds. This may be due to network issues or editor focus.
+Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

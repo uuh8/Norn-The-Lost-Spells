@@ -11,6 +11,8 @@ namespace Game.ElementField
         private readonly ElementWorldActivityRegions _liquidPrimaryRegion=new ElementWorldActivityRegions(1);
         private ElementWorldActivityRegions LiquidActivityDomain()
         {
+            // CPU权威持续推进全部已有材料；发送Interest只决定客户端接收范围。
+            if (_executionMode == WorldExecutionMode.Authority) return null;
             if(ActivityExpansionEnabled)return _activityRegions;
             _liquidPrimaryRegion.Clear();_liquidPrimaryRegion.TryAdd(GetActiveWorldBounds());return _liquidPrimaryRegion;
         }
@@ -18,7 +20,8 @@ namespace Game.ElementField
         private bool? _activityOverride;
         private readonly Bounds[] _writeActivityBounds = new Bounds[6];
         private readonly long[] _writeActivityExpiry = new long[6];
-        public bool ActivityExpansionEnabled => _activityOverride ?? (_profile != null && _profile.EnableWorldActivityExpansion);
+        public bool ActivityExpansionEnabled => _executionMode == WorldExecutionMode.Authority
+            || (_activityOverride ?? (_profile != null && _profile.EnableWorldActivityExpansion));
         public ElementWorldActivityRegions ActivityRegions => ActivityExpansionEnabled ? _activityRegions : null;
         public int ActivitySourceCount => _activitySources.Count;
         public int UnitActivitySourcesSkippedByBudget => _activitySources.UnitBudgetSkippedCount;
@@ -34,6 +37,7 @@ namespace Game.ElementField
 
         private bool RetainWriteActivity(in ElementWriteRequest request)
         {
+            if (_executionMode == WorldExecutionMode.Authority) return true;
             if (!ActivityExpansionEnabled) return true;
             Vector3 position = request.WorldPosition;
             if (_activityRegions.Contains(position)) return true;
@@ -94,11 +98,14 @@ namespace Game.ElementField
         private void OnActivitySourceChanged(WorldActivitySourceEvent change)
         {
             if (ActivityExpansionEnabled) _activitySources.Apply(change);
+            if (_executionMode == WorldExecutionMode.Authority && _activitySources.RejectedCount != 0)
+                FailAuthorityActivity(WorldActivityFailure.SourceCapacity);
         }
 
         private void RefreshWorldActivity()
         {
             if (!ActivityExpansionEnabled || !IsInitialized) return;
+            if (_executionMode == WorldExecutionMode.Authority) { RefreshAuthorityActivity(); return; }
             _activityRegions.Clear();
             _activityRegions.TryAdd(GetActiveWorldBounds());
             float size = CellSize * ChunkSize;
@@ -135,6 +142,7 @@ namespace Game.ElementField
 
         private bool IsGameplayChunk(ElementChunkKey key)
         {
+            if (_executionMode == WorldExecutionMode.Authority) return true;
             return ActivityExpansionEnabled && _activityRegions.Count > 0
                 ? _activityRegions.Intersects(ChunkBounds(key))
                 : ElementChunkActivityPlanner.IsInsideActiveRegion(key, _interestChunk,

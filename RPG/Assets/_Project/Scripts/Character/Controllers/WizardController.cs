@@ -79,6 +79,8 @@ namespace Game.Character
         public float AimMaxDistance => _aimMaxDistance;
         public int AirAttackStateHash => _airAttackStateHash;
         public bool IsOnlineActionPresentationActive => _onlineActionPresentation;
+        // Wizard 的屏幕中心始终参与施法瞄准；公共区域绑定时重放这一默认能力，避免错过 OnEnable 的一次事件。
+        public override bool DefaultCrosshairVisible => true;
 
         /// <summary>线上移动 FSM 继续模拟走跳，但活跃施法 Overlay 暂时拥有 Animator，避免空中逻辑覆盖攻击动画。</summary>
         public void SetOnlineActionPresentation(bool active)

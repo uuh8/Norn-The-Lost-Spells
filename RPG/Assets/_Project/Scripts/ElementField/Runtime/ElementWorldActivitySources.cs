@@ -100,5 +100,43 @@ namespace Game.ElementField
             }
             return accepted;
         }
+
+        /// <summary>
+        /// 权威查询完整固定来源表，不沿用单机轮转预算。任何区域装不下都返回失败，由Runtime锁存Faulted；
+        /// 返回true才允许整份候选集合发布，禁止只凭RejectedCount记录日志后继续漏掉角色或投射物。
+        /// </summary>
+        internal bool TryAppendAll(ElementWorldActivityRegions regions, float unitRadius, float projectileRadius,
+            Vector3 origin, float chunkWorldSize)
+        {
+            for (int i = 0; i < _sources.Length; i++)
+            {
+                Transform source = _sources[i];
+                if (source == null)
+                {
+                    if (!ReferenceEquals(source, null)) { _sources[i] = null; Count--; }
+                    continue;
+                }
+                if (!source.gameObject.activeInHierarchy) continue;
+                float radius = _kinds[i] == WorldActivitySourceKind.Unit ? unitRadius : projectileRadius;
+                if (!TryBuildBounds(source.position, radius, origin, chunkWorldSize, out Bounds bounds)
+                    || !regions.TryAdd(bounds)) return false;
+            }
+            return true;
+        }
+
+        /// <summary>Actor与事件来源共用Chunk对齐，负坐标向下取整，确保同一位置自然去重。</summary>
+        internal static bool TryBuildBounds(Vector3 position, float radius, Vector3 origin, float size, out Bounds bounds)
+        {
+            bounds = default;
+            if (!float.IsFinite(size) || size <= 0 || !float.IsFinite(radius) || radius < 0) return false;
+            Vector3 min = (position - Vector3.one * radius - origin) / size;
+            Vector3 max = (position + Vector3.one * radius - origin) / size;
+            min = new Vector3(Mathf.Floor(min.x), Mathf.Floor(min.y), Mathf.Floor(min.z));
+            max = new Vector3(Mathf.Floor(max.x) + 1, Mathf.Floor(max.y) + 1, Mathf.Floor(max.z) + 1);
+            bounds.SetMinMax(origin + min * size, origin + max * size);
+            return float.IsFinite(bounds.min.x) && float.IsFinite(bounds.min.y) && float.IsFinite(bounds.min.z)
+                && float.IsFinite(bounds.max.x) && float.IsFinite(bounds.max.y) && float.IsFinite(bounds.max.z)
+                && bounds.size.x > 0 && bounds.size.y > 0 && bounds.size.z > 0;
+        }
     }
 }

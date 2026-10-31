@@ -1,0 +1,43 @@
+{
+  "SchemaVersion": 1,
+  "FollowUpPlayer7DEvidence": "../player-7d/acceptance.json",
+  "LatestFollowUpEvidence": "../player-7h/acceptance.json",
+  "Scope": "N4 formal P7/P8 source worlds, authority encounters and original shared presentation increment",
+  "RecordedAtLocal": "2026-10-27 Asia/Shanghai",
+  "ApplicationProtocolVersion": 2,
+  "GameplayConfigHash": "4fecc56511950a9d3257b44fe537ce4b81b091941154bff25fc86d5c34572610",
+  "ContentManifestHash": "80f84176ed3b987340236f6cdc273328e8a9ec07a34176ea3426b594a779ba28",
+  "VersionsChanged": false,
+  "EditMode": { "Passed": 210, "Failed": 0, "Evidence": "final-editmode-green" },
+  "PlayMode": { "Passed": 9, "Failed": 0, "Evidence": "world-playmode-green", "RealNetworkClients": false },
+  "BusinessTests": { "Passed": 91, "Failed": 0, "Skipped": 0, "MySqlPort": 13384, "Schema": "norn_online_test", "Evidence": "mysql/n4-formal-dungeons.trx" },
+  "ProtocolGeneratedFilesVerified": 7,
+  "FormalMapExported": true,
+  "P7": { "ConfiguredNpcs": 12, "Encounters": 4, "NpcCounts": [2, 3, 3, 4], "Players": 4 },
+  "P8": { "ConfiguredNpcs": 1, "Encounters": 1, "BossActorId": 5, "EnterThenExitSafetyVolume": true },
+  "ClientBuild": { "Result": "Succeeded", "Errors": 0, "Evidence": "builds/account-menu-client-build.json" },
+  "ServerBuild": { "Result": "Succeeded", "Errors": 0, "Evidence": "builds/room-server-build.json", "InitialSucceededWithPreflightErrorRejected": true, "HardRejectionVerified": true },
+  "DiagnosticNativePlayerPath": {
+    "UsesRealBusinessAccountsAndOneUseTickets": true,
+    "UsesFormalSourceWorlds": true,
+    "TwoClientP7": true, "TwoClientP8": true,
+    "OneClientQuitOtherContinuesBothMaps": true,
+    "ReconnectSameRunWithNewerEpochBothMaps": true,
+    "CorrectDungeonProgressAndOwnedInventoryBothMaps": true,
+    "VisibleFPortalInput": false, "OriginalSharedUiInput": false, "CombatInput": false,
+    "Evidence": ["transport-p7", "transport-p8"]
+  },
+  "NativePlayerPath": { "Status": "VisiblePlayerPathRequiresManualVerification", "TwoClientP7": false, "TwoClientP8": false },
+  "ProtectedFilesAfterResume": { "Count": 12, "Unchanged": 12, "Evidence": "preservation-after-builds.json" },
+  "InitialStartFailure": { "HttpStatus": 500, "DsError": "ReadyRejected", "RootCause": "Unconfirmed", "P7P8AndNormalMenuBusinessRestartReadyPassed": true, "Evidence": "initial-ready-failure" },
+  "FullFrameProfilerForFormalWorldsAccepted": false,
+  "FormalOnlineExperienceAccepted": false,
+  "N4Complete": false,
+  "ReleaseReady": false,
+  "RemainingBoundaries": [
+    "Real two-client original F portal, shared UI drag, movement, combat and Hub return must be recorded separately from diagnostic admission",
+    "Original lighting data missing from P8 is not recreated or declared restored by this export",
+    "Material grid, liquid/gas replication, online settlement and rewards remain separate planned stages",
+    "N0 native Built-in Resource startup errors, encryption allocation, Linux, public network, IL2CPP and D3D12 remain independent gates"
+  ]
+}

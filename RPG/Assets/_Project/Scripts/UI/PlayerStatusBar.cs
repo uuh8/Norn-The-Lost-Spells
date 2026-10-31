@@ -4,8 +4,9 @@ using Game.Combat;
 
 namespace Game.UI
 {
-    public class PlayerStatusBar : MonoBehaviour
+    public class PlayerStatusBar : MonoBehaviour, ICombatHudElement
     {
+        public GameObject PresentationRoot => gameObject;
         [SerializeField] private HealthComponent _playerHealth;
         [SerializeField] private StatusIconView _burningView;
         [SerializeField] private StatusIconView _wetView;
@@ -16,11 +17,28 @@ namespace Game.UI
         private readonly StatusIconAcquisitionOrder _acquisitionOrder =
             new StatusIconAcquisitionOrder();
 
+        public void Bind(HealthComponent health)
+        {
+            ClearAll(); _playerHealth = health;
+            if (health == null) return;
+            var status = health.GetComponent<StatusController>();
+            if (status == null) return;
+            // 不等下一次强度变化事件：HUD 可能在首份网络快照之后才加载。
+            for (int i = 0; i < 4; i++)
+            {
+                var kind = (StatusKind)i;
+                if (!status.TryGetIntensity(kind, out float intensity)) continue;
+                OnStatusChanged(new StatusChangedEvent { TargetId = health.Id, Kind = kind,
+                    IsActive = true, Intensity = intensity, Icon = status.GetIcon(kind) });
+            }
+        }
+
         private void Awake()
         {
             // Awake 发生在 OnEnable 订阅之前：先清理场景序列化留下的占位显示，之后收到的
             // StatusChangedEvent 就是 Runtime Truth，不能再被较晚执行的 Start 覆盖。
-            ClearAll();
+            // 父 HUD 的 OnEnable 可能已绑定新角色；不能把先到的 Replica 状态又清成空白。
+            Bind(_playerHealth);
         }
 
         private void OnEnable()

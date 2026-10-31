@@ -1,0 +1,90 @@
+{
+  "SchemaVersion": 1,
+  "Scope": "N4 Task7D real P7 entry baseline and original HUD notification/Stage ownership fixes",
+  "RecordedAtLocal": "2026-10-27 Asia/Shanghai",
+  "ApplicationProtocolVersion": 2,
+  "GameplayConfigHash": "0d3fbf6a7f7a54bda3a1f28b6bc7745d333ebb1937dddeb463dac4dad3703e57",
+  "VersionsChanged": false,
+  "CodeIncrementComplete": true,
+  "Implemented": {
+    "FormalSceneHasNoIndependentMovementHint": true,
+    "OriginalNotificationShowsCastRejectionAndFrozenState": true,
+    "LateSourceAndReenabledHudReplayWorldFencedView": true,
+    "StageGameplayAndNotificationLeavesTransferredTogether": true,
+    "StageAdapterDisabledWithoutStoppingSinglePlayerOwner": true,
+    "AllCandidatesValidatedBeforeMutation": true,
+    "OriginalActiveAndEnabledRestored": true,
+    "CapturedMulticastCallbacksCannotReopenSuppressedStage": true
+  },
+  "EditMode": {
+    "Passed": 28, "Failed": 0,
+    "Evidence": "stage-green",
+    "IncludesEarlier15NotificationTests": true,
+    "Fixtures": [
+      "Game.UI.Tests.DungeonHudSourceTests",
+      "Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests",
+      "Game.Run.Tests.CombatPresentationLifecycleTests"
+    ]
+  },
+  "PlayMode": {
+    "Passed": 9, "Failed": 0,
+    "Evidence": "playmode-green",
+    "UsesRealSceneLifecycle": true,
+    "UsesTwoNetworkClients": false,
+    "CoversNativeGuiCombatOrFullFrameProfiler": false
+  },
+  "ObservedRegressionFailures": {
+    "OldFormalSceneHint": { "Passed": 12, "Failed": 1, "Evidence": "hint-red" },
+    "StageOwnership": { "Passed": 0, "Failed": 2, "Evidence": "stage-red" },
+    "LaterMulticastAndDisabledCasesSeparatelyObservedRed": false
+  },
+  "Builds": {
+    "Client": { "Result": "Succeeded", "Errors": 0, "RecordedAtUtc": "2026-10-27T08:51:18.8705169Z", "Evidence": "builds-final/account-menu-client-build.json" },
+    "DedicatedServer": { "Result": "Succeeded", "Errors": 0, "RecordedAtUtc": "2026-10-27T08:28:51.3076214Z", "Evidence": "builds-final/room-server-build.json" },
+    "NormalRenderingAndResourcesPreserved": true,
+    "ExpectedGameplayHashFoundInBothActualResourcesAssets": true,
+    "ClientIncludesFinalStageSuppressionFix": true,
+    "ServerPredatesPresentationOnlyStageFix": true,
+    "PresentationOnlyChangeDidNotChangeGameplayHash": true
+  },
+  "VisibleP7BaselineBeforeHudFixBuild": {
+    "GameplayConfigHash": "4fecc56511950a9d3257b44fe537ce4b81b091941154bff25fc86d5c34572610",
+    "RealRegistrationLoginAndFreshProfileGate": true,
+    "RealFChoiceMatchReadyAndStartButtons": true,
+    "TwoClientsInSameRoomAndOriginalP7World": true,
+    "OriginalTabOpened": true,
+    "PeerMovedWhileTabOpenAndTimeScaleOne": true,
+    "PeerContinuesAfterClientExit": true,
+    "RepliesBeforePeerExit": 1120,
+    "RepliesAfterPeerExit": 1124,
+    "ExplicitDiagnosticPositioningAtHubPortalUsed": true,
+    "OnlineActorTransformInjectionUsed": false,
+    "SinglePlayerFilesIsolatedInMemory": true,
+    "Evidence": ["../formal-dungeons/native-p7-player7d", "p7-a-tab-peer.json", "p7-b-tab-peer-movement.json", "p7-b-before-peer-exit.json", "p7-b-after-peer-exit.json"],
+    "FinalHudBuildVisibleAcceptance": false,
+    "RealCardDragAccepted": false,
+    "VisibleP8Accepted": false,
+    "VisibleCombatOrFeelAccepted": false,
+    "FullFrameProfilerAccepted": false
+  },
+  "GuiToolIncident": {
+    "ClientToScreenReusedMutatedPointFoundAndCorrected": true,
+    "InvalidClientAreaClickRejected": true,
+    "MixedDpiAndFullscreenDragAutomationUnresolved": true,
+    "BusinessAuthenticationOrInventoryHandlersBypassed": false
+  },
+  "Preservation": { "Count": 12, "Unchanged": 12, "Evidence": "preservation-final.json", "QualitySettingsSerializationUpgradeRestoredFromMatchingBaseline": true },
+  "Cleanup": { "Evidence": "cleanup.json", "KnownTaskProcessesRemaining": 0, "ListenersOn5080Or13384": 0, "SystemMySqlAndUnityEditorNotStopped": true },
+  "GitCommitOrPushCreatedThisRun": false,
+  "Task7DComplete": false,
+  "FormalOnlineExperienceAccepted": false,
+  "N4Complete": false,
+  "ReleaseReady": false,
+  "Remaining": [
+    "Final HUD build needs visible P7/P8 single-copy UI, movement/camera/feet, shared Tab drag and combat checks",
+    "Final formal-world return to the same Hub and same-run reentry resource/epoch checks remain distinct from earlier lab or diagnostic acceptance",
+    "Actual full-frame positively calibrated GC acceptance for formal worlds remains unexecuted",
+    "Two inherited native Built-in Resource startup errors, encryption allocation, Linux/public/IL2CPP/D3D12 remain independent gates",
+    "Material world replication, settlement/rewards and later recovery stages retain their approved separate scope"
+  ]
+}

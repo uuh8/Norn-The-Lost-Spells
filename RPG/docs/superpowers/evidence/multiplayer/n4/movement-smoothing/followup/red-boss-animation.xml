@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-28 13:31:17Z" end-time="2026-10-28 13:31:21Z" duration="3.9130393">
+  <test-suite type="TestSuite" id="1934" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="843" result="Failed" site="Child" start-time="2026-10-28 13:31:17Z" end-time="2026-10-28 13:31:21Z" duration="3.913039" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1927" name="Game.Run.PlayMode.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.PlayMode.Tests.dll" runstate="Runnable" testcasecount="822" result="Failed" site="Child" start-time="2026-10-28 13:31:17Z" end-time="2026-10-28 13:31:21Z" duration="3.892041" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27148" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1928" name="Game" fullname="Game" runstate="Runnable" testcasecount="822" result="Failed" site="Child" start-time="2026-10-28 13:31:17Z" end-time="2026-10-28 13:31:21Z" duration="3.883483" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1929" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="822" result="Failed" site="Child" start-time="2026-10-28 13:31:17Z" end-time="2026-10-28 13:31:21Z" duration="3.868960" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1930" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="822" result="Failed" site="Child" start-time="2026-10-28 13:31:17Z" end-time="2026-10-28 13:31:21Z" duration="3.852478" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1579" name="RemoteNpcLocomotionPlayModeTests" fullname="Game.Run.Tests.RemoteNpcLocomotionPlayModeTests" classname="Game.Run.Tests.RemoteNpcLocomotionPlayModeTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-28 13:31:17Z" end-time="2026-10-28 13:31:21Z" duration="3.831773" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1580" name="WorldReplicaSnapshotsDriveBossDirectionalRunWithoutAuthoritySimulation" fullname="Game.Run.Tests.RemoteNpcLocomotionPlayModeTests.WorldReplicaSnapshotsDriveBossDirectionalRunWithoutAuthoritySimulation" methodname="WorldReplicaSnapshotsDriveBossDirectionalRunWithoutAuthoritySimulation" classname="Game.Run.Tests.RemoteNpcLocomotionPlayModeTests" runstate="Runnable" seed="1867260047" result="Failed" start-time="2026-10-28 13:31:17Z" end-time="2026-10-28 13:31:21Z" duration="3.804974" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Boss 位置快照已在移动，但组合层没有把段速度交给原 Animator。
+  Expected: greater than 0.100000001f
+  But was:  0.0f
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.RemoteNpcLocomotionPlayModeTests+<WorldReplicaSnapshotsDriveBossDirectionalRunWithoutAuthoritySimulation>d__23.MoveNext () [0x000b5] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\RunPlayMode\RemoteNpcLocomotionPlayModeTests.cs:128
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in .\Library\PackageCache\com.unity.test-framework@aebcb98460c6\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/playmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -6,6 +6,8 @@
     <UserSecretsId>norn-online-business-local</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <!-- 仅开放给同仓测试读取内部重试边界，不把进程控制测试接口公开给业务调用者。 -->
+    <InternalsVisibleTo Include="Norn.Business.Tests" />
     <ProjectReference Include="../../Shared/Protocol/Game.NetworkProtocol.csproj" />
     <PackageReference Include="Google.Protobuf" />
     <PackageReference Include="MySqlConnector" />

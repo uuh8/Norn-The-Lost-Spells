@@ -2,6 +2,7 @@ using System;
 using Game.Core;
 using Game.Multiplayer;
 using Game.Networking;
+using Game.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -47,7 +48,7 @@ namespace Game.Project.Editor
                 if (AssetDatabase.LoadAssetAtPath<SceneAsset>(PortalScenePath) == null)
                 {
                     var camera = new GameObject("ConnectionCamera").AddComponent<Camera>(); camera.clearFlags = CameraClearFlags.SolidColor; camera.backgroundColor = new Color(.025f,.04f,.065f);
-                    new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule)).GetComponent<InputSystemUIInputModule>().AssignDefaultActions();
+                    new GameObject("EventSystem", typeof(FocusAwareEventSystem), typeof(InputSystemUIInputModule)).GetComponent<InputSystemUIInputModule>().AssignDefaultActions();
                     if (!EditorSceneManager.SaveScene(scene, PortalScenePath)) throw new InvalidOperationException("连接Scene保存失败。");
                 }
                 AssetDatabase.SaveAssets();

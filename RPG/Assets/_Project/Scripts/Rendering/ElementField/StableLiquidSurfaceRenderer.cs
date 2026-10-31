@@ -104,7 +104,7 @@ namespace Game.Rendering
             _uvs = new List<Vector2>(vertexCapacity);
             _shapeGradients = new List<Vector4>(vertexCapacity);
             _triangles = new List<int>(Mathf.Max(patchCapacity*6,ShoreVertexBudget*3));
-            int maximumColumns=(_source as LiquidWorldRuntime)?.MaximumStableRegionCells ?? 65536;
+            int maximumColumns=(_source as ILiquidPresentationReadOnly)?.MaximumStableRegionCells ?? 65536;
             _shore=new StableLiquidShoreMesher(maximumColumns,ShoreVertexBudget);
             _materialInstance = new Material(_liquidShader);
             _materialInstance.CopyPropertiesFromMaterial(_sourceMaterial);

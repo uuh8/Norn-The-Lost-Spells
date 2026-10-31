@@ -19,10 +19,12 @@ namespace Game.ElementField
             var exchange = command.Exchange; if (exchange == null || exchange.Handled || exchange.WorldId != _worldId) return;
             exchange.Handled = true;
             if (_executing) { exchange.Failure = MaterialTransferFailure.ResourceBusy; return; }
-            if (_world == null || !_world.IsInitialized || _port == null) { exchange.Failure = MaterialTransferFailure.WorldUnavailable; return; }
+            // Faulted 仍可能 IsInitialized=true；必须在 Source 被预约前拒绝，不能把物料交给将被重建的世界。
+            if (_world == null || !_world.CanAcceptWorldWrites || _port == null) { exchange.Failure = MaterialTransferFailure.WorldUnavailable; return; }
             _executing = true;
             try { exchange.Failure = _port.Deposit(exchange, out exchange.Transferred); }
-            finally { _executing = false; exchange.Source?.Cancel(); }
+            // 外部 Source 清理由 Port 在 World 锁内统一负责；Adapter 只释放自己的命令重入标志。
+            finally { _executing = false; }
         }
     }
 }

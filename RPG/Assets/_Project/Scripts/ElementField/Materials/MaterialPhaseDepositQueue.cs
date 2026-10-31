@@ -19,6 +19,13 @@ namespace Game.ElementField
         private int _head, _tail;
         public int Count { get; private set; }
         public ulong PendingQuantity { get; private set; }
+        /// <summary>按FIFO顺序取值副本，不移动head/数量；Source只能在所属World提交边界同步使用。</summary>
+        internal bool TryPeek(int index, out MaterialPhasePendingDeposit pending)
+        {
+            pending = default;
+            if ((uint)index >= (uint)Count) return false;
+            pending = _entries[(_head + index) % _entries.Length]; return true;
+        }
         internal ulong MaterialQuantity(Game.Materials.MaterialId material)
         {
             ulong total=0; for(int i=0;i<Count;i++) { var entry=_entries[(_head+i)%_entries.Length]; if(entry.Request.MaterialKind==material) total+=entry.Remaining; }

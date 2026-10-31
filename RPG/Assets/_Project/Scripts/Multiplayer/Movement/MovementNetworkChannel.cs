@@ -29,6 +29,9 @@ namespace Game.Multiplayer
         /// <summary>合法运动输入证明 Client 已处理认证回复；其他复制通道沿用这道跨通道竞争栅栏。</summary>
         public bool IsActorReady(ulong actorId, uint epoch) => actorId >= 1 && actorId <= 4 && _readyEpochs[(int)actorId - 1] == epoch;
         public long RejectedInputs { get; private set; }
+        /// <summary>仅累计本通道Protobuf payload字节，不含Mirror/KCP/UDP/IP头；不能当作抓包得到的线速。</summary>
+        public long ReceivedStatePayloadBytes { get; private set; }
+        public long SentStatePayloadBytes { get; private set; }
         public event Action<JoinConnectionIdentity, PlayerSimulationFrame> InputReceived;
         public event Action<MovementStateFrame> StateReceived;
         private void Awake() => _manager = GetComponent<RoomNetworkManager>();
@@ -64,6 +67,7 @@ namespace Game.Multiplayer
         private void OnState(MovementStateEnvelope envelope)
         {
             if (!_codec.TryDecodeState(envelope.Payload, out var state) || SimulationHash == 0 || state.SimulationHash != SimulationHash) return;
+            ReceivedStatePayloadBytes += envelope.Payload.Count;
             var frame = MovementMessageMapping.Read(state);
             if (_delayedStates.Enabled) _delayedStates.Schedule(frame, Time.realtimeSinceStartupAsDouble);
             else StateReceived?.Invoke(frame);
@@ -90,7 +94,10 @@ namespace Game.Multiplayer
             {
                 var connection = _manager.ActorConnection(i);
                 if (connection != null && connection.authenticationData is JoinConnectionIdentity identity && _readyEpochs[i] == identity.ConnectionEpoch)
+                {
                     connection.Send(envelope, Channels.Unreliable);
+                    SentStatePayloadBytes += size;
+                }
             }
         }
     }

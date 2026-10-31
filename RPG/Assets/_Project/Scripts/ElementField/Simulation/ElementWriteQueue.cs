@@ -24,6 +24,13 @@ namespace Game.ElementField
 
         public int Capacity => _buffer.Length;
         public int Count => _count;
+        /// <summary>复制待写请求时保留FIFO与原队列，禁止用Dequeue/Requeue改变真实提交顺序。</summary>
+        internal bool TryPeek(int index, out ElementWriteRequest request)
+        {
+            request = default;
+            if ((uint)index >= (uint)_count) return false;
+            request = _buffer[(_head + index) % _buffer.Length]; return true;
+        }
 
         public bool TryEnqueue(in ElementWriteRequest request)
         {

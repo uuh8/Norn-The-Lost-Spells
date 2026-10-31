@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Passed" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-25 14:28:19Z" end-time="2026-10-25 14:28:19Z" duration="0.3139849">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2440" result="Passed" start-time="2026-10-25 14:28:19Z" end-time="2026-10-25 14:28:19Z" duration="0.313985" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="3762" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="695" result="Passed" start-time="2026-10-25 14:28:19Z" end-time="2026-10-25 14:28:19Z" duration="0.278387" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26116" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="3763" name="Game" fullname="Game" runstate="Runnable" testcasecount="695" result="Passed" start-time="2026-10-25 14:28:19Z" end-time="2026-10-25 14:28:19Z" duration="0.260036" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3764" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="695" result="Passed" start-time="2026-10-25 14:28:19Z" end-time="2026-10-25 14:28:19Z" duration="0.240647" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="3765" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="695" result="Passed" start-time="2026-10-25 14:28:19Z" end-time="2026-10-25 14:28:19Z" duration="0.214527" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="2943" name="CombatPresentationBossTests" fullname="Game.Run.Tests.CombatPresentationBossTests" classname="Game.Run.Tests.CombatPresentationBossTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-25 14:28:19Z" end-time="2026-10-25 14:28:19Z" duration="0.101035" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2944" name="SameWorldInventoryReplacementKeepsLiveBossInitialization" fullname="Game.Run.Tests.CombatPresentationBossTests.SameWorldInventoryReplacementKeepsLiveBossInitialization" methodname="SameWorldInventoryReplacementKeepsLiveBossInitialization" classname="Game.Run.Tests.CombatPresentationBossTests" runstate="Runnable" seed="995620909" result="Passed" start-time="2026-10-25 14:28:19Z" end-time="2026-10-25 14:28:19Z" duration="0.076244" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="2945" name="CombatPresentationLifecycleTests" fullname="Game.Run.Tests.CombatPresentationLifecycleTests" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-10-25 14:28:19Z" end-time="2026-10-25 14:28:19Z" duration="0.108138" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2949" name="DestroyedOldScopeReleasesOnlyItsOwnLease" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.DestroyedOldScopeReleasesOnlyItsOwnLease" methodname="DestroyedOldScopeReleasesOnlyItsOwnLease" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="1235691032" result="Passed" start-time="2026-10-25 14:28:19Z" end-time="2026-10-25 14:28:19Z" duration="0.028019" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2946" name="DifferentCombatAreasReuseHostAndHudWithoutMovingGameplayObjects" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.DifferentCombatAreasReuseHostAndHudWithoutMovingGameplayObjects" methodname="DifferentCombatAreasReuseHostAndHudWithoutMovingGameplayObjects" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="611876467" result="Passed" start-time="2026-10-25 14:28:19Z" end-time="2026-10-25 14:28:19Z" duration="0.016971" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2952" name="FailedContextReplacementClearsLeaseButDoesNotCloseUnacquiredNewController" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.FailedContextReplacementClearsLeaseButDoesNotCloseUnacquiredNewController" methodname="FailedContextReplacementClearsLeaseButDoesNotCloseUnacquiredNewController" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="2135929121" result="Passed" start-time="2026-10-25 14:28:19Z" end-time="2026-10-25 14:28:19Z" duration="0.014592" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[CombatPresentation] 共用 HUD 接管被拒绝，已保留场景原界面：HUD 根混入了角色、库存或交互生命周期，拒绝整体隐藏：ReplacementHudMixedWithGameplay
+]]></output>
+              </test-case>
+              <test-case id="2947" name="OldLeaseCannotUpdateOrReleaseNewOwner" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.OldLeaseCannotUpdateOrReleaseNewOwner" methodname="OldLeaseCannotUpdateOrReleaseNewOwner" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="821550496" result="Passed" start-time="2026-10-25 14:28:19Z" end-time="2026-10-25 14:28:19Z" duration="0.011488" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2948" name="ReleaseClearsActorAndSceneReadReferencesButKeepsReusableHud" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.ReleaseClearsActorAndSceneReadReferencesButKeepsReusableHud" methodname="ReleaseClearsActorAndSceneReadReferencesButKeepsReusableHud" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="954778910" result="Passed" start-time="2026-10-25 14:28:19Z" end-time="2026-10-25 14:28:19Z" duration="0.009462" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2950" name="RepeatedIdenticalContextKeepsOriginalInventoryOpen" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.RepeatedIdenticalContextKeepsOriginalInventoryOpen" methodname="RepeatedIdenticalContextKeepsOriginalInventoryOpen" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="1310720635" result="Passed" start-time="2026-10-25 14:28:19Z" end-time="2026-10-25 14:28:19Z" duration="0.006649" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2951" name="UnsafeLegacyCompositionRejectsWithoutClosingUnacquiredInventoryOrKeepingLease" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.UnsafeLegacyCompositionRejectsWithoutClosingUnacquiredInventoryOrKeepingLease" methodname="UnsafeLegacyCompositionRejectsWithoutClosingUnacquiredInventoryOrKeepingLease" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="563502334" result="Passed" start-time="2026-10-25 14:28:19Z" end-time="2026-10-25 14:28:19Z" duration="0.005897" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[CombatPresentation] 共用 HUD 接管被拒绝，已保留场景原界面：HUD 根混入了角色、库存或交互生命周期，拒绝整体隐藏：LegacyHudMixedWithGameplay
+Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

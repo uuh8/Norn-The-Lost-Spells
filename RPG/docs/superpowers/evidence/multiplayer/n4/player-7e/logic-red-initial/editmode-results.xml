@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="9" result="Failed(Child)" total="9" passed="3" failed="6" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-27 09:23:52Z" end-time="2026-10-27 09:23:55Z" duration="2.5451531">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2621" result="Failed" site="Child" start-time="2026-10-27 09:23:52Z" end-time="2026-10-27 09:23:55Z" duration="2.545153" total="9" passed="3" failed="6" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2514" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="123" result="Failed" site="Child" start-time="2026-10-27 09:23:53Z" end-time="2026-10-27 09:23:54Z" duration="1.737205" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23424" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2515" name="Game" fullname="Game" runstate="Runnable" testcasecount="123" result="Failed" site="Child" start-time="2026-10-27 09:23:53Z" end-time="2026-10-27 09:23:54Z" duration="1.644383" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2516" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="123" result="Failed" site="Child" start-time="2026-10-27 09:23:53Z" end-time="2026-10-27 09:23:54Z" duration="1.544249" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2517" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="123" result="Failed" site="Child" start-time="2026-10-27 09:23:53Z" end-time="2026-10-27 09:23:54Z" duration="1.446138" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2502" name="TrustedDungeonInitializationTests" fullname="Game.Multiplayer.Tests.TrustedDungeonInitializationTests" classname="Game.Multiplayer.Tests.TrustedDungeonInitializationTests" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-10-27 09:23:53Z" end-time="2026-10-27 09:23:54Z" duration="1.343649" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2512" name="DestroyedManagerReplacementRebindsChannelsBeforeWorldUpdateContinues" fullname="Game.Multiplayer.Tests.TrustedDungeonInitializationTests.DestroyedManagerReplacementRebindsChannelsBeforeWorldUpdateContinues" methodname="DestroyedManagerReplacementRebindsChannelsBeforeWorldUpdateContinues" classname="Game.Multiplayer.Tests.TrustedDungeonInitializationTests" runstate="Runnable" seed="1958350698" result="Failed" start-time="2026-10-27 09:23:53Z" end-time="2026-10-27 09:23:54Z" duration="1.222007" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  ResolveManager不能只替换_manager便跳过BindNetwork，旧World必须连接到新Manager的实际通道。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.TrustedDungeonInitializationTests.DestroyedManagerReplacementRebindsChannelsBeforeWorldUpdateContinues () [0x00084] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\TrustedDungeonInitializationTests.cs:119
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2513" name="ExplicitNetworkRebindReconfiguresProgressFromExistingTrustedDungeon" fullname="Game.Multiplayer.Tests.TrustedDungeonInitializationTests.ExplicitNetworkRebindReconfiguresProgressFromExistingTrustedDungeon" methodname="ExplicitNetworkRebindReconfiguresProgressFromExistingTrustedDungeon" classname="Game.Multiplayer.Tests.TrustedDungeonInitializationTests" runstate="Runnable" seed="144437360" result="Failed" start-time="2026-10-27 09:23:54Z" end-time="2026-10-27 09:23:54Z" duration="0.009717" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  DungeonProgress与Movement/Combat属于同一代Manager，不能继续引用上一代组件。
+  Expected: same as <ExplicitReplacement (Game.Multiplayer.DungeonProgressNetworkChannel)>
+  But was:  <OriginalManager (Game.Multiplayer.DungeonProgressNetworkChannel)>
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.TrustedDungeonInitializationTests.ExplicitNetworkRebindReconfiguresProgressFromExistingTrustedDungeon () [0x000d9] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\TrustedDungeonInitializationTests.cs:139
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="4238" name="Game.UI.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.UI.Tests.dll" runstate="Runnable" testcasecount="52" result="Failed" site="Child" start-time="2026-10-27 09:23:54Z" end-time="2026-10-27 09:23:55Z" duration="0.709074" total="7" passed="3" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23424" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="4239" name="Game" fullname="Game" runstate="Runnable" testcasecount="52" result="Failed" site="Child" start-time="2026-10-27 09:23:54Z" end-time="2026-10-27 09:23:55Z" duration="0.702753" total="7" passed="3" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="4240" name="UI" fullname="Game.UI" runstate="Runnable" testcasecount="52" result="Failed" site="Child" start-time="2026-10-27 09:23:54Z" end-time="2026-10-27 09:23:55Z" duration="0.602764" total="7" passed="3" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="4241" name="Tests" fullname="Game.UI.Tests" runstate="Runnable" testcasecount="52" result="Failed" site="Child" start-time="2026-10-27 09:23:54Z" end-time="2026-10-27 09:23:55Z" duration="0.503168" total="7" passed="3" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="4216" name="OnlineMovementCursorTests" fullname="Game.UI.Tests.OnlineMovementCursorTests" classname="Game.UI.Tests.OnlineMovementCursorTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-27 09:23:55Z" end-time="2026-10-27 09:23:55Z" duration="0.404368" total="7" passed="3" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="4219" name="EscapeBelongsToInventoryEvenWhenItsCaptureWasReleasedEarlierInSameFrame" fullname="Game.UI.Tests.OnlineMovementCursorTests.EscapeBelongsToInventoryEvenWhenItsCaptureWasReleasedEarlierInSameFrame" classname="Game.UI.Tests.OnlineMovementCursorTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-27 09:23:55Z" end-time="2026-10-27 09:23:55Z" duration="0.133115" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="4217" name="EscapeBelongsToInventoryEvenWhenItsCaptureWasReleasedEarlierInSameFrame(False)" fullname="Game.UI.Tests.OnlineMovementCursorTests.EscapeBelongsToInventoryEvenWhenItsCaptureWasReleasedEarlierInSameFrame(False)" methodname="EscapeBelongsToInventoryEvenWhenItsCaptureWasReleasedEarlierInSameFrame" classname="Game.UI.Tests.OnlineMovementCursorTests" runstate="Runnable" seed="440899227" result="Failed" start-time="2026-10-27 09:23:55Z" end-time="2026-10-27 09:23:55Z" duration="0.030527" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.UI.Tests.OnlineMovementCursorTests.ExerciseEscape (System.Boolean inventoryCaptured, System.Boolean releaseBeforeUpdate, System.Boolean menuOpen, System.Boolean expectedOpen) [0x000ff] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineMovementCursorTests.cs:50
+at Game.UI.Tests.OnlineMovementCursorTests.EscapeBelongsToInventoryEvenWhenItsCaptureWasReleasedEarlierInSameFrame (System.Boolean inventoryAlreadyClosed) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineMovementCursorTests.cs:19
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="4218" name="EscapeBelongsToInventoryEvenWhenItsCaptureWasReleasedEarlierInSameFrame(True)" fullname="Game.UI.Tests.OnlineMovementCursorTests.EscapeBelongsToInventoryEvenWhenItsCaptureWasReleasedEarlierInSameFrame(True)" methodname="EscapeBelongsToInventoryEvenWhenItsCaptureWasReleasedEarlierInSameFrame" classname="Game.UI.Tests.OnlineMovementCursorTests" runstate="Runnable" seed="328777734" result="Failed" start-time="2026-10-27 09:23:55Z" end-time="2026-10-27 09:23:55Z" duration="0.004120" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.UI.Tests.OnlineMovementCursorTests.ExerciseEscape (System.Boolean inventoryCaptured, System.Boolean releaseBeforeUpdate, System.Boolean menuOpen, System.Boolean expectedOpen) [0x000ff] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineMovementCursorTests.cs:50
+at Game.UI.Tests.OnlineMovementCursorTests.EscapeBelongsToInventoryEvenWhenItsCaptureWasReleasedEarlierInSameFrame (System.Boolean inventoryAlreadyClosed) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineMovementCursorTests.cs:19
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="4222" name="EscapeStillTogglesConnectionMenuWhenInventoryDoesNotOwnThePress" fullname="Game.UI.Tests.OnlineMovementCursorTests.EscapeStillTogglesConnectionMenuWhenInventoryDoesNotOwnThePress" classname="Game.UI.Tests.OnlineMovementCursorTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-27 09:23:55Z" end-time="2026-10-27 09:23:55Z" duration="0.073966" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="4220" name="EscapeStillTogglesConnectionMenuWhenInventoryDoesNotOwnThePress(False,True)" fullname="Game.UI.Tests.OnlineMovementCursorTests.EscapeStillTogglesConnectionMenuWhenInventoryDoesNotOwnThePress(False,True)" methodname="EscapeStillTogglesConnectionMenuWhenInventoryDoesNotOwnThePress" classname="Game.UI.Tests.OnlineMovementCursorTests" runstate="Runnable" seed="590151015" result="Failed" start-time="2026-10-27 09:23:55Z" end-time="2026-10-27 09:23:55Z" duration="0.004036" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.UI.Tests.OnlineMovementCursorTests.ExerciseEscape (System.Boolean inventoryCaptured, System.Boolean releaseBeforeUpdate, System.Boolean menuOpen, System.Boolean expectedOpen) [0x000ff] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineMovementCursorTests.cs:50
+at Game.UI.Tests.OnlineMovementCursorTests.EscapeStillTogglesConnectionMenuWhenInventoryDoesNotOwnThePress (System.Boolean alreadyOpen, System.Boolean expectedOpen) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineMovementCursorTests.cs:26
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="4221" name="EscapeStillTogglesConnectionMenuWhenInventoryDoesNotOwnThePress(True,False)" fullname="Game.UI.Tests.OnlineMovementCursorTests.EscapeStillTogglesConnectionMenuWhenInventoryDoesNotOwnThePress(True,False)" methodname="EscapeStillTogglesConnectionMenuWhenInventoryDoesNotOwnThePress" classname="Game.UI.Tests.OnlineMovementCursorTests" runstate="Runnable" seed="1506978966" result="Failed" start-time="2026-10-27 09:23:55Z" end-time="2026-10-27 09:23:55Z" duration="0.005062" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.UI.Tests.OnlineMovementCursorTests.ExerciseEscape (System.Boolean inventoryCaptured, System.Boolean releaseBeforeUpdate, System.Boolean menuOpen, System.Boolean expectedOpen) [0x000ff] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineMovementCursorTests.cs:50
+at Game.UI.Tests.OnlineMovementCursorTests.EscapeStillTogglesConnectionMenuWhenInventoryDoesNotOwnThePress (System.Boolean alreadyOpen, System.Boolean expectedOpen) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineMovementCursorTests.cs:26
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="4223" name="InventoryCaptureUnlocksCursorWithoutOpeningConnectionMenu" fullname="Game.UI.Tests.OnlineMovementCursorTests.InventoryCaptureUnlocksCursorWithoutOpeningConnectionMenu" methodname="InventoryCaptureUnlocksCursorWithoutOpeningConnectionMenu" classname="Game.UI.Tests.OnlineMovementCursorTests" runstate="Runnable" seed="1519020512" result="Passed" start-time="2026-10-27 09:23:55Z" end-time="2026-10-27 09:23:55Z" duration="0.011805" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4226" name="OnlineMenuOrDisconnectUnlocksCursorForActualButtons" fullname="Game.UI.Tests.OnlineMovementCursorTests.OnlineMenuOrDisconnectUnlocksCursorForActualButtons" classname="Game.UI.Tests.OnlineMovementCursorTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-27 09:23:55Z" end-time="2026-10-27 09:23:55Z" duration="0.084343" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4224" name="OnlineMenuOrDisconnectUnlocksCursorForActualButtons(True,True)" fullname="Game.UI.Tests.OnlineMovementCursorTests.OnlineMenuOrDisconnectUnlocksCursorForActualButtons(True,True)" methodname="OnlineMenuOrDisconnectUnlocksCursorForActualButtons" classname="Game.UI.Tests.OnlineMovementCursorTests" runstate="Runnable" seed="971359578" result="Passed" start-time="2026-10-27 09:23:55Z" end-time="2026-10-27 09:23:55Z" duration="0.003883" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4225" name="OnlineMenuOrDisconnectUnlocksCursorForActualButtons(False,False)" fullname="Game.UI.Tests.OnlineMovementCursorTests.OnlineMenuOrDisconnectUnlocksCursorForActualButtons(False,False)" methodname="OnlineMenuOrDisconnectUnlocksCursorForActualButtons" classname="Game.UI.Tests.OnlineMovementCursorTests" runstate="Runnable" seed="216256029" result="Passed" start-time="2026-10-27 09:23:55Z" end-time="2026-10-27 09:23:55Z" duration="0.002642" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

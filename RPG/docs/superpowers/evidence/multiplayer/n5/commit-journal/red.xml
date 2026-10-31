@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="30" result="Failed(Child)" total="30" passed="0" failed="30" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:19Z" duration="1.356388">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2799" result="Failed" site="Child" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:19Z" duration="1.356388" total="30" passed="0" failed="30" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1516" name="Game.Core.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Core.Tests.dll" runstate="Runnable" testcasecount="37" result="Failed" site="Child" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.530565" total="22" passed="0" failed="22" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27148" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1517" name="Game" fullname="Game" runstate="Runnable" testcasecount="37" result="Failed" site="Child" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.448512" total="22" passed="0" failed="22" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1518" name="Core" fullname="Game.Core" runstate="Runnable" testcasecount="37" result="Failed" site="Child" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.348176" total="22" passed="0" failed="22" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1519" name="Tests" fullname="Game.Core.Tests" runstate="Runnable" testcasecount="37" result="Failed" site="Child" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.246819" total="22" passed="0" failed="22" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1481" name="WorldChunkCommitJournalTests" fullname="Game.Core.Tests.WorldChunkCommitJournalTests" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" testcasecount="22" result="Failed" site="Child" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.146289" total="22" passed="0" failed="22" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1494" name="BatchLargerThanRecordCapacityCannotEvictHistoryOrCommitPrefix" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.BatchLargerThanRecordCapacityCannotEvictHistoryOrCommitPrefix" methodname="BatchLargerThanRecordCapacityCannotEvictHistoryOrCommitPrefix" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="898833625" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.022997" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1482" name="ConstructorRejectsZeroEpochAndNonPositiveCapacitiesOrBudget" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.ConstructorRejectsZeroEpochAndNonPositiveCapacitiesOrBudget" methodname="ConstructorRejectsZeroEpochAndNonPositiveCapacitiesOrBudget" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="881440394" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.000490" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1499" name="CopyCapacityAndNullFailuresPreserveDestinationAndAllowLaterFullRetry" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.CopyCapacityAndNullFailuresPreserveDestinationAndAllowLaterFullRetry" methodname="CopyCapacityAndNullFailuresPreserveDestinationAndAllowLaterFullRetry" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="612852683" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.000341" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1498" name="CursorBeforeHistoryFloorRequiresBaselineAndDoesNotOverwriteDestination" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.CursorBeforeHistoryFloorRequiresBaselineAndDoesNotOverwriteDestination" methodname="CursorBeforeHistoryFloorRequiresBaselineAndDoesNotOverwriteDestination" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="422806577" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.000294" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1495" name="DuplicateAndLookupInspectionWorkCannotBypassTinyBudget" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.DuplicateAndLookupInspectionWorkCannotBypassTinyBudget" methodname="DuplicateAndLookupInspectionWorkCannotBypassTinyBudget" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="1701588561" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.000285" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1490" name="DuplicateKeysAreRejectedBeforeAnyPartOfBatchCommits" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.DuplicateKeysAreRejectedBeforeAnyPartOfBatchCommits" methodname="DuplicateKeysAreRejectedBeforeAnyPartOfBatchCommits" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="425740381" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.000286" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1492" name="EmptyPrefixIsNoOpAndDoesNotReadUnsubmittedArrayTail" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.EmptyPrefixIsNoOpAndDoesNotReadUnsubmittedArrayTail" methodname="EmptyPrefixIsNoOpAndDoesNotReadUnsubmittedArrayTail" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="2004059253" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.000440" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1484" name="FirstResidentStartsAtGenerationOneRevisionOne" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.FirstResidentStartsAtGenerationOneRevisionOne" methodname="FirstResidentStartsAtGenerationOneRevisionOne" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="1862066856" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.000891" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1500" name="FutureCursorIsRejectedAndCurrentCursorReturnsNoRecordsWithoutClearingTail" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.FutureCursorIsRejectedAndCurrentCursorReturnsNoRecordsWithoutClearingTail" methodname="FutureCursorIsRejectedAndCurrentCursorReturnsNoRecordsWithoutClearingTail" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="959153340" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.000347" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1491" name="InvalidArrayCountKindAndDomainPreserveExistingCommit" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.InvalidArrayCountKindAndDomainPreserveExistingCommit" methodname="InvalidArrayCountKindAndDomainPreserveExistingCommit" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="2113543689" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.000304" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1496" name="InvalidLastChangeCannotPublishEarlierValidUpdateOrCreate" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.InvalidLastChangeCannotPublishEarlierValidUpdateOrCreate" methodname="InvalidLastChangeCannotPublishEarlierValidUpdateOrCreate" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="1034026906" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.000291" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1489" name="InvalidLifecycleOperationsDoNotInventOrAdvanceState" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.InvalidLifecycleOperationsDoNotInventOrAdvanceState" methodname="InvalidLifecycleOperationsDoNotInventOrAdvanceState" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="1513408075" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.000321" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1503" name="LastCommitSequenceIsValidThenNonEmptyBatchesFailWhileEmptyBatchRemainsNoOp" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.LastCommitSequenceIsValidThenNonEmptyBatchesFailWhileEmptyBatchRemainsNoOp" methodname="LastCommitSequenceIsValidThenNonEmptyBatchesFailWhileEmptyBatchRemainsNoOp" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="1648424155" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.000312" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1501" name="LastRevisionIncrementIsValidButExhaustedChunkRejectsEntireBatch" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.LastRevisionIncrementIsValidButExhaustedChunkRejectsEntireBatch" methodname="LastRevisionIncrementIsValidButExhaustedChunkRejectsEntireBatch" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="1127752007" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.000286" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1502" name="MaximumGenerationAllowsCurrentLifeUpdatesButForbidsRecreateWrap" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.MaximumGenerationAllowsCurrentLifeUpdatesButForbidsRecreateWrap" methodname="MaximumGenerationAllowsCurrentLifeUpdatesButForbidsRecreateWrap" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="992246847" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.000288" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1493" name="MetadataCapacityKeepsTombstoneAndRejectsEntireMixedBatch" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.MetadataCapacityKeepsTombstoneAndRejectsEntireMixedBatch" methodname="MetadataCapacityKeepsTombstoneAndRejectsEntireMixedBatch" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="1476337198" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.000312" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1483" name="NativeDomainAndNegativeCoordinatesIdentifyIndependentChunks" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.NativeDomainAndNegativeCoordinatesIdentifyIndependentChunks" methodname="NativeDomainAndNegativeCoordinatesIdentifyIndependentChunks" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="1105164081" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.000285" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1485" name="OneBatchUsesOneCommitSequenceAndPreservesInputOrder" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.OneBatchUsesOneCommitSequenceAndPreservesInputOrder" methodname="OneBatchUsesOneCommitSequenceAndPreservesInputOrder" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="504677568" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.000427" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1488" name="RecreateIncrementsGenerationAndStartsIndependentRevision" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.RecreateIncrementsGenerationAndStartsIndependentRevision" methodname="RecreateIncrementsGenerationAndStartsIndependentRevision" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="610790200" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.000419" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1487" name="RemoveRetainsAddressAndIncrementsRevisionAsTombstone" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.RemoveRetainsAddressAndIncrementsRevisionAsTombstone" methodname="RemoveRetainsAddressAndIncrementsRevisionAsTombstone" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="1532597169" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.000295" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1497" name="RingEvictsWholeCommitBatchAndRetainsChronologicalCompleteSuccessors" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.RingEvictsWholeCommitBatchAndRetainsChronologicalCompleteSuccessors" methodname="RingEvictsWholeCommitBatchAndRetainsChronologicalCompleteSuccessors" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="1205759970" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.000314" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1486" name="UpdateKeepsGenerationAndRecordsExactPreviousRevision" fullname="Game.Core.Tests.WorldChunkCommitJournalTests.UpdateKeepsGenerationAndRecordsExactPreviousRevision" methodname="UpdateKeepsGenerationAndRecordsExactPreviousRevision" classname="Game.Core.Tests.WorldChunkCommitJournalTests" runstate="Runnable" seed="1788175808" result="Failed" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:18Z" duration="0.000289" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   N5-1C 缺少生产契约 Game.Core.WorldChunkCommitJournal
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldChunkCommitJournalTests.Contract (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:33
+at Game.Core.Tests.WorldChunkCommitJournalTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldChunkCommitJournalTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="2448" name="Game.ElementField.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.ElementField.Tests.dll" runstate="Runnable" testcasecount="759" result="Failed" site="Child" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:19Z" duration="0.720004" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27148" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2449" name="Game" fullname="Game" runstate="Runnable" testcasecount="759" result="Failed" site="Child" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:19Z" duration="0.668449" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2450" name="ElementField" fullname="Game.ElementField" runstate="Runnable" testcasecount="759" result="Failed" site="Child" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:19Z" duration="0.571898" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2451" name="Tests" fullname="Game.ElementField.Tests" runstate="Runnable" testcasecount="759" result="Failed" site="Child" start-time="2026-10-29 08:07:18Z" end-time="2026-10-29 08:07:19Z" duration="0.471761" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2296" name="MaterialWorldTransactionTests" fullname="Game.ElementField.Tests.MaterialWorldTransactionTests" classname="Game.ElementField.Tests.MaterialWorldTransactionTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-29 08:07:19Z" end-time="2026-10-29 08:07:19Z" duration="0.372323" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="2306" name="CapacityUndoAndCancelKeepFenceUntilExitAndReleaseEvenWhenCancelThrows" fullname="Game.ElementField.Tests.MaterialWorldTransactionTests.CapacityUndoAndCancelKeepFenceUntilExitAndReleaseEvenWhenCancelThrows" classname="Game.ElementField.Tests.MaterialWorldTransactionTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-29 08:07:19Z" end-time="2026-10-29 08:07:19Z" duration="0.241110" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2304" name="CapacityUndoAndCancelKeepFenceUntilExitAndReleaseEvenWhenCancelThrows(False)" fullname="Game.ElementField.Tests.MaterialWorldTransactionTests.CapacityUndoAndCancelKeepFenceUntilExitAndReleaseEvenWhenCancelThrows(False)" methodname="CapacityUndoAndCancelKeepFenceUntilExitAndReleaseEvenWhenCancelThrows" classname="Game.ElementField.Tests.MaterialWorldTransactionTests" runstate="Runnable" seed="164693119" result="Failed" start-time="2026-10-29 08:07:19Z" end-time="2026-10-29 08:07:19Z" duration="0.134891" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.ElementField.Tests.MaterialWorldTransactionTests.AssertProbe (Game.ElementField.Tests.MaterialWorldTransactionTests+Probe probe) [0x0001c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\MaterialWorldTransactionTests.cs:157
+at Game.ElementField.Tests.MaterialWorldTransactionTests.CapacityUndoAndCancelKeepFenceUntilExitAndReleaseEvenWhenCancelThrows (System.Boolean cancelThrows) [0x000a9] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\MaterialWorldTransactionTests.cs:115
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2305" name="CapacityUndoAndCancelKeepFenceUntilExitAndReleaseEvenWhenCancelThrows(True)" fullname="Game.ElementField.Tests.MaterialWorldTransactionTests.CapacityUndoAndCancelKeepFenceUntilExitAndReleaseEvenWhenCancelThrows(True)" methodname="CapacityUndoAndCancelKeepFenceUntilExitAndReleaseEvenWhenCancelThrows" classname="Game.ElementField.Tests.MaterialWorldTransactionTests" runstate="Runnable" seed="792515581" result="Failed" start-time="2026-10-29 08:07:19Z" end-time="2026-10-29 08:07:19Z" duration="0.005753" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.ElementField.Tests.MaterialWorldTransactionTests.AssertProbe (Game.ElementField.Tests.MaterialWorldTransactionTests+Probe probe) [0x0001c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\MaterialWorldTransactionTests.cs:157
+at Game.ElementField.Tests.MaterialWorldTransactionTests.CapacityUndoAndCancelKeepFenceUntilExitAndReleaseEvenWhenCancelThrows (System.Boolean cancelThrows) [0x000a9] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\MaterialWorldTransactionTests.cs:115
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="2298" name="CollectionReservationCannotOverwriteOuterSampleThroughSamePortReentry" fullname="Game.ElementField.Tests.MaterialWorldTransactionTests.CollectionReservationCannotOverwriteOuterSampleThroughSamePortReentry" methodname="CollectionReservationCannotOverwriteOuterSampleThroughSamePortReentry" classname="Game.ElementField.Tests.MaterialWorldTransactionTests" runstate="Runnable" seed="1919409518" result="Failed" start-time="2026-10-29 08:07:19Z" end-time="2026-10-29 08:07:19Z" duration="0.006162" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  必须真实执行 Reserve/Cancel 回调。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.ElementField.Tests.MaterialWorldTransactionTests.AssertProbe (Game.ElementField.Tests.MaterialWorldTransactionTests+Probe probe) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\MaterialWorldTransactionTests.cs:156
+at Game.ElementField.Tests.MaterialWorldTransactionTests.CollectionReservationCannotOverwriteOuterSampleThroughSamePortReentry () [0x00071] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\MaterialWorldTransactionTests.cs:55
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2297" name="DepositReservationIsolatesClockCaptureWritesAndNestedPortsUntilSuccess" fullname="Game.ElementField.Tests.MaterialWorldTransactionTests.DepositReservationIsolatesClockCaptureWritesAndNestedPortsUntilSuccess" methodname="DepositReservationIsolatesClockCaptureWritesAndNestedPortsUntilSuccess" classname="Game.ElementField.Tests.MaterialWorldTransactionTests" runstate="Runnable" seed="816778522" result="Failed" start-time="2026-10-29 08:07:19Z" end-time="2026-10-29 08:07:19Z" duration="0.004925" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.ElementField.Tests.MaterialWorldTransactionTests.AssertProbe (Game.ElementField.Tests.MaterialWorldTransactionTests+Probe probe) [0x0001c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\MaterialWorldTransactionTests.cs:157
+at Game.ElementField.Tests.MaterialWorldTransactionTests.DepositReservationIsolatesClockCaptureWritesAndNestedPortsUntilSuccess () [0x0006d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\MaterialWorldTransactionTests.cs:36
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="2303" name="ReservationAndCommitExceptionsLatchFaultAndReleaseWorldFence" fullname="Game.ElementField.Tests.MaterialWorldTransactionTests.ReservationAndCommitExceptionsLatchFaultAndReleaseWorldFence" classname="Game.ElementField.Tests.MaterialWorldTransactionTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-29 08:07:19Z" end-time="2026-10-29 08:07:19Z" duration="0.019639" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2299" name="ReservationAndCommitExceptionsLatchFaultAndReleaseWorldFence(True,True)" fullname="Game.ElementField.Tests.MaterialWorldTransactionTests.ReservationAndCommitExceptionsLatchFaultAndReleaseWorldFence(True,True)" methodname="ReservationAndCommitExceptionsLatchFaultAndReleaseWorldFence" classname="Game.ElementField.Tests.MaterialWorldTransactionTests" runstate="Runnable" seed="67513829" result="Failed" start-time="2026-10-29 08:07:19Z" end-time="2026-10-29 08:07:19Z" duration="0.004607" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.ElementField.Tests.MaterialWorldTransactionTests.ReservationAndCommitExceptionsLatchFaultAndReleaseWorldFence (System.Boolean deposit, System.Boolean duringReserve) [0x000db] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\MaterialWorldTransactionTests.cs:89
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2300" name="ReservationAndCommitExceptionsLatchFaultAndReleaseWorldFence(True,False)" fullname="Game.ElementField.Tests.MaterialWorldTransactionTests.ReservationAndCommitExceptionsLatchFaultAndReleaseWorldFence(True,False)" methodname="ReservationAndCommitExceptionsLatchFaultAndReleaseWorldFence" classname="Game.ElementField.Tests.MaterialWorldTransactionTests" runstate="Runnable" seed="1143959262" result="Failed" start-time="2026-10-29 08:07:19Z" end-time="2026-10-29 08:07:19Z" duration="0.003314" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.ElementField.Tests.MaterialWorldTransactionTests.ReservationAndCommitExceptionsLatchFaultAndReleaseWorldFence (System.Boolean deposit, System.Boolean duringReserve) [0x000db] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\MaterialWorldTransactionTests.cs:89
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2301" name="ReservationAndCommitExceptionsLatchFaultAndReleaseWorldFence(False,True)" fullname="Game.ElementField.Tests.MaterialWorldTransactionTests.ReservationAndCommitExceptionsLatchFaultAndReleaseWorldFence(False,True)" methodname="ReservationAndCommitExceptionsLatchFaultAndReleaseWorldFence" classname="Game.ElementField.Tests.MaterialWorldTransactionTests" runstate="Runnable" seed="355780198" result="Failed" start-time="2026-10-29 08:07:19Z" end-time="2026-10-29 08:07:19Z" duration="0.002853" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: <System.InvalidOperationException>
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.ElementField.Tests.MaterialWorldTransactionTests.ReservationAndCommitExceptionsLatchFaultAndReleaseWorldFence (System.Boolean deposit, System.Boolean duringReserve) [0x000c7] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\MaterialWorldTransactionTests.cs:87
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2302" name="ReservationAndCommitExceptionsLatchFaultAndReleaseWorldFence(False,False)" fullname="Game.ElementField.Tests.MaterialWorldTransactionTests.ReservationAndCommitExceptionsLatchFaultAndReleaseWorldFence(False,False)" methodname="ReservationAndCommitExceptionsLatchFaultAndReleaseWorldFence" classname="Game.ElementField.Tests.MaterialWorldTransactionTests" runstate="Runnable" seed="1990286427" result="Failed" start-time="2026-10-29 08:07:19Z" end-time="2026-10-29 08:07:19Z" duration="0.002399" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: <System.InvalidOperationException>
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.ElementField.Tests.MaterialWorldTransactionTests.ReservationAndCommitExceptionsLatchFaultAndReleaseWorldFence (System.Boolean deposit, System.Boolean duringReserve) [0x000c7] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\MaterialWorldTransactionTests.cs:87
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -27,6 +27,7 @@ namespace Game.ElementField
         }
         public bool TryGetQuantity(Vector3Int cell, MaterialId material, out uint quantity)
         {
+            if (_executionMode == Game.Core.WorldExecutionMode.Replica) return TryGetReplicaQuantity(cell, material, out quantity);
             quantity = 0;
             if (!IsInitialized || !_materialRoutes.TryResolve(material, out var backend)) return false;
             switch (backend)

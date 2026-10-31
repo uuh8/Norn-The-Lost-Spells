@@ -49,6 +49,8 @@ namespace Game.Character
         public float AimMaxDistance => _aimMaxDistance;
         public int ChargeDrawHash => _chargeDrawHash;
         public int ChargeLooseHash => _chargeLooseHash;
+        // 原 Archer 的 Start/OnEnable 已始终显示准心；共同 HUD 不能在晚绑定时用基类 false 覆盖它。
+        public override bool DefaultCrosshairVisible => true;
 
         protected override void Awake()
         {

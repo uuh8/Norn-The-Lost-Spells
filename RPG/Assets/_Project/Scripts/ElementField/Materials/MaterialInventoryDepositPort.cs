@@ -17,7 +17,44 @@ namespace Game.ElementField
         internal MaterialInventoryDepositPort(ElementWorldRuntime world) { _world = world; }
         internal MaterialTransferFailure Deposit(MaterialDepositExchange exchange, out ulong transferred)
         {
+            transferred = 0;
+            if (_world == null) return MaterialTransferFailure.WorldUnavailable;
+            // 先取得世界锁再进入 Core：同一个 Port 重入时连 _count 也不能清，否则会丢掉外层 Undo Journal。
+            MaterialTransferFailure ownership = _world.TryBeginMaterialTransaction();
+            if (ownership != MaterialTransferFailure.None) return ownership;
+            Exception primary = null;
+            try { return DepositCore(exchange, out transferred); }
+            catch (Exception exception)
+            {
+                primary = exception;
+                _world.MarkMaterialTransactionFaulted();
+                throw;
+            }
+            finally
+            {
+                try
+                {
+                    // 所有成功/普通失败/异常路径统一清理一次，且仍持有 World 锁。
+                    // 成功 Commit 后 Cancel 只释放已消耗的预留，不是 Undo，不会撤销已提交的库存和世界数量。
+                    exchange?.Source?.Cancel();
+                }
+                catch (Exception cleanup)
+                {
+                    _world.MarkMaterialTransactionFaulted();
+                    if (primary == null) throw;
+                    // primary 正在向调用者传播，finally 不能用第二个异常覆盖它。
+                    // Exception.Data 的稀有异常路径允许分配；正常交易不访问 Data，也不增加热路径分配。
+                    primary.Data["Norn.MaterialCleanupException"] = cleanup;
+                }
+                finally { _world.EndMaterialTransaction(); }
+            }
+        }
+        private MaterialTransferFailure DepositCore(MaterialDepositExchange exchange, out ulong transferred)
+        {
             using var marker = Marker.Auto(); transferred = 0; _count = _visited = 0;
+            // Port 也可以被同 Assembly 的代码直接调用，不能只依赖 EventBus Adapter 做生命周期检查。
+            // 先拒绝故障世界，确保 Source 预约和任何 Stage 都尚未发生；保留原 Undo/Cancel 路径完成已有事务。
+            if (_world == null || !_world.CanAcceptWorldWrites) return MaterialTransferFailure.WorldUnavailable;
             if (exchange.Source == null || exchange.Amounts == null || exchange.Count <= 0 || exchange.Count > 8
                 || exchange.Count > exchange.Amounts.Length || !Finite(exchange.Position) || !float.IsFinite(exchange.Radius)
                 || exchange.Radius <= 0 || exchange.Radius > 2) return MaterialTransferFailure.InvalidRequest;
@@ -44,7 +81,7 @@ namespace Game.ElementField
             {
                 var amount = exchange.Amounts[i]; if (amount.Quantity == 0) continue;
                 failure = StageComponent((MaterialId)amount.MaterialKey, amount.Quantity, exchange.Position, exchange.Radius);
-                if (failure != MaterialTransferFailure.None) { Undo(); exchange.Source.Cancel(); return failure; }
+                if (failure != MaterialTransferFailure.None) { Undo(); return failure; }
             }
             bool valid = _world.FixedSolids == null || _world.FixedSolids.ValidateConversionGeometry();
             for (int i = 0; i < _count && valid; i++)
@@ -55,7 +92,7 @@ namespace Game.ElementField
                 if (valid && _world.FixedSolids.BlocksWholeCell(address.Material))
                     valid = _world.TryPrepareMaterialTopologyChange(address.Cell, true);
             }
-            if (!valid) { Undo(); exchange.Source.Cancel(); return MaterialTransferFailure.GeometryRejected; }
+            if (!valid) { Undo(); return MaterialTransferFailure.GeometryRejected; }
             exchange.Source.Commit();
             for (int i = 0; i < exchange.Count; i++)
                 _world.RecordInventoryImport((MaterialId)exchange.Amounts[i].MaterialKey, exchange.Amounts[i].Quantity);

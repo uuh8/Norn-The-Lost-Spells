@@ -27,6 +27,10 @@ foreach ($generatedFile in $generatedFiles) {
         }
     } else {
         New-Item -ItemType Directory -Path $generatedRoot -Force | Out-Null
+        # Unity/IDE可能映射正在使用的生成源码；内容相同就不覆写，既保留文件时间，
+        # 也避免新增Schema时因无关旧文件的共享锁失败。真正变化的文件仍必须正常写入。
+        if ((Test-Path -LiteralPath $destination) -and
+            (Get-FileHash -LiteralPath $destination).Hash -eq (Get-FileHash -LiteralPath $generatedFile.FullName).Hash) { continue }
         Copy-Item -LiteralPath $generatedFile.FullName -Destination $destination -Force
     }
 }

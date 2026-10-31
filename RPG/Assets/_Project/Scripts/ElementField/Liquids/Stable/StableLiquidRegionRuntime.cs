@@ -133,6 +133,19 @@ namespace Game.ElementField
         }
 
         public int RegionCount => _activeRegionCount;
+        // 复制使用注册槽位而非active计数；退役槽仍可能保有旧Quantity，不能再次发布。
+        // 只返回值元数据与逐格Quantity，不把可变StableLiquidRegion/曲线数组交给外部。
+        internal int ReplicationRegionSlotCount => _regionCount;
+        internal bool TryGetReplicationRegion(int slot, out MaterialId material,
+            out Vector3Int minimum, out Vector3Int maximum)
+        {
+            material = MaterialId.Empty; minimum = maximum = default;
+            if ((uint)slot >= (uint)_regionCount) return false;
+            StableLiquidRegion region = _regions[slot];
+            if (region == null || !region.IsActive || region.Quantity == 0) return false;
+            material = region.Material; minimum = region.Minimum; maximum = region.Maximum; return true;
+        }
+        internal uint ReadReplicationQuantity(int slot, Vector3Int cell) => _regions[slot].QuantityAt(cell);
         public int OutletCount => _activeOutletCount;
         public uint UnsupportedInternalGeometryChanges { get; private set; }
         public uint ExpandedRegions { get; private set; }

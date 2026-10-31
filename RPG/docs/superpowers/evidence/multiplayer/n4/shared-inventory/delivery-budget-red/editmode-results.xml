@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="12" result="Failed(Child)" total="12" passed="6" failed="6" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-26 06:47:48Z" end-time="2026-10-26 06:47:49Z" duration="0.8115609">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2544" result="Failed" site="Child" start-time="2026-10-26 06:47:48Z" end-time="2026-10-26 06:47:49Z" duration="0.811561" total="12" passed="6" failed="6" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2456" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="84" result="Failed" site="Child" start-time="2026-10-26 06:47:48Z" end-time="2026-10-26 06:47:49Z" duration="0.716742" total="12" passed="6" failed="6" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27688" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2457" name="Game" fullname="Game" runstate="Runnable" testcasecount="84" result="Failed" site="Child" start-time="2026-10-26 06:47:48Z" end-time="2026-10-26 06:47:49Z" duration="0.602292" total="12" passed="6" failed="6" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2458" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="84" result="Failed" site="Child" start-time="2026-10-26 06:47:49Z" end-time="2026-10-26 06:47:49Z" duration="0.512513" total="12" passed="6" failed="6" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2459" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="84" result="Failed" site="Child" start-time="2026-10-26 06:47:49Z" end-time="2026-10-26 06:47:49Z" duration="0.412534" total="12" passed="6" failed="6" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2351" name="InventoryCommandRoutingTests" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" testcasecount="12" result="Failed" site="Child" start-time="2026-10-26 06:47:49Z" end-time="2026-10-26 06:47:49Z" duration="0.311279" total="12" passed="6" failed="6" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="2355" name="CommandEnvelopeRejectsOversizeOrTruncatedBytes" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.CommandEnvelopeRejectsOversizeOrTruncatedBytes" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-10-26 06:47:49Z" end-time="2026-10-26 06:47:49Z" duration="0.139203" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="2353" name="CommandEnvelopeRejectsOversizeOrTruncatedBytes(&quot;Command&quot;)" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.CommandEnvelopeRejectsOversizeOrTruncatedBytes(&quot;Command&quot;)" methodname="CommandEnvelopeRejectsOversizeOrTruncatedBytes" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="1824339460" result="Passed" start-time="2026-10-26 06:47:49Z" end-time="2026-10-26 06:47:49Z" duration="0.023839" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="2354" name="CommandEnvelopeRejectsOversizeOrTruncatedBytes(&quot;Receipt&quot;)" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.CommandEnvelopeRejectsOversizeOrTruncatedBytes(&quot;Receipt&quot;)" methodname="CommandEnvelopeRejectsOversizeOrTruncatedBytes" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="1606073345" result="Passed" start-time="2026-10-26 06:47:49Z" end-time="2026-10-26 06:47:49Z" duration="0.000491" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="2352" name="CommandsAndReceiptsHaveDistinctMirrorIds" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.CommandsAndReceiptsHaveDistinctMirrorIds" methodname="CommandsAndReceiptsHaveDistinctMirrorIds" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="872987438" result="Passed" start-time="2026-10-26 06:47:49Z" end-time="2026-10-26 06:47:49Z" duration="0.004130" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2360" name="IngressBudgetDoesNotReattachOldEpochOrAcceptInvalidTime" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.IngressBudgetDoesNotReattachOldEpochOrAcceptInvalidTime" methodname="IngressBudgetDoesNotReattachOldEpochOrAcceptInvalidTime" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="1530244818" result="Failed" start-time="2026-10-26 06:47:49Z" end-time="2026-10-26 06:47:49Z" duration="0.006250" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少有界库存命令路由：InventoryCommandRateBudget
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventoryCommandRoutingTests.Require (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:18
+at Game.Multiplayer.Tests.InventoryCommandRoutingTests.IngressBudgetDoesNotReattachOldEpochOrAcceptInvalidTime () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:96
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2359" name="IngressBudgetRejectsFloodBeforeAllocationAndRefillsOnlyToBurstLimit" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.IngressBudgetRejectsFloodBeforeAllocationAndRefillsOnlyToBurstLimit" methodname="IngressBudgetRejectsFloodBeforeAllocationAndRefillsOnlyToBurstLimit" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="1726957195" result="Failed" start-time="2026-10-26 06:47:49Z" end-time="2026-10-26 06:47:49Z" duration="0.000924" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少有界库存命令路由：InventoryCommandRateBudget
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventoryCommandRoutingTests.Require (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:18
+at Game.Multiplayer.Tests.InventoryCommandRoutingTests.IngressBudgetRejectsFloodBeforeAllocationAndRefillsOnlyToBurstLimit () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:84
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2358" name="PendingBudgetDoesNotEvictUnacknowledgedCommandsAndClearReleasesIt" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.PendingBudgetDoesNotEvictUnacknowledgedCommandsAndClearReleasesIt" methodname="PendingBudgetDoesNotEvictUnacknowledgedCommandsAndClearReleasesIt" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="1172993170" result="Passed" start-time="2026-10-26 06:47:49Z" end-time="2026-10-26 06:47:49Z" duration="0.002216" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2356" name="PendingReceiptKeepsCallerAndConsumesOnlyOnce" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.PendingReceiptKeepsCallerAndConsumesOnlyOnce" methodname="PendingReceiptKeepsCallerAndConsumesOnlyOnce" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="762028664" result="Passed" start-time="2026-10-26 06:47:49Z" end-time="2026-10-26 06:47:49Z" duration="0.004766" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="2365" name="ReplayedReceiptCannotForceSnapshotOutsideCurrentDeliveryBudget" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.ReplayedReceiptCannotForceSnapshotOutsideCurrentDeliveryBudget" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-26 06:47:49Z" end-time="2026-10-26 06:47:49Z" duration="0.048971" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2361" name="ReplayedReceiptCannotForceSnapshotOutsideCurrentDeliveryBudget(0,0,False)" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.ReplayedReceiptCannotForceSnapshotOutsideCurrentDeliveryBudget(0,0,False)" methodname="ReplayedReceiptCannotForceSnapshotOutsideCurrentDeliveryBudget" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="589728151" result="Failed" start-time="2026-10-26 06:47:49Z" end-time="2026-10-26 06:47:49Z" duration="0.001128" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少有界库存命令路由：InventoryCommandDeliveryPolicy
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventoryCommandRoutingTests.Require (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:18
+at Game.Multiplayer.Tests.InventoryCommandRoutingTests.ReplayedReceiptCannotForceSnapshotOutsideCurrentDeliveryBudget (System.Int32 budgetFailure, System.Int32 receiptFailure, System.Boolean expected) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:108
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2362" name="ReplayedReceiptCannotForceSnapshotOutsideCurrentDeliveryBudget(0,4,True)" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.ReplayedReceiptCannotForceSnapshotOutsideCurrentDeliveryBudget(0,4,True)" methodname="ReplayedReceiptCannotForceSnapshotOutsideCurrentDeliveryBudget" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="576371070" result="Failed" start-time="2026-10-26 06:47:49Z" end-time="2026-10-26 06:47:49Z" duration="0.000307" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少有界库存命令路由：InventoryCommandDeliveryPolicy
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventoryCommandRoutingTests.Require (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:18
+at Game.Multiplayer.Tests.InventoryCommandRoutingTests.ReplayedReceiptCannotForceSnapshotOutsideCurrentDeliveryBudget (System.Int32 budgetFailure, System.Int32 receiptFailure, System.Boolean expected) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:108
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2363" name="ReplayedReceiptCannotForceSnapshotOutsideCurrentDeliveryBudget(11,0,False)" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.ReplayedReceiptCannotForceSnapshotOutsideCurrentDeliveryBudget(11,0,False)" methodname="ReplayedReceiptCannotForceSnapshotOutsideCurrentDeliveryBudget" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="1876992863" result="Failed" start-time="2026-10-26 06:47:49Z" end-time="2026-10-26 06:47:49Z" duration="0.000304" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少有界库存命令路由：InventoryCommandDeliveryPolicy
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventoryCommandRoutingTests.Require (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:18
+at Game.Multiplayer.Tests.InventoryCommandRoutingTests.ReplayedReceiptCannotForceSnapshotOutsideCurrentDeliveryBudget (System.Int32 budgetFailure, System.Int32 receiptFailure, System.Boolean expected) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:108
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2364" name="ReplayedReceiptCannotForceSnapshotOutsideCurrentDeliveryBudget(11,4,False)" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.ReplayedReceiptCannotForceSnapshotOutsideCurrentDeliveryBudget(11,4,False)" methodname="ReplayedReceiptCannotForceSnapshotOutsideCurrentDeliveryBudget" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="1133978295" result="Failed" start-time="2026-10-26 06:47:49Z" end-time="2026-10-26 06:47:49Z" duration="0.000275" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少有界库存命令路由：InventoryCommandDeliveryPolicy
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventoryCommandRoutingTests.Require (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:18
+at Game.Multiplayer.Tests.InventoryCommandRoutingTests.ReplayedReceiptCannotForceSnapshotOutsideCurrentDeliveryBudget (System.Int32 budgetFailure, System.Int32 receiptFailure, System.Boolean expected) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:108
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="2357" name="WrongEpochAndDuplicateIdCannotHijackCaller" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.WrongEpochAndDuplicateIdCannotHijackCaller" methodname="WrongEpochAndDuplicateIdCannotHijackCaller" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="1258608481" result="Passed" start-time="2026-10-26 06:47:49Z" end-time="2026-10-26 06:47:49Z" duration="0.000681" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -25,7 +25,44 @@ namespace Game.ElementField
         internal MaterialTransferFailure Transfer(in MaterialTransferRequestedEvent request, IMaterialTransferDestination destination, out ulong transferred)
         {
             transferred = 0;
+            if (_world == null) return MaterialTransferFailure.WorldUnavailable;
+            // Sample 会清写工作数组，destination 属性与 Reserve/Commit/Cancel 都由外部实现。
+            // 整段持有 World 互斥，不能仅给 Stage 或 TryReserve 加局部锁；失败 Cancel 也必须留在保护内。
+            MaterialTransferFailure ownership = _world.TryBeginMaterialTransaction();
+            if (ownership != MaterialTransferFailure.None) return ownership;
+            Exception primary = null;
+            try { return TransferCore(in request, destination, out transferred); }
+            catch (Exception exception)
+            {
+                primary = exception;
+                _world.MarkMaterialTransactionFaulted();
+                throw;
+            }
+            finally
+            {
+                try
+                {
+                    // Target 的 Reserve/Commit/Cancel 都是外部实现；成功后的清理也不能落在互斥保护外。
+                    // Commit 后 Cancel 仅释放预留，不能理解成撤销已进入库存的材料。普通失败则先按原 Journal Undo。
+                    destination?.Cancel();
+                }
+                catch (Exception cleanup)
+                {
+                    _world.MarkMaterialTransactionFaulted();
+                    if (primary == null) throw;
+                    // 保留最早异常的对象与传播栈，把清理错误附到 Data 供诊断；仅异常路径可能分配 Data 字典。
+                    primary.Data["Norn.MaterialCleanupException"] = cleanup;
+                }
+                finally { _world.EndMaterialTransaction(); }
+            }
+        }
+        private MaterialTransferFailure TransferCore(in MaterialTransferRequestedEvent request, IMaterialTransferDestination destination, out ulong transferred)
+        {
+            transferred = 0;
             using var measurement = TransferMarker.Auto();
+            // 直接 Port 调用也必须封住：Faulted 不是已回滚的空世界，不能把其中的半提交数量转成玩家资产。
+            // 在采样与 Destination.TryReserve 之前拒绝，避免失败世界继续改变任一端的数量或 Ledger。
+            if (_world == null || !_world.CanAcceptWorldWrites) return MaterialTransferFailure.WorldUnavailable;
             MaterialTransferFailure failure;
             using (SampleMarker.Auto()) failure = Sample(request.SampleCenter, request.Radius, destination.AllowedMaterials, !request.SolidItem,request.CollectorPosition);
             if (failure != MaterialTransferFailure.None) return failure;
@@ -36,7 +73,7 @@ namespace Game.ElementField
                 gasVersion = _world.Gases?.Version ?? 0;
             if (!destination.TryReserve(_amounts, _components, out failure)) return failure;
             if (liquidVersion != (_world.InventoryLiquid?.SurfaceVersion ?? 0) || solidVersion != (_world.FixedSolids?.Version ?? 0)
-                || gasVersion != (_world.Gases?.Version ?? 0)) { destination.Cancel(); return MaterialTransferFailure.StaleVersion; }
+                || gasVersion != (_world.Gases?.Version ?? 0)) { return MaterialTransferFailure.StaleVersion; }
             Array.Clear(_remaining, 0, _remaining.Length);
             for (int i = 0; i < _components; i++) _remaining[_amounts[i].MaterialKey] = _amounts[i].Quantity;
             for (int i = 0; i < _count; i++)
@@ -44,7 +81,7 @@ namespace Game.ElementField
                 byte key = (byte)_addresses[i].Material;
                 _takes[i] = (uint)Math.Min(_available[i], _remaining[key]); _remaining[key] -= _takes[i];
                 if (_takes[i] > 0 && (!Read(_addresses[i], out uint current) || current != _available[i] || !_world.IsConversionAddressActive(_addresses[i])))
-                { destination.Cancel(); return MaterialTransferFailure.StaleVersion; }
+                { return MaterialTransferFailure.StaleVersion; }
             }
             _world.FixedSolids?.BeginConversionGeometry();
             int staged = 0;
@@ -56,7 +93,7 @@ namespace Game.ElementField
                     && _world.FixedSolids.BlocksWholeCell(_addresses[i].Material))
                     valid = _world.TryPrepareMaterialTopologyChange(_addresses[i].Cell, _world.FixedSolids.BlocksCell(_addresses[i].Cell));
             if (!valid)
-            { Undo(staged); destination.Cancel(); return MaterialTransferFailure.GeometryRejected; }
+            { Undo(staged); return MaterialTransferFailure.GeometryRejected; }
             // Commit 的目标操作仅写已验证的固定数组/预留库存；这段调用不能发布外部事件或交错写入。
             destination.Commit();
             for (int i = 0; i < _components; i++) _world.RecordInventoryExport((MaterialId)_amounts[i].MaterialKey, _amounts[i].Quantity);

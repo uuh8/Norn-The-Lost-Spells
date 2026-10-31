@@ -21,6 +21,8 @@ namespace Game.ElementField
         private readonly bool[] _blocks = new bool[256];
         private readonly bool[] _partialVolume = new bool[256];
         private readonly Collider[] _actorHits = new Collider[32];
+        public FixedSolidWorldProfile ConfigurationProfile => _profile;
+        public bool BuildsVisualMeshes => _physics != null && _physics.BuildsVisualMeshes;
         private readonly ElementChunkKey[] _dirty = new ElementChunkKey[7];
         private int _dirtyCount;
         private readonly MaterialPhasePendingDeposit[] _depositWork = new MaterialPhasePendingDeposit[64];
@@ -74,7 +76,8 @@ namespace Game.ElementField
                 _pending = new MaterialPhaseDepositQueue(_profile.MaximumPendingDeposits);
                 _depositRequestLimit=_profile.MaximumCellsPerTick;
                 _physics = new FixedSolidPhysicsAdapter(transform, _store, BlocksMaterial,
-                    _profile.MaximumNavigationBoxesPerChunk, origin, size);
+                    _profile.MaximumNavigationBoxesPerChunk, origin, size,
+                    buildVisualMeshes: world == null || world.ExecutionMode != Game.Core.WorldExecutionMode.Authority);
                 InitializeGravity();
                 return true;
             }

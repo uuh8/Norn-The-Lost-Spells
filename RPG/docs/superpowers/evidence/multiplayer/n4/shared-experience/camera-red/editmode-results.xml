@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-25 07:51:37Z" end-time="2026-10-25 07:51:38Z" duration="1.0944797">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2427" result="Failed" site="Child" start-time="2026-10-25 07:51:37Z" end-time="2026-10-25 07:51:38Z" duration="1.094480" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2419" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="64" result="Failed" site="Child" start-time="2026-10-25 07:51:37Z" end-time="2026-10-25 07:51:37Z" duration="0.551380" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16108" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2420" name="Game" fullname="Game" runstate="Runnable" testcasecount="64" result="Failed" site="Child" start-time="2026-10-25 07:51:37Z" end-time="2026-10-25 07:51:37Z" duration="0.457590" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2421" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="64" result="Failed" site="Child" start-time="2026-10-25 07:51:37Z" end-time="2026-10-25 07:51:37Z" duration="0.358628" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2422" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="64" result="Failed" site="Child" start-time="2026-10-25 07:51:37Z" end-time="2026-10-25 07:51:37Z" duration="0.258831" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2411" name="SharedGameplayCameraAuthoringTests" fullname="Game.Multiplayer.Tests.SharedGameplayCameraAuthoringTests" classname="Game.Multiplayer.Tests.SharedGameplayCameraAuthoringTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-25 07:51:37Z" end-time="2026-10-25 07:51:37Z" duration="0.157787" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2413" name="InstallRejectsUnapprovedSceneBeforeCreatingObjects" fullname="Game.Multiplayer.Tests.SharedGameplayCameraAuthoringTests.InstallRejectsUnapprovedSceneBeforeCreatingObjects" methodname="InstallRejectsUnapprovedSceneBeforeCreatingObjects" classname="Game.Multiplayer.Tests.SharedGameplayCameraAuthoringTests" runstate="Runnable" seed="1207877719" result="Failed" start-time="2026-10-25 07:51:37Z" end-time="2026-10-25 07:51:37Z" duration="0.023779" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.SharedGameplayCameraAuthoringTests.InstallRejectsUnapprovedSceneBeforeCreatingObjects () [0x00017] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayCameraAuthoringTests.cs:77
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2412" name="PreviewCopiesOriginalCameraPipelineWithoutGameplayOwnersOrSourceWrites" fullname="Game.Multiplayer.Tests.SharedGameplayCameraAuthoringTests.PreviewCopiesOriginalCameraPipelineWithoutGameplayOwnersOrSourceWrites" methodname="PreviewCopiesOriginalCameraPipelineWithoutGameplayOwnersOrSourceWrites" classname="Game.Multiplayer.Tests.SharedGameplayCameraAuthoringTests" runstate="Runnable" seed="419892397" result="Failed" start-time="2026-10-25 07:51:37Z" end-time="2026-10-25 07:51:37Z" duration="0.005309" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少同源正式 Cinemachine 导出器。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.SharedGameplayCameraAuthoringTests.PreviewCopiesOriginalCameraPipelineWithoutGameplayOwnersOrSourceWrites () [0x0001c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayCameraAuthoringTests.cs:21
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="2902" name="Game.Rendering.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Rendering.Tests.dll" runstate="Runnable" testcasecount="319" result="Failed" site="Child" start-time="2026-10-25 07:51:37Z" end-time="2026-10-25 07:51:38Z" duration="0.447727" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16108" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2903" name="Game" fullname="Game" runstate="Runnable" testcasecount="319" result="Failed" site="Child" start-time="2026-10-25 07:51:37Z" end-time="2026-10-25 07:51:38Z" duration="0.404307" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2904" name="Rendering" fullname="Game.Rendering" runstate="Runnable" testcasecount="319" result="Failed" site="Child" start-time="2026-10-25 07:51:37Z" end-time="2026-10-25 07:51:38Z" duration="0.306357" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2905" name="Tests" fullname="Game.Rendering.Tests" runstate="Runnable" testcasecount="319" result="Failed" site="Child" start-time="2026-10-25 07:51:38Z" end-time="2026-10-25 07:51:38Z" duration="0.205536" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2772" name="LocalActorCameraBindingTests" fullname="Game.Rendering.Tests.LocalActorCameraBindingTests" classname="Game.Rendering.Tests.LocalActorCameraBindingTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-25 07:51:38Z" end-time="2026-10-25 07:51:38Z" duration="0.104274" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2773" name="CameraRegistryRejectsStaleOwnerAndDestroyedCamera" fullname="Game.Rendering.Tests.LocalActorCameraBindingTests.CameraRegistryRejectsStaleOwnerAndDestroyedCamera" methodname="CameraRegistryRejectsStaleOwnerAndDestroyedCamera" classname="Game.Rendering.Tests.LocalActorCameraBindingTests" runstate="Runnable" seed="1499466662" result="Failed" start-time="2026-10-25 07:51:38Z" end-time="2026-10-25 07:51:38Z" duration="0.001535" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少 owner-fenced 原相机注册契约。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Rendering.Tests.LocalActorCameraBindingTests.CameraRegistryRejectsStaleOwnerAndDestroyedCamera () [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Rendering\LocalActorCameraBindingTests.cs:18
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2774" name="LateBindingUsesExplicitPresentationTargetAndClearsOnlyItsOwnRegistration" fullname="Game.Rendering.Tests.LocalActorCameraBindingTests.LateBindingUsesExplicitPresentationTargetAndClearsOnlyItsOwnRegistration" methodname="LateBindingUsesExplicitPresentationTargetAndClearsOnlyItsOwnRegistration" classname="Game.Rendering.Tests.LocalActorCameraBindingTests" runstate="Runnable" seed="738309479" result="Failed" start-time="2026-10-25 07:51:38Z" end-time="2026-10-25 07:51:38Z" duration="0.001871" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少原 Cinemachine 的只读绑定器。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Rendering.Tests.LocalActorCameraBindingTests.LateBindingUsesExplicitPresentationTargetAndClearsOnlyItsOwnRegistration () [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Rendering\LocalActorCameraBindingTests.cs:45
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

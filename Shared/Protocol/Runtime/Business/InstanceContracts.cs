@@ -6,6 +6,7 @@ namespace Game.NetworkProtocol
     [Serializable] public sealed class InstanceLaunchDescriptor
     {
         public string InstanceId = "", RoomId = "", RunId = "";
+        public string DungeonId = ""; // 业务 Party 授权的稳定地图键，绝不是可自由加载的 Scene 路径；旧描述缺省空值拒绝。
         public uint RoomEpoch;
         public int Port;
         public string BusinessBaseUrl = "";
@@ -20,6 +21,7 @@ namespace Game.NetworkProtocol
     [Serializable] public sealed class RoomInstanceReply
     {
         public string InstanceId = "", RunId = "", State = "", Host = "127.0.0.1";
+        public string DungeonId = ""; // 控制面只读的副本身份；与实际 DS 装配的配置键核对。
         public uint RoomEpoch;
         public int Port;
     }
@@ -28,6 +30,7 @@ namespace Game.NetworkProtocol
         public uint RoomEpoch, ProtocolVersion;
         public string BuildVersion = "", ManifestHash = "";
         public string GameplayConfigHash = ""; // DS 必须证明加载了冻结资产对应的规则版本。
+        public string DungeonId = ""; // DS 已完成装配的地图；业务服须在发布 Ready 前与 Party 比对。
         public int ProcessId;
         public long ProcessStartTicks; // UTC DateTime ticks，用来拒绝被复用的PID。
     }
@@ -35,6 +38,7 @@ namespace Game.NetworkProtocol
     [Serializable] public sealed class InstanceLeaseReply { public long LeaseExpiresUnixMilliseconds; }
     [Serializable] public sealed class InstanceReadyReply
     {
+        public string DungeonId = ""; // 再确认业务授权地图；不允许根据返回值在运行中偷偷切换世界。
         public long LeaseExpiresUnixMilliseconds;
         public InstanceEntryMember[] Members = Array.Empty<InstanceEntryMember>();
     }
@@ -46,6 +50,7 @@ namespace Game.NetworkProtocol
     [Serializable] public sealed class JoinTicketReply
     {
         public string Ticket = "", PlayerId = "", InstanceId = "", RoomId = "", RunId = "";
+        public string DungeonId = ""; // 业务签发的期望地图，握手确认必须保持同值；不能从本地门名替代。
         public uint RoomEpoch;
         public string Host = "127.0.0.1";
         public int Port;
@@ -59,6 +64,7 @@ namespace Game.NetworkProtocol
     [Serializable] public sealed class ConsumeJoinTicketReply
     {
         public string PlayerId = "", RoomId = "", RunId = "";
+        public string DungeonId = ""; // 原子兑换后从 Party 派生的地图，不接受 Client 自报。
         public uint RoomEpoch, ConnectionEpoch; // 每次兑换递增，旧连接与迟到认证回复必须失效。
         public ulong ActorId;
     }

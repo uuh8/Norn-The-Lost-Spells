@@ -22,7 +22,7 @@ namespace Game.Networking.Tests
         }
         private static CombatCastIntentMessage Intent() => new CombatCastIntentMessage
         {
-            ProtocolVersion = 1, ConnectionEpoch = 1, CommandId = 1, GameplayHash = 123,
+            ProtocolVersion = ProtocolCompatibility.CurrentVersion, ConnectionEpoch = 1, CommandId = 1, GameplayHash = 123,
             WandInstanceId = new string('a', 32), ProgramRevision = 1, AimZ = 20
         };
         [Test] public void ValidIntent_RoundTripsWithoutTrustingActorOrDamageFields()
@@ -79,7 +79,7 @@ namespace Game.Networking.Tests
             Assert.That(((CombatFactMessage)second).ProgramRevision, Is.Zero);
         }
         private static CombatFactMessage Fact() => new CombatFactMessage
-        { ProtocolVersion = 1, GameplayHash = 123, Sequence = 1, ServerTick = 1, ActorId = 1, ConnectionEpoch = 1 };
+        { ProtocolVersion = ProtocolCompatibility.CurrentVersion, GameplayHash = 123, Sequence = 1, ServerTick = 1, ActorId = 1, ConnectionEpoch = 1 };
         [Test] public void ActorSourceAndNegativeAnimatorHashPreserveTheirBitsAndReset()
         {
             var codec = Create(); var fact = Fact(); fact.Kind = 3; fact.AttackerActorId = 7;
@@ -91,6 +91,69 @@ namespace Game.Networking.Tests
             Assert.That(Decode(codec, fact.ToByteArray(), "Fact", out var second), Is.True);
             Assert.That(((CombatFactMessage)second).AnimationHash, Is.Zero);
             Assert.That(((CombatFactMessage)second).AttackerActorId, Is.Zero);
+        }
+
+        [TestCase(1u)]
+        [TestCase(2u)]
+        [TestCase(3u)]
+        public void ActorStateCarriesStableOwnedSlotWithoutRepeatingWandString(uint slotPlusOne)
+        {
+            var fact = ActorState(); SetSlot(fact, slotPlusOne); fact.ProgramRevision = 1;
+            Assert.That(Decode(Create(), fact.ToByteArray(), "Fact", out var value), Is.True);
+            Assert.That(GetSlot((CombatFactMessage)value), Is.EqualTo(slotPlusOne));
+            Assert.That(((CombatFactMessage)value).WandInstanceId, Is.Empty,
+                "两根程序Revision相同的杖也必须靠稳定装备槽定位，不能借当前Setup字符串猜测余额所属。");
+            var field = CombatFactMessage.Descriptor.FindFieldByName("wand_slot_plus_one");
+            Assert.That(field, Is.Not.Null); Assert.That(field.FieldNumber, Is.EqualTo(46));
+        }
+
+        [Test] public void OwnedWandSlotOutsideBudgetOrOnOtherFactKindIsRejected()
+        {
+            var codec = Create(); var fact = ActorState(); SetSlot(fact, 4);
+            Assert.That(Decode(codec, fact.ToByteArray(), "Fact", out _), Is.False);
+            Assert.That(EncodeFact(codec, fact), Is.False);
+            fact = Fact(); fact.Kind = 8; SetSlot(fact, 1);
+            Assert.That(Decode(codec, fact.ToByteArray(), "Fact", out _), Is.False);
+            Assert.That(EncodeFact(codec, fact), Is.False);
+        }
+
+        [Test] public void ReuseClearsOwnedWandSlotBeforeNextFactWithoutOwnedSource()
+        {
+            var codec = Create(); var first = ActorState(); SetSlot(first, 2);
+            Assert.That(Decode(codec, first.ToByteArray(), "Fact", out var before), Is.True);
+            Assert.That(Decode(codec, ActorState().ToByteArray(), "Fact", out var after), Is.True);
+            Assert.That(ReferenceEquals(before, after), Is.True);
+            Assert.That(GetSlot((CombatFactMessage)after), Is.Zero,
+                "池化Fact必须清新Schema字段；否则无Owned来源的下一包仍会污染上根杖的读数。");
+        }
+
+        [Test] public void OwnedWandSlotRejectsDuplicateTagAndNextUnknownTag()
+        {
+            var fact = ActorState(); SetSlot(fact, 1); var bytes = fact.ToByteArray();
+            Assert.That(Decode(Create(), Append(bytes, new byte[] { 240, 2, 2 }), "Fact", out _), Is.False);
+            Assert.That(Decode(Create(), Append(bytes, new byte[] { 248, 2, 1 }), "Fact", out _), Is.False);
+        }
+
+        private static CombatFactMessage ActorState()
+        { var fact = Fact(); fact.Kind = 7; fact.MaxHp = fact.CurrentHp = 100; fact.MoveMultiplier = 1; return fact; }
+        private static PropertyInfo SlotProperty()
+        {
+            var property = typeof(CombatFactMessage).GetProperty("WandSlotPlusOne");
+            Assert.That(property, Is.Not.Null,
+                "ActorState缺少稳定Owned装备槽；跨可靠/非可靠通道乱序时ProgramRevision不能区分两根杖。");
+            return property;
+        }
+        private static void SetSlot(CombatFactMessage message, uint value) => SlotProperty().SetValue(message, value);
+        private static uint GetSlot(CombatFactMessage message) => (uint)SlotProperty().GetValue(message);
+        private static bool EncodeFact(object codec, CombatFactMessage message)
+        {
+            var args = new object[] { message, new ArraySegment<byte>(new byte[512]), 0 };
+            return (bool)codec.GetType().GetMethod("TryEncodeFact").Invoke(codec, args);
+        }
+        private static byte[] Append(byte[] bytes, byte[] tail)
+        {
+            var result = new byte[bytes.Length + tail.Length]; Array.Copy(bytes, result, bytes.Length);
+            Array.Copy(tail, 0, result, bytes.Length, tail.Length); return result;
         }
     }
 }

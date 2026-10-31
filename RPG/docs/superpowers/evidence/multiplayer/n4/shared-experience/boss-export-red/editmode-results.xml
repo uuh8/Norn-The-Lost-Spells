@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-24 15:11:24Z" end-time="2026-10-24 15:11:25Z" duration="1.5325839">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2415" result="Failed" site="Child" start-time="2026-10-24 15:11:24Z" end-time="2026-10-24 15:11:25Z" duration="1.532584" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1273" name="Game.Character.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.Tests.dll" runstate="Runnable" testcasecount="220" result="Failed" site="Child" start-time="2026-10-24 15:11:24Z" end-time="2026-10-24 15:11:25Z" duration="1.022586" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12136" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1274" name="Game" fullname="Game" runstate="Runnable" testcasecount="220" result="Failed" site="Child" start-time="2026-10-24 15:11:24Z" end-time="2026-10-24 15:11:25Z" duration="0.930714" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1275" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="220" result="Failed" site="Child" start-time="2026-10-24 15:11:24Z" end-time="2026-10-24 15:11:25Z" duration="0.829806" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1276" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="220" result="Failed" site="Child" start-time="2026-10-24 15:11:24Z" end-time="2026-10-24 15:11:25Z" duration="0.727168" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1042" name="BossReplicaHudTests" fullname="Game.Character.Tests.BossReplicaHudTests" classname="Game.Character.Tests.BossReplicaHudTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-24 15:11:24Z" end-time="2026-10-24 15:11:25Z" duration="0.611859" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1043" name="FirstActivePhaseOneInitializesOriginalBossHudOnce" fullname="Game.Character.Tests.BossReplicaHudTests.FirstActivePhaseOneInitializesOriginalBossHudOnce" methodname="FirstActivePhaseOneInitializesOriginalBossHudOnce" classname="Game.Character.Tests.BossReplicaHudTests" runstate="Runnable" seed="1344822366" result="Failed" start-time="2026-10-24 15:11:24Z" end-time="2026-10-24 15:11:25Z" duration="0.492788" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  默认阶段已是1也必须初始化正式HUD，不能只在Phase2才显示。
+  Expected: 1
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.BossReplicaHudTests.FirstActivePhaseOneInitializesOriginalBossHudOnce () [0x00064] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\BossReplicaHudTests.cs:47
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1044" name="StateOnlyHealthCorrectionAndDeathReachSharedHudWithoutDamageEvent" fullname="Game.Character.Tests.BossReplicaHudTests.StateOnlyHealthCorrectionAndDeathReachSharedHudWithoutDamageEvent" methodname="StateOnlyHealthCorrectionAndDeathReachSharedHudWithoutDamageEvent" classname="Game.Character.Tests.BossReplicaHudTests" runstate="Runnable" seed="1972070562" result="Failed" start-time="2026-10-24 15:11:25Z" end-time="2026-10-24 15:11:25Z" duration="0.007442" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.BossReplicaHudTests.StateOnlyHealthCorrectionAndDeathReachSharedHudWithoutDamageEvent () [0x0004e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\BossReplicaHudTests.cs:61
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="2411" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="59" result="Failed" site="Child" start-time="2026-10-24 15:11:25Z" end-time="2026-10-24 15:11:25Z" duration="0.412223" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12136" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2412" name="Game" fullname="Game" runstate="Runnable" testcasecount="59" result="Failed" site="Child" start-time="2026-10-24 15:11:25Z" end-time="2026-10-24 15:11:25Z" duration="0.399183" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2413" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="59" result="Failed" site="Child" start-time="2026-10-24 15:11:25Z" end-time="2026-10-24 15:11:25Z" duration="0.303824" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2414" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="59" result="Failed" site="Child" start-time="2026-10-24 15:11:25Z" end-time="2026-10-24 15:11:25Z" duration="0.203288" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2409" name="SharedGameplayHudAuthoringTests" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-24 15:11:25Z" end-time="2026-10-24 15:11:25Z" duration="0.102131" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2410" name="SharedHudExporter_ProvidesExplicitInstallAndVerifyEntryPoints" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.SharedHudExporter_ProvidesExplicitInstallAndVerifyEntryPoints" methodname="SharedHudExporter_ProvidesExplicitInstallAndVerifyEntryPoints" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" seed="666634736" result="Failed" start-time="2026-10-24 15:11:25Z" end-time="2026-10-24 15:11:25Z" duration="0.004556" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少共享正式 HUD 导出器；旧 OnlineCombatHud 不能代替原 P7/P8 authoring。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.SharedHudExporter_ProvidesExplicitInstallAndVerifyEntryPoints () [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:16
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

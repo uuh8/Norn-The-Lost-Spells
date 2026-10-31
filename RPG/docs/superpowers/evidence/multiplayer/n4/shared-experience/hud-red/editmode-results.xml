@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="5" result="Failed(Child)" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-24 15:03:08Z" end-time="2026-10-24 15:03:09Z" duration="0.6496008">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2405" result="Failed" site="Child" start-time="2026-10-24 15:03:08Z" end-time="2026-10-24 15:03:09Z" duration="0.649601" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3975" name="Game.UI.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.UI.Tests.dll" runstate="Runnable" testcasecount="23" result="Failed" site="Child" start-time="2026-10-24 15:03:08Z" end-time="2026-10-24 15:03:09Z" duration="0.552326" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12136" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3976" name="Game" fullname="Game" runstate="Runnable" testcasecount="23" result="Failed" site="Child" start-time="2026-10-24 15:03:08Z" end-time="2026-10-24 15:03:09Z" duration="0.461884" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3977" name="UI" fullname="Game.UI" runstate="Runnable" testcasecount="23" result="Failed" site="Child" start-time="2026-10-24 15:03:08Z" end-time="2026-10-24 15:03:09Z" duration="0.365223" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3978" name="Tests" fullname="Game.UI.Tests" runstate="Runnable" testcasecount="23" result="Failed" site="Child" start-time="2026-10-24 15:03:08Z" end-time="2026-10-24 15:03:09Z" duration="0.238861" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3947" name="LocalActorHudBindingTests" fullname="Game.UI.Tests.LocalActorHudBindingTests" classname="Game.UI.Tests.LocalActorHudBindingTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-10-24 15:03:08Z" end-time="2026-10-24 15:03:09Z" duration="0.161531" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3948" name="BindInitializesFromReplicaAndRejectsPreviousActorDamage" fullname="Game.UI.Tests.LocalActorHudBindingTests.BindInitializesFromReplicaAndRejectsPreviousActorDamage" methodname="BindInitializesFromReplicaAndRejectsPreviousActorDamage" classname="Game.UI.Tests.LocalActorHudBindingTests" runstate="Runnable" seed="1411553543" result="Failed" start-time="2026-10-24 15:03:09Z" end-time="2026-10-24 15:03:09Z" duration="0.036092" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  原 HUD 需要离散 Bind API，保留单机序列化引用并支持联机 Actor。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.LocalActorHudBindingTests.Bind (System.Object bar, System.Object actor) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\LocalActorHudBindingTests.cs:99
+at Game.UI.Tests.LocalActorHudBindingTests.BindInitializesFromReplicaAndRejectsPreviousActorDamage () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\LocalActorHudBindingTests.cs:34
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3951" name="LateStatusBindingReconstructsIconsAndUnbindClearsThem" fullname="Game.UI.Tests.LocalActorHudBindingTests.LateStatusBindingReconstructsIconsAndUnbindClearsThem" methodname="LateStatusBindingReconstructsIconsAndUnbindClearsThem" classname="Game.UI.Tests.LocalActorHudBindingTests" runstate="Runnable" seed="1891986549" result="Failed" start-time="2026-10-24 15:03:09Z" end-time="2026-10-24 15:03:09Z" duration="0.004575" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  原 HUD 需要离散 Bind API，保留单机序列化引用并支持联机 Actor。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.LocalActorHudBindingTests.Bind (System.Object bar, System.Object actor) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\LocalActorHudBindingTests.cs:99
+at Game.UI.Tests.LocalActorHudBindingTests.LateStatusBindingReconstructsIconsAndUnbindClearsThem () [0x000e6] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\LocalActorHudBindingTests.cs:71
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3950" name="RebindingManaReadsServerStateWithoutSpendingOrRegenerating" fullname="Game.UI.Tests.LocalActorHudBindingTests.RebindingManaReadsServerStateWithoutSpendingOrRegenerating" methodname="RebindingManaReadsServerStateWithoutSpendingOrRegenerating" classname="Game.UI.Tests.LocalActorHudBindingTests" runstate="Runnable" seed="522086490" result="Failed" start-time="2026-10-24 15:03:09Z" end-time="2026-10-24 15:03:09Z" duration="0.002206" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  原 HUD 需要离散 Bind API，保留单机序列化引用并支持联机 Actor。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.LocalActorHudBindingTests.Bind (System.Object bar, System.Object actor) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\LocalActorHudBindingTests.cs:99
+at Game.UI.Tests.LocalActorHudBindingTests.RebindingManaReadsServerStateWithoutSpendingOrRegenerating () [0x0004b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\LocalActorHudBindingTests.cs:56
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3952" name="SharedBindingUsesOriginalComponentsAndClearsOnUnbind" fullname="Game.UI.Tests.LocalActorHudBindingTests.SharedBindingUsesOriginalComponentsAndClearsOnUnbind" methodname="SharedBindingUsesOriginalComponentsAndClearsOnUnbind" classname="Game.UI.Tests.LocalActorHudBindingTests" runstate="Runnable" seed="405238206" result="Failed" start-time="2026-10-24 15:03:09Z" end-time="2026-10-24 15:03:09Z" duration="0.001088" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少共享 HUD 绑定器，不应再创建独立 Online HP 控制器。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.LocalActorHudBindingTests.SharedBindingUsesOriginalComponentsAndClearsOnUnbind () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\LocalActorHudBindingTests.cs:81
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3949" name="StateOnlyReplicaCorrectionReachesOriginalHealthBar" fullname="Game.UI.Tests.LocalActorHudBindingTests.StateOnlyReplicaCorrectionReachesOriginalHealthBar" methodname="StateOnlyReplicaCorrectionReachesOriginalHealthBar" classname="Game.UI.Tests.LocalActorHudBindingTests" runstate="Runnable" seed="1550416843" result="Failed" start-time="2026-10-24 15:03:09Z" end-time="2026-10-24 15:03:09Z" duration="0.007679" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 0.109999999f +/- 0.00100000005f
+  But was:  1.0f
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.LocalActorHudBindingTests.StateOnlyReplicaCorrectionReachesOriginalHealthBar () [0x00066] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\LocalActorHudBindingTests.cs:48
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

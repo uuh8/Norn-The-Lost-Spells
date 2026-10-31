@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="16" result="Failed(Child)" total="16" passed="0" failed="16" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.2769981">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2463" result="Failed" site="Child" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.276998" total="16" passed="0" failed="16" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2520" name="Game.Networking.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Networking.Tests.dll" runstate="Runnable" testcasecount="76" result="Failed" site="Child" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.089149" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26116" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2521" name="Game" fullname="Game" runstate="Runnable" testcasecount="76" result="Failed" site="Child" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.079686" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2522" name="Networking" fullname="Game.Networking" runstate="Runnable" testcasecount="76" result="Failed" site="Child" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.071294" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2523" name="Tests" fullname="Game.Networking.Tests" runstate="Runnable" testcasecount="76" result="Failed" site="Child" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.062443" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2466" name="JoinDungeonIdentityTests" fullname="Game.Networking.Tests.JoinDungeonIdentityTests" classname="Game.Networking.Tests.JoinDungeonIdentityTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.058996" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <output><![CDATA[Error after 1 attempt(s): UnavailableForLegalReasons -  -- Result type: PointsBalanceResult -- Url: https://generators.ai.unity.com -- Trace Id 0d504969-3314-47cd-bcb7-731db536300c => 
+Error after 1 attempt(s): UnavailableForLegalReasons -  -- Result type: SettingsResult -- Url: https://generators.ai.unity.com -- Trace Id 0d504969-3314-47cd-bcb7-731db536300c => 
+]]></output>
+              <test-case id="2467" name="AdmissionDungeonMustMatchBeforeConnectionEpochCanAdvance" fullname="Game.Networking.Tests.JoinDungeonIdentityTests.AdmissionDungeonMustMatchBeforeConnectionEpochCanAdvance" methodname="AdmissionDungeonMustMatchBeforeConnectionEpochCanAdvance" classname="Game.Networking.Tests.JoinDungeonIdentityTests" runstate="Runnable" seed="99787410" result="Failed" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.024365" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  业务回复的地图身份必须通过同一纯验证入口，不能只在 Client UI 比较。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.JoinDungeonIdentityTests.AdmissionDungeonMustMatchBeforeConnectionEpochCanAdvance () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\JoinDungeonIdentityTests.cs:15
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2468" name="ClientConfirmationRequiresTicketDungeonAndCurrentProtocol" fullname="Game.Networking.Tests.JoinDungeonIdentityTests.ClientConfirmationRequiresTicketDungeonAndCurrentProtocol" methodname="ClientConfirmationRequiresTicketDungeonAndCurrentProtocol" classname="Game.Networking.Tests.JoinDungeonIdentityTests" runstate="Runnable" seed="912307107" result="Failed" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.001870" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.JoinDungeonIdentityTests.ClientConfirmationRequiresTicketDungeonAndCurrentProtocol () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\JoinDungeonIdentityTests.cs:33
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="3783" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="708" result="Failed" site="Child" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.137470" total="14" passed="0" failed="14" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26116" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3784" name="Game" fullname="Game" runstate="Runnable" testcasecount="708" result="Failed" site="Child" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.118096" total="14" passed="0" failed="14" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3785" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="708" result="Failed" site="Child" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.096118" total="14" passed="0" failed="14" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3786" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="708" result="Failed" site="Child" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.066737" total="14" passed="0" failed="14" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3244" name="OnlineInventoryPresentationSourceTests" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="14" result="Failed" site="Child" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.061008" total="14" passed="0" failed="14" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3259" name="DisposeClearsPreviousReadReferencesAndRejectsLateSnapshots" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.DisposeClearsPreviousReadReferencesAndRejectsLateSnapshots" methodname="DisposeClearsPreviousReadReferencesAndRejectsLateSnapshots" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="2079380375" result="Failed" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.021984" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少纯线上库存 Presentation Source；不能在 Client 重建有写权限的 Owned 工作区。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.CreateOnlyMemoryCatalog () [0x00061] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="3252" name="ForeignIdentityNeverPublishesAReadModel" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ForeignIdentityNeverPublishesAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.011914" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="3248" name="ForeignIdentityNeverPublishesAReadModel(&quot;RunId&quot;,&quot;foreign-run&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ForeignIdentityNeverPublishesAReadModel(&quot;RunId&quot;,&quot;foreign-run&quot;)" methodname="ForeignIdentityNeverPublishesAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1312172089" result="Failed" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.002194" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[SetUp :   缺少纯线上库存 Presentation Source；不能在 Client 重建有写权限的 Owned 工作区。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.CreateOnlyMemoryCatalog () [0x00061] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:23
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3249" name="ForeignIdentityNeverPublishesAReadModel(&quot;PlayerId&quot;,&quot;foreign-player&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ForeignIdentityNeverPublishesAReadModel(&quot;PlayerId&quot;,&quot;foreign-player&quot;)" methodname="ForeignIdentityNeverPublishesAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1628775110" result="Failed" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.001500" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[SetUp :   缺少纯线上库存 Presentation Source；不能在 Client 重建有写权限的 Owned 工作区。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.CreateOnlyMemoryCatalog () [0x00061] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:23
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3250" name="ForeignIdentityNeverPublishesAReadModel(&quot;InventoryId&quot;,&quot;foreign-inventory&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ForeignIdentityNeverPublishesAReadModel(&quot;InventoryId&quot;,&quot;foreign-inventory&quot;)" methodname="ForeignIdentityNeverPublishesAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1657512889" result="Failed" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.001915" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[SetUp :   缺少纯线上库存 Presentation Source；不能在 Client 重建有写权限的 Owned 工作区。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.CreateOnlyMemoryCatalog () [0x00061] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:23
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3251" name="ForeignIdentityNeverPublishesAReadModel(&quot;GameplayConfigHash&quot;,&quot;ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ForeignIdentityNeverPublishesAReadModel(&quot;GameplayConfigHash&quot;,&quot;ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff&quot;)" methodname="ForeignIdentityNeverPublishesAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="578255624" result="Failed" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.001225" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[SetUp :   缺少纯线上库存 Presentation Source；不能在 Client 重建有写权限的 Owned 工作区。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.CreateOnlyMemoryCatalog () [0x00061] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:23
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="3245" name="ImportKeepsAuthoritativeManaCooldownProgramRevisionAndSpellUses" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ImportKeepsAuthoritativeManaCooldownProgramRevisionAndSpellUses" methodname="ImportKeepsAuthoritativeManaCooldownProgramRevisionAndSpellUses" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="2076300768" result="Failed" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.001618" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少纯线上库存 Presentation Source；不能在 Client 重建有写权限的 Owned 工作区。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.CreateOnlyMemoryCatalog () [0x00061] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3256" name="InvalidReplacementLeavesPreviousInventoryAndResourcesIntact" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidReplacementLeavesPreviousInventoryAndResourcesIntact" methodname="InvalidReplacementLeavesPreviousInventoryAndResourcesIntact" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="30256379" result="Failed" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.001614" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少纯线上库存 Presentation Source；不能在 Client 重建有写权限的 Owned 工作区。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.CreateOnlyMemoryCatalog () [0x00061] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3258" name="MissingBagAndUnsupportedCapabilitiesFailClosed" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.MissingBagAndUnsupportedCapabilitiesFailClosed" methodname="MissingBagAndUnsupportedCapabilitiesFailClosed" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1351272238" result="Failed" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.001430" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少纯线上库存 Presentation Source；不能在 Client 重建有写权限的 Owned 工作区。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.CreateOnlyMemoryCatalog () [0x00061] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3255" name="MissingResourceOrEligibilityStateNeverUsesClientDefaults" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.MissingResourceOrEligibilityStateNeverUsesClientDefaults" methodname="MissingResourceOrEligibilityStateNeverUsesClientDefaults" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1424285861" result="Failed" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.001383" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少纯线上库存 Presentation Source；不能在 Client 重建有写权限的 Owned 工作区。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.CreateOnlyMemoryCatalog () [0x00061] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3247" name="MutableIncomingArraysCannotRewritePublishedValues" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.MutableIncomingArraysCannotRewritePublishedValues" methodname="MutableIncomingArraysCannotRewritePublishedValues" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="800570637" result="Failed" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.001325" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少纯线上库存 Presentation Source；不能在 Client 重建有写权限的 Owned 工作区。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.CreateOnlyMemoryCatalog () [0x00061] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3254" name="OrphanInstalledCardAndFlattenedBackpackAreRejected" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.OrphanInstalledCardAndFlattenedBackpackAreRejected" methodname="OrphanInstalledCardAndFlattenedBackpackAreRejected" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1510288444" result="Failed" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.001606" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少纯线上库存 Presentation Source；不能在 Client 重建有写权限的 Owned 工作区。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.CreateOnlyMemoryCatalog () [0x00061] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3257" name="ReadSourceDoesNotHandleAuthorityRequestsOrRegenerateResources" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ReadSourceDoesNotHandleAuthorityRequestsOrRegenerateResources" methodname="ReadSourceDoesNotHandleAuthorityRequestsOrRegenerateResources" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1935782677" result="Failed" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.001452" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少纯线上库存 Presentation Source；不能在 Client 重建有写权限的 Owned 工作区。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.CreateOnlyMemoryCatalog () [0x00061] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3246" name="StableReadInterfacesInstallNewValuesWithoutReplacingUiSource" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.StableReadInterfacesInstallNewValuesWithoutReplacingUiSource" methodname="StableReadInterfacesInstallNewValuesWithoutReplacingUiSource" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="977328290" result="Failed" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.001535" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少纯线上库存 Presentation Source；不能在 Client 重建有写权限的 Owned 工作区。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.CreateOnlyMemoryCatalog () [0x00061] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3253" name="WrongEpochAndStaleSequenceCannotOverwriteCurrentState" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.WrongEpochAndStaleSequenceCannotOverwriteCurrentState" methodname="WrongEpochAndStaleSequenceCannotOverwriteCurrentState" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="2014494343" result="Failed" start-time="2026-10-25 18:01:37Z" end-time="2026-10-25 18:01:37Z" duration="0.001460" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少纯线上库存 Presentation Source；不能在 Client 重建有写权限的 Owned 工作区。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.CreateOnlyMemoryCatalog () [0x00061] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:23
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

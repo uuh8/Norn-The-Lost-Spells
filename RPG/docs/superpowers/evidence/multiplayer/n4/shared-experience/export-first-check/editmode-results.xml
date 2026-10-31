@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-24 23:54:16Z" end-time="2026-10-24 23:54:24Z" duration="7.4887433">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2420" result="Failed" site="Child" start-time="2026-10-24 23:54:16Z" end-time="2026-10-24 23:54:24Z" duration="7.488743" total="4" passed="2" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2413" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="61" result="Failed" site="Child" start-time="2026-10-24 23:54:16Z" end-time="2026-10-24 23:54:23Z" duration="6.914982" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12136" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2414" name="Game" fullname="Game" runstate="Runnable" testcasecount="61" result="Failed" site="Child" start-time="2026-10-24 23:54:16Z" end-time="2026-10-24 23:54:23Z" duration="6.825776" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2415" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="61" result="Failed" site="Child" start-time="2026-10-24 23:54:16Z" end-time="2026-10-24 23:54:23Z" duration="6.725900" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2416" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="61" result="Failed" site="Child" start-time="2026-10-24 23:54:17Z" end-time="2026-10-24 23:54:23Z" duration="6.626434" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2409" name="SharedGameplayHudAuthoringTests" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-24 23:54:17Z" end-time="2026-10-24 23:54:23Z" duration="6.526748" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2412" name="Install_RejectsUnsavedOrFormalSourceScenesBeforeMutation" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.Install_RejectsUnsavedOrFormalSourceScenesBeforeMutation" methodname="Install_RejectsUnsavedOrFormalSourceScenesBeforeMutation" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" seed="448703085" result="Passed" start-time="2026-10-24 23:54:17Z" end-time="2026-10-24 23:54:17Z" duration="0.033123" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2411" name="Preview_ReusesFormalHierarchyAndAssetsWithoutSinglePlayerAuthority" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.Preview_ReusesFormalHierarchyAndAssetsWithoutSinglePlayerAuthority" methodname="Preview_ReusesFormalHierarchyAndAssetsWithoutSinglePlayerAuthority" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" seed="1326096112" result="Failed" start-time="2026-10-24 23:54:17Z" end-time="2026-10-24 23:54:23Z" duration="6.379215" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: (960.00, 540.00, 0.00)
+  But was:  (0.00, 0.00, 0.00)
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.AssertAncestorLayout (UnityEngine.Transform source, UnityEngine.Transform clone) [0x0002f] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:112
+at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.Preview_ReusesFormalHierarchyAndAssetsWithoutSinglePlayerAuthority () [0x0029e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:70
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2410" name="SharedHudExporter_ProvidesExplicitInstallAndVerifyEntryPoints" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.SharedHudExporter_ProvidesExplicitInstallAndVerifyEntryPoints" methodname="SharedHudExporter_ProvidesExplicitInstallAndVerifyEntryPoints" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" seed="404904727" result="Passed" start-time="2026-10-24 23:54:23Z" end-time="2026-10-24 23:54:23Z" duration="0.001232" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="3739" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="686" result="Failed" site="Child" start-time="2026-10-24 23:54:23Z" end-time="2026-10-24 23:54:24Z" duration="0.470198" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12136" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3740" name="Game" fullname="Game" runstate="Runnable" testcasecount="686" result="Failed" site="Child" start-time="2026-10-24 23:54:23Z" end-time="2026-10-24 23:54:24Z" duration="0.435103" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3741" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="686" result="Failed" site="Child" start-time="2026-10-24 23:54:23Z" end-time="2026-10-24 23:54:24Z" duration="0.270994" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3742" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="686" result="Failed" site="Child" start-time="2026-10-24 23:54:23Z" end-time="2026-10-24 23:54:24Z" duration="0.244337" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3338" name="SharedInventoryPresentationTests" fullname="Game.Run.Tests.SharedInventoryPresentationTests" classname="Game.Run.Tests.SharedInventoryPresentationTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-24 23:54:23Z" end-time="2026-10-24 23:54:24Z" duration="0.143588" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3345" name="HeldHudWithoutReadySourceHidesSerializedPlaceholderIconsAtStartup" fullname="Game.Run.Tests.SharedInventoryPresentationTests.HeldHudWithoutReadySourceHidesSerializedPlaceholderIconsAtStartup" methodname="HeldHudWithoutReadySourceHidesSerializedPlaceholderIconsAtStartup" classname="Game.Run.Tests.SharedInventoryPresentationTests" runstate="Runnable" seed="392314177" result="Failed" start-time="2026-10-24 23:54:24Z" end-time="2026-10-24 23:54:24Z" duration="0.045209" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Runtime 未获可信来源时不能显示从单机作者场景带来的占位资产。
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.SharedInventoryPresentationTests.HeldHudWithoutReadySourceHidesSerializedPlaceholderIconsAtStartup () [0x000f2] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\SharedInventoryPresentationTests.cs:161
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

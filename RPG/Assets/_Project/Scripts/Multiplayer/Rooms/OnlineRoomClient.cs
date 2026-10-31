@@ -178,7 +178,10 @@ namespace Game.Multiplayer
             JoinTicketReply ticket;
             try { ticket = JsonUtility.FromJson<JoinTicketReply>(_body); } catch (ArgumentException) { _code = "InvalidTicketReply"; yield break; }
             _body = null; // 票只留在握手对象中，不写Client存档或UI视图。
-            if (ticket == null || ticket.RoomId != _room.RoomId || ticket.PlayerId != _account.PlayerId || ticket.RunId != _room.RunId || ticket.RoomEpoch != _room.RoomEpoch || _profile.ConnectionPrefab == null)
+            // Room 的地图是业务授权的入口；Ticket 即使其他身份相同，也不能把当前玩家送往另一张地图。
+            // 先比对再创建连接对象，避免在 UI 看起来入场后才发现“门和实际副本不一致”。
+            if (ticket == null || ticket.RoomId != _room.RoomId || ticket.PlayerId != _account.PlayerId || ticket.RunId != _room.RunId || ticket.RoomEpoch != _room.RoomEpoch ||
+                !DungeonIdentityRules.Matches(_room.DungeonId, ticket.DungeonId) || _profile.ConnectionPrefab == null)
             { _code = "InvalidTicketReply"; yield break; }
             var root = Instantiate(_profile.ConnectionPrefab); _manager = root.GetComponent<RoomNetworkManager>(); _auth = root.GetComponent<JoinTicketAuthenticator>();
             if (root.GetComponent<MovementNetworkChannel>() == null) root.AddComponent<MovementNetworkChannel>();
@@ -186,6 +189,8 @@ namespace Game.Multiplayer
             double deadline = Time.realtimeSinceStartupAsDouble + 12;
             while (Time.realtimeSinceStartupAsDouble < deadline && NetworkClient.active && !_auth.ClientAuthenticated) yield return _connectionPoll;
             if (!_auth.ClientAuthenticated || !NetworkClient.isConnected) { _code = "AdmissionFailed"; StopConnection(); }
+            else if (_auth.ClientIdentity == null || !DungeonIdentityRules.Matches(_room.DungeonId, _auth.ClientIdentity.DungeonId))
+            { _code = "AdmissionDungeonMismatch"; StopConnection(); }
         }
         private IEnumerator Connected()
         {

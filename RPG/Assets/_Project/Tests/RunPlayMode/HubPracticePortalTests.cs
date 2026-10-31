@@ -13,6 +13,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using UnityEngine.UI;
 
 namespace Game.Run.Tests
 {
@@ -29,12 +30,13 @@ namespace Game.Run.Tests
         private bool _background;
         private InputTestFixture _inputFixture;
         private Keyboard _keyboard;
+        private Mouse _mouse;
         [UnitySetUp]public IEnumerator InitializePractice()
         {
             _background=Application.runInBackground;Application.runInBackground=true;Time.timeScale=1;
             // UnitySetUp先于普通SetUp；嵌入Fixture以保证Scene里的Action属于隔离Runtime。
             _inputFixture=new InputTestFixture();_inputFixture.Setup();
-            _keyboard=InputSystem.AddDevice<Keyboard>();InputSystem.AddDevice<Mouse>();
+            _keyboard=InputSystem.AddDevice<Keyboard>();_mouse=InputSystem.AddDevice<Mouse>();
             EditorWindow.GetWindow(Type.GetType("UnityEditor.GameView,UnityEditor")).Focus();
             // 官方InputTestFixture隔离整套测试输入Runtime，真实设备不参与测试也不会被禁用。
             _files=new MemoryFiles();_repository=null;SceneManager.sceneLoaded+=Loaded;
@@ -139,6 +141,12 @@ namespace Game.Run.Tests
             float end=Time.realtimeSinceStartup+6;
             while(boss.IsInvulnerable && Time.realtimeSinceStartup<end)yield return null;
             Assert.That(boss.IsInvulnerable,Is.False);
+            var presentation = CombatPresentationHost.Active;
+            Assert.That(presentation != null && presentation.IsBound, Is.True);
+            var bossHud = presentation.HudRoot.GetComponentInChildren<BossHealthBarController>(true);
+            int displayedBoss = (int)typeof(BossHealthBarController).GetField("_bossId",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(bossHud);
+            Assert.That(displayedBoss, Is.EqualTo(boss.Id), "P8 实际 Encounter 必须初始化同一份常驻原 Boss 血条。");
             boss.ReceiveHit(new DamageRequest(12345,1,999999,DamageType.True,boss.transform.position,Vector3.forward));
             Assert.That(encounter.State,Is.EqualTo(BossEncounterState.Completed));
         }
@@ -205,7 +213,9 @@ namespace Game.Run.Tests
             Assert.That(HubPracticeSession.Current,Is.Null,"走入范围不能自动传送");
             InputSystem.QueueStateEvent(_keyboard,new UnityEngine.InputSystem.LowLevel.KeyboardState(Key.F));InputSystem.Update();yield return null;
             InputSystem.QueueStateEvent(_keyboard,new UnityEngine.InputSystem.LowLevel.KeyboardState());InputSystem.Update();
-            Assert.That(HubPracticeSession.Current,Is.Not.Null,"范围内F应申请进入");
+            Assert.That(HubPracticeSession.Current,Is.Null,"F 只打开模式选择，不能跳过原单机按钮。");
+            yield return ChooseSinglePlayerFromOriginalDialog();
+            Assert.That(HubPracticeSession.Current,Is.Not.Null,"点击单机后才申请进入。");
         }
         [UnityTest]public IEnumerator P7FCollectsFourKindsAndReturnsOriginalIdentities(){yield return Practice("P7",true);}
         [UnityTest]public IEnumerator P8FCollectsFourKindsAndReturnsOriginalIdentities(){yield return Practice("P8",true);}
@@ -365,6 +375,36 @@ namespace Game.Run.Tests
             Assert.That(SceneManager.GetSceneByPath(target).isLoaded,Is.True);
             Assert.That(HubPracticeSession.Current,Is.Not.Null);
         }
+        private IEnumerator ChooseSinglePlayerFromOriginalDialog()
+        {
+            Button single = null; float deadline = Time.realtimeSinceStartup + 5f;
+            while (Time.realtimeSinceStartup < deadline)
+            {
+                var dialog = UnityEngine.Object.FindAnyObjectByType<DungeonEntryDialogController>();
+                if (dialog != null)
+                    single = (Button)typeof(DungeonEntryDialogController).GetField("_single",
+                        System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).GetValue(dialog);
+                if (single != null && single.gameObject.activeInHierarchy) break;
+                yield return null;
+            }
+            Assert.That(single != null && single.gameObject.activeInHierarchy, Is.True, "F 必须打开现有模式选择 UI。");
+            Assert.That(HubPracticeSession.Current, Is.Null, "选择前不创建练习库存上下文。");
+            // 本 Fixture 从“已进入 Hub 的角色”开始，只提供已登录的 UI 前置；真实账号/Profile 门禁由独立业务/Native验收覆盖。
+            // 该事件不创建 Token、账号或生产资产，也不能绕过下方原 Button 的鼠标处理。
+            EventBus<OnlineLobbyChangedEvent>.Publish(new OnlineLobbyChangedEvent { Authenticated = true });
+            yield return null;
+            Canvas.ForceUpdateCanvases();
+            Assert.That(single.IsInteractable(), Is.True);
+            var rect = (RectTransform)single.transform;
+            var canvas = single.GetComponentInParent<Canvas>();
+            var camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+            Vector2 point = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(rect.rect.center));
+            // InputTestFixture 隔离了真实设备；跨帧移动、按下与释放，让原 EventSystem/Raycast/Button 完成点击。
+            _inputFixture.Set(_mouse.position, point); yield return null;
+            _inputFixture.Press(_mouse.leftButton); yield return null;
+            _inputFixture.Release(_mouse.leftButton); yield return null;
+        }
+
         private IEnumerator Practice(string suffix,bool collect=false,bool full=false)
         {
             _before=AssetSnapshot(_session.Profile);var gate=Portal(suffix);string target=gate.ScenePath;
@@ -372,11 +412,23 @@ namespace Game.Run.Tests
             Move(_player,gate.transform.position+Vector3.up*.2f);
             // TestRunner Coroutine 可先于交互组件 Update 恢复；等本帧结束再按键，避免读取移动前的站点缓存。
             yield return new WaitForEndOfFrame();_inputFixture.Press(_keyboard.fKey);yield return null;_inputFixture.Release(_keyboard.fKey);
+            yield return ChooseSinglePlayerFromOriginalDialog();
             float end=Time.realtimeSinceStartup+25;Scene practice=default;
             while(Time.realtimeSinceStartup<end){practice=SceneManager.GetSceneByPath(target);if(practice.IsValid() && practice.isLoaded)break;yield return null;}
             Assert.That(practice.IsValid() && practice.isLoaded,Is.True,"接触后未加载 "+target);
             yield return null;yield return null;Assert.That(HubPracticeSession.Current,Is.Not.Null);Assert.That(Find<SinglePlayerInventorySession>(practice),Is.Not.Null,"练习Scene必须有真实库存工作区");
             var player=Find<WizardController>(practice);Assert.That(player,Is.Not.Null);
+            var sharedHud = CombatPresentationHost.Active;
+            Assert.That(sharedHud, Is.Not.Null, "公共工作区必须自动装配战斗 HUD，不能要求每张新地图再放置一份。");
+            Assert.That(sharedHud.IsBound, Is.True);
+            Assert.That(sharedHud.Actor, Is.SameAs(player.gameObject));
+            Assert.That(sharedHud.InventorySource, Is.SameAs(Find<PracticeInventoryWorkspace>(practice).Session));
+            Assert.That(sharedHud.gameObject.scene.name, Is.EqualTo("DontDestroyOnLoad"),
+                "必须在真实 PlayMode 验证纯 UI 常驻；EditMode 引用相同不足以证明跨图存活。");
+            Assert.That(player.gameObject.scene.handle, Is.EqualTo(practice.handle));
+            var originalHud = Find<PlayerHealthBar>(practice);
+            Assert.That(originalHud == null || !originalHud.gameObject.activeInHierarchy, Is.True,
+                "同源常驻 HUD 接管后，原场景血条不能再绘制第二份。");
             // 原P7首进主动打开教学说明并暂停；按正常玩家流程关闭，不强改TimeScale绕过暂停所有者。
             var guide=Find<GameplayGuideController>(practice);if(guide!=null)guide.Close();yield return null;Assert.That(Time.timeScale,Is.EqualTo(1));
             if(suffix=="P8"){yield return CompleteBoss(practice);yield return null;}
@@ -424,8 +476,8 @@ namespace Game.Run.Tests
                 unpicked=Spawn(practice,inventory,player.transform,"Food/Apple").RuntimeInstanceId;
                 if(suffix=="P7" && !full)yield return ProbePickupProfiler();
                 yield return new WaitForEndOfFrame();
-                System.IO.Directory.CreateDirectory("TestResults/SinglePlayer/M6-T3-ItemCarry");
-                ScreenCapture.CaptureScreenshot("TestResults/SinglePlayer/M6-T3-ItemCarry/"+suffix+"-pickup.png");
+                // 本例验证输入、库存与回程，不依赖异步屏幕截图是否可用。外观证据由独立可见
+                // Native/人工验收保存；不因截图 IO 失败而中断真实资产链，也不把缺图写成外观已通过。
             }
             // 原关卡的玩家/法术与世界有独立初始化，实际施法也不能写进据点库存。
             // 此处只验证物品往返；真实施法与扣费由研究台/OwnedWand 的实射用例验证。
@@ -435,6 +487,9 @@ namespace Game.Run.Tests
             while(Time.realtimeSinceStartup<end){var hub=SceneManager.GetSceneByPath(Hub);if(hub.IsValid() && hub.isLoaded && _session!=null && _session.gameObject.scene==hub)break;yield return null;}
             yield return null;yield return null;Assert.That(_scene.path,Is.EqualTo(Hub));Assert.That(_scene.isLoaded,Is.True);Assert.That(_session,Is.Not.Null);
             Assert.That(HubPracticeSession.Current,Is.Null);
+            Assert.That(CombatPresentationHost.Active, Is.SameAs(sharedHud), "回 Hub 保留同一份纯界面资源，下一次副本复用。");
+            Assert.That(sharedHud.IsBound, Is.False);
+            Assert.That(sharedHud.Actor, Is.Null); Assert.That(sharedHud.InventorySource, Is.Null);
             if(!collect)Assert.That(AssetSnapshot(_session.Profile),Is.EqualTo(_before));
             else
             {

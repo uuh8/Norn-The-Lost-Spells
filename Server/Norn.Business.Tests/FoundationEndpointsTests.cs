@@ -55,10 +55,10 @@ public sealed class FoundationEndpointsTests : IClassFixture<WebApplicationFacto
         Assert.Equal(ProtocolCompatibility.CurrentVersion, reply.ProtocolVersion);
     }
 
-    // Theory 的两组输入分别验证缺省版本 0 和不兼容版本 2，合计两个用例。
+    // Theory 验证缺省版本 0 与尚未强制地图身份的旧应用版本 1；这与 Protobuf 库版本无关。
     [Theory]
     [InlineData(0u)]
-    [InlineData(2u)]
+    [InlineData(1u)]
     public async Task Ping_IncompatibleVersion_IsRejected(uint version)
     {
         ProtocolPingRequest request = NewRequest();

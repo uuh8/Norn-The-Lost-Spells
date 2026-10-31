@@ -14,11 +14,12 @@ namespace Game.Character
     // 使 Awake 中的 GetComponent 成为可靠依赖读取，而不是每帧查找或运行到一半才发现组件缺失。
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(GroundChecker))]
-    public abstract class PlayerControllerBase : MonoBehaviour, IPlayerMovementSimulation
+    public abstract class PlayerControllerBase : MonoBehaviour, IPlayerMovementSimulation, ICombatActorPresentation
     {
         [SerializeField] private PlayerExecutionMode _executionMode;
         private bool _initialized, _inputSubscribed, _isSimulating, _isReplaying;
         private bool _jumpPressedPending, _dashPressedPending, _inputSuppressed;
+        private bool _onlineInputBlocked;
         private bool _waitJumpRelease, _waitDashRelease, _hasFocus = true;
         private bool _hasReplicaPresentation;
         private PlayerLocomotionKind _lastReplicaPresentation;
@@ -29,6 +30,8 @@ namespace Game.Character
         public bool CanPlayMovementFeedback => OwnsLocalInput && !_isReplaying;
         public float SimulationDeltaTime => _simulationDeltaTime;
         public Transform CameraRoot => _cameraRoot;
+        // 基础近战默认没有准心；远程角色覆写能力。公共 HUD 只重放默认值，不改原瞄准/蓄力逻辑。
+        public virtual bool DefaultCrosshairVisible => false;
 
         /// <summary>
         /// 组合层把 Prefab 实例放在 inactive hierarchy 后先配置，再激活触发 Awake。
@@ -39,6 +42,7 @@ namespace Game.Character
             if (_executionMode == mode) return;
             UnbindLocalInput();
             _executionMode = mode;
+            _onlineInputBlocked = false;
             ClearOnlineInput();
             if (!_initialized) return;
             if (!OwnsLocalInput)
@@ -61,7 +65,7 @@ namespace Game.Character
         /// </summary>
         public PlayerSimulationFrame SampleInput(uint sequence, uint epoch, bool suppressed = false)
         {
-            bool blocked = suppressed || !OwnsLocalInput || !_hasFocus || _inputActions == null;
+            bool blocked = suppressed || _onlineInputBlocked || !OwnsLocalInput || !_hasFocus || _inputActions == null;
             if (blocked)
             {
                 ClearOnlineInput();
@@ -209,7 +213,25 @@ namespace Game.Character
             SyncAnimatorParameters();
         }
 
-        /// <summary>断线／菜单／失焦只清本地意图；冷却与运动状态仍由服务器 Tick 决定。</summary>
+        /// <summary>
+        /// 组合层同步 UI Owner、Frozen、连接和死亡的当前输入门；它不是一份模拟输入，也不等待 30Hz Tick。
+        /// 清 pending 与解除门是不同操作：关 UI 后的全新 performed 必须立即有效，但 UI 内已按住的键仍须释放。
+        /// Focus 由本角色的 Unity 回调维护，外部 Owner 解除不能绕过另一个仍存在的门。
+        /// </summary>
+        public void SetOnlineInputBlocked(bool blocked)
+        {
+            if (_executionMode != PlayerExecutionMode.Prediction) return;
+            _onlineInputBlocked = blocked;
+            if (blocked) { ClearOnlineInput(); return; }
+            _inputSuppressed = !_hasFocus;
+            if (_inputActions == null) return;
+            // 没有按住的键不需要再等一份“释放采样”；否则关 UI 后 0..33ms 的新按键会被误当成旧按住。
+            // 仍按住的键保留栅栏，后续 canceled 负责解除，允许 release/new press 都发生于两次 Tick 之间。
+            if (!_inputActions.Player.Jump.IsPressed()) _waitJumpRelease = false;
+            if (!_inputActions.Player.Dash.IsPressed()) _waitDashRelease = false;
+        }
+
+        /// <summary>断线／菜单／失焦清除旧本地意图；是否重新开放由独立的当前门决定，冷却与运动状态仍归服务器。</summary>
         public void ClearOnlineInput()
         {
             _inputSuppressed = true;
@@ -604,8 +626,10 @@ namespace Game.Character
             EventBus<UserSettingsChangedEvent>.Subscribe(OnUserSettingsChanged);
             ApplyUserSettings(UserSettingsService.Current);
             _inputActions.Player.Jump.performed += OnJumpPerformed;
+            _inputActions.Player.Jump.canceled += OnJumpCanceled;
             _inputActions.Player.Attack.performed += OnAttackPerformed;
             _inputActions.Player.Dash.performed += OnDashPerformed;
+            _inputActions.Player.Dash.canceled += OnDashCanceled;
             _inputActions.Player.Enable();
             _inputSubscribed = true;
             _inputSuppressed = false;
@@ -619,8 +643,10 @@ namespace Game.Character
             {
                 EventBus<UserSettingsChangedEvent>.Unsubscribe(OnUserSettingsChanged);
                 _inputActions.Player.Jump.performed -= OnJumpPerformed;
+                _inputActions.Player.Jump.canceled -= OnJumpCanceled;
                 _inputActions.Player.Attack.performed -= OnAttackPerformed;
                 _inputActions.Player.Dash.performed -= OnDashPerformed;
+                _inputActions.Player.Dash.canceled -= OnDashCanceled;
                 _inputActions.Player.Disable();
                 _inputSubscribed = false;
             }
@@ -683,9 +709,15 @@ namespace Game.Character
 
         private void OnJumpPerformed(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
         {
-            if (!OwnsLocalInput || Time.timeScale == 0f || !_hasFocus) return;
+            if (!OwnsLocalInput || Time.timeScale == 0f || !_hasFocus || _onlineInputBlocked) return;
             if (_executionMode == PlayerExecutionMode.SinglePlayer) JumpBufferCounter = _jumpBufferTime;
             else if (!_inputSuppressed && !_waitJumpRelease) _jumpPressedPending = true;
+        }
+
+        private void OnJumpCanceled(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
+        {
+            // canceled 证明旧按住已结束。不能清 pending：正常短按可在下一次采样前已经释放，边沿仍要消费一次。
+            _waitJumpRelease = false;
         }
 
         /// <summary>
@@ -705,9 +737,14 @@ namespace Game.Character
 
         private void OnDashPerformed(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
         {
-            if (!OwnsLocalInput || Time.timeScale == 0f || !_hasFocus) return;
+            if (!OwnsLocalInput || Time.timeScale == 0f || !_hasFocus || _onlineInputBlocked) return;
             if (_executionMode == PlayerExecutionMode.SinglePlayer) DashBufferCounter = _dashBufferTime;
             else if (!_inputSuppressed && !_waitDashRelease) _dashPressedPending = true;
+        }
+
+        private void OnDashCanceled(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
+        {
+            _waitDashRelease = false;
         }
 
         private void OnUserSettingsChanged(UserSettingsChangedEvent settingsEvent)

@@ -1,0 +1,113 @@
+{
+  "Stage": "N4-player-experience-remediation",
+  "Date": "2026-10-29",
+  "Status": "CodeAndBuildReadyForManualNativeCheck",
+  "ImplementationComplete": true,
+  "RemediationVerificationComplete": false,
+  "LocalTechnicalChecksPassed": true,
+  "N4Complete": false,
+  "FormalOnlineExperienceAccepted": false,
+  "ReleaseReady": false,
+  "GameplayHash": "523f059b2129efd0976431b64c6a51fdba0faa1a98304370fdc4dda4376f3f70",
+  "VersionUpgrades": false,
+  "ProtocolSchemaChanged": false,
+  "Tests": {
+    "CoreEditModePassed": 78,
+    "SourceAndExportAuthoringPassed": 11,
+    "DifferentEditModeCases": 89,
+    "NpcPlayModePassed": 5,
+    "ExistingPlayerAndPhysicsPlayModePassed": 5,
+    "ViewportPlayModePassed": 1,
+    "DifferentPlayModeCasesAcrossSessions": 11,
+    "FullProjectRunAllClaimed": false,
+    "RealMySqlBusinessSuiteRerun": false,
+    "RetainedAttempts": [
+      "red-layout-latency.xml",
+      "red-boss-animation.xml",
+      "blocked-test-attribute.json",
+      "green9-fixture-failure1.xml",
+      "green88-layout-assertion1.xml",
+      "ui-no-camera-attempt",
+      "ui-foreign-canvas-attempt.xml",
+      "ui-inactive-dialog-attempt.xml"
+    ]
+  },
+  "Movement": {
+    "AuthoritySimulationHz": 30,
+    "SnapshotHzConfigured": 30,
+    "NetworkPumpHzConfigured": 60,
+    "MinimumPlaybackBufferSeconds": 0.05,
+    "MaximumPlaybackBufferSeconds": 0.2,
+    "RealEndToEndLatencyMilliseconds": null,
+    "DeterministicQualityScope": "20 simulated seconds, 30Hz snapshots and 60Hz sampling, injected network conditions; not public-network or Native latency measurement",
+    "StableMovingFrameRatio": 1.0,
+    "Injected100ms20ms1PercentMovingFrameRatio": 1.0,
+    "Injected200ms40ms3PercentMovingFrameRatio": 0.9902,
+    "HotPathAllocationEvents": 0,
+    "HotPathPositiveCalibrationPassed": true,
+    "NativeFullFrameAllocationClaimedAtThisPoint": false
+  },
+  "Ui": {
+    "SharedSinglePlayerAndOnlineAuthoring": true,
+    "ActualGameViewSizes": ["1920x1080", "2560x1440", "2560x1600"],
+    "ScreenAndCanvasRenderingDisplaySizeChecked": true,
+    "GetWorldCornersAndActualTenSlotUnionChecked": true,
+    "BossNamePhaseAndStageDoNotOverlapHeldSlots": true,
+    "BossAndStageTopInsetDesignPixels": 120,
+    "PngCount": 6,
+    "PersistedPngDimensionsChecked": true,
+    "Latest2560x1600PngVisuallyReviewed": true,
+    "Scope": "Editor isolated original UGUI layout with Game adapters disabled and test-only clear camera; not Native combat or live inventory data",
+    "ApplicationCanvasesPreserved": "Transparent PortalTransitionFade and application Canvas without active Graphics; visible foreign Canvas rejected"
+  },
+  "Npc": {
+    "WorldToBossDirectionalBlendTreePassed": true,
+    "WorldToOrdinaryEnemyRunAndStopPassed": true,
+    "BossWalkingAndUpperBodyCastPassed": true,
+    "ReplicaGameplayAuthorityNotEnabled": true,
+    "TeleportAnimationPlaybackTickGuardPassed": true,
+    "CompleteBossTeleportPositionAndLaterPhasesClaimed": false
+  },
+  "SourceSceneAudit": {
+    "File": "source-ui-audit.json",
+    "AllowedObjects": 9,
+    "AllowedUiFields": 28,
+    "ReconstructedBaselineBytesMatch": true
+  },
+  "Builds": {
+    "Client": "builds/client.json",
+    "Server": "builds/server.json",
+    "BothSucceeded": true,
+    "ErrorsEach": 0,
+    "ActualResourceGameplayHashesMatch": true,
+    "HashEvidence": "builds/hash-verification.json"
+  },
+  "Native": {
+    "LatestPairAcceptancePending": true,
+    "LatestInteractiveAttempt": "AbortedBeforeInputBecauseTargetWindowFocusWasNotAcquired",
+    "ClientStartupSmokeOnly": true,
+    "LatestNativeSnapshotHzOrFullFrameGcClaimed": false,
+    "OwnedTestWindowsClosed": true,
+    "CleanupEvidence": "native-window-cleanup.json",
+    "PreviousUserFeedback": "user-feedback.md",
+    "PreviousPairFramesWereZeroAndNotUsedAsPerformanceEvidence": true
+  },
+  "Preservation": {
+    "BaselineFiles": 12,
+    "UnchangedFiles": 10,
+    "AuthorizedSourceUiSceneChanges": 2,
+    "SourceUiOnlyChangesIndependentlyReconstructed": true,
+    "Evidence": "preservation-final.json",
+    "BusinessAndPreexistingPrivateDatabaseLeftReady": true,
+    "SystemMySqlAndEditorStopped": false
+  },
+  "Limits": [
+    "50ms is a playback buffer target, not measured total input-to-display latency",
+    "Full P7 clearance, later Boss phases/kill and subjective feel remain manual N4 gates",
+    "Single unreliable input edge redundancy remains a separate improvement",
+    "N5 shared material world and N6 settlement are not implemented by this fix",
+    "Linux/public network/IL2CPP/D3D12/encryption acceptance not established",
+    "Two inherited native Built-in Resource startup errors remain unresolved"
+  ],
+  "NewGitCommitOrPush": false
+}

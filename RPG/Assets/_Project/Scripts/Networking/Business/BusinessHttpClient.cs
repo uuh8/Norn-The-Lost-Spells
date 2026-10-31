@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using Game.NetworkProtocol;
 using UnityEngine.Networking;
 
 namespace Game.Networking
@@ -7,6 +8,8 @@ namespace Game.Networking
     /// <summary>业务 HTTP Adapter；与 Mirror/KCP 连接无关，不保存身份或操作本地资产。</summary>
     public static class BusinessHttpClient
     {
+        // HTTP 与 KCP 握手共用应用版本；缓存文本只在类型初始化分配，避免升级协议时漏改某条请求路径。
+        private static readonly string ApplicationProtocol = ProtocolCompatibility.CurrentVersion.ToString(System.Globalization.CultureInfo.InvariantCulture);
         public static bool IsAllowedBaseUrl(string value)
         {
             return Uri.TryCreate(value, UriKind.Absolute, out var uri) && string.IsNullOrEmpty(uri.UserInfo) &&
@@ -26,7 +29,7 @@ namespace Game.Networking
                 request.SetRequestHeader("Content-Type", "application/json");
             }
             if (!string.IsNullOrEmpty(token)) request.SetRequestHeader("Authorization", "Bearer " + token);
-            request.SetRequestHeader("X-Norn-Protocol", "1");
+            request.SetRequestHeader("X-Norn-Protocol", ApplicationProtocol);
             request.SetRequestHeader("X-Norn-Manifest", manifest);
             return request;
         }

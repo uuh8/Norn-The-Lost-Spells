@@ -84,15 +84,17 @@ namespace Game.UI
             _paletteRoot.sizeDelta=new Vector2(shown*86,104);_capacity.text="携带背包 · 已占 "+used+" / "+cells+" 格";
             _bagEquipment.text="当前背包："+bagName+"\n装备本体位于独立装备位";
             _containerDetails.text="";
-            if(_inventory.Session.TryCopyContainer(_inventory.SelectedItemId,_composition,out int n,out ulong total,out ulong capacity))
+            // 详情读取与格子相同的只读来源，不能显示线上格子却从单机存档取容器组分。
+            var source=_inventory.PresentationSource;
+            if(source!=null && source.TryCopyContainer(_inventory.SelectedItemId,_composition,out int n,out ulong total,out ulong capacity))
             {
                 string text="容器："+total+" / "+capacity+" · 剩余 "+(capacity-total)+"\n";
                 // 最多八组分用两列文字；有限详情区域保留全部组分与操作提示，不把后几项截掉。
                 for(int i=0;i<n;i++)text+=MaterialName(_composition[i].MaterialKey)+" "+_composition[i].Quantity+(i%2==1 || i==n-1?"\n":"    |    ");
                 _containerDetails.text=text+"E 采集 · H 持续撒出 · G 投掷破碎\n关闭面板后靠近材料操作。";
             }
-            if(_pickup!=null)_pickup.gameObject.SetActive(_inventory.Session.ReadOnly.TryGetView(_inventory.SelectedItemId,out var selected) && selected.Location.Kind==ItemLocationKind.WorldItem);
-            if(_drop!=null)_drop.gameObject.SetActive(_inventory.Session.ReadOnly.TryGetView(_inventory.SelectedItemId,out var discard)
+            if(_pickup!=null)_pickup.gameObject.SetActive(!_inventory.PresentationIsReadOnly && source?.ReadOnly!=null && source.ReadOnly.TryGetView(_inventory.SelectedItemId,out var selected) && selected.Location.Kind==ItemLocationKind.WorldItem);
+            if(_drop!=null)_drop.gameObject.SetActive(!_inventory.PresentationIsReadOnly && source?.ReadOnly!=null && source.ReadOnly.TryGetView(_inventory.SelectedItemId,out var discard)
                 && discard.Location.Kind!=ItemLocationKind.WorldItem && discard.Location.Kind!=ItemLocationKind.Warehouse);
             var labels=GetComponentsInChildren<Text>(true);for(int i=0;i<labels.Length;i++)labels[i].font=_inventory.UiFont;
         }

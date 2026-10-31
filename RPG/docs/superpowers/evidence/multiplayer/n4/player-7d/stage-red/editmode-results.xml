@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-27 08:35:52Z" end-time="2026-10-27 08:35:53Z" duration="0.6374004">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2613" result="Failed" site="Child" start-time="2026-10-27 08:35:52Z" end-time="2026-10-27 08:35:53Z" duration="0.637400" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3943" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="719" result="Failed" site="Child" start-time="2026-10-27 08:35:52Z" end-time="2026-10-27 08:35:53Z" duration="0.539986" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23424" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3944" name="Game" fullname="Game" runstate="Runnable" testcasecount="719" result="Failed" site="Child" start-time="2026-10-27 08:35:53Z" end-time="2026-10-27 08:35:53Z" duration="0.443610" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3945" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="719" result="Failed" site="Child" start-time="2026-10-27 08:35:53Z" end-time="2026-10-27 08:35:53Z" duration="0.341740" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3946" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="719" result="Failed" site="Child" start-time="2026-10-27 08:35:53Z" end-time="2026-10-27 08:35:53Z" duration="0.241658" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3097" name="CombatPresentationLifecycleTests" fullname="Game.Run.Tests.CombatPresentationLifecycleTests" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" testcasecount="11" result="Failed" site="Child" start-time="2026-10-27 08:35:53Z" end-time="2026-10-27 08:35:53Z" duration="0.142144" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3107" name="LegacyStageSuppressionHidesBothLeavesWithoutStoppingSinglePlayerOwnerOrSiblingHealth" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.LegacyStageSuppressionHidesBothLeavesWithoutStoppingSinglePlayerOwnerOrSiblingHealth" methodname="LegacyStageSuppressionHidesBothLeavesWithoutStoppingSinglePlayerOwnerOrSiblingHealth" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="665526722" result="Failed" start-time="2026-10-27 08:35:53Z" end-time="2026-10-27 08:35:53Z" duration="0.029500" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Stage的三条区域文本必须交给同一份DDOL HUD，不能留在Scene内重叠显示。
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.CombatPresentationLifecycleTests.LegacyStageSuppressionHidesBothLeavesWithoutStoppingSinglePlayerOwnerOrSiblingHealth () [0x00098] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\CombatPresentationLifecycleTests.cs:264
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3108" name="UnsafeStageLeafRejectsBeforeMutatingAnyValidLegacyStage" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.UnsafeStageLeafRejectsBeforeMutatingAnyValidLegacyStage" methodname="UnsafeStageLeafRejectsBeforeMutatingAnyValidLegacyStage" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="2051276566" result="Failed" start-time="2026-10-27 08:35:53Z" end-time="2026-10-27 08:35:53Z" duration="0.002456" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Stage的表现叶树误含Gameplay Owner时，必须在任何enabled/active变更前整体拒绝。
+  Expected: <System.InvalidOperationException>
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.CombatPresentationLifecycleTests.UnsafeStageLeafRejectsBeforeMutatingAnyValidLegacyStage () [0x0005a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\CombatPresentationLifecycleTests.cs:286
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

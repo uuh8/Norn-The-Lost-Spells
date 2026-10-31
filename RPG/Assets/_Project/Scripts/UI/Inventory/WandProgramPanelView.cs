@@ -58,12 +58,13 @@ namespace Game.UI
             _wandDrag.Bind(controller,wand,found);
             _header.font=controller.UiFont;_header.supportRichText=true;_header.fontSize=20;_header.resizeTextForBestFit=false;
             _header.text=(_wandSlot+1)+" · "+(found?wand.DisplayName:"空法杖位 · 拖入法杖");
-            var read=controller.Session.WandsReadOnly;
+            // 面板与库存格子共用数据源，服务器事实不会被单机资源覆盖。
+            var read=controller.PresentationSource.WandsReadOnly;
             if (found && read.TryGetState(wand.InstanceId,out var state) && read.TryGetProgram(wand.InstanceId,out var program))
             {
                 // UI打开会暂停。离散库存刷新才求预览，持续恢复的资源由外部HUD显示。
                 float mana;
-                if(controller.Session.UseSpellProgrammingV2)mana=WandInventoryView.V2ManaPreview(controller.Session,wand.InstanceId);
+                if(controller.PresentationSource.UseSpellProgrammingV2)mana=WandInventoryView.V2ManaPreview(controller.PresentationSource,wand.InstanceId);
                 else mana=CastEvaluator.Evaluate(program.Program,program.BaseDraws,float.MaxValue,CastModifierState.Default,_preview).ManaSpent;
                 _header.text+=" · 法术槽 "+occupied+"/"+capacity+" · 基础抽取 "+program.BaseDraws
                     +"\n"+WandInventoryView.ResourceCaption(state)

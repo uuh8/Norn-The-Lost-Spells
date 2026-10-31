@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="30" result="Failed(Child)" total="30" passed="0" failed="30" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-26 06:33:07Z" end-time="2026-10-26 06:33:09Z" duration="2.0182688">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2521" result="Failed" site="Child" start-time="2026-10-26 06:33:07Z" end-time="2026-10-26 06:33:09Z" duration="2.018269" total="30" passed="0" failed="30" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2445" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="78" result="Failed" site="Child" start-time="2026-10-26 06:33:07Z" end-time="2026-10-26 06:33:08Z" duration="0.710021" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27688" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2446" name="Game" fullname="Game" runstate="Runnable" testcasecount="78" result="Failed" site="Child" start-time="2026-10-26 06:33:07Z" end-time="2026-10-26 06:33:08Z" duration="0.613628" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2447" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="78" result="Failed" site="Child" start-time="2026-10-26 06:33:07Z" end-time="2026-10-26 06:33:08Z" duration="0.505573" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2448" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="78" result="Failed" site="Child" start-time="2026-10-26 06:33:07Z" end-time="2026-10-26 06:33:08Z" duration="0.397869" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2347" name="InventoryCommandRoutingTests" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-26 06:33:07Z" end-time="2026-10-26 06:33:08Z" duration="0.287100" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="2351" name="CommandEnvelopeRejectsOversizeOrTruncatedBytes" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.CommandEnvelopeRejectsOversizeOrTruncatedBytes" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-26 06:33:07Z" end-time="2026-10-26 06:33:08Z" duration="0.163618" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2349" name="CommandEnvelopeRejectsOversizeOrTruncatedBytes(&quot;Command&quot;)" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.CommandEnvelopeRejectsOversizeOrTruncatedBytes(&quot;Command&quot;)" methodname="CommandEnvelopeRejectsOversizeOrTruncatedBytes" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="678838465" result="Failed" start-time="2026-10-26 06:33:07Z" end-time="2026-10-26 06:33:08Z" duration="0.032653" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少有界库存命令路由：InventoryCommandEnvelopeSerialization
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventoryCommandRoutingTests.Require (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:18
+at Game.Multiplayer.Tests.InventoryCommandRoutingTests.CommandEnvelopeRejectsOversizeOrTruncatedBytes (System.String kind) [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:40
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2350" name="CommandEnvelopeRejectsOversizeOrTruncatedBytes(&quot;Receipt&quot;)" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.CommandEnvelopeRejectsOversizeOrTruncatedBytes(&quot;Receipt&quot;)" methodname="CommandEnvelopeRejectsOversizeOrTruncatedBytes" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="348193351" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.000770" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少有界库存命令路由：InventoryCommandEnvelopeSerialization
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventoryCommandRoutingTests.Require (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:18
+at Game.Multiplayer.Tests.InventoryCommandRoutingTests.CommandEnvelopeRejectsOversizeOrTruncatedBytes (System.String kind) [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:40
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="2348" name="CommandsAndReceiptsHaveDistinctMirrorIds" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.CommandsAndReceiptsHaveDistinctMirrorIds" methodname="CommandsAndReceiptsHaveDistinctMirrorIds" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="677568149" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.006229" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少有界库存命令路由：InventoryCommandEnvelope
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventoryCommandRoutingTests.Require (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:18
+at Game.Multiplayer.Tests.InventoryCommandRoutingTests.CommandsAndReceiptsHaveDistinctMirrorIds () [0x0006c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:27
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2354" name="PendingBudgetDoesNotEvictUnacknowledgedCommandsAndClearReleasesIt" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.PendingBudgetDoesNotEvictUnacknowledgedCommandsAndClearReleasesIt" methodname="PendingBudgetDoesNotEvictUnacknowledgedCommandsAndClearReleasesIt" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="1515281632" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.001420" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少有界库存命令路由：InventoryCommandPendingInbox
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventoryCommandRoutingTests.Require (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:18
+at Game.Multiplayer.Tests.InventoryCommandRoutingTests.PendingBudgetDoesNotEvictUnacknowledgedCommandsAndClearReleasesIt () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:71
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2352" name="PendingReceiptKeepsCallerAndConsumesOnlyOnce" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.PendingReceiptKeepsCallerAndConsumesOnlyOnce" methodname="PendingReceiptKeepsCallerAndConsumesOnlyOnce" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="1230982571" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.001012" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少有界库存命令路由：InventoryCommandPendingInbox
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventoryCommandRoutingTests.Require (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:18
+at Game.Multiplayer.Tests.InventoryCommandRoutingTests.PendingReceiptKeepsCallerAndConsumesOnlyOnce () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:52
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2353" name="WrongEpochAndDuplicateIdCannotHijackCaller" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.WrongEpochAndDuplicateIdCannotHijackCaller" methodname="WrongEpochAndDuplicateIdCannotHijackCaller" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="1299170302" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.001083" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少有界库存命令路由：InventoryCommandPendingInbox
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventoryCommandRoutingTests.Require (System.String name) [0x00021] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:18
+at Game.Multiplayer.Tests.InventoryCommandRoutingTests.WrongEpochAndDuplicateIdCannotHijackCaller () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:61
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="2580" name="Game.Networking.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Networking.Tests.dll" runstate="Runnable" testcasecount="112" result="Failed" site="Child" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.593081" total="17" passed="0" failed="17" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27688" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2581" name="Game" fullname="Game" runstate="Runnable" testcasecount="112" result="Failed" site="Child" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.554777" total="17" passed="0" failed="17" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2582" name="Networking" fullname="Game.Networking" runstate="Runnable" testcasecount="112" result="Failed" site="Child" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.447928" total="17" passed="0" failed="17" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2583" name="Tests" fullname="Game.Networking.Tests" runstate="Runnable" testcasecount="112" result="Failed" site="Child" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.338686" total="17" passed="0" failed="17" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2480" name="InventoryCommandCodecTests" fullname="Game.Networking.Tests.InventoryCommandCodecTests" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" testcasecount="17" result="Failed" site="Child" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.228253" total="17" passed="0" failed="17" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2484" name="DefaultNullOptionalStringsCanonicalizeToEmpty" fullname="Game.Networking.Tests.InventoryCommandCodecTests.DefaultNullOptionalStringsCanonicalizeToEmpty" methodname="DefaultNullOptionalStringsCanonicalizeToEmpty" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="504355604" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.005305" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少与64KiB完整快照分离的512B命令/收据Codec。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.RequireCommandCodec () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:19
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2485" name="ExpectedGameplayHashAndApplicationVersionMustMatch" fullname="Game.Networking.Tests.InventoryCommandCodecTests.ExpectedGameplayHashAndApplicationVersionMustMatch" methodname="ExpectedGameplayHashAndApplicationVersionMustMatch" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="1027194189" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.000682" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少与64KiB完整快照分离的512B命令/收据Codec。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.RequireCommandCodec () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:19
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2492" name="MalformedIdAndUnknownCommandKindAreRejected" fullname="Game.Networking.Tests.InventoryCommandCodecTests.MalformedIdAndUnknownCommandKindAreRejected" methodname="MalformedIdAndUnknownCommandKindAreRejected" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="176682852" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.000832" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少与64KiB完整快照分离的512B命令/收据Codec。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.RequireCommandCodec () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:19
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="2489" name="MissingCommandIdentityOrVersionIsRejected" fullname="Game.Networking.Tests.InventoryCommandCodecTests.MissingCommandIdentityOrVersionIsRejected" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.102056" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2486" name="MissingCommandIdentityOrVersionIsRejected(&quot;CommandId&quot;)" fullname="Game.Networking.Tests.InventoryCommandCodecTests.MissingCommandIdentityOrVersionIsRejected(&quot;CommandId&quot;)" methodname="MissingCommandIdentityOrVersionIsRejected" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="462982320" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.000751" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[SetUp :   缺少与64KiB完整快照分离的512B命令/收据Codec。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.RequireCommandCodec () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:19
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2487" name="MissingCommandIdentityOrVersionIsRejected(&quot;ConnectionEpoch&quot;)" fullname="Game.Networking.Tests.InventoryCommandCodecTests.MissingCommandIdentityOrVersionIsRejected(&quot;ConnectionEpoch&quot;)" methodname="MissingCommandIdentityOrVersionIsRejected" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="1653156888" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.000630" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[SetUp :   缺少与64KiB完整快照分离的512B命令/收据Codec。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.RequireCommandCodec () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:19
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2488" name="MissingCommandIdentityOrVersionIsRejected(&quot;ExpectedInventoryVersion&quot;)" fullname="Game.Networking.Tests.InventoryCommandCodecTests.MissingCommandIdentityOrVersionIsRejected(&quot;ExpectedInventoryVersion&quot;)" methodname="MissingCommandIdentityOrVersionIsRejected" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="1069230085" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.000766" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[SetUp :   缺少与64KiB完整快照分离的512B命令/收据Codec。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.RequireCommandCodec () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:19
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="2495" name="OversizedPayloadAndSmallOutputFailWithoutPartialLength" fullname="Game.Networking.Tests.InventoryCommandCodecTests.OversizedPayloadAndSmallOutputFailWithoutPartialLength" methodname="OversizedPayloadAndSmallOutputFailWithoutPartialLength" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="2134290093" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.000599" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少与64KiB完整快照分离的512B命令/收据Codec。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.RequireCommandCodec () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:19
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2482" name="PlaceCardBetweenOwnedWandsPreservesBothProgramRevisions" fullname="Game.Networking.Tests.InventoryCommandCodecTests.PlaceCardBetweenOwnedWandsPreservesBothProgramRevisions" methodname="PlaceCardBetweenOwnedWandsPreservesBothProgramRevisions" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="720646001" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.000564" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少与64KiB完整快照分离的512B命令/收据Codec。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.RequireCommandCodec () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:19
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2491" name="PlaceRequiresConsistentSourceAndTargetProgramIdentity" fullname="Game.Networking.Tests.InventoryCommandCodecTests.PlaceRequiresConsistentSourceAndTargetProgramIdentity" methodname="PlaceRequiresConsistentSourceAndTargetProgramIdentity" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="1344624385" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.000540" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少与64KiB完整快照分离的512B命令/收据Codec。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.RequireCommandCodec () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:19
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2483" name="PlaceToAndFromSpellStorageUsesExplicitEmptyRoot" fullname="Game.Networking.Tests.InventoryCommandCodecTests.PlaceToAndFromSpellStorageUsesExplicitEmptyRoot" methodname="PlaceToAndFromSpellStorageUsesExplicitEmptyRoot" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="357902983" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.000521" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少与64KiB完整快照分离的512B命令/收据Codec。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.RequireCommandCodec () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:19
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2497" name="ReceiptHashUnknownFieldsAndOldApplicationAreRejected" fullname="Game.Networking.Tests.InventoryCommandCodecTests.ReceiptHashUnknownFieldsAndOldApplicationAreRejected" methodname="ReceiptHashUnknownFieldsAndOldApplicationAreRejected" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="598004934" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.000518" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少与64KiB完整快照分离的512B命令/收据Codec。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.RequireCommandCodec () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:19
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2496" name="ReceiptsRoundTripSuccessAndFailureWithoutClientAuthoredSuccessFlag" fullname="Game.Networking.Tests.InventoryCommandCodecTests.ReceiptsRoundTripSuccessAndFailureWithoutClientAuthoredSuccessFlag" methodname="ReceiptsRoundTripSuccessAndFailureWithoutClientAuthoredSuccessFlag" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="465760443" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.000510" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少与64KiB完整快照分离的512B命令/收据Codec。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.RequireCommandCodec () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:19
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2498" name="SchemaDoesNotCarryCallerActorPlayerOrIndependentSuccess" fullname="Game.Networking.Tests.InventoryCommandCodecTests.SchemaDoesNotCarryCallerActorPlayerOrIndependentSuccess" methodname="SchemaDoesNotCarryCallerActorPlayerOrIndependentSuccess" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="1491018911" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.000538" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少与64KiB完整快照分离的512B命令/收据Codec。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.RequireCommandCodec () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:19
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2490" name="SelectCannotSmuggleMoveFieldsOrInvalidSlot" fullname="Game.Networking.Tests.InventoryCommandCodecTests.SelectCannotSmuggleMoveFieldsOrInvalidSlot" methodname="SelectCannotSmuggleMoveFieldsOrInvalidSlot" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="1364169208" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.000555" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少与64KiB完整快照分离的512B命令/收据Codec。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.RequireCommandCodec () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:19
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2481" name="SelectWandRoundTripsCurrentIdentityAndVersions" fullname="Game.Networking.Tests.InventoryCommandCodecTests.SelectWandRoundTripsCurrentIdentityAndVersions" methodname="SelectWandRoundTripsCurrentIdentityAndVersions" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="851466042" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.000534" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少与64KiB完整快照分离的512B命令/收据Codec。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.RequireCommandCodec () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:19
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2493" name="UnknownOrDuplicateWireFieldsCannotOverrideCommand" fullname="Game.Networking.Tests.InventoryCommandCodecTests.UnknownOrDuplicateWireFieldsCannotOverrideCommand" methodname="UnknownOrDuplicateWireFieldsCannotOverrideCommand" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="48266621" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.000536" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少与64KiB完整快照分离的512B命令/收据Codec。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.RequireCommandCodec () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:19
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2494" name="WrongWireTypeTruncationAndNonMinimalVarintAreRejected" fullname="Game.Networking.Tests.InventoryCommandCodecTests.WrongWireTypeTruncationAndNonMinimalVarintAreRejected" methodname="WrongWireTypeTruncationAndNonMinimalVarintAreRejected" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="2136409158" result="Failed" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:08Z" duration="0.000535" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少与64KiB完整快照分离的512B命令/收据Codec。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.RequireCommandCodec () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:19
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="3851" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="714" result="Failed" site="Child" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:09Z" duration="0.607622" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27688" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3852" name="Game" fullname="Game" runstate="Runnable" testcasecount="714" result="Failed" site="Child" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:09Z" duration="0.513339" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3853" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="714" result="Failed" site="Child" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:09Z" duration="0.402522" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3854" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="714" result="Failed" site="Child" start-time="2026-10-26 06:33:08Z" end-time="2026-10-26 06:33:09Z" duration="0.292639" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3309" name="OnlineInventoryCommandAuthorityTests" fullname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests" classname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-26 06:33:09Z" end-time="2026-10-26 06:33:09Z" duration="0.184010" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3316" name="BoundedLedgerRejectsEvictedOldCommandsAndEpochNeverRollsBack" fullname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests.BoundedLedgerRejectsEvictedOldCommandsAndEpochNeverRollsBack" methodname="BoundedLedgerRejectsEvictedOldCommandsAndEpochNeverRollsBack" classname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests" runstate="Runnable" seed="1042874350" result="Failed" start-time="2026-10-26 06:33:09Z" end-time="2026-10-26 06:33:09Z" duration="0.054933" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  先建立 Core 值命令合同。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryCommandAuthorityTests.Intent (Game.Run.OnlineOwnedWorkspace workspace, System.UInt64 id, System.Int32 kind, System.String item) [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryCommandAuthorityTests.cs:134
+at Game.Run.Tests.OnlineInventoryCommandAuthorityTests.BoundedLedgerRejectsEvictedOldCommandsAndEpochNeverRollsBack () [0x00009] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryCommandAuthorityTests.cs:106
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3310" name="CoreContractAndReadContextDoNotExposeAuthorityServices" fullname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests.CoreContractAndReadContextDoNotExposeAuthorityServices" methodname="CoreContractAndReadContextDoNotExposeAuthorityServices" classname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests" runstate="Runnable" seed="1762143896" result="Failed" start-time="2026-10-26 06:33:09Z" end-time="2026-10-26 06:33:09Z" duration="0.003226" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryCommandAuthorityTests.CoreContractAndReadContextDoNotExposeAuthorityServices () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryCommandAuthorityTests.cs:22
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3313" name="ExactRetryReturnsOriginalReceiptBeforeCurrentVersionAndConflictIsRejected" fullname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests.ExactRetryReturnsOriginalReceiptBeforeCurrentVersionAndConflictIsRejected" methodname="ExactRetryReturnsOriginalReceiptBeforeCurrentVersionAndConflictIsRejected" classname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests" runstate="Runnable" seed="1595427925" result="Failed" start-time="2026-10-26 06:33:09Z" end-time="2026-10-26 06:33:09Z" duration="0.003015" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  先建立 Core 值命令合同。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryCommandAuthorityTests.Intent (Game.Run.OnlineOwnedWorkspace workspace, System.UInt64 id, System.Int32 kind, System.String item) [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryCommandAuthorityTests.cs:134
+at Game.Run.Tests.OnlineInventoryCommandAuthorityTests.Storage (Game.Run.OnlineOwnedWorkspace workspace, System.UInt64 id) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryCommandAuthorityTests.cs:140
+at Game.Run.Tests.OnlineInventoryCommandAuthorityTests.ExactRetryReturnsOriginalReceiptBeforeCurrentVersionAndConflictIsRejected () [0x00009] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryCommandAuthorityTests.cs:66
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3312" name="MoveToRealStorageAndBackReusesQualificationAndExportsLocation" fullname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests.MoveToRealStorageAndBackReusesQualificationAndExportsLocation" methodname="MoveToRealStorageAndBackReusesQualificationAndExportsLocation" classname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests" runstate="Runnable" seed="1649646827" result="Failed" start-time="2026-10-26 06:33:09Z" end-time="2026-10-26 06:33:09Z" duration="0.003006" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  先建立 Core 值命令合同。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryCommandAuthorityTests.Intent (Game.Run.OnlineOwnedWorkspace workspace, System.UInt64 id, System.Int32 kind, System.String item) [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryCommandAuthorityTests.cs:134
+at Game.Run.Tests.OnlineInventoryCommandAuthorityTests.Storage (Game.Run.OnlineOwnedWorkspace workspace, System.UInt64 id) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryCommandAuthorityTests.cs:140
+at Game.Run.Tests.OnlineInventoryCommandAuthorityTests.MoveToRealStorageAndBackReusesQualificationAndExportsLocation () [0x00009] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryCommandAuthorityTests.cs:48
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3314" name="RecordedBusyCannotExecuteSameIdAfterBusyHasEnded" fullname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests.RecordedBusyCannotExecuteSameIdAfterBusyHasEnded" methodname="RecordedBusyCannotExecuteSameIdAfterBusyHasEnded" classname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests" runstate="Runnable" seed="760899639" result="Failed" start-time="2026-10-26 06:33:09Z" end-time="2026-10-26 06:33:09Z" duration="0.002514" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  先建立 Core 值命令合同。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryCommandAuthorityTests.Intent (Game.Run.OnlineOwnedWorkspace workspace, System.UInt64 id, System.Int32 kind, System.String item) [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryCommandAuthorityTests.cs:134
+at Game.Run.Tests.OnlineInventoryCommandAuthorityTests.Storage (Game.Run.OnlineOwnedWorkspace workspace, System.UInt64 id) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryCommandAuthorityTests.cs:140
+at Game.Run.Tests.OnlineInventoryCommandAuthorityTests.RecordedBusyCannotExecuteSameIdAfterBusyHasEnded () [0x00009] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryCommandAuthorityTests.cs:76
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3311" name="SelectUsesRealEquippedWandAndPreservesInventoryAndMana" fullname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests.SelectUsesRealEquippedWandAndPreservesInventoryAndMana" methodname="SelectUsesRealEquippedWandAndPreservesInventoryAndMana" classname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests" runstate="Runnable" seed="2027320782" result="Failed" start-time="2026-10-26 06:33:09Z" end-time="2026-10-26 06:33:09Z" duration="0.002820" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  先建立 Core 值命令合同。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryCommandAuthorityTests.Intent (Game.Run.OnlineOwnedWorkspace workspace, System.UInt64 id, System.Int32 kind, System.String item) [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryCommandAuthorityTests.cs:134
+at Game.Run.Tests.OnlineInventoryCommandAuthorityTests.SelectUsesRealEquippedWandAndPreservesInventoryAndMana () [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryCommandAuthorityTests.cs:35
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3315" name="StaleVersionsAndOccupiedDestinationRejectWithoutMovingEitherCard" fullname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests.StaleVersionsAndOccupiedDestinationRejectWithoutMovingEitherCard" methodname="StaleVersionsAndOccupiedDestinationRejectWithoutMovingEitherCard" classname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests" runstate="Runnable" seed="430488773" result="Failed" start-time="2026-10-26 06:33:09Z" end-time="2026-10-26 06:33:09Z" duration="0.003433" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  先建立 Core 值命令合同。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryCommandAuthorityTests.Intent (Game.Run.OnlineOwnedWorkspace workspace, System.UInt64 id, System.Int32 kind, System.String item) [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryCommandAuthorityTests.cs:134
+at Game.Run.Tests.OnlineInventoryCommandAuthorityTests.Storage (Game.Run.OnlineOwnedWorkspace workspace, System.UInt64 id) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryCommandAuthorityTests.cs:140
+at Game.Run.Tests.OnlineInventoryCommandAuthorityTests.StaleVersionsAndOccupiedDestinationRejectWithoutMovingEitherCard () [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryCommandAuthorityTests.cs:90
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

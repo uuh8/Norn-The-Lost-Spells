@@ -20,6 +20,10 @@ public sealed class RoomInstanceService(OnlineDatabase database, RoomTransaction
 {
     private RoomInstanceOptions Config => options.Instances;
     private DateTime Now => clock.GetUtcNow().UtcDateTime;
+    /// <summary>
+    /// 在短 SQL 事务里声明唯一实例，并从不可变 Party 取 Dungeon；进程启动由 RoomLauncher 在提交后执行。
+    /// 这样 HTTP 重试只能拿回原 Instance/Port/地图，不会因尚未登记 PID 而新起第二个服务器。
+    /// </summary>
     public Task<InstanceLaunchGrant> AllocateAsync(RunReservation run, CancellationToken ct)
     {
         if (!Config.Enabled) throw new OnlineFailure(503, "InstancesDisabled"); Config.Validate();
@@ -27,8 +31,11 @@ public sealed class RoomInstanceService(OnlineDatabase database, RoomTransaction
         {
             var party = await RoomTransactions.Party(db, tx, run.RoomId, ct);
             if (party.ActiveRunId != run.RunId || party.RoomEpoch != run.RoomEpoch || party.State != "Starting") throw new OnlineFailure(409, "InstanceEpochExpired");
+            // DungeonId 只在建房事务中写入，现有 API 不允许换图；在同一 Room Gate 事务读取，
+            // 避免进程启动重试从调用者或旧 launch.json 猜地图。未来允许换图时必须改为读取冻结 Run 字段。
+            string dungeon = RequireKnownDungeon(party.DungeonId);
             var previous = await db.QuerySingleOrDefaultAsync<InstanceRow>(new CommandDefinition("SELECT * FROM ServerInstances WHERE RunId=@Run", new { Run = run.RunId }, tx, cancellationToken: ct));
-            if (previous != null) return new InstanceLaunchGrant(Descriptor(previous), null, false);
+            if (previous != null) return new InstanceLaunchGrant(Descriptor(previous, dungeon), null, false);
             var reserved = (await db.QueryAsync<int>(new CommandDefinition("SELECT ActivePort FROM ServerInstances WHERE ActivePort IS NOT NULL", transaction: tx, cancellationToken: ct))).ToHashSet();
             if (reserved.Count >= Config.MaximumInstances) throw new OnlineFailure(503, "InstanceCapacity");
             foreach (var endpoint in IPGlobalProperties.GetIPGlobalProperties().GetActiveUdpListeners()) reserved.Add(endpoint.Port);
@@ -39,7 +46,7 @@ public sealed class RoomInstanceService(OnlineDatabase database, RoomTransaction
                 INSERT INTO ServerInstances(InstanceId,RunId,RoomId,RoomEpoch,State,SecretHash,UdpPort,ActivePort,ReadyDeadlineUtc)
                 VALUES(@Id,@Run,@Room,@Epoch,'Launching',@Hash,@Port,@Port,@Deadline)
                 """, new { Id = id, Run = run.RunId, Room = run.RoomId, Epoch = run.RoomEpoch, Hash = AccountService.HashToken(secret), Port = port, Deadline = Now.AddSeconds(Config.ReadyTimeoutSeconds) }, tx, cancellationToken: ct));
-            return new InstanceLaunchGrant(Descriptor(await Get(db, tx, id, ct)), secret, true);
+            return new InstanceLaunchGrant(Descriptor(await Get(db, tx, id, ct), dungeon), secret, true);
         }, ct);
     }
     public Task RecordProcessAsync(string instance, InstanceProcessIdentity process, CancellationToken ct) => transactions.MutateAsync(async (db, tx) =>
@@ -49,12 +56,19 @@ public sealed class RoomInstanceService(OnlineDatabase database, RoomTransaction
         if (row.State != "Launching" || row.ProcessId != null) throw new OnlineFailure(409, "InstanceStateConflict");
         await db.ExecuteAsync(new CommandDefinition("UPDATE ServerInstances SET ProcessId=@ProcessId,ProcessStartTicks=@StartTicks,Executable=@Executable WHERE InstanceId=@Id", new { Id = instance, process.ProcessId, process.StartTicks, process.Executable }, tx, cancellationToken: ct)); return true;
     }, ct);
+    /// <summary>
+    /// DS 完成地图/规则装配后才提交 Ready。Secret、进程身份、Run/Epoch、配置版本与地图都成立，
+    /// 才能在同一事务发布 Ready/Running；仅看到一个活着或已监听的进程不构成可入场状态。
+    /// </summary>
     public Task<InstanceReadyReply> ReadyAsync(string instance, string secret, InstanceReadyRequest request, CancellationToken ct) => transactions.MutateAsync(async (db, tx) =>
     {
         var row = await Credential(db, tx, instance, secret, ct); content.RequireVersion(request.ProtocolVersion, request.ManifestHash);
         if (request.BuildVersion != content.Manifest.BuildVersion || string.IsNullOrEmpty(content.GameplayConfigHash) || request.GameplayConfigHash != content.GameplayConfigHash)
             throw new OnlineFailure(409, "ContentVersionMismatch");
-        await RequireCurrent(db, tx, row, request.RoomEpoch, false, ct);
+        var party = await RequireCurrent(db, tx, row, request.RoomEpoch, false, ct);
+        // Ready 不只是证明进程在监听：DS 必须确认它实际装配的副本与业务授权相同。
+        // 放在所有 UPDATE 前，错误/旧描述既不能发布 Running，也不能污染正确 DS 随后的重试。
+        if (!DungeonIdentityRules.Matches(party.DungeonId, request.DungeonId)) throw new OnlineFailure(409, "DungeonMismatch");
         if (row.State == "Launching" && Now >= row.ReadyDeadlineUtc) throw new OnlineFailure(409, "InstanceEpochExpired");
         if (row.ProcessId != request.ProcessId || row.ProcessStartTicks != request.ProcessStartTicks || !InstanceProcesses.Matches(new InstanceProcessIdentity(request.ProcessId, request.ProcessStartTicks, row.Executable))) throw new OnlineFailure(409, "InstanceProcessMismatch");
         DateTime until = Now.AddSeconds(Config.LeaseSeconds);
@@ -72,7 +86,7 @@ public sealed class RoomInstanceService(OnlineDatabase database, RoomTransaction
             if (assets.RunId != row.RunId || assets.ActorId != member.ActorId || assets.InventoryVersion != member.Profile.Version)
                 throw new OnlineFailure(409, "EntrySnapshotMismatch");
         }
-        return new InstanceReadyReply { LeaseExpiresUnixMilliseconds = Unix(until), Members = profiles };
+        return new InstanceReadyReply { DungeonId = party.DungeonId, LeaseExpiresUnixMilliseconds = Unix(until), Members = profiles };
     }, ct);
     public Task<InstanceLeaseReply> HeartbeatAsync(string instance, string secret, uint epoch, CancellationToken ct) => transactions.MutateAsync(async (db, tx) =>
     {
@@ -95,11 +109,15 @@ public sealed class RoomInstanceService(OnlineDatabase database, RoomTransaction
             INSERT INTO JoinTickets VALUES(@Hash,@Id,@Player,@Epoch,@Protocol,@Build,@Manifest,@Expires,NULL);
             UPDATE RunMembers SET LastTicketUtc=@Now WHERE RunId=@Run AND CharacterId=@Player
             """, new { Id = row.InstanceId, Player = player, Hash = AccountService.HashToken(token), Epoch = row.RoomEpoch, Protocol = content.Manifest.ProtocolVersion, Build = content.Manifest.BuildVersion, Manifest = content.Manifest.Hash, Expires = expires, Now, Run = row.RunId }, tx, cancellationToken: ct));
-        return new JoinTicketReply { Ticket = token, PlayerId = player, InstanceId = row.InstanceId, RoomId = room, RunId = row.RunId, RoomEpoch = row.RoomEpoch, Port = row.UdpPort, ExpiresUnixMilliseconds = Unix(expires) };
+        return new JoinTicketReply { Ticket = token, PlayerId = player, InstanceId = row.InstanceId, RoomId = room, RunId = row.RunId, DungeonId = party.DungeonId, RoomEpoch = row.RoomEpoch, Port = row.UdpPort, ExpiresUnixMilliseconds = Unix(expires) };
     }, ct);
+    /// <summary>
+    /// DS 用独立实例凭据兑换 Client 的一次性 Ticket。Client 仅提供票与期望角色，不提供地图选择；
+    /// 成功事务同时消费票并增加 ConnectionEpoch，回放失败，重连保留同一 Actor 与 Party 地图身份。
+    /// </summary>
     public Task<ConsumeJoinTicketReply> ConsumeAsync(string instance, string secret, ConsumeJoinTicketRequest request, CancellationToken ct) => transactions.MutateAsync(async (db, tx) =>
     {
-        var row = await Credential(db, tx, instance, secret, ct); await RequireCurrent(db, tx, row, request.RoomEpoch, true, ct);
+        var row = await Credential(db, tx, instance, secret, ct); var party = await RequireCurrent(db, tx, row, request.RoomEpoch, true, ct);
         if (!IsToken(request.Ticket)) throw new OnlineFailure(401, "InvalidJoinTicket");
         var ticket = await db.QuerySingleOrDefaultAsync<TicketRow>(new CommandDefinition("SELECT * FROM JoinTickets WHERE TicketHash=@Hash", new { Hash = AccountService.HashToken(request.Ticket) }, tx, cancellationToken: ct));
         if (ticket == null || ticket.InstanceId != instance || ticket.CharacterId != request.PlayerId || ticket.RoomEpoch != row.RoomEpoch || ticket.ConsumedUtc != null || Now >= ticket.ExpiresUtc || ticket.ProtocolVersion != content.Manifest.ProtocolVersion || ticket.BuildVersion != content.Manifest.BuildVersion || ticket.ManifestHash != content.Manifest.Hash) throw new OnlineFailure(401, "InvalidJoinTicket");
@@ -111,7 +129,8 @@ public sealed class RoomInstanceService(OnlineDatabase database, RoomTransaction
         if (member == null || member.ConnectionEpoch == uint.MaxValue) throw new OnlineFailure(401, "InvalidJoinTicket");
         uint connectionEpoch = member.ConnectionEpoch + 1;
         await db.ExecuteAsync(new CommandDefinition("UPDATE JoinTickets SET ConsumedUtc=@Now WHERE TicketHash=@Hash; UPDATE RunMembers SET State='Admitted',ConnectionEpoch=@ConnectionEpoch WHERE RunId=@Run AND CharacterId=@Player", new { Now, Hash = AccountService.HashToken(request.Ticket), ConnectionEpoch = connectionEpoch, Run = row.RunId, Player = request.PlayerId }, tx, cancellationToken: ct));
-        return new ConsumeJoinTicketReply { PlayerId = request.PlayerId, RoomId = row.RoomId, RunId = row.RunId, RoomEpoch = row.RoomEpoch, ConnectionEpoch = connectionEpoch, ActorId = (ulong)member.Seat + 1 };
+        // Client 没有提交 Dungeon 选择字段；兑换结果只从受保护的 Party 取得，DS 还须与自己的启动身份再比对。
+        return new ConsumeJoinTicketReply { PlayerId = request.PlayerId, RoomId = row.RoomId, RunId = row.RunId, DungeonId = party.DungeonId, RoomEpoch = row.RoomEpoch, ConnectionEpoch = connectionEpoch, ActorId = (ulong)member.Seat + 1 };
     }, ct);
     public Task<bool> FailAsync(string instance, string code, CancellationToken ct)
     {
@@ -154,26 +173,51 @@ public sealed class RoomInstanceService(OnlineDatabase database, RoomTransaction
     {
         await RoomTransactions.RequireMember(db, tx, room, player, ct); var party = await RoomTransactions.Party(db, tx, room, ct);
         var row = await db.QuerySingleOrDefaultAsync<InstanceRow>(new CommandDefinition("SELECT * FROM ServerInstances WHERE RunId=@Run", new { Run = party.ActiveRunId }, tx, cancellationToken: ct)) ?? throw new OnlineFailure(404, "InstanceNotFound");
-        return new RoomInstanceReply { InstanceId = row.InstanceId, RunId = row.RunId, RoomEpoch = row.RoomEpoch, Port = row.UdpPort, State = row.State };
+        return new RoomInstanceReply { InstanceId = row.InstanceId, RunId = row.RunId, DungeonId = RequireKnownDungeon(party.DungeonId), RoomEpoch = row.RoomEpoch, Port = row.UdpPort, State = row.State };
     }, ct);
-    private InstanceLaunchDescriptor Descriptor(InstanceRow r) => new() { InstanceId = r.InstanceId, RoomId = r.RoomId, RunId = r.RunId, RoomEpoch = r.RoomEpoch, Port = r.UdpPort, BusinessBaseUrl = Config.BusinessBaseUrl, ProtocolVersion = content.Manifest.ProtocolVersion, BuildVersion = content.Manifest.BuildVersion, ManifestHash = content.Manifest.Hash, GameplayConfigHash = content.GameplayConfigHash, HeartbeatSeconds = Config.HeartbeatSeconds, FreezeAfterSeconds = Config.FreezeAfterSeconds, IdleShutdownSeconds = Config.IdleShutdownSeconds };
+    /// <summary>
+    /// 只组合已提交的实例身份，不创建进程或读取 Client 选择。重复 Allocate 与新 Allocate 共用此入口，
+    /// 避免业务重试丢掉地图字段；存活 DS 的 re-adopt 只监督既有 PID，不重写其描述文件。
+    /// </summary>
+    private InstanceLaunchDescriptor Descriptor(InstanceRow row, string dungeon) => new()
+    {
+        InstanceId = row.InstanceId, RoomId = row.RoomId, RunId = row.RunId, DungeonId = dungeon,
+        RoomEpoch = row.RoomEpoch, Port = row.UdpPort, BusinessBaseUrl = Config.BusinessBaseUrl,
+        ProtocolVersion = content.Manifest.ProtocolVersion, BuildVersion = content.Manifest.BuildVersion,
+        ManifestHash = content.Manifest.Hash, GameplayConfigHash = content.GameplayConfigHash,
+        HeartbeatSeconds = Config.HeartbeatSeconds, FreezeAfterSeconds = Config.FreezeAfterSeconds,
+        IdleShutdownSeconds = Config.IdleShutdownSeconds
+    };
     private static async Task<InstanceRow> Get(MySqlConnection db, MySqlTransaction tx, string id, CancellationToken ct) => await db.QuerySingleOrDefaultAsync<InstanceRow>(new CommandDefinition("SELECT * FROM ServerInstances WHERE InstanceId=@Id", new { Id = id }, tx, cancellationToken: ct)) ?? throw new OnlineFailure(404, "InstanceNotFound");
     private static async Task<InstanceRow> Credential(MySqlConnection db, MySqlTransaction tx, string id, string secret, CancellationToken ct)
     {
         if (!IsToken(secret)) throw new OnlineFailure(401, "InvalidInstanceCredential");
         return await db.QuerySingleOrDefaultAsync<InstanceRow>(new CommandDefinition("SELECT * FROM ServerInstances WHERE InstanceId=@Id AND SecretHash=@Hash", new { Id = id, Hash = AccountService.HashToken(secret) }, tx, cancellationToken: ct)) ?? throw new OnlineFailure(401, "InvalidInstanceCredential");
     }
-    private async Task RequireCurrent(MySqlConnection db, MySqlTransaction tx, InstanceRow row, uint epoch, bool ready, CancellationToken ct)
+    /// <summary>
+    /// 验证数据库中当前授权并返回同一事务快照中的 Party，调用者不要再从 Client/文件重建地图身份。
+    /// 所有调用方已取得 RoomMutationGate，期间 ActiveRun/Epoch/Dungeon 不会被另一业务写请求拆开修改。
+    /// </summary>
+    private async Task<RoomTransactions.PartyRow> RequireCurrent(MySqlConnection db, MySqlTransaction tx, InstanceRow row, uint epoch, bool ready, CancellationToken ct)
     {
         if (row.RoomEpoch != epoch || row.State == "Failed" || ready && row.State != "Ready" || row.State == "Ready" && (row.LeaseExpiresUtc == null || Now >= row.LeaseExpiresUtc)) throw new OnlineFailure(409, "InstanceEpochExpired");
         var party = await RoomTransactions.Party(db, tx, row.RoomId, ct);
         if (party.ActiveRunId != row.RunId || party.RoomEpoch != row.RoomEpoch || party.State is not ("Starting" or "Running")) throw new OnlineFailure(409, "InstanceEpochExpired");
+        RequireKnownDungeon(party.DungeonId);
         // 规则升级后，旧 DS 不能只靠旧密钥续租。复用唯一冻结 JSON，不在重启时把旧规则重新标成新 Hash。
         int mismatched = await db.ExecuteScalarAsync<int>(new CommandDefinition("""
             SELECT COUNT(*) FROM RunMembers WHERE RunId=@Run
             AND COALESCE(JSON_UNQUOTE(JSON_EXTRACT(EntrySnapshot,'$.CombatAssets.GameplayConfigHash')),'')<>@Hash
             """, new { Run = row.RunId, Hash = content.GameplayConfigHash }, tx, cancellationToken: ct));
         if (!IsToken(content.GameplayConfigHash) || mismatched != 0) throw new OnlineFailure(409, "ContentVersionMismatch");
+        return party;
+    }
+    private string RequireKnownDungeon(string dungeon)
+    {
+        // 格式检查不能取代业务白名单：一个看起来合法的新字符串也不能创建尚未部署的地图。
+        if (!DungeonIdentityRules.IsValidId(dungeon) || !options.DungeonIds.Contains(dungeon, StringComparer.Ordinal))
+            throw new OnlineFailure(409, "UnknownDungeon");
+        return dungeon;
     }
     private static bool IsToken(string? s) => s != null && s.Length == 64 && s.All(c => c is >= '0' and <= '9' or >= 'a' and <= 'f');
     private static long Unix(DateTime utc) => new DateTimeOffset(DateTime.SpecifyKind(utc, DateTimeKind.Utc)).ToUnixTimeMilliseconds();

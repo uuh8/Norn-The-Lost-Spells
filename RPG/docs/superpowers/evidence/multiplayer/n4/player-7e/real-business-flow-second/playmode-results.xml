@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-27 13:43:15Z" end-time="2026-10-27 13:43:44Z" duration="28.6901961">
+  <test-suite type="TestSuite" id="1928" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="839" result="Failed" site="Child" start-time="2026-10-27 13:43:15Z" end-time="2026-10-27 13:43:44Z" duration="28.690196" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1921" name="Game.Run.PlayMode.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.PlayMode.Tests.dll" runstate="Runnable" testcasecount="818" result="Failed" site="Child" start-time="2026-10-27 13:43:15Z" end-time="2026-10-27 13:43:44Z" duration="28.667542" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="23424" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1922" name="Game" fullname="Game" runstate="Runnable" testcasecount="818" result="Failed" site="Child" start-time="2026-10-27 13:43:15Z" end-time="2026-10-27 13:43:44Z" duration="28.661111" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1923" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="818" result="Failed" site="Child" start-time="2026-10-27 13:43:15Z" end-time="2026-10-27 13:43:44Z" duration="28.642648" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1924" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="818" result="Failed" site="Child" start-time="2026-10-27 13:43:15Z" end-time="2026-10-27 13:43:44Z" duration="28.626550" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1170" name="DungeonEntryFlowPlayModeTests" fullname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" classname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-27 13:43:15Z" end-time="2026-10-27 13:43:44Z" duration="28.608755" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1173" name="PortalMatch_AuthenticatedAdmissionReconnectAndReturn_PreservesLocalHub" fullname="Game.Run.Tests.DungeonEntryFlowPlayModeTests.PortalMatch_AuthenticatedAdmissionReconnectAndReturn_PreservesLocalHub" methodname="PortalMatch_AuthenticatedAdmissionReconnectAndReturn_PreservesLocalHub" classname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" runstate="Runnable" seed="1137405030" result="Failed" start-time="2026-10-27 13:43:15Z" end-time="2026-10-27 13:43:44Z" duration="28.587880" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  等待Lobby，当前None/Busy=False：
+  Expected: less than 44.300794003851479d
+  But was:  44.31607140385313d
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.DungeonEntryFlowPlayModeTests+<WaitRoomPhase>d__27.MoveNext () [0x0003c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\RunPlayMode\DungeonEntryFlowPlayModeTests.cs:229
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in .\Library\PackageCache\com.unity.test-framework@aebcb98460c6\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[UI] Scene Transition Controller 'SceneFade' subscribed; activeInHierarchy=True.
+[OnlineAccounts] 业务 Client 初始化：Ready
+[OnlineAccounts] 业务 HTTP 发起：POST /api/online/sessions
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[UI] Scene Transition Controller starting LoadSceneAsync('SinglePlayer_Hub').
+[UI] Scene Transition Controller 'SceneFade' unsubscribed; transitioning=True.
+Saving results to: Temp/SinglePlayer/playmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

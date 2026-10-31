@@ -45,7 +45,7 @@ public sealed class OwnedCombatAssetsTests
         using var process = Process.GetCurrentProcess();
         var identity = new InstanceProcessIdentity(process.Id, process.StartTime.ToUniversalTime().Ticks, process.MainModule!.FileName!);
         await service.RecordProcessAsync(grant.Descriptor.InstanceId, identity, default);
-        var request = new InstanceReadyRequest { RoomEpoch = run.Run.RoomEpoch, ProtocolVersion = f.Manifest.ProtocolVersion, BuildVersion = f.Manifest.BuildVersion,
+        var request = new InstanceReadyRequest { DungeonId = grant.Descriptor.DungeonId, RoomEpoch = run.Run.RoomEpoch, ProtocolVersion = f.Manifest.ProtocolVersion, BuildVersion = f.Manifest.BuildVersion,
             ManifestHash = f.Manifest.Hash, GameplayConfigHash = new string('b', 64), ProcessId = identity.ProcessId, ProcessStartTicks = identity.StartTicks };
         var wrong = await Assert.ThrowsAsync<OnlineFailure>(() => service.ReadyAsync(grant.Descriptor.InstanceId, grant.Secret!, request, default));
         Assert.Equal("ContentVersionMismatch", wrong.Code);

@@ -37,6 +37,7 @@ namespace Game.ElementField
         private float _size;
         private readonly GasVentAuthoring[] _vents = new GasVentAuthoring[64];
         private int _ventCount;
+        public GasWorldProfile ConfigurationProfile => _profile;
         public bool IsMaterialInitialized => _store != null;
         public int ResidentCellCount => _store != null ? _store.ResidentCellCount : 0;
         public uint Version => _store != null ? _store.Version : 0;

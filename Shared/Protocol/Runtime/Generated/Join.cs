@@ -26,17 +26,18 @@ namespace Game.NetworkProtocol {
           string.Concat(
             "Cgpqb2luLnByb3RvEg1ub3JuLnByb3RvY29sIl8KEUpvaW5UaWNrZXRSZXF1",
             "ZXN0EhgKEHByb3RvY29sX3ZlcnNpb24YASABKA0SDgoGdGlja2V0GAIgASgJ",
-            "EhEKCXBsYXllcl9pZBgDIAEoCRINCgVub25jZRgEIAEoBCK1AQoWSm9pblRp",
+            "EhEKCXBsYXllcl9pZBgDIAEoCRINCgVub25jZRgEIAEoBCLJAQoWSm9pblRp",
             "Y2tldFJlcGx5TWVzc2FnZRIYChBwcm90b2NvbF92ZXJzaW9uGAEgASgNEg0K",
             "BW5vbmNlGAIgASgEEhEKCXBsYXllcl9pZBgDIAEoCRIPCgdyb29tX2lkGAQg",
             "ASgJEg4KBnJ1bl9pZBgFIAEoCRISCgpyb29tX2Vwb2NoGAYgASgNEhgKEGNv",
-            "bm5lY3Rpb25fZXBvY2gYByABKA0SEAoIYWN0b3JfaWQYCCABKARCF6oCFEdh",
-            "bWUuTmV0d29ya1Byb3RvY29sYgZwcm90bzM="));
+            "bm5lY3Rpb25fZXBvY2gYByABKA0SEAoIYWN0b3JfaWQYCCABKAQSEgoKZHVu",
+            "Z2Vvbl9pZBgJIAEoCUIXqgIUR2FtZS5OZXR3b3JrUHJvdG9jb2xiBnByb3Rv",
+            "Mw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.JoinTicketRequest), global::Game.NetworkProtocol.JoinTicketRequest.Parser, new[]{ "ProtocolVersion", "Ticket", "PlayerId", "Nonce" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.JoinTicketReplyMessage), global::Game.NetworkProtocol.JoinTicketReplyMessage.Parser, new[]{ "ProtocolVersion", "Nonce", "PlayerId", "RoomId", "RunId", "RoomEpoch", "ConnectionEpoch", "ActorId" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.JoinTicketReplyMessage), global::Game.NetworkProtocol.JoinTicketReplyMessage.Parser, new[]{ "ProtocolVersion", "Nonce", "PlayerId", "RoomId", "RunId", "RoomEpoch", "ConnectionEpoch", "ActorId", "DungeonId" }, null, null, null, null)
           }));
     }
     #endregion
@@ -413,6 +414,7 @@ namespace Game.NetworkProtocol {
       roomEpoch_ = other.roomEpoch_;
       connectionEpoch_ = other.connectionEpoch_;
       actorId_ = other.actorId_;
+      dungeonId_ = other.dungeonId_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -542,6 +544,21 @@ namespace Game.NetworkProtocol {
       }
     }
 
+    /// <summary>Field number for the "dungeon_id" field.</summary>
+    public const int DungeonIdFieldNumber = 9;
+    private string dungeonId_ = "";
+    /// <summary>
+    /// 业务服确认的稳定副本配置键，非Client自选Scene路径；缺省空值拒绝入场。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string DungeonId {
+      get { return dungeonId_; }
+      set {
+        dungeonId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -565,6 +582,7 @@ namespace Game.NetworkProtocol {
       if (RoomEpoch != other.RoomEpoch) return false;
       if (ConnectionEpoch != other.ConnectionEpoch) return false;
       if (ActorId != other.ActorId) return false;
+      if (DungeonId != other.DungeonId) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -580,6 +598,7 @@ namespace Game.NetworkProtocol {
       if (RoomEpoch != 0) hash ^= RoomEpoch.GetHashCode();
       if (ConnectionEpoch != 0) hash ^= ConnectionEpoch.GetHashCode();
       if (ActorId != 0UL) hash ^= ActorId.GetHashCode();
+      if (DungeonId.Length != 0) hash ^= DungeonId.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -630,6 +649,10 @@ namespace Game.NetworkProtocol {
         output.WriteRawTag(64);
         output.WriteUInt64(ActorId);
       }
+      if (DungeonId.Length != 0) {
+        output.WriteRawTag(74);
+        output.WriteString(DungeonId);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -672,6 +695,10 @@ namespace Game.NetworkProtocol {
         output.WriteRawTag(64);
         output.WriteUInt64(ActorId);
       }
+      if (DungeonId.Length != 0) {
+        output.WriteRawTag(74);
+        output.WriteString(DungeonId);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -705,6 +732,9 @@ namespace Game.NetworkProtocol {
       }
       if (ActorId != 0UL) {
         size += 1 + pb::CodedOutputStream.ComputeUInt64Size(ActorId);
+      }
+      if (DungeonId.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(DungeonId);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -741,6 +771,9 @@ namespace Game.NetworkProtocol {
       }
       if (other.ActorId != 0UL) {
         ActorId = other.ActorId;
+      }
+      if (other.DungeonId.Length != 0) {
+        DungeonId = other.DungeonId;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -793,6 +826,10 @@ namespace Game.NetworkProtocol {
             ActorId = input.ReadUInt64();
             break;
           }
+          case 74: {
+            DungeonId = input.ReadString();
+            break;
+          }
         }
       }
     #endif
@@ -842,6 +879,10 @@ namespace Game.NetworkProtocol {
           }
           case 64: {
             ActorId = input.ReadUInt64();
+            break;
+          }
+          case 74: {
+            DungeonId = input.ReadString();
             break;
           }
         }

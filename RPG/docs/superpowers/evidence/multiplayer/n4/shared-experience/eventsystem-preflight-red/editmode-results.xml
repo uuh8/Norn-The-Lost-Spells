@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-25 08:55:37Z" end-time="2026-10-25 08:55:39Z" duration="1.2503336">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2432" result="Failed" site="Child" start-time="2026-10-25 08:55:37Z" end-time="2026-10-25 08:55:39Z" duration="1.250334" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="4012" name="Game.UI.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.UI.Tests.dll" runstate="Runnable" testcasecount="27" result="Failed" site="Child" start-time="2026-10-25 08:55:37Z" end-time="2026-10-25 08:55:39Z" duration="1.153721" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="16108" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="4013" name="Game" fullname="Game" runstate="Runnable" testcasecount="27" result="Failed" site="Child" start-time="2026-10-25 08:55:38Z" end-time="2026-10-25 08:55:39Z" duration="1.059935" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="4014" name="UI" fullname="Game.UI" runstate="Runnable" testcasecount="27" result="Failed" site="Child" start-time="2026-10-25 08:55:38Z" end-time="2026-10-25 08:55:39Z" duration="0.959966" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="4015" name="Tests" fullname="Game.UI.Tests" runstate="Runnable" testcasecount="27" result="Failed" site="Child" start-time="2026-10-25 08:55:38Z" end-time="2026-10-25 08:55:39Z" duration="0.860390" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3979" name="FocusAwareEventSystemTests" fullname="Game.UI.Tests.FocusAwareEventSystemTests" classname="Game.UI.Tests.FocusAwareEventSystemTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-25 08:55:38Z" end-time="2026-10-25 08:55:39Z" duration="0.757946" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3980" name="ReenabledEventSystemSamplesCurrentFocusInsteadOfStaleDisabledState" fullname="Game.UI.Tests.FocusAwareEventSystemTests.ReenabledEventSystemSamplesCurrentFocusInsteadOfStaleDisabledState" methodname="ReenabledEventSystemSamplesCurrentFocusInsteadOfStaleDisabledState" classname="Game.UI.Tests.FocusAwareEventSystemTests" runstate="Runnable" seed="948661965" result="Passed" start-time="2026-10-25 08:55:38Z" end-time="2026-10-25 08:55:38Z" duration="0.033568" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3982" name="UnknownCustomSystemRejectsWholeRootBeforeChangingEarlierSiblings" fullname="Game.UI.Tests.FocusAwareEventSystemTests.UnknownCustomSystemRejectsWholeRootBeforeChangingEarlierSiblings" methodname="UnknownCustomSystemRejectsWholeRootBeforeChangingEarlierSiblings" classname="Game.UI.Tests.FocusAwareEventSystemTests" runstate="Runnable" seed="1348685259" result="Failed" start-time="2026-10-25 08:55:38Z" end-time="2026-10-25 08:55:38Z" duration="0.030320" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: <System.Reflection.TargetInvocationException>
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.FocusAwareEventSystemTests.UnknownCustomSystemRejectsWholeRootBeforeChangingEarlierSiblings () [0x000b0] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\FocusAwareEventSystemTests.cs:127
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3981" name="UpgradePreservesSerializedComponentIdentitySettingsAndInputActionBindings" fullname="Game.UI.Tests.FocusAwareEventSystemTests.UpgradePreservesSerializedComponentIdentitySettingsAndInputActionBindings" methodname="UpgradePreservesSerializedComponentIdentitySettingsAndInputActionBindings" classname="Game.UI.Tests.FocusAwareEventSystemTests" runstate="Runnable" seed="1097202472" result="Passed" start-time="2026-10-25 08:55:38Z" end-time="2026-10-25 08:55:39Z" duration="0.570423" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

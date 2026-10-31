@@ -33,8 +33,13 @@ namespace Game.Combat
         {
             if (_execution.Mode != CombatExecutionMode.Replica || !float.IsFinite(snapshot.MaxHp)
                 || !float.IsFinite(snapshot.CurrentHp) || snapshot.MaxHp <= 0f) return;
-            _maxHp = snapshot.MaxHp; _currentHp = Mathf.Clamp(snapshot.CurrentHp, 0f, _maxHp);
+            float current = Mathf.Clamp(snapshot.CurrentHp, 0f, snapshot.MaxHp);
+            bool changed = current != _currentHp || snapshot.MaxHp != _maxHp;
+            _maxHp = snapshot.MaxHp; _currentHp = current;
             _teamId = snapshot.TeamId; _isInvulnerable = snapshot.IsInvulnerable;
+            // 状态通知与受击事实分开；既覆盖丢包后的 HP 恢复，也避免 UI 在 Update 中轮询/格式化文字。
+            if (changed) EventBus<HealthStateChangedEvent>.Publish(new HealthStateChangedEvent
+                { TargetId = _id, CurrentHp = _currentHp, MaxHp = _maxHp });
         }
 
         // ──────────────────────────────────────────────

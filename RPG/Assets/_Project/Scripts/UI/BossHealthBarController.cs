@@ -11,8 +11,9 @@ namespace Game.UI
     /// 它只消费跨模块 Event Snapshot，不引用 WizardBossController 或 BossDefinition，
     /// 因此移动 Marker、替换 Text/Image 都不会反向改变 Gameplay Phase。
     /// </summary>
-    public sealed class BossHealthBarController : MonoBehaviour
+    public sealed class BossHealthBarController : MonoBehaviour, ICombatHudElement
     {
+        public GameObject PresentationRoot => gameObject;
         [Header("Root")]
         [SerializeField] private GameObject _hudRoot;
 
@@ -29,8 +30,21 @@ namespace Game.UI
         private int _bossId;
         private float _maxHp;
         private bool _isInitialized;
+        private byte _displayedPhase;
+        private int _worldSceneHandle;
 
         private const float ThresholdLabelGap = 4f;
+
+        /// <summary>
+        /// 常驻 Host 在区域接管时指定本机 Scene 句柄。0 保留原独立场景 UI 的未限定行为；
+        /// 同区域重复绑定是幂等操作，不能清掉一次性初始化；换区域则先隐藏旧 Boss 再等待当前区域快照。
+        /// </summary>
+        public void BindWorld(int sceneHandle)
+        {
+            if (_worldSceneHandle == sceneHandle) return;
+            _worldSceneHandle = sceneHandle;
+            ClearPresentation();
+        }
 
         private void Awake()
         {
@@ -42,6 +56,7 @@ namespace Game.UI
         private void OnEnable()
         {
             EventBus<BossHudInitializedEvent>.Subscribe(OnInitialized);
+            EventBus<BossHudStateChangedEvent>.Subscribe(OnReplicaState);
             EventBus<DamageReceivedEvent>.Subscribe(OnDamageReceived);
             EventBus<BossPhaseChangedEvent>.Subscribe(OnPhaseChanged);
             EventBus<DeathEvent>.Subscribe(OnDeath);
@@ -50,23 +65,42 @@ namespace Game.UI
 
         private void Start()
         {
-            SetVisible(false);
+            // 网络事实可在其他物体的 Start 之前到达；Start 不能撤销已取得的显示资格。
+            if (!_isInitialized) SetVisible(false);
         }
 
         private void OnDisable()
         {
             EventBus<BossHudInitializedEvent>.Unsubscribe(OnInitialized);
+            EventBus<BossHudStateChangedEvent>.Unsubscribe(OnReplicaState);
             EventBus<DamageReceivedEvent>.Unsubscribe(OnDamageReceived);
             EventBus<BossPhaseChangedEvent>.Unsubscribe(OnPhaseChanged);
             EventBus<DeathEvent>.Unsubscribe(OnDeath);
             EventBus<RunStateChangedEvent>.Unsubscribe(OnRunStateChanged);
+            // 常驻 HUD 下一次启用不会再执行 Start；显式清子树 activeSelf，不能把上一区域的 Boss 条带进新图。
+            ClearPresentation();
+        }
+
+        private void ClearPresentation()
+        {
+            SetVisible(false);
             _isInitialized = false;
             _bossId = 0;
             _maxHp = 0f;
+            _displayedPhase = 0;
+        }
+
+        private void OnReplicaState(BossHudStateChangedEvent state)
+        {
+            if (!_isInitialized || state.BossId != _bossId) return;
+            if (!state.Active || state.CurrentHp <= 0f) { SetVisible(false); return; }
+            SetHealth(state.CurrentHp); SetPhase(state.CurrentPhase); SetVisible(true);
         }
 
         private void OnInitialized(BossHudInitializedEvent initializedEvent)
         {
+            // EventBus 是同步全局通知。即使旧 Scope 晚发重放，当前 Host 也只接受已绑定 World 的本机事实。
+            if (_worldSceneHandle != 0 && initializedEvent.WorldSceneHandle != _worldSceneHandle) return;
             if (initializedEvent.BossId == 0 ||
                 initializedEvent.MaxHp <= 0f)
             {
@@ -153,6 +187,9 @@ namespace Game.UI
 
         private void SetPhase(byte phase)
         {
+            // ActorState 是高频事实，文字仅在阶段改变时写入，避免每个快照插值分配 string。
+            if (_displayedPhase == phase) return;
+            _displayedPhase = phase;
             if (_phaseText != null)
             {
                 _phaseText.text = $"Phase {Mathf.Max(1, phase)}";

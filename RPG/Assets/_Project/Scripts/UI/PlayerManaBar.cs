@@ -9,8 +9,9 @@ namespace Game.UI
     /// 玩家屏幕 HUD 蓝条。Inspector 拖入玩家 ManaComponent 和填充 Image。
     /// Image 需要设置为 Type=Filled，Fill Method=Horizontal。
     /// </summary>
-    public class PlayerManaBar : MonoBehaviour
+    public class PlayerManaBar : MonoBehaviour, ICombatHudElement
     {
+        public GameObject PresentationRoot => gameObject;
         [SerializeField] private Image _fill;
         [SerializeField] private ManaComponent _playerMana;
         [SerializeField] private Text _valueLabel;
@@ -20,6 +21,16 @@ namespace Game.UI
         private float _displayFill = 1f;
         private int _lastCurrentValue = int.MinValue;
         private int _lastMaxValue = int.MinValue;
+
+        /// <summary>原蓝条绑定新角色时立即安装当前事实；不调用资源 Spend/Regenerate。</summary>
+        public void Bind(ManaComponent mana)
+        {
+            _playerMana = mana;
+            _lastCurrentValue = _lastMaxValue = int.MinValue;
+            _targetFill = _displayFill = mana != null ? mana.Normalized : 0f;
+            RefreshValueLabel(mana != null ? mana.CurrentMana : 0f, mana != null ? mana.MaxMana : 0f);
+            ApplyFill();
+        }
 
         private void Start()
         {

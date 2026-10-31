@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="1" failed="5" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-28 09:45:17Z" end-time="2026-10-28 09:45:18Z" duration="0.7915762">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2645" result="Failed" site="Child" start-time="2026-10-28 09:45:17Z" end-time="2026-10-28 09:45:18Z" duration="0.791576" total="6" passed="1" failed="5" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2530" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="133" result="Failed" site="Child" start-time="2026-10-28 09:45:17Z" end-time="2026-10-28 09:45:18Z" duration="0.690890" total="6" passed="1" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27148" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2531" name="Game" fullname="Game" runstate="Runnable" testcasecount="133" result="Failed" site="Child" start-time="2026-10-28 09:45:17Z" end-time="2026-10-28 09:45:18Z" duration="0.600524" total="6" passed="1" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2532" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="133" result="Failed" site="Child" start-time="2026-10-28 09:45:17Z" end-time="2026-10-28 09:45:18Z" duration="0.500853" total="6" passed="1" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2533" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="133" result="Failed" site="Child" start-time="2026-10-28 09:45:18Z" end-time="2026-10-28 09:45:18Z" duration="0.399553" total="6" passed="1" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2507" name="SnapshotSendClockTests" fullname="Game.Multiplayer.Tests.SnapshotSendClockTests" classname="Game.Multiplayer.Tests.SnapshotSendClockTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-28 09:45:18Z" end-time="2026-10-28 09:45:18Z" duration="0.300843" total="6" passed="1" failed="5" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2514" name="LateFrame_SkipsExpiredPeriodsAndSendsOnlyLatestStateOnce" fullname="Game.Multiplayer.Tests.SnapshotSendClockTests.LateFrame_SkipsExpiredPeriodsAndSendsOnlyLatestStateOnce" methodname="LateFrame_SkipsExpiredPeriodsAndSendsOnlyLatestStateOnce" classname="Game.Multiplayer.Tests.SnapshotSendClockTests" runstate="Runnable" seed="1155808739" result="Failed" start-time="2026-10-28 09:45:18Z" end-time="2026-10-28 09:45:18Z" duration="0.026809" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.SnapshotSendClockTests.LateFrame_SkipsExpiredPeriodsAndSendsOnlyLatestStateOnce () [0x0006f] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SnapshotSendClockTests.cs:62
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2515" name="Reset_DiscardsPreviousSessionDeadline" fullname="Game.Multiplayer.Tests.SnapshotSendClockTests.Reset_DiscardsPreviousSessionDeadline" methodname="Reset_DiscardsPreviousSessionDeadline" classname="Game.Multiplayer.Tests.SnapshotSendClockTests" runstate="Runnable" seed="1523759334" result="Passed" start-time="2026-10-28 09:45:18Z" end-time="2026-10-28 09:45:18Z" duration="0.004731" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="2513" name="SlightFrameJitter_PreservesConfiguredSendRate" fullname="Game.Multiplayer.Tests.SnapshotSendClockTests.SlightFrameJitter_PreservesConfiguredSendRate" classname="Game.Multiplayer.Tests.SnapshotSendClockTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-28 09:45:18Z" end-time="2026-10-28 09:45:18Z" duration="0.063234" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2511" name="SlightFrameJitter_PreservesConfiguredSendRate(15,300)" fullname="Game.Multiplayer.Tests.SnapshotSendClockTests.SlightFrameJitter_PreservesConfiguredSendRate(15,300)" methodname="SlightFrameJitter_PreservesConfiguredSendRate" classname="Game.Multiplayer.Tests.SnapshotSendClockTests" runstate="Runnable" seed="630024536" result="Failed" start-time="2026-10-28 09:45:18Z" end-time="2026-10-28 09:45:18Z" duration="0.008757" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  轻微帧时间抖动只能改变单份快照何时发出，不应长期削减快照数量。
+  Expected: 300 +/- 1
+  But was:  200
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.SnapshotSendClockTests.SlightFrameJitter_PreservesConfiguredSendRate (System.Int32 sendRate, System.Int32 expectedSends) [0x0006a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SnapshotSendClockTests.cs:43
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2512" name="SlightFrameJitter_PreservesConfiguredSendRate(30,600)" fullname="Game.Multiplayer.Tests.SnapshotSendClockTests.SlightFrameJitter_PreservesConfiguredSendRate(30,600)" methodname="SlightFrameJitter_PreservesConfiguredSendRate" classname="Game.Multiplayer.Tests.SnapshotSendClockTests" runstate="Runnable" seed="349874078" result="Failed" start-time="2026-10-28 09:45:18Z" end-time="2026-10-28 09:45:18Z" duration="0.000636" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  轻微帧时间抖动只能改变单份快照何时发出，不应长期削减快照数量。
+  Expected: 600 +/- 1
+  But was:  301
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.SnapshotSendClockTests.SlightFrameJitter_PreservesConfiguredSendRate (System.Int32 sendRate, System.Int32 expectedSends) [0x0006a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SnapshotSendClockTests.cs:43
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="2510" name="StableThirtyFps_PreservesConfiguredSendRate" fullname="Game.Multiplayer.Tests.SnapshotSendClockTests.StableThirtyFps_PreservesConfiguredSendRate" classname="Game.Multiplayer.Tests.SnapshotSendClockTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-28 09:45:18Z" end-time="2026-10-28 09:45:18Z" duration="0.088265" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2508" name="StableThirtyFps_PreservesConfiguredSendRate(15,300)" fullname="Game.Multiplayer.Tests.SnapshotSendClockTests.StableThirtyFps_PreservesConfiguredSendRate(15,300)" methodname="StableThirtyFps_PreservesConfiguredSendRate" classname="Game.Multiplayer.Tests.SnapshotSendClockTests" runstate="Runnable" seed="1804768413" result="Failed" start-time="2026-10-28 09:45:18Z" end-time="2026-10-28 09:45:18Z" duration="0.001164" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  发送资格必须随真实时间保持配置频率，不能每次从当前帧重新等待完整 interval。
+  Expected: 300 +/- 1
+  But was:  200
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.SnapshotSendClockTests.StableThirtyFps_PreservesConfiguredSendRate (System.Int32 sendRate, System.Int32 expectedSends) [0x00041] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SnapshotSendClockTests.cs:23
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2509" name="StableThirtyFps_PreservesConfiguredSendRate(30,600)" fullname="Game.Multiplayer.Tests.SnapshotSendClockTests.StableThirtyFps_PreservesConfiguredSendRate(30,600)" methodname="StableThirtyFps_PreservesConfiguredSendRate" classname="Game.Multiplayer.Tests.SnapshotSendClockTests" runstate="Runnable" seed="789877994" result="Failed" start-time="2026-10-28 09:45:18Z" end-time="2026-10-28 09:45:18Z" duration="0.000644" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  发送资格必须随真实时间保持配置频率，不能每次从当前帧重新等待完整 interval。
+  Expected: 600 +/- 1
+  But was:  300
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.SnapshotSendClockTests.StableThirtyFps_PreservesConfiguredSendRate (System.Int32 sendRate, System.Int32 expectedSends) [0x00041] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SnapshotSendClockTests.cs:23
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

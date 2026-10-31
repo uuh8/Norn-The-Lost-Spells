@@ -143,7 +143,9 @@ namespace Game.Run
             var activated = _session.Repository.TrySave(candidate);
             if (!activated.Success) { RollbackDeparture(activated.Message); yield break; }
             _committing = true; _session.AdoptCommitted(candidate); _committing = false;
-            _hubWorld?.SetActive(false);
+            // Unity 未赋值/已销毁的 Object 仍可能有托管 wrapper；?. 只检查 CLR null，不能识别它。
+            // 分组后的 Hub 使用 _hubEnvironment，这个旧单根字段允许为空，应使用 Unity 的 != 判空。
+            if (_hubWorld != null) _hubWorld.SetActive(false);
             // 玩家移动到本局Scene，让SpellCaster/投掷的既有Scene归属自然覆盖所有攻击/VFX资源。
             SceneManager.MoveGameObjectToScene(_player.transform.root.gameObject, _world);
             _session.WorldActor=_player.transform;
@@ -251,7 +253,7 @@ namespace Game.Run
             if (enabled) controller.enabled = false; _player.transform.position = position; if (enabled) controller.enabled = true; }
         private void SetHubEnvironment(bool active)
         {
-            if(_hubEnvironment.Length==0){_hubWorld?.SetActive(active);return;}
+            if(_hubEnvironment.Length==0){if(_hubWorld!=null)_hubWorld.SetActive(active);return;}
             // 只停用环境、材质呈现与光照；保留玩家/库存/UI，避免双世界模拟和重叠渲染。
             for(int i=0;i<_hubEnvironment.Length;i++)if(_hubEnvironment[i]!=null)_hubEnvironment[i].SetActive(active);
         }

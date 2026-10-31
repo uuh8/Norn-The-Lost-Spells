@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-29 02:42:13Z" end-time="2026-10-29 02:42:57Z" duration="43.6662334">
+  <test-suite type="TestSuite" id="1959" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="861" result="Failed" site="Child" start-time="2026-10-29 02:42:13Z" end-time="2026-10-29 02:42:57Z" duration="43.666233" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1952" name="Game.Run.PlayMode.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.PlayMode.Tests.dll" runstate="Runnable" testcasecount="840" result="Failed" site="Child" start-time="2026-10-29 02:42:13Z" end-time="2026-10-29 02:42:57Z" duration="43.637310" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27148" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1953" name="Game" fullname="Game" runstate="Runnable" testcasecount="840" result="Failed" site="Child" start-time="2026-10-29 02:42:13Z" end-time="2026-10-29 02:42:57Z" duration="43.628565" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1954" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="840" result="Failed" site="Child" start-time="2026-10-29 02:42:13Z" end-time="2026-10-29 02:42:57Z" duration="43.615482" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1955" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="840" result="Failed" site="Child" start-time="2026-10-29 02:42:13Z" end-time="2026-10-29 02:42:57Z" duration="43.596924" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1172" name="DungeonEntryFlowPlayModeTests" fullname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" classname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-29 02:42:13Z" end-time="2026-10-29 02:42:57Z" duration="43.578626" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1175" name="PortalMatch_AuthenticatedAdmissionReconnectAndReturn_PreservesLocalHub" fullname="Game.Run.Tests.DungeonEntryFlowPlayModeTests.PortalMatch_AuthenticatedAdmissionReconnectAndReturn_PreservesLocalHub" methodname="PortalMatch_AuthenticatedAdmissionReconnectAndReturn_PreservesLocalHub" classname="Game.Run.Tests.DungeonEntryFlowPlayModeTests" runstate="Runnable" seed="1744404338" result="Failed" start-time="2026-10-29 02:42:13Z" end-time="2026-10-29 02:42:57Z" duration="43.544712" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  真实 EventSystem 尚未派发 BeginDrag。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.DungeonEntryFlowPlayModeTests+<DragOriginalItem>d__31.MoveNext () [0x002da] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\RunPlayMode\DungeonEntryFlowPlayModeTests.cs:311
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in .\Library\PackageCache\com.unity.test-framework@aebcb98460c6\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[UI] Scene Transition Controller 'SceneFade' subscribed; activeInHierarchy=True.
+[OnlineAccounts] 业务 Client 初始化：Ready
+[OnlineAccounts] 业务 HTTP 发起：POST /api/online/sessions
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[OnlineAccounts] 业务 HTTP 发起：GET /api/online/profile
+[OnlineAccounts] 业务 HTTP 完成：200 / Success
+[UI] Scene Transition Controller starting LoadSceneAsync('SinglePlayer_Hub').
+[UI] Scene Transition Controller 'SceneFade' unsubscribed; transitioning=True.
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/match
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/091422c138474794b74997163b120299/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/091422c138474794b74997163b120299/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：GET /api/online/profile
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/091422c138474794b74997163b120299/ready
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/091422c138474794b74997163b120299/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/091422c138474794b74997163b120299/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/091422c138474794b74997163b120299/start
+[OnlineRooms] 房间HTTP完成：202
+Account API did not become accessible within 30 seconds. This may be due to network issues or editor focus.
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/091422c138474794b74997163b120299/presence
+[OnlineRooms] 房间HTTP完成：200
+Error after 1 attempt(s): UnavailableForLegalReasons -  -- Result type: PointsBalanceResult -- Url: https://generators.ai.unity.com -- Trace Id c5307ab8-321d-4bcc-a7cd-c17cab5287d5 => 
+Error after 1 attempt(s): UnavailableForLegalReasons -  -- Result type: SettingsResult -- Url: https://generators.ai.unity.com -- Trace Id c5307ab8-321d-4bcc-a7cd-c17cab5287d5 => 
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/091422c138474794b74997163b120299/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/091422c138474794b74997163b120299/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/091422c138474794b74997163b120299/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/091422c138474794b74997163b120299/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/091422c138474794b74997163b120299/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/091422c138474794b74997163b120299/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/091422c138474794b74997163b120299/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/091422c138474794b74997163b120299/presence
+[OnlineRooms] 房间HTTP完成：200
+[OnlineRooms] 房间HTTP：POST /api/online/rooms/091422c138474794b74997163b120299/ticket
+[OnlineRooms] 房间HTTP完成：200
+[UI] PlayerHealthBar 未指定玩家 HealthComponent，血条不会更新
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+Saving results to: Temp/SinglePlayer/playmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

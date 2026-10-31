@@ -1,0 +1,21 @@
+syntax = "proto3";
+package norn.protocol;
+option csharp_namespace = "Game.NetworkProtocol";
+
+////////////////////////////////////////////////////////////////
+// Run级遭遇事实：仅Server发布，Client安装门/原HUD表现，不据此发奖励。
+////////////////////////////////////////////////////////////////
+
+// 首次入局、重连或进度变化时可靠发送；不是每Actor/每Tick的大数组。
+message DungeonProgressMessage
+{
+    uint32 protocol_version = 1;           // 应用协议版本，0或不兼容版本拒绝。
+    fixed64 gameplay_hash = 2;            // 两端共同玩法摘要，完整SHA256已在入局时核对。
+    string run_id = 3;                    // 当前授权Run的32位小写hex；不使用某个玩家的连接Epoch代替整局身份。
+    string dungeon_id = 4;                // 已认证的内容键，最多32 ASCII字节；不是客户端提供的Scene路径。
+    uint32 revision = 5;                  // 本Run进度修订，非零且只在进度变化时增长。
+    uint32 server_tick = 6;               // 快照时的权威Tick，冻结时不前进；非本机Rendering frame。
+    uint32 encounter_index_plus_one = 7;  // 当前遭遇索引+1，1..4；0代表缺失而非默认第一关。
+    uint32 phase = 8;                     // 1=Armed，2=Active，3=StageCleared；Client不能提交该字段请求开战。
+    uint32 remaining_enemies = 9;         // 当前区未死亡NPC数，最多12；具体区域容量由受控Definition再次核对。
+}

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-25 14:29:52Z" end-time="2026-10-25 14:29:52Z" duration="0.0934407">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2441" result="Failed" site="Child" start-time="2026-10-25 14:29:52Z" end-time="2026-10-25 14:29:52Z" duration="0.093441" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="4023" name="Game.UI.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.UI.Tests.dll" runstate="Runnable" testcasecount="29" result="Failed" site="Child" start-time="2026-10-25 14:29:52Z" end-time="2026-10-25 14:29:52Z" duration="0.073317" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26116" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="4024" name="Game" fullname="Game" runstate="Runnable" testcasecount="29" result="Failed" site="Child" start-time="2026-10-25 14:29:52Z" end-time="2026-10-25 14:29:52Z" duration="0.069280" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="4025" name="UI" fullname="Game.UI" runstate="Runnable" testcasecount="29" result="Failed" site="Child" start-time="2026-10-25 14:29:52Z" end-time="2026-10-25 14:29:52Z" duration="0.065822" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="4026" name="Tests" fullname="Game.UI.Tests" runstate="Runnable" testcasecount="29" result="Failed" site="Child" start-time="2026-10-25 14:29:52Z" end-time="2026-10-25 14:29:52Z" duration="0.062862" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3983" name="BossHudPersistentLifecycleTests" fullname="Game.UI.Tests.BossHudPersistentLifecycleTests" classname="Game.UI.Tests.BossHudPersistentLifecycleTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-25 14:29:52Z" end-time="2026-10-25 14:29:52Z" duration="0.059732" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3984" name="DisableHidesOldBossChildBeforePersistentHudIsReused" fullname="Game.UI.Tests.BossHudPersistentLifecycleTests.DisableHidesOldBossChildBeforePersistentHudIsReused" methodname="DisableHidesOldBossChildBeforePersistentHudIsReused" classname="Game.UI.Tests.BossHudPersistentLifecycleTests" runstate="Runnable" seed="1046408783" result="Failed" start-time="2026-10-25 14:29:52Z" end-time="2026-10-25 14:29:52Z" duration="0.032351" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  父 HUD 停用不等于子节点 authored activeSelf 已清；下一区域重用时不能带出旧 Boss 条。
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.BossHudPersistentLifecycleTests.DisableHidesOldBossChildBeforePersistentHudIsReused () [0x00037] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\BossHudPersistentLifecycleTests.cs:44
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3985" name="ReenableWithoutSecondStartWaitsForNewBossThenUsesItsSnapshot" fullname="Game.UI.Tests.BossHudPersistentLifecycleTests.ReenableWithoutSecondStartWaitsForNewBossThenUsesItsSnapshot" methodname="ReenableWithoutSecondStartWaitsForNewBossThenUsesItsSnapshot" classname="Game.UI.Tests.BossHudPersistentLifecycleTests" runstate="Runnable" seed="761489205" result="Failed" start-time="2026-10-25 14:29:52Z" end-time="2026-10-25 14:29:52Z" duration="0.001447" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  新 Context 尚无 Boss 初始化时，旧画面必须保持隐藏。
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.BossHudPersistentLifecycleTests.ReenableWithoutSecondStartWaitsForNewBossThenUsesItsSnapshot () [0x0002d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\BossHudPersistentLifecycleTests.cs:56
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

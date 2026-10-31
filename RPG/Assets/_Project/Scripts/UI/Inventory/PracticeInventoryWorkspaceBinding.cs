@@ -1,3 +1,4 @@
+using Game.Core;
 using Game.Run;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -14,6 +15,8 @@ namespace Game.UI
         [SerializeField] private HeldItemHud _heldHud;
         [SerializeField] private ContainerCompositionView _containerHud;
         [SerializeField] private Canvas _containerCanvas;
+        private CombatPresentationScope _combatPresentation;
+        private bool _configured;
         private void Awake()
         {
             // 场景只装配携带背包；旧法杖编辑器已在 Authoring 迁移时移除，不再运行时互相禁用。
@@ -22,9 +25,32 @@ namespace Game.UI
             {var menu=root.GetComponentInChildren<DemoPauseMenuController>(true);if(menu!=null)menu.ConfigurePracticeInventory(_inventory);}
             if(_heldHud!=null)_heldHud.ConfigureVisibility(_inventory,null,null,_heldHud.GetComponentInParent<Canvas>(true));
             if(_eventSystem!=null)_eventSystem.SetActive(EventSystem.current==null);
+            _configured = true;
+        }
+        private void OnEnable() { if (_configured) BindCombatPresentation(); }
+        private void OnDisable() { if (_combatPresentation != null) _combatPresentation.Clear(); }
+
+        /// <summary>
+        /// 所有使用共同练习工作区的地图都经过这里，不按 P7/P8 名字分支。Scope 留在场景中，
+        /// 只有 Host 的纯 HUD 常驻；不把 Session/Player reparent 到 DontDestroyOnLoad 树。
+        /// </summary>
+        private void BindCombatPresentation()
+        {
+            if (_workspace == null || _workspace.Player == null || _workspace.Session == null) return;
+            if (_combatPresentation == null)
+                _combatPresentation = GetComponent<CombatPresentationScope>() ?? gameObject.AddComponent<CombatPresentationScope>();
+            var actor = _workspace.Player.gameObject;
+            var ability = actor.GetComponent<ICombatActorPresentation>();
+            _combatPresentation.Bind(new CombatPresentationContext
+            {
+                Actor = actor, WorldScene = actor.scene, InventorySource = _workspace.Session,
+                InventoryController = _inventory, CrosshairVisible = ability != null && ability.DefaultCrosshairVisible
+            });
         }
         private void Start()
         {
+            // Start 是另一条保险：工作区 Configure 可能晚于组件首次启用；重复 Context 由 Host 幂等处理。
+            BindCombatPresentation();
             var tools=_workspace.Session.ToolbeltReadOnly;
             // 此显示与角色同步均读取同一Run快照；UI不引用Character的采集控制器。
             if(_containerHud!=null && tools.SelectedSlot>=3 && tools.TryGetBinding(tools.SelectedSlot-3,out var item))_containerHud.Select(item);

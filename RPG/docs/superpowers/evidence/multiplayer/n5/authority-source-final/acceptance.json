@@ -1,0 +1,72 @@
+{
+  "Stage": "N5-1B-cpu-ownership-and-four-domain-readonly-source",
+  "Date": "2026-10-29",
+  "TaskComplete": true,
+  "N5Complete": false,
+  "Scope": "CPU execution ownership and bounded spatial quantity/Pending value capture; not rule-state restoration or network replication",
+  "Tests": {
+    "FinalTargeted": {"Passed": 61, "Failed": 0, "Evidence": "green.xml"},
+    "FinalBreakdown": {"RevisionFence": 9, "CoreBuffer": 1, "LiquidSampleClock": 8, "ActualP7GridInitialization": 2, "WorldClock": 21, "FaultedWrites": 5, "FourDomainSource": 15},
+    "SinglePlayerRelatedRegression": {"Fixtures": 24, "Passed": 253, "Failed": 0, "Evidence": "../single-player-regression/green.xml"},
+    "OverlappingCases": 20,
+    "DistinctCases": 294,
+    "FullProjectRunAll": false
+  },
+  "ActualProfileIntegration": {
+    "Profiles": "In-memory clones of formal P7 CPU Grid World/Liquid profiles; original referenced Catalog/Routes/Behaviors retained, capacities reduced only for tests",
+    "Modes": ["SinglePlayer", "Authority"],
+    "ReflectivelyForcedIsInitialized": false,
+    "WaterInjectedGmu": 64,
+    "WaterResidentAfterOneRealTickGmu": 64,
+    "WaterPendingAfterTickGmu": 0,
+    "CapturedDomains": ["LegacyCell", "Liquid", "Solid", "Gas"],
+    "RendererOrGpuComponents": false,
+    "NativeHeadlessProcessTested": false
+  },
+  "Implemented": [
+    "SinglePlayer/Authority/Replica ownership selected before initialization",
+    "External 30Hz feeds existing 10Hz material accumulator; nonzero monotonic serverTick fence",
+    "Frozen consumes server tick identity without accumulating time; synchronous mid-catch-up freeze stops remaining whole ticks",
+    "All material Tick paths expose an in-progress boundary; exceptions latch Faulted without pretending to roll back",
+    "Faulted rejects further clocks, Source, formal write queue and direct/EventBus inventory deposit/collection entry points before reservation",
+    "Authority runtime diagnostics are not erased by a later automatic Update",
+    "Liquid Step accepts explicit sample timestamp while original single-player overload retains Time.time",
+    "Caller-owned fixed Cell/Pending/Geometry buffers with two-pass capacity/inspection preflight and atomic rejection",
+    "Native per-domain uint quantities, separate Legacy intensity, full Stable depth and active-owner-only expansion handoff",
+    "Complete pending request values and progress copied without consuming queues",
+    "Any GPU material route rejects incomplete CPU capture, including Poison/Sticky when Water is Grid"
+  ],
+  "IndependentStaticReview": "Read-only Source review found no further definite P1/P2 after the full GPU route rejection; concrete struct enumerators/value copies have no identified new hot-path allocation. This is not measured GC acceptance.",
+  "RedEvidence": [
+    "../authority-clock/red.xml",
+    "../authority-clock/edge-red.xml",
+    "../authority-clock/fault-write-red.xml",
+    "../material-source/red-valid.xml",
+    "../material-source/gpu-route-red.xml"
+  ],
+  "FixtureFailuresRetainedSeparately": [
+    "Missing reaction profile and interference from the current Editor Physics scene",
+    "RequireComponent already created a DisallowMultipleComponent Baker; second AddComponent returned null",
+    "Activator overload selected Type/bool via UnityEngine.Object implicit bool rather than constructor arguments",
+    "Stable air-to-air edit was an idempotent no-op; corrected test performs a real air-to-solid handoff"
+  ],
+  "Preservation": {"Files": 12, "Unchanged": 12, "Evidence": "preservation-after.json"},
+  "EditorHandoff": {"Playing": false, "Compiling": false, "Dirty": false, "Scene": "Assets/_Project/Scenes/P7_MainMenu.unity", "Evidence": "editor-handoff.json"},
+  "CanRestoreAuthorityRules": false,
+  "AuthoritySceneDriverIntegrated": false,
+  "ReplicaStoreOrAtomicInstallationImplemented": false,
+  "CommitRevisionJournalImplemented": false,
+  "FrozenBaselineOrDeltaImplemented": false,
+  "WorldTransportOrProtoImplemented": false,
+  "FourPlayerInterestImplemented": false,
+  "NativeOrFullFrameGcAccepted": false,
+  "GcByteZerosAcceptedAsEvidence": false,
+  "N5ClientOrDedicatedServerBuildProduced": false,
+  "LinuxPublicNetworkIl2CppAccepted": false,
+  "N4FormalExperienceGatePreserved": true,
+  "VersionsOrAsmdefChanged": false,
+  "ServerOrSharedChangedByThisTask": false,
+  "ServicesRestartedByThisTask": false,
+  "NewCommitOrPush": false,
+  "NextTask": "N5-1C independent committed Generation/Revision and tombstones, including Tick-external inventory transactions; then frozen Baseline/Delta and atomic Replica"
+}

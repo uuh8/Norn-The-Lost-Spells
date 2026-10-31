@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-24 23:50:15Z" end-time="2026-10-24 23:50:16Z" duration="0.6752231">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2419" result="Failed" site="Child" start-time="2026-10-24 23:50:15Z" end-time="2026-10-24 23:50:16Z" duration="0.675223" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3738" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="685" result="Failed" site="Child" start-time="2026-10-24 23:50:16Z" end-time="2026-10-24 23:50:16Z" duration="0.577012" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="12136" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3739" name="Game" fullname="Game" runstate="Runnable" testcasecount="685" result="Failed" site="Child" start-time="2026-10-24 23:50:16Z" end-time="2026-10-24 23:50:16Z" duration="0.484882" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3740" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="685" result="Failed" site="Child" start-time="2026-10-24 23:50:16Z" end-time="2026-10-24 23:50:16Z" duration="0.385103" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3741" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="685" result="Failed" site="Child" start-time="2026-10-24 23:50:16Z" end-time="2026-10-24 23:50:16Z" duration="0.284249" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3338" name="SharedInventoryPresentationTests" fullname="Game.Run.Tests.SharedInventoryPresentationTests" classname="Game.Run.Tests.SharedInventoryPresentationTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-24 23:50:16Z" end-time="2026-10-24 23:50:16Z" duration="0.183107" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3344" name="DestroyedExternalSourceClosesPanelAndReleasesInputWithoutLocalFallback" fullname="Game.Run.Tests.SharedInventoryPresentationTests.DestroyedExternalSourceClosesPanelAndReleasesInputWithoutLocalFallback" methodname="DestroyedExternalSourceClosesPanelAndReleasesInputWithoutLocalFallback" classname="Game.Run.Tests.SharedInventoryPresentationTests" runstate="Runnable" seed="1043401874" result="Failed" start-time="2026-10-24 23:50:16Z" end-time="2026-10-24 23:50:16Z" duration="0.070973" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  来源失效后不能继续显示旧资产并永久捕获输入。
+  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.SharedInventoryPresentationTests.DestroyedExternalSourceClosesPanelAndReleasesInputWithoutLocalFallback () [0x0006c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\SharedInventoryPresentationTests.cs:140
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

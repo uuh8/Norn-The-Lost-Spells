@@ -92,6 +92,56 @@ namespace Game.Multiplayer.Tests
         }
 
         [Test]
+        public void NewerDeadSnapshot_OlderNonlethalDamageCannotShortenCorpseDeadline()
+        {
+            var deathState = Fact(7, 1, 1, 100, 0f); deathState.Amount = 1.9f;
+            Receive(deathState);
+            var lifetime = _registry[0].BodyLifetime;
+            Assert.That(lifetime.RemainingSeconds(100), Is.EqualTo(1.9f).Within(.0001f));
+
+            // 两条通道没有总顺序：当前读模型已死亡，不代表这个旧 Damage 自身就是致死事实。
+            // 若把 tick90 的非致死命中当成死亡起点，MarkDeath 的“只缩短”保护反而会永久提前清尸体。
+            var oldDamage = Fact(8, 1, 1, 90, 50f); oldDamage.Amount = 10f;
+            Receive(oldDamage);
+
+            Assert.That(lifetime.RemainingSeconds(100), Is.EqualTo(1.9f).Within(.0001f),
+                "非致死旧事实可保留命中反馈，但不能修改较新死亡事实给出的尸体期限。");
+            Assert.That(_registry[0].Health.CurrentHp, Is.Zero);
+            Assert.That(_damageEvents, Is.EqualTo(1));
+            Assert.That(_deathEvents, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void NewerDeadSnapshot_OlderReliableActionCannotReclaimAnimatorFromDeath()
+        {
+            var wizard = PrepareRemoteWizard();
+            var deathState = Fact(7, 2, 1, 20, 0f); deathState.Amount = 1.9f;
+            Receive(deathState);
+            Assert.That(wizard.IsOnlineActionPresentationActive, Is.False);
+
+            // 可靠 Action 在自己的流里仍是新消息；较新的不可靠死亡状态已经让原 Prefab 进入死亡表现。
+            // 检查实际施法 Overlay 入口的所有权，避免 inactive EditMode 的 Animator 求值时机影响断言。
+            Receive(ActionFact(10));
+            Assert.That(wizard.IsOnlineActionPresentationActive, Is.False,
+                "死亡后不能由迟到施法重新取得 Animator 所有权并覆盖死亡动画。");
+            var death = Fact(9, 2, 1, 19, 0f); death.Amount = 1.9f;
+            Receive(death);
+            Assert.That(_deathEvents, Is.EqualTo(1), "可靠死亡晚到不能靠重播 Death 来掩盖旧动作覆盖。");
+        }
+
+        [Test]
+        public void NewerLivingSnapshot_OlderUnpresentedActionStillUsesOriginalCastPresentation()
+        {
+            var wizard = PrepareRemoteWizard();
+            Receive(Fact(7, 2, 1, 20, 80f));
+            Receive(ActionFact(10));
+            Assert.That(wizard.IsOnlineActionPresentationActive, Is.True,
+                "活人的普通 HP 状态比动作新，不代表可靠动作已经播放；不能用 ActorState 序列笼统丢弃。");
+            Assert.That(_registry[1].Health.CurrentHp, Is.EqualTo(80f));
+            Assert.That(_deathEvents, Is.Zero);
+        }
+
+        [Test]
         public void OutputStateAfterTermination_CannotRecreateTerminatedOutput()
         {
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Art/Prefabs/Wizard/Magic/Fireball.prefab");
@@ -136,6 +186,25 @@ namespace Game.Multiplayer.Tests
             CurrentHp = hp, MaxHp = 100f, Team = 1, MoveMultiplier = 1f,
             RotationW = 1f, PositionX = 32123f, PositionY = 19000f, PositionZ = 23123f
         };
+        private WizardController PrepareRemoteWizard()
+        {
+            var slot = _registry.EnsurePlayer(1, PlayerExecutionMode.Replica);
+            var wizard = slot.Player as WizardController;
+            Assert.That(wizard, Is.Not.Null, "动作回归必须使用原生产 Wizard Prefab。");
+            // 外层世界一直 inactive；夹具仅补齐真实 Awake 缓存，不启动 Update/Input 或另造动画控制器。
+            typeof(WizardController).GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(wizard, null);
+            typeof(HealthComponent).GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(slot.Health, null);
+            Assert.That(wizard.Animator, Is.Not.Null);
+            Assert.That(_definition.AnimationHash(false), Is.Not.Zero);
+            return wizard;
+        }
+        private CombatFactMessage ActionFact(uint sequence)
+        {
+            var action = Fact(3, 2, 1, sequence, 0);
+            action.AnimationHash = unchecked((uint)_definition.AnimationHash(false));
+            action.ActionKind = 1; action.Amount = .1f;
+            return action;
+        }
         private void Receive(CombatFactMessage fact) => Install.Invoke(_combat, new object[] { fact });
         private void OnDamage(DamageReceivedEvent fact) { _damageEvents++; _lastDamageRemainingHp = fact.RemainingHp; }
         private void OnDeath(DeathEvent fact) => _deathEvents++;

@@ -12,7 +12,8 @@ namespace Game.ElementField
     /// </summary>
     public sealed partial class LiquidWorldRuntime : MonoBehaviour, IFluidDepositSink, ILiquidSurfaceReadOnly,
         ILiquidMotionReadOnly, ILiquidWorldQueryReadOnly, ILiquidSurfaceLayerReadOnly,
-        ILiquidStableSurfaceSnapshotReadOnly, ILiquidLayeredSurfaceReadOnly, ILiquidTransportReadOnly
+        ILiquidStableSurfaceSnapshotReadOnly, ILiquidLayeredSurfaceReadOnly, ILiquidTransportReadOnly,
+        ILiquidPresentationReadOnly
     {
         private static readonly ProfilerMarker PendingMarker =
             new ProfilerMarker("GridLiquid.PendingDeposits");
@@ -34,6 +35,7 @@ namespace Game.ElementField
         }
 
         [SerializeField] private LiquidWorldProfile _profile;
+        public LiquidWorldProfile ConfigurationProfile => _profile;
         [Header("Runtime Debug (Read Only)")]
         [SerializeField] private int _residentChunks;
         [SerializeField] private int _activeCells;
@@ -345,6 +347,22 @@ namespace Game.ElementField
         public void Step(float deltaTime)
         {
             if (_store == null || deltaTime <= 0f) return;
+            // 单机Renderer原本按Unity Time.time外推落水样本；保持该时基，避免仅接入服务器就改动单机手感。
+            Step(deltaTime, Time.time);
+        }
+
+        /// <summary>
+        /// 显式推进CPU液体，并给运动样本写入调用方拥有的时间。Authority使用材料Tick累计时间，
+        /// 不读取Unity真实时间；Frozen没有调用即没有新样本。sampleTime只标记运动样本，
+        /// 当前Solver没有按它计算规则年龄，因此不能把这个重载误称为修复数量规则计龄。
+        /// 客户端未来安装这些样本时必须使用对应播放时钟，不能直接与另一个进程的Time.time相减。
+        /// </summary>
+        public void Step(float deltaTime, float sampleTime)
+        {
+            // 校验必须先于BeginTick/出队；无效候选不能清历史、移动Pending或触碰数量账本。
+            if (!float.IsFinite(deltaTime) || deltaTime <= 0f) throw new ArgumentOutOfRangeException(nameof(deltaTime));
+            if (!float.IsFinite(sampleTime) || sampleTime < 0f) throw new ArgumentOutOfRangeException(nameof(sampleTime));
+            if (_store == null) return;
             _history.BeginTick(); _terrain.BeginTick();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             // 只计 Grid Liquid 的 Tick；其它模块的分配不能混入液体 Solver 的结论。
@@ -374,7 +392,7 @@ namespace Game.ElementField
             // 同一 Tick 的四项成本分别显示在 Profiler，方便区别写入排队、
             // 静水出流、局部格求解和自动压缩；Marker.Auto 不创建托管对象。
             using (StableMarker.Auto()) _stable.Step(deltaTime);
-            using (SolverMarker.Auto()) _solver.Step(_profile.MaximumCellsPerTick, deltaTime, Time.time);
+            using (SolverMarker.Auto()) _solver.Step(_profile.MaximumCellsPerTick, deltaTime, sampleTime);
             // 先完成本 Tick 的局部 Solver，再判断分区是否安静，避免交接后立刻改写旧动态格。
             using (RecaptureMarker.Auto()) _stable.TryRecaptureQuietSector(
                 _count == 0 && !_activity.HasPendingRecovery);

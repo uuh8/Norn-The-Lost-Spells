@@ -99,6 +99,10 @@ public sealed class RoomInstanceTests
         await using (var f = new OnlineFactory(instances: true)) { run = await Reserve(f); (_, grant) = await MakeReady(f, run); }
         await using var restarted = new OnlineFactory(instances: true); _ = restarted.CreateClient();
         var service = restarted.Services.GetRequiredService<RoomInstanceService>();
+        var adopted = await service.ViewAsync(run.A.PlayerId, run.Run.RoomId, default);
+        Assert.Equal(grant.Descriptor.InstanceId, adopted.InstanceId);
+        Assert.Equal(grant.Descriptor.DungeonId, adopted.DungeonId);
+        Assert.Equal("p7", adopted.DungeonId); // 新业务 Host 读取同一 Party，不重建另一个地图身份。
         var lease = await service.HeartbeatAsync(grant.Descriptor.InstanceId, grant.Secret!, run.Run.RoomEpoch, default);
         Assert.True(lease.LeaseExpiresUnixMilliseconds > restarted.Clock.GetUtcNow().ToUnixTimeMilliseconds()); Assert.Equal(2, await Leases(restarted, run.Run.RunId));
         await service.FailAsync(grant.Descriptor.InstanceId, "Cancelled", default);
@@ -106,7 +110,7 @@ public sealed class RoomInstanceTests
 
     private static InstanceProcessIdentity Identity()
     { using var p = Process.GetCurrentProcess(); return new InstanceProcessIdentity(p.Id, p.StartTime.ToUniversalTime().Ticks, p.MainModule!.FileName!); }
-    private static InstanceReadyRequest Ready(OnlineFactory f, RunData run, InstanceProcessIdentity p) => new() { RoomEpoch = run.Run.RoomEpoch, ProtocolVersion = f.Manifest.ProtocolVersion, BuildVersion = f.Manifest.BuildVersion, ManifestHash = f.Manifest.Hash, GameplayConfigHash = OnlineFactory.GameplayHash, ProcessId = p.ProcessId, ProcessStartTicks = p.StartTicks };
+    private static InstanceReadyRequest Ready(OnlineFactory f, RunData run, InstanceProcessIdentity p) => new() { DungeonId = "p7", RoomEpoch = run.Run.RoomEpoch, ProtocolVersion = f.Manifest.ProtocolVersion, BuildVersion = f.Manifest.BuildVersion, ManifestHash = f.Manifest.Hash, GameplayConfigHash = OnlineFactory.GameplayHash, ProcessId = p.ProcessId, ProcessStartTicks = p.StartTicks };
     private static async Task<(RoomInstanceService, InstanceLaunchGrant)> MakeReady(OnlineFactory f, RunData run)
     {
         var service = f.Services.GetRequiredService<RoomInstanceService>(); var grant = await service.AllocateAsync(run.Run, default); var p = Identity();

@@ -8,7 +8,7 @@ namespace Game.Networking.Tests
     /// <summary>直接测试正式 Codec/Pool 源码；内存往返不冒充 KCP 进程通信。</summary>
     public sealed class ProtoCodecTests
     {
-        private static ProtocolPingRequest Request(uint version = 1, string text = "你好，Norn 👋") =>
+        private static ProtocolPingRequest Request(uint version = ProtocolCompatibility.CurrentVersion, string text = "你好，Norn 👋") =>
             new ProtocolPingRequest { ProtocolVersion = version, Sequence = ulong.MaxValue, Message = text };
 
         private static bool Decode(ProtoMessageCodec codec, ProtocolPingRequest message,
@@ -40,7 +40,7 @@ namespace Game.Networking.Tests
         public void ProtocolVersionMismatch_IsRejected()
         {
             var codec = new ProtoMessageCodec(new ProtoMessagePool(1));
-            Assert.That(Decode(codec, Request(2), out _, out var error), Is.False);
+            Assert.That(Decode(codec, Request(1), out _, out var error), Is.False);
             Assert.That(error, Is.EqualTo(ProtocolDecodeFailure.VersionMismatch));
         }
 
@@ -88,7 +88,7 @@ namespace Game.Networking.Tests
         {
             var pool = new ProtoMessagePool(1);
             var codec = new ProtoMessageCodec(pool);
-            Decode(codec, Request(2), out _, out _);
+            Decode(codec, Request(1), out _, out _);
             Assert.That(pool.TryRent(RealtimeMessageKind.PingReply, out var lease), Is.True);
             lease.Dispose();
         }
@@ -114,7 +114,7 @@ namespace Game.Networking.Tests
             Assert.That(Decode(codec, Request(), out var first, out _), Is.True);
             first.Dispose();
             // 第二次没有传文本和序号；MergeFrom 本身不会清理第一次的字段。
-            Assert.That(Decode(codec, new ProtocolPingRequest { ProtocolVersion = 1 }, out var second, out _), Is.True);
+            Assert.That(Decode(codec, new ProtocolPingRequest { ProtocolVersion = ProtocolCompatibility.CurrentVersion }, out var second, out _), Is.True);
             using (second)
             {
                 Assert.That(second.Request.Message, Is.Empty);
@@ -133,7 +133,7 @@ namespace Game.Networking.Tests
             unknown[original.Length] = 0xA0; unknown[original.Length + 1] = 0x06; unknown[original.Length + 2] = 1;
             Assert.That(codec.TryDecode(RealtimeMessageKind.PingRequest, new ArraySegment<byte>(unknown), out var first, out _), Is.True);
             first.Dispose();
-            var minimal = new ProtocolPingRequest { ProtocolVersion = 1 };
+            var minimal = new ProtocolPingRequest { ProtocolVersion = ProtocolCompatibility.CurrentVersion };
             Assert.That(Decode(codec, minimal, out var second, out _), Is.True);
             using (second) Assert.That(second.Request.CalculateSize(), Is.EqualTo(minimal.CalculateSize()));
         }
@@ -163,7 +163,7 @@ namespace Game.Networking.Tests
         public void TextBudget_IsUtf8Bytes()
         {
             var codec = new ProtoMessageCodec(new ProtoMessagePool(1));
-            Assert.That(Decode(codec, Request(1, new string('汉', 100)), out _, out var error), Is.False);
+            Assert.That(Decode(codec, Request(ProtocolCompatibility.CurrentVersion, new string('汉', 100)), out _, out var error), Is.False);
             Assert.That(error, Is.EqualTo(ProtocolDecodeFailure.TextTooLong));
         }
 
@@ -196,10 +196,10 @@ namespace Game.Networking.Tests
         public void Reply_HasItsOwnResettableType()
         {
             var codec = new ProtoMessageCodec(new ProtoMessagePool(1));
-            var reply = new ProtocolPingReply { ProtocolVersion = 1, Sequence = 3, Message = "reply" };
+            var reply = new ProtocolPingReply { ProtocolVersion = ProtocolCompatibility.CurrentVersion, Sequence = 3, Message = "reply" };
             Assert.That(codec.TryDecode(RealtimeMessageKind.PingReply, new ArraySegment<byte>(reply.ToByteArray()), out var first, out _), Is.True);
             using (first) Assert.That(first.Reply.Message, Is.EqualTo("reply"));
-            Assert.That(codec.TryDecode(RealtimeMessageKind.PingReply, new ArraySegment<byte>(new ProtocolPingReply { ProtocolVersion = 1 }.ToByteArray()), out var second, out _), Is.True);
+            Assert.That(codec.TryDecode(RealtimeMessageKind.PingReply, new ArraySegment<byte>(new ProtocolPingReply { ProtocolVersion = ProtocolCompatibility.CurrentVersion }.ToByteArray()), out var second, out _), Is.True);
             using (second) Assert.That(second.Reply.Sequence, Is.Zero);
         }
     }

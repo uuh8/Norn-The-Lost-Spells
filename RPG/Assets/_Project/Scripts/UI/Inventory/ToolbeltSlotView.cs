@@ -22,8 +22,9 @@ namespace Game.UI
         public void ConfigureCompact() { _compact = true; }
         public void Refresh(SinglePlayerInventoryController controller)
         {
-            _controller=controller; _itemId=null; var read=controller.Session.ToolbeltReadOnly;
-            if (read!=null && read.TryGetBinding(_toolSlot,out var id) && controller.Session.ReadOnly.TryGetView(id,out var item))
+            // 快捷栏归属和实例信息必须取自同一只读来源，禁止混入保留的单机会话。
+            _controller=controller; _itemId=null; var source=controller.PresentationSource;var read=source?.ToolbeltReadOnly;
+            if (read!=null && read.TryGetBinding(_toolSlot,out var id) && source.ReadOnly!=null && source.ReadOnly.TryGetView(id,out var item))
             {
                 _itemId=id; _icon.sprite=item.Icon; _icon.enabled=item.Icon!=null;
                 // 名称/容量数字由图标与填充承担；快捷键数字仍用于辨识操作位置。

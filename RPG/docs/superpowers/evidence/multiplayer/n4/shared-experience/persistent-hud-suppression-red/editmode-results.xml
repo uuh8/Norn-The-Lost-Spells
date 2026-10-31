@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-25 14:20:02Z" end-time="2026-10-25 14:20:03Z" duration="0.7487277">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2438" result="Failed" site="Child" start-time="2026-10-25 14:20:02Z" end-time="2026-10-25 14:20:03Z" duration="0.748728" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3759" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="693" result="Failed" site="Child" start-time="2026-10-25 14:20:02Z" end-time="2026-10-25 14:20:03Z" duration="0.651313" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26116" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3760" name="Game" fullname="Game" runstate="Runnable" testcasecount="693" result="Failed" site="Child" start-time="2026-10-25 14:20:02Z" end-time="2026-10-25 14:20:03Z" duration="0.557279" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3761" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="693" result="Failed" site="Child" start-time="2026-10-25 14:20:02Z" end-time="2026-10-25 14:20:03Z" duration="0.455505" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3762" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="693" result="Failed" site="Child" start-time="2026-10-25 14:20:02Z" end-time="2026-10-25 14:20:03Z" duration="0.358480" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2943" name="CombatPresentationLifecycleTests" fullname="Game.Run.Tests.CombatPresentationLifecycleTests" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-10-25 14:20:02Z" end-time="2026-10-25 14:20:03Z" duration="0.257699" total="6" passed="5" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2947" name="DestroyedOldScopeReleasesOnlyItsOwnLease" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.DestroyedOldScopeReleasesOnlyItsOwnLease" methodname="DestroyedOldScopeReleasesOnlyItsOwnLease" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="1090252502" result="Passed" start-time="2026-10-25 14:20:02Z" end-time="2026-10-25 14:20:03Z" duration="0.076268" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2944" name="DifferentCombatAreasReuseHostAndHudWithoutMovingGameplayObjects" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.DifferentCombatAreasReuseHostAndHudWithoutMovingGameplayObjects" methodname="DifferentCombatAreasReuseHostAndHudWithoutMovingGameplayObjects" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="1648192553" result="Passed" start-time="2026-10-25 14:20:03Z" end-time="2026-10-25 14:20:03Z" duration="0.016751" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2945" name="OldLeaseCannotUpdateOrReleaseNewOwner" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.OldLeaseCannotUpdateOrReleaseNewOwner" methodname="OldLeaseCannotUpdateOrReleaseNewOwner" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="628693917" result="Passed" start-time="2026-10-25 14:20:03Z" end-time="2026-10-25 14:20:03Z" duration="0.014117" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2946" name="ReleaseClearsActorAndSceneReadReferencesButKeepsReusableHud" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.ReleaseClearsActorAndSceneReadReferencesButKeepsReusableHud" methodname="ReleaseClearsActorAndSceneReadReferencesButKeepsReusableHud" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="1728022777" result="Passed" start-time="2026-10-25 14:20:03Z" end-time="2026-10-25 14:20:03Z" duration="0.013812" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2948" name="RepeatedIdenticalContextKeepsOriginalInventoryOpen" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.RepeatedIdenticalContextKeepsOriginalInventoryOpen" methodname="RepeatedIdenticalContextKeepsOriginalInventoryOpen" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="2122982025" result="Passed" start-time="2026-10-25 14:20:03Z" end-time="2026-10-25 14:20:03Z" duration="0.007384" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2949" name="UnsafeLegacyCompositionRejectsWithoutClosingUnacquiredInventoryOrKeepingLease" fullname="Game.Run.Tests.CombatPresentationLifecycleTests.UnsafeLegacyCompositionRejectsWithoutClosingUnacquiredInventoryOrKeepingLease" methodname="UnsafeLegacyCompositionRejectsWithoutClosingUnacquiredInventoryOrKeepingLease" classname="Game.Run.Tests.CombatPresentationLifecycleTests" runstate="Runnable" seed="701865842" result="Failed" start-time="2026-10-25 14:20:03Z" end-time="2026-10-25 14:20:03Z" duration="0.015184" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.InvalidOperationException: HUD 根混入了角色、库存或交互生命周期，拒绝整体隐藏：LegacyHudMixedWithGameplay
+  at Game.UI.CombatHudLegacySuppression.RequirePureLeaf (UnityEngine.GameObject root) [0x0006f] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\UI\Combat\CombatHudLegacySuppression.cs:85 
+  at Game.UI.CombatHudLegacySuppression.Suppress (UnityEngine.SceneManagement.Scene world, UnityEngine.SceneManagement.Scene inventoryScene, UnityEngine.Transform persistentHud) [0x00059] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\UI\Combat\CombatHudLegacySuppression.cs:40 
+  at Game.UI.CombatPresentationHost.Apply (Game.UI.CombatPresentationContext& context) [0x00023] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\UI\Combat\CombatPresentationHost.cs:146 
+  at Game.UI.CombatPresentationHost.TryAcquire (UnityEngine.Object owner, Game.UI.CombatPresentationContext& context, Game.UI.CombatPresentationLease& lease) [0x0008c] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\UI\Combat\CombatPresentationHost.cs:51 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+   --- End of inner exception stack trace ---
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at Game.Run.Tests.CombatPresentationLifecycleTests+<>c__DisplayClass14_1.<UnsafeLegacyCompositionRejectsWithoutClosingUnacquiredInventoryOrKeepingLease>b__0 () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\CombatPresentationLifecycleTests.cs:160 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00000] in <f577cd9686154d6ab10efd7e65e64366>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00041] in <f577cd9686154d6ab10efd7e65e64366>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.CombatPresentationLifecycleTests.UnsafeLegacyCompositionRejectsWithoutClosingUnacquiredInventoryOrKeepingLease () [0x0009c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\CombatPresentationLifecycleTests.cs:160
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

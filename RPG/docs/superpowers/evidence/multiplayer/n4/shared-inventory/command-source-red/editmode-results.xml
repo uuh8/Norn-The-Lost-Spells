@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="31" result="Failed(Child)" total="31" passed="27" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-26 06:34:23Z" end-time="2026-10-26 06:34:28Z" duration="5.875319">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2523" result="Failed" site="Child" start-time="2026-10-26 06:34:23Z" end-time="2026-10-26 06:34:28Z" duration="5.875319" total="31" passed="27" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1285" name="Game.Character.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.Tests.dll" runstate="Runnable" testcasecount="230" result="Failed" site="Child" start-time="2026-10-26 06:34:23Z" end-time="2026-10-26 06:34:27Z" duration="4.503881" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27688" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1286" name="Game" fullname="Game" runstate="Runnable" testcasecount="230" result="Failed" site="Child" start-time="2026-10-26 06:34:23Z" end-time="2026-10-26 06:34:27Z" duration="4.404596" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1287" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="230" result="Failed" site="Child" start-time="2026-10-26 06:34:23Z" end-time="2026-10-26 06:34:27Z" duration="4.296585" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1288" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="230" result="Failed" site="Child" start-time="2026-10-26 06:34:23Z" end-time="2026-10-26 06:34:27Z" duration="4.185723" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1222" name="OnlineCastDriverTests" fullname="Game.Character.Tests.OnlineCastDriverTests" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-10-26 06:34:23Z" end-time="2026-10-26 06:34:27Z" duration="4.077075" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1229" name="DeadAuthorityRejectsInventoryEditWithoutMovingOwnedCard" fullname="Game.Character.Tests.OnlineCastDriverTests.DeadAuthorityRejectsInventoryEditWithoutMovingOwnedCard" methodname="DeadAuthorityRejectsInventoryEditWithoutMovingOwnedCard" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="444198033" result="Failed" start-time="2026-10-26 06:34:23Z" end-time="2026-10-26 06:34:27Z" duration="3.938130" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.DeadAuthorityRejectsInventoryEditWithoutMovingOwnedCard () [0x0001c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:137
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1228" name="QueuedCastRejectsInventoryEditAndRetryCannotBecomeSuccessfulLater" fullname="Game.Character.Tests.OnlineCastDriverTests.QueuedCastRejectsInventoryEditAndRetryCannotBecomeSuccessfulLater" methodname="QueuedCastRejectsInventoryEditAndRetryCannotBecomeSuccessfulLater" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="1211194126" result="Failed" start-time="2026-10-26 06:34:27Z" end-time="2026-10-26 06:34:27Z" duration="0.009303" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  库存写入必须经过Character动作/生存状态门，不能只调用Run。 
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.QueuedCastRejectsInventoryEditAndRetryCannotBecomeSuccessfulLater () [0x0001c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:123
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="2582" name="Game.Networking.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Networking.Tests.dll" runstate="Runnable" testcasecount="112" result="Failed" site="Child" start-time="2026-10-26 06:34:27Z" end-time="2026-10-26 06:34:28Z" duration="0.577843" total="15" passed="14" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27688" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2583" name="Game" fullname="Game" runstate="Runnable" testcasecount="112" result="Failed" site="Child" start-time="2026-10-26 06:34:27Z" end-time="2026-10-26 06:34:28Z" duration="0.561231" total="15" passed="14" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2584" name="Networking" fullname="Game.Networking" runstate="Runnable" testcasecount="112" result="Failed" site="Child" start-time="2026-10-26 06:34:27Z" end-time="2026-10-26 06:34:28Z" duration="0.450763" total="15" passed="14" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2585" name="Tests" fullname="Game.Networking.Tests" runstate="Runnable" testcasecount="112" result="Failed" site="Child" start-time="2026-10-26 06:34:27Z" end-time="2026-10-26 06:34:28Z" duration="0.343295" total="15" passed="14" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2501" name="InventorySnapshotCodecTests" fullname="Game.Networking.Tests.InventorySnapshotCodecTests" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" testcasecount="15" result="Failed" site="Child" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.234255" total="15" passed="14" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2502" name="CurrentResourceAndOwnedIdentityRoundTrip" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.CurrentResourceAndOwnedIdentityRoundTrip" methodname="CurrentResourceAndOwnedIdentityRoundTrip" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="483084318" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.064029" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2504" name="DecodeReturnsOwnedDtoRatherThanBorrowingNextDecode" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.DecodeReturnsOwnedDtoRatherThanBorrowingNextDecode" methodname="DecodeReturnsOwnedDtoRatherThanBorrowingNextDecode" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="221108314" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.002965" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2509" name="DuplicateScalarFieldDoesNotUseProtobufLastWins" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.DuplicateScalarFieldDoesNotUseProtobufLastWins" methodname="DuplicateScalarFieldDoesNotUseProtobufLastWins" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="1118788023" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.003850" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2514" name="InstanceStatsAndAlwaysCastTraitsSurviveWithoutTemplateFallback" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.InstanceStatsAndAlwaysCastTraitsSurviveWithoutTemplateFallback" methodname="InstanceStatsAndAlwaysCastTraitsSurviveWithoutTemplateFallback" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="2130954149" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.008901" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2505" name="InsufficientOutputDoesNotPublishPartialLength" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.InsufficientOutputDoesNotPublishPartialLength" methodname="InsufficientOutputDoesNotPublishPartialLength" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="827331390" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.001674" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2513" name="ItemCountAndContentStringBudgetsApplyToOutgoingSnapshots" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.ItemCountAndContentStringBudgetsApplyToOutgoingSnapshots" methodname="ItemCountAndContentStringBudgetsApplyToOutgoingSnapshots" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="1695163850" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.001852" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2503" name="MaximumOwnedClosureIsLargerThanCombatFactAndStillRoundTrips" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.MaximumOwnedClosureIsLargerThanCombatFactAndStillRoundTrips" methodname="MaximumOwnedClosureIsLargerThanCombatFactAndStillRoundTrips" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="1270746604" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.016643" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2507" name="MissingAndOldApplicationVersionCannotBecomeCurrentSnapshot" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.MissingAndOldApplicationVersionCannotBecomeCurrentSnapshot" methodname="MissingAndOldApplicationVersionCannotBecomeCurrentSnapshot" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="132335986" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.003202" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2512" name="NonFiniteAndNegativeCurrentResourcesCannotEncode" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.NonFiniteAndNegativeCurrentResourcesCannotEncode" methodname="NonFiniteAndNegativeCurrentResourcesCannotEncode" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="1069101783" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.003085" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2506" name="OversizedPayloadIsRejectedBeforeMessageConstruction" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.OversizedPayloadIsRejectedBeforeMessageConstruction" methodname="OversizedPayloadIsRejectedBeforeMessageConstruction" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="662839134" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.001087" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2516" name="RuntimeSpellStorageRejectsParentAliasAndOutOfWireSlotBudget" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.RuntimeSpellStorageRejectsParentAliasAndOutOfWireSlotBudget" methodname="RuntimeSpellStorageRejectsParentAliasAndOutOfWireSlotBudget" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="376616837" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.001546" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2515" name="RuntimeSpellStorageRoundTripsAsAnExplicitRootInsteadOfInventingBag" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.RuntimeSpellStorageRoundTripsAsAnExplicitRootInsteadOfInventingBag" methodname="RuntimeSpellStorageRoundTripsAsAnExplicitRootInsteadOfInventingBag" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="370507849" result="Failed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.002081" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventorySnapshotCodecTests.Encode (System.Object value) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventorySnapshotCodecTests.cs:190
+at Game.Networking.Tests.InventorySnapshotCodecTests.RuntimeSpellStorageRoundTripsAsAnExplicitRootInsteadOfInventingBag () [0x0005e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventorySnapshotCodecTests.cs:143
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2510" name="TooManyEmptyNestedItemsAreRejectedByWireBudget" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.TooManyEmptyNestedItemsAreRejectedByWireBudget" methodname="TooManyEmptyNestedItemsAreRejectedByWireBudget" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="1983780936" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.002960" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2511" name="TruncatedLengthAndWrongWireTypeAreRejected" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.TruncatedLengthAndWrongWireTypeAreRejected" methodname="TruncatedLengthAndWrongWireTypeAreRejected" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="1885289025" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.001977" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2508" name="UnknownRootAndNestedFieldsAreRejected" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.UnknownRootAndNestedFieldsAreRejected" methodname="UnknownRootAndNestedFieldsAreRejected" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="233618193" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.002133" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="3853" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="714" result="Failed" site="Child" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.684651" total="14" passed="13" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27688" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3854" name="Game" fullname="Game" runstate="Runnable" testcasecount="714" result="Failed" site="Child" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.640591" total="14" passed="13" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3855" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="714" result="Failed" site="Child" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.530297" total="14" passed="13" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3856" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="714" result="Failed" site="Child" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.421768" total="14" passed="13" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3319" name="OnlineInventoryPresentationSourceTests" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="14" result="Failed" site="Child" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.312579" total="14" passed="13" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3334" name="DisposeClearsPreviousReadReferencesAndRejectsLateSnapshots" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.DisposeClearsPreviousReadReferencesAndRejectsLateSnapshots" methodname="DisposeClearsPreviousReadReferencesAndRejectsLateSnapshots" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="2101355720" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.023676" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="3327" name="ForeignIdentityNeverPublishesAReadModel" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ForeignIdentityNeverPublishesAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.100123" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="3323" name="ForeignIdentityNeverPublishesAReadModel(&quot;RunId&quot;,&quot;foreign-run&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ForeignIdentityNeverPublishesAReadModel(&quot;RunId&quot;,&quot;foreign-run&quot;)" methodname="ForeignIdentityNeverPublishesAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="302810279" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.004598" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="3324" name="ForeignIdentityNeverPublishesAReadModel(&quot;PlayerId&quot;,&quot;foreign-player&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ForeignIdentityNeverPublishesAReadModel(&quot;PlayerId&quot;,&quot;foreign-player&quot;)" methodname="ForeignIdentityNeverPublishesAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1275082351" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.003161" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="3325" name="ForeignIdentityNeverPublishesAReadModel(&quot;InventoryId&quot;,&quot;foreign-inventory&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ForeignIdentityNeverPublishesAReadModel(&quot;InventoryId&quot;,&quot;foreign-inventory&quot;)" methodname="ForeignIdentityNeverPublishesAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1359615642" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.003080" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="3326" name="ForeignIdentityNeverPublishesAReadModel(&quot;GameplayConfigHash&quot;,&quot;ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ForeignIdentityNeverPublishesAReadModel(&quot;GameplayConfigHash&quot;,&quot;ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff&quot;)" methodname="ForeignIdentityNeverPublishesAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1091100261" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.003067" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="3320" name="ImportKeepsAuthoritativeManaCooldownProgramRevisionAndSpellUses" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ImportKeepsAuthoritativeManaCooldownProgramRevisionAndSpellUses" methodname="ImportKeepsAuthoritativeManaCooldownProgramRevisionAndSpellUses" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="556370690" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.011012" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3331" name="InvalidReplacementLeavesPreviousInventoryAndResourcesIntact" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidReplacementLeavesPreviousInventoryAndResourcesIntact" methodname="InvalidReplacementLeavesPreviousInventoryAndResourcesIntact" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="110879510" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.003063" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3333" name="MissingBagAndUnsupportedCapabilitiesFailClosed" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.MissingBagAndUnsupportedCapabilitiesFailClosed" methodname="MissingBagAndUnsupportedCapabilitiesFailClosed" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1168442559" result="Failed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.007017" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  随身法术专区是已有根位置7；提供目录容量不代表创建普通Bag或仓库权限。
+  Expected: 12
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.MissingBagAndUnsupportedCapabilitiesFailClosed () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:157
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3330" name="MissingResourceOrEligibilityStateNeverUsesClientDefaults" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.MissingResourceOrEligibilityStateNeverUsesClientDefaults" methodname="MissingResourceOrEligibilityStateNeverUsesClientDefaults" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1808696434" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.004798" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3322" name="MutableIncomingArraysCannotRewritePublishedValues" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.MutableIncomingArraysCannotRewritePublishedValues" methodname="MutableIncomingArraysCannotRewritePublishedValues" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="335948143" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.004805" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3329" name="OrphanInstalledCardAndFlattenedBackpackAreRejected" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.OrphanInstalledCardAndFlattenedBackpackAreRejected" methodname="OrphanInstalledCardAndFlattenedBackpackAreRejected" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="138416503" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.005866" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3332" name="ReadSourceDoesNotHandleAuthorityRequestsOrRegenerateResources" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ReadSourceDoesNotHandleAuthorityRequestsOrRegenerateResources" methodname="ReadSourceDoesNotHandleAuthorityRequestsOrRegenerateResources" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1687589215" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.005482" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3321" name="StableReadInterfacesInstallNewValuesWithoutReplacingUiSource" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.StableReadInterfacesInstallNewValuesWithoutReplacingUiSource" methodname="StableReadInterfacesInstallNewValuesWithoutReplacingUiSource" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="653452861" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.008050" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3328" name="WrongEpochAndStaleSequenceCannotOverwriteCurrentState" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.WrongEpochAndStaleSequenceCannotOverwriteCurrentState" methodname="WrongEpochAndStaleSequenceCannotOverwriteCurrentState" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1370117119" result="Passed" start-time="2026-10-26 06:34:28Z" end-time="2026-10-26 06:34:28Z" duration="0.005707" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

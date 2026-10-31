@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Game.Core;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,7 +20,13 @@ namespace Game.UI
         private Font _font;
         private bool _roomMode;
         private int _roomPortal;
-        private bool _gameplayActive, _gameplayMenu;
+        private bool _gameplayActive, _gameplayMenu, _gameplayInputCaptured;
+        // 菜单和库存可以同时占用本机输入；总 InputCaptured 只表示“至少一位 Owner”，
+        // 不能再用 !MenuOpen 反推库存已经关闭。这里只记录原库存 Controller 的可见性事实。
+        private readonly HashSet<int> _inventoryInputOwners = new HashSet<int>(4);
+        // Cancel InputAction 在输入阶段先关闭 Tab，随后 Update 仍可读到同一次 Esc。
+        // 保留释放帧，避免“刚释放捕获”被误判成允许打开下一层菜单；不吞掉后续帧的新按键。
+        private int _inventoryCaptureReleasedFrame = -1;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void Reset() => _instance = null;
@@ -52,6 +59,8 @@ namespace Game.UI
             EventBus<OnlineLobbyChangedEvent>.Subscribe(OnIdentity);
             EventBus<OnlineRoomChangedEvent>.Subscribe(OnRoom);
             EventBus<OnlineMovementPresentationEvent>.Subscribe(OnGameplay);
+            EventBus<InventoryPresentationVisibilityEvent>.Subscribe(OnInventoryVisibility);
+            ReplayCurrentInputPresentation();
         }
         private void OnDisable()
         {
@@ -62,27 +71,69 @@ namespace Game.UI
             EventBus<OnlineLobbyChangedEvent>.Unsubscribe(OnIdentity);
             EventBus<OnlineRoomChangedEvent>.Unsubscribe(OnRoom);
             EventBus<OnlineMovementPresentationEvent>.Unsubscribe(OnGameplay);
+            EventBus<InventoryPresentationVisibilityEvent>.Unsubscribe(OnInventoryVisibility);
+            _inventoryInputOwners.Clear(); _inventoryCaptureReleasedFrame = -1;
+        }
+        private void OnInventoryVisibility(InventoryPresentationVisibilityEvent state)
+        {
+            if (state.OwnerId == 0) return;
+            if (state.Open) _inventoryInputOwners.Add(state.OwnerId);
+            else if (_inventoryInputOwners.Remove(state.OwnerId))
+                _inventoryCaptureReleasedFrame = Time.frameCount;
+        }
+        private void ReplayCurrentInputPresentation()
+        {
+            // EventBus 不缓存 Visibility。Dialog 可能晚于库存启用，或在库存保持打开时重启；
+            // 此时从现有原 Controller 的只读显示事实恢复 Owner，不能要求它重新 Open 或关闭重开。
+            // FindObjectsByType 会创建数组，只允许在这个离散启用边界使用，绝不放入 Update 热路径。
+            _inventoryInputOwners.Clear();
+            var inventories = FindObjectsByType<SinglePlayerInventoryController>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            for (int i = 0; i < inventories.Length; i++)
+            {
+                var inventory = inventories[i];
+                if (inventory.isActiveAndEnabled && inventory.PresentationIsReadOnly && inventory.IsOpen)
+                    _inventoryInputOwners.Add(inventory.GetInstanceID());
+            }
+            // 先恢复 Owner，再请求当前 World 的既有只读视图，避免同步重放时把总捕获位误当作完整归属。
+            // Actor 仅用于取得本机 Scene handle，不读取网络身份、资产或推进模拟。
+            var actor = LocalActorPresentation.Actor;
+            if (actor != null && actor.scene.IsValid() && actor.scene.isLoaded)
+                EventBus<OnlineMovementViewRequestedEvent>.Publish(new OnlineMovementViewRequestedEvent
+                { WorldSceneHandle = actor.scene.handle });
         }
         private void OnGameplay(OnlineMovementPresentationEvent view)
         {
-            _gameplayActive = view.Active; _gameplayMenu = view.MenuOpen;
+            // 保留原 View-only 合同的保守保护：尚未观察到 Owner 事件时，非菜单捕获仍属于上层交互。
+            // 该 fallback 不能区分“菜单和库存同开”，所以明确 Owner 和其释放帧始终独立保留。
+            bool inventoryWasCapturing = _gameplayActive && _gameplayInputCaptured && !_gameplayMenu;
+            bool inventoryIsCapturing = view.Active && view.InputCaptured && !view.MenuOpen;
+            if (inventoryWasCapturing && !inventoryIsCapturing) _inventoryCaptureReleasedFrame = Time.frameCount;
+            _gameplayActive = view.Active; _gameplayMenu = view.MenuOpen; _gameplayInputCaptured = view.InputCaptured;
             if (view.Active)
             {
                 bool open = view.MenuOpen || !view.Connected;
                 _panel.SetActive(open);
                 // 断线也会从事件打开UI，不能只在Escape分支解锁，否则按钮可见却点不到。
-                Cursor.lockState = open ? CursorLockMode.None : CursorLockMode.Locked; Cursor.visible = open;
+                // 背包捕获输入需要鼠标，但不能因此把连接/房间菜单一起显示。
+                SetCursor(open || view.InputCaptured);
             }
         }
         private void Update()
         {
             if (!_gameplayActive || Keyboard.current == null || !Keyboard.current.escapeKey.wasPressedThisFrame) return;
+            // 库存仍打开时 Esc 用于取消拖动/关闭原 Tab；本帧已关闭时，也不能让同一个按键穿透。
+            // 明确检查库存 Owner，而非总捕获位；即使先开连接菜单再开 Tab，第一下 Esc 也只属于库存。
+            // 释放帧只保护这次输入，下一帧新的 Esc 仍能关闭已经没有库存 Owner 的连接菜单。
+            if (_inventoryInputOwners.Count != 0 || (_gameplayInputCaptured && !_gameplayMenu) ||
+                _inventoryCaptureReleasedFrame == Time.frameCount) return;
             _gameplayMenu = !_gameplayMenu;
             EventBus<OnlineMovementMenuRequestEvent>.Publish(new OnlineMovementMenuRequestEvent { Open = _gameplayMenu });
             _panel.SetActive(_gameplayMenu);
-            Cursor.lockState = _gameplayMenu ? CursorLockMode.None : CursorLockMode.Locked; Cursor.visible = _gameplayMenu;
+            SetCursor(_gameplayMenu || _gameplayInputCaptured);
             // 只暂停本机意图；从不修改Time.timeScale，其他玩家/AI与网络继续。
         }
+        private static void SetCursor(bool visible)
+        { Cursor.lockState = visible ? CursorLockMode.None : CursorLockMode.Locked; Cursor.visible = visible; }
         private void OnDestroy() { if (_instance == this) _instance = null; if (_font != null) Destroy(_font); }
         private void OnRequested(DungeonEntryChoiceRequestedEvent request)
         {
@@ -121,6 +172,8 @@ namespace Game.UI
         {
             if (view.Phase == OnlineRoomPhase.None)
             {
+                // 返回据点结束上一局的输入显示寿命，不让常驻 Dialog 保留已卸载库存的 Owner。
+                _inventoryInputOwners.Clear(); _inventoryCaptureReleasedFrame = -1;
                 _roomMode = false; ResetRoomButtons();
                 if (_request.PortalId == 0) _panel.SetActive(false); else UpdateIdentity();
                 return;

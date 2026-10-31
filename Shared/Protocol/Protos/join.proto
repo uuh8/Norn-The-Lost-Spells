@@ -26,4 +26,5 @@ message JoinTicketReplyMessage
     uint32 room_epoch       = 6; // 当前有效实例代次。
     uint32 connection_epoch = 7; // 重连递增；迟到旧回复不能覆盖新连接。
     uint64 actor_id         = 8; // 本Run内服务器分配的稳定身份，范围1–4。
+    string dungeon_id       = 9; // 业务服确认的稳定副本配置键，非Client自选Scene路径；缺省空值拒绝入场。
 }

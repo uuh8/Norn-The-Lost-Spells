@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="23" result="Failed(Child)" total="23" passed="11" failed="12" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-28 13:29:16Z" end-time="2026-10-28 13:29:28Z" duration="12.1629647">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2676" result="Failed" site="Child" start-time="2026-10-28 13:29:16Z" end-time="2026-10-28 13:29:28Z" duration="12.162965" total="23" passed="11" failed="12" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2568" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="164" result="Failed" site="Child" start-time="2026-10-28 13:29:16Z" end-time="2026-10-28 13:29:28Z" duration="12.059832" total="23" passed="11" failed="12" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27148" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2569" name="Game" fullname="Game" runstate="Runnable" testcasecount="164" result="Failed" site="Child" start-time="2026-10-28 13:29:16Z" end-time="2026-10-28 13:29:28Z" duration="11.969180" total="23" passed="11" failed="12" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2570" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="164" result="Failed" site="Child" start-time="2026-10-28 13:29:17Z" end-time="2026-10-28 13:29:28Z" duration="11.870580" total="23" passed="11" failed="12" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2571" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="164" result="Failed" site="Child" start-time="2026-10-28 13:29:17Z" end-time="2026-10-28 13:29:28Z" duration="11.770584" total="23" passed="11" failed="12" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2411" name="MovementLatencyBudgetTests" fullname="Game.Multiplayer.Tests.MovementLatencyBudgetTests" classname="Game.Multiplayer.Tests.MovementLatencyBudgetTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-28 13:29:17Z" end-time="2026-10-28 13:29:17Z" duration="0.387665" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="2414" name="Profile_StablePlaybackKeepsSuccessorHistoryWithinFiftyMilliseconds" fullname="Game.Multiplayer.Tests.MovementLatencyBudgetTests.Profile_StablePlaybackKeepsSuccessorHistoryWithinFiftyMilliseconds" classname="Game.Multiplayer.Tests.MovementLatencyBudgetTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-28 13:29:17Z" end-time="2026-10-28 13:29:17Z" duration="0.266163" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2412" name="Profile_StablePlaybackKeepsSuccessorHistoryWithinFiftyMilliseconds(False)" fullname="Game.Multiplayer.Tests.MovementLatencyBudgetTests.Profile_StablePlaybackKeepsSuccessorHistoryWithinFiftyMilliseconds(False)" methodname="Profile_StablePlaybackKeepsSuccessorHistoryWithinFiftyMilliseconds" classname="Game.Multiplayer.Tests.MovementLatencyBudgetTests" runstate="Runnable" seed="1276315474" result="Failed" start-time="2026-10-28 13:29:17Z" end-time="2026-10-28 13:29:17Z" duration="0.028225" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: in range (0.03333334,0.05)
+  But was:  0.0666666701f
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.MovementLatencyBudgetTests.Profile_StablePlaybackKeepsSuccessorHistoryWithinFiftyMilliseconds (System.Boolean runtimeAsset) [0x00028] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\MovementLatencyBudgetTests.cs:25
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2413" name="Profile_StablePlaybackKeepsSuccessorHistoryWithinFiftyMilliseconds(True)" fullname="Game.Multiplayer.Tests.MovementLatencyBudgetTests.Profile_StablePlaybackKeepsSuccessorHistoryWithinFiftyMilliseconds(True)" methodname="Profile_StablePlaybackKeepsSuccessorHistoryWithinFiftyMilliseconds" classname="Game.Multiplayer.Tests.MovementLatencyBudgetTests" runstate="Runnable" seed="2092290305" result="Failed" start-time="2026-10-28 13:29:17Z" end-time="2026-10-28 13:29:17Z" duration="0.128763" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: in range (0.03333334,0.05)
+  But was:  0.0666666701f
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.MovementLatencyBudgetTests.Profile_StablePlaybackKeepsSuccessorHistoryWithinFiftyMilliseconds (System.Boolean runtimeAsset) [0x00028] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\MovementLatencyBudgetTests.cs:25
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="2415" name="RoomConfiguration_UsesSixtyHzNetworkPumpWithoutStartingTransport" fullname="Game.Multiplayer.Tests.MovementLatencyBudgetTests.RoomConfiguration_UsesSixtyHzNetworkPumpWithoutStartingTransport" methodname="RoomConfiguration_UsesSixtyHzNetworkPumpWithoutStartingTransport" classname="Game.Multiplayer.Tests.MovementLatencyBudgetTests" runstate="Runnable" seed="1740558034" result="Failed" start-time="2026-10-28 13:29:17Z" end-time="2026-10-28 13:29:17Z" duration="0.015478" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Mirror用sendRate同时配置Server flush与Headless帧循环；30Hz会保留更粗的收发相位。
+  Expected: 60
+  But was:  30
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.MovementLatencyBudgetTests.RoomConfiguration_UsesSixtyHzNetworkPumpWithoutStartingTransport () [0x0005c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\MovementLatencyBudgetTests.cs:49
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2416" name="SixtyRenderUpdates_StillProduceThirtyAuthoritySimulationTicks" fullname="Game.Multiplayer.Tests.MovementLatencyBudgetTests.SixtyRenderUpdates_StillProduceThirtyAuthoritySimulationTicks" methodname="SixtyRenderUpdates_StillProduceThirtyAuthoritySimulationTicks" classname="Game.Multiplayer.Tests.MovementLatencyBudgetTests" runstate="Runnable" seed="2066013658" result="Passed" start-time="2026-10-28 13:29:17Z" end-time="2026-10-28 13:29:17Z" duration="0.003601" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="2423" name="MovementSchedulingTests" fullname="Game.Multiplayer.Tests.MovementSchedulingTests" classname="Game.Multiplayer.Tests.MovementSchedulingTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-10-28 13:29:17Z" end-time="2026-10-28 13:29:17Z" duration="0.021556" total="8" passed="5" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2431" name="Input_BacklogCompactionExecutesSuppressionAndReleaseBeforeLatestMovement" fullname="Game.Multiplayer.Tests.MovementSchedulingTests.Input_BacklogCompactionExecutesSuppressionAndReleaseBeforeLatestMovement" methodname="Input_BacklogCompactionExecutesSuppressionAndReleaseBeforeLatestMovement" classname="Game.Multiplayer.Tests.MovementSchedulingTests" runstate="Runnable" seed="2126016503" result="Failed" start-time="2026-10-28 13:29:17Z" end-time="2026-10-28 13:29:17Z" duration="0.003521" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 7
+  But was:  6
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.MovementSchedulingTests.Input_BacklogCompactionExecutesSuppressionAndReleaseBeforeLatestMovement () [0x0015e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\MovementSchedulingTests.cs:131
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2430" name="Input_BacklogCompactionKeepsJumpDashAndJumpReleaseInChronologicalOrder" fullname="Game.Multiplayer.Tests.MovementSchedulingTests.Input_BacklogCompactionKeepsJumpDashAndJumpReleaseInChronologicalOrder" methodname="Input_BacklogCompactionKeepsJumpDashAndJumpReleaseInChronologicalOrder" classname="Game.Multiplayer.Tests.MovementSchedulingTests" runstate="Runnable" seed="1500419364" result="Failed" start-time="2026-10-28 13:29:17Z" end-time="2026-10-28 13:29:17Z" duration="0.001266" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 10
+  But was:  9
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.MovementSchedulingTests.Input_BacklogCompactionKeepsJumpDashAndJumpReleaseInChronologicalOrder () [0x00169] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\MovementSchedulingTests.cs:108
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2429" name="Input_ContinuousBacklogDoesNotRemainAsPermanentControlLatency" fullname="Game.Multiplayer.Tests.MovementSchedulingTests.Input_ContinuousBacklogDoesNotRemainAsPermanentControlLatency" methodname="Input_ContinuousBacklogDoesNotRemainAsPermanentControlLatency" classname="Game.Multiplayer.Tests.MovementSchedulingTests" runstate="Runnable" seed="1691668983" result="Failed" start-time="2026-10-28 13:29:17Z" end-time="2026-10-28 13:29:17Z" duration="0.000724" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  过期连续方向由最新帧替代，不能留下额外一帧FIFO延迟。
+  Expected: 10
+  But was:  9
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.MovementSchedulingTests.Input_ContinuousBacklogDoesNotRemainAsPermanentControlLatency () [0x00058] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\MovementSchedulingTests.cs:86
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2424" name="Input_DuplicateWrongEpochAndNaNDoNotAdvanceConsumedAck" fullname="Game.Multiplayer.Tests.MovementSchedulingTests.Input_DuplicateWrongEpochAndNaNDoNotAdvanceConsumedAck" methodname="Input_DuplicateWrongEpochAndNaNDoNotAdvanceConsumedAck" classname="Game.Multiplayer.Tests.MovementSchedulingTests" runstate="Runnable" seed="292622697" result="Passed" start-time="2026-10-28 13:29:17Z" end-time="2026-10-28 13:29:17Z" duration="0.000544" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2427" name="Input_FloodIsBounded_AndActorEpochResetClearsOldQueue" fullname="Game.Multiplayer.Tests.MovementSchedulingTests.Input_FloodIsBounded_AndActorEpochResetClearsOldQueue" methodname="Input_FloodIsBounded_AndActorEpochResetClearsOldQueue" classname="Game.Multiplayer.Tests.MovementSchedulingTests" runstate="Runnable" seed="1630855199" result="Passed" start-time="2026-10-28 13:29:17Z" end-time="2026-10-28 13:29:17Z" duration="0.000968" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2426" name="Input_NeutralizeClearsQueueButPreservesOldSequenceFence" fullname="Game.Multiplayer.Tests.MovementSchedulingTests.Input_NeutralizeClearsQueueButPreservesOldSequenceFence" methodname="Input_NeutralizeClearsQueueButPreservesOldSequenceFence" classname="Game.Multiplayer.Tests.MovementSchedulingTests" runstate="Runnable" seed="1709901825" result="Passed" start-time="2026-10-28 13:29:17Z" end-time="2026-10-28 13:29:17Z" duration="0.002666" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2425" name="Input_NoNewFrameDoesNotRepeatEdges_AndSilenceBecomesNeutral" fullname="Game.Multiplayer.Tests.MovementSchedulingTests.Input_NoNewFrameDoesNotRepeatEdges_AndSilenceBecomesNeutral" methodname="Input_NoNewFrameDoesNotRepeatEdges_AndSilenceBecomesNeutral" classname="Game.Multiplayer.Tests.MovementSchedulingTests" runstate="Runnable" seed="1459429747" result="Passed" start-time="2026-10-28 13:29:17Z" end-time="2026-10-28 13:29:17Z" duration="0.000336" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2428" name="Tick_FrozenHasNoDebt_AndCatchupIsBounded" fullname="Game.Multiplayer.Tests.MovementSchedulingTests.Tick_FrozenHasNoDebt_AndCatchupIsBounded" methodname="Tick_FrozenHasNoDebt_AndCatchupIsBounded" classname="Game.Multiplayer.Tests.MovementSchedulingTests" runstate="Runnable" seed="1173059470" result="Passed" start-time="2026-10-28 13:29:17Z" end-time="2026-10-28 13:29:17Z" duration="0.000508" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="2517" name="SharedGameplayHudAuthoringTests" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" testcasecount="11" result="Failed" site="Child" start-time="2026-10-28 13:29:17Z" end-time="2026-10-28 13:29:28Z" duration="11.260292" total="11" passed="5" failed="6" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2530" name="FormalSceneContainsNoIndependentOnlineMovementHud" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.FormalSceneContainsNoIndependentOnlineMovementHud" methodname="FormalSceneContainsNoIndependentOnlineMovementHud" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" seed="340520930" result="Passed" start-time="2026-10-28 13:29:17Z" end-time="2026-10-28 13:29:17Z" duration="0.115441" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2528" name="Install_RejectsUnsavedOrFormalSourceScenesBeforeMutation" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.Install_RejectsUnsavedOrFormalSourceScenesBeforeMutation" methodname="Install_RejectsUnsavedOrFormalSourceScenesBeforeMutation" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" seed="523667772" result="Passed" start-time="2026-10-28 13:29:17Z" end-time="2026-10-28 13:29:17Z" duration="0.005268" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2527" name="Preview_ReusesFormalHierarchyAndAssetsWithoutSinglePlayerAuthority" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.Preview_ReusesFormalHierarchyAndAssetsWithoutSinglePlayerAuthority" methodname="Preview_ReusesFormalHierarchyAndAssetsWithoutSinglePlayerAuthority" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" seed="1318802747" result="Passed" start-time="2026-10-28 13:29:17Z" end-time="2026-10-28 13:29:22Z" duration="4.431844" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2529" name="SharedHeldHierarchyDoesNotDependOnRemovedSinglePlayerBootstrapActivation" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.SharedHeldHierarchyDoesNotDependOnRemovedSinglePlayerBootstrapActivation" methodname="SharedHeldHierarchyDoesNotDependOnRemovedSinglePlayerBootstrapActivation" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" seed="1796570889" result="Passed" start-time="2026-10-28 13:29:22Z" end-time="2026-10-28 13:29:24Z" duration="1.976010" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2526" name="SharedHudExporter_ProvidesExplicitInstallAndVerifyEntryPoints" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.SharedHudExporter_ProvidesExplicitInstallAndVerifyEntryPoints" methodname="SharedHudExporter_ProvidesExplicitInstallAndVerifyEntryPoints" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" seed="243073343" result="Passed" start-time="2026-10-28 13:29:24Z" end-time="2026-10-28 13:29:24Z" duration="0.001075" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2524" name="SourceBossHudFollowsTheTopThroughAViewportStretchParent" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.SourceBossHudFollowsTheTopThroughAViewportStretchParent" methodname="SourceBossHudFollowsTheTopThroughAViewportStretchParent" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" seed="1434892528" result="Failed" start-time="2026-10-28 13:29:24Z" end-time="2026-10-28 13:29:25Z" duration="0.955176" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 0.0f +/- 0.00100000005f
+  But was:  0.5f
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.AssertVector (UnityEngine.Vector2 actual, UnityEngine.Vector2 expected) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:306
+at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.AssertViewportStretch (UnityEngine.RectTransform rect) [0x00012] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:300
+at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests+<>c.<SourceBossHudFollowsTheTopThroughAViewportStretchParent>b__4_0 (UnityEngine.SceneManagement.Scene scene) [0x0002a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:69
+at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.WithSourceScene (System.String path, System.Action`1[T] inspect) [0x0004a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:274
+at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.SourceBossHudFollowsTheTopThroughAViewportStretchParent () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:63
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="2520" name="SourceCombatCanvasUsesTheOriginalHeldHudResolutionPolicy" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.SourceCombatCanvasUsesTheOriginalHeldHudResolutionPolicy" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-28 13:29:25Z" end-time="2026-10-28 13:29:26Z" duration="1.741221" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2518" name="SourceCombatCanvasUsesTheOriginalHeldHudResolutionPolicy(&quot;Assets/_Project/Scenes/P7_DemoRun.unity&quot;)" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.SourceCombatCanvasUsesTheOriginalHeldHudResolutionPolicy(&quot;Assets/_Project/Scenes/P7_DemoRun.unity&quot;)" methodname="SourceCombatCanvasUsesTheOriginalHeldHudResolutionPolicy" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" seed="397936168" result="Failed" start-time="2026-10-28 13:29:25Z" end-time="2026-10-28 13:29:25Z" duration="0.471607" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  共同战斗Canvas必须使用ScaleWithScreenSize，避免与原十格栏缩放分离。
+  Expected: 1
+  But was:  0
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests+<>c.<SourceCombatCanvasUsesTheOriginalHeldHudResolutionPolicy>b__2_0 (UnityEngine.SceneManagement.Scene scene) [0x0004a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:33
+at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.WithSourceScene (System.String path, System.Action`1[T] inspect) [0x0004a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:274
+at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.SourceCombatCanvasUsesTheOriginalHeldHudResolutionPolicy (System.String path) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:23
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2519" name="SourceCombatCanvasUsesTheOriginalHeldHudResolutionPolicy(&quot;Assets/_Project/Scenes/P8_BossField.unity&quot;)" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.SourceCombatCanvasUsesTheOriginalHeldHudResolutionPolicy(&quot;Assets/_Project/Scenes/P8_BossField.unity&quot;)" methodname="SourceCombatCanvasUsesTheOriginalHeldHudResolutionPolicy" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" seed="928726850" result="Failed" start-time="2026-10-28 13:29:25Z" end-time="2026-10-28 13:29:26Z" duration="1.254515" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  共同战斗Canvas必须使用ScaleWithScreenSize，避免与原十格栏缩放分离。
+  Expected: 1
+  But was:  0
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests+<>c.<SourceCombatCanvasUsesTheOriginalHeldHudResolutionPolicy>b__2_0 (UnityEngine.SceneManagement.Scene scene) [0x0004a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:33
+at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.WithSourceScene (System.String path, System.Action`1[T] inspect) [0x0004a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:274
+at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.SourceCombatCanvasUsesTheOriginalHeldHudResolutionPolicy (System.String path) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:23
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="2523" name="SourcePlayerHudKeepsIts1080LayoutWhileFollowingTheScreenBottom" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.SourcePlayerHudKeepsIts1080LayoutWhileFollowingTheScreenBottom" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-28 13:29:26Z" end-time="2026-10-28 13:29:28Z" duration="1.029079" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2521" name="SourcePlayerHudKeepsIts1080LayoutWhileFollowingTheScreenBottom(&quot;Assets/_Project/Scenes/P7_DemoRun.unity&quot;)" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.SourcePlayerHudKeepsIts1080LayoutWhileFollowingTheScreenBottom(&quot;Assets/_Project/Scenes/P7_DemoRun.unity&quot;)" methodname="SourcePlayerHudKeepsIts1080LayoutWhileFollowingTheScreenBottom" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" seed="948356791" result="Failed" start-time="2026-10-28 13:29:27Z" end-time="2026-10-28 13:29:27Z" duration="0.103488" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: 0.0f +/- 0.00100000005f
+  But was:  0.5f
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.AssertVector (UnityEngine.Vector2 actual, UnityEngine.Vector2 expected) [0x0002c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:307
+at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests+<>c.<SourcePlayerHudKeepsIts1080LayoutWhileFollowingTheScreenBottom>b__3_0 (UnityEngine.SceneManagement.Scene scene) [0x00034] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:50
+at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.WithSourceScene (System.String path, System.Action`1[T] inspect) [0x0004a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:274
+at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.SourcePlayerHudKeepsIts1080LayoutWhileFollowingTheScreenBottom (System.String path) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:45
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2522" name="SourcePlayerHudKeepsIts1080LayoutWhileFollowingTheScreenBottom(&quot;Assets/_Project/Scenes/P8_BossField.unity&quot;)" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.SourcePlayerHudKeepsIts1080LayoutWhileFollowingTheScreenBottom(&quot;Assets/_Project/Scenes/P8_BossField.unity&quot;)" methodname="SourcePlayerHudKeepsIts1080LayoutWhileFollowingTheScreenBottom" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" seed="742195142" result="Failed" start-time="2026-10-28 13:29:27Z" end-time="2026-10-28 13:29:28Z" duration="0.899140" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: 0.0f +/- 0.00100000005f
+  But was:  0.5f
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.AssertVector (UnityEngine.Vector2 actual, UnityEngine.Vector2 expected) [0x0002c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:307
+at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests+<>c.<SourcePlayerHudKeepsIts1080LayoutWhileFollowingTheScreenBottom>b__3_0 (UnityEngine.SceneManagement.Scene scene) [0x00034] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:50
+at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.WithSourceScene (System.String path, System.Action`1[T] inspect) [0x0004a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:274
+at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.SourcePlayerHudKeepsIts1080LayoutWhileFollowingTheScreenBottom (System.String path) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:45
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="2525" name="SourceStageAndNotificationFollowScreenEdgesThroughAViewportStretchParent" fullname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.SourceStageAndNotificationFollowScreenEdgesThroughAViewportStretchParent" methodname="SourceStageAndNotificationFollowScreenEdgesThroughAViewportStretchParent" classname="Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests" runstate="Runnable" seed="17488745" result="Failed" start-time="2026-10-28 13:29:28Z" end-time="2026-10-28 13:29:28Z" duration="0.917788" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 0.0f +/- 0.00100000005f
+  But was:  0.5f
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.AssertVector (UnityEngine.Vector2 actual, UnityEngine.Vector2 expected) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:306
+at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.AssertViewportStretch (UnityEngine.RectTransform rect) [0x00012] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:300
+at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests+<>c.<SourceStageAndNotificationFollowScreenEdgesThroughAViewportStretchParent>b__5_0 (UnityEngine.SceneManagement.Scene scene) [0x0000d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:85
+at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.WithSourceScene (System.String path, System.Action`1[T] inspect) [0x0004a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:274
+at Game.Multiplayer.Tests.SharedGameplayHudAuthoringTests.SourceStageAndNotificationFollowScreenEdgesThroughAViewportStretchParent () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudAuthoringTests.cs:82
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

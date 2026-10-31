@@ -1,0 +1,128 @@
+syntax = "proto3";
+package norn.protocol;
+option csharp_namespace = "Game.NetworkProtocol";
+
+////////////////////////////////////////////////////////////////
+// 完整库存只读快照：离散、Owner-only、可靠通道，不是每 Tick 消息
+////////////////////////////////////////////////////////////////
+
+// 网络层校验应用版本与 Wire 预算；认证身份及目录/父链语义由上层再次校验。
+// WorldSceneKey 不通过网络发送，由 Client 当前世界提供，不能加载包中指定的 Scene。
+message InventorySnapshotMessage
+{
+    uint32 protocol_version = 1;                    // 应用协议版本，默认0或旧版拒绝，不是Protobuf库版本。
+    uint32 schema_version = 2;                      // 本完整快照合同版本，当前1；默认0不取得数据资格。
+    uint32 connection_epoch = 3;                    // 当前认证连接代次，旧连接的迟到快照必须拒绝。
+    fixed64 snapshot_sequence = 4;                  // 当前连接内非零单调快照序号，与战斗事实序号独立。
+    uint32 resource_version = 5;                    // 同批资源读数版本，不在Client自行回蓝/推进CD。
+    uint32 selection_version = 6;                   // 同批选杖版本；重放不是一次新的选杖命令。
+    uint32 spell_use_version = 7;                   // 同批法术资格版本，不能仅凭剩余次数猜本局资格。
+    uint32 server_tick = 8;                         // 捕获时权威Tick；允许初始0，作为后续资源事实的基线。
+    InventoryOwnedAssetMessage assets = 9;          // 当前真实装备/安装卡闭包，不是最初EntrySnapshot的旧余额。
+    repeated InventoryWandPresentationMessage wands = 10; // 每根装备法杖的当前读数，完整提供，最多3根。
+    repeated InventorySpellUsePresentationMessage spell_uses = 11; // 每张安装卡的资格，最多96张。
+}
+
+////////////////////////////////////////////////////////////////
+// 资产身份与位置：装备法杖、安装卡及随身法术专区，不伪造真实背包
+////////////////////////////////////////////////////////////////
+
+// 与Core值合同对应；Hash只作兼容性标识，不赋予客户端资产写权限。
+message InventoryOwnedAssetMessage
+{
+    uint32 schema_version = 1;                // Owned资产合同版本，当前1，缺省0拒绝。
+    string run_id = 2;                        // 业务Run ID，32位小写hex，不是本地存档ID。
+    string player_id = 3;                     // 业务Player ID，32位小写hex。
+    string inventory_id = 4;                  // Run/Player组合的库存身份，最多96个ASCII字节，不能按物品ID截成32位。
+    string gameplay_config_hash = 5;          // 64位小写SHA256，须与认证后当前配置完全一致。
+    string selected_wand_instance_id = 6;     // 当前已装备法杖实例，32位小写hex，不是模板ContentId。
+    uint64 actor_id = 7;                      // 本Run稳定Actor身份，当前玩家范围1..4，非Unity InstanceID。
+    uint32 inventory_version = 8;             // 当前真实资产版本，默认0拒绝。
+    repeated InventoryOwnedItemMessage items = 9; // 最大99项：3根法杖及至多96张卡，移入法术专区不增加总量。
+}
+
+// 不传Sprite、Prefab路径或可执行代码；外观和规则从受控ContentId/Hash解析。
+message InventoryOwnedItemMessage
+{
+    string instance_id = 1;                   // 资产实例ID，32位小写hex，移动/重连不重建。
+    string content_id = 2;                    // 受控目录键，最多128个ASCII字节；网络值不能自由加载资源。
+    string parent_instance_id = 3;            // 安装卡为所属法杖ID；装备根/随身法术专区为空，不冒充背包。
+    uint32 revision = 4;                      // 非零实例修订号，读取快照不是修改操作。
+    int32 location_kind = 5;                  // 原保存编号：WandSlot=2、EquippedWand=3、SpellStorage=7；其它拒绝。
+    int32 slot = 6;                           // 装备位0..2、程序位0..31或专区位0..255；Run另核对目录容量。
+    int32 x = 7;                              // 保留值位置合同的X字段，当前非Grid闭包不由Client推导坐标。
+    int32 y = 8;                              // 保留值位置合同的Y字段。
+    int32 quarter_turns = 9;                  // 旋转四分之一圈次数0..3，不能借旋转改变归属。
+    int32 remaining_charges = 10;             // 当前真实有限次数，非负；不能从模板默认值补满。
+    bool has_unlimited_charges = 11;           // 无限次数必须由服务器显式给出，false默认仍是有限。
+    bool use_template_wand_stats = 12;         // true使用共同Hash保护的模板，且wand_stats必须为空。
+    InventoryOwnedWandStatsMessage wand_stats = 13; // false的装备法杖必须完整提供实例固定属性；卡片不得夹带。
+}
+
+// 法杖实例的固定属性；高频Mana/CD不放进模板，更不能在Client修改模板SO。
+message InventoryOwnedWandStatsMessage
+{
+    float max_mana = 1;                       // 法力上限，大于0且有限。
+    float mana_regen_per_second = 2;          // 每秒恢复量，非负；只读展示不执行恢复。
+    float base_cast_delay = 3;                // 基础射速间隔，单位second，非负。
+    float base_reload_time = 4;               // 基础Reload间隔，单位second，非负。
+    float base_spread_degrees = 5;            // 基础散射角，单位degree，有限值。
+    int32 program_capacity = 6;               // 程序槽容量，当前1..32。
+    int32 base_draws = 7;                     // 基础抽取数，由领域层再核对玩法范围。
+    bool shuffle = 8;                         // 是否洗牌，只安装服务器事实。
+    repeated string always_cast_content_ids = 9; // 固有法术目录键，最多32项，每项最多128个ASCII字节。
+}
+
+////////////////////////////////////////////////////////////////
+// 当前资源和资格：只读结果，不创建Client Authority Workspace
+////////////////////////////////////////////////////////////////
+
+// 每根装备法杖完整提供，不能只发送选中法杖而令其他槽位凭空回满。
+message InventoryWandPresentationMessage
+{
+    string instance_id = 1;                   // 对应装备法杖实例ID，32位小写hex。
+    uint32 program_revision = 2;              // 服务器真实程序版本，非零，不由导入次数重新编号。
+    float current_mana = 3;                   // 当前Mana，非负有限，目录上限由读模型再次核对。
+    float cooldown_remaining = 4;            // 当前剩余Cooldown/Reload，单位second，非负有限。
+}
+
+// RemainingCharges来自同批items，避免同一快照出现两个相互矛盾的次数来源。
+message InventorySpellUsePresentationMessage
+{
+    string instance_id = 1;                   // 同批安装卡/专区卡实例ID，32位小写hex。
+    bool eligible = 2;                        // 服务器已确定的本局资格，未来次数为0不等于本局资格消失。
+}
+
+////////////////////////////////////////////////////////////////
+// 授权库存命令与收据：512B独立预算，不把完整快照当成写请求
+////////////////////////////////////////////////////////////////
+
+// 只表达操作意图。CallerId只在本机关联UI；Actor/Player由认证连接提供，不能让Client自报。
+// Expected版本用于拒绝过期拖拽，不是Client修改服务器版本的指令；实际资产只由Run改动。
+message InventoryCommandMessage
+{
+    uint32 protocol_version = 1;              // 应用协议版本，必须等于ProtocolCompatibility.CurrentVersion。
+    fixed64 gameplay_hash = 2;                // 当前共同玩法配置指纹，非零且必须与认证Run匹配。
+    fixed64 command_id = 3;                   // 当前连接Epoch内单调命令号，非零；重试必须沿用原意图。
+    uint32 connection_epoch = 4;              // 认证连接代数，非零；旧连接命令不能作用到重入后的角色。
+    uint32 expected_inventory_version = 5;    // Client提交时所读的资产版本，非零；冲突后读取新快照再操作。
+    uint32 kind = 6;                          // SelectWand=1、PlaceCard=2；0与未知值拒绝。
+    string item_id = 7;                       // 32位小写hex；选杖为法杖实例，放卡为卡片实例，不是ContentId。
+    string source_wand_id = 8;                // 原程序所属法杖ID；从随身SpellStorage取卡时为空。
+    uint32 source_program_revision = 9;       // 非空SourceWand对应的非零程序版本；Storage来源/选杖为0。
+    string target_wand_id = 10;               // 目标法杖ID；移入SpellStorage或选杖时为空。
+    uint32 target_program_revision = 11;      // 非空TargetWand对应的非零程序版本；Storage目标/选杖为0。
+    int32 target_slot = 12;                   // 选杖槽0..2；放卡Wire预算0..255，实际程序/专区容量由Run核验。
+    bool to_spell_storage = 13;               // true明确表示随身法术专区，不代表Bag/仓库/地面；选杖必须false。
+}
+
+// 只返回本条命令结果，资产变化由随后完整快照提供；不发送独立Success以免与Failure矛盾。
+message InventoryCommandReceiptMessage
+{
+    uint32 protocol_version = 1;              // 应用协议版本，必须与当前Client/DS一致。
+    fixed64 gameplay_hash = 2;                // 同一认证Run的配置指纹，收据不能跨配置使用。
+    fixed64 command_id = 3;                   // 原命令号；Client只匹配自己的pending，不当成资产授权。
+    uint32 connection_epoch = 4;              // 当前认证连接代数；旧Epoch收据不得关闭新连接pending。
+    uint32 inventory_version = 5;             // 成功必须非零；尚未就绪等失败允许0，不用虚构资产版本。
+    uint32 failure = 6;                       // None=0；1..11按Core失败枚举；Success由None推导，未知值拒绝。
+}

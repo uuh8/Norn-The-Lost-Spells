@@ -74,7 +74,7 @@ public sealed class OnlineFactory : WebApplicationFactory<Program>
         var login = (await response.Content.ReadFromJsonAsync<LoginAccountReply>(Json))!;
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", login.Token);
         client.DefaultRequestHeaders.Add("X-Norn-Manifest", Manifest.Hash);
-        client.DefaultRequestHeaders.Add("X-Norn-Protocol", "1");
+        client.DefaultRequestHeaders.Add("X-Norn-Protocol", ProtocolCompatibility.CurrentVersion.ToString(System.Globalization.CultureInfo.InvariantCulture));
         return login.Token;
     }
     public LoginAccountRequest LoginRequest(string username) => new() { Username = username, Password = Password, ProtocolVersion = Manifest.ProtocolVersion, ContentManifestHash = Manifest.Hash };

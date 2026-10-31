@@ -188,6 +188,13 @@ namespace Game.Combat
             return _instances[ToIndex(kind)].Intensity;
         }
 
+        /// <summary>晚创建的共享 HUD 从当前读模型重建 Icon；读取不重新应用状态，也不向其他订阅者广播伪事件。</summary>
+        public Sprite GetIcon(StatusKind kind)
+        {
+            StatusDefinition definition = GetDefinition(kind);
+            return definition != null ? definition.Icon : null;
+        }
+
         public bool TryGetIntensity(StatusKind kind, out float intensity)
         {
             StatusInstance instance = _instances[ToIndex(kind)];

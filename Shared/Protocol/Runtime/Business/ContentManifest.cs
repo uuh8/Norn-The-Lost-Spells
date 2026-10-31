@@ -10,7 +10,7 @@ namespace Game.NetworkProtocol
     [Serializable] public sealed class ContentManifest
     {
         public uint SchemaVersion = 1;
-        public uint ProtocolVersion = 1;
+        public uint ProtocolVersion = ProtocolCompatibility.CurrentVersion;
         public string BuildVersion = "";
         public string Hash = "";
         public ContentManifestEntry[] Items = Array.Empty<ContentManifestEntry>();

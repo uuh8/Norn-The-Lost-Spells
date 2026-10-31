@@ -43,7 +43,7 @@ namespace Game.Project.Editor
                 serialized.ApplyModifiedPropertiesWithoutUndo();
                 serialized.Update(); serialized.FindProperty("_simulationHash").longValue = unchecked((long)Hash(profile));
                 serialized.ApplyModifiedPropertiesWithoutUndo(); EditorUtility.SetDirty(profile); AssetDatabase.SaveAssets();
-                UpgradeScene(RoomLifecycleTools.ScenePath, false); UpgradeScene(RoomLifecycleTools.PortalScenePath, true);
+                UpgradeScene(RoomLifecycleTools.ScenePath, false); UpgradeScene(RoomLifecycleTools.PortalScenePath, false);
             }
             finally { EditorSceneManager.RestoreSceneManagerSetup(original); }
             Verify();
@@ -68,8 +68,13 @@ namespace Game.Project.Editor
                 int count = 0;
                 OnlineWorldBootstrap world = null;
                 foreach (var root in scene.GetRootGameObjects())
+                {
+                    if (path == RoomLifecycleTools.PortalScenePath &&
+                        (root.name == "OnlineMovementControls" || root.GetComponentInChildren<OnlineMovementHint>(true) != null))
+                        throw new InvalidOperationException("正式 OnlineRoom 残留独立操作提示，请重新安装共享 HUD。");
                     foreach (var candidate in root.GetComponentsInChildren<OnlineWorldBootstrap>(true))
                     { count++; world = candidate; }
+                }
                 if (count != 1 || world == null || !world.enabled || !world.gameObject.activeInHierarchy)
                     throw new InvalidOperationException(path + "必须包含唯一且启用的OnlineWorldBootstrap，拒绝构建无Tick或重复Tick的副本。");
             }
@@ -123,7 +128,10 @@ namespace Game.Project.Editor
             bool hasWorld = false, hasHint = false;
             foreach (var root in scene.GetRootGameObjects()) { hasWorld |= root.GetComponent<OnlineWorldBootstrap>() != null; hasHint |= root.GetComponentInChildren<OnlineMovementHint>(true) != null; }
             if (!hasWorld) { var root = new GameObject("OnlineMovementWorld"); SceneManager.MoveGameObjectToScene(root, scene); root.AddComponent<OnlineWorldBootstrap>(); }
-            if (client && !hasHint)
+            // 正式副本使用原 P7/P8 的共同 HUD；升级旧 Scene 时同时清除历史诊断横幅，不能只阻止新建。
+            // client 只是诊断工具的选项，不能据此让任意 Client Scene 获得另一套发布用 UI。
+            if (path == RoomLifecycleTools.PortalScenePath) SharedGameplayHudTools.RemoveLegacyMovementHints(scene);
+            if (client && path == RoomLifecycleTools.ScenePath && !hasHint)
             {
                 var canvasRoot = new GameObject("OnlineMovementControls", typeof(Canvas), typeof(CanvasScaler)); SceneManager.MoveGameObjectToScene(canvasRoot, scene);
                 canvasRoot.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;

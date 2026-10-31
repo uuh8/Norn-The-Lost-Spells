@@ -102,6 +102,27 @@ namespace Game.Run.Tests
         }
 
         [UnityTest]
+        public IEnumerator InitializationBeforeStartIsNotHiddenAgain()
+        {
+            PublishInitialization();
+            typeof(BossHealthBarController).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(_controller, null);
+            yield return null;
+            Assert.That(_hudRoot.activeSelf, Is.True, "跨对象 Start 顺序不能撤销已收到的初始化事实。");
+        }
+
+        [UnityTest]
+        public IEnumerator ReplicaFullStateCorrectsHealthAndHidesDeadBoss()
+        {
+            PublishInitialization();
+            EventBus<BossHudStateChangedEvent>.Publish(new BossHudStateChangedEvent
+                { BossId = 42, CurrentHp = 210, CurrentPhase = 2, Active = true });
+            yield return null;
+            Assert.That(_healthFill.fillAmount, Is.EqualTo(.21f).Within(.001f));
+            EventBus<BossHudStateChangedEvent>.Publish(new BossHudStateChangedEvent { BossId = 42, Active = false });
+            Assert.That(_hudRoot.activeSelf, Is.False);
+        }
+
+        [UnityTest]
         public IEnumerator DamageAndPhaseEvents_FilterBossIdAndRefreshPresentation()
         {
             PublishInitialization();

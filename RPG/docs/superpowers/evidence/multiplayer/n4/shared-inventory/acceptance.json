@@ -1,0 +1,74 @@
+{
+  "SchemaVersion": 1,
+  "Scope": "N4 shared inventory increment; authoritative commands and original UI composition",
+  "RecordedAtLocal": "2026-10-26 Asia/Shanghai",
+  "ApplicationProtocolVersion": 2,
+  "GameplayConfigHash": "3ed0f8ec1c65c5671cbc1e9255155670a740d13608c24d812704d4af47efd94a",
+  "ContentManifestHash": "80f84176ed3b987340236f6cdc273328e8a9ec07a34176ea3426b594a779ba28",
+  "Versions": {
+    "Unity": "6000.3.16f1",
+    "Mirror": "96.11.3",
+    "GoogleProtobuf": "3.34.2",
+    "protoc": "34.2",
+    "DotNetSdk": "10.0.402",
+    "BusinessRuntime": "10.0.13",
+    "MySQL": "8.4.13",
+    "Changed": false
+  },
+  "EditMode": {
+    "Passed": 135,
+    "Failed": 0,
+    "Evidence": "final-ghost-editmode-green"
+  },
+  "PlayMode": {
+    "Passed": 5,
+    "Failed": 0,
+    "Evidence": "final-playmode-green"
+  },
+  "BusinessTests": {
+    "Passed": 91,
+    "Failed": 0,
+    "Skipped": 0,
+    "DatabasePort": 13384,
+    "Schema": "norn_online_test",
+    "Evidence": "mysql/n4-shared-inventory.trx"
+  },
+  "Builds": {
+    "ServerPassed": true,
+    "LatestClientPassed": true,
+    "Errors": 0,
+    "RenderingInputsIsolated": false,
+    "ClientResourcesExcluded": false,
+    "Evidence": [
+      "builds/server.json",
+      "builds/client-ghost-fixed.json"
+    ]
+  },
+  "OwnerOnlyInventoryWireConnected": true,
+  "OnlineInventoryCommandGatewayImplemented": true,
+  "OriginalTabNativeRendered": true,
+  "OriginalTabNativeEvidence": "native-fixed/a-072315264.png",
+  "NativeLocalOnlyInputCaptureAccepted": true,
+  "NativeInputEvidence": "native-fixed/portal-entry.json and a/b.json",
+  "SceneAwakeToLoadedRegressionAccepted": true,
+  "GhostRaycastRegressionAccepted": true,
+  "LatestNativeInventoryDragAccepted": false,
+  "LatestNativeReentryWithEditedInventoryAccepted": false,
+  "LatestFullFrameZeroAllocationAccepted": false,
+  "FormalDungeonContentCompositionImplemented": false,
+  "FormalOnlineExperienceAccepted": false,
+  "N4Complete": false,
+  "ReleaseReady": false,
+  "OriginalSettingsAndSavesPreserved": true,
+  "PreservationEvidence": "preservation-final.json",
+  "ManualInstructions": "Assets/_Project/Docs/2026-10-20 联机系统开发解析（更新中）.md Task N4-7B section 5",
+  "Notes": [
+    "Test batches overlap; do not sum successive runs.",
+    "native-authorized retains the failed Scene-loading binding result; native-fixed proves actual original Tab rendering and isolated input capture.",
+    "native-fixed raw-move diagnostic reached dragging=true but the unpatched Ghost swallowed drop raycasts. CanvasGroup preservation was fixed, re-exported, tested and rebuilt.",
+    "native-final did not finish GUI acceptance: foreground acquisition failed and the recorded Client process was gone on the single retry. Do not mark asset movement or latest Native profiler as passed.",
+    "No new packages or framework upgrades. NuGet lock graphs missing direct references were restored to committed versions and verified in locked mode.",
+    "Next work is trusted Dungeon initialization and controlled map/heterogeneous NPC composition; the current world remains a technical fixture.",
+    "Current movement snapshots are one actor per bounded message, not a single aggregated array."
+  ]
+}

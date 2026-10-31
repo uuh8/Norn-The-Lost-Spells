@@ -21,7 +21,7 @@ namespace Game.Multiplayer
         private readonly byte[] _outIntent = new byte[CombatCodec.MaxPayloadBytes];
         private readonly byte[] _outFact = new byte[CombatCodec.MaxPayloadBytes];
         private readonly IntentRateState[] _intentRates = new IntentRateState[4];
-        private readonly uint[] _factEpochs = new uint[8];
+        private readonly uint[] _factEpochs = new uint[OnlineActorLimits.MaximumActors];
         private JoinConnectionIdentity _clientIdentity;
         private bool _serverRegistered, _clientRegistered;
 
@@ -140,7 +140,7 @@ namespace Game.Multiplayer
                 ClearClientFence();
                 _clientIdentity = identity;
             }
-            int index = (int)message.ActorId - 1; // Codec 已限制 ActorId 为 1..8，数组容量固定。
+            int index = (int)message.ActorId - 1; // Codec与数组共享Core Actor预算，不再另写旧的8席上限。
             if (message.ActorId == identity.ActorId && message.ConnectionEpoch != identity.ConnectionEpoch ||
                 message.ConnectionEpoch < _factEpochs[index])
             {

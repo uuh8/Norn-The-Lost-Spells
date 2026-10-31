@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="12" result="Failed(Child)" total="12" passed="0" failed="12" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-29 12:54:50Z" end-time="2026-10-29 12:54:51Z" duration="0.6365676">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2825" result="Failed" site="Child" start-time="2026-10-29 12:54:50Z" end-time="2026-10-29 12:54:51Z" duration="0.636568" total="12" passed="0" failed="12" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1531" name="Game.Core.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Core.Tests.dll" runstate="Runnable" testcasecount="50" result="Failed" site="Child" start-time="2026-10-29 12:54:50Z" end-time="2026-10-29 12:54:51Z" duration="0.523440" total="12" passed="0" failed="12" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27148" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1532" name="Game" fullname="Game" runstate="Runnable" testcasecount="50" result="Failed" site="Child" start-time="2026-10-29 12:54:50Z" end-time="2026-10-29 12:54:51Z" duration="0.446450" total="12" passed="0" failed="12" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1533" name="Core" fullname="Game.Core" runstate="Runnable" testcasecount="50" result="Failed" site="Child" start-time="2026-10-29 12:54:51Z" end-time="2026-10-29 12:54:51Z" duration="0.343851" total="12" passed="0" failed="12" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1534" name="Tests" fullname="Game.Core.Tests" runstate="Runnable" testcasecount="50" result="Failed" site="Child" start-time="2026-10-29 12:54:51Z" end-time="2026-10-29 12:54:51Z" duration="0.245293" total="12" passed="0" failed="12" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1506" name="WorldMaterialOccupancyTests" fullname="Game.Core.Tests.WorldMaterialOccupancyTests" classname="Game.Core.Tests.WorldMaterialOccupancyTests" runstate="Runnable" testcasecount="12" result="Failed" site="Child" start-time="2026-10-29 12:54:51Z" end-time="2026-10-29 12:54:51Z" duration="0.143781" total="12" passed="0" failed="12" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1511" name="CapacityFailure_RejectsWholeCandidate" fullname="Game.Core.Tests.WorldMaterialOccupancyTests.CapacityFailure_RejectsWholeCandidate" methodname="CapacityFailure_RejectsWholeCandidate" classname="Game.Core.Tests.WorldMaterialOccupancyTests" runstate="Runnable" seed="649019536" result="Failed" start-time="2026-10-29 12:54:51Z" end-time="2026-10-29 12:54:51Z" duration="0.027039" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少材料逻辑占据规范化器
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldMaterialOccupancyTests.SetUp () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldMaterialOccupancyTests.cs:16
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1515" name="DuplicateOwner_IsRejected_AndNextCandidateIsClean" fullname="Game.Core.Tests.WorldMaterialOccupancyTests.DuplicateOwner_IsRejected_AndNextCandidateIsClean" methodname="DuplicateOwner_IsRejected_AndNextCandidateIsClean" classname="Game.Core.Tests.WorldMaterialOccupancyTests" runstate="Runnable" seed="1216953322" result="Failed" start-time="2026-10-29 12:54:51Z" end-time="2026-10-29 12:54:51Z" duration="0.000495" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少材料逻辑占据规范化器
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldMaterialOccupancyTests.SetUp () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldMaterialOccupancyTests.cs:16
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1514" name="EmptyCandidate_RemovesOccupancy_ThenIsStable" fullname="Game.Core.Tests.WorldMaterialOccupancyTests.EmptyCandidate_RemovesOccupancy_ThenIsStable" methodname="EmptyCandidate_RemovesOccupancy_ThenIsStable" classname="Game.Core.Tests.WorldMaterialOccupancyTests" runstate="Runnable" seed="251224341" result="Failed" start-time="2026-10-29 12:54:51Z" end-time="2026-10-29 12:54:51Z" duration="0.000270" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少材料逻辑占据规范化器
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldMaterialOccupancyTests.SetUp () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldMaterialOccupancyTests.cs:16
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1508" name="EnumerationOrder_DoesNotChangeSnapshot_AndInputIsNotBorrowed" fullname="Game.Core.Tests.WorldMaterialOccupancyTests.EnumerationOrder_DoesNotChangeSnapshot_AndInputIsNotBorrowed" methodname="EnumerationOrder_DoesNotChangeSnapshot_AndInputIsNotBorrowed" classname="Game.Core.Tests.WorldMaterialOccupancyTests" runstate="Runnable" seed="658099568" result="Failed" start-time="2026-10-29 12:54:51Z" end-time="2026-10-29 12:54:51Z" duration="0.000249" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少材料逻辑占据规范化器
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldMaterialOccupancyTests.SetUp () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldMaterialOccupancyTests.cs:16
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1518" name="ExtremeCoordinates_AreComparedWithoutSubtractionOverflow" fullname="Game.Core.Tests.WorldMaterialOccupancyTests.ExtremeCoordinates_AreComparedWithoutSubtractionOverflow" methodname="ExtremeCoordinates_AreComparedWithoutSubtractionOverflow" classname="Game.Core.Tests.WorldMaterialOccupancyTests" runstate="Runnable" seed="1505980558" result="Failed" start-time="2026-10-29 12:54:51Z" end-time="2026-10-29 12:54:51Z" duration="0.000309" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少材料逻辑占据规范化器
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldMaterialOccupancyTests.SetUp () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldMaterialOccupancyTests.cs:16
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1516" name="FireStrength_IsNotSummedOrAcceptedAboveByteRange" fullname="Game.Core.Tests.WorldMaterialOccupancyTests.FireStrength_IsNotSummedOrAcceptedAboveByteRange" methodname="FireStrength_IsNotSummedOrAcceptedAboveByteRange" classname="Game.Core.Tests.WorldMaterialOccupancyTests" runstate="Runnable" seed="1574969625" result="Failed" start-time="2026-10-29 12:54:51Z" end-time="2026-10-29 12:54:51Z" duration="0.000420" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少材料逻辑占据规范化器
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldMaterialOccupancyTests.SetUp () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldMaterialOccupancyTests.cs:16
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1512" name="InspectionBudget_CountsInputEvenWhenAllQuantitiesAreZero" fullname="Game.Core.Tests.WorldMaterialOccupancyTests.InspectionBudget_CountsInputEvenWhenAllQuantitiesAreZero" methodname="InspectionBudget_CountsInputEvenWhenAllQuantitiesAreZero" classname="Game.Core.Tests.WorldMaterialOccupancyTests" runstate="Runnable" seed="72382548" result="Failed" start-time="2026-10-29 12:54:51Z" end-time="2026-10-29 12:54:51Z" duration="0.000277" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少材料逻辑占据规范化器
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldMaterialOccupancyTests.SetUp () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldMaterialOccupancyTests.cs:16
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1513" name="InvalidIdentity_RejectsWithoutReplacingPublishedData" fullname="Game.Core.Tests.WorldMaterialOccupancyTests.InvalidIdentity_RejectsWithoutReplacingPublishedData" methodname="InvalidIdentity_RejectsWithoutReplacingPublishedData" classname="Game.Core.Tests.WorldMaterialOccupancyTests" runstate="Runnable" seed="822788182" result="Failed" start-time="2026-10-29 12:54:51Z" end-time="2026-10-29 12:54:51Z" duration="0.000532" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少材料逻辑占据规范化器
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldMaterialOccupancyTests.SetUp () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldMaterialOccupancyTests.cs:16
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1510" name="Overflow_RejectsWithoutReplacingPublishedData" fullname="Game.Core.Tests.WorldMaterialOccupancyTests.Overflow_RejectsWithoutReplacingPublishedData" methodname="Overflow_RejectsWithoutReplacingPublishedData" classname="Game.Core.Tests.WorldMaterialOccupancyTests" runstate="Runnable" seed="1569407251" result="Failed" start-time="2026-10-29 12:54:51Z" end-time="2026-10-29 12:54:51Z" duration="0.000306" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少材料逻辑占据规范化器
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldMaterialOccupancyTests.SetUp () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldMaterialOccupancyTests.cs:16
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1509" name="QuantityMaterialAndDomain_StayDistinct" fullname="Game.Core.Tests.WorldMaterialOccupancyTests.QuantityMaterialAndDomain_StayDistinct" methodname="QuantityMaterialAndDomain_StayDistinct" classname="Game.Core.Tests.WorldMaterialOccupancyTests" runstate="Runnable" seed="1911849812" result="Failed" start-time="2026-10-29 12:54:51Z" end-time="2026-10-29 12:54:51Z" duration="0.000260" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少材料逻辑占据规范化器
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldMaterialOccupancyTests.SetUp () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldMaterialOccupancyTests.cs:16
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1517" name="SortingBudgetFailure_PreservesPublishedSnapshot" fullname="Game.Core.Tests.WorldMaterialOccupancyTests.SortingBudgetFailure_PreservesPublishedSnapshot" methodname="SortingBudgetFailure_PreservesPublishedSnapshot" classname="Game.Core.Tests.WorldMaterialOccupancyTests" runstate="Runnable" seed="1906902353" result="Failed" start-time="2026-10-29 12:54:51Z" end-time="2026-10-29 12:54:51Z" duration="0.000327" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少材料逻辑占据规范化器
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldMaterialOccupancyTests.SetUp () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldMaterialOccupancyTests.cs:16
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1507" name="StableDynamicHandoff_DoesNotInventLogicalChange" fullname="Game.Core.Tests.WorldMaterialOccupancyTests.StableDynamicHandoff_DoesNotInventLogicalChange" methodname="StableDynamicHandoff_DoesNotInventLogicalChange" classname="Game.Core.Tests.WorldMaterialOccupancyTests" runstate="Runnable" seed="907726900" result="Failed" start-time="2026-10-29 12:54:51Z" end-time="2026-10-29 12:54:51Z" duration="0.000290" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp :   缺少材料逻辑占据规范化器
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldMaterialOccupancyTests.SetUp () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldMaterialOccupancyTests.cs:16
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

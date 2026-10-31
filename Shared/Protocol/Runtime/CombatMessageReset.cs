@@ -17,6 +17,8 @@ namespace Game.NetworkProtocol
         {
             ProtocolVersion = Sequence = ServerTick = Kind = ConnectionEpoch = PrefabKey = OutputOrdinal = 0;
             Result = Phase = Team = ProgramRevision = RemainingCharges = Flags = DamageType = AnimationHash = ActionKind = SoundKey = 0;
+            // ActorState按稳定装备槽定位资源；若省略清理，下一条无Owned来源的事实会借用旧槽并污染另一根杖。
+            WandSlotPlusOne = 0;
             GameplayHash = ActorId = CommandId = OutputId = TargetActorId = AttackerActorId = 0;
             PositionX = PositionY = PositionZ = RotationX = RotationY = RotationZ = RotationW = 0;
             VelocityX = VelocityY = VelocityZ = CurrentHp = MaxHp = CurrentMana = MaxMana = Cooldown = 0;

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-26 11:28:30Z" end-time="2026-10-26 11:28:34Z" duration="3.8660827">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2546" result="Failed" site="Child" start-time="2026-10-26 11:28:30Z" end-time="2026-10-26 11:28:34Z" duration="3.866083" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3871" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="715" result="Failed" site="Child" start-time="2026-10-26 11:28:30Z" end-time="2026-10-26 11:28:34Z" duration="3.768331" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27688" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3872" name="Game" fullname="Game" runstate="Runnable" testcasecount="715" result="Failed" site="Child" start-time="2026-10-26 11:28:30Z" end-time="2026-10-26 11:28:34Z" duration="3.676141" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3873" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="715" result="Failed" site="Child" start-time="2026-10-26 11:28:31Z" end-time="2026-10-26 11:28:34Z" duration="3.577667" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3874" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="715" result="Failed" site="Child" start-time="2026-10-26 11:28:31Z" end-time="2026-10-26 11:28:34Z" duration="3.476633" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3473" name="SharedInventoryPresentationTests" fullname="Game.Run.Tests.SharedInventoryPresentationTests" classname="Game.Run.Tests.SharedInventoryPresentationTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-10-26 11:28:31Z" end-time="2026-10-26 11:28:34Z" duration="3.375188" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3477" name="ExportKeepsOriginalDragGhostCanvasGroupSoItCannotSwallowDropRaycasts" fullname="Game.Run.Tests.SharedInventoryPresentationTests.ExportKeepsOriginalDragGhostCanvasGroupSoItCannotSwallowDropRaycasts" methodname="ExportKeepsOriginalDragGhostCanvasGroupSoItCannotSwallowDropRaycasts" classname="Game.Run.Tests.SharedInventoryPresentationTests" runstate="Runnable" seed="1209792641" result="Failed" start-time="2026-10-26 11:28:31Z" end-time="2026-10-26 11:28:34Z" duration="3.259412" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  CanvasGroup是原Ghost的UGUI输入行为，不是需要剥离的Gameplay权威。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.SharedInventoryPresentationTests.ExportKeepsOriginalDragGhostCanvasGroupSoItCannotSwallowDropRaycasts () [0x00069] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\SharedInventoryPresentationTests.cs:123
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

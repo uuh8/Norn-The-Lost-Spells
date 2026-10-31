@@ -337,7 +337,25 @@ namespace Game.Character
         {
             if (_animator == null) return;
             Vector3 v = _cc.velocity; v.y = 0f;
-            _animator.SetFloat(SpeedHash, v.magnitude);
+            SetMovementAnimatorSpeed(v.magnitude);
+        }
+
+        /// <summary>
+        /// 在线Replica只把已确认快照段的水平米/秒交给原Animator，保持与单机SyncAnimator相同的单位。
+        /// 不读取Replica的CC.velocity：网络直接安装Transform时没有本地Move，那个速度不能代表画面移动。
+        /// 只写参数，不每帧CrossFade Idle/Run；攻击/受击/死亡仍由原Action事实和Animator出口控制。
+        /// </summary>
+        public void PresentReplicaMovement(float planarMetersPerSecond)
+        {
+            if (!_isOnlineReplica) return;
+            SetMovementAnimatorSpeed(_dead || _health != null && !_health.IsAlive ? 0f : planarMetersPerSecond);
+        }
+
+        private void SetMovementAnimatorSpeed(float planarMetersPerSecond)
+        {
+            if (_animator == null) return;
+            _animator.SetFloat(SpeedHash, float.IsFinite(planarMetersPerSecond)
+                ? Mathf.Max(0f, planarMetersPerSecond) : 0f);
         }
 
         #region 行动能力（供状态调用）

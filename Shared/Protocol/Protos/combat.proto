@@ -75,4 +75,5 @@ message CombatFactMessage
     uint32 animation_hash = 43;    // NPC/Boss已批准动作的Animator Hash，按原始32位保存。
     uint32 action_kind = 44;       // 1=CrossFade State、2=Trigger；不是客户端任意执行请求。
     uint32 sound_key = 45;         // 受控AudioClip表索引；Setup提供本机预测声，声音事实确认相同Command不重播。
+    uint32 wand_slot_plus_one = 46; // 仅ActorState：0无Owned来源，1..3映射稳定装备槽0..2；乱序时不按当前Setup猜测余额归属。
 }

@@ -22,6 +22,7 @@ namespace Game.UI
         {if(button!=null){var label=button.GetComponentInChildren<Text>(true);if(label!=null)label.text=text;}}
         private SinglePlayerInventoryController _controller;
         private long _lastCurrency=long.MinValue;
+        private bool _walletInitialized, _walletAvailable;
         private uint _toolVersion;
         private static readonly ProfilerMarker UpdateMarker=new ProfilerMarker("Norn.Backpack.Update");
         public void Configure(Text capacity,Text wallet,ToolbeltView tools) { _capacity=capacity; _wallet=wallet; _tools=tools; }
@@ -36,21 +37,25 @@ namespace Game.UI
                 if (first) used+=item.Rules.Shape.CellCount;
             }
             if (_capacity!=null) { _capacity.font=controller.UiFont; _capacity.text=cells==0?"未装备背包":"已占 "+used+" / "+cells+" 格"; }
-            _tools?.Refresh(controller); _toolVersion=controller.Session.ToolbeltReadOnly?.ConfigurationVersion??0; RefreshWallet();
+            // 视图读取通用来源；线上绑定不会借用 Inspector 中保留的单机 Session。
+            _tools?.Refresh(controller); _toolVersion=controller.PresentationSource?.ToolbeltReadOnly?.ConfigurationVersion??0; RefreshWallet();
         }
         private void Update()
         {
             if (_controller==null || !_controller.IsOpen) return;
             using var sample=UpdateMarker.Auto(); RefreshWallet();
-            uint version=_controller.Session.ToolbeltReadOnly?.ConfigurationVersion??0;
+            uint version=_controller.PresentationSource?.ToolbeltReadOnly?.ConfigurationVersion??0;
             if (_toolVersion!=version) { _toolVersion=version; _tools?.Refresh(_controller); }
         }
         private void RefreshWallet()
         {
-            long value=_controller.Session.WalletReadOnly.Currency;
-            if (value==_lastCurrency || _wallet==null) return;
-            // 钱包只在交易等离散变化时格式化；稳定帧不创建字符串。
-            _lastCurrency=value; _wallet.font=_controller.UiFont; _wallet.text=value.ToString();
+            var read = _controller.PresentationSource?.WalletReadOnly;
+            bool available = read != null; long value = available ? read.Currency : 0;
+            if (_wallet == null || _walletInitialized && available == _walletAvailable && (!available || value == _lastCurrency)) return;
+            // null能力表示当前合同没有钱包，不等于真实余额0。沿用原Text显示缺失标记；
+            // 单机有效读口的0仍显示0。可用性/余额变化才格式化，稳定Update不创建字符串。
+            _walletInitialized = true; _walletAvailable = available; _lastCurrency = value;
+            _wallet.font = _controller.UiFont; _wallet.text = available ? value.ToString() : "—";
         }
     }
 }

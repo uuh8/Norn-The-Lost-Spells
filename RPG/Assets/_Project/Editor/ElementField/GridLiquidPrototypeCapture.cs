@@ -555,7 +555,8 @@ namespace Game.EditorTools
                 FindObjectsInactive.Include, FindObjectsSortMode.None);
             if (liquids.Length > 0)
             {
-                LiquidWorldRuntime liquid = continuous!=null && continuous.Source!=null?continuous.Source:liquids[0];
+                // 此诊断段读取Solver专属统计，Replica只提供Presentation接口，不能强制当作玩法Runtime。
+                LiquidWorldRuntime liquid = continuous!=null && continuous.Source is LiquidWorldRuntime runtime?runtime:liquids[0];
                 snapshot.SourceInstanceId=liquid.GetInstanceID();
                 snapshot.Initialized = liquid.IsFluidInitialized;
                 snapshot.TerrainFallbacks=liquid.TerrainFallbackCount;

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-26 07:16:15Z" end-time="2026-10-26 07:16:15Z" duration="0.5407886">
+  <test-suite type="TestSuite" id="1921" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="834" result="Failed" site="Child" start-time="2026-10-26 07:16:15Z" end-time="2026-10-26 07:16:15Z" duration="0.540789" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1914" name="Game.Run.PlayMode.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.PlayMode.Tests.dll" runstate="Runnable" testcasecount="813" result="Failed" site="Child" start-time="2026-10-26 07:16:15Z" end-time="2026-10-26 07:16:15Z" duration="0.519307" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="27688" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1915" name="Game" fullname="Game" runstate="Runnable" testcasecount="813" result="Failed" site="Child" start-time="2026-10-26 07:16:15Z" end-time="2026-10-26 07:16:15Z" duration="0.512740" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1916" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="813" result="Failed" site="Child" start-time="2026-10-26 07:16:15Z" end-time="2026-10-26 07:16:15Z" duration="0.495539" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1917" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="813" result="Failed" site="Child" start-time="2026-10-26 07:16:15Z" end-time="2026-10-26 07:16:15Z" duration="0.476699" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1185" name="EarlyCombatPresentationLifecycleTests" fullname="Game.Run.Tests.EarlyCombatPresentationLifecycleTests" classname="Game.Run.Tests.EarlyCombatPresentationLifecycleTests" runstate="Runnable" testcasecount="1" result="Failed" site="Child" start-time="2026-10-26 07:16:15Z" end-time="2026-10-26 07:16:15Z" duration="0.461672" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1186" name="AwakeActorBeforeSceneLoadedStillComposesOriginalTabAndVisiblePanel" fullname="Game.Run.Tests.EarlyCombatPresentationLifecycleTests.AwakeActorBeforeSceneLoadedStillComposesOriginalTabAndVisiblePanel" methodname="AwakeActorBeforeSceneLoadedStillComposesOriginalTabAndVisiblePanel" classname="Game.Run.Tests.EarlyCombatPresentationLifecycleTests" runstate="Runnable" seed="94194971" result="Failed" start-time="2026-10-26 07:16:15Z" end-time="2026-10-26 07:16:15Z" duration="0.431662" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Awake阶段拒绝绑定后必须在真实Scene就绪边界重放Actor，Source到达不能永远丢在空Context。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.EarlyCombatPresentationLifecycleTests+<AwakeActorBeforeSceneLoadedStillComposesOriginalTabAndVisiblePanel>d__7.MoveNext () [0x003cd] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\RunPlayMode\EarlyCombatPresentationLifecycleTests.cs:80
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in .\Library\PackageCache\com.unity.test-framework@aebcb98460c6\UnityEngine.TestRunner\NUnitExtensions\Attributes\TestEnumerator.cs:44
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/playmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
