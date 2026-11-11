@@ -64,7 +64,8 @@ namespace Game.Character
         public bool TryValidate(int expectedAreaCount, out string error)
         {
             error = null;
-            if (expectedAreaCount < 1 || AreaCount != expectedAreaCount) { error = "地图区域接线数量与Definition不一致。"; return false; }
+            // 原Home显式是零遭遇地图；是否允许零区域由已验证Definition决定，不能伪造空战斗区。
+            if (expectedAreaCount < 0 || _areas == null || AreaCount != expectedAreaCount) { error = "地图区域接线数量与Definition不一致。"; return false; }
             for (int i = 0; i < AreaCount; i++)
             {
                 var area = _areas[i];

@@ -307,6 +307,112 @@ namespace Game.Run.Tests
             AssertLocation("a", ItemLocation.Warehouse);
         }
 
+        // 跨Owner第一小段只测试同一容器在两份真实Store之间移交；无网络/场景/存档/新物品发放。
+        [Test]
+        public void CrossOwnerContainerMovesViaGroundWithTheSameInstanceAndComposition()
+        {
+            AddTransferBottle(); var ground = new ItemOwnershipStore(_store.Catalog); var receiver = TransferReceiver("b");
+            _store.TryGet("transfer-bottle", out var original); uint compositionVersion = original.Composition.Version;
+            uint a = _store.Version, b = receiver.Version;
+            Assert.That(Transfer(_store, ground, Bag("transfer-bag"), World("world-incarnation")).Success, Is.True);
+            Assert.That(_store.TryGet("transfer-bottle", out _), Is.False);
+            Assert.That(ground.TryGet("transfer-bottle", out var dropped), Is.True); Assert.That(dropped, Is.SameAs(original));
+            Assert.That(Transfer(ground, receiver, World("world-incarnation"), Bag("b-bag")).Success, Is.True);
+            Assert.That(ground.Count, Is.Zero); Assert.That(receiver.TryGet("transfer-bottle", out var picked), Is.True);
+            Assert.That(picked, Is.SameAs(original)); Assert.That(picked.Composition, Is.SameAs(original.Composition));
+            Assert.That(picked.Composition.Total, Is.EqualTo(27ul)); Assert.That(picked.Composition.GetQuantity(1), Is.EqualTo(20ul));
+            Assert.That(picked.Composition.GetQuantity(3), Is.EqualTo(7ul)); Assert.That(picked.Composition.Version, Is.EqualTo(compositionVersion));
+            Assert.That(_store.Version, Is.EqualTo(a + 1)); Assert.That(receiver.Version, Is.EqualTo(b + 1)); Assert.That(ground.Version, Is.EqualTo(2));
+        }
+
+        [Test]
+        public void CrossOwnerFirstSuccessfulPickupWinsWithoutASecondCopy()
+        {
+            AddTransferBottle(); var ground = new ItemOwnershipStore(_store.Catalog); var b = TransferReceiver("b"); var c = TransferReceiver("c");
+            Assert.That(Transfer(_store, ground, Bag("transfer-bag"), World("drop-1")).Success, Is.True);
+            Assert.That(Transfer(ground, b, World("drop-1"), Bag("b-bag")).Success, Is.True);
+            uint version = c.Version;
+            Assert.That(Transfer(ground, c, World("drop-1"), Bag("c-bag")).Success, Is.False);
+            Assert.That(c.Version, Is.EqualTo(version)); Assert.That(c.TryGet("transfer-bottle", out _), Is.False);
+            Assert.That(b.TryGet("transfer-bottle", out var bottle), Is.True); Assert.That(bottle.Composition.Total, Is.EqualTo(27ul));
+        }
+
+        [Test]
+        public void CrossOwnerFailedCapacityLeavesBothVersionsAndQuantityUntouched()
+        {
+            AddTransferBottle(); var ground = new ItemOwnershipStore(_store.Catalog); var b = TransferReceiver("b");
+            Assert.That(Transfer(_store, ground, Bag("transfer-bag"), World("drop-1")).Success, Is.True);
+            Assert.That(b.TryAdd(new RuntimeItemState("blocking", "container.basic", 0), Bag("b-bag")), Is.True);
+            uint gv = ground.Version, bv = b.Version;
+            Assert.That(Transfer(ground, b, World("drop-1"), Bag("b-bag")).Success, Is.False);
+            Assert.That(ground.Version, Is.EqualTo(gv)); Assert.That(b.Version, Is.EqualTo(bv));
+            Assert.That(ground.TryGet("transfer-bottle", out var bottle), Is.True); Assert.That(bottle.Composition.Total, Is.EqualTo(27ul));
+            Assert.That(b.TryGet("transfer-bottle", out _), Is.False);
+            // 此夹具的默认包只有一格；先真实移走占格物，再向同一合法空格拾取，验证失败没有遗留准备锁。
+            Assert.That(b.TryMove("blocking", ItemLocation.Warehouse).Success, Is.True);
+            Assert.That(Transfer(ground, b, World("drop-1"), Bag("b-bag")).Success, Is.True);
+        }
+
+        [TestCase(true)] [TestCase(false)]
+        public void CrossOwnerStaleEitherVersionDoesNotMoveTheBottle(bool sourceStale)
+        {
+            AddTransferBottle(); var ground = new ItemOwnershipStore(_store.Catalog); uint av = _store.Version, gv = ground.Version;
+            var result = Transfer(_store, ground, Bag("transfer-bag"), World("drop-1"), sourceStale ? av + 1 : av, sourceStale ? gv : gv + 1);
+            Assert.That(result.Reason, Is.EqualTo(InventoryFailureReason.StaleVersion));
+            Assert.That(_store.Version, Is.EqualTo(av)); Assert.That(ground.Version, Is.EqualTo(gv)); Assert.That(ground.Count, Is.Zero);
+        }
+
+        [Test]
+        public void CrossOwnerWrongGroundIncarnationCannotPickupTheCurrentItem()
+        {
+            AddTransferBottle(); var ground = new ItemOwnershipStore(_store.Catalog); var b = TransferReceiver("b");
+            Assert.That(Transfer(_store, ground, Bag("transfer-bag"), World("new-drop")).Success, Is.True);
+            Assert.That(Transfer(ground, b, World("old-drop"), Bag("b-bag")).Reason, Is.EqualTo(InventoryFailureReason.InvalidOwnership));
+            Assert.That(ground.TryGetLocation("transfer-bottle", out var location), Is.True); Assert.That(location.OwnerId, Is.EqualTo("new-drop"));
+            Assert.That(b.TryGet("transfer-bottle", out _), Is.False);
+        }
+
+        [Test]
+        public void CrossOwnerCannotTransferWhileSourceMaterialTransactionHoldsTheLock()
+        {
+            AddTransferBottle(); var ground = new ItemOwnershipStore(_store.Catalog);
+            Assert.That(_store.TryLockMaterial(_store.Version), Is.True);
+            try { Assert.That(Transfer(_store, ground, Bag("transfer-bag"), World("drop-1")).Reason, Is.EqualTo(InventoryFailureReason.ResourceBusy)); }
+            finally { _store.FinishMaterial(false); }
+            Assert.That(Transfer(_store, ground, Bag("transfer-bag"), World("drop-1")).Success, Is.True);
+        }
+
+        [Test]
+        public void CrossOwnerDuplicateTargetIdentityDoesNotDeleteTheSource()
+        {
+            AddTransferBottle(); var ground = new ItemOwnershipStore(_store.Catalog);
+            Assert.That(ground.TryAdd(new RuntimeItemState("transfer-bottle","container.basic",0),World("other-drop")), Is.True);
+            Assert.That(Transfer(_store, ground, Bag("transfer-bag"), World("drop-1")).Reason, Is.EqualTo(InventoryFailureReason.DuplicateIdentity));
+            Assert.That(_store.TryGet("transfer-bottle", out var original), Is.True); Assert.That(original.Composition.Total, Is.EqualTo(27ul));
+        }
+
+        private ItemOwnershipStore TransferReceiver(string actor)
+        {
+            var result = new ItemOwnershipStore(_store.Catalog);
+            Assert.That(result.TryAdd(new RuntimeItemState(actor+"-bag","backpack.basic",0),new ItemLocation(ItemLocationKind.EquippedBackpack,actor,0,0,0,0)),Is.True);
+            return result;
+        }
+        private void AddTransferBottle()
+        {
+            Assert.That(_store.TryAdd(new RuntimeItemState("transfer-bag","backpack.basic",0),new ItemLocation(ItemLocationKind.EquippedBackpack,"a",0,0,0,0)), Is.True);
+            Assert.That(_store.Catalog.TryGetRules("container.basic",out var rules), Is.True);
+            var mix = new ContainerComposition(rules.ContainerCapacity,rules.ContainerMaterials);
+            mix.AddReserved(new[] {new MaterialAmount(1,20),new MaterialAmount(3,7)},2);
+            Assert.That(_store.TryAdd(new RuntimeItemState("transfer-bottle","container.basic",0,composition:mix),Bag("transfer-bag")),Is.True);
+        }
+        private static InventoryOperationResult Transfer(ItemOwnershipStore from, ItemOwnershipStore to, ItemLocation source, ItemLocation target,
+            uint? sourceVersion=null,uint? targetVersion=null)
+        {
+            var method=typeof(ItemOwnershipStore).GetMethod("TryTransferContainerTo");
+            Assert.That(method,Is.Not.Null,"必须有复用原准备锁的真实跨Store提交，不能先删后加或复制物品。");
+            return (InventoryOperationResult)method.Invoke(from,new object[]{to,"transfer-bottle",source,target,sourceVersion??from.Version,targetVersion??to.Version});
+        }
+
         private void Add(string id, string contentId, int charges = 0)
         {
             Assert.That(_store.TryAdd(new RuntimeItemState(id, contentId, charges), ItemLocation.Warehouse), Is.True);

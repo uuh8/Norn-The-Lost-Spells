@@ -30,7 +30,12 @@ namespace Game.Core
         private long _lastTick=-1;
         public ulong WorldEpoch => _journal.WorldEpoch;
         public ulong CommitSequence => _journal.CommitSequence;
+        /// <summary>最近一次成功材料捕获的WorldTick；空提交不推进CommitSequence，仍有独立采样时间。</summary>
+        public long LastCapturedWorldTick => _lastTick;
         public int ChunkCount => _count;
+        /// <summary>真实进入payload历史ring的变更记录数；Capture/空提交/Tick均不能冒充日志覆盖。</summary>
+        public ulong HistoryRecordsWritten {get;private set;}
+        public int HistoryCapacity=>_history.Length;
         public WorldCommitOwnerFailure LastFailure {get;private set;}
 
         public WorldReplicationCommitOwner(ulong epoch,int chunkCapacity,int cellCapacity,int pendingCapacity,int historyCapacity,int maxWordsPerChunk,int inspectionBudget)
@@ -109,7 +114,16 @@ namespace Game.Core
                 var header=new WorldChunkPayloadHeader(WorldEpoch,CommitSequence,_keys[slot],state.Generation,baseRevision,state.Revision,h.WorldTick,words,WorldChunkPayloadCodec.ComputeChecksum(_published[slot],words),_active[slot]);
                 _headers[slot]=header;AppendHistory(header,_published[slot]);
             }
-            _count=nextCount;_lastTick=h.WorldTick;LastFailure=WorldCommitOwnerFailure.None;return true;
+            _count=nextCount;_lastTick=h.WorldTick;LastFailure=WorldCommitOwnerFailure.None;
+            // 唯一Owner的真实发布边界：Journal、payload与历史均已成功，才观察本次变更。
+            // 不按连接再捕获，不扫描/复制payload；无变化提交没有事件。Header.ServerTick是材料WorldTick，
+            // Core没有Gameplay 30Hz上下文，保留事件GameplayTick=0，不能把两个时钟混成一个。
+            var timing=WorldReplicationTimingTrace.Active;
+            if(timing!=null)
+                for(int c=0;c<changes;c++)
+                    timing.Record(new WorldReplicationTimingEvent{Stage=WorldReplicationTimingStage.Committed,
+                        Header=_headers[_changedSlots[c]],ConnectionId=-1,PageIndex=-1});
+            return true;
         }
         private bool Activate(WorldChunkKey key,ref int count)
         {
@@ -157,7 +171,7 @@ namespace Game.Core
         {
             int index=(_historyHead+_historyCount)%_history.Length;
             if(_historyCount==_history.Length){index=_historyHead;_historyHead=(_historyHead+1)%_history.Length;}else _historyCount++;
-            _historyHeaders[index]=h;Array.Copy(words,_history[index],h.WordCount);
+            _historyHeaders[index]=h;Array.Copy(words,_history[index],h.WordCount);HistoryRecordsWritten++;
         }
         /// <summary>
         /// 单次复制冻结整块；分页发送者应保存这份caller-owned数组，后续页不再回读Owner。

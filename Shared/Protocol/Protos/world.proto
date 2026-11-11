@@ -8,21 +8,23 @@ option csharp_namespace = "Game.NetworkProtocol";
 
 // 每条业务消息上限900B。words为预热的packed fixed32，避免ByteString或嵌套对象解析分配。
 // 客户端必须完整校验身份、页集合、Checksum和数量后才安装/ACK；不能凭高Revision抢占合法候选。
+// 订阅生命期独立于材料版本：只有可信Enter激活Key，Leave失效后旧代数据/ACK/Resync均不得复活它。
+// Enter/Leave仅携带公共身份、原生Key与subscription_epoch；Snapshot/材料版本/分页/内容字段必须为0。
 message WorldPageMessage
 {
     uint32 protocol_version = 1;          // 当前应用协议版本，缺省0拒绝。
     fixed64 gameplay_hash = 2;            // 可信Run的玩法指纹，不能以包内Hash创建信任。
     uint32 connection_epoch = 3;          // 认证连接代次，重连后旧页/ACK全部拒绝。
     fixed64 world_epoch = 4;              // 权威世界生命期，重连不重置。
-    fixed64 snapshot_id = 5;              // 本次冻结传输身份，非零；重发沿用原身份。
-    uint32 kind = 6;                      // 1=Baseline、2=Delta、3=安装ACK、4=Resync、5=删除。
+    fixed64 snapshot_id = 5;              // 材料消息的非零冻结传输身份，重发沿用；Enter/Leave必须为0。
+    uint32 kind = 6;                      // 1=Baseline、2=Delta、3=安装ACK、4=Resync、5=权威删除、6=订阅Enter、7=订阅Leave。
     uint32 domain = 7;                    // 原生网格域，0=LegacyCell、1=Liquid、2=Solid、3=Gas。
     sint32 chunk_x = 8;                   // 原生Chunk的X地址，允许负坐标。
     sint32 chunk_y = 9;                   // 原生Chunk的Y地址，不能按液体表面高度重算。
     sint32 chunk_z = 10;                  // 原生Chunk的Z地址。
-    fixed64 generation = 11;             // 同坐标Chunk重建代次，旧代不得污染新数据。
-    fixed64 base_revision = 12;           // Delta依赖的已安装版本；Baseline为0。
-    fixed64 revision = 13;                // 本候选完整安装后的版本，未安装前不得推进水位。
+    fixed64 generation = 11;             // 同坐标Chunk重建代次，材料消息非零；Enter/Leave为0，不借材料代次表示订阅。
+    fixed64 base_revision = 12;           // Delta依赖的已安装版本；Baseline与Enter/Leave为0。
+    fixed64 revision = 13;                // 完整安装后才推进的材料版本；Enter/Leave为0，不表示材料发生变化。
     uint32 page_index = 14;               // 从0开始的分页索引；控制消息为0。
     uint32 page_count = 15;               // 同一冻结块的总页数，受本机固定容量限制。
     uint32 server_tick = 16;              // 捕获时服务器步编号，不代替材料或网络版本。
@@ -30,4 +32,17 @@ message WorldPageMessage
     uint32 word_offset = 18;              // 本页在完整uint序列的偏移。
     uint32 total_words = 19;              // 完整冻结块的uint数量，不能用于恶意动态扩容。
     repeated fixed32 words = 20;          // 本页最多160个32bit字，浮点量按原始bit保存。
+    fixed64 subscription_epoch = 21;      // 每认证连接每原生Key的非零订阅代次；退出失效、重入增代，1–7种消息均必需。
+}
+
+// DS在账户准入成功后发送的独立世界身份；不是Chunk页，也不授予材料或玩家资源写权。
+// Client必须以当前认证上下文校验Run/地图/房间与连接代次，再以该Epoch配置inactive材料世界。
+message WorldIdentityMessage
+{
+    uint32 protocol_version = 1;    // 应用协议v4；0与旧版本缺少必需世界握手或订阅生命期语义，明确拒绝。
+    string run_id = 2;              // 当前认证Run的32位小写hex身份，不能从消息自建信任。
+    string dungeon_id = 3;          // 已认证地图键，1–32个合法ASCII字符，与本次准入严格相等。
+    uint32 room_epoch = 4;          // 房间实例栅栏，只用于核对认证上下文，不作为WorldEpoch。
+    uint32 connection_epoch = 5;    // 当前认证连接代次，旧连接的握手不能污染新上下文。
+    fixed64 world_epoch = 6;        // DS创建当前世界时分配的非零身份；重连同一世界保持，不按数值大小替换。
 }

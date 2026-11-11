@@ -1,0 +1,86 @@
+{
+  "RecordedUtc": "2026-10-31T15:04:57.384113+00:00",
+  "ProtocolVersion": 4,
+  "Cases": [
+    {
+      "Mode": "checksum",
+      "Target": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "WorldEpoch": 1761297737089978282,
+      "ConnectionId": 35680032,
+      "ConnectionEpoch": 1,
+      "SubscriptionEpoch": 1,
+      "Generation": 1,
+      "RejectedBase": 3,
+      "RejectedRevision": 4,
+      "RecoveredRevision": 9,
+      "FirstFailure": "Checksum",
+      "ReplayFailure": "StaleVersion",
+      "SentPages": 1,
+      "MutatedPages": 1,
+      "SourcePages": 1,
+      "AcksBefore": [
+        4,
+        4,
+        0,
+        0
+      ],
+      "AcksAfter": [
+        6,
+        12,
+        0,
+        0
+      ],
+      "LiquidQuantityBefore": 512,
+      "LiquidQuantityAfter": 1024,
+      "FreshActualStorePreservation": true,
+      "ExactPerConnectionPerKeyAcks": true
+    },
+    {
+      "Mode": "missing-base",
+      "Target": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "WorldEpoch": 16580532804649921435,
+      "ConnectionId": 35671188,
+      "ConnectionEpoch": 1,
+      "SubscriptionEpoch": 1,
+      "Generation": 1,
+      "RejectedBase": 2,
+      "RejectedRevision": 4,
+      "RecoveredRevision": 9,
+      "FirstFailure": "MissingRevision",
+      "ReplayFailure": "StaleVersion",
+      "SentPages": 1,
+      "MutatedPages": 1,
+      "SourcePages": 1,
+      "AcksBefore": [
+        4,
+        4,
+        0,
+        0
+      ],
+      "AcksAfter": [
+        6,
+        12,
+        0,
+        0
+      ],
+      "LiquidQuantityBefore": 512,
+      "LiquidQuantityAfter": 1024,
+      "FreshActualStorePreservation": true,
+      "ExactPerConnectionPerKeyAcks": true
+    }
+  ],
+  "Passed": true,
+  "SameGenerationOnly": true,
+  "PausedCheckpoints": true,
+  "KeyboardPlayerPath": false
+}

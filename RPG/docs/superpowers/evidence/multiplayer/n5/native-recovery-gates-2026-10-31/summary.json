@@ -1,0 +1,235 @@
+{
+  "RecordedUtc": "2026-10-31T16:37:43.286021+00:00",
+  "Scope": "N5 Native two-key multi-page/history-ring/Generation recovery gates",
+  "ProtocolVersion": 4,
+  "SchemaChanged": false,
+  "P2DiagnosticFixed": true,
+  "P2Red": {
+    "Passed": 0,
+    "Failed": 2
+  },
+  "ContractRed": {
+    "Passed": 0,
+    "Failed": 2
+  },
+  "Green": {
+    "Passed": 4,
+    "Failed": 0
+  },
+  "Coordinator": {
+    "Passed": 35,
+    "Failed": 0
+  },
+  "EditMode": {
+    "Fixtures": 27,
+    "Passed": 427,
+    "Failed": 0
+  },
+  "PlayMode": {
+    "Passed": 2,
+    "Failed": 0
+  },
+  "BusinessTestsRerun": false,
+  "BusinessReason": "Business/Shared source unchanged; avoid repeating global expiration integration test on historical Native records; real fresh-account API/Ready/Ticket/KCP path verified by Native",
+  "GenerationConsistencyFiles": 8,
+  "NativeBuilds": {
+    "client": {
+      "Result": "Succeeded",
+      "UnityVersion": "6000.3.16f1",
+      "Output": "Builds/OnlineRooms/Client/NornRoomClient.exe",
+      "RecordedAtUtc": "2026-10-31T15:48:13.0291705Z",
+      "DedicatedServer": false,
+      "RenderingInputsIsolated": false,
+      "ClientResourcesExcluded": false,
+      "Errors": 0
+    },
+    "server": {
+      "Result": "Succeeded",
+      "UnityVersion": "6000.3.16f1",
+      "Output": "Builds/OnlineRooms/Server/NornRoomServer.exe",
+      "RecordedAtUtc": "2026-10-31T15:52:30.8724605Z",
+      "DedicatedServer": true,
+      "RenderingInputsIsolated": false,
+      "ClientResourcesExcluded": false,
+      "Errors": 0
+    }
+  },
+  "Native": {
+    "Case": "gates-4",
+    "Targets": [
+      {
+        "Domain": 2,
+        "X": -3,
+        "Y": 0,
+        "Z": -2,
+        "Cells": 128,
+        "Quantity": 8192
+      },
+      {
+        "Domain": 2,
+        "X": -1,
+        "Y": 0,
+        "Z": -2,
+        "Cells": 128,
+        "Quantity": 8192
+      }
+    ],
+    "InitialSolidQuantity": 16384,
+    "HistorySolidQuantity": 16224,
+    "RebuiltSolidQuantity": 16304,
+    "InitialPeerAcks": [
+      6,
+      20,
+      0,
+      0
+    ],
+    "HistoryPeerAcks": [
+      8,
+      180,
+      0,
+      0
+    ],
+    "RebuiltPeerAcks": [
+      13,
+      185,
+      0,
+      0
+    ],
+    "HistoryCapacity": 128,
+    "HistoryRecordsAdded": 160,
+    "PartialPageCount": 6,
+    "PartialUniqueSent": 5,
+    "NativeRecoveryAck": {
+      "protocolVersion": 4,
+      "connectionEpoch": 1,
+      "kind": 3,
+      "domain": 2,
+      "pageIndex": 0,
+      "pageCount": 0,
+      "serverTick": 116,
+      "wordOffset": 0,
+      "totalWords": 0,
+      "chunkX": -3,
+      "chunkY": 0,
+      "chunkZ": -2,
+      "pageWords": 0,
+      "gameplayHash": 1534228942706558865,
+      "worldEpoch": 6847573227043341780,
+      "subscriptionEpoch": 1,
+      "snapshotId": 92,
+      "generation": 2,
+      "baseRevision": 0,
+      "revision": 1,
+      "checksum": 3500561433
+    },
+    "OldReplayHeader": {
+      "protocolVersion": 4,
+      "connectionEpoch": 1,
+      "kind": 1,
+      "domain": 2,
+      "pageIndex": 0,
+      "pageCount": 6,
+      "serverTick": 115,
+      "wordOffset": 0,
+      "totalWords": 900,
+      "chunkX": -3,
+      "chunkY": 0,
+      "chunkZ": -2,
+      "pageWords": 160,
+      "gameplayHash": 1534228942706558865,
+      "worldEpoch": 6847573227043341780,
+      "subscriptionEpoch": 1,
+      "snapshotId": 90,
+      "generation": 1,
+      "baseRevision": 0,
+      "revision": 88,
+      "checksum": 1567979442
+    },
+    "OldReplayFailure": "StaleVersion",
+    "CoveredEvidenceKind": "Complete raw covered/removed snapshots, default strict checker",
+    "CoveredTrace": {
+      "RecordedUtc": "2026-10-31T16:35:09.2919618Z",
+      "HistoryStart": 21,
+      "Checks": {
+        "Capacity128": true,
+        "History160": true,
+        "Rounds80": true,
+        "AlphaCells": true,
+        "AlphaSignature": true,
+        "SeedComplete": true,
+        "BetaAck": true,
+        "BetaSignature": true
+      },
+      "HistoryNow": 181
+    },
+    "AtomicReceiveCountClaimed": false,
+    "IndependentProof": "gates-4\\native-recovery-gates-consistency.json",
+    "SameGenerationOnly": false,
+    "PausedCheckpoints": true,
+    "KeyboardPath": false,
+    "PerformanceMeasured": false
+  },
+  "InitialFailures": [
+    {
+      "Case": "gates-1",
+      "Stage": "Physical fixture",
+      "Result": "Did not form two>=90-cell blocks; falling material consumed128 permanent keys, explicit Commit:Capacity; preserve failure, do not reduce threshold/cap or claim production physics fix"
+    },
+    {
+      "Case": "gates-2",
+      "Stage": "Observer deadline",
+      "Result": "Stable2x128 cells/6pages; B final actual sends occurred~41s after start, beyond35s observer;45s automatic release then recovered. Generation not requested"
+    },
+    {
+      "Case": "gates-3",
+      "Stage": "Observer deadline and same-process continuation",
+      "Result": "Same-process generation/replay executed; strict verification failed on stale removed/a metadata. Failed consistency result retained; not counted as final raw pass."
+    }
+  ],
+  "EmptyP2FilterRun": {
+    "Passed": 0,
+    "Failed": 0,
+    "CountedAsRed": false
+  },
+  "ProtectedFilesUnchanged": 12,
+  "PreservedAssets": 15,
+  "NewSourceDirectories": 0,
+  "Editor": {
+    "Playing": false,
+    "Compiling": false,
+    "Dirty": false,
+    "Scene": "Assets/_Project/Scenes/P7_MainMenu.unity"
+  },
+  "N5Complete": false,
+  "NoCommitOrPush": true,
+  "Remaining": [
+    "Continuous material reactions/four players/stress/HOL/calibrated Native performance/GC",
+    "Full keyboard Hub/player path, same-process reconnect and consumed-resource preservation",
+    "P8 Native recovery, N4/N6 and remote platform gates",
+    "128 permanent keys remain a hard cap; no capacity/eviction/map policy approved here",
+    "Complex-terrain support/deposit issue observed in failed positive-z fixture is not isolated as a production defect",
+    "Existing explicit home/away diagnostic P3 error latch",
+    "Two Built-in Resource startup errors per DS and unchanged shader warnings; visual correctness not accepted"
+  ],
+  "PermissionOrDecisionBlocker": false,
+  "EvidenceLimitations": [
+    "Before-final-page proof records DS unique pages sent and fresh client/store/ACK state; does not count client per-page reception",
+    "Stable paused checkpoints and finite real ticks are not continuous physics/performance acceptance"
+  ],
+  "HistoricalEvidenceGapsRetained": true,
+  "FinalRawCase": "gates-4",
+  "SamplingCorrections": [
+    "44s all-eight-condition observer within original45s hold; no data/ACK threshold relaxed",
+    "Require full Client metadata consistency after tombstone before snapshot"
+  ],
+  "ResolvedStartupIssue": "MySQL TCP not ready when business first opened schema connection; no session/Native; retry only after explicit readiness evidence",
+  "ResolvedAutoReviewIssue": "Unnecessary connections.private.json read in diagnostic rejected; action not executed; removed credential access and used sanitized stderr/PID-only alternative",
+  "FinalChecks": {
+    "Links": 45,
+    "MissingLinks": 0,
+    "TextDiffCheckExitCode": 0,
+    "OwnCredentialExposure": 0,
+    "CommitHead": "0d87d0da931ec2b39f7cd569661e750bafa0df84",
+    "SourceFiles": 7
+  }
+}

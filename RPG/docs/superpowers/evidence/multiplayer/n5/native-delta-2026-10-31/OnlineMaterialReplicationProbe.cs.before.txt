@@ -1,0 +1,52 @@
+using System;
+using System.IO;
+using Game.Core;
+using Game.Materials;
+using UnityEngine;
+
+namespace Game.ElementField
+{
+    /// <summary>
+    /// 显式 Development DS 的一次性材料夹具。沿正式 ElementWriteRequest 入队，不写 Store/Revision/客户端缓存。
+    /// 没有指定环境路径时不创建对象；它不是注册赠品、玩家投放指令或生产关卡默认材料。
+    /// </summary>
+    public sealed class OnlineMaterialReplicationProbe : MonoBehaviour
+    {
+        private string _output;
+        private ElementWorldRuntime _world;
+        private long _seedTick;
+        private bool _accepted;
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void Install()
+        {
+#if DEVELOPMENT_BUILD && UNITY_SERVER && !UNITY_EDITOR
+            string output=Environment.GetEnvironmentVariable("NORN_N5_MATERIAL_PROBE");
+            if(string.IsNullOrEmpty(output))return;
+            var root=new GameObject("ExplicitNativeMaterialReplicationFixture");
+            root.AddComponent<OnlineMaterialReplicationProbe>()._output=output;
+#endif
+        }
+        private void Update()
+        {
+            if(string.IsNullOrEmpty(_output))return;
+            if(_world==null)_world=FindFirstObjectByType<ElementWorldRuntime>();
+            if(_world==null || !_world.IsInitialized || _world.ExecutionMode!=WorldExecutionMode.Authority)return;
+            var position=_world.Origin+new Vector3(.125f,2.125f,.125f);
+            if(!_accepted)
+            {
+                var request=new ElementWriteRequest(position,MaterialId.Water,512,.25f,false);
+                _accepted=_world.TryEnqueueWrite(in request);_seedTick=_world.WorldTick;
+                if(!_accepted){GameLog.Error("显式材料复制夹具的正式写入被拒绝。","WorldReplicationProbe");enabled=false;}
+                else return;
+            }
+            // 在五个真实材料Tick后使用既有Debug暂停，建立确定的同一提交边界；不改控制/战斗时钟。
+            // 这是显式QA夹具的稳定检查点，不把它冒充持续反应/压力或动态流体表现验收。
+            if(_accepted && _world.WorldTick<_seedTick+5)return;
+            if(_accepted)_world.SetSimulationPausedForDebug(true);
+            Directory.CreateDirectory(Path.GetDirectoryName(_output));
+            File.WriteAllText(_output,JsonUtility.ToJson(new Result{Accepted=_accepted,Quantity=512,WorldTick=_world.WorldTick,PausedForComparison=_accepted,Position=position,RecordedUtc=DateTime.UtcNow.ToString("O")},true));
+            enabled=false;
+        }
+        [Serializable] private sealed class Result{public bool Accepted,PausedForComparison;public int Quantity;public long WorldTick;public Vector3 Position;public string RecordedUtc;}
+    }
+}

@@ -156,6 +156,15 @@ namespace Game.UI
                 node.OwnerId = snapshot.Location.OwnerId;
                 node.SlotIndex = snapshot.Location.SlotIndex;
             }
+            // 工具格使用自己的IDropHandler而非InventoryDropTarget；只在显式UI报告中给出真实可见矩形，
+            // OS鼠标仍需走EventSystem完成拖放，探针不能调用OnDrop或改绑定，也不扩大正式UI写接口。
+            foreach (var tool in FindObjectsByType<ToolbeltSlotView>(FindObjectsSortMode.None))
+            {
+                var node = AddNode(tool, "ToolbeltSlot", true, report);
+                if (node == null) continue;
+                node.SlotIndex = tool.ToolSlot;
+                node.DropKind = tool.Compact ? "Compact" : "Inventory";
+            }
             // 反射限于这个显式只读探针，避免为自动验收给正式库存 UI 扩大公共写接口。
             const BindingFlags fields = BindingFlags.Instance | BindingFlags.NonPublic;
             var kind = typeof(InventoryDropTarget).GetField("_kind", fields);

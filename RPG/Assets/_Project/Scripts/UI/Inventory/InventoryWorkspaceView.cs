@@ -86,16 +86,29 @@ namespace Game.UI
             _containerDetails.text="";
             // 详情读取与格子相同的只读来源，不能显示线上格子却从单机存档取容器组分。
             var source=_inventory.PresentationSource;
+            // 在线Source仍只读，但已批准的容器按钮应走Controller意图网关；只读不等于禁用所有交互。
+            bool onlineContainerActions=source is IOnlineInventoryCommandContext onlineContext
+                && onlineContext.ActorId!=0 && onlineContext.ConnectionEpoch!=0;
+            bool accountActions=source is IAccountInventoryCommandContext;
             if(source!=null && source.TryCopyContainer(_inventory.SelectedItemId,_composition,out int n,out ulong total,out ulong capacity))
             {
                 string text="容器："+total+" / "+capacity+" · 剩余 "+(capacity-total)+"\n";
                 // 最多八组分用两列文字；有限详情区域保留全部组分与操作提示，不把后几项截掉。
                 for(int i=0;i<n;i++)text+=MaterialName(_composition[i].MaterialKey)+" "+_composition[i].Quantity+(i%2==1 || i==n-1?"\n":"    |    ");
-                _containerDetails.text=text+"E 采集 · H 持续撒出 · G 投掷破碎\n关闭面板后靠近材料操作。";
+                // 账号据点只有整备/稳定落地，不把Home/副本的材料玩法提示借给没有材料World的Hub。
+                _containerDetails.text=text+(accountActions
+                    ? "据点仅整备/丢弃；采集、倾倒和投掷请进入实验场或副本。"
+                    : onlineContainerActions
+                    ? "F 采集 · H 持续倾倒\n拖入工具槽并按数字键选中，关闭面板后操作。"
+                    : "E 采集 · H 持续撒出 · G 投掷破碎\n关闭面板后靠近材料操作。");
             }
-            if(_pickup!=null)_pickup.gameObject.SetActive(!_inventory.PresentationIsReadOnly && source?.ReadOnly!=null && source.ReadOnly.TryGetView(_inventory.SelectedItemId,out var selected) && selected.Location.Kind==ItemLocationKind.WorldItem);
-            if(_drop!=null)_drop.gameObject.SetActive(!_inventory.PresentationIsReadOnly && source?.ReadOnly!=null && source.ReadOnly.TryGetView(_inventory.SelectedItemId,out var discard)
-                && discard.Location.Kind!=ItemLocationKind.WorldItem && discard.Location.Kind!=ItemLocationKind.Warehouse);
+            if(_pickup!=null)_pickup.gameObject.SetActive(source?.ReadOnly!=null && source.ReadOnly.TryGetView(_inventory.SelectedItemId,out var selected)
+                && selected.Location.Kind==ItemLocationKind.WorldItem
+                && (!_inventory.PresentationIsReadOnly || accountActions || onlineContainerActions && selected.Kind==ItemKind.Container));
+            if(_drop!=null)_drop.gameObject.SetActive(source?.ReadOnly!=null && source.ReadOnly.TryGetView(_inventory.SelectedItemId,out var discard)
+                && discard.Location.Kind!=ItemLocationKind.WorldItem && discard.Location.Kind!=ItemLocationKind.Warehouse
+                && !discard.EntryBoundBackpack
+                && (!_inventory.PresentationIsReadOnly || accountActions || onlineContainerActions && discard.Kind==ItemKind.Container));
             var labels=GetComponentsInChildren<Text>(true);for(int i=0;i<labels.Length;i++)labels[i].font=_inventory.UiFont;
         }
         public static string MaterialName(byte key)

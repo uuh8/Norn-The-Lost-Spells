@@ -1,0 +1,35 @@
+{
+  "SchemaVersion": 1,
+  "RecordedAtUtc": "2026-11-04T14:15:33Z",
+  "SupersedesHubAcceptanceAssumptionsOf": "delivery-20261104.json",
+  "ReportedHubRegressionsFullyAccepted": false,
+  "CodeAndBuildsDeployed": true,
+  "Findings": {
+    "MoveReceiptNullPoseTurnedIntoUnityInlineObject": "Reproduced and fixed at raw HTTP JSON boundary; original receipt, identity, version and Profile checks retained",
+    "ServerHadAlreadyCommittedUserMove": true,
+    "RepeatedSameVersionShopNotificationRestartedRead": "Reproduced and fixed; explicit open/new version/invalid quote controls retained",
+    "WarehouseAndShopWalletReadMissingLocalProfileAsZero": "Actual Text RED reproduced; now reads confirmed account scope, invalid state shows unknown"
+  },
+  "UnityRegression": { "Passed": 164, "Failed": 0, "Evidence": "hub-full-ui-account-green-20261104.xml" },
+  "Builds": {
+    "Server": "room-server-verification-20261104T133631Z-build.json",
+    "ServerBuildErrors": 0,
+    "Menu": "account-menu-client-build.json",
+    "MenuBuiltAtUtc": "2026-11-04T13:53:18.9856090Z",
+    "MenuBuildErrors": 0
+  },
+  "Business": { "Pid": 40708, "IdentityVerified": true, "HealthReady": true },
+  "NewDatabaseMigrations": false,
+  "BackupSummary": "RPG/.tools/regression-backups/20261104T134526317Z-071564/backup-summary.private.json",
+  "PhysicalHubAcceptance": {
+    "Passed": false,
+    "Executed": false,
+    "Status": "User chose manual experience acceptance; shared keyboard and mouse automation will not run",
+    "AcceptanceOwner": "User",
+    "UserDecision": "Fix bugs and run automatic checks; user will perform experience acceptance and report remaining issues",
+    "Tool": "Tools/Networking/Run-NativeHubRegression.ps1",
+    "Scope": "New account via original main menu; buy/reopen shop; real warehouse and Tab wand equip/unequip, moves/drop/pickup; original single-player entry and saved return",
+    "CallbackInvocation": false,
+    "TeleportFallback": false
+  }
+}

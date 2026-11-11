@@ -133,3 +133,11 @@ InitTestScene*.unity*
 
 # 手写验证项目是源码输入，不能被 Unity 自动生成 .csproj 的通用规则排除。
 !/docs/superpowers/validation/2026-10-07-material-lifecycle-feedback/pure_checks/PureChecks.csproj
+
+# 独立 .NET 验证工具保留手写项目，排除可重建的编译输出。
+/Tools/**/bin/
+/Tools/**/obj/
+!/Tools/Networking/NativeInventoryRegression/NativeInventoryRegression.csproj
+
+# Unity 崩溃恢复副本只留本机；已跟踪的历史副本不在这里删除。
+/Assets/_Recovery/

@@ -1,0 +1,177 @@
+{
+  "RecordedAtUtc": "2026-11-03T15:13:47.847399+08:00",
+  "Scope": "Account Hub structural moves, server-backed solo, final no-revival death",
+  "ImplementedForTheseSlices": true,
+  "WholeHubComplete": false,
+  "WholeMultiplayerComplete": false,
+  "N5Complete": false,
+  "N6Complete": false,
+  "PlayerExperienceAccepted": false,
+  "ReleaseReady": false,
+  "Source": {
+    "Protocol": 14,
+    "Owned": 3,
+    "CompleteCheckpoint": 4,
+    "MemberTerminal": 2,
+    "LegacyMemberTerminal": 1,
+    "ContentHash": "e79b64af2167407e1bf412c982ca526faf17ef3e356e3d02a1024fcf3037e369",
+    "GameplayHash": "2942932b6a154a5ce3f7890a23d53fa9d5d971404792f1f8e63b49a3de57b2fd",
+    "GeneratedCSharp": 9,
+    "GeneratedConsistencyChecked": true,
+    "NativeBuilt": false,
+    "IndependentDedicatedBuild": false,
+    "Published": false
+  },
+  "Production": {
+    "Hub": "Fresh account Profile and prearm before old Session enable; account-only HTTP moves, original F/region/canvas; exact original instance/state preservation",
+    "Solo": "Actual Single button -> authenticated fixed entry command -> original freeze/backpack/container/launcher/Ready/Ticket/DS. Trusted one-player marker; cooperative two-to-four Ready unchanged. Existing tables, no new SQL. Failed sole-member idle Open private room may reserve new epoch; prior command replay stays first.",
+    "Death": "DS final no-revival decision -> self drain -> immutable preclear snapshot and exact carried retirement -> committed receipt -> own membership termination -> authenticated DS reason -> verified Profile/Hub. Gold/equipped backpack shell/warehouse retained; transferred/world items excluded. Separate FinalDeath material loss source3 persists after receipt.",
+    "Historical": "Schema1 ESC canonical unchanged; terminal2 explicit reason and facts; current complete4 maximum96 loss rows, older2/3 maximum64, ChunkKey128 retained",
+    "NoNewReviveOrDeathDrops": true,
+    "NoClientDeathAuthority": true
+  },
+  "Verification": {
+    "Unity": {
+      "Passed": 7,
+      "Failed": 0,
+      "Start": "2026-11-03T06:45:02.6611886Z",
+      "End": "2026-11-03T06:45:12.241768Z",
+      "Report": "single-death-minimal-unity-20261103-report.json",
+      "Xml": "single-death-minimal-unity-20261103-results.xml",
+      "Scope": "2 death fact cases, Codec/Reset, actual Single Gate; not gameplay"
+    },
+    "Business": {
+      "Passed": 2,
+      "Failed": 0,
+      "Utc": "2026-11-03T06:44:25.4742772Z",
+      "Report": "single-death-final-direct-business-green-20261103-summary.json",
+      "Trx": "Server/TestResults/coin-member-exit-20261103/single-death-final-direct-business-green-20261103.trx",
+      "Scope": "Isolated precise retirement, Gold, loss/checkpoint continuation and legacy ESC hash/assets"
+    },
+    "FinalBusinessBuild": {
+      "ExitCode": 0,
+      "Warnings": 0,
+      "Errors": 0,
+      "DllUtc": "2026-11-03T06:47:03.1128787Z",
+      "LastSoloRecoverySourceUtc": "2026-11-03T06:45:00.1886169Z",
+      "Log": "single-death-final-business-build-20261103.log"
+    },
+    "Official": [
+      {
+        "Report": "single-death-v14-export-content-20261103-result.json",
+        "Command": "export-content",
+        "Utc": "2026-11-03T06:38:16.6473038Z",
+        "Passed": true
+      },
+      {
+        "Report": "single-death-v14-verify-online-combat-20261103-result.json",
+        "Command": "verify-online-combat",
+        "Utc": "2026-11-03T06:44:07.7318507Z",
+        "Passed": true
+      },
+      {
+        "Report": "single-death-v14-final-refresh-source-20261103-result.json",
+        "Command": "refresh-source",
+        "Utc": "2026-11-03T06:54:40.6533598Z",
+        "Passed": true
+      },
+      {
+        "Report": "single-death-v14-final-refresh-online-hashes-20261103-result.json",
+        "Command": "refresh-online-hashes",
+        "Utc": "2026-11-03T06:57:41.1819008Z",
+        "Passed": true
+      },
+      {
+        "Report": "single-death-v14-final-inspect-safety-20261103-result.json",
+        "Command": "inspect-safety",
+        "Utc": "2026-11-03T06:57:42.8863413Z",
+        "Passed": true
+      }
+    ],
+    "EarlierCompileFailure": {
+      "NoTrx": true,
+      "Log": "single-death-final-direct-business-20261103.log",
+      "Cause": "CS8604; explicit schema2 non-null locals corrected, no warning suppression or legacy change",
+      "IsTestResult": false
+    },
+    "HubEvidence": "hub-account-authoritative-moves-development-20261103.json",
+    "CountsNotAdded": true,
+    "NoRepeatedBroadRegression": true
+  },
+  "NotVerified": [
+    "Real solo through KCP/DS gameplay",
+    "Autonomous final death and physical client/Hub return",
+    "Native or independent Dedicated conditional build",
+    "Latest failed solo room gameplay recovery",
+    "Full cooperative player chain",
+    "Four-player stability/performance explicitly deferred",
+    "Known DS resource errors, D3D12 and earlier movement observations not declared repaired"
+  ],
+  "Preserved": {
+    "MainQueried": false,
+    "MainMigrated": false,
+    "MainLastKnown": "010",
+    "Migrations011012": "isolated only",
+    "NoNewMigration": true,
+    "OldPublishedProtocol": 11,
+    "Protection": "single-death-protection-20261103.json",
+    "ProtectedUnchanged": 7,
+    "OldPublishedUnchanged": 4,
+    "EditorPid": 34452,
+    "EditorKeptOpen": true,
+    "EditorResponding": true,
+    "PrivateMysqlPid": 35908,
+    "PrivateMysqlPort": 13384,
+    "Business5080Listening": false,
+    "NoOldSaveMergeImportOrAssetReset": true,
+    "NoCommitPush": true
+  },
+  "FinalEditor": {
+    "Playing": false,
+    "Compiling": false,
+    "Updating": false,
+    "CompilationFailed": false,
+    "Building": false,
+    "TestsRunning": false,
+    "DirtyScene": false,
+    "Scenes": [
+      "Assets/_Project/Scenes/P7_MainMenu.unity"
+    ],
+    "NoInternalDirtySaveOrDiscard": true
+  },
+  "PendingOwnOperations": [],
+  "RemainingProduction": [
+    "Hub selected-wand and organize",
+    "Hub ground drop/pickup",
+    "Trading/research/attachment and Hub material authority writes",
+    "Normal completed terminal after all members terminal"
+  ],
+  "DeliveryNeeded": [
+    "Specific approval for backup/main011012",
+    "Publish matched business server",
+    "Build matched protocol14 DS and verify ready",
+    "User may then test solo using current Editor only",
+    "Cooperative acceptance additionally needs matched14 Native client; old11 cannot mix"
+  ],
+  "Documentation": [
+    "Project total plan sections60.1/61.1",
+    "N5 plan/explainer",
+    "Multiplayer explainer",
+    "Existing manual-test-checklist.md"
+  ],
+  "TransportRecovery": {
+    "LastNetworkDocAppendFailedBeforeExecution": true,
+    "ReadbackConfirmedAbsent": true,
+    "SafelyRetried": true,
+    "NoUnknownWrite": true
+  },
+  "DocumentationChecks": {
+    "RecordedAtUtc": "2026-11-03T07:16:07.3972330+00:00",
+    "JsonParsed": true,
+    "FinalEvidencePresent": true,
+    "FiveLivingDocumentsUpdated": true,
+    "ScopedDiffCheckExitCode": 0,
+    "LineEndingWarningsRetained": true,
+    "OwnRequestsPending": []
+  }
+}

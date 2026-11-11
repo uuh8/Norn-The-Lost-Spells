@@ -42,9 +42,18 @@ namespace Game.Networking
         private static bool Valid(WorldPageMessage m)
         {
             if(m==null || !ProtocolCompatibility.IsSupported(m.ProtocolVersion) || m.GameplayHash==0
-                || m.ConnectionEpoch==0 || m.WorldEpoch==0 || m.SnapshotId==0 || m.Kind<1 || m.Kind>5
-                || m.Domain>3 || m.Generation==0 || m.Revision==0 || m.Checksum>uint.MaxValue
+                || m.ConnectionEpoch==0 || m.WorldEpoch==0 || m.SubscriptionEpoch==0 || m.Kind<1 || m.Kind>7
+                || m.Domain>3
                 || m.Words.Count>PageWords)return false;
+            // 订阅控制只声明“这个认证连接当前可接收这个Key的哪一代”，不描述材料状态。
+            // 先单独校验零材料字段，再处理1–5：若套用旧的Snapshot/Generation必需规则，
+            // 就会被迫伪造材料版本；若放任这些字段，则控制包可能偷偷推进候选/版本水位。
+            // 此处只验证wire形状；可信Enter、当前订阅匹配与幂等性仍由连接/领域层裁决。
+            if(m.Kind==6 || m.Kind==7)
+                return m.SnapshotId==0 && m.Generation==0 && m.BaseRevision==0 && m.Revision==0
+                    && m.PageIndex==0 && m.PageCount==0 && m.ServerTick==0 && m.Checksum==0
+                    && m.WordOffset==0 && m.TotalWords==0 && m.Words.Count==0;
+            if(m.SnapshotId==0 || m.Generation==0 || m.Revision==0 || m.Checksum>uint.MaxValue)return false;
             if(m.Kind==3 || m.Kind==4)
                 return m.Words.Count==0 && m.TotalWords==0 && m.WordOffset==0 && m.PageCount==0 && m.PageIndex==0;
             if(m.Kind==5)return m.Words.Count==0 && m.TotalWords==0 && m.WordOffset==0
@@ -62,9 +71,11 @@ namespace Game.Networking
             {
                 if(!Varint(bytes,ref offset,out ulong tag) || tag>uint.MaxValue)return false;
                 int field=(int)(tag>>3),wire=(int)(tag&7);
-                if(field<1 || field>20 || (seen&(1UL<<field))!=0)return false;
+                if(field<1 || field>21 || (seen&(1UL<<field))!=0)return false;
                 seen|=1UL<<field;
-                int expected=field==20?2:field==2 || field==4 || field==5 || field==11 || field==12 || field==13 || field==17?1:0;
+                // 新代次使用fixed64，不能接受varint的同值替身或重复字段后写覆盖。
+                // 原始wire预检在Merge前完成，保持字段白名单和固定容量，不让unknown进入热路径。
+                int expected=field==20?2:field==2 || field==4 || field==5 || field==11 || field==12 || field==13 || field==17 || field==21?1:0;
                 if(wire!=expected)return false;
                 if(wire==1){if(bytes.Length-offset<8)return false;offset+=8;}
                 else if(wire==2)

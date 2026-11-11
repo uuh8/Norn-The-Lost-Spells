@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="10" result="Failed(Child)" total="10" passed="0" failed="10" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 03:58:00Z" end-time="2026-11-02 03:58:02Z" duration="1.4380992">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3728" result="Failed" site="Child" start-time="2026-11-02 03:58:00Z" end-time="2026-11-02 03:58:02Z" duration="1.438099" total="10" passed="0" failed="10" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2792" name="Game.ElementField.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.ElementField.Tests.dll" runstate="Runnable" testcasecount="830" result="Failed" site="Child" start-time="2026-11-02 03:58:00Z" end-time="2026-11-02 03:58:01Z" duration="0.721143" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2793" name="Game" fullname="Game" runstate="Runnable" testcasecount="830" result="Failed" site="Child" start-time="2026-11-02 03:58:01Z" end-time="2026-11-02 03:58:01Z" duration="0.633502" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2794" name="ElementField" fullname="Game.ElementField" runstate="Runnable" testcasecount="830" result="Failed" site="Child" start-time="2026-11-02 03:58:01Z" end-time="2026-11-02 03:58:01Z" duration="0.533653" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2795" name="Tests" fullname="Game.ElementField.Tests" runstate="Runnable" testcasecount="830" result="Failed" site="Child" start-time="2026-11-02 03:58:01Z" end-time="2026-11-02 03:58:01Z" duration="0.434721" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1896" name="ElementWorldExposureSystemTests" fullname="Game.ElementField.Tests.ElementWorldExposureSystemTests" classname="Game.ElementField.Tests.ElementWorldExposureSystemTests" runstate="Runnable" testcasecount="17" result="Failed" site="Child" start-time="2026-11-02 03:58:01Z" end-time="2026-11-02 03:58:01Z" duration="0.222604" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1910" name="FaultedWorldDirectExposureDoesNotWriteExistingStatus" fullname="Game.ElementField.Tests.ElementWorldExposureSystemTests.FaultedWorldDirectExposureDoesNotWriteExistingStatus" methodname="FaultedWorldDirectExposureDoesNotWriteExistingStatus" classname="Game.ElementField.Tests.ElementWorldExposureSystemTests" runstate="Runnable" seed="1401901902" result="Failed" start-time="2026-11-02 03:58:01Z" end-time="2026-11-02 03:58:01Z" duration="0.101941" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  材料故障后残留可查询Store不能继续成为Exposure伤害/反应来源。
+  Expected: 5.01960802f
+  But was:  10.039216f
+]]></message>
+                  <stack-trace><![CDATA[at Game.ElementField.Tests.ElementWorldExposureSystemTests.FaultedWorldDirectExposureDoesNotWriteExistingStatus () [0x00083] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\ElementWorldExposureSystemTests.cs:445
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1908" name="SuspendedAuthorityDirectExposurePreservesStatusAndDoesNotAccumulatePausedTime" fullname="Game.ElementField.Tests.ElementWorldExposureSystemTests.SuspendedAuthorityDirectExposurePreservesStatusAndDoesNotAccumulatePausedTime" methodname="SuspendedAuthorityDirectExposurePreservesStatusAndDoesNotAccumulatePausedTime" classname="Game.ElementField.Tests.ElementWorldExposureSystemTests" runstate="Runnable" seed="1926506598" result="Failed" start-time="2026-11-02 03:58:01Z" end-time="2026-11-02 03:58:01Z" duration="0.005444" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  直接TickExposure也必须拒绝挂起世界，保留原Status且不继续增加剂量。
+  Expected: 5.01960802f +/- 9.99999975E-05f
+  But was:  100.0f
+]]></message>
+                  <stack-trace><![CDATA[at Game.ElementField.Tests.ElementWorldExposureSystemTests.SuspendedAuthorityDirectExposurePreservesStatusAndDoesNotAccumulatePausedTime () [0x00099] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\ElementWorldExposureSystemTests.cs:394
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1909" name="SynchronousAuthoritySuspensionStopsLaterExposureTargetsAndCatchUpRounds" fullname="Game.ElementField.Tests.ElementWorldExposureSystemTests.SynchronousAuthoritySuspensionStopsLaterExposureTargetsAndCatchUpRounds" methodname="SynchronousAuthoritySuspensionStopsLaterExposureTargetsAndCatchUpRounds" classname="Game.ElementField.Tests.ElementWorldExposureSystemTests" runstate="Runnable" seed="158256072" result="Failed" start-time="2026-11-02 03:58:01Z" end-time="2026-11-02 03:58:01Z" duration="0.003593" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  首个Status通知中暂停后，同轮后续目标和补采样不得继续写。
+  Expected: 1
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at Game.ElementField.Tests.ElementWorldExposureSystemTests.SynchronousAuthoritySuspensionStopsLaterExposureTargetsAndCatchUpRounds () [0x000a3] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\ElementWorldExposureSystemTests.cs:425
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="2557" name="MaterialWorldTransactionTests" fullname="Game.ElementField.Tests.MaterialWorldTransactionTests" classname="Game.ElementField.Tests.MaterialWorldTransactionTests" runstate="Runnable" testcasecount="22" result="Failed" site="Child" start-time="2026-11-02 03:58:01Z" end-time="2026-11-02 03:58:01Z" duration="0.088014" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2559" name="SuspendedAuthorityRejectsNewPortTransactionsBeforeTouchingInventory" fullname="Game.ElementField.Tests.MaterialWorldTransactionTests.SuspendedAuthorityRejectsNewPortTransactionsBeforeTouchingInventory" methodname="SuspendedAuthorityRejectsNewPortTransactionsBeforeTouchingInventory" classname="Game.ElementField.Tests.MaterialWorldTransactionTests" runstate="Runnable" seed="920336123" result="Failed" start-time="2026-11-02 03:58:01Z" end-time="2026-11-02 03:58:01Z" duration="0.083529" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: WorldUnavailable
+  But was:  None
+]]></message>
+                  <stack-trace><![CDATA[at Game.ElementField.Tests.MaterialWorldTransactionTests.SuspendedAuthorityRejectsNewPortTransactionsBeforeTouchingInventory () [0x00065] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\MaterialWorldTransactionTests.cs:47
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="2680" name="WorldAuthorityStepTests" fullname="Game.ElementField.Tests.WorldAuthorityStepTests" classname="Game.ElementField.Tests.WorldAuthorityStepTests" runstate="Runnable" testcasecount="22" result="Failed" site="Child" start-time="2026-11-02 03:58:01Z" end-time="2026-11-02 03:58:01Z" duration="0.020940" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2691" name="AuthoritySuspensionRejectsNewWritesAndRetainsPreviouslyQueuedMaterial" fullname="Game.ElementField.Tests.WorldAuthorityStepTests.AuthoritySuspensionRejectsNewWritesAndRetainsPreviouslyQueuedMaterial" methodname="AuthoritySuspensionRejectsNewWritesAndRetainsPreviouslyQueuedMaterial" classname="Game.ElementField.Tests.WorldAuthorityStepTests" runstate="Runnable" seed="2145280640" result="Failed" start-time="2026-11-02 03:58:01Z" end-time="2026-11-02 03:58:01Z" duration="0.004913" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.ElementField.Tests.WorldAuthorityStepTests.AuthoritySuspensionRejectsNewWritesAndRetainsPreviouslyQueuedMaterial () [0x00047] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\WorldAuthorityStepTests.cs:129
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="5184" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="927" result="Failed" site="Child" start-time="2026-11-02 03:58:01Z" end-time="2026-11-02 03:58:02Z" duration="0.614977" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="5185" name="Game" fullname="Game" runstate="Runnable" testcasecount="927" result="Failed" site="Child" start-time="2026-11-02 03:58:01Z" end-time="2026-11-02 03:58:02Z" duration="0.521212" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="5186" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="927" result="Failed" site="Child" start-time="2026-11-02 03:58:01Z" end-time="2026-11-02 03:58:02Z" duration="0.420343" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="5187" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="927" result="Failed" site="Child" start-time="2026-11-02 03:58:02Z" end-time="2026-11-02 03:58:02Z" duration="0.320670" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="4444" name="OnlineInventoryCommandAuthorityTests" fullname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests" classname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-11-02 03:58:02Z" end-time="2026-11-02 03:58:02Z" duration="0.144498" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="4445" name="ClosedAuthorityGateRejectsNewInventoryAndLegacySelectionWithoutChangingAssets" fullname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests.ClosedAuthorityGateRejectsNewInventoryAndLegacySelectionWithoutChangingAssets" methodname="ClosedAuthorityGateRejectsNewInventoryAndLegacySelectionWithoutChangingAssets" classname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests" runstate="Runnable" seed="46179876" result="Failed" start-time="2026-11-02 03:58:02Z" end-time="2026-11-02 03:58:02Z" duration="0.040877" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  库存与原始选择事件也必须检查同一权威写入门。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryCommandAuthorityTests.ConfigureWriteGate (Game.Run.OnlineOwnedWorkspace workspace, System.Func`1[TResult] gate) [0x00029] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryCommandAuthorityTests.cs:23
+at Game.Run.Tests.OnlineInventoryCommandAuthorityTests.ClosedAuthorityGateRejectsNewInventoryAndLegacySelectionWithoutChangingAssets () [0x00017] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryCommandAuthorityTests.cs:31
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4446" name="ClosedAuthorityGateReplaysExactPriorInventorySuccessAndFailure" fullname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests.ClosedAuthorityGateReplaysExactPriorInventorySuccessAndFailure" methodname="ClosedAuthorityGateReplaysExactPriorInventorySuccessAndFailure" classname="Game.Run.Tests.OnlineInventoryCommandAuthorityTests" runstate="Runnable" seed="1970867602" result="Failed" start-time="2026-11-02 03:58:02Z" end-time="2026-11-02 03:58:02Z" duration="0.002337" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  库存与原始选择事件也必须检查同一权威写入门。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryCommandAuthorityTests.ConfigureWriteGate (Game.Run.OnlineOwnedWorkspace workspace, System.Func`1[TResult] gate) [0x00029] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryCommandAuthorityTests.cs:23
+at Game.Run.Tests.OnlineInventoryCommandAuthorityTests.ClosedAuthorityGateReplaysExactPriorInventorySuccessAndFailure () [0x00016] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryCommandAuthorityTests.cs:52
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="4530" name="OnlineOwnedWorkspaceTests" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" testcasecount="128" result="Failed" site="Child" start-time="2026-11-02 03:58:02Z" end-time="2026-11-02 03:58:02Z" duration="0.077638" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="4532" name="ClosedAuthorityGatePreservesPreparedCastWithoutCommitCancelOrRegeneration" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.ClosedAuthorityGatePreservesPreparedCastWithoutCommitCancelOrRegeneration" methodname="ClosedAuthorityGatePreservesPreparedCastWithoutCommitCancelOrRegeneration" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="234936710" result="Failed" start-time="2026-11-02 03:58:02Z" end-time="2026-11-02 03:58:02Z" duration="0.007817" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  权威原始写入口需要统一的只读 CanAdvance 门。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineOwnedWorkspaceTests.ConfigureWriteGate (Game.Run.OnlineOwnedWorkspace workspace, System.Func`1[TResult] gate) [0x00029] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:57
+at Game.Run.Tests.OnlineOwnedWorkspaceTests.ClosedAuthorityGatePreservesPreparedCastWithoutCommitCancelOrRegeneration () [0x00025] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:87
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4531" name="ClosedAuthorityGateRejectsDirectAndEventBusCastWithoutReservingResources" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.ClosedAuthorityGateRejectsDirectAndEventBusCastWithoutReservingResources" methodname="ClosedAuthorityGateRejectsDirectAndEventBusCastWithoutReservingResources" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1199730340" result="Failed" start-time="2026-11-02 03:58:02Z" end-time="2026-11-02 03:58:02Z" duration="0.008299" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  权威原始写入口需要统一的只读 CanAdvance 门。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineOwnedWorkspaceTests.ConfigureWriteGate (Game.Run.OnlineOwnedWorkspace workspace, System.Func`1[TResult] gate) [0x00029] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:57
+at Game.Run.Tests.OnlineOwnedWorkspaceTests.ClosedAuthorityGateRejectsDirectAndEventBusCastWithoutReservingResources () [0x00025] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:65
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4533" name="ClosedAuthorityGateRetainsCommittedCastReceiptAndOutputReleaseFact" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.ClosedAuthorityGateRetainsCommittedCastReceiptAndOutputReleaseFact" methodname="ClosedAuthorityGateRetainsCommittedCastReceiptAndOutputReleaseFact" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1172154890" result="Failed" start-time="2026-11-02 03:58:02Z" end-time="2026-11-02 03:58:02Z" duration="0.004382" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  权威原始写入口需要统一的只读 CanAdvance 门。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineOwnedWorkspaceTests.ConfigureWriteGate (Game.Run.OnlineOwnedWorkspace workspace, System.Func`1[TResult] gate) [0x00029] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:57
+at Game.Run.Tests.OnlineOwnedWorkspaceTests.ClosedAuthorityGateRetainsCommittedCastReceiptAndOutputReleaseFact () [0x00025] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:106
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-04 13:22:05Z" end-time="2026-11-04 13:22:12Z" duration="6.7586167">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="4368" result="Failed" site="Child" start-time="2026-11-04 13:22:05Z" end-time="2026-11-04 13:22:12Z" duration="6.758617" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="6311" name="Game.UI.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.UI.Tests.dll" runstate="Runnable" testcasecount="179" result="Failed" site="Child" start-time="2026-11-04 13:22:06Z" end-time="2026-11-04 13:22:12Z" duration="6.662923" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26976" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="6312" name="Game" fullname="Game" runstate="Runnable" testcasecount="179" result="Failed" site="Child" start-time="2026-11-04 13:22:06Z" end-time="2026-11-04 13:22:12Z" duration="6.568669" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="6313" name="UI" fullname="Game.UI" runstate="Runnable" testcasecount="179" result="Failed" site="Child" start-time="2026-11-04 13:22:06Z" end-time="2026-11-04 13:22:12Z" duration="6.468553" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="6314" name="Tests" fullname="Game.UI.Tests" runstate="Runnable" testcasecount="179" result="Failed" site="Child" start-time="2026-11-04 13:22:06Z" end-time="2026-11-04 13:22:12Z" duration="6.368691" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="6130" name="OnlineInventoryUiGatewayTests" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="118" result="Failed" site="Child" start-time="2026-11-04 13:22:06Z" end-time="2026-11-04 13:22:12Z" duration="6.268019" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="6144" name="AccountShopOriginalCanvasReopensRowsAfterTheConfirmedReplyArrives" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.AccountShopOriginalCanvasReopensRowsAfterTheConfirmedReplyArrives" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-04 13:22:06Z" end-time="2026-11-04 13:22:12Z" duration="6.109066" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="6142" name="AccountShopOriginalCanvasReopensRowsAfterTheConfirmedReplyArrives(False)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.AccountShopOriginalCanvasReopensRowsAfterTheConfirmedReplyArrives(False)" methodname="AccountShopOriginalCanvasReopensRowsAfterTheConfirmedReplyArrives" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="476270297" result="Failed" start-time="2026-11-04 13:22:06Z" end-time="2026-11-04 13:22:11Z" duration="4.620055" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  账号资产未绑定当前Hub，未启用本地替代来源。
+  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.UI.Tests.OnlineInventoryUiGatewayTests.CloneOriginalAccountShopCanvas (UnityEngine.Component shop, UnityEngine.SceneManagement.Scene& preview, UnityEngine.GameObject& clone, Game.UI.SinglePlayerInventoryController& embedded) [0x00219] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.ShopReopen.cs:105
+at Game.UI.Tests.OnlineInventoryUiGatewayTests.AccountShopOriginalCanvasReopensRowsAfterTheConfirmedReplyArrives (System.Boolean advanceProfile) [0x0004b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.ShopReopen.cs:31
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="6143" name="AccountShopOriginalCanvasReopensRowsAfterTheConfirmedReplyArrives(True)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.AccountShopOriginalCanvasReopensRowsAfterTheConfirmedReplyArrives(True)" methodname="AccountShopOriginalCanvasReopensRowsAfterTheConfirmedReplyArrives" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1522508041" result="Failed" start-time="2026-11-04 13:22:11Z" end-time="2026-11-04 13:22:12Z" duration="1.383076" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  账号资产未绑定当前Hub，未启用本地替代来源。
+  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.UI.Tests.OnlineInventoryUiGatewayTests.CloneOriginalAccountShopCanvas (UnityEngine.Component shop, UnityEngine.SceneManagement.Scene& preview, UnityEngine.GameObject& clone, Game.UI.SinglePlayerInventoryController& embedded) [0x00219] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.ShopReopen.cs:105
+at Game.UI.Tests.OnlineInventoryUiGatewayTests.AccountShopOriginalCanvasReopensRowsAfterTheConfirmedReplyArrives (System.Boolean advanceProfile) [0x0004b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.ShopReopen.cs:31
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="6145" name="AccountShopSameVersionHubNotificationDoesNotRestartAConfirmedRead" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.AccountShopSameVersionHubNotificationDoesNotRestartAConfirmedRead" methodname="AccountShopSameVersionHubNotificationDoesNotRestartAConfirmedRead" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="873627094" result="Failed" start-time="2026-11-04 13:22:12Z" end-time="2026-11-04 13:22:12Z" duration="0.053669" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  相同账号/版本的重复Scope通知不是新的交易或用户重新打开，不能把已确认商店改为pending。
+  Expected: 1
+  But was:  2
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.OnlineInventoryUiGatewayTests.AccountShopSameVersionHubNotificationDoesNotRestartAConfirmedRead () [0x000ef] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.ShopReopen.cs:76
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-31 17:01:41Z" end-time="2026-10-31 17:01:41Z" duration="0.6338052">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3108" result="Failed" site="Child" start-time="2026-10-31 17:01:41Z" end-time="2026-10-31 17:01:41Z" duration="0.633805" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1300" name="Game.Character.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.Tests.dll" runstate="Runnable" testcasecount="243" result="Failed" site="Child" start-time="2026-10-31 17:01:41Z" end-time="2026-10-31 17:01:41Z" duration="0.534919" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25660" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1301" name="Game" fullname="Game" runstate="Runnable" testcasecount="243" result="Failed" site="Child" start-time="2026-10-31 17:01:41Z" end-time="2026-10-31 17:01:41Z" duration="0.444722" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1302" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="243" result="Failed" site="Child" start-time="2026-10-31 17:01:41Z" end-time="2026-10-31 17:01:41Z" duration="0.342891" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1303" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="243" result="Failed" site="Child" start-time="2026-10-31 17:01:41Z" end-time="2026-10-31 17:01:41Z" duration="0.244683" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1222" name="OnlineCastDriverTests" fullname="Game.Character.Tests.OnlineCastDriverTests" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-10-31 17:01:41Z" end-time="2026-10-31 17:01:41Z" duration="0.143365" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1228" name="AuthorityInventoryDiagnosticMapsConsumedInstanceValuesWithoutChangingWorkspace" fullname="Game.Character.Tests.OnlineCastDriverTests.AuthorityInventoryDiagnosticMapsConsumedInstanceValuesWithoutChangingWorkspace" methodname="AuthorityInventoryDiagnosticMapsConsumedInstanceValuesWithoutChangingWorkspace" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="1516405321" result="Failed" start-time="2026-10-31 17:01:41Z" end-time="2026-10-31 17:01:41Z" duration="0.027824" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  DS和Client应共享纯值诊断格式，不能让DS依赖仅Client安装的Probe。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.AuthorityInventoryDiagnosticMapsConsumedInstanceValuesWithoutChangingWorkspace () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:171
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1227" name="ClientInventoryDiagnosticReadsCurrentSourceCopiesValuesAndRejectsOldEpoch" fullname="Game.Character.Tests.OnlineCastDriverTests.ClientInventoryDiagnosticReadsCurrentSourceCopiesValuesAndRejectsOldEpoch" methodname="ClientInventoryDiagnosticReadsCurrentSourceCopiesValuesAndRejectsOldEpoch" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="1950260122" result="Failed" start-time="2026-10-31 17:01:41Z" end-time="2026-10-31 17:01:41Z" duration="0.002934" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  诊断必须从Client已安装Source导出实例值，不能把入局模板当作当前库存。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.ClientInventoryDiagnosticReadsCurrentSourceCopiesValuesAndRejectsOldEpoch () [0x00027] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:109
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

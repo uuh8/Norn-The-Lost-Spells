@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="11" result="Failed(Child)" total="11" passed="6" failed="5" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 05:18:43Z" end-time="2026-11-02 05:18:45Z" duration="2.0693877">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3753" result="Failed" site="Child" start-time="2026-11-02 05:18:43Z" end-time="2026-11-02 05:18:45Z" duration="2.069388" total="11" passed="6" failed="5" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1594" name="Game.Combat.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Combat.Tests.dll" runstate="Runnable" testcasecount="143" result="Failed" site="Child" start-time="2026-11-02 05:18:43Z" end-time="2026-11-02 05:18:44Z" duration="0.531634" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1595" name="Game" fullname="Game" runstate="Runnable" testcasecount="143" result="Failed" site="Child" start-time="2026-11-02 05:18:43Z" end-time="2026-11-02 05:18:44Z" duration="0.442100" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1596" name="Combat" fullname="Game.Combat" runstate="Runnable" testcasecount="143" result="Failed" site="Child" start-time="2026-11-02 05:18:43Z" end-time="2026-11-02 05:18:44Z" duration="0.343359" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1597" name="Tests" fullname="Game.Combat.Tests" runstate="Runnable" testcasecount="143" result="Failed" site="Child" start-time="2026-11-02 05:18:43Z" end-time="2026-11-02 05:18:44Z" duration="0.243293" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1462" name="CombatVisualLifetimeTests" fullname="Game.Combat.Tests.CombatVisualLifetimeTests" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-11-02 05:18:44Z" end-time="2026-11-02 05:18:44Z" duration="0.142025" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1469" name="ReplicaWaitingIsOrangeOneWayAndNeverPublishesMaterialImpact" fullname="Game.Combat.Tests.CombatVisualLifetimeTests.ReplicaWaitingIsOrangeOneWayAndNeverPublishesMaterialImpact" methodname="ReplicaWaitingIsOrangeOneWayAndNeverPublishesMaterialImpact" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" seed="1269512712" result="Failed" start-time="2026-11-02 05:18:44Z" end-time="2026-11-02 05:18:44Z" duration="0.028128" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  正式飞瓶与Replica需要复用原Catalog模型净化/归一方法。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatVisualLifetimeTests.InstallThrownModel (Game.Combat.ThrownContainerProjectile projectile, UnityEngine.GameObject model) [0x00029] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatVisualLifetimeTests.cs:204
+at Game.Combat.Tests.CombatVisualLifetimeTests.ReplicaWaitingIsOrangeOneWayAndNeverPublishesMaterialImpact () [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatVisualLifetimeTests.cs:146
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1468" name="ThrownWorldModelInstallationRejectsBadRepeatedAndAlreadyLaunchedChanges" fullname="Game.Combat.Tests.CombatVisualLifetimeTests.ThrownWorldModelInstallationRejectsBadRepeatedAndAlreadyLaunchedChanges" methodname="ThrownWorldModelInstallationRejectsBadRepeatedAndAlreadyLaunchedChanges" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" seed="519859170" result="Failed" start-time="2026-11-02 05:18:44Z" end-time="2026-11-02 05:18:44Z" duration="0.001217" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  正式飞瓶与Replica需要复用原Catalog模型净化/归一方法。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatVisualLifetimeTests.InstallThrownModel (Game.Combat.ThrownContainerProjectile projectile, UnityEngine.GameObject model) [0x00029] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatVisualLifetimeTests.cs:204
+at Game.Combat.Tests.CombatVisualLifetimeTests.ThrownWorldModelInstallationRejectsBadRepeatedAndAlreadyLaunchedChanges () [0x00022] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatVisualLifetimeTests.cs:116
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1467" name="ThrownWorldModelUsesOriginalNormalizationAndCannotOwnGameplayPhysics" fullname="Game.Combat.Tests.CombatVisualLifetimeTests.ThrownWorldModelUsesOriginalNormalizationAndCannotOwnGameplayPhysics" methodname="ThrownWorldModelUsesOriginalNormalizationAndCannotOwnGameplayPhysics" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" seed="1138207029" result="Failed" start-time="2026-11-02 05:18:44Z" end-time="2026-11-02 05:18:44Z" duration="0.002642" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  正式飞瓶与Replica需要复用原Catalog模型净化/归一方法。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatVisualLifetimeTests.InstallThrownModel (Game.Combat.ThrownContainerProjectile projectile, UnityEngine.GameObject model) [0x00029] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatVisualLifetimeTests.cs:204
+at Game.Combat.Tests.CombatVisualLifetimeTests.ThrownWorldModelUsesOriginalNormalizationAndCannotOwnGameplayPhysics () [0x00093] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatVisualLifetimeTests.cs:86
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="3201" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="305" result="Failed" site="Child" start-time="2026-11-02 05:18:44Z" end-time="2026-11-02 05:18:45Z" duration="0.817526" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3202" name="Game" fullname="Game" runstate="Runnable" testcasecount="305" result="Failed" site="Child" start-time="2026-11-02 05:18:44Z" end-time="2026-11-02 05:18:45Z" duration="0.762418" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3203" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="305" result="Failed" site="Child" start-time="2026-11-02 05:18:44Z" end-time="2026-11-02 05:18:45Z" duration="0.662512" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3204" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="305" result="Failed" site="Child" start-time="2026-11-02 05:18:44Z" end-time="2026-11-02 05:18:45Z" duration="0.563065" total="5" passed="3" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2823" name="AuthorityTickFailureTests" fullname="Game.Multiplayer.Tests.AuthorityTickFailureTests" classname="Game.Multiplayer.Tests.AuthorityTickFailureTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-11-02 05:18:44Z" end-time="2026-11-02 05:18:44Z" duration="0.387752" total="3" passed="2" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2832" name="MaterialStepExceptionPreservesCommittedQuantityAndWorldAndLatchesWritesAcrossHeartbeat" fullname="Game.Multiplayer.Tests.AuthorityTickFailureTests.MaterialStepExceptionPreservesCommittedQuantityAndWorldAndLatchesWritesAcrossHeartbeat" methodname="MaterialStepExceptionPreservesCommittedQuantityAndWorldAndLatchesWritesAcrossHeartbeat" classname="Game.Multiplayer.Tests.AuthorityTickFailureTests" runstate="Runnable" seed="1353922344" result="Passed" start-time="2026-11-02 05:18:44Z" end-time="2026-11-02 05:18:44Z" duration="0.271905" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[OnlineWorld] 世界同步故障，已暂停新玩法写入并保留现场：InvalidOperationException: Intentional exception after a committed material step
+]]></output>
+              </test-case>
+              <test-case id="2834" name="SuspensionCallbackExceptionLatchesWritesWithoutRetryingOrDestroyingTheMaterialOwner" fullname="Game.Multiplayer.Tests.AuthorityTickFailureTests.SuspensionCallbackExceptionLatchesWritesWithoutRetryingOrDestroyingTheMaterialOwner" methodname="SuspensionCallbackExceptionLatchesWritesWithoutRetryingOrDestroyingTheMaterialOwner" classname="Game.Multiplayer.Tests.AuthorityTickFailureTests" runstate="Runnable" seed="98328845" result="Passed" start-time="2026-11-02 05:18:44Z" end-time="2026-11-02 05:18:44Z" duration="0.002210" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[OnlineWorld] 世界同步故障，已暂停新玩法写入并保留现场：SetSuspended: Intentional exception in material suspension callback
+]]></output>
+              </test-case>
+              <test-case id="2833" name="TargetableActorRejectedByMaterialBindingPreservesSceneAndLatchesWritesAcrossHeartbeat" fullname="Game.Multiplayer.Tests.AuthorityTickFailureTests.TargetableActorRejectedByMaterialBindingPreservesSceneAndLatchesWritesAcrossHeartbeat" methodname="TargetableActorRejectedByMaterialBindingPreservesSceneAndLatchesWritesAcrossHeartbeat" classname="Game.Multiplayer.Tests.AuthorityTickFailureTests" runstate="Runnable" seed="1443955239" result="Failed" start-time="2026-11-02 05:18:44Z" end-time="2026-11-02 05:18:44Z" duration="0.012535" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[Unhandled log message: '[Error] Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                  <stack-trace><![CDATA[UnityEngine.Object:Destroy (UnityEngine.Object)
+Game.Multiplayer.NetworkActorRegistry:Dispose () (at Assets/_Project/Scripts/Multiplayer/Movement/NetworkActorRegistry.cs:188)
+Game.Multiplayer.OnlineWorldBootstrap:StopWorld () (at Assets/_Project/Scripts/Multiplayer/Movement/OnlineWorldBootstrap.cs:780)
+Game.Multiplayer.Tests.AuthorityTickFailureTests:AssertMaterialBoundaryFaultRetainsScene (Game.Multiplayer.Tests.AuthorityTickFailureTests/MaterialBoundaryFault) (at Assets/_Project/Tests/Multiplayer/AuthorityTickFailureTests.cs:407)
+Game.Multiplayer.Tests.AuthorityTickFailureTests:TargetableActorRejectedByMaterialBindingPreservesSceneAndLatchesWritesAcrossHeartbeat () (at Assets/_Project/Tests/Multiplayer/AuthorityTickFailureTests.cs:267)
+System.Reflection.MethodBase:Invoke (object,object[])
+NUnit.Framework.Internal.Reflect:InvokeMethod (System.Reflection.MethodInfo,object,object[])
+NUnit.Framework.Internal.MethodWrapper:Invoke (object,object[])
+NUnit.Framework.Internal.Commands.TestMethodCommand:RunNonAsyncTestMethod (NUnit.Framework.Internal.ITestExecutionContext)
+NUnit.Framework.Internal.Commands.TestMethodCommand:RunTestMethod (NUnit.Framework.Internal.ITestExecutionContext)
+NUnit.Framework.Internal.Commands.TestMethodCommand:Execute (NUnit.Framework.Internal.ITestExecutionContext)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[OnlineWorld] 世界同步故障，已暂停新玩法写入并保留现场：MaterialActorSynchronizationRejected: 1
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="2967" name="OnlineCombatReplicationTests" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-11-02 05:18:44Z" end-time="2026-11-02 05:18:45Z" duration="0.073561" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2969" name="ContainerBirthRejectsUnknownModelsAndAnUnrelatedControlledProjectilePrefab" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests.ContainerBirthRejectsUnknownModelsAndAnUnrelatedControlledProjectilePrefab" methodname="ContainerBirthRejectsUnknownModelsAndAnUnrelatedControlledProjectilePrefab" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" seed="1916307515" result="Passed" start-time="2026-11-02 05:18:44Z" end-time="2026-11-02 05:18:44Z" duration="0.037171" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2968" name="ContainerBirthRestoresTheRealModelAndWaitingAndCannotReturnToFlying" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests.ContainerBirthRestoresTheRealModelAndWaitingAndCannotReturnToFlying" methodname="ContainerBirthRestoresTheRealModelAndWaitingAndCannotReturnToFlying" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" seed="1534729184" result="Failed" start-time="2026-11-02 05:18:44Z" end-time="2026-11-02 05:18:45Z" duration="0.008291" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  重连的可靠出生必须带当前Waiting，不能重新播放投掷。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineCombatReplicationTests.ContainerBirthRestoresTheRealModelAndWaitingAndCannotReturnToFlying () [0x000a7] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineCombatReplicationTests.cs:96
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="3683" name="Game.Networking.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Networking.Tests.dll" runstate="Runnable" testcasecount="404" result="Passed" start-time="2026-11-02 05:18:45Z" end-time="2026-11-02 05:18:45Z" duration="0.538241" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="3684" name="Game" fullname="Game" runstate="Runnable" testcasecount="404" result="Passed" start-time="2026-11-02 05:18:45Z" end-time="2026-11-02 05:18:45Z" duration="0.513127" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3685" name="Networking" fullname="Game.Networking" runstate="Runnable" testcasecount="404" result="Passed" start-time="2026-11-02 05:18:45Z" end-time="2026-11-02 05:18:45Z" duration="0.411712" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="3686" name="Tests" fullname="Game.Networking.Tests" runstate="Runnable" testcasecount="404" result="Passed" start-time="2026-11-02 05:18:45Z" end-time="2026-11-02 05:18:45Z" duration="0.313101" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="3220" name="CombatCodecTests" fullname="Game.Networking.Tests.CombatCodecTests" classname="Game.Networking.Tests.CombatCodecTests" runstate="Runnable" testcasecount="17" result="Passed" start-time="2026-11-02 05:18:45Z" end-time="2026-11-02 05:18:45Z" duration="0.122494" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="3221" name="ContainerOutputCarriesControlledModelAndWaitingStateAndResetClearsBoth" fullname="Game.Networking.Tests.CombatCodecTests.ContainerOutputCarriesControlledModelAndWaitingStateAndResetClearsBoth" methodname="ContainerOutputCarriesControlledModelAndWaitingStateAndResetClearsBoth" classname="Game.Networking.Tests.CombatCodecTests" runstate="Runnable" seed="268688412" result="Passed" start-time="2026-11-02 05:18:45Z" end-time="2026-11-02 05:18:45Z" duration="0.020939" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3222" name="ContainerOutputMetadataCannotLeakIntoActorStateOrUseAnUnboundedModelKey" fullname="Game.Networking.Tests.CombatCodecTests.ContainerOutputMetadataCannotLeakIntoActorStateOrUseAnUnboundedModelKey" methodname="ContainerOutputMetadataCannotLeakIntoActorStateOrUseAnUnboundedModelKey" classname="Game.Networking.Tests.CombatCodecTests" runstate="Runnable" seed="1099765334" result="Passed" start-time="2026-11-02 05:18:45Z" end-time="2026-11-02 05:18:45Z" duration="0.000656" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="3259" name="InventoryCommandCodecTests" fullname="Game.Networking.Tests.InventoryCommandCodecTests" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" testcasecount="108" result="Passed" start-time="2026-11-02 05:18:45Z" end-time="2026-11-02 05:18:45Z" duration="0.091259" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="3260" name="ThrowContainerRoundTripsAnAimIntentWithoutClientVelocityOrQuantity" fullname="Game.Networking.Tests.InventoryCommandCodecTests.ThrowContainerRoundTripsAnAimIntentWithoutClientVelocityOrQuantity" methodname="ThrowContainerRoundTripsAnAimIntentWithoutClientVelocityOrQuantity" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="1546271746" result="Passed" start-time="2026-11-02 05:18:45Z" end-time="2026-11-02 05:18:45Z" duration="0.014610" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

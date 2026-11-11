@@ -1,0 +1,1216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="137" result="Failed(Child)" total="137" passed="126" failed="11" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-01 16:23:59Z" end-time="2026-11-01 16:24:31Z" duration="32.4809304">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3683" result="Failed" site="Child" start-time="2026-11-01 16:23:59Z" end-time="2026-11-01 16:24:31Z" duration="32.480930" total="137" passed="126" failed="11" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3628" name="Game.Networking.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Networking.Tests.dll" runstate="Runnable" testcasecount="401" result="Passed" start-time="2026-11-01 16:23:59Z" end-time="2026-11-01 16:24:03Z" duration="3.675305" total="20" passed="20" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="3629" name="Game" fullname="Game" runstate="Runnable" testcasecount="401" result="Passed" start-time="2026-11-01 16:23:59Z" end-time="2026-11-01 16:24:03Z" duration="3.584798" total="20" passed="20" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3630" name="Networking" fullname="Game.Networking" runstate="Runnable" testcasecount="401" result="Passed" start-time="2026-11-01 16:23:59Z" end-time="2026-11-01 16:24:03Z" duration="3.486184" total="20" passed="20" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="3631" name="Tests" fullname="Game.Networking.Tests" runstate="Runnable" testcasecount="401" result="Passed" start-time="2026-11-01 16:23:59Z" end-time="2026-11-01 16:24:03Z" duration="3.386709" total="20" passed="20" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="3435" name="InventorySnapshotTransferTests" fullname="Game.Networking.Tests.InventorySnapshotTransferTests" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" testcasecount="20" result="Passed" start-time="2026-11-01 16:23:59Z" end-time="2026-11-01 16:24:03Z" duration="3.286139" total="20" passed="20" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="3448" name="AssemblerCopiesCorrectSegmentOffsetsAndNeverAliasesReceivedPageArray" fullname="Game.Networking.Tests.InventorySnapshotTransferTests.AssemblerCopiesCorrectSegmentOffsetsAndNeverAliasesReceivedPageArray" methodname="AssemblerCopiesCorrectSegmentOffsetsAndNeverAliasesReceivedPageArray" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" seed="2083709386" result="Passed" start-time="2026-11-01 16:23:59Z" end-time="2026-11-01 16:23:59Z" duration="0.033755" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3447" name="AssemblerPublishesOnlyCompleteChecksumAndWaitsForInstallationConfirmation" fullname="Game.Networking.Tests.InventorySnapshotTransferTests.AssemblerPublishesOnlyCompleteChecksumAndWaitsForInstallationConfirmation" methodname="AssemblerPublishesOnlyCompleteChecksumAndWaitsForInstallationConfirmation" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" seed="893041179" result="Passed" start-time="2026-11-01 16:23:59Z" end-time="2026-11-01 16:24:00Z" duration="0.075891" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3452" name="BadHighChecksumAndCodecRejectionDoNotPoisonInstalledSequence" fullname="Game.Networking.Tests.InventorySnapshotTransferTests.BadHighChecksumAndCodecRejectionDoNotPoisonInstalledSequence" methodname="BadHighChecksumAndCodecRejectionDoNotPoisonInstalledSequence" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" seed="384941661" result="Passed" start-time="2026-11-01 16:24:00Z" end-time="2026-11-01 16:24:00Z" duration="0.000733" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3436" name="ChecksumUsesByteFnv1AWithoutBorrowingSegmentPrefixOrSuffix" fullname="Game.Networking.Tests.InventorySnapshotTransferTests.ChecksumUsesByteFnv1AWithoutBorrowingSegmentPrefixOrSuffix" methodname="ChecksumUsesByteFnv1AWithoutBorrowingSegmentPrefixOrSuffix" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" seed="1636024530" result="Passed" start-time="2026-11-01 16:24:00Z" end-time="2026-11-01 16:24:00Z" duration="0.001238" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3455" name="ClearReleasesStagingAndKeepsSameEpochInstalledFence" fullname="Game.Networking.Tests.InventorySnapshotTransferTests.ClearReleasesStagingAndKeepsSameEpochInstalledFence" methodname="ClearReleasesStagingAndKeepsSameEpochInstalledFence" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" seed="1669433025" result="Passed" start-time="2026-11-01 16:24:00Z" end-time="2026-11-01 16:24:00Z" duration="0.001071" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3454" name="CompletedArraysTransferOwnershipAndAllowNextSnapshotBeforeLateInstallation" fullname="Game.Networking.Tests.InventorySnapshotTransferTests.CompletedArraysTransferOwnershipAndAllowNextSnapshotBeforeLateInstallation" methodname="CompletedArraysTransferOwnershipAndAllowNextSnapshotBeforeLateInstallation" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" seed="1038235008" result="Passed" start-time="2026-11-01 16:24:00Z" end-time="2026-11-01 16:24:00Z" duration="0.001101" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="3443" name="CreatePageKeepsExactLengthIndexAndBorrowedOffset" fullname="Game.Networking.Tests.InventorySnapshotTransferTests.CreatePageKeepsExactLengthIndexAndBorrowedOffset" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-11-01 16:24:00Z" end-time="2026-11-01 16:24:01Z" duration="1.201414" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="3437" name="CreatePageKeepsExactLengthIndexAndBorrowedOffset(1,1)" fullname="Game.Networking.Tests.InventorySnapshotTransferTests.CreatePageKeepsExactLengthIndexAndBorrowedOffset(1,1)" methodname="CreatePageKeepsExactLengthIndexAndBorrowedOffset" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" seed="1515504157" result="Passed" start-time="2026-11-01 16:24:00Z" end-time="2026-11-01 16:24:00Z" duration="0.001854" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="3438" name="CreatePageKeepsExactLengthIndexAndBorrowedOffset(16384,1)" fullname="Game.Networking.Tests.InventorySnapshotTransferTests.CreatePageKeepsExactLengthIndexAndBorrowedOffset(16384,1)" methodname="CreatePageKeepsExactLengthIndexAndBorrowedOffset" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" seed="795112854" result="Passed" start-time="2026-11-01 16:24:00Z" end-time="2026-11-01 16:24:00Z" duration="0.000788" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="3439" name="CreatePageKeepsExactLengthIndexAndBorrowedOffset(16385,2)" fullname="Game.Networking.Tests.InventorySnapshotTransferTests.CreatePageKeepsExactLengthIndexAndBorrowedOffset(16385,2)" methodname="CreatePageKeepsExactLengthIndexAndBorrowedOffset" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" seed="363605112" result="Passed" start-time="2026-11-01 16:24:00Z" end-time="2026-11-01 16:24:00Z" duration="0.001067" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="3440" name="CreatePageKeepsExactLengthIndexAndBorrowedOffset(65537,5)" fullname="Game.Networking.Tests.InventorySnapshotTransferTests.CreatePageKeepsExactLengthIndexAndBorrowedOffset(65537,5)" methodname="CreatePageKeepsExactLengthIndexAndBorrowedOffset" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" seed="1910270901" result="Passed" start-time="2026-11-01 16:24:00Z" end-time="2026-11-01 16:24:00Z" duration="0.002383" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="3441" name="CreatePageKeepsExactLengthIndexAndBorrowedOffset(20971520,1280)" fullname="Game.Networking.Tests.InventorySnapshotTransferTests.CreatePageKeepsExactLengthIndexAndBorrowedOffset(20971520,1280)" methodname="CreatePageKeepsExactLengthIndexAndBorrowedOffset" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" seed="1222897176" result="Passed" start-time="2026-11-01 16:24:00Z" end-time="2026-11-01 16:24:00Z" duration="0.484381" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="3442" name="CreatePageKeepsExactLengthIndexAndBorrowedOffset(33554432,2048)" fullname="Game.Networking.Tests.InventorySnapshotTransferTests.CreatePageKeepsExactLengthIndexAndBorrowedOffset(33554432,2048)" methodname="CreatePageKeepsExactLengthIndexAndBorrowedOffset" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" seed="181495603" result="Passed" start-time="2026-11-01 16:24:00Z" end-time="2026-11-01 16:24:01Z" duration="0.702217" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="3450" name="DuplicatePagesMustMatchBytesAndMetadataWithoutPublishingPartialData" fullname="Game.Networking.Tests.InventorySnapshotTransferTests.DuplicatePagesMustMatchBytesAndMetadataWithoutPublishingPartialData" methodname="DuplicatePagesMustMatchBytesAndMetadataWithoutPublishingPartialData" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" seed="1894255141" result="Passed" start-time="2026-11-01 16:24:01Z" end-time="2026-11-01 16:24:01Z" duration="0.021085" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3444" name="InvalidPageMetadataAndTruncatedSlicesNeverBecomeValidPages" fullname="Game.Networking.Tests.InventorySnapshotTransferTests.InvalidPageMetadataAndTruncatedSlicesNeverBecomeValidPages" methodname="InvalidPageMetadataAndTruncatedSlicesNeverBecomeValidPages" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" seed="1153706154" result="Passed" start-time="2026-11-01 16:24:01Z" end-time="2026-11-01 16:24:01Z" duration="0.002961" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3456" name="Maximum2048PagesAssembleWithinOneBoundedCandidate" fullname="Game.Networking.Tests.InventorySnapshotTransferTests.Maximum2048PagesAssembleWithinOneBoundedCandidate" methodname="Maximum2048PagesAssembleWithinOneBoundedCandidate" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" seed="19886448" result="Passed" start-time="2026-11-01 16:24:01Z" end-time="2026-11-01 16:24:02Z" duration="1.721446" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3449" name="ReliableOrderedAssemblyRejectsFirstNonZeroAndGapsWithoutUnboundedCache" fullname="Game.Networking.Tests.InventorySnapshotTransferTests.ReliableOrderedAssemblyRejectsFirstNonZeroAndGapsWithoutUnboundedCache" methodname="ReliableOrderedAssemblyRejectsFirstNonZeroAndGapsWithoutUnboundedCache" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" seed="580379253" result="Passed" start-time="2026-11-01 16:24:02Z" end-time="2026-11-01 16:24:03Z" duration="0.088337" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3445" name="SenderKeepsCurrentAndOnlyLatestPendingWithoutAdvancingOnPeek" fullname="Game.Networking.Tests.InventorySnapshotTransferTests.SenderKeepsCurrentAndOnlyLatestPendingWithoutAdvancingOnPeek" methodname="SenderKeepsCurrentAndOnlyLatestPendingWithoutAdvancingOnPeek" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" seed="1343804582" result="Passed" start-time="2026-11-01 16:24:03Z" end-time="2026-11-01 16:24:03Z" duration="0.004828" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3446" name="SenderRejectsOldIdentityAndInvalidPayloadWithoutReplacingValidQueue" fullname="Game.Networking.Tests.InventorySnapshotTransferTests.SenderRejectsOldIdentityAndInvalidPayloadWithoutReplacingValidQueue" methodname="SenderRejectsOldIdentityAndInvalidPayloadWithoutReplacingValidQueue" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" seed="395639576" result="Passed" start-time="2026-11-01 16:24:03Z" end-time="2026-11-01 16:24:03Z" duration="0.001755" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3453" name="UnfinishedHighSequenceCannotBlockLowerUninstalledSnapshotStartingAtZero" fullname="Game.Networking.Tests.InventorySnapshotTransferTests.UnfinishedHighSequenceCannotBlockLowerUninstalledSnapshotStartingAtZero" methodname="UnfinishedHighSequenceCannotBlockLowerUninstalledSnapshotStartingAtZero" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" seed="1283431683" result="Passed" start-time="2026-11-01 16:24:03Z" end-time="2026-11-01 16:24:03Z" duration="0.002588" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3451" name="WrongEpochAndMetadataCannotChangeCurrentCandidate" fullname="Game.Networking.Tests.InventorySnapshotTransferTests.WrongEpochAndMetadataCannotChangeCurrentCandidate" methodname="WrongEpochAndMetadataCannotChangeCurrentCandidate" classname="Game.Networking.Tests.InventorySnapshotTransferTests" runstate="Runnable" seed="1696971988" result="Passed" start-time="2026-11-01 16:24:03Z" end-time="2026-11-01 16:24:03Z" duration="0.014504" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="5136" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="914" result="Passed" start-time="2026-11-01 16:24:03Z" end-time="2026-11-01 16:24:29Z" duration="26.469633" total="65" passed="65" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="5137" name="Game" fullname="Game" runstate="Runnable" testcasecount="914" result="Passed" start-time="2026-11-01 16:24:03Z" end-time="2026-11-01 16:24:29Z" duration="26.444932" total="65" passed="65" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="5138" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="914" result="Passed" start-time="2026-11-01 16:24:03Z" end-time="2026-11-01 16:24:29Z" duration="26.346218" total="65" passed="65" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="5139" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="914" result="Passed" start-time="2026-11-01 16:24:03Z" end-time="2026-11-01 16:24:29Z" duration="26.246566" total="65" passed="65" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="4410" name="OnlineInventoryPresentationSourceTests" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="65" result="Passed" start-time="2026-11-01 16:24:03Z" end-time="2026-11-01 16:24:29Z" duration="26.147063" total="65" passed="65" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="4483" name="ANewerEmptyGroundRemovesTheViewAndAnOlderGroundCannotResurrectIt" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ANewerEmptyGroundRemovesTheViewAndAnOlderGroundCannotResurrectIt" methodname="ANewerEmptyGroundRemovesTheViewAndAnOlderGroundCannotResurrectIt" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1854436980" result="Passed" start-time="2026-11-01 16:24:03Z" end-time="2026-11-01 16:24:03Z" duration="0.046486" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4454" name="AuthoritativeToolChoiceSelectsRealContainerWhileKeepingLastWandResources" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.AuthoritativeToolChoiceSelectsRealContainerWhileKeepingLastWandResources" methodname="AuthoritativeToolChoiceSelectsRealContainerWhileKeepingLastWandResources" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1418719006" result="Passed" start-time="2026-11-01 16:24:03Z" end-time="2026-11-01 16:24:03Z" duration="0.009345" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4428" name="BackpackSpareWandUsesItsOwnInstanceCapacityWithoutCreatingEquippedResources" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.BackpackSpareWandUsesItsOwnInstanceCapacityWithoutCreatingEquippedResources" methodname="BackpackSpareWandUsesItsOwnInstanceCapacityWithoutCreatingEquippedResources" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="2032859660" result="Passed" start-time="2026-11-01 16:24:03Z" end-time="2026-11-01 16:24:03Z" duration="0.005187" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4453" name="CanInstallChecksCurrentVersionFencesWithoutPublishingSequenceInventoryOrResources" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.CanInstallChecksCurrentVersionFencesWithoutPublishingSequenceInventoryOrResources" methodname="CanInstallChecksCurrentVersionFencesWithoutPublishingSequenceInventoryOrResources" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1357535776" result="Passed" start-time="2026-11-01 16:24:03Z" end-time="2026-11-01 16:24:03Z" duration="0.004948" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4427" name="CarriedSnapshotCopiesDtoComponentsAndKeepsOldViewsAcrossAtomicReplacement" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.CarriedSnapshotCopiesDtoComponentsAndKeepsOldViewsAcrossAtomicReplacement" methodname="CarriedSnapshotCopiesDtoComponentsAndKeepsOldViewsAcrossAtomicReplacement" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="239338814" result="Passed" start-time="2026-11-01 16:24:03Z" end-time="2026-11-01 16:24:03Z" duration="0.008352" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4446" name="CarriedSourceRemainsPassiveRejectsOldEpochAndClearsToolsAndComponentsOnDispose" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.CarriedSourceRemainsPassiveRejectsOldEpochAndClearsToolsAndComponentsOnDispose" methodname="CarriedSourceRemainsPassiveRejectsOldEpochAndClearsToolsAndComponentsOnDispose" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1523737864" result="Passed" start-time="2026-11-01 16:24:03Z" end-time="2026-11-01 16:24:03Z" duration="0.004680" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4426" name="CompleteCarriedSnapshotDisplaysRealBagGridToolsAndOnlyActualSpellEligibility" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.CompleteCarriedSnapshotDisplaysRealBagGridToolsAndOnlyActualSpellEligibility" methodname="CompleteCarriedSnapshotDisplaysRealBagGridToolsAndOnlyActualSpellEligibility" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="580268590" result="Passed" start-time="2026-11-01 16:24:03Z" end-time="2026-11-01 16:24:03Z" duration="0.006222" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4451" name="CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-01 16:24:03Z" end-time="2026-11-01 16:24:28Z" duration="25.235111" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4447" name="CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses(172,False)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses(172,False)" methodname="CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1563167067" result="Passed" start-time="2026-11-01 16:24:03Z" end-time="2026-11-01 16:24:03Z" duration="0.030658" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4448" name="CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses(4096,False)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses(4096,False)" methodname="CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="432752362" result="Passed" start-time="2026-11-01 16:24:03Z" end-time="2026-11-01 16:24:16Z" duration="12.640045" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4449" name="CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses(172,True)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses(172,True)" methodname="CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="60673586" result="Passed" start-time="2026-11-01 16:24:16Z" end-time="2026-11-01 16:24:16Z" duration="0.024641" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4450" name="CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses(4096,True)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses(4096,True)" methodname="CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="423944354" result="Passed" start-time="2026-11-01 16:24:16Z" end-time="2026-11-01 16:24:28Z" duration="12.526596" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="4425" name="DisposeClearsPreviousReadReferencesAndRejectsLateSnapshots" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.DisposeClearsPreviousReadReferencesAndRejectsLateSnapshots" methodname="DisposeClearsPreviousReadReferencesAndRejectsLateSnapshots" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1023884023" result="Passed" start-time="2026-11-01 16:24:28Z" end-time="2026-11-01 16:24:28Z" duration="0.002932" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4418" name="ForeignIdentityNeverPublishesAReadModel" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ForeignIdentityNeverPublishesAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-01 16:24:28Z" end-time="2026-11-01 16:24:28Z" duration="0.023189" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4414" name="ForeignIdentityNeverPublishesAReadModel(&quot;RunId&quot;,&quot;foreign-run&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ForeignIdentityNeverPublishesAReadModel(&quot;RunId&quot;,&quot;foreign-run&quot;)" methodname="ForeignIdentityNeverPublishesAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1277009664" result="Passed" start-time="2026-11-01 16:24:28Z" end-time="2026-11-01 16:24:28Z" duration="0.002287" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4415" name="ForeignIdentityNeverPublishesAReadModel(&quot;PlayerId&quot;,&quot;foreign-player&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ForeignIdentityNeverPublishesAReadModel(&quot;PlayerId&quot;,&quot;foreign-player&quot;)" methodname="ForeignIdentityNeverPublishesAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1925730462" result="Passed" start-time="2026-11-01 16:24:28Z" end-time="2026-11-01 16:24:28Z" duration="0.002611" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4416" name="ForeignIdentityNeverPublishesAReadModel(&quot;InventoryId&quot;,&quot;foreign-inventory&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ForeignIdentityNeverPublishesAReadModel(&quot;InventoryId&quot;,&quot;foreign-inventory&quot;)" methodname="ForeignIdentityNeverPublishesAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="793583913" result="Passed" start-time="2026-11-01 16:24:28Z" end-time="2026-11-01 16:24:28Z" duration="0.001930" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4417" name="ForeignIdentityNeverPublishesAReadModel(&quot;GameplayConfigHash&quot;,&quot;ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ForeignIdentityNeverPublishesAReadModel(&quot;GameplayConfigHash&quot;,&quot;ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff&quot;)" methodname="ForeignIdentityNeverPublishesAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1375725561" result="Passed" start-time="2026-11-01 16:24:28Z" end-time="2026-11-01 16:24:28Z" duration="0.002220" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="4464" name="GroundProjectionMergesOnlyReadValuesAndDoesNotShareMutableComponentsOrPoses" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.GroundProjectionMergesOnlyReadValuesAndDoesNotShareMutableComponentsOrPoses" methodname="GroundProjectionMergesOnlyReadValuesAndDoesNotShareMutableComponentsOrPoses" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="465713394" result="Passed" start-time="2026-11-01 16:24:28Z" end-time="2026-11-01 16:24:28Z" duration="0.003944" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4411" name="ImportKeepsAuthoritativeManaCooldownProgramRevisionAndSpellUses" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ImportKeepsAuthoritativeManaCooldownProgramRevisionAndSpellUses" methodname="ImportKeepsAuthoritativeManaCooldownProgramRevisionAndSpellUses" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1670086080" result="Passed" start-time="2026-11-01 16:24:28Z" end-time="2026-11-01 16:24:28Z" duration="0.003056" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4458" name="InvalidAuthoritativeToolChoiceCannotPublishAReadModel" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidAuthoritativeToolChoiceCannotPublishAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-11-01 16:24:28Z" end-time="2026-11-01 16:24:28Z" duration="0.078283" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4455" name="InvalidAuthoritativeToolChoiceCannotPublishAReadModel(&quot;slot-outside&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidAuthoritativeToolChoiceCannotPublishAReadModel(&quot;slot-outside&quot;)" methodname="InvalidAuthoritativeToolChoiceCannotPublishAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="570405628" result="Passed" start-time="2026-11-01 16:24:28Z" end-time="2026-11-01 16:24:28Z" duration="0.002851" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4456" name="InvalidAuthoritativeToolChoiceCannotPublishAReadModel(&quot;unbound-slot&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidAuthoritativeToolChoiceCannotPublishAReadModel(&quot;unbound-slot&quot;)" methodname="InvalidAuthoritativeToolChoiceCannotPublishAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="543100203" result="Passed" start-time="2026-11-01 16:24:28Z" end-time="2026-11-01 16:24:28Z" duration="0.001874" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4457" name="InvalidAuthoritativeToolChoiceCannotPublishAReadModel(&quot;noncontainer&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidAuthoritativeToolChoiceCannotPublishAReadModel(&quot;noncontainer&quot;)" methodname="InvalidAuthoritativeToolChoiceCannotPublishAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1538522446" result="Passed" start-time="2026-11-01 16:24:28Z" end-time="2026-11-01 16:24:28Z" duration="0.001509" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="4442" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-11-01 16:24:28Z" end-time="2026-11-01 16:24:29Z" duration="0.126238" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4429" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;missing-state&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;missing-state&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1742976681" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.004472" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4430" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;missing-components&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;missing-components&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1683718052" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.001942" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4431" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;schema-zero&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;schema-zero&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1641512091" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002084" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4432" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;duplicate-component&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;duplicate-component&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1403934721" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.001787" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4433" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;forbidden-material&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;forbidden-material&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="920565906" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.001900" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4434" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;over-capacity&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;over-capacity&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="2040379366" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002762" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4435" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;collision&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;collision&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="108916246" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002747" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4436" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;missing-parent&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;missing-parent&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="37975912" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002444" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4437" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;foreign-root&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;foreign-root&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="2141262009" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002214" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4438" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;solid-shell&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;solid-shell&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="571503571" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002360" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4439" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;noncontainer-state&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;noncontainer-state&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="2120403242" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.001825" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4440" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;missing-spell-use&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;missing-spell-use&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1511241524" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002058" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4441" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;fake-spell-use&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;fake-spell-use&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1590601593" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002348" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="4473" name="InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.089234" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4465" name="InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel(&quot;duplicate-ground-id&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel(&quot;duplicate-ground-id&quot;)" methodname="InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="2068717342" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.003257" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4466" name="InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel(&quot;owned-id-collision&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel(&quot;owned-id-collision&quot;)" methodname="InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1686972529" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.004286" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4467" name="InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel(&quot;zero-quantity&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel(&quot;zero-quantity&quot;)" methodname="InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="968315631" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002980" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4468" name="InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel(&quot;over-capacity&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel(&quot;over-capacity&quot;)" methodname="InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1356997347" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002493" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4469" name="InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel(&quot;overflow-quantity&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel(&quot;overflow-quantity&quot;)" methodname="InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1739405160" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002569" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4470" name="InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel(&quot;duplicate-component&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel(&quot;duplicate-component&quot;)" methodname="InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="663077589" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002659" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4471" name="InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel(&quot;missing-components&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel(&quot;missing-components&quot;)" methodname="InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="992950404" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002798" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4472" name="InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel(&quot;zero-version&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel(&quot;zero-version&quot;)" methodname="InvalidGroundBatchCannotReplaceTheExistingOwnerOrGroundReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="392102266" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.001612" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="4422" name="InvalidReplacementLeavesPreviousInventoryAndResourcesIntact" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidReplacementLeavesPreviousInventoryAndResourcesIntact" methodname="InvalidReplacementLeavesPreviousInventoryAndResourcesIntact" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1222654834" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002612" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4482" name="KnownGroundCannotBeClearedByNullOrByChangingItsContentsAtTheSameVersion" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.KnownGroundCannotBeClearedByNullOrByChangingItsContentsAtTheSameVersion" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.081379" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4480" name="KnownGroundCannotBeClearedByNullOrByChangingItsContentsAtTheSameVersion(True)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.KnownGroundCannotBeClearedByNullOrByChangingItsContentsAtTheSameVersion(True)" methodname="KnownGroundCannotBeClearedByNullOrByChangingItsContentsAtTheSameVersion" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="518492272" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.004323" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4481" name="KnownGroundCannotBeClearedByNullOrByChangingItsContentsAtTheSameVersion(False)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.KnownGroundCannotBeClearedByNullOrByChangingItsContentsAtTheSameVersion(False)" methodname="KnownGroundCannotBeClearedByNullOrByChangingItsContentsAtTheSameVersion" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1153262516" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002951" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="4424" name="MissingBagAndUnsupportedCapabilitiesFailClosed" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.MissingBagAndUnsupportedCapabilitiesFailClosed" methodname="MissingBagAndUnsupportedCapabilitiesFailClosed" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1672972165" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002941" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4421" name="MissingResourceOrEligibilityStateNeverUsesClientDefaults" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.MissingResourceOrEligibilityStateNeverUsesClientDefaults" methodname="MissingResourceOrEligibilityStateNeverUsesClientDefaults" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1148537829" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002637" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4413" name="MutableIncomingArraysCannotRewritePublishedValues" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.MutableIncomingArraysCannotRewritePublishedValues" methodname="MutableIncomingArraysCannotRewritePublishedValues" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1919459181" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002131" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4484" name="OneCompleteSnapshotCanAtomicallyMoveTheGroundIdentityIntoTheOwnersRealBag" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.OneCompleteSnapshotCanAtomicallyMoveTheGroundIdentityIntoTheOwnersRealBag" methodname="OneCompleteSnapshotCanAtomicallyMoveTheGroundIdentityIntoTheOwnersRealBag" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1687878756" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002742" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4420" name="OrphanInstalledCardAndFlattenedBackpackAreRejected" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.OrphanInstalledCardAndFlattenedBackpackAreRejected" methodname="OrphanInstalledCardAndFlattenedBackpackAreRejected" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="100862747" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002540" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4423" name="ReadSourceDoesNotHandleAuthorityRequestsOrRegenerateResources" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ReadSourceDoesNotHandleAuthorityRequestsOrRegenerateResources" methodname="ReadSourceDoesNotHandleAuthorityRequestsOrRegenerateResources" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="716201968" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002436" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4445" name="RotatedCarriedShapeUsesActualHoleAndRejectsOccupiedCell" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.RotatedCarriedShapeUsesActualHoleAndRejectsOccupiedCell" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.079731" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4443" name="RotatedCarriedShapeUsesActualHoleAndRejectsOccupiedCell(False)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.RotatedCarriedShapeUsesActualHoleAndRejectsOccupiedCell(False)" methodname="RotatedCarriedShapeUsesActualHoleAndRejectsOccupiedCell" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1843691093" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002693" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4444" name="RotatedCarriedShapeUsesActualHoleAndRejectsOccupiedCell(True)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.RotatedCarriedShapeUsesActualHoleAndRejectsOccupiedCell(True)" methodname="RotatedCarriedShapeUsesActualHoleAndRejectsOccupiedCell" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="263162977" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002289" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="4463" name="SelectionVersionCannotHideAChangedToolBindingOrRegress" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.SelectionVersionCannotHideAChangedToolBindingOrRegress" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.105067" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4459" name="SelectionVersionCannotHideAChangedToolBindingOrRegress(&quot;choice-changed&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.SelectionVersionCannotHideAChangedToolBindingOrRegress(&quot;choice-changed&quot;)" methodname="SelectionVersionCannotHideAChangedToolBindingOrRegress" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="2054640937" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002653" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4460" name="SelectionVersionCannotHideAChangedToolBindingOrRegress(&quot;binding-changed&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.SelectionVersionCannotHideAChangedToolBindingOrRegress(&quot;binding-changed&quot;)" methodname="SelectionVersionCannotHideAChangedToolBindingOrRegress" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1568360565" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002348" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4461" name="SelectionVersionCannotHideAChangedToolBindingOrRegress(&quot;last-wand-changed&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.SelectionVersionCannotHideAChangedToolBindingOrRegress(&quot;last-wand-changed&quot;)" methodname="SelectionVersionCannotHideAChangedToolBindingOrRegress" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="2086652093" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002728" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4462" name="SelectionVersionCannotHideAChangedToolBindingOrRegress(&quot;old-version&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.SelectionVersionCannotHideAChangedToolBindingOrRegress(&quot;old-version&quot;)" methodname="SelectionVersionCannotHideAChangedToolBindingOrRegress" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="2085214045" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002181" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="4452" name="SnapshotOver4096ItemsNeverPublishesPartialSource" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.SnapshotOver4096ItemsNeverPublishesPartialSource" methodname="SnapshotOver4096ItemsNeverPublishesPartialSource" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1233554480" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.004010" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4412" name="StableReadInterfacesInstallNewValuesWithoutReplacingUiSource" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.StableReadInterfacesInstallNewValuesWithoutReplacingUiSource" methodname="StableReadInterfacesInstallNewValuesWithoutReplacingUiSource" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1230454374" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002332" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4479" name="TheSameGroundVersionCannotHideChangedInstanceFacts" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.TheSameGroundVersionCannotHideChangedInstanceFacts" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.095931" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4474" name="TheSameGroundVersionCannotHideChangedInstanceFacts(&quot;position&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.TheSameGroundVersionCannotHideChangedInstanceFacts(&quot;position&quot;)" methodname="TheSameGroundVersionCannotHideChangedInstanceFacts" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="218936785" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.004218" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4475" name="TheSameGroundVersionCannotHideChangedInstanceFacts(&quot;rotation&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.TheSameGroundVersionCannotHideChangedInstanceFacts(&quot;rotation&quot;)" methodname="TheSameGroundVersionCannotHideChangedInstanceFacts" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="626612470" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002754" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4476" name="TheSameGroundVersionCannotHideChangedInstanceFacts(&quot;world-owner&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.TheSameGroundVersionCannotHideChangedInstanceFacts(&quot;world-owner&quot;)" methodname="TheSameGroundVersionCannotHideChangedInstanceFacts" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="501315040" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002521" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4477" name="TheSameGroundVersionCannotHideChangedInstanceFacts(&quot;quantity&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.TheSameGroundVersionCannotHideChangedInstanceFacts(&quot;quantity&quot;)" methodname="TheSameGroundVersionCannotHideChangedInstanceFacts" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="2079527758" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002484" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4478" name="TheSameGroundVersionCannotHideChangedInstanceFacts(&quot;revision&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.TheSameGroundVersionCannotHideChangedInstanceFacts(&quot;revision&quot;)" methodname="TheSameGroundVersionCannotHideChangedInstanceFacts" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="773563341" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.002280" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="4419" name="WrongEpochAndStaleSequenceCannotOverwriteCurrentState" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.WrongEpochAndStaleSequenceCannotOverwriteCurrentState" methodname="WrongEpochAndStaleSequenceCannotOverwriteCurrentState" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="666695146" result="Passed" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:29Z" duration="0.003559" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="5504" name="Game.UI.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.UI.Tests.dll" runstate="Runnable" testcasecount="113" result="Failed" site="Child" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:31Z" duration="2.233944" total="52" passed="41" failed="11" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="5505" name="Game" fullname="Game" runstate="Runnable" testcasecount="113" result="Failed" site="Child" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:31Z" duration="2.155305" total="52" passed="41" failed="11" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="5506" name="UI" fullname="Game.UI" runstate="Runnable" testcasecount="113" result="Failed" site="Child" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:31Z" duration="2.055655" total="52" passed="41" failed="11" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="5507" name="Tests" fullname="Game.UI.Tests" runstate="Runnable" testcasecount="113" result="Failed" site="Child" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:31Z" duration="1.955817" total="52" passed="41" failed="11" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="5399" name="OnlineInventoryUiGatewayTests" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="52" result="Failed" site="Child" start-time="2026-11-01 16:24:29Z" end-time="2026-11-01 16:24:31Z" duration="1.856119" total="52" passed="41" failed="11" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="5443" name="ASharedGroundReadValueAloneDoesNotGrantNearbyPickup" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.ASharedGroundReadValueAloneDoesNotGrantNearbyPickup" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.194936" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="5441" name="ASharedGroundReadValueAloneDoesNotGrantNearbyPickup(&quot;far&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.ASharedGroundReadValueAloneDoesNotGrantNearbyPickup(&quot;far&quot;)" methodname="ASharedGroundReadValueAloneDoesNotGrantNearbyPickup" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="916185722" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.069433" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="5442" name="ASharedGroundReadValueAloneDoesNotGrantNearbyPickup(&quot;missing-proxy&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.ASharedGroundReadValueAloneDoesNotGrantNearbyPickup(&quot;missing-proxy&quot;)" methodname="ASharedGroundReadValueAloneDoesNotGrantNearbyPickup" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1555015669" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.025633" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="5403" name="CardToSpellStorageUsesRealStorageTargetAndKeepsAssetsUntilSnapshot" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.CardToSpellStorageUsesRealStorageTargetAndKeepsAssetsUntilSnapshot" methodname="CardToSpellStorageUsesRealStorageTargetAndKeepsAssetsUntilSnapshot" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1896860764" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.027667" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="5435" name="CarriedContainerGroundDropUsesOwnerIntentAndWaitsForConfirmedAssets" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.CarriedContainerGroundDropUsesOwnerIntentAndWaitsForConfirmedAssets" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.063419" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="5433" name="CarriedContainerGroundDropUsesOwnerIntentAndWaitsForConfirmedAssets(&quot;bag-bottle&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.CarriedContainerGroundDropUsesOwnerIntentAndWaitsForConfirmedAssets(&quot;bag-bottle&quot;)" methodname="CarriedContainerGroundDropUsesOwnerIntentAndWaitsForConfirmedAssets" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1325851316" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.030961" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="5434" name="CarriedContainerGroundDropUsesOwnerIntentAndWaitsForConfirmedAssets(&quot;tool-bottle&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.CarriedContainerGroundDropUsesOwnerIntentAndWaitsForConfirmedAssets(&quot;tool-bottle&quot;)" methodname="CarriedContainerGroundDropUsesOwnerIntentAndWaitsForConfirmedAssets" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1051103231" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.028959" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="5464" name="ClosingAndReopeningInventoryDiscardsOldReceiptAndSnapshotStatus" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.ClosingAndReopeningInventoryDiscardsOldReceiptAndSnapshotStatus" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.091383" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="5462" name="ClosingAndReopeningInventoryDiscardsOldReceiptAndSnapshotStatus(False)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.ClosingAndReopeningInventoryDiscardsOldReceiptAndSnapshotStatus(False)" methodname="ClosingAndReopeningInventoryDiscardsOldReceiptAndSnapshotStatus" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="727150375" result="Failed" label="Error" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.032152" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.
+  ----> UnityEngine.MissingReferenceException : The object of type 'Game.Run.NearbyPickupController' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.]]></message>
+                    <stack-trace><![CDATA[  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.Receipt (System.UInt64 id, System.UInt32 epoch, System.Int32 caller, System.UInt64 actor, Game.Core.OnlineInventoryCommandFailure failure) [0x0009d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:795 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.ClosingAndReopeningInventoryDiscardsOldReceiptAndSnapshotStatus (System.Boolean receiptBeforeClose) [0x00050] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:656 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+--MissingReferenceException
+  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Behaviour.get_isActiveAndEnabled () [0x00006] in <f14a369973b548758cab792edd81bcc6>:0 
+  at Game.Run.NearbyPickupController.get_OnlineContextAlive () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:47 
+  at Game.Run.NearbyPickupController.OnOnlineReceipt (Game.Core.OnlineInventoryCommandResultEvent result) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:254 
+  at (wrapper delegate-invoke) System.Action`1[Game.Core.OnlineInventoryCommandResultEvent].invoke_void_T(Game.Core.OnlineInventoryCommandResultEvent)
+  at Game.Core.EventBus`1[T].Publish (T evt) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Core\EventBus.cs:40 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 ]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="5463" name="ClosingAndReopeningInventoryDiscardsOldReceiptAndSnapshotStatus(True)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.ClosingAndReopeningInventoryDiscardsOldReceiptAndSnapshotStatus(True)" methodname="ClosingAndReopeningInventoryDiscardsOldReceiptAndSnapshotStatus" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="163912769" result="Failed" label="Error" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.018516" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.
+  ----> UnityEngine.MissingReferenceException : The object of type 'Game.Run.NearbyPickupController' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.]]></message>
+                    <stack-trace><![CDATA[  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.Receipt (System.UInt64 id, System.UInt32 epoch, System.Int32 caller, System.UInt64 actor, Game.Core.OnlineInventoryCommandFailure failure) [0x0009d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:795 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.ClosingAndReopeningInventoryDiscardsOldReceiptAndSnapshotStatus (System.Boolean receiptBeforeClose) [0x0000d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:654 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+--MissingReferenceException
+  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Behaviour.get_isActiveAndEnabled () [0x00006] in <f14a369973b548758cab792edd81bcc6>:0 
+  at Game.Run.NearbyPickupController.get_OnlineContextAlive () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:47 
+  at Game.Run.NearbyPickupController.OnOnlineReceipt (Game.Core.OnlineInventoryCommandResultEvent result) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:254 
+  at (wrapper delegate-invoke) System.Action`1[Game.Core.OnlineInventoryCommandResultEvent].invoke_void_T(Game.Core.OnlineInventoryCommandResultEvent)
+  at Game.Core.EventBus`1[T].Publish (T evt) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Core\EventBus.cs:40 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 ]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="5428" name="ContainerBindingKeepsTheVersionCapturedWhenDraggingStarted" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.ContainerBindingKeepsTheVersionCapturedWhenDraggingStarted" methodname="ContainerBindingKeepsTheVersionCapturedWhenDraggingStarted" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="2090267623" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.023341" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="5429" name="ContainerBindingReceiptWaitsForConfirmedSourceWithoutOptimisticToolChanges" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.ContainerBindingReceiptWaitsForConfirmedSourceWithoutOptimisticToolChanges" methodname="ContainerBindingReceiptWaitsForConfirmedSourceWithoutOptimisticToolChanges" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="549079800" result="Failed" label="Error" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.024251" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.
+  ----> UnityEngine.MissingReferenceException : The object of type 'Game.Run.NearbyPickupController' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.]]></message>
+                  <stack-trace><![CDATA[  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.Receipt (System.UInt64 id, System.UInt32 epoch, System.Int32 caller, System.UInt64 actor, Game.Core.OnlineInventoryCommandFailure failure) [0x0009d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:795 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.ContainerBindingReceiptWaitsForConfirmedSourceWithoutOptimisticToolChanges () [0x00057] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:263 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+--MissingReferenceException
+  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Behaviour.get_isActiveAndEnabled () [0x00006] in <f14a369973b548758cab792edd81bcc6>:0 
+  at Game.Run.NearbyPickupController.get_OnlineContextAlive () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:47 
+  at Game.Run.NearbyPickupController.OnOnlineReceipt (Game.Core.OnlineInventoryCommandResultEvent result) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:254 
+  at (wrapper delegate-invoke) System.Action`1[Game.Core.OnlineInventoryCommandResultEvent].invoke_void_T(Game.Core.OnlineInventoryCommandResultEvent)
+  at Game.Core.EventBus`1[T].Publish (T evt) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Core\EventBus.cs:40 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 ]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="5409" name="ContainerInspectionDoesNotBindOrSelectTheBottle" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.ContainerInspectionDoesNotBindOrSelectTheBottle" methodname="ContainerInspectionDoesNotBindOrSelectTheBottle" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1163807289" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.022948" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="5405" name="EquippedWandDragCannotBecomeEquipOrLocalInventoryCommand" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.EquippedWandDragCannotBecomeEquipOrLocalInventoryCommand" methodname="EquippedWandDragCannotBecomeEquipOrLocalInventoryCommand" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1823339088" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.017578" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="5450" name="EscapeAfterMenuThenOriginalTabClosesInventoryWithoutClosingConnectionMenu" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.EscapeAfterMenuThenOriginalTabClosesInventoryWithoutClosingConnectionMenu" methodname="EscapeAfterMenuThenOriginalTabClosesInventoryWithoutClosingConnectionMenu" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1400475048" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.088856" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="5447" name="FailedOnlineBatchItemNeverPublishesAFalsePickupSuccess" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.FailedOnlineBatchItemNeverPublishesAFalsePickupSuccess" methodname="FailedOnlineBatchItemNeverPublishesAFalsePickupSuccess" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1600305411" result="Failed" label="Error" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.026948" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.
+  ----> UnityEngine.MissingReferenceException : The object of type 'Game.Run.NearbyPickupController' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.]]></message>
+                  <stack-trace><![CDATA[  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.Receipt (System.UInt64 id, System.UInt32 epoch, System.Int32 caller, System.UInt64 actor, Game.Core.OnlineInventoryCommandFailure failure) [0x0009d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:795 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.FailedOnlineBatchItemNeverPublishesAFalsePickupSuccess () [0x00084] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:413 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+--MissingReferenceException
+  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Behaviour.get_isActiveAndEnabled () [0x00006] in <f14a369973b548758cab792edd81bcc6>:0 
+  at Game.Run.NearbyPickupController.get_OnlineContextAlive () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:47 
+  at Game.Run.NearbyPickupController.OnOnlineReceipt (Game.Core.OnlineInventoryCommandResultEvent result) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:254 
+  at (wrapper delegate-invoke) System.Action`1[Game.Core.OnlineInventoryCommandResultEvent].invoke_void_T(Game.Core.OnlineInventoryCommandResultEvent)
+  at Game.Core.EventBus`1[T].Publish (T evt) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Core\EventBus.cs:40 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 ]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="5461" name="FailedReceiptIsNotTurnedIntoSuccessByAnUnrelatedInventorySnapshot" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.FailedReceiptIsNotTurnedIntoSuccessByAnUnrelatedInventorySnapshot" methodname="FailedReceiptIsNotTurnedIntoSuccessByAnUnrelatedInventorySnapshot" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1157762398" result="Failed" label="Error" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.019630" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.
+  ----> UnityEngine.MissingReferenceException : The object of type 'Game.Run.NearbyPickupController' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.]]></message>
+                  <stack-trace><![CDATA[  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.Receipt (System.UInt64 id, System.UInt32 epoch, System.Int32 caller, System.UInt64 actor, Game.Core.OnlineInventoryCommandFailure failure) [0x0009d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:795 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.FailedReceiptIsNotTurnedIntoSuccessByAnUnrelatedInventorySnapshot () [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:642 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+--MissingReferenceException
+  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Behaviour.get_isActiveAndEnabled () [0x00006] in <f14a369973b548758cab792edd81bcc6>:0 
+  at Game.Run.NearbyPickupController.get_OnlineContextAlive () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:47 
+  at Game.Run.NearbyPickupController.OnOnlineReceipt (Game.Core.OnlineInventoryCommandResultEvent result) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:254 
+  at (wrapper delegate-invoke) System.Action`1[Game.Core.OnlineInventoryCommandResultEvent].invoke_void_T(Game.Core.OnlineInventoryCommandResultEvent)
+  at Game.Core.EventBus`1[T].Publish (T evt) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Core\EventBus.cs:40 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 ]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="5448" name="GroundRevisionRefreshesNearbyEvenWhenPersonalInventoryVersionStaysUnchanged" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.GroundRevisionRefreshesNearbyEvenWhenPersonalInventoryVersionStaysUnchanged" methodname="GroundRevisionRefreshesNearbyEvenWhenPersonalInventoryVersionStaysUnchanged" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1139078246" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.026435" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="5413" name="InvalidToolSlotCancelsContainerDragWithoutEitherWritePath" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.InvalidToolSlotCancelsContainerDragWithoutEitherWritePath" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.084871" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="5410" name="InvalidToolSlotCancelsContainerDragWithoutEitherWritePath(-1)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.InvalidToolSlotCancelsContainerDragWithoutEitherWritePath(-1)" methodname="InvalidToolSlotCancelsContainerDragWithoutEitherWritePath" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1261092963" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.031109" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="5411" name="InvalidToolSlotCancelsContainerDragWithoutEitherWritePath(7)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.InvalidToolSlotCancelsContainerDragWithoutEitherWritePath(7)" methodname="InvalidToolSlotCancelsContainerDragWithoutEitherWritePath" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1957765800" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.025409" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="5412" name="InvalidToolSlotCancelsContainerDragWithoutEitherWritePath(255)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.InvalidToolSlotCancelsContainerDragWithoutEitherWritePath(255)" methodname="InvalidToolSlotCancelsContainerDragWithoutEitherWritePath" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="75202999" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.024546" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="5460" name="InventoryChangedNotificationCannotFinishReceiptBeforeRealReadModelReachesVersion" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.InventoryChangedNotificationCannotFinishReceiptBeforeRealReadModelReachesVersion" methodname="InventoryChangedNotificationCannotFinishReceiptBeforeRealReadModelReachesVersion" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="85408405" result="Failed" label="Error" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.020245" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.
+  ----> UnityEngine.MissingReferenceException : The object of type 'Game.Run.NearbyPickupController' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.]]></message>
+                  <stack-trace><![CDATA[  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.Receipt (System.UInt64 id, System.UInt32 epoch, System.Int32 caller, System.UInt64 actor, Game.Core.OnlineInventoryCommandFailure failure) [0x0009d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:795 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.InventoryChangedNotificationCannotFinishReceiptBeforeRealReadModelReachesVersion () [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:630 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+--MissingReferenceException
+  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Behaviour.get_isActiveAndEnabled () [0x00006] in <f14a369973b548758cab792edd81bcc6>:0 
+  at Game.Run.NearbyPickupController.get_OnlineContextAlive () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:47 
+  at Game.Run.NearbyPickupController.OnOnlineReceipt (Game.Core.OnlineInventoryCommandResultEvent result) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:254 
+  at (wrapper delegate-invoke) System.Action`1[Game.Core.OnlineInventoryCommandResultEvent].invoke_void_T(Game.Core.OnlineInventoryCommandResultEvent)
+  at Game.Core.EventBus`1[T].Publish (T evt) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Core\EventBus.cs:40 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 ]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="5453" name="LateDialogRecoversAlreadyOpenOriginalInventoryBeforeEscape" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.LateDialogRecoversAlreadyOpenOriginalInventoryBeforeEscape" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.050345" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="5451" name="LateDialogRecoversAlreadyOpenOriginalInventoryBeforeEscape(False)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.LateDialogRecoversAlreadyOpenOriginalInventoryBeforeEscape(False)" methodname="LateDialogRecoversAlreadyOpenOriginalInventoryBeforeEscape" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1643575399" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.024232" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="5452" name="LateDialogRecoversAlreadyOpenOriginalInventoryBeforeEscape(True)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.LateDialogRecoversAlreadyOpenOriginalInventoryBeforeEscape(True)" methodname="LateDialogRecoversAlreadyOpenOriginalInventoryBeforeEscape" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="437303062" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.023031" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="5404" name="MidDragSnapshotDoesNotRewriteCapturedSourceVersionButTargetUsesCurrentProgram" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.MidDragSnapshotDoesNotRewriteCapturedSourceVersionButTargetUsesCurrentProgram" methodname="MidDragSnapshotDoesNotRewriteCapturedSourceVersionButTargetUsesCurrentProgram" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1151072863" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.020038" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="5446" name="OnlineNearbyBatchEndsOnSourceReleaseAndIgnoresItsLateReceipt" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.OnlineNearbyBatchEndsOnSourceReleaseAndIgnoresItsLateReceipt" methodname="OnlineNearbyBatchEndsOnSourceReleaseAndIgnoresItsLateReceipt" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="909618825" result="Failed" label="Error" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.025719" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.
+  ----> UnityEngine.MissingReferenceException : The object of type 'Game.Run.NearbyPickupController' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.]]></message>
+                  <stack-trace><![CDATA[  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.Receipt (System.UInt64 id, System.UInt32 epoch, System.Int32 caller, System.UInt64 actor, Game.Core.OnlineInventoryCommandFailure failure) [0x0009d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:795 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.OnlineNearbyBatchEndsOnSourceReleaseAndIgnoresItsLateReceipt () [0x0009b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:400 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+--MissingReferenceException
+  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Behaviour.get_isActiveAndEnabled () [0x00006] in <f14a369973b548758cab792edd81bcc6>:0 
+  at Game.Run.NearbyPickupController.get_OnlineContextAlive () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:47 
+  at Game.Run.NearbyPickupController.OnOnlineReceipt (Game.Core.OnlineInventoryCommandResultEvent result) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:254 
+  at (wrapper delegate-invoke) System.Action`1[Game.Core.OnlineInventoryCommandResultEvent].invoke_void_T(Game.Core.OnlineInventoryCommandResultEvent)
+  at Game.Core.EventBus`1[T].Publish (T evt) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Core\EventBus.cs:40 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 ]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="5445" name="OnlineNearbyBatchWaitsForTheExactReceiptAndOwnerBeforeSendingNextVersion" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.OnlineNearbyBatchWaitsForTheExactReceiptAndOwnerBeforeSendingNextVersion" methodname="OnlineNearbyBatchWaitsForTheExactReceiptAndOwnerBeforeSendingNextVersion" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1994333711" result="Failed" label="Error" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.027099" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.
+  ----> UnityEngine.MissingReferenceException : The object of type 'Game.Run.NearbyPickupController' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.]]></message>
+                  <stack-trace><![CDATA[  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.Receipt (System.UInt64 id, System.UInt32 epoch, System.Int32 caller, System.UInt64 actor, Game.Core.OnlineInventoryCommandFailure failure) [0x0009d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:795 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.OnlineNearbyBatchWaitsForTheExactReceiptAndOwnerBeforeSendingNextVersion () [0x000a4] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:379 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+--MissingReferenceException
+  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Behaviour.get_isActiveAndEnabled () [0x00006] in <f14a369973b548758cab792edd81bcc6>:0 
+  at Game.Run.NearbyPickupController.get_OnlineContextAlive () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:47 
+  at Game.Run.NearbyPickupController.OnOnlineReceipt (Game.Core.OnlineInventoryCommandResultEvent result) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:254 
+  at (wrapper delegate-invoke) System.Action`1[Game.Core.OnlineInventoryCommandResultEvent].invoke_void_T(Game.Core.OnlineInventoryCommandResultEvent)
+  at Game.Core.EventBus`1[T].Publish (T evt) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Core\EventBus.cs:40 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 ]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="5444" name="OriginalTabPickupButtonUsesAutoPlaceWithoutPretendingItCollectedTheItem" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.OriginalTabPickupButtonUsesAutoPlaceWithoutPretendingItCollectedTheItem" methodname="OriginalTabPickupButtonUsesAutoPlaceWithoutPretendingItCollectedTheItem" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1702642209" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.025591" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="5401" name="OwnedCardDragPublishesVersionedPlaceIntentWithoutEditingReadModel" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.OwnedCardDragPublishesVersionedPlaceIntentWithoutEditingReadModel" methodname="OwnedCardDragPublishesVersionedPlaceIntentWithoutEditingReadModel" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="513711488" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.018720" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="5408" name="RealContainerDragToToolSlotPublishesOnlyVersionedBindIntent" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.RealContainerDragToToolSlotPublishesOnlyVersionedBindIntent" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.053926" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="5406" name="RealContainerDragToToolSlotPublishesOnlyVersionedBindIntent(&quot;bag-bottle&quot;,2)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.RealContainerDragToToolSlotPublishesOnlyVersionedBindIntent(&quot;bag-bottle&quot;,2)" methodname="RealContainerDragToToolSlotPublishesOnlyVersionedBindIntent" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="2072483096" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.028758" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="5407" name="RealContainerDragToToolSlotPublishesOnlyVersionedBindIntent(&quot;tool-bottle&quot;,0)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.RealContainerDragToToolSlotPublishesOnlyVersionedBindIntent(&quot;tool-bottle&quot;,0)" methodname="RealContainerDragToToolSlotPublishesOnlyVersionedBindIntent" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="457532074" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:30Z" duration="0.022062" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="5427" name="RebindingPresentationSourceEndsTheCapturedContainerDrag" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.RebindingPresentationSourceEndsTheCapturedContainerDrag" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-11-01 16:24:30Z" end-time="2026-11-01 16:24:31Z" duration="0.167825" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="5422" name="RebindingPresentationSourceEndsTheCapturedContainerDrag(&quot;same-identity&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.RebindingPresentationSourceEndsTheCapturedContainerDrag(&quot;same-identity&quot;)" methodname="RebindingPresentationSourceEndsTheCapturedContainerDrag" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="342613940" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.025978" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="5423" name="RebindingPresentationSourceEndsTheCapturedContainerDrag(&quot;new-epoch&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.RebindingPresentationSourceEndsTheCapturedContainerDrag(&quot;new-epoch&quot;)" methodname="RebindingPresentationSourceEndsTheCapturedContainerDrag" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="569265632" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.023396" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="5424" name="RebindingPresentationSourceEndsTheCapturedContainerDrag(&quot;old-epoch&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.RebindingPresentationSourceEndsTheCapturedContainerDrag(&quot;old-epoch&quot;)" methodname="RebindingPresentationSourceEndsTheCapturedContainerDrag" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="398238408" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.023651" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="5425" name="RebindingPresentationSourceEndsTheCapturedContainerDrag(&quot;other-actor&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.RebindingPresentationSourceEndsTheCapturedContainerDrag(&quot;other-actor&quot;)" methodname="RebindingPresentationSourceEndsTheCapturedContainerDrag" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1074649166" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.024209" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="5426" name="RebindingPresentationSourceEndsTheCapturedContainerDrag(&quot;no-source&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.RebindingPresentationSourceEndsTheCapturedContainerDrag(&quot;no-source&quot;)" methodname="RebindingPresentationSourceEndsTheCapturedContainerDrag" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1877252658" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.021046" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="5449" name="ReceiptsMustMatchActorCallerEpochAndLatestCommandAndNeverMutateAssets" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.ReceiptsMustMatchActorCallerEpochAndLatestCommandAndNeverMutateAssets" methodname="ReceiptsMustMatchActorCallerEpochAndLatestCommandAndNeverMutateAssets" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="559943336" result="Failed" label="Error" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.018634" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.
+  ----> UnityEngine.MissingReferenceException : The object of type 'Game.Run.NearbyPickupController' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.]]></message>
+                  <stack-trace><![CDATA[  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.Receipt (System.UInt64 id, System.UInt32 epoch, System.Int32 caller, System.UInt64 actor, Game.Core.OnlineInventoryCommandFailure failure) [0x0009d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:795 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.ReceiptsMustMatchActorCallerEpochAndLatestCommandAndNeverMutateAssets () [0x00069] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:502 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+--MissingReferenceException
+  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Behaviour.get_isActiveAndEnabled () [0x00006] in <f14a369973b548758cab792edd81bcc6>:0 
+  at Game.Run.NearbyPickupController.get_OnlineContextAlive () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:47 
+  at Game.Run.NearbyPickupController.OnOnlineReceipt (Game.Core.OnlineInventoryCommandResultEvent result) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:254 
+  at (wrapper delegate-invoke) System.Action`1[Game.Core.OnlineInventoryCommandResultEvent].invoke_void_T(Game.Core.OnlineInventoryCommandResultEvent)
+  at Game.Core.EventBus`1[T].Publish (T evt) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Core\EventBus.cs:40 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 ]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="5400" name="RepeatedWandAndCardInspectionDoesNotReportARejectedWrite" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.RepeatedWandAndCardInspectionDoesNotReportARejectedWrite" methodname="RepeatedWandAndCardInspectionDoesNotReportARejectedWrite" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1817457044" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.017770" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="5456" name="RestartedDialogRecoversAlreadyOpenOriginalInventoryBeforeEscape" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.RestartedDialogRecoversAlreadyOpenOriginalInventoryBeforeEscape" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.052303" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="5454" name="RestartedDialogRecoversAlreadyOpenOriginalInventoryBeforeEscape(False)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.RestartedDialogRecoversAlreadyOpenOriginalInventoryBeforeEscape(False)" methodname="RestartedDialogRecoversAlreadyOpenOriginalInventoryBeforeEscape" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1192489624" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.022186" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="5455" name="RestartedDialogRecoversAlreadyOpenOriginalInventoryBeforeEscape(True)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.RestartedDialogRecoversAlreadyOpenOriginalInventoryBeforeEscape(True)" methodname="RestartedDialogRecoversAlreadyOpenOriginalInventoryBeforeEscape" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1720647234" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.026528" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="5436" name="SelectedContainerDropReusesTheOriginalDropSelectedEntry" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.SelectedContainerDropReusesTheOriginalDropSelectedEntry" methodname="SelectedContainerDropReusesTheOriginalDropSelectedEntry" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="467129635" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.022639" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="5440" name="SharedContainerCannotBeDraggedIntoAnUnownedBackpack" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.SharedContainerCannotBeDraggedIntoAnUnownedBackpack" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.079257" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="5438" name="SharedContainerCannotBeDraggedIntoAnUnownedBackpack(&quot;warehouse&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.SharedContainerCannotBeDraggedIntoAnUnownedBackpack(&quot;warehouse&quot;)" methodname="SharedContainerCannotBeDraggedIntoAnUnownedBackpack" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="550344560" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.025433" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="5439" name="SharedContainerCannotBeDraggedIntoAnUnownedBackpack(&quot;other-bag&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.SharedContainerCannotBeDraggedIntoAnUnownedBackpack(&quot;other-bag&quot;)" methodname="SharedContainerCannotBeDraggedIntoAnUnownedBackpack" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1143338788" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.026499" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="5437" name="SharedGroundContainerDragTargetsOnlyTheRealEquippedBackpackGrid" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.SharedGroundContainerDragTargetsOnlyTheRealEquippedBackpackGrid" methodname="SharedGroundContainerDragTargetsOnlyTheRealEquippedBackpackGrid" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1233769664" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.025130" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="5421" name="StaleWarehouseForeignOrGroundViewsCannotGrantAnOnlineToolBinding" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.StaleWarehouseForeignOrGroundViewsCannotGrantAnOnlineToolBinding" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.093565" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="5418" name="StaleWarehouseForeignOrGroundViewsCannotGrantAnOnlineToolBinding(&quot;Warehouse&quot;,&quot;warehouse&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.StaleWarehouseForeignOrGroundViewsCannotGrantAnOnlineToolBinding(&quot;Warehouse&quot;,&quot;warehouse&quot;)" methodname="StaleWarehouseForeignOrGroundViewsCannotGrantAnOnlineToolBinding" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="365696312" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.025137" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="5419" name="StaleWarehouseForeignOrGroundViewsCannotGrantAnOnlineToolBinding(&quot;EquippedTool&quot;,&quot;other-player&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.StaleWarehouseForeignOrGroundViewsCannotGrantAnOnlineToolBinding(&quot;EquippedTool&quot;,&quot;other-player&quot;)" methodname="StaleWarehouseForeignOrGroundViewsCannotGrantAnOnlineToolBinding" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1233719516" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.022582" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="5420" name="StaleWarehouseForeignOrGroundViewsCannotGrantAnOnlineToolBinding(&quot;WorldItem&quot;,&quot;ground&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.StaleWarehouseForeignOrGroundViewsCannotGrantAnOnlineToolBinding(&quot;WorldItem&quot;,&quot;ground&quot;)" methodname="StaleWarehouseForeignOrGroundViewsCannotGrantAnOnlineToolBinding" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1827918965" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.024707" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="5459" name="SuccessfulReceiptAndInstalledSnapshotFinishStatusInEitherArrivalOrder" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.SuccessfulReceiptAndInstalledSnapshotFinishStatusInEitherArrivalOrder" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.066622" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="5457" name="SuccessfulReceiptAndInstalledSnapshotFinishStatusInEitherArrivalOrder(False)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.SuccessfulReceiptAndInstalledSnapshotFinishStatusInEitherArrivalOrder(False)" methodname="SuccessfulReceiptAndInstalledSnapshotFinishStatusInEitherArrivalOrder" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1201588133" result="Failed" label="Error" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.019753" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.
+  ----> UnityEngine.MissingReferenceException : The object of type 'Game.Run.NearbyPickupController' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.]]></message>
+                    <stack-trace><![CDATA[  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.Receipt (System.UInt64 id, System.UInt32 epoch, System.Int32 caller, System.UInt64 actor, Game.Core.OnlineInventoryCommandFailure failure) [0x0009d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:795 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.SuccessfulReceiptAndInstalledSnapshotFinishStatusInEitherArrivalOrder (System.Boolean snapshotFirst) [0x00019] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:616 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+--MissingReferenceException
+  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Behaviour.get_isActiveAndEnabled () [0x00006] in <f14a369973b548758cab792edd81bcc6>:0 
+  at Game.Run.NearbyPickupController.get_OnlineContextAlive () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:47 
+  at Game.Run.NearbyPickupController.OnOnlineReceipt (Game.Core.OnlineInventoryCommandResultEvent result) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:254 
+  at (wrapper delegate-invoke) System.Action`1[Game.Core.OnlineInventoryCommandResultEvent].invoke_void_T(Game.Core.OnlineInventoryCommandResultEvent)
+  at Game.Core.EventBus`1[T].Publish (T evt) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Core\EventBus.cs:40 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 ]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="5458" name="SuccessfulReceiptAndInstalledSnapshotFinishStatusInEitherArrivalOrder(True)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.SuccessfulReceiptAndInstalledSnapshotFinishStatusInEitherArrivalOrder(True)" methodname="SuccessfulReceiptAndInstalledSnapshotFinishStatusInEitherArrivalOrder" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="988284326" result="Failed" label="Error" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.020639" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.
+  ----> UnityEngine.MissingReferenceException : The object of type 'Game.Run.NearbyPickupController' has been destroyed but you are still trying to access it.
+Your script should either check if it is null or you should not destroy the object.]]></message>
+                    <stack-trace><![CDATA[  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.Receipt (System.UInt64 id, System.UInt32 epoch, System.Int32 caller, System.UInt64 actor, Game.Core.OnlineInventoryCommandFailure failure) [0x0009d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:795 
+  at Game.UI.Tests.OnlineInventoryUiGatewayTests.SuccessfulReceiptAndInstalledSnapshotFinishStatusInEitherArrivalOrder (System.Boolean snapshotFirst) [0x00019] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:616 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+--MissingReferenceException
+  at UnityEngine.Object+MarshalledUnityObject.TryThrowEditorNullExceptionObject (UnityEngine.Object unityObj, System.String parameterName) [0x0006a] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Bindings.ThrowHelper.ThrowNullReferenceException (System.Object obj) [0x00010] in <f14a369973b548758cab792edd81bcc6>:0 
+  at UnityEngine.Behaviour.get_isActiveAndEnabled () [0x00006] in <f14a369973b548758cab792edd81bcc6>:0 
+  at Game.Run.NearbyPickupController.get_OnlineContextAlive () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:47 
+  at Game.Run.NearbyPickupController.OnOnlineReceipt (Game.Core.OnlineInventoryCommandResultEvent result) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Run\Hub\NearbyPickupController.cs:254 
+  at (wrapper delegate-invoke) System.Action`1[Game.Core.OnlineInventoryCommandResultEvent].invoke_void_T(Game.Core.OnlineInventoryCommandResultEvent)
+  at Game.Core.EventBus`1[T].Publish (T evt) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Core\EventBus.cs:40 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 ]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="5432" name="SupportingContainerDragDoesNotOpenUnapprovedDropDestinations" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.SupportingContainerDragDoesNotOpenUnapprovedDropDestinations" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.102838" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="5430" name="SupportingContainerDragDoesNotOpenUnapprovedDropDestinations(&quot;Warehouse&quot;,null,-1)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.SupportingContainerDragDoesNotOpenUnapprovedDropDestinations(&quot;Warehouse&quot;,null,-1)" methodname="SupportingContainerDragDoesNotOpenUnapprovedDropDestinations" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="516920162" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.022659" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="5431" name="SupportingContainerDragDoesNotOpenUnapprovedDropDestinations(&quot;ProgramSlot&quot;,&quot;wand&quot;,1)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.SupportingContainerDragDoesNotOpenUnapprovedDropDestinations(&quot;ProgramSlot&quot;,&quot;wand&quot;,1)" methodname="SupportingContainerDragDoesNotOpenUnapprovedDropDestinations" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1723304128" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.021545" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="5417" name="ToolBindingGatewayNeverPromotesCardsWandsOrOtherUsableItems" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.ToolBindingGatewayNeverPromotesCardsWandsOrOtherUsableItems" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.131157" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="5414" name="ToolBindingGatewayNeverPromotesCardsWandsOrOtherUsableItems(&quot;card&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.ToolBindingGatewayNeverPromotesCardsWandsOrOtherUsableItems(&quot;card&quot;)" methodname="ToolBindingGatewayNeverPromotesCardsWandsOrOtherUsableItems" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="66863417" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.034733" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="5415" name="ToolBindingGatewayNeverPromotesCardsWandsOrOtherUsableItems(&quot;wand&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.ToolBindingGatewayNeverPromotesCardsWandsOrOtherUsableItems(&quot;wand&quot;)" methodname="ToolBindingGatewayNeverPromotesCardsWandsOrOtherUsableItems" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="153996506" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.020288" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="5416" name="ToolBindingGatewayNeverPromotesCardsWandsOrOtherUsableItems(&quot;ordinary&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.ToolBindingGatewayNeverPromotesCardsWandsOrOtherUsableItems(&quot;ordinary&quot;)" methodname="ToolBindingGatewayNeverPromotesCardsWandsOrOtherUsableItems" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="12840202" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.019941" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="5402" name="UnsupportedGroundDestinationCancelsWithoutSendingEitherAuthorityPath" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.UnsupportedGroundDestinationCancelsWithoutSendingEitherAuthorityPath" methodname="UnsupportedGroundDestinationCancelsWithoutSendingEitherAuthorityPath" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="998709386" result="Passed" start-time="2026-11-01 16:24:31Z" end-time="2026-11-01 16:24:31Z" duration="0.016809" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

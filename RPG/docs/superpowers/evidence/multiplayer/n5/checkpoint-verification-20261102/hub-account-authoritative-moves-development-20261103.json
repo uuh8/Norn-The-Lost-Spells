@@ -1,0 +1,105 @@
+{
+  "RecordedAtUtc": "2026-11-03T06:19:32.3084745+00:00",
+  "Scope": "First account Hub, authoritative structured inventory moves and original warehouse F/range/canvas routing",
+  "DevelopmentImplemented": true,
+  "PlayerGameplayAccepted": false,
+  "WholeHubComplete": false,
+  "N5Complete": false,
+  "N6Complete": false,
+  "ReleaseReady": false,
+  "UserWorkflow": "Feature development first; user owns gameplay acceptance; no repeated broad regression or automatic game/native testing",
+  "Verification": {
+    "FinalDirectUnity": {
+      "Passed": 9,
+      "Failed": 0,
+      "StartedUtc": "2026-11-03T06:07:46.9449166Z",
+      "EndedUtc": "2026-11-03T06:07:56.7925693Z",
+      "Error": "",
+      "SceneDirty": false,
+      "Report": "hub-account-direct-entry-green-20261103-report.json",
+      "Xml": "hub-account-direct-entry-green-20261103-results.xml"
+    },
+    "FormalHttpDatabase": {
+      "Passed": 19,
+      "Failed": 0,
+      "RecordedAtUtc": "2026-11-03T05:43:56.6488245Z",
+      "Report": "hub-account-move-backpack-green3-20261103-summary.json",
+      "Database": "norn_online_test",
+      "UsesActualProductionRoutesAuthenticationSerializationTransaction": true,
+      "IsTcpKcpOrPlayerGameplayProof": false,
+      "SyntheticStackCase": "One case uses existing per-host ConfigureWebHost hook and a private Temp manifest deep copy with MaxStack3; official manifest/global environment/production rules unchanged; other 18 use official catalog"
+    },
+    "Prior118": {
+      "Passed": 111,
+      "Failed": 7,
+      "Report": "hub-account-station-range-red-20261103-report.json",
+      "FailureScope": "Five new F/context cases plus two new warehouse range cases; preserved before minimal fixes",
+      "NotRepeatedAfterUserTestingHandoff": true
+    },
+    "CountsNotAdded": true
+  },
+  "Implemented": [
+    "Fresh same-session Profile before Hub; prearm target before Session enable so old local save never initializes",
+    "Ready correlated to original menu and captured target",
+    "Account-only command context without fake Run/Actor/Epoch",
+    "Warehouse, real backpack grid, wand cards, spell storage, wand/backpack/tool equipment move",
+    "Original atomic swaps, backpack child-coordinate migration and server-derived whole stack",
+    "Character lock, original receipt-first idempotency, lease/version/source/parent/layout validation",
+    "Fixed body bounded retries; receipt plus full Profile install before UI success; valid no-op keeps version",
+    "Same-account relogin and unloaded original Hub recovery; wrong account cannot take pending command",
+    "Malformed successful JSON cannot leave Busy stuck",
+    "Original F station identity/range/focus and original warehouse canvas routing",
+    "Known asset lock marks metadata without changing balance/items/version; no caller unlock",
+    "Entry reequips same trusted protected backpack ID from owner warehouse without issuing another"
+  ],
+  "Preserved": [
+    "Registration 10000 only once",
+    "Real rolled wand stats and ordered traits",
+    "Container composition and material quantities",
+    "Original capacity/geometry/interaction rules",
+    "Old local saves not imported, merged or overwritten",
+    "Main database and old published files not updated",
+    "Editor kept open"
+  ],
+  "FormalConfiguration": {
+    "HubScene": "Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub.unity",
+    "Catalog": "Assets/_Project/ScriptableObjects/World/Hub/Inventory/Catalog.asset",
+    "StarterWand": "wandtest.wand.a",
+    "StarterSpell": "wandtest.fire",
+    "StarterWandGuidInCatalog": true,
+    "StarterSpellGuidInCatalog": true
+  },
+  "CurrentNextSlice": {
+    "ProtocolAtHubChecks": 13,
+    "CurrentSourceProtocol": 14,
+    "FinalManifestRefreshPending": true,
+    "Next": "Server-backed solo and final no-revival death production wiring now in progress",
+    "GeneratedProtocolCSharp": 9,
+    "MainDatabaseLastKnown": "010",
+    "Migrations011012": "isolated only",
+    "DeploymentUnchanged": 11
+  },
+  "RemainingHubWrites": [
+    "Selected-wand choice",
+    "Organize merge and retirement",
+    "Hub world drop/pickup",
+    "Trading and research writes",
+    "Hub material gameplay asset writes"
+  ],
+  "SourceDigests": {
+    "RPG/Assets/_Project/Scripts/Multiplayer/Accounts/OnlineAccountClient.cs": "09ed189e0ddfed270dccb83f7b873bccefb16b6a34ffe1222a3e7e88b932c90f",
+    "RPG/Assets/_Project/Scripts/Multiplayer/Accounts/OnlineAccountClient.Inventory.cs": "4d7422f053db5f47fd3d7f522432cb3047913a4ed8901c0a26b73851218061bb",
+    "RPG/Assets/_Project/Scripts/Multiplayer/Accounts/OnlineAccountBootstrap.cs": "50aca7c43b3263fd8c772e73efc5e4a96d01292de0754ef395547f2ee1db9da5",
+    "RPG/Assets/_Project/Scripts/Core/Online/OnlineAccountInventoryContracts.cs": "371a5a2dd4b6752f1e5d9dca71afc1a85f614130164c89b7e18aaf3cf216bd3f",
+    "RPG/Assets/_Project/Scripts/Core/Online/OnlineAccountInventoryCommands.cs": "3404a950603f0fb13425e97083a92ca505ee8e8f159048daa8119213696824fd",
+    "RPG/Assets/_Project/Scripts/UI/DemoMainMenuController.cs": "196e783cb5f6b9cb0974817b28220245806a0bd33bd9c5d2128d0d7c1ffddf84",
+    "RPG/Assets/_Project/Scripts/UI/Inventory/SinglePlayerInventoryController.cs": "d610078f0f5b0f54999f8a609307cf44007b43e4d3efb9ac3b61b4563e2e1755",
+    "RPG/Assets/_Project/Scripts/UI/Inventory/SinglePlayerInventoryController.AccountCommands.cs": "5ca22460b4f45d10e93865265920e901b194e7cbcd0bfb818d5d49c8ac99de76",
+    "RPG/Assets/_Project/Scripts/Run/Inventory/AccountInventoryPresentationSource.cs": "aec5c92e4921b997476f54ebdff7b15611c5ec94d66ca488f618fd7530670bb8",
+    "RPG/Assets/_Project/Scripts/Run/Runtime/SinglePlayerInventorySession.cs": "8aee3d674ac4cf6f241d5ce0eb6292f35e8cea8cbc5368955542d7dc5b7336f7",
+    "RPG/Assets/_Project/Scripts/Run/Hub/HubInteractionController.cs": "33d83ae315e430eee7b17c7ff4e6eafafc9931f53d6a21db97760d70a565cca8",
+    "Server/Norn.Business/Features/Inventory/AccountInventoryMoves.cs": "c3429d6cf37d7c5cdfad6c453905c26b918915b8a2892334cfaf50bb9cbc29b8",
+    "Server/Norn.Business/Features/Inventory/InventoryService.cs": "4dd6bf2404621bb1e44a76b23cc56f65af829cfa0b17eed5d844d3e8b1cbfa81",
+    "Server/Norn.Business/Features/Inventory/OwnedCombatAssetRules.cs": "eaf0b817ed0f5bcdfe69b3207b6b84313bab41f3083adc5b1c9e68faa7acb8cb"
+  }
+}

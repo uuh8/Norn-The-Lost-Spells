@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 05:23:42Z" end-time="2026-11-02 05:23:42Z" duration="0.6417937">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3754" result="Failed" site="Child" start-time="2026-11-02 05:23:42Z" end-time="2026-11-02 05:23:42Z" duration="0.641794" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3684" name="Game.Networking.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Networking.Tests.dll" runstate="Runnable" testcasecount="405" result="Failed" site="Child" start-time="2026-11-02 05:23:42Z" end-time="2026-11-02 05:23:42Z" duration="0.539530" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3685" name="Game" fullname="Game" runstate="Runnable" testcasecount="405" result="Failed" site="Child" start-time="2026-11-02 05:23:42Z" end-time="2026-11-02 05:23:42Z" duration="0.451511" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3686" name="Networking" fullname="Game.Networking" runstate="Runnable" testcasecount="405" result="Failed" site="Child" start-time="2026-11-02 05:23:42Z" end-time="2026-11-02 05:23:42Z" duration="0.351098" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3687" name="Tests" fullname="Game.Networking.Tests" runstate="Runnable" testcasecount="405" result="Failed" site="Child" start-time="2026-11-02 05:23:42Z" end-time="2026-11-02 05:23:42Z" duration="0.250933" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3220" name="CombatCodecTests" fullname="Game.Networking.Tests.CombatCodecTests" classname="Game.Networking.Tests.CombatCodecTests" runstate="Runnable" testcasecount="18" result="Failed" site="Child" start-time="2026-11-02 05:23:42Z" end-time="2026-11-02 05:23:42Z" duration="0.149387" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3223" name="ContainerStateUsesItsExistingOutputIdentityWithoutRepeatingModelStrings" fullname="Game.Networking.Tests.CombatCodecTests.ContainerStateUsesItsExistingOutputIdentityWithoutRepeatingModelStrings" methodname="ContainerStateUsesItsExistingOutputIdentityWithoutRepeatingModelStrings" classname="Game.Networking.Tests.CombatCodecTests" runstate="Runnable" seed="1861644916" result="Failed" start-time="2026-11-02 05:23:42Z" end-time="2026-11-02 05:23:42Z" duration="0.042164" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  15Hz只更新已出生OutputId的等待状态，模型字符串只在可靠出生/重连补发一次。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.CombatCodecTests.ContainerStateUsesItsExistingOutputIdentityWithoutRepeatingModelStrings () [0x00059] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\CombatCodecTests.cs:53
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

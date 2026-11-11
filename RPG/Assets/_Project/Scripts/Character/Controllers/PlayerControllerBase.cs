@@ -14,7 +14,8 @@ namespace Game.Character
     // 使 Awake 中的 GetComponent 成为可靠依赖读取，而不是每帧查找或运行到一半才发现组件缺失。
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(GroundChecker))]
-    public abstract class PlayerControllerBase : MonoBehaviour, IPlayerMovementSimulation, ICombatActorPresentation
+    public abstract partial class PlayerControllerBase : MonoBehaviour, IPlayerMovementSimulation, ICombatActorPresentation,
+        IPlayerMovementReadOnlyObservation
     {
         [SerializeField] private PlayerExecutionMode _executionMode;
         private bool _initialized, _inputSubscribed, _isSimulating, _isReplaying;

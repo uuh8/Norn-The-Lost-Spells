@@ -17,16 +17,29 @@ namespace Game.Run.Tests
             _root = new GameObject("Choice actor"); _actor = _root.AddComponent<BoxCollider>();
             _eligible = true; _paused = false; _requests = _enters = _matches = 0;
             _gate = new DungeonEntryChoiceGate(17, "configured-p7", "P7", c => _eligible && c == _actor,
-                c => { _enters++; return true; }, () => { _paused = true; return true; }, () => _paused = false);
+                () => { _paused = true; return true; }, () => _paused = false);
             _gate.Enable();
             EventBus<DungeonMatchRequestedEvent>.Subscribe(OnMatch);
+            EventBus<DungeonSinglePlayerRequestedEvent>.Subscribe(OnSingle);
         }
         private void OnRequest(DungeonEntryChoiceRequestedEvent e) => _requests++;
         private void OnMatch(DungeonMatchRequestedEvent e) => _matches++;
+        private void OnSingle(DungeonSinglePlayerRequestedEvent e) => _enters++;
         private void Submit(DungeonEntryMode mode, int id = 17, Collider actor = null) => EventBus<DungeonEntryChoiceSubmittedEvent>.Publish(
             new DungeonEntryChoiceSubmittedEvent { PortalId = id, Actor = actor != null ? actor : _actor, Mode = mode });
         [Test] public void MissingPresentation_DoesNotPauseOrEnter()
         { Assert.That(_gate.Request(_actor), Is.False); Assert.That(_paused, Is.False); Assert.That(_enters, Is.Zero); }
+        [Test] public void PeacefulHomeRequestsOnlySinglePlayerAndKeepsItsPauseUntilRealAdmission()
+        {
+            var method = typeof(DungeonEntryChoiceGate).GetMethod("RequestSinglePlayer");
+            Assert.That(method, Is.Not.Null);
+            Assert.That((bool)method.Invoke(_gate, new object[] { _actor }), Is.True);
+            Assert.That((bool)method.Invoke(_gate, new object[] { _actor }), Is.False);
+            Assert.That(_enters, Is.EqualTo(1)); Assert.That(_matches, Is.Zero); Assert.That(_requests, Is.Zero);
+            Assert.That(_paused, Is.True);
+            EventBus<DungeonOnlineEntryConfirmedEvent>.Publish(new DungeonOnlineEntryConfirmedEvent { PortalId = 17 });
+            Assert.That(_paused || _gate.Pending, Is.False);
+        }
         [Test] public void RepeatedInteraction_OpensExactlyOneChoice()
         {
             EventBus<DungeonEntryChoiceRequestedEvent>.Subscribe(OnRequest);
@@ -50,10 +63,10 @@ namespace Game.Run.Tests
             EventBus<DungeonEntryChoiceRequestedEvent>.Subscribe(OnRequest); _gate.Request(_actor); Submit(DungeonEntryMode.Matchmaking);
             Assert.That(_matches, Is.EqualTo(1)); Assert.That(_enters, Is.Zero); Assert.That(_gate.Pending && _paused, Is.True);
         }
-        [Test] public void SinglePlayer_RevalidatesAndEntersOnceAfterUnpause()
+        [Test] public void SinglePlayer_RequestsTheServerOnceAndWaitsForRealAdmission()
         {
             EventBus<DungeonEntryChoiceRequestedEvent>.Subscribe(OnRequest); _gate.Request(_actor); Submit(DungeonEntryMode.SinglePlayer);
-            Submit(DungeonEntryMode.SinglePlayer); Assert.That(_enters, Is.EqualTo(1)); Assert.That(_paused, Is.False);
+            Submit(DungeonEntryMode.SinglePlayer); Assert.That(_enters, Is.EqualTo(1)); Assert.That(_paused, Is.True);
         }
         [Test] public void MatchPending_CannotSwitchToSinglePlayerOrRepeatMatch()
         {
@@ -67,7 +80,7 @@ namespace Game.Run.Tests
             EventBus<DungeonOnlineEntryConfirmedEvent>.Publish(new DungeonOnlineEntryConfirmedEvent { PortalId = 99 });
             Assert.That(_paused, Is.True);
             EventBus<DungeonMatchReleasedEvent>.Publish(new DungeonMatchReleasedEvent { PortalId = 17, CloseChoice = false });
-            Submit(DungeonEntryMode.SinglePlayer); Assert.That(_enters, Is.EqualTo(1)); Assert.That(_paused, Is.False);
+            Submit(DungeonEntryMode.SinglePlayer); Assert.That(_enters, Is.EqualTo(1)); Assert.That(_paused, Is.True);
         }
         [Test] public void AuthenticatedEntry_ReleasesChoiceWithoutCallingLocalRun()
         {
@@ -86,6 +99,7 @@ namespace Game.Run.Tests
         {
             _gate.Disable(); EventBus<DungeonEntryChoiceRequestedEvent>.Unsubscribe(OnRequest);
             EventBus<DungeonMatchRequestedEvent>.Unsubscribe(OnMatch);
+            EventBus<DungeonSinglePlayerRequestedEvent>.Unsubscribe(OnSingle);
             Object.DestroyImmediate(_root); if (_other != null) Object.DestroyImmediate(_other);
         }
     }

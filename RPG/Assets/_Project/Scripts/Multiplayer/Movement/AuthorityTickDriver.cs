@@ -37,30 +37,56 @@ namespace Game.Multiplayer
         }
         private void Update()
         {
-            if (_world == null) return;
-            int steps = _clock.Advance(Time.unscaledDeltaTime, _world.CanAdvance);
-            for (int i = 0; i < steps; i++)
+            var currentWorld = _world;
+            if (currentWorld == null) return;
+            try
             {
-                // steps 只是帧开始时的预算；上一个 Tick 的出生/命中回调可能使世界 Faulted 或停止。
-                // 必须重新取得推进资格，不能把旧预算当成继续运行 Gameplay 的授权。
-                if (_world == null || !_world.CanAdvance) break;
-                bool sample = _meter != null && MeasuredTicks < 120;
-                if (sample) _meter.Begin();
-                Tick++; _world.Step(FixedStepClock.DeltaTime, Tick);
-                if (_authority && _world != null && _world.CanAdvance)
+                currentWorld.SynchronizeMaterialLifecycle();
+                if (_world == null) return; // 明确StopWorld仍可释放当前Driver，故障挂起保留同一World。
+                int steps = _clock.Advance(Time.unscaledDeltaTime, _world.CanAdvance && !_world.ResearchPaused);
+                for (int i = 0; i < steps; i++)
                 {
-                    // BeforePhysics 内也可能拒绝产出；这种失败必须连本 Tick 的物理推进一起撤销。
-                    Physics.SyncTransforms(); Physics.Simulate(FixedStepClock.DeltaTime);
-                    if (_world != null && _world.CanAdvance) _world.AfterPhysics(FixedStepClock.DeltaTime, Tick);
+                    // steps只是帧开始时的预算；上一目标/上一Tick回调故障后，不能继续消费旧物理预算。
+                    if (_world == null || !_world.CanAdvance || _world.ResearchPaused) break;
+                    var meter = _meter;
+                    bool sample = meter != null && MeasuredTicks < 120;
+                    bool completed = false;
+                    if (sample) meter.Begin();
+                    try
+                    {
+                        Tick++; _world.Step(FixedStepClock.DeltaTime, Tick);
+                        if (_authority && _world != null && _world.CanAdvance)
+                        {
+                            // BeforePhysics失败连本Tick物理也不再推进；Physics回调与After的异常由同一门锁存。
+                            Physics.SyncTransforms(); Physics.Simulate(FixedStepClock.DeltaTime);
+                            if (_world != null && _world.CanAdvance) _world.AfterPhysics(FixedStepClock.DeltaTime, Tick);
+                        }
+                        completed = true;
+                    }
+                    finally
+                    {
+                        // 异常同样结束已开始的Recorder；失败样本不计成功Tick，显式Stop已Dispose的Owner不再访问。
+                        if (sample && ReferenceEquals(_meter, meter))
+                        {
+                            long count = meter.End();
+                            if (completed)
+                            {
+                                MeasuredTicks++; TickCounterValid &= count >= 0 && meter.IsValid;
+                                if (count >= 0) TickAllocationEvents += count;
+                            }
+                            else TickCounterValid = false;
+                        }
+                    }
                 }
-                if (sample)
-                {
-                    long count = _meter.End(); MeasuredTicks++;
-                    TickCounterValid &= count >= 0 && _meter.IsValid;
-                    if (count >= 0) TickAllocationEvents += count;
-                }
+                if (_world != null) _world.PumpSnapshots(Time.realtimeSinceStartupAsDouble);
+                // 同一Render轮先让控制/战斗/运动进入Mirror，再有界追加材料页；暂停仍可发布Frozen事实。
+                if (_world != null) _world.PumpMaterialReplication(Time.realtimeSinceStartupAsDouble);
             }
-            if (_world != null) _world.PumpSnapshots(Time.realtimeSinceStartupAsDouble);
+            catch (Exception error)
+            {
+                if (_authority) currentWorld.PauseAuthorityAfterException(error);
+                throw;
+            }
         }
         public void StopDriver()
         {

@@ -1,0 +1,529 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d23c392c-cacd-4a82-a0ad-6c2c3566b314" name="zhy@ZHY 2026-11-03 19:56:17" runUser="ZHY\zhy" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T19:56:17.5600651+08:00" queuing="2026-11-03T19:56:17.5600656+08:00" start="2026-11-03T19:56:13.9124309+08:00" finish="2026-11-03T19:56:25.1668729+08:00" />
+  <TestSettings name="default" id="e68c50e4-509b-4c7e-8216-ac4c859ae297">
+    <Deployment runDeploymentRoot="zhy_ZHY_2026-11-03_19_56_17" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="e711c574-5773-4f83-bb6f-40d5ed1ab65b" testId="301b99d7-b242-915f-cd74-c7283b195f46" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeCannotClearCarriedAssetsClaimSuccessProgressOrReplaceTheFrozenSessionScope(defect: &quot;success&quot;)" computerName="ZHY" duration="00:00:00.4782989" startTime="2026-11-03T19:56:20.2540052+08:00" endTime="2026-11-03T19:56:20.7324397+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e711c574-5773-4f83-bb6f-40d5ed1ab65b" />
+    <UnitTestResult executionId="34cb28d2-160c-4864-bc43-2fa9dfe02596" testId="f2d8225b-d16f-4e46-d7d4-ad4363828672" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundReplacementNeverDeletesTheSeparateHubSceneRecord" computerName="ZHY" duration="00:00:00.5964530" startTime="2026-11-03T19:56:23.9302291+08:00" endTime="2026-11-03T19:56:24.5263871+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="34cb28d2-160c-4864-bc43-2fa9dfe02596">
+      <Output>
+        <ErrorInfo>
+          <Message>Norn.Business.Infrastructure.OnlineFailure : PracticeGroundCommitPending</Message>
+          <StackTrace>   at Norn.Business.Features.Runs.RunMemberExitService.&lt;&gt;c__DisplayClass6_0.&lt;&lt;CommitAsync&gt;b__0&gt;d.MoveNext() in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs:line 60&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 19&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 20&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 20&#xD;
+   at Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundReplacementNeverDeletesTheSeparateHubSceneRecord() in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 107&#xD;
+   at Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundReplacementNeverDeletesTheSeparateHubSceneRecord() in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 112&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ce819308-a913-40d2-92ec-f9036f706790" testId="c2f718de-3d48-5ad4-d6c6-ce11f1abc624" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeCannotClearCarriedAssetsClaimSuccessProgressOrReplaceTheFrozenSessionScope(defect: &quot;scope&quot;)" computerName="ZHY" duration="00:00:00.5008220" startTime="2026-11-03T19:56:19.7547195+08:00" endTime="2026-11-03T19:56:20.2536551+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ce819308-a913-40d2-92ec-f9036f706790" />
+    <UnitTestResult executionId="4bafd97e-83df-43fa-9c39-7b72ebc49105" testId="31ec896e-2252-5e4e-fdb2-859defb68188" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets(mapLegacyOwner: True)" computerName="ZHY" duration="00:00:01.3846135" startTime="2026-11-03T19:56:15.4030950+08:00" endTime="2026-11-03T19:56:16.8149239+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4bafd97e-83df-43fa-9c39-7b72ebc49105">
+      <Output>
+        <ErrorInfo>
+          <Message>Norn.Business.Infrastructure.OnlineFailure : PracticeGroundCommitPending</Message>
+          <StackTrace>   at Norn.Business.Features.Runs.RunMemberExitService.&lt;&gt;c__DisplayClass6_0.&lt;&lt;CommitAsync&gt;b__0&gt;d.MoveNext() in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs:line 60&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 19&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 20&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 20&#xD;
+   at Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets(Boolean mapLegacyOwner) in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 74&#xD;
+   at Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets(Boolean mapLegacyOwner) in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 100&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="928bbd49-b98b-41c8-970e-ce69a8048034" testId="277652c7-82ef-088c-97ca-6fc570bb75e0" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeMissingOriginalWithoutAnExplicitRetirementKeepsTheLiveRunAndAllAssets" computerName="ZHY" duration="00:00:00.5351795" startTime="2026-11-03T19:56:24.5276150+08:00" endTime="2026-11-03T19:56:25.0635205+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="928bbd49-b98b-41c8-970e-ce69a8048034">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Throws() Failure: No exception was thrown&#xD;
+Expected: typeof(Norn.Business.Infrastructure.OnlineFailure)</Message>
+          <StackTrace>   at Norn.Business.Tests.HomePracticeTransactionTests.HomeMissingOriginalWithoutAnExplicitRetirementKeepsTheLiveRunAndAllAssets() in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 151&#xD;
+   at Norn.Business.Tests.HomePracticeTransactionTests.HomeMissingOriginalWithoutAnExplicitRetirementKeepsTheLiveRunAndAllAssets() in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 152&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a3fb9010-f42f-4efc-a733-f866beaf91e7" testId="39a563d1-e915-e952-0eb8-c73684ab58c8" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: &quot;destroy&quot;)" computerName="ZHY" duration="00:00:00.5198941" startTime="2026-11-03T19:56:18.7528433+08:00" endTime="2026-11-03T19:56:19.2716429+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a3fb9010-f42f-4efc-a733-f866beaf91e7">
+      <Output>
+        <ErrorInfo>
+          <Message>Norn.Business.Infrastructure.OnlineFailure : RunMemberExitInvalid</Message>
+          <StackTrace>   at Norn.Business.Features.Runs.RunMemberExitRules.RequireFinalRetirement(OnlineRunMemberExitRequest request) in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitRules.cs:line 165&#xD;
+   at Norn.Business.Features.Runs.RunMemberExitRules.RequireOwned(OnlineRunMemberExitRequest request, ContentManifestValidator content) in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitRules.cs:line 140&#xD;
+   at Norn.Business.Features.Runs.RunMemberExitService.&lt;&gt;c__DisplayClass6_0.&lt;&lt;CommitAsync&gt;b__0&gt;d.MoveNext() in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs:line 83&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 19&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 20&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 20&#xD;
+   at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause) in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 132&#xD;
+   at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause) in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 141&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="60754930-29c3-4741-b9b6-6f0da6329c8a" testId="2b89ee45-4d9f-5c8b-75db-c9e653212e02" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeCannotClearCarriedAssetsClaimSuccessProgressOrReplaceTheFrozenSessionScope(defect: &quot;death&quot;)" computerName="ZHY" duration="00:00:00.4494329" startTime="2026-11-03T19:56:20.7327153+08:00" endTime="2026-11-03T19:56:21.1823034+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="60754930-29c3-4741-b9b6-6f0da6329c8a" />
+    <UnitTestResult executionId="7dd62a7b-7081-4b06-b363-4525c2d71c53" testId="f6867ea7-0293-b5a6-04a9-6567f48396e2" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: &quot;consume&quot;)" computerName="ZHY" duration="00:00:00.4789376" startTime="2026-11-03T19:56:19.2727798+08:00" endTime="2026-11-03T19:56:19.7516611+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7dd62a7b-7081-4b06-b363-4525c2d71c53">
+      <Output>
+        <ErrorInfo>
+          <Message>Norn.Business.Infrastructure.OnlineFailure : RunMemberExitInvalid</Message>
+          <StackTrace>   at Norn.Business.Features.Runs.RunMemberExitRules.RequireFinalRetirement(OnlineRunMemberExitRequest request) in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitRules.cs:line 165&#xD;
+   at Norn.Business.Features.Runs.RunMemberExitRules.RequireOwned(OnlineRunMemberExitRequest request, ContentManifestValidator content) in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitRules.cs:line 140&#xD;
+   at Norn.Business.Features.Runs.RunMemberExitService.&lt;&gt;c__DisplayClass6_0.&lt;&lt;CommitAsync&gt;b__0&gt;d.MoveNext() in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs:line 83&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 19&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 20&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 20&#xD;
+   at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause) in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 132&#xD;
+   at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause) in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 141&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="219db2f7-3d56-4854-87f9-784b5c6d5922" testId="215d2400-7228-a74f-1b52-a0c56ed3b1d0" testName="Norn.Business.Tests.HomePracticeTransactionTests.TrustedRaidSuccessRefreshesOriginalShopRulesExactlyOnceWhileIdleEscDoesNot(success: False, collected: 0, refresh: False)" computerName="ZHY" duration="00:00:00.5717101" startTime="2026-11-03T19:56:21.6531563+08:00" endTime="2026-11-03T19:56:22.2234083+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="219db2f7-3d56-4854-87f9-784b5c6d5922" />
+    <UnitTestResult executionId="9a4b512b-11b6-4a44-bb54-52324810c48b" testId="b09aace0-b70f-0ade-dbbd-b4d0d3af847a" testName="Norn.Business.Tests.HomePracticeTransactionTests.SameSessionReadsBackTheCommittedContinuityAndReloginHidesItWithoutDeletingHistory" computerName="ZHY" duration="00:00:00.7083307" startTime="2026-11-03T19:56:17.4705103+08:00" endTime="2026-11-03T19:56:18.1773730+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9a4b512b-11b6-4a44-bb54-52324810c48b" />
+    <UnitTestResult executionId="4feade69-b2a4-4f82-894c-d8b6084980c1" testId="eb2eb853-306e-f51a-04f4-30b4a7ca575f" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetirementCannotOverlapAnItemStillPresentInTheGroundClosure" computerName="ZHY" duration="00:00:00.4676295" startTime="2026-11-03T19:56:21.1825237+08:00" endTime="2026-11-03T19:56:21.6513168+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4feade69-b2a4-4f82-894c-d8b6084980c1">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+           ↓ (pos 0)&#xD;
+Expected: "RunMemberExitInvalid"&#xD;
+Actual:   "PracticeGroundCommitPending"&#xD;
+           ↑ (pos 0)</Message>
+          <StackTrace>   at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetirementCannotOverlapAnItemStillPresentInTheGroundClosure() in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 176&#xD;
+   at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetirementCannotOverlapAnItemStillPresentInTheGroundClosure() in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 176&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c014db39-457d-4f2c-a3bf-426ec7e6fff7" testId="3c0b3443-28e0-512c-7623-f9929c5ae8bc" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundCannotAdoptAnotherAccountsRealWandOrItsInstalledCard" computerName="ZHY" duration="00:00:00.6049825" startTime="2026-11-03T19:56:23.3233794+08:00" endTime="2026-11-03T19:56:23.9291034+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c014db39-457d-4f2c-a3bf-426ec7e6fff7">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Strings differ&#xD;
+           ↓ (pos 0)&#xD;
+Expected: "RunMemberExitOwnershipConflict"&#xD;
+Actual:   "PracticeGroundCommitPending"&#xD;
+           ↑ (pos 0)</Message>
+          <StackTrace>   at Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundCannotAdoptAnotherAccountsRealWandOrItsInstalledCard() in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 166&#xD;
+   at Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundCannotAdoptAnotherAccountsRealWandOrItsInstalledCard() in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 166&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="060ffdb9-f12a-4f29-ace9-08ec0e40e0ad" testId="183873f3-d55d-fc5b-fcdc-d3718ec7d19e" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets(mapLegacyOwner: False)" computerName="ZHY" duration="00:00:00.6495682" startTime="2026-11-03T19:56:16.8321841+08:00" endTime="2026-11-03T19:56:17.4662813+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="060ffdb9-f12a-4f29-ace9-08ec0e40e0ad">
+      <Output>
+        <ErrorInfo>
+          <Message>Norn.Business.Infrastructure.OnlineFailure : PracticeGroundCommitPending</Message>
+          <StackTrace>   at Norn.Business.Features.Runs.RunMemberExitService.&lt;&gt;c__DisplayClass6_0.&lt;&lt;CommitAsync&gt;b__0&gt;d.MoveNext() in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs:line 60&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 19&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 20&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 20&#xD;
+   at Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets(Boolean mapLegacyOwner) in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 74&#xD;
+   at Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets(Boolean mapLegacyOwner) in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 100&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="33ff2027-a232-402c-bd7a-f6b798cf1f87" testId="6fc12184-bb41-30c1-4bf0-90cec19db0aa" testName="Norn.Business.Tests.HomePracticeTransactionTests.TrustedRaidSuccessRefreshesOriginalShopRulesExactlyOnceWhileIdleEscDoesNot(success: True, collected: 1, refresh: True)" computerName="ZHY" duration="00:00:00.5299803" startTime="2026-11-03T19:56:22.7928604+08:00" endTime="2026-11-03T19:56:23.3231451+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="33ff2027-a232-402c-bd7a-f6b798cf1f87" />
+    <UnitTestResult executionId="cd4019f9-bd09-4819-b4fa-c78cebbcaf7a" testId="ac8eb245-f1b8-ed82-04bc-4f6a05640966" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: &quot;merge&quot;)" computerName="ZHY" duration="00:00:00.5733441" startTime="2026-11-03T19:56:18.1791280+08:00" endTime="2026-11-03T19:56:18.7508159+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cd4019f9-bd09-4819-b4fa-c78cebbcaf7a">
+      <Output>
+        <ErrorInfo>
+          <Message>Norn.Business.Infrastructure.OnlineFailure : RunMemberExitInvalid</Message>
+          <StackTrace>   at Norn.Business.Features.Runs.RunMemberExitRules.RequireFinalRetirement(OnlineRunMemberExitRequest request) in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitRules.cs:line 165&#xD;
+   at Norn.Business.Features.Runs.RunMemberExitRules.RequireOwned(OnlineRunMemberExitRequest request, ContentManifestValidator content) in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitRules.cs:line 140&#xD;
+   at Norn.Business.Features.Runs.RunMemberExitService.&lt;&gt;c__DisplayClass6_0.&lt;&lt;CommitAsync&gt;b__0&gt;d.MoveNext() in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs:line 83&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 19&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 20&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 20&#xD;
+   at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause) in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 132&#xD;
+   at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause) in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 141&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="7b97e523-3448-43f7-a4b6-7612da986a0f" testId="501b7294-05f3-7c3d-9f47-d817e64a41c0" testName="Norn.Business.Tests.HomePracticeTransactionTests.TrustedRaidSuccessRefreshesOriginalShopRulesExactlyOnceWhileIdleEscDoesNot(success: True, collected: 0, refresh: False)" computerName="ZHY" duration="00:00:00.5687882" startTime="2026-11-03T19:56:22.2235823+08:00" endTime="2026-11-03T19:56:22.7926066+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7b97e523-3448-43f7-a4b6-7612da986a0f" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets(mapLegacyOwner: True)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="31ec896e-2252-5e4e-fdb2-859defb68188">
+      <Execution id="4bafd97e-83df-43fa-9c39-7b72ebc49105" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetirementCannotOverlapAnItemStillPresentInTheGroundClosure" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="eb2eb853-306e-f51a-04f4-30b4a7ca575f">
+      <Execution id="4feade69-b2a4-4f82-894c-d8b6084980c1" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeRetirementCannotOverlapAnItemStillPresentInTheGroundClosure" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.TrustedRaidSuccessRefreshesOriginalShopRulesExactlyOnceWhileIdleEscDoesNot(success: False, collected: 0, refresh: False)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="215d2400-7228-a74f-1b52-a0c56ed3b1d0">
+      <Execution id="219db2f7-3d56-4854-87f9-784b5c6d5922" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="TrustedRaidSuccessRefreshesOriginalShopRulesExactlyOnceWhileIdleEscDoesNot" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.TrustedRaidSuccessRefreshesOriginalShopRulesExactlyOnceWhileIdleEscDoesNot(success: True, collected: 0, refresh: False)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="501b7294-05f3-7c3d-9f47-d817e64a41c0">
+      <Execution id="7b97e523-3448-43f7-a4b6-7612da986a0f" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="TrustedRaidSuccessRefreshesOriginalShopRulesExactlyOnceWhileIdleEscDoesNot" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeCannotClearCarriedAssetsClaimSuccessProgressOrReplaceTheFrozenSessionScope(defect: &quot;scope&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="c2f718de-3d48-5ad4-d6c6-ce11f1abc624">
+      <Execution id="ce819308-a913-40d2-92ec-f9036f706790" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeCannotClearCarriedAssetsClaimSuccessProgressOrReplaceTheFrozenSessionScope" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: &quot;consume&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="f6867ea7-0293-b5a6-04a9-6567f48396e2">
+      <Execution id="7dd62a7b-7081-4b06-b363-4525c2d71c53" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeMissingOriginalWithoutAnExplicitRetirementKeepsTheLiveRunAndAllAssets" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="277652c7-82ef-088c-97ca-6fc570bb75e0">
+      <Execution id="928bbd49-b98b-41c8-970e-ce69a8048034" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeMissingOriginalWithoutAnExplicitRetirementKeepsTheLiveRunAndAllAssets" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: &quot;destroy&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="39a563d1-e915-e952-0eb8-c73684ab58c8">
+      <Execution id="a3fb9010-f42f-4efc-a733-f866beaf91e7" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundReplacementNeverDeletesTheSeparateHubSceneRecord" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="f2d8225b-d16f-4e46-d7d4-ad4363828672">
+      <Execution id="34cb28d2-160c-4864-bc43-2fa9dfe02596" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeGroundReplacementNeverDeletesTheSeparateHubSceneRecord" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets(mapLegacyOwner: False)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="183873f3-d55d-fc5b-fcdc-d3718ec7d19e">
+      <Execution id="060ffdb9-f12a-4f29-ace9-08ec0e40e0ad" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.TrustedRaidSuccessRefreshesOriginalShopRulesExactlyOnceWhileIdleEscDoesNot(success: True, collected: 1, refresh: True)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="6fc12184-bb41-30c1-4bf0-90cec19db0aa">
+      <Execution id="33ff2027-a232-402c-bd7a-f6b798cf1f87" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="TrustedRaidSuccessRefreshesOriginalShopRulesExactlyOnceWhileIdleEscDoesNot" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: &quot;merge&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="ac8eb245-f1b8-ed82-04bc-4f6a05640966">
+      <Execution id="cd4019f9-bd09-4819-b4fa-c78cebbcaf7a" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundCannotAdoptAnotherAccountsRealWandOrItsInstalledCard" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="3c0b3443-28e0-512c-7623-f9929c5ae8bc">
+      <Execution id="c014db39-457d-4f2c-a3bf-426ec7e6fff7" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeGroundCannotAdoptAnotherAccountsRealWandOrItsInstalledCard" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeCannotClearCarriedAssetsClaimSuccessProgressOrReplaceTheFrozenSessionScope(defect: &quot;death&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="2b89ee45-4d9f-5c8b-75db-c9e653212e02">
+      <Execution id="60754930-29c3-4741-b9b6-6f0da6329c8a" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeCannotClearCarriedAssetsClaimSuccessProgressOrReplaceTheFrozenSessionScope" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeCannotClearCarriedAssetsClaimSuccessProgressOrReplaceTheFrozenSessionScope(defect: &quot;success&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="301b99d7-b242-915f-cd74-c7283b195f46">
+      <Execution id="e711c574-5773-4f83-bb6f-40d5ed1ab65b" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeCannotClearCarriedAssetsClaimSuccessProgressOrReplaceTheFrozenSessionScope" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.SameSessionReadsBackTheCommittedContinuityAndReloginHidesItWithoutDeletingHistory" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="b09aace0-b70f-0ade-dbbd-b4d0d3af847a">
+      <Execution id="9a4b512b-11b6-4a44-bb54-52324810c48b" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="SameSessionReadsBackTheCommittedContinuityAndReloginHidesItWithoutDeletingHistory" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="301b99d7-b242-915f-cd74-c7283b195f46" executionId="e711c574-5773-4f83-bb6f-40d5ed1ab65b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f2d8225b-d16f-4e46-d7d4-ad4363828672" executionId="34cb28d2-160c-4864-bc43-2fa9dfe02596" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c2f718de-3d48-5ad4-d6c6-ce11f1abc624" executionId="ce819308-a913-40d2-92ec-f9036f706790" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="31ec896e-2252-5e4e-fdb2-859defb68188" executionId="4bafd97e-83df-43fa-9c39-7b72ebc49105" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="277652c7-82ef-088c-97ca-6fc570bb75e0" executionId="928bbd49-b98b-41c8-970e-ce69a8048034" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="39a563d1-e915-e952-0eb8-c73684ab58c8" executionId="a3fb9010-f42f-4efc-a733-f866beaf91e7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2b89ee45-4d9f-5c8b-75db-c9e653212e02" executionId="60754930-29c3-4741-b9b6-6f0da6329c8a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f6867ea7-0293-b5a6-04a9-6567f48396e2" executionId="7dd62a7b-7081-4b06-b363-4525c2d71c53" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="215d2400-7228-a74f-1b52-a0c56ed3b1d0" executionId="219db2f7-3d56-4854-87f9-784b5c6d5922" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b09aace0-b70f-0ade-dbbd-b4d0d3af847a" executionId="9a4b512b-11b6-4a44-bb54-52324810c48b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eb2eb853-306e-f51a-04f4-30b4a7ca575f" executionId="4feade69-b2a4-4f82-894c-d8b6084980c1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3c0b3443-28e0-512c-7623-f9929c5ae8bc" executionId="c014db39-457d-4f2c-a3bf-426ec7e6fff7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="183873f3-d55d-fc5b-fcdc-d3718ec7d19e" executionId="060ffdb9-f12a-4f29-ace9-08ec0e40e0ad" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6fc12184-bb41-30c1-4bf0-90cec19db0aa" executionId="33ff2027-a232-402c-bd7a-f6b798cf1f87" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ac8eb245-f1b8-ed82-04bc-4f6a05640966" executionId="cd4019f9-bd09-4819-b4fa-c78cebbcaf7a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="501b7294-05f3-7c3d-9f47-d817e64a41c0" executionId="7b97e523-3448-43f7-a4b6-7612da986a0f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="16" executed="16" passed="7" failed="9" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.13)&#xD;
+[xUnit.net 00:00:00.55]   Discovering: Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.72]   Discovered:  Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.77]   Starting:    Norn.Business.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:02.21]       Norn.Business.Infrastructure.OnlineFailure : PracticeGroundCommitPending&#xD;
+[xUnit.net 00:00:02.21]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.21]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs(60,0): at Norn.Business.Features.Runs.RunMemberExitService.&lt;&gt;c__DisplayClass6_0.&lt;&lt;CommitAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:02.21]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.21]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(19,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:02.21]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(20,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:02.21]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(20,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:02.21]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(74,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets(Boolean mapLegacyOwner)&#xD;
+[xUnit.net 00:00:02.21]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(100,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets(Boolean mapLegacyOwner)&#xD;
+[xUnit.net 00:00:02.21]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:02.86]       Norn.Business.Infrastructure.OnlineFailure : PracticeGroundCommitPending&#xD;
+[xUnit.net 00:00:02.86]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.86]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs(60,0): at Norn.Business.Features.Runs.RunMemberExitService.&lt;&gt;c__DisplayClass6_0.&lt;&lt;CommitAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:02.86]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:02.86]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(19,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:02.86]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(20,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:02.86]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(20,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:02.86]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(74,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets(Boolean mapLegacyOwner)&#xD;
+[xUnit.net 00:00:02.86]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(100,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets(Boolean mapLegacyOwner)&#xD;
+[xUnit.net 00:00:02.86]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:04.14]       Norn.Business.Infrastructure.OnlineFailure : RunMemberExitInvalid&#xD;
+[xUnit.net 00:00:04.14]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.15]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitRules.cs(165,0): at Norn.Business.Features.Runs.RunMemberExitRules.RequireFinalRetirement(OnlineRunMemberExitRequest request)&#xD;
+[xUnit.net 00:00:04.15]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitRules.cs(140,0): at Norn.Business.Features.Runs.RunMemberExitRules.RequireOwned(OnlineRunMemberExitRequest request, ContentManifestValidator content)&#xD;
+[xUnit.net 00:00:04.15]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs(83,0): at Norn.Business.Features.Runs.RunMemberExitService.&lt;&gt;c__DisplayClass6_0.&lt;&lt;CommitAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:04.15]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.15]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(19,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:04.15]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(20,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:04.15]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(20,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:04.15]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(132,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause)&#xD;
+[xUnit.net 00:00:04.15]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(141,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause)&#xD;
+[xUnit.net 00:00:04.15]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:04.67]       Norn.Business.Infrastructure.OnlineFailure : RunMemberExitInvalid&#xD;
+[xUnit.net 00:00:04.67]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.67]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitRules.cs(165,0): at Norn.Business.Features.Runs.RunMemberExitRules.RequireFinalRetirement(OnlineRunMemberExitRequest request)&#xD;
+[xUnit.net 00:00:04.67]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitRules.cs(140,0): at Norn.Business.Features.Runs.RunMemberExitRules.RequireOwned(OnlineRunMemberExitRequest request, ContentManifestValidator content)&#xD;
+[xUnit.net 00:00:04.67]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs(83,0): at Norn.Business.Features.Runs.RunMemberExitService.&lt;&gt;c__DisplayClass6_0.&lt;&lt;CommitAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:04.67]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.67]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(19,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:04.67]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(20,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:04.67]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(20,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:04.67]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(132,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause)&#xD;
+[xUnit.net 00:00:04.67]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(141,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause)&#xD;
+[xUnit.net 00:00:04.67]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:05.15]       Norn.Business.Infrastructure.OnlineFailure : RunMemberExitInvalid&#xD;
+[xUnit.net 00:00:05.15]       Stack Trace:&#xD;
+[xUnit.net 00:00:05.15]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitRules.cs(165,0): at Norn.Business.Features.Runs.RunMemberExitRules.RequireFinalRetirement(OnlineRunMemberExitRequest request)&#xD;
+[xUnit.net 00:00:05.15]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitRules.cs(140,0): at Norn.Business.Features.Runs.RunMemberExitRules.RequireOwned(OnlineRunMemberExitRequest request, ContentManifestValidator content)&#xD;
+[xUnit.net 00:00:05.15]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs(83,0): at Norn.Business.Features.Runs.RunMemberExitService.&lt;&gt;c__DisplayClass6_0.&lt;&lt;CommitAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:05.15]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:05.15]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(19,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:05.15]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(20,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:05.15]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(20,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:05.15]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(132,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause)&#xD;
+[xUnit.net 00:00:05.15]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(141,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause)&#xD;
+[xUnit.net 00:00:05.15]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:07.04]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:07.05]                  ↓ (pos 0)&#xD;
+[xUnit.net 00:00:07.05]       Expected: "RunMemberExitInvalid"&#xD;
+[xUnit.net 00:00:07.05]       Actual:   "PracticeGroundCommitPending"&#xD;
+[xUnit.net 00:00:07.05]                  ↑ (pos 0)&#xD;
+[xUnit.net 00:00:07.05]       Stack Trace:&#xD;
+[xUnit.net 00:00:07.05]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(176,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetirementCannotOverlapAnItemStillPresentInTheGroundClosure()&#xD;
+[xUnit.net 00:00:07.05]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(176,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetirementCannotOverlapAnItemStillPresentInTheGroundClosure()&#xD;
+[xUnit.net 00:00:07.05]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:09.32]       Assert.Equal() Failure: Strings differ&#xD;
+[xUnit.net 00:00:09.32]                  ↓ (pos 0)&#xD;
+[xUnit.net 00:00:09.32]       Expected: "RunMemberExitOwnershipConflict"&#xD;
+[xUnit.net 00:00:09.32]       Actual:   "PracticeGroundCommitPending"&#xD;
+[xUnit.net 00:00:09.32]                  ↑ (pos 0)&#xD;
+[xUnit.net 00:00:09.32]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.32]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(166,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundCannotAdoptAnotherAccountsRealWandOrItsInstalledCard()&#xD;
+[xUnit.net 00:00:09.32]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(166,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundCannotAdoptAnotherAccountsRealWandOrItsInstalledCard()&#xD;
+[xUnit.net 00:00:09.32]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:09.92]       Norn.Business.Infrastructure.OnlineFailure : PracticeGroundCommitPending&#xD;
+[xUnit.net 00:00:09.92]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.92]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs(60,0): at Norn.Business.Features.Runs.RunMemberExitService.&lt;&gt;c__DisplayClass6_0.&lt;&lt;CommitAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:09.92]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.92]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(19,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:09.92]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(20,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:09.92]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(20,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:09.92]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(107,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundReplacementNeverDeletesTheSeparateHubSceneRecord()&#xD;
+[xUnit.net 00:00:09.92]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(112,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundReplacementNeverDeletesTheSeparateHubSceneRecord()&#xD;
+[xUnit.net 00:00:09.92]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:10.46]       Assert.Throws() Failure: No exception was thrown&#xD;
+[xUnit.net 00:00:10.46]       Expected: typeof(Norn.Business.Infrastructure.OnlineFailure)&#xD;
+[xUnit.net 00:00:10.46]       Stack Trace:&#xD;
+[xUnit.net 00:00:10.46]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(151,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeMissingOriginalWithoutAnExplicitRetirementKeepsTheLiveRunAndAllAssets()&#xD;
+[xUnit.net 00:00:10.46]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(152,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeMissingOriginalWithoutAnExplicitRetirementKeepsTheLiveRunAndAllAssets()&#xD;
+[xUnit.net 00:00:10.46]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:10.47]   Finished:    Norn.Business.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-03T19:56:16.8182533+08:00">
+        <Text>[xUnit.net 00:00:02.21]     Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets(mapLegacyOwner: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-03T19:56:17.4670558+08:00">
+        <Text>[xUnit.net 00:00:02.86]     Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets(mapLegacyOwner: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-03T19:56:18.7514589+08:00">
+        <Text>[xUnit.net 00:00:04.14]     Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: "merge") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-03T19:56:19.2720055+08:00">
+        <Text>[xUnit.net 00:00:04.66]     Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: "destroy") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-03T19:56:19.7523439+08:00">
+        <Text>[xUnit.net 00:00:05.15]     Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: "consume") [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-03T19:56:21.6518319+08:00">
+        <Text>[xUnit.net 00:00:07.04]     Norn.Business.Tests.HomePracticeTransactionTests.HomeRetirementCannotOverlapAnItemStillPresentInTheGroundClosure [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-03T19:56:23.9293937+08:00">
+        <Text>[xUnit.net 00:00:09.32]     Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundCannotAdoptAnotherAccountsRealWandOrItsInstalledCard [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-03T19:56:24.5266820+08:00">
+        <Text>[xUnit.net 00:00:09.92]     Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundReplacementNeverDeletesTheSeparateHubSceneRecord [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-03T19:56:25.0638715+08:00">
+        <Text>[xUnit.net 00:00:10.46]     Norn.Business.Tests.HomePracticeTransactionTests.HomeMissingOriginalWithoutAnExplicitRetirementKeepsTheLiveRunAndAllAssets [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

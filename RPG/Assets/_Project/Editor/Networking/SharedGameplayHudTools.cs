@@ -193,6 +193,7 @@ namespace Game.Project.Editor
                 // 现在该根只保留 Transform，必须由纯表现 composition 接替激活；状态 Icon/Boss 等子节点原显隐不变。
                 workspaceView.SetActive(true);
                 ClearExternalReferences(result);
+                EnsureWandResourceSprites(result);
                 var binding = result.AddComponent<LocalActorHudBinding>();
                 var data = new SerializedObject(binding);
                 data.FindProperty("_healthBar").objectReferenceValue = result.GetComponentInChildren<PlayerHealthBar>(true);
@@ -272,7 +273,7 @@ namespace Game.Project.Editor
                 throw new InvalidOperationException("共享 HUD 只允许写入已加载的 OnlineRoom，不允许覆盖正式单机 Scene 或历史 lab。");
         }
 
-        private static string SourceHash() => Hash128.Compute("NornSharedHudV3|Stage:" + StageSourceScene + "|" +
+        private static string SourceHash() => Hash128.Compute("NornSharedHudV4|Stage:" + StageSourceScene + "|" +
             AssetDatabase.GetAssetDependencyHash(PlayerSourceScene) + "|" +
             AssetDatabase.GetAssetDependencyHash(BossSourceScene) + "|" +
             AssetDatabase.GetAssetDependencyHash(WorkspaceSourcePrefab)).ToString();
@@ -400,6 +401,27 @@ namespace Game.Project.Editor
             var data = new SerializedObject(target); var property = data.FindProperty(field);
             if (property == null) throw new InvalidOperationException("共享 UI 绑定字段已变化：" + target.GetType().Name + "." + field);
             property.objectReferenceValue = null; data.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        /// <summary>
+        /// 原十格栏用纯色 Image 表达 Mana/CD，但 Filled 在没有 Sprite 时会退回 Graphic 的完整矩形。
+        /// 只为缺失 Sprite 的原条补仓库既有工具同用的 UGUI 内置资源；颜色、尺寸、填充方向和无数字布局不变。
+        /// 修复发生于 inactive 导出树，不写正式来源、不创建新贴图，也不给 Runtime 热路径增加资源分配。
+        /// </summary>
+        private static void EnsureWandResourceSprites(GameObject root)
+        {
+            var held = root.GetComponentInChildren<HeldItemHud>(true);
+            var cells = new SerializedObject(held).FindProperty("_cells");
+            var sprite = AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd");
+            if (sprite == null) throw new InvalidOperationException("UGUI 内置填充 Sprite 不可用。");
+            for (int slot = 0; slot < Game.Core.HeldItemSlots.WandCount; slot++)
+                foreach (string field in new[] { "Mana", "Cooldown" })
+                {
+                    var image = cells.GetArrayElementAtIndex(slot).FindPropertyRelative(field).objectReferenceValue as Image;
+                    if (image == null || image.type != Image.Type.Filled)
+                        throw new InvalidOperationException("原法杖资源条缺少 Filled Image：" + slot + "/" + field);
+                    if (image.sprite == null) image.sprite = sprite;
+                }
         }
 
         private static void ValidatePresentation(GameObject root)

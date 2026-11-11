@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 17:14:27Z" end-time="2026-11-02 17:14:28Z" duration="0.6009517">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3903" result="Failed" site="Child" start-time="2026-11-02 17:14:27Z" end-time="2026-11-02 17:14:28Z" duration="0.600952" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3244" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="324" result="Failed" site="Child" start-time="2026-11-02 17:14:27Z" end-time="2026-11-02 17:14:28Z" duration="0.539641" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3245" name="Game" fullname="Game" runstate="Runnable" testcasecount="324" result="Failed" site="Child" start-time="2026-11-02 17:14:27Z" end-time="2026-11-02 17:14:28Z" duration="0.519436" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3246" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="324" result="Failed" site="Child" start-time="2026-11-02 17:14:27Z" end-time="2026-11-02 17:14:28Z" duration="0.501172" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3247" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="324" result="Failed" site="Child" start-time="2026-11-02 17:14:27Z" end-time="2026-11-02 17:14:28Z" duration="0.482887" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2859" name="CombatSnapshotSchedulingTests" fullname="Game.Multiplayer.Tests.CombatSnapshotSchedulingTests" classname="Game.Multiplayer.Tests.CombatSnapshotSchedulingTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-11-02 17:14:27Z" end-time="2026-11-02 17:14:28Z" duration="0.479934" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2865" name="RealPump_ReequippingTheSameWandAfterEmptyHandsResendsSetupSoundWithoutReplayingOutputBirths" fullname="Game.Multiplayer.Tests.CombatSnapshotSchedulingTests.RealPump_ReequippingTheSameWandAfterEmptyHandsResendsSetupSoundWithoutReplayingOutputBirths" methodname="RealPump_ReequippingTheSameWandAfterEmptyHandsResendsSetupSoundWithoutReplayingOutputBirths" classname="Game.Multiplayer.Tests.CombatSnapshotSchedulingTests" runstate="Runnable" seed="2079676681" result="Failed" start-time="2026-11-02 17:14:28Z" end-time="2026-11-02 17:14:28Z" duration="0.448259" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.CombatSnapshotSchedulingTests.RealPump_ReequippingTheSameWandAfterEmptyHandsResendsSetupSoundWithoutReplayingOutputBirths () [0x0066c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\CombatSnapshotSchedulingTests.cs:197
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[OnlineInventory] 权威库存无法发布，已停止该副本模拟以保留当前资产。
+Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

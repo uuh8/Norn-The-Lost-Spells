@@ -26,6 +26,19 @@ namespace Game.UI
         public int VisibleCount{get;private set;}public int FirstIndex{get;private set;}
         public RectTransform Panel=>_visual!=null?(RectTransform)_visual.transform:null;
         private static readonly ProfilerMarker Marker=new ProfilerMarker("Norn.Items.PickupList");
+        private IInventoryReadOnly CurrentRead => _nearby?.PresentationReadOnly ?? _inventory?.PresentationSource?.ReadOnly
+            ?? (_session != null && !_session.AccountInventoryReadOnly ? _session.ReadOnly : null);
+        /// <summary>
+        /// 在线 Scope 把原提示列表接到同 Actor 的附近读桥与背包；这里只显示候选，不提交 F 命令。
+        /// 清掉作者旧 Session/Hub 引用，防止等待线上 Source 时误读保留据点。提示与 Actor 同 Scene 销毁。
+        /// </summary>
+        public void ConfigureOnline(SinglePlayerInventoryController inventory, NearbyPickupController nearby, Collider actor)
+        {
+            if (_inventory == inventory && _nearby == nearby && _portalActor == actor && _session == null && _hub == null) return;
+            _session = null; _hub = null; _inventory = inventory; _nearby = nearby; _portalActor = actor;
+            _stationKind = -1; _portalTarget = null; _dirty = true;
+            if (_visual != null) _visual.SetActive(false);
+        }
         private void Awake()
         {
             // 兼容已保存的旧Scene：只在初始化查找一次并复制现有行，保留素材/字体/作者样式。
@@ -46,7 +59,7 @@ namespace Game.UI
         }
         private void OnEnable(){EventBus<NearbyPickupListChangedEvent>.Subscribe(OnList);_dirty=true;}
         private void OnDisable(){EventBus<NearbyPickupListChangedEvent>.Unsubscribe(OnList);if(_visual!=null)_visual.SetActive(false);}
-        private void OnList(NearbyPickupListChangedEvent e){if(_session?.ReadOnly?.InventoryId==e.InventoryId)_dirty=true;}
+        private void OnList(NearbyPickupListChangedEvent e){if(CurrentRead?.InventoryId==e.InventoryId)_dirty=true;}
         private void LateUpdate()
         {
             using var sample=Marker.Auto();
@@ -57,8 +70,9 @@ namespace Game.UI
                 && (point.Kind==HubStationKind.Shop || point.Kind==HubStationKind.Warehouse || point.Kind==HubStationKind.SpellResearch))station=(int)point.Kind;
             if(station < 0 && Time.timeScale > 0 && PortalInteractionRegistry.TryGetNearest(_portalActor, out portal)) station = 2;
             if(station!=_stationKind || !ReferenceEquals(portal,_portalTarget)){_stationKind=station;_portalTarget=portal;_dirty=true;}
-            bool hasItems=_nearby!=null && _nearby.isActiveAndEnabled && _nearby.Count>0;
-            bool show=(hasItems || _stationKind>=0) && Time.timeScale>0;
+            bool hasItems=CurrentRead!=null && _nearby!=null && _nearby.isActiveAndEnabled && _nearby.Count>0;
+            // 在线 Tab 只阻止本机输入，不把全局 timeScale 设为 0；原列表也要服从同一面板显隐。
+            bool show=(hasItems || _stationKind>=0) && Time.timeScale>0 && (_inventory==null || !_inventory.IsOpen);
             if(_visual==null)return;if(_visual.activeSelf!=show)_visual.SetActive(show);
             if(!show)return;var font=_inventory!=null?_inventory.UiFont:null;
             if(_nearby!=null && _revision!=_nearby.Revision || _font!=font)_dirty=true;
@@ -66,7 +80,8 @@ namespace Game.UI
         }
         public void RefreshNow()
         {
-            if(_session?.ReadOnly==null || _rows==null)return;
+            var inventory=CurrentRead;
+            if(inventory==null || _rows==null)return;
             INearbyPickupReadOnly read=_nearby;int count=_nearby!=null && _nearby.isActiveAndEnabled?read.Count:0;
             bool station=_stationKind>=0;
             int offset=station?1:0;
@@ -86,7 +101,7 @@ namespace Game.UI
                 }
                 int itemIndex=FirstIndex+i-offset;
                 bool selected=itemIndex==read.SelectedIndex;
-                if(_session.ReadOnly.TryGetView(read.GetItemId(itemIndex),out var item))
+                if(inventory.TryGetView(read.GetItemId(itemIndex),out var item))
                 {
                     _labels[i].text=(selected && !station?"F  ":"    ")+item.DisplayName;
                     _labels[i].color=selected?new Color(1,.92f,.6f,1):Color.white;

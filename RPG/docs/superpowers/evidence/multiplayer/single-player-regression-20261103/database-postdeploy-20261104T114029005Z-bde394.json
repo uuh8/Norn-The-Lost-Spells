@@ -1,0 +1,52 @@
+{
+  "SchemaVersion": 1,
+  "Passed": true,
+  "Database": "norn_online_dev",
+  "Port": 13384,
+  "StartedAtUtc": "2026-11-04T11:40:29.0266819Z",
+  "FinishedAtUtc": "2026-11-04T11:40:30.3326107Z",
+  "Stage": "Complete",
+  "FailureType": "",
+  "FailureCode": "",
+  "PrivateOptionFileRemoved": true,
+  "BackupSummarySha256": "c1d921c1d942bb412b20c18b7eec368db141a07eb34c2d6b768524c6855d0591",
+  "ExpectedMigrationRange": "1..16",
+  "AppliedMigrationCount": 16,
+  "MigrationSourceHashesVerified": true,
+  "OriginalMigrationHistoryPreserved": true,
+  "OriginalBaseTableCount": 32,
+  "UnchangedOriginalBaseTableCount": 31,
+  "SchemaMigrationsRows": "13->16",
+  "NewTables": [
+    "accountpracticecontinuity",
+    "charactereconomyprogress",
+    "charactershopstates"
+  ],
+  "AssetSummaryChecks": [
+    {
+      "Name": "WalletBalance",
+      "Unchanged": true
+    },
+    {
+      "Name": "CharacterVersions",
+      "Unchanged": true
+    },
+    {
+      "Name": "ItemRevisions",
+      "Unchanged": true
+    },
+    {
+      "Name": "FiniteSpellCharges",
+      "Unchanged": true
+    },
+    {
+      "Name": "BackpackGrants",
+      "Unchanged": true
+    },
+    {
+      "Name": "HubGroundItems",
+      "Unchanged": true
+    }
+  ],
+  "Scope": "Read-only exact development database before HTTP smoke; no API/Profile, migration, service control or asset writes."
+}

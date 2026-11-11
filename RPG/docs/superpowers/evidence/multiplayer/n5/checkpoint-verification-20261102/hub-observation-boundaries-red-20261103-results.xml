@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="15" result="Failed(Child)" total="15" passed="14" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 23:58:45Z" end-time="2026-11-02 23:58:46Z" duration="1.7110682">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3986" result="Failed" site="Child" start-time="2026-11-02 23:58:45Z" end-time="2026-11-02 23:58:46Z" duration="1.711068" total="15" passed="14" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3295" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="364" result="Passed" start-time="2026-11-02 23:58:45Z" end-time="2026-11-02 23:58:46Z" duration="0.752055" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="3296" name="Game" fullname="Game" runstate="Runnable" testcasecount="364" result="Passed" start-time="2026-11-02 23:58:45Z" end-time="2026-11-02 23:58:46Z" duration="0.678128" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3297" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="364" result="Passed" start-time="2026-11-02 23:58:45Z" end-time="2026-11-02 23:58:46Z" duration="0.576553" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="3298" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="364" result="Passed" start-time="2026-11-02 23:58:45Z" end-time="2026-11-02 23:58:46Z" duration="0.385629" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="3119" name="PlayerMovementReadOnlyObservationTests" fullname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests" classname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-11-02 23:58:45Z" end-time="2026-11-02 23:58:46Z" duration="0.285901" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="3125" name="CurrentInputActorReadsActualCurrentAcrossBindingAndOldActorUnbinding" fullname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.CurrentInputActorReadsActualCurrentAcrossBindingAndOldActorUnbinding" methodname="CurrentInputActorReadsActualCurrentAcrossBindingAndOldActorUnbinding" classname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests" runstate="Runnable" seed="1937247481" result="Passed" start-time="2026-11-02 23:58:45Z" end-time="2026-11-02 23:58:46Z" duration="0.127185" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3124" name="DisabledActorAndControllerRemainSafeToObserveWithoutRebindingInput" fullname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.DisabledActorAndControllerRemainSafeToObserveWithoutRebindingInput" methodname="DisabledActorAndControllerRemainSafeToObserveWithoutRebindingInput" classname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests" runstate="Runnable" seed="1135769253" result="Passed" start-time="2026-11-02 23:58:46Z" end-time="2026-11-02 23:58:46Z" duration="0.006088" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3120" name="RepeatedObservationPreservesInputGatesAndPendingUntilRealSampleConsumesOnce" fullname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.RepeatedObservationPreservesInputGatesAndPendingUntilRealSampleConsumesOnce" methodname="RepeatedObservationPreservesInputGatesAndPendingUntilRealSampleConsumesOnce" classname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests" runstate="Runnable" seed="1775680276" result="Passed" start-time="2026-11-02 23:58:46Z" end-time="2026-11-02 23:58:46Z" duration="0.032471" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="3123" name="ReplicaWithoutLocalInputCanBeObservedBeforeOrAfterInitialization" fullname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.ReplicaWithoutLocalInputCanBeObservedBeforeOrAfterInitialization" classname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-02 23:58:46Z" end-time="2026-11-02 23:58:46Z" duration="0.008613" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="3121" name="ReplicaWithoutLocalInputCanBeObservedBeforeOrAfterInitialization(False)" fullname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.ReplicaWithoutLocalInputCanBeObservedBeforeOrAfterInitialization(False)" methodname="ReplicaWithoutLocalInputCanBeObservedBeforeOrAfterInitialization" classname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests" runstate="Runnable" seed="488858002" result="Passed" start-time="2026-11-02 23:58:46Z" end-time="2026-11-02 23:58:46Z" duration="0.001558" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="3122" name="ReplicaWithoutLocalInputCanBeObservedBeforeOrAfterInitialization(True)" fullname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.ReplicaWithoutLocalInputCanBeObservedBeforeOrAfterInitialization(True)" methodname="ReplicaWithoutLocalInputCanBeObservedBeforeOrAfterInitialization" classname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests" runstate="Runnable" seed="1088822671" result="Passed" start-time="2026-11-02 23:58:46Z" end-time="2026-11-02 23:58:46Z" duration="0.000509" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="5456" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="988" result="Failed" site="Child" start-time="2026-11-02 23:58:46Z" end-time="2026-11-02 23:58:46Z" duration="0.711002" total="10" passed="9" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="5457" name="Game" fullname="Game" runstate="Runnable" testcasecount="988" result="Failed" site="Child" start-time="2026-11-02 23:58:46Z" end-time="2026-11-02 23:58:46Z" duration="0.617327" total="10" passed="9" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="5458" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="988" result="Failed" site="Child" start-time="2026-11-02 23:58:46Z" end-time="2026-11-02 23:58:46Z" duration="0.518955" total="10" passed="9" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="5459" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="988" result="Failed" site="Child" start-time="2026-11-02 23:58:46Z" end-time="2026-11-02 23:58:46Z" duration="0.419127" total="10" passed="9" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="4448" name="HubMovementReadOnlyProbeTests" fullname="Game.Run.Tests.HubMovementReadOnlyProbeTests" classname="Game.Run.Tests.HubMovementReadOnlyProbeTests" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-11-02 23:58:46Z" end-time="2026-11-02 23:58:46Z" duration="0.319916" total="10" passed="9" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="4457" name="ActualCurrentIsDistinctFromCachedActorAndDeltaIsOnlyForSameActor" fullname="Game.Run.Tests.HubMovementReadOnlyProbeTests.ActualCurrentIsDistinctFromCachedActorAndDeltaIsOnlyForSameActor" methodname="ActualCurrentIsDistinctFromCachedActorAndDeltaIsOnlyForSameActor" classname="Game.Run.Tests.HubMovementReadOnlyProbeTests" runstate="Runnable" seed="79995591" result="Passed" start-time="2026-11-02 23:58:46Z" end-time="2026-11-02 23:58:46Z" duration="0.028324" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4459" name="ContactsAreBoundedTo32AndRejectExpiredOrStoppedObservations" fullname="Game.Run.Tests.HubMovementReadOnlyProbeTests.ContactsAreBoundedTo32AndRejectExpiredOrStoppedObservations" methodname="ContactsAreBoundedTo32AndRejectExpiredOrStoppedObservations" classname="Game.Run.Tests.HubMovementReadOnlyProbeTests" runstate="Runnable" seed="720132254" result="Passed" start-time="2026-11-02 23:58:46Z" end-time="2026-11-02 23:58:46Z" duration="0.003758" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4455" name="DisableFlushesPartialWindowExactlyOnce" fullname="Game.Run.Tests.HubMovementReadOnlyProbeTests.DisableFlushesPartialWindowExactlyOnce" methodname="DisableFlushesPartialWindowExactlyOnce" classname="Game.Run.Tests.HubMovementReadOnlyProbeTests" runstate="Runnable" seed="141331952" result="Passed" start-time="2026-11-02 23:58:46Z" end-time="2026-11-02 23:58:46Z" duration="0.022925" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4454" name="DurationHardLimitStopsWithoutAddingExpiredFrame" fullname="Game.Run.Tests.HubMovementReadOnlyProbeTests.DurationHardLimitStopsWithoutAddingExpiredFrame" methodname="DurationHardLimitStopsWithoutAddingExpiredFrame" classname="Game.Run.Tests.HubMovementReadOnlyProbeTests" runstate="Runnable" seed="404716329" result="Passed" start-time="2026-11-02 23:58:46Z" end-time="2026-11-02 23:58:46Z" duration="0.017176" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4456" name="ExcessiveSampleRequestIsClampedTo240AndNeverRestarts" fullname="Game.Run.Tests.HubMovementReadOnlyProbeTests.ExcessiveSampleRequestIsClampedTo240AndNeverRestarts" methodname="ExcessiveSampleRequestIsClampedTo240AndNeverRestarts" classname="Game.Run.Tests.HubMovementReadOnlyProbeTests" runstate="Runnable" seed="616187985" result="Passed" start-time="2026-11-02 23:58:46Z" end-time="2026-11-02 23:58:46Z" duration="0.087706" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4458" name="LateSubscribedUiIsUnknownAndObservedOwnersHaveFixedBound" fullname="Game.Run.Tests.HubMovementReadOnlyProbeTests.LateSubscribedUiIsUnknownAndObservedOwnersHaveFixedBound" methodname="LateSubscribedUiIsUnknownAndObservedOwnersHaveFixedBound" classname="Game.Run.Tests.HubMovementReadOnlyProbeTests" runstate="Runnable" seed="960966311" result="Failed" start-time="2026-11-02 23:58:46Z" end-time="2026-11-02 23:58:46Z" duration="0.033507" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  事件必须复制成可序列化值，不能写成空JSON对象
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.HubMovementReadOnlyProbeTests.LateSubscribedUiIsUnknownAndObservedOwnersHaveFixedBound () [0x0017b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\HubMovementReadOnlyProbeTests.cs:184
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4452" name="NoPositiveOptInNeverSamplesOrWrites" fullname="Game.Run.Tests.HubMovementReadOnlyProbeTests.NoPositiveOptInNeverSamplesOrWrites" classname="Game.Run.Tests.HubMovementReadOnlyProbeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-02 23:58:46Z" end-time="2026-11-02 23:58:46Z" duration="0.007136" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4450" name="NoPositiveOptInNeverSamplesOrWrites(0)" fullname="Game.Run.Tests.HubMovementReadOnlyProbeTests.NoPositiveOptInNeverSamplesOrWrites(0)" methodname="NoPositiveOptInNeverSamplesOrWrites" classname="Game.Run.Tests.HubMovementReadOnlyProbeTests" runstate="Runnable" seed="1948814768" result="Passed" start-time="2026-11-02 23:58:46Z" end-time="2026-11-02 23:58:46Z" duration="0.002065" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4451" name="NoPositiveOptInNeverSamplesOrWrites(-1)" fullname="Game.Run.Tests.HubMovementReadOnlyProbeTests.NoPositiveOptInNeverSamplesOrWrites(-1)" methodname="NoPositiveOptInNeverSamplesOrWrites" classname="Game.Run.Tests.HubMovementReadOnlyProbeTests" runstate="Runnable" seed="508282085" result="Passed" start-time="2026-11-02 23:58:46Z" end-time="2026-11-02 23:58:46Z" duration="0.001280" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="4449" name="ReadOnlyModeNeverConsumesCommandsOrRequestsRoomObservation" fullname="Game.Run.Tests.HubMovementReadOnlyProbeTests.ReadOnlyModeNeverConsumesCommandsOrRequestsRoomObservation" methodname="ReadOnlyModeNeverConsumesCommandsOrRequestsRoomObservation" classname="Game.Run.Tests.HubMovementReadOnlyProbeTests" runstate="Runnable" seed="1117996215" result="Passed" start-time="2026-11-02 23:58:46Z" end-time="2026-11-02 23:58:46Z" duration="0.004243" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4453" name="SampleCapacityStopsOnceAndDuplicateFrameDoesNotSpendCapacity" fullname="Game.Run.Tests.HubMovementReadOnlyProbeTests.SampleCapacityStopsOnceAndDuplicateFrameDoesNotSpendCapacity" methodname="SampleCapacityStopsOnceAndDuplicateFrameDoesNotSpendCapacity" classname="Game.Run.Tests.HubMovementReadOnlyProbeTests" runstate="Runnable" seed="668780541" result="Passed" start-time="2026-11-02 23:58:46Z" end-time="2026-11-02 23:58:46Z" duration="0.011900" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

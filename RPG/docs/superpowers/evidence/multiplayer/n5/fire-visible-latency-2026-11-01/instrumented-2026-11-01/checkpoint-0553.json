@@ -1,0 +1,100 @@
+{
+  "RecordedUtc": "2026-11-01T05:53:47.359739+00:00",
+  "State": "Implementation and matching builds verified; calibrated Native capture blocked",
+  "Tests": {
+    "timing-green": {
+      "State": "Finished",
+      "Passed": 31,
+      "Failed": 0,
+      "UpdatedUtc": "2026-11-01T04:38:06.2013270Z"
+    },
+    "n5-and-rendering-regression": {
+      "State": "Finished",
+      "Passed": 457,
+      "Failed": 0,
+      "UpdatedUtc": "2026-11-01T04:44:49.5905344Z"
+    },
+    "timing-record-allocation": {
+      "State": "Finished",
+      "Passed": 1,
+      "Failed": 0,
+      "UpdatedUtc": "2026-11-01T04:52:30.5712685Z"
+    },
+    "review-fix-lifecycle": {
+      "State": "Finished",
+      "Passed": 9,
+      "Failed": 0,
+      "UpdatedUtc": "2026-11-01T04:52:50.9377998Z"
+    }
+  },
+  "ClientBuild": {
+    "Result": "Succeeded",
+    "UnityVersion": "6000.3.16f1",
+    "Output": "Builds/OnlineAccounts/Menu/NornMenuClient.exe",
+    "RecordedAtUtc": "2026-11-01T05:12:31.7092196Z",
+    "DedicatedServer": false,
+    "RenderingInputsIsolated": false,
+    "ClientResourcesExcluded": false,
+    "Errors": 0
+  },
+  "ServerBuild": {
+    "Result": "Succeeded",
+    "UnityVersion": "6000.3.16f1",
+    "Output": "Builds/OnlineRooms/Server/NornRoomServer.exe",
+    "RecordedAtUtc": "2026-11-01T05:20:00.7489331Z",
+    "DedicatedServer": true,
+    "RenderingInputsIsolated": false,
+    "ClientResourcesExcluded": false,
+    "Errors": 0
+  },
+  "ProtocolVersion": 4,
+  "NativeFirstCase": {
+    "Error": "Memory guard stopped case",
+    "RecordedUtc": "2026-11-01T05:22:33.4638919Z",
+    "State": "Failed"
+  },
+  "NativeFirstCaseStartedTiming": false,
+  "NativeFirstCaseEventCounts": {
+    "a": 0,
+    "b": 0
+  },
+  "NativeSecondCase": "Prepared only; Editor close blocked by dirty persistent assets",
+  "EditorSafety": {
+    "RecordedUtc": "2026-11-01T05:49:49.613926+00:00",
+    "State": "Blocked before normal close; no close request sent",
+    "Reason": "Editor reports dirty persistent assets; user required stopping rather than saving/discarding",
+    "DirtyAssetCount": 67,
+    "DirtyScene": false,
+    "Compiling": false,
+    "TestsRunning": false,
+    "Building": false,
+    "EditorProcessId": 24836,
+    "NoForce": true,
+    "NoSaveOrDiscard": true
+  },
+  "AvailableBytes": 12756389888,
+  "ContainerImplementationAuthorized": true,
+  "ContainerImplementationStarted": false,
+  "FireLatencyRootCauseEstablished": false,
+  "DrawIsCpuSubmissionOnly": true,
+  "N5Complete": false,
+  "ProtectionChecked": 1365,
+  "ProtectionDifferences": 15,
+  "ProtectionMissing": [],
+  "Next": "User handles/reviews dirty Editor assets; fresh safety check then normal close, run native-2 without rebuilding",
+  "AdditionalBlockedAction": {
+    "RecordedUtc": "2026-11-01T05:53:47.359739+00:00",
+    "Action": "Add and execute exact-hash guarded restoration of Physics serialization",
+    "Target": "RPG/ProjectSettings/DynamicsManager.asset",
+    "State": "Denied; known not executed",
+    "Reason": "Automatic approval review considered possible rollback of user/tool settings changes; current explicit permission only covers checking and normal Editor exit",
+    "EvidenceOnly": "Current SHA256 53cf96c365b85eefe78b3cda76af21f68246744277ae6ca21ffd6a67bdb72a1c equals pre-existing historical reserialization artifact",
+    "Retried": false,
+    "WorkaroundAttempted": false,
+    "CurrentDifferencePreserved": true,
+    "Resolution": "Leave the difference; restoring it requires explicit relevant authorization and review"
+  },
+  "KnownTaskProcessIdsStillPresent": [],
+  "ScopedSourceDiffCheckExit": 0,
+  "GlobalDiffCheck": "Existing serialized P7/P8 Prefab trailing whitespace reported; not edited in this timing slice"
+}

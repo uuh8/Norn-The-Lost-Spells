@@ -6,13 +6,17 @@ using Game.NetworkProtocol;
 using Microsoft.AspNetCore.Identity;
 using MySqlConnector;
 using Norn.Business.Content;
+using Norn.Business.Features.Inventory;
 using Norn.Business.Infrastructure;
 
 namespace Norn.Business.Features.Accounts;
 
 /// <summary>账户/角色初始化由一个事务提交；Client 没有初始物品、余额或 PlayerId 的指定权。</summary>
-public sealed class AccountService(OnlineDatabase database, ContentManifestValidator content, OnlineOptions options, TimeProvider clock)
+public sealed class AccountService(OnlineDatabase database, ContentManifestValidator content, OnlineOptions options, TimeProvider clock, InventoryService inventory)
 {
+    // 新角色创建时的初始余额，不是登录奖励或余额保底。只在注册事务里插入新钱包，
+    // 账号唯一键/钱包主键与事务一起保证成功一次；旧号和已花掉的金币绝不由登录补回。
+    private const long RegistrationGold = 10000;
     private readonly PasswordHasher<string> _hasher = new();
     // 不存在的账号也做 PasswordHasher 验证，避免直接跳过昂贵计算而明显泄漏用户名存在性。
     private readonly string _dummyHash = new PasswordHasher<string>().HashPassword("dummy", "not-a-real-account-password");
@@ -28,7 +32,7 @@ public sealed class AccountService(OnlineDatabase database, ContentManifestValid
         {
             await connection.ExecuteAsync(new CommandDefinition("INSERT INTO Accounts VALUES(@Account,@Username,@Normalized,@Hash,@Now)",
                 new { Account = account, request.Username, Normalized = request.Username.ToUpperInvariant(), Hash = hash, Now = clock.GetUtcNow().UtcDateTime }, transaction, cancellationToken: ct));
-            await connection.ExecuteAsync(new CommandDefinition("INSERT INTO Characters VALUES(@Player,@Account,1,'online.hub.spawn'); INSERT INTO Wallets VALUES(@Player,0)", new { Player = player, Account = account }, transaction, cancellationToken: ct));
+            await connection.ExecuteAsync(new CommandDefinition("INSERT INTO Characters VALUES(@Player,@Account,1,'online.hub.spawn'); INSERT INTO Wallets VALUES(@Player,@Gold)", new { Player = player, Account = account, Gold = RegistrationGold }, transaction, cancellationToken: ct));
             string wand = Guid.NewGuid().ToString("N"), spell = Guid.NewGuid().ToString("N");
             for (int i = 0; i < options.StarterContentIds.Length; i++)
             {
@@ -48,6 +52,9 @@ public sealed class AccountService(OnlineDatabase database, ContentManifestValid
                 INSERT INTO OwnedCombatStarterAudits(CharacterId,GrantVersion,Status,WandInstanceId,SpellInstanceId,BeforeJson,RecordedAtUtc)
                 VALUES(@Player,1,'Applied',@Wand,@Spell,JSON_OBJECT('Reason','RegistrationV1','Charges',@Charges),UTC_TIMESTAMP(6))
                 """, new { Player = player, Wand = wand, Spell = spell, Charges = options.StarterSpellCharges }, transaction, cancellationToken: ct));
+            // 最小包属于账号初始资产，必须先于第一次Profile存在。与杖卡、钱包同事务提交，
+            // 来源明确为AccountBaseline，不创建假Run，也不借首次GET掩盖注册漏发。
+            await inventory.GrantRegistrationBackpackAsync(connection, transaction, player, ct);
             await transaction.CommitAsync(ct);
             return new RegisterAccountReply { Username = request.Username };
         }
@@ -76,6 +83,9 @@ public sealed class AccountService(OnlineDatabase database, ContentManifestValid
     }
 
     public static string HashToken(string token) => Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
+    /// <summary>只供已认证Endpoint派生和平scope；原Bearer和认证表TokenHash都不出服务边界、不写日志。</summary>
+    internal static string PracticeSessionScope(string token)
+        => Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes("Norn.PracticeSession.v1:" + HashToken(token))));
 
     private static void ValidateCredentials(string? username, string? password)
     {

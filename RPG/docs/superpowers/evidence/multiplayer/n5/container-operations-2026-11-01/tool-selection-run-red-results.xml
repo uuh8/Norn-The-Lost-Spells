@@ -1,0 +1,961 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="128" result="Failed(Child)" total="128" passed="117" failed="11" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-01 11:21:32Z" end-time="2026-11-01 11:23:02Z" duration="89.9843317">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3352" result="Failed" site="Child" start-time="2026-11-01 11:21:32Z" end-time="2026-11-01 11:23:02Z" duration="89.984332" total="128" passed="117" failed="11" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="4785" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="823" result="Failed" site="Child" start-time="2026-11-01 11:21:33Z" end-time="2026-11-01 11:23:02Z" duration="89.888300" total="128" passed="117" failed="11" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="4786" name="Game" fullname="Game" runstate="Runnable" testcasecount="823" result="Failed" site="Child" start-time="2026-11-01 11:21:33Z" end-time="2026-11-01 11:23:02Z" duration="89.794982" total="128" passed="117" failed="11" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="4787" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="823" result="Failed" site="Child" start-time="2026-11-01 11:21:33Z" end-time="2026-11-01 11:23:02Z" duration="89.694175" total="128" passed="117" failed="11" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="4788" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="823" result="Failed" site="Child" start-time="2026-11-01 11:21:33Z" end-time="2026-11-01 11:23:02Z" duration="89.594096" total="128" passed="117" failed="11" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="4131" name="OnlineInventoryPresentationSourceTests" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="47" result="Failed" site="Child" start-time="2026-11-01 11:21:33Z" end-time="2026-11-01 11:21:58Z" duration="24.812866" total="47" passed="39" failed="8" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="4175" name="AuthoritativeToolChoiceSelectsRealContainerWhileKeepingLastWandResources" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.AuthoritativeToolChoiceSelectsRealContainerWhileKeepingLastWandResources" methodname="AuthoritativeToolChoiceSelectsRealContainerWhileKeepingLastWandResources" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1562301644" result="Failed" start-time="2026-11-01 11:21:33Z" end-time="2026-11-01 11:21:33Z" duration="0.066801" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 9
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.AuthoritativeToolChoiceSelectsRealContainerWhileKeepingLastWandResources () [0x00019] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:388
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4149" name="BackpackSpareWandUsesItsOwnInstanceCapacityWithoutCreatingEquippedResources" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.BackpackSpareWandUsesItsOwnInstanceCapacityWithoutCreatingEquippedResources" methodname="BackpackSpareWandUsesItsOwnInstanceCapacityWithoutCreatingEquippedResources" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="528697653" result="Passed" start-time="2026-11-01 11:21:33Z" end-time="2026-11-01 11:21:33Z" duration="0.008008" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4174" name="CanInstallChecksCurrentVersionFencesWithoutPublishingSequenceInventoryOrResources" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.CanInstallChecksCurrentVersionFencesWithoutPublishingSequenceInventoryOrResources" methodname="CanInstallChecksCurrentVersionFencesWithoutPublishingSequenceInventoryOrResources" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="173919271" result="Passed" start-time="2026-11-01 11:21:33Z" end-time="2026-11-01 11:21:33Z" duration="0.005417" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4148" name="CarriedSnapshotCopiesDtoComponentsAndKeepsOldViewsAcrossAtomicReplacement" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.CarriedSnapshotCopiesDtoComponentsAndKeepsOldViewsAcrossAtomicReplacement" methodname="CarriedSnapshotCopiesDtoComponentsAndKeepsOldViewsAcrossAtomicReplacement" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1009907579" result="Passed" start-time="2026-11-01 11:21:33Z" end-time="2026-11-01 11:21:33Z" duration="0.003557" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4167" name="CarriedSourceRemainsPassiveRejectsOldEpochAndClearsToolsAndComponentsOnDispose" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.CarriedSourceRemainsPassiveRejectsOldEpochAndClearsToolsAndComponentsOnDispose" methodname="CarriedSourceRemainsPassiveRejectsOldEpochAndClearsToolsAndComponentsOnDispose" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1260173856" result="Passed" start-time="2026-11-01 11:21:33Z" end-time="2026-11-01 11:21:33Z" duration="0.004146" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4147" name="CompleteCarriedSnapshotDisplaysRealBagGridToolsAndOnlyActualSpellEligibility" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.CompleteCarriedSnapshotDisplaysRealBagGridToolsAndOnlyActualSpellEligibility" methodname="CompleteCarriedSnapshotDisplaysRealBagGridToolsAndOnlyActualSpellEligibility" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="208733624" result="Passed" start-time="2026-11-01 11:21:33Z" end-time="2026-11-01 11:21:33Z" duration="0.006426" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4172" name="CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-01 11:21:33Z" end-time="2026-11-01 11:21:57Z" duration="24.179776" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4168" name="CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses(172,False)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses(172,False)" methodname="CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1383958547" result="Passed" start-time="2026-11-01 11:21:33Z" end-time="2026-11-01 11:21:33Z" duration="0.022934" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4169" name="CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses(4096,False)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses(4096,False)" methodname="CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1154812035" result="Passed" start-time="2026-11-01 11:21:33Z" end-time="2026-11-01 11:21:45Z" duration="12.226292" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4170" name="CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses(172,True)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses(172,True)" methodname="CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="663400524" result="Passed" start-time="2026-11-01 11:21:45Z" end-time="2026-11-01 11:21:45Z" duration="0.020799" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4171" name="CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses(4096,True)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses(4096,True)" methodname="CompleteLargeCarriedSnapshotKeepsEveryItemAndActualSpellUses" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="46024476" result="Passed" start-time="2026-11-01 11:21:45Z" end-time="2026-11-01 11:21:57Z" duration="11.904163" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="4146" name="DisposeClearsPreviousReadReferencesAndRejectsLateSnapshots" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.DisposeClearsPreviousReadReferencesAndRejectsLateSnapshots" methodname="DisposeClearsPreviousReadReferencesAndRejectsLateSnapshots" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="941442934" result="Passed" start-time="2026-11-01 11:21:57Z" end-time="2026-11-01 11:21:57Z" duration="0.003001" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4139" name="ForeignIdentityNeverPublishesAReadModel" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ForeignIdentityNeverPublishesAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-01 11:21:57Z" end-time="2026-11-01 11:21:57Z" duration="0.011283" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4135" name="ForeignIdentityNeverPublishesAReadModel(&quot;RunId&quot;,&quot;foreign-run&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ForeignIdentityNeverPublishesAReadModel(&quot;RunId&quot;,&quot;foreign-run&quot;)" methodname="ForeignIdentityNeverPublishesAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="292419867" result="Passed" start-time="2026-11-01 11:21:57Z" end-time="2026-11-01 11:21:57Z" duration="0.002520" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4136" name="ForeignIdentityNeverPublishesAReadModel(&quot;PlayerId&quot;,&quot;foreign-player&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ForeignIdentityNeverPublishesAReadModel(&quot;PlayerId&quot;,&quot;foreign-player&quot;)" methodname="ForeignIdentityNeverPublishesAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="2119517097" result="Passed" start-time="2026-11-01 11:21:57Z" end-time="2026-11-01 11:21:57Z" duration="0.001543" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4137" name="ForeignIdentityNeverPublishesAReadModel(&quot;InventoryId&quot;,&quot;foreign-inventory&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ForeignIdentityNeverPublishesAReadModel(&quot;InventoryId&quot;,&quot;foreign-inventory&quot;)" methodname="ForeignIdentityNeverPublishesAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="165055932" result="Passed" start-time="2026-11-01 11:21:57Z" end-time="2026-11-01 11:21:57Z" duration="0.001493" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4138" name="ForeignIdentityNeverPublishesAReadModel(&quot;GameplayConfigHash&quot;,&quot;ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ForeignIdentityNeverPublishesAReadModel(&quot;GameplayConfigHash&quot;,&quot;ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff&quot;)" methodname="ForeignIdentityNeverPublishesAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1310509275" result="Passed" start-time="2026-11-01 11:21:57Z" end-time="2026-11-01 11:21:57Z" duration="0.001552" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="4132" name="ImportKeepsAuthoritativeManaCooldownProgramRevisionAndSpellUses" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ImportKeepsAuthoritativeManaCooldownProgramRevisionAndSpellUses" methodname="ImportKeepsAuthoritativeManaCooldownProgramRevisionAndSpellUses" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="195299346" result="Passed" start-time="2026-11-01 11:21:57Z" end-time="2026-11-01 11:21:57Z" duration="0.003077" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4179" name="InvalidAuthoritativeToolChoiceCannotPublishAReadModel" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidAuthoritativeToolChoiceCannotPublishAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-11-01 11:21:57Z" end-time="2026-11-01 11:21:57Z" duration="0.096953" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="4176" name="InvalidAuthoritativeToolChoiceCannotPublishAReadModel(&quot;slot-outside&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidAuthoritativeToolChoiceCannotPublishAReadModel(&quot;slot-outside&quot;)" methodname="InvalidAuthoritativeToolChoiceCannotPublishAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="703304140" result="Failed" start-time="2026-11-01 11:21:57Z" end-time="2026-11-01 11:21:57Z" duration="0.003774" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidAuthoritativeToolChoiceCannotPublishAReadModel (System.String defect) [0x00066] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:413
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="4177" name="InvalidAuthoritativeToolChoiceCannotPublishAReadModel(&quot;unbound-slot&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidAuthoritativeToolChoiceCannotPublishAReadModel(&quot;unbound-slot&quot;)" methodname="InvalidAuthoritativeToolChoiceCannotPublishAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1395969613" result="Failed" start-time="2026-11-01 11:21:57Z" end-time="2026-11-01 11:21:57Z" duration="0.002597" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidAuthoritativeToolChoiceCannotPublishAReadModel (System.String defect) [0x00066] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:413
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="4178" name="InvalidAuthoritativeToolChoiceCannotPublishAReadModel(&quot;noncontainer&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidAuthoritativeToolChoiceCannotPublishAReadModel(&quot;noncontainer&quot;)" methodname="InvalidAuthoritativeToolChoiceCannotPublishAReadModel" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="892891287" result="Failed" start-time="2026-11-01 11:21:57Z" end-time="2026-11-01 11:21:57Z" duration="0.002457" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidAuthoritativeToolChoiceCannotPublishAReadModel (System.String defect) [0x00066] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:413
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="4163" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-11-01 11:21:57Z" end-time="2026-11-01 11:21:58Z" duration="0.117774" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4150" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;missing-state&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;missing-state&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="866458348" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002852" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4151" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;missing-components&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;missing-components&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="901406027" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002015" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4152" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;schema-zero&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;schema-zero&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="801812537" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001799" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4153" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;duplicate-component&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;duplicate-component&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="111276517" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001765" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4154" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;forbidden-material&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;forbidden-material&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1234173420" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001613" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4155" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;over-capacity&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;over-capacity&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1105068867" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001935" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4156" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;collision&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;collision&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1508902225" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002309" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4157" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;missing-parent&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;missing-parent&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="849774453" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001765" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4158" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;foreign-root&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;foreign-root&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="323257265" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001642" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4159" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;solid-shell&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;solid-shell&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="880178234" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001962" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4160" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;noncontainer-state&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;noncontainer-state&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="461373872" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001843" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4161" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;missing-spell-use&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;missing-spell-use&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="2003933652" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001919" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4162" name="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;fake-spell-use&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents(&quot;fake-spell-use&quot;)" methodname="InvalidCarriedReplacementKeepsWholePreviousSourceAndComponents" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1332102656" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001713" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="4143" name="InvalidReplacementLeavesPreviousInventoryAndResourcesIntact" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.InvalidReplacementLeavesPreviousInventoryAndResourcesIntact" methodname="InvalidReplacementLeavesPreviousInventoryAndResourcesIntact" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1111384584" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002389" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4145" name="MissingBagAndUnsupportedCapabilitiesFailClosed" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.MissingBagAndUnsupportedCapabilitiesFailClosed" methodname="MissingBagAndUnsupportedCapabilitiesFailClosed" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="686840694" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002752" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4142" name="MissingResourceOrEligibilityStateNeverUsesClientDefaults" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.MissingResourceOrEligibilityStateNeverUsesClientDefaults" methodname="MissingResourceOrEligibilityStateNeverUsesClientDefaults" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="433244323" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002165" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4134" name="MutableIncomingArraysCannotRewritePublishedValues" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.MutableIncomingArraysCannotRewritePublishedValues" methodname="MutableIncomingArraysCannotRewritePublishedValues" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1060691263" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002036" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4141" name="OrphanInstalledCardAndFlattenedBackpackAreRejected" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.OrphanInstalledCardAndFlattenedBackpackAreRejected" methodname="OrphanInstalledCardAndFlattenedBackpackAreRejected" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="746274890" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001699" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4144" name="ReadSourceDoesNotHandleAuthorityRequestsOrRegenerateResources" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.ReadSourceDoesNotHandleAuthorityRequestsOrRegenerateResources" methodname="ReadSourceDoesNotHandleAuthorityRequestsOrRegenerateResources" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1390641541" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001920" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4166" name="RotatedCarriedShapeUsesActualHoleAndRejectsOccupiedCell" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.RotatedCarriedShapeUsesActualHoleAndRejectsOccupiedCell" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.061812" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4164" name="RotatedCarriedShapeUsesActualHoleAndRejectsOccupiedCell(False)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.RotatedCarriedShapeUsesActualHoleAndRejectsOccupiedCell(False)" methodname="RotatedCarriedShapeUsesActualHoleAndRejectsOccupiedCell" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="138987954" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002278" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4165" name="RotatedCarriedShapeUsesActualHoleAndRejectsOccupiedCell(True)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.RotatedCarriedShapeUsesActualHoleAndRejectsOccupiedCell(True)" methodname="RotatedCarriedShapeUsesActualHoleAndRejectsOccupiedCell" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="787248172" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001703" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="4184" name="SelectionVersionCannotHideAChangedToolBindingOrRegress" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.SelectionVersionCannotHideAChangedToolBindingOrRegress" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.108227" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="4180" name="SelectionVersionCannotHideAChangedToolBindingOrRegress(&quot;choice-changed&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.SelectionVersionCannotHideAChangedToolBindingOrRegress(&quot;choice-changed&quot;)" methodname="SelectionVersionCannotHideAChangedToolBindingOrRegress" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="321232638" result="Failed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.004443" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.SelectionVersionCannotHideAChangedToolBindingOrRegress (System.String defect) [0x000f7] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:436
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="4181" name="SelectionVersionCannotHideAChangedToolBindingOrRegress(&quot;binding-changed&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.SelectionVersionCannotHideAChangedToolBindingOrRegress(&quot;binding-changed&quot;)" methodname="SelectionVersionCannotHideAChangedToolBindingOrRegress" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="888150936" result="Failed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001916" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.SelectionVersionCannotHideAChangedToolBindingOrRegress (System.String defect) [0x000f7] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:436
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="4182" name="SelectionVersionCannotHideAChangedToolBindingOrRegress(&quot;last-wand-changed&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.SelectionVersionCannotHideAChangedToolBindingOrRegress(&quot;last-wand-changed&quot;)" methodname="SelectionVersionCannotHideAChangedToolBindingOrRegress" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="280177372" result="Failed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001842" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.SelectionVersionCannotHideAChangedToolBindingOrRegress (System.String defect) [0x000f7] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:436
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="4183" name="SelectionVersionCannotHideAChangedToolBindingOrRegress(&quot;old-version&quot;)" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.SelectionVersionCannotHideAChangedToolBindingOrRegress(&quot;old-version&quot;)" methodname="SelectionVersionCannotHideAChangedToolBindingOrRegress" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1915018477" result="Failed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.003947" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  String lengths are both 4. Strings differ at index 0.
+  Expected: "tool"
+  But was:  "wand"
+  -----------^
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.SelectionVersionCannotHideAChangedToolBindingOrRegress (System.String defect) [0x0010b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:437
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="4173" name="SnapshotOver4096ItemsNeverPublishesPartialSource" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.SnapshotOver4096ItemsNeverPublishesPartialSource" methodname="SnapshotOver4096ItemsNeverPublishesPartialSource" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1628111374" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.005441" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4133" name="StableReadInterfacesInstallNewValuesWithoutReplacingUiSource" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.StableReadInterfacesInstallNewValuesWithoutReplacingUiSource" methodname="StableReadInterfacesInstallNewValuesWithoutReplacingUiSource" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="1822944961" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002347" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4140" name="WrongEpochAndStaleSequenceCannotOverwriteCurrentState" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.WrongEpochAndStaleSequenceCannotOverwriteCurrentState" methodname="WrongEpochAndStaleSequenceCannotOverwriteCurrentState" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="2128618610" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002120" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="4185" name="OnlineOwnedWorkspaceTests" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" testcasecount="81" result="Failed" site="Child" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:23:02Z" duration="64.680692" total="81" passed="78" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="4271" name="BusyToolSelectionCannotBecomeSuccessfulWhenTheSameCommandIsRetriedLater" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.BusyToolSelectionCannotBecomeSuccessfulWhenTheSameCommandIsRetriedLater" methodname="BusyToolSelectionCannotBecomeSuccessfulWhenTheSameCommandIsRetriedLater" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1126026246" result="Failed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.074589" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineOwnedWorkspaceTests.BusyToolSelectionCannotBecomeSuccessfulWhenTheSameCommandIsRetriedLater () [0x000bd] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:593
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4201" name="CarriedBagAndMixedBottle_KeepTrustedCapacityIdentityAndIndependentComponents" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.CarriedBagAndMixedBottle_KeepTrustedCapacityIdentityAndIndependentComponents" methodname="CarriedBagAndMixedBottle_KeepTrustedCapacityIdentityAndIndependentComponents" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="579275219" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.004651" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4223" name="CarriedSolidMaterialWithoutExplicitQuantityState_IsRejectedInsteadOfImportingAnEmptyShell" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.CarriedSolidMaterialWithoutExplicitQuantityState_IsRejectedInsteadOfImportingAnEmptyShell" methodname="CarriedSolidMaterialWithoutExplicitQuantityState_IsRejectedInsteadOfImportingAnEmptyShell" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="963213409" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.003641" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4259" name="ClosureOver4096Items_IsRejectedAtomically" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.ClosureOver4096Items_IsRejectedAtomically" methodname="ClosureOver4096Items_IsRejectedAtomically" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1736373976" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.003815" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4203" name="ContainerQuantitiesAboveFloatIntegerPrecision_AreImportedExactly" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.ContainerQuantitiesAboveFloatIntegerPrecision_AreImportedExactly" methodname="ContainerQuantitiesAboveFloatIntegerPrecision_AreImportedExactly" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1954860177" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.003546" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4190" name="DifferentGameplayConfigHash_IsRejectedBeforeWorkspacePublication" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.DifferentGameplayConfigHash_IsRejectedBeforeWorkspacePublication" methodname="DifferentGameplayConfigHash_IsRejectedBeforeWorkspacePublication" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="828119343" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002889" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4198" name="DuplicateComplete_ConsumesManaAndFiniteUsesOnce" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.DuplicateComplete_ConsumesManaAndFiniteUsesOnce" methodname="DuplicateComplete_ConsumesManaAndFiniteUsesOnce" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1671008546" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.003333" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4231" name="EquippedTool_UsesTrustedUseKindAndKeepsItsPlayerEquipmentRoot" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.EquippedTool_UsesTrustedUseKindAndKeepsItsPlayerEquipmentRoot" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.010870" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4228" name="EquippedTool_UsesTrustedUseKindAndKeepsItsPlayerEquipmentRoot(&quot;online.bottle&quot;,0)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.EquippedTool_UsesTrustedUseKindAndKeepsItsPlayerEquipmentRoot(&quot;online.bottle&quot;,0)" methodname="EquippedTool_UsesTrustedUseKindAndKeepsItsPlayerEquipmentRoot" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="46257746" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002602" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4229" name="EquippedTool_UsesTrustedUseKindAndKeepsItsPlayerEquipmentRoot(&quot;online.bottle&quot;,6)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.EquippedTool_UsesTrustedUseKindAndKeepsItsPlayerEquipmentRoot(&quot;online.bottle&quot;,6)" methodname="EquippedTool_UsesTrustedUseKindAndKeepsItsPlayerEquipmentRoot" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="2011253123" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002686" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4230" name="EquippedTool_UsesTrustedUseKindAndKeepsItsPlayerEquipmentRoot(&quot;online.throwable&quot;,6)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.EquippedTool_UsesTrustedUseKindAndKeepsItsPlayerEquipmentRoot(&quot;online.throwable&quot;,6)" methodname="EquippedTool_UsesTrustedUseKindAndKeepsItsPlayerEquipmentRoot" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1559557007" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002085" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="4234" name="EquippedToolOutsideSevenTrustedSlots_IsRejected" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.EquippedToolOutsideSevenTrustedSlots_IsRejected" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.097392" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4232" name="EquippedToolOutsideSevenTrustedSlots_IsRejected(-1)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.EquippedToolOutsideSevenTrustedSlots_IsRejected(-1)" methodname="EquippedToolOutsideSevenTrustedSlots_IsRejected" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1512544304" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002561" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4233" name="EquippedToolOutsideSevenTrustedSlots_IsRejected(7)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.EquippedToolOutsideSevenTrustedSlots_IsRejected(7)" methodname="EquippedToolOutsideSevenTrustedSlots_IsRejected" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="2118503328" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002608" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="4200" name="EventBusOnlyMatchingInventoryHandlesRequestAndPublishesReceipt" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.EventBusOnlyMatchingInventoryHandlesRequestAndPublishesReceipt" methodname="EventBusOnlyMatchingInventoryHandlesRequestAndPublishesReceipt" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1372853333" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.004221" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4202" name="ExplicitSchemaOneEmptyBottle_IsAcceptedWithoutInventingContents" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.ExplicitSchemaOneEmptyBottle_IsAcceptedWithoutInventingContents" methodname="ExplicitSchemaOneEmptyBottle_IsAcceptedWithoutInventingContents" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="531784416" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002863" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4195" name="FiniteZeroChargeSpell_PreparesNoGameplayOutputOrFreeMana" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.FiniteZeroChargeSpell_PreparesNoGameplayOutputOrFreeMana" methodname="FiniteZeroChargeSpell_PreparesNoGameplayOutputOrFreeMana" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1684775041" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.003321" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4197" name="ForeignWandRequest_IsRejectedWithoutSpendingOwnedResources" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.ForeignWandRequest_IsRejectedWithoutSpendingOwnedResources" methodname="ForeignWandRequest_IsRejectedWithoutSpendingOwnedResources" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1838085192" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002308" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4194" name="ImportPreservesIdentityFiniteChargesAndSelectedWandWithoutReadingLocalProfile" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.ImportPreservesIdentityFiniteChargesAndSelectedWandWithoutReadingLocalProfile" methodname="ImportPreservesIdentityFiniteChargesAndSelectedWandWithoutReadingLocalProfile" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="658374771" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.003462" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4191" name="InstalledSpellWithMissingParent_IsRejectedAtomically" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InstalledSpellWithMissingParent_IsRejectedAtomically" methodname="InstalledSpellWithMissingParent_IsRejectedAtomically" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1042095347" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002153" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4196" name="InstanceWandStatsOverrideTemplateWithoutMutatingSharedDefinition" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InstanceWandStatsOverrideTemplateWithoutMutatingSharedDefinition" methodname="InstanceWandStatsOverrideTemplateWithoutMutatingSharedDefinition" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="963445669" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.003863" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4250" name="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.104737" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4237" name="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;collision&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;collision&quot;)" methodname="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1333588053" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.003276" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4238" name="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;bounds&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;bounds&quot;)" methodname="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1727688655" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002611" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4239" name="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;missing-parent&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;missing-parent&quot;)" methodname="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="211491585" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001953" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4240" name="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;null-parent&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;null-parent&quot;)" methodname="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1052259464" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002389" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4241" name="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;empty-parent&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;empty-parent&quot;)" methodname="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1125342014" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001952" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4242" name="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;wrong-parent-kind&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;wrong-parent-kind&quot;)" methodname="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1520157773" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.003230" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4243" name="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;foreign-root&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;foreign-root&quot;)" methodname="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="816679120" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001939" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4244" name="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;bag-slot&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;bag-slot&quot;)" methodname="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1926937002" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002685" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4245" name="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;bag-grid&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;bag-grid&quot;)" methodname="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1130144032" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002346" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4246" name="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;backpack-slot&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;backpack-slot&quot;)" methodname="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="632958994" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002593" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4247" name="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;wand-slot&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;wand-slot&quot;)" methodname="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1427452305" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001776" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4248" name="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;rotation&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;rotation&quot;)" methodname="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1542647414" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001817" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4249" name="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;duplicate-identity&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished(&quot;duplicate-identity&quot;)" methodname="InvalidCarriedOwnershipOrGrid_IsRejectedBeforeAnyWorkspaceIsPublished" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="2051233772" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002766" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="4219" name="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" testcasecount="14" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.104952" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4205" name="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;missing-state&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;missing-state&quot;)" methodname="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1039528439" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.005808" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4206" name="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;schema-zero&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;schema-zero&quot;)" methodname="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1314784407" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001769" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4207" name="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;schema-two&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;schema-two&quot;)" methodname="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1346357941" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001665" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4208" name="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;empty-shell&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;empty-shell&quot;)" methodname="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="564495776" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002595" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4209" name="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;missing-components&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;missing-components&quot;)" methodname="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="2124488062" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.001794" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4210" name="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;null-component&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;null-component&quot;)" methodname="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1426743375" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002526" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4211" name="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;duplicate-key&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;duplicate-key&quot;)" methodname="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="175010473" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002121" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4212" name="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;zero-quantity&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;zero-quantity&quot;)" methodname="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="925370181" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002332" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4213" name="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;unknown-zero&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;unknown-zero&quot;)" methodname="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="772570934" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002008" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4214" name="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;unknown-nine&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;unknown-nine&quot;)" methodname="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1286446700" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002990" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4215" name="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;forbidden-fire&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;forbidden-fire&quot;)" methodname="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="215763206" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002834" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4216" name="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;over-capacity&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;over-capacity&quot;)" methodname="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="594415252" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.003031" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4217" name="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;ulong-overflow&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;ulong-overflow&quot;)" methodname="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1478027980" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002880" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4218" name="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;too-many-components&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping(&quot;too-many-components&quot;)" methodname="InvalidContainerState_IsRejectedAtomicallyWithoutDefaultingOrClamping" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="314712612" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002902" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="4235" name="ItemWithoutUseCapabilityCannotBecomeAnEquippedTool" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.ItemWithoutUseCapabilityCannotBecomeAnEquippedTool" methodname="ItemWithoutUseCapabilityCannotBecomeAnEquippedTool" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="650941940" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.002854" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4258" name="LegalCarriedClosureBeyondOldFlatLimit_ImportsAllInstances" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.LegalCarriedClosureBeyondOldFlatLimit_ImportsAllInstances" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:22:20Z" duration="21.326437" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4256" name="LegalCarriedClosureBeyondOldFlatLimit_ImportsAllInstances(172)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.LegalCarriedClosureBeyondOldFlatLimit_ImportsAllInstances(172)" methodname="LegalCarriedClosureBeyondOldFlatLimit_ImportsAllInstances" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="138425087" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:21:58Z" duration="0.041005" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4257" name="LegalCarriedClosureBeyondOldFlatLimit_ImportsAllInstances(4096)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.LegalCarriedClosureBeyondOldFlatLimit_ImportsAllInstances(4096)" methodname="LegalCarriedClosureBeyondOldFlatLimit_ImportsAllInstances" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="834789123" result="Passed" start-time="2026-11-01 11:21:58Z" end-time="2026-11-01 11:22:20Z" duration="21.228600" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="4255" name="NonCarriedRootLocations_AreRejectedRatherThanImportedAsPlayerEquipment" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.NonCarriedRootLocations_AreRejectedRatherThanImportedAsPlayerEquipment" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-01 11:22:20Z" end-time="2026-11-01 11:22:20Z" duration="0.012161" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4251" name="NonCarriedRootLocations_AreRejectedRatherThanImportedAsPlayerEquipment(Warehouse)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.NonCarriedRootLocations_AreRejectedRatherThanImportedAsPlayerEquipment(Warehouse)" methodname="NonCarriedRootLocations_AreRejectedRatherThanImportedAsPlayerEquipment" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="730899436" result="Passed" start-time="2026-11-01 11:22:20Z" end-time="2026-11-01 11:22:20Z" duration="0.002330" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4252" name="NonCarriedRootLocations_AreRejectedRatherThanImportedAsPlayerEquipment(WorldItem)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.NonCarriedRootLocations_AreRejectedRatherThanImportedAsPlayerEquipment(WorldItem)" methodname="NonCarriedRootLocations_AreRejectedRatherThanImportedAsPlayerEquipment" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1782751558" result="Passed" start-time="2026-11-01 11:22:20Z" end-time="2026-11-01 11:22:20Z" duration="0.001768" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4253" name="NonCarriedRootLocations_AreRejectedRatherThanImportedAsPlayerEquipment(ThrownContainer)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.NonCarriedRootLocations_AreRejectedRatherThanImportedAsPlayerEquipment(ThrownContainer)" methodname="NonCarriedRootLocations_AreRejectedRatherThanImportedAsPlayerEquipment" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1375539767" result="Passed" start-time="2026-11-01 11:22:20Z" end-time="2026-11-01 11:22:20Z" duration="0.001590" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4254" name="NonCarriedRootLocations_AreRejectedRatherThanImportedAsPlayerEquipment(SpellStorage)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.NonCarriedRootLocations_AreRejectedRatherThanImportedAsPlayerEquipment(SpellStorage)" methodname="NonCarriedRootLocations_AreRejectedRatherThanImportedAsPlayerEquipment" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1239552627" result="Passed" start-time="2026-11-01 11:22:20Z" end-time="2026-11-01 11:22:20Z" duration="0.001628" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="4222" name="NonContainerCannotCarryContainerState_EvenAnExplicitEmptyState" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.NonContainerCannotCarryContainerState_EvenAnExplicitEmptyState" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-01 11:22:20Z" end-time="2026-11-01 11:22:20Z" duration="0.096341" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4220" name="NonContainerCannotCarryContainerState_EvenAnExplicitEmptyState(0)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.NonContainerCannotCarryContainerState_EvenAnExplicitEmptyState(0)" methodname="NonContainerCannotCarryContainerState_EvenAnExplicitEmptyState" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="659182605" result="Passed" start-time="2026-11-01 11:22:20Z" end-time="2026-11-01 11:22:20Z" duration="0.003512" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4221" name="NonContainerCannotCarryContainerState_EvenAnExplicitEmptyState(1)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.NonContainerCannotCarryContainerState_EvenAnExplicitEmptyState(1)" methodname="NonContainerCannotCarryContainerState_EvenAnExplicitEmptyState" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1014166053" result="Passed" start-time="2026-11-01 11:22:20Z" end-time="2026-11-01 11:22:20Z" duration="0.001838" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="4189" name="OldOrUnknownOwnedSchema_IsRejectedInsteadOfGrantingUnlimitedUses" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.OldOrUnknownOwnedSchema_IsRejectedInsteadOfGrantingUnlimitedUses" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-11-01 11:22:20Z" end-time="2026-11-01 11:22:20Z" duration="0.100665" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4186" name="OldOrUnknownOwnedSchema_IsRejectedInsteadOfGrantingUnlimitedUses(uint.MinValue)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.OldOrUnknownOwnedSchema_IsRejectedInsteadOfGrantingUnlimitedUses(uint.MinValue)" methodname="OldOrUnknownOwnedSchema_IsRejectedInsteadOfGrantingUnlimitedUses" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="568562750" result="Passed" start-time="2026-11-01 11:22:20Z" end-time="2026-11-01 11:22:20Z" duration="0.002453" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4187" name="OldOrUnknownOwnedSchema_IsRejectedInsteadOfGrantingUnlimitedUses(1)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.OldOrUnknownOwnedSchema_IsRejectedInsteadOfGrantingUnlimitedUses(1)" methodname="OldOrUnknownOwnedSchema_IsRejectedInsteadOfGrantingUnlimitedUses" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="748817918" result="Passed" start-time="2026-11-01 11:22:20Z" end-time="2026-11-01 11:22:20Z" duration="0.002239" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4188" name="OldOrUnknownOwnedSchema_IsRejectedInsteadOfGrantingUnlimitedUses(3)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.OldOrUnknownOwnedSchema_IsRejectedInsteadOfGrantingUnlimitedUses(3)" methodname="OldOrUnknownOwnedSchema_IsRejectedInsteadOfGrantingUnlimitedUses" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="2011533526" result="Passed" start-time="2026-11-01 11:22:20Z" end-time="2026-11-01 11:22:20Z" duration="0.001819" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="4262" name="PresentationCaptureIncludesRealBagToolsSpareWandAndIndependentContainerStates" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.PresentationCaptureIncludesRealBagToolsSpareWandAndIndependentContainerStates" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-01 11:22:20Z" end-time="2026-11-01 11:22:20Z" duration="0.101438" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4260" name="PresentationCaptureIncludesRealBagToolsSpareWandAndIndependentContainerStates(True)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.PresentationCaptureIncludesRealBagToolsSpareWandAndIndependentContainerStates(True)" methodname="PresentationCaptureIncludesRealBagToolsSpareWandAndIndependentContainerStates" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1567836211" result="Passed" start-time="2026-11-01 11:22:20Z" end-time="2026-11-01 11:22:20Z" duration="0.005439" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4261" name="PresentationCaptureIncludesRealBagToolsSpareWandAndIndependentContainerStates(False)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.PresentationCaptureIncludesRealBagToolsSpareWandAndIndependentContainerStates(False)" methodname="PresentationCaptureIncludesRealBagToolsSpareWandAndIndependentContainerStates" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1064250721" result="Passed" start-time="2026-11-01 11:22:20Z" end-time="2026-11-01 11:22:20Z" duration="0.002364" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="4267" name="PresentationCaptureKeepsEveryCarriedItemAndOnlyActualSpellUses" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.PresentationCaptureKeepsEveryCarriedItemAndOnlyActualSpellUses" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-01 11:22:20Z" end-time="2026-11-01 11:23:02Z" duration="42.379305" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4263" name="PresentationCaptureKeepsEveryCarriedItemAndOnlyActualSpellUses(172,False)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.PresentationCaptureKeepsEveryCarriedItemAndOnlyActualSpellUses(172,False)" methodname="PresentationCaptureKeepsEveryCarriedItemAndOnlyActualSpellUses" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1810681565" result="Passed" start-time="2026-11-01 11:22:20Z" end-time="2026-11-01 11:22:20Z" duration="0.042653" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4264" name="PresentationCaptureKeepsEveryCarriedItemAndOnlyActualSpellUses(4096,False)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.PresentationCaptureKeepsEveryCarriedItemAndOnlyActualSpellUses(4096,False)" methodname="PresentationCaptureKeepsEveryCarriedItemAndOnlyActualSpellUses" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="741302646" result="Passed" start-time="2026-11-01 11:22:20Z" end-time="2026-11-01 11:22:41Z" duration="21.466561" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4265" name="PresentationCaptureKeepsEveryCarriedItemAndOnlyActualSpellUses(172,True)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.PresentationCaptureKeepsEveryCarriedItemAndOnlyActualSpellUses(172,True)" methodname="PresentationCaptureKeepsEveryCarriedItemAndOnlyActualSpellUses" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1261445832" result="Passed" start-time="2026-11-01 11:22:41Z" end-time="2026-11-01 11:22:42Z" duration="0.035875" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4266" name="PresentationCaptureKeepsEveryCarriedItemAndOnlyActualSpellUses(4096,True)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.PresentationCaptureKeepsEveryCarriedItemAndOnlyActualSpellUses(4096,True)" methodname="PresentationCaptureKeepsEveryCarriedItemAndOnlyActualSpellUses" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1647155532" result="Passed" start-time="2026-11-01 11:22:42Z" end-time="2026-11-01 11:23:02Z" duration="20.741404" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="4268" name="PresentationCaptureRetainsExistingSpellStorageAfterAuthoritativeCardMove" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.PresentationCaptureRetainsExistingSpellStorageAfterAuthoritativeCardMove" methodname="PresentationCaptureRetainsExistingSpellStorageAfterAuthoritativeCardMove" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1486448871" result="Passed" start-time="2026-11-01 11:23:02Z" end-time="2026-11-01 11:23:02Z" duration="0.004727" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4199" name="RepeatedOrOlderAuthorityTick_DoesNotRegenerateManaTwice" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.RepeatedOrOlderAuthorityTick_DoesNotRegenerateManaTwice" methodname="RepeatedOrOlderAuthorityTick_DoesNotRegenerateManaTwice" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="533723356" result="Passed" start-time="2026-11-01 11:23:02Z" end-time="2026-11-01 11:23:02Z" duration="0.003234" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4236" name="RotatedContainerHole_AllowsAnotherItemInTheActualUnoccupiedCell" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.RotatedContainerHole_AllowsAnotherItemInTheActualUnoccupiedCell" methodname="RotatedContainerHole_AllowsAnotherItemInTheActualUnoccupiedCell" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="215475947" result="Passed" start-time="2026-11-01 11:23:02Z" end-time="2026-11-01 11:23:02Z" duration="0.003890" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4227" name="SelectedWandCannotBeABackpackSpareEvenWhenItsParentChainIsValid" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.SelectedWandCannotBeABackpackSpareEvenWhenItsParentChainIsValid" methodname="SelectedWandCannotBeABackpackSpareEvenWhenItsParentChainIsValid" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1901332050" result="Passed" start-time="2026-11-01 11:23:02Z" end-time="2026-11-01 11:23:02Z" duration="0.001847" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4192" name="SelectedWandMustBelongToImportedEquippedSlots" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.SelectedWandMustBelongToImportedEquippedSlots" methodname="SelectedWandMustBelongToImportedEquippedSlots" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1748488578" result="Passed" start-time="2026-11-01 11:23:02Z" end-time="2026-11-01 11:23:02Z" duration="0.003338" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4269" name="SelectingBoundContainerKeepsLastWandAndAmountsBlocksCastingAndStillTicksMana" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.SelectingBoundContainerKeepsLastWandAndAmountsBlocksCastingAndStillTicksMana" methodname="SelectingBoundContainerKeepsLastWandAndAmountsBlocksCastingAndStillTicksMana" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="929306924" result="Failed" start-time="2026-11-01 11:23:02Z" end-time="2026-11-01 11:23:02Z" duration="0.002798" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineOwnedWorkspaceTests.SelectingBoundContainerKeepsLastWandAndAmountsBlocksCastingAndStillTicksMana () [0x00078] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:548
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4226" name="SpareWandAndItsInstalledCard_AreReachableThroughTheRealCarriedBag" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.SpareWandAndItsInstalledCard_AreReachableThroughTheRealCarriedBag" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-01 11:23:02Z" end-time="2026-11-01 11:23:02Z" duration="0.007713" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4224" name="SpareWandAndItsInstalledCard_AreReachableThroughTheRealCarriedBag(True)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.SpareWandAndItsInstalledCard_AreReachableThroughTheRealCarriedBag(True)" methodname="SpareWandAndItsInstalledCard_AreReachableThroughTheRealCarriedBag" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="823146181" result="Passed" start-time="2026-11-01 11:23:02Z" end-time="2026-11-01 11:23:02Z" duration="0.002457" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4225" name="SpareWandAndItsInstalledCard_AreReachableThroughTheRealCarriedBag(False)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.SpareWandAndItsInstalledCard_AreReachableThroughTheRealCarriedBag(False)" methodname="SpareWandAndItsInstalledCard_AreReachableThroughTheRealCarriedBag" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1260441378" result="Passed" start-time="2026-11-01 11:23:02Z" end-time="2026-11-01 11:23:02Z" duration="0.002066" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="4270" name="ToolChoiceUsesReceiptDedupPersistsAcrossEpochAndClearsWhenReselectingSameWand" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.ToolChoiceUsesReceiptDedupPersistsAcrossEpochAndClearsWhenReselectingSameWand" methodname="ToolChoiceUsesReceiptDedupPersistsAcrossEpochAndClearsWhenReselectingSameWand" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1989008521" result="Failed" start-time="2026-11-01 11:23:02Z" end-time="2026-11-01 11:23:02Z" duration="0.002411" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineOwnedWorkspaceTests.ToolChoiceUsesReceiptDedupPersistsAcrossEpochAndClearsWhenReselectingSameWand () [0x00011] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:566
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4278" name="ToolSelectionRequiresThisActorsExactBoundContainerAndCurrentInventory" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.ToolSelectionRequiresThisActorsExactBoundContainerAndCurrentInventory" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-11-01 11:23:02Z" end-time="2026-11-01 11:23:02Z" duration="0.107034" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4272" name="ToolSelectionRequiresThisActorsExactBoundContainerAndCurrentInventory(&quot;wrong-id&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.ToolSelectionRequiresThisActorsExactBoundContainerAndCurrentInventory(&quot;wrong-id&quot;)" methodname="ToolSelectionRequiresThisActorsExactBoundContainerAndCurrentInventory" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="896183169" result="Passed" start-time="2026-11-01 11:23:02Z" end-time="2026-11-01 11:23:02Z" duration="0.002775" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4273" name="ToolSelectionRequiresThisActorsExactBoundContainerAndCurrentInventory(&quot;wrong-slot&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.ToolSelectionRequiresThisActorsExactBoundContainerAndCurrentInventory(&quot;wrong-slot&quot;)" methodname="ToolSelectionRequiresThisActorsExactBoundContainerAndCurrentInventory" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="535518866" result="Passed" start-time="2026-11-01 11:23:02Z" end-time="2026-11-01 11:23:02Z" duration="0.002216" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4274" name="ToolSelectionRequiresThisActorsExactBoundContainerAndCurrentInventory(&quot;slot-outside&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.ToolSelectionRequiresThisActorsExactBoundContainerAndCurrentInventory(&quot;slot-outside&quot;)" methodname="ToolSelectionRequiresThisActorsExactBoundContainerAndCurrentInventory" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1016275800" result="Passed" start-time="2026-11-01 11:23:02Z" end-time="2026-11-01 11:23:02Z" duration="0.001807" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4275" name="ToolSelectionRequiresThisActorsExactBoundContainerAndCurrentInventory(&quot;noncontainer&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.ToolSelectionRequiresThisActorsExactBoundContainerAndCurrentInventory(&quot;noncontainer&quot;)" methodname="ToolSelectionRequiresThisActorsExactBoundContainerAndCurrentInventory" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="242603397" result="Passed" start-time="2026-11-01 11:23:02Z" end-time="2026-11-01 11:23:02Z" duration="0.002512" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4276" name="ToolSelectionRequiresThisActorsExactBoundContainerAndCurrentInventory(&quot;bag-container&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.ToolSelectionRequiresThisActorsExactBoundContainerAndCurrentInventory(&quot;bag-container&quot;)" methodname="ToolSelectionRequiresThisActorsExactBoundContainerAndCurrentInventory" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1529739685" result="Passed" start-time="2026-11-01 11:23:02Z" end-time="2026-11-01 11:23:02Z" duration="0.002215" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4277" name="ToolSelectionRequiresThisActorsExactBoundContainerAndCurrentInventory(&quot;stale-version&quot;)" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.ToolSelectionRequiresThisActorsExactBoundContainerAndCurrentInventory(&quot;stale-version&quot;)" methodname="ToolSelectionRequiresThisActorsExactBoundContainerAndCurrentInventory" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="529898207" result="Passed" start-time="2026-11-01 11:23:02Z" end-time="2026-11-01 11:23:02Z" duration="0.002341" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="4204" name="TwoBottlesReferencingOneDtoState_ReceiveIndependentRuntimeCompositions" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.TwoBottlesReferencingOneDtoState_ReceiveIndependentRuntimeCompositions" methodname="TwoBottlesReferencingOneDtoState_ReceiveIndependentRuntimeCompositions" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1129479771" result="Passed" start-time="2026-11-01 11:23:02Z" end-time="2026-11-01 11:23:02Z" duration="0.002208" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4193" name="WandWithoutExplicitTemplateMarkerOrInstanceStats_IsRejected" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.WandWithoutExplicitTemplateMarkerOrInstanceStats_IsRejected" methodname="WandWithoutExplicitTemplateMarkerOrInstanceStats_IsRejected" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="2105391156" result="Passed" start-time="2026-11-01 11:23:02Z" end-time="2026-11-01 11:23:02Z" duration="0.002595" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

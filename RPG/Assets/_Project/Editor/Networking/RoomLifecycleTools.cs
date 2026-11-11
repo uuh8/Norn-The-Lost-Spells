@@ -20,6 +20,7 @@ namespace Game.Project.Editor
         public const string ClientPath = "Builds/OnlineRooms/Client/NornRoomClient.exe";
         public const string PortalScenePath = "Assets/_Project/Scenes/Online/OnlineRoom.unity";
         public const string ConnectionPrefabPath = "Assets/_Project/Prefabs/Online/RoomConnection.prefab";
+        private const string InventoryRegressionScenePath = "Assets/_Project/Scenes/Tests/SinglePlayerInventoryRegression.unity";
         [MenuItem("Tools/Norn/Online/Setup Portal Room Entry")]
         public static void SetupPortal()
         {
@@ -39,10 +40,10 @@ namespace Game.Project.Editor
                 var data = new SerializedObject(profile); data.FindProperty("_connectionPrefab").objectReferenceValue = prefab;
                 data.FindProperty("_connectionScene").stringValue = PortalScenePath;
                 data.FindProperty("_hubScene").stringValue = "Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub.unity";
-                var portals = data.FindProperty("_portals"); portals.arraySize = 3;
-                string[] paths = { "Assets/_Project/Scenes/P7_DemoRun.unity", "Assets/_Project/Scenes/P8_BossField.unity", "Assets/_Project/Scenes/Tests/RaidWorldSandbox.unity" };
-                string[] keys = { "p7", "p8", "raid" };
-                for (int i = 0; i < 3; i++) { var binding = portals.GetArrayElementAtIndex(i); binding.FindPropertyRelative("PortalScenePath").stringValue = paths[i]; binding.FindPropertyRelative("DungeonId").stringValue = keys[i]; }
+                var portals = data.FindProperty("_portals"); portals.arraySize = 4;
+                string[] paths = { "Assets/_Project/Scenes/P7_DemoRun.unity", "Assets/_Project/Scenes/P8_BossField.unity", "Assets/_Project/Scenes/Tests/RaidWorldSandbox.unity", "Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Home.unity" };
+                string[] keys = { "p7", "p8", "raid", "home" };
+                for (int i = 0; i < paths.Length; i++) { var binding = portals.GetArrayElementAtIndex(i); binding.FindPropertyRelative("PortalScenePath").stringValue = paths[i]; binding.FindPropertyRelative("DungeonId").stringValue = keys[i]; }
                 data.ApplyModifiedPropertiesWithoutUndo();
                 // 正式连接Scene只负责N2入场展示；不复制P7/P8客户端角色到服务器伪称权威玩法。
                 if (AssetDatabase.LoadAssetAtPath<SceneAsset>(PortalScenePath) == null)
@@ -92,5 +93,63 @@ namespace Game.Project.Editor
         public static void BuildClient() { OnlineMovementTools.Verify(); OnlineBuildTools.Build(false, ScenePath, ClientPath, "room-client"); }
         [MenuItem("Tools/Norn/Online/Build Room Dedicated Server (Windows)")]
         public static void BuildServer() { OnlineMovementTools.Verify(); OnlineBuildTools.Build(true, ScenePath, ServerPath, "room-server"); }
+        /// <summary>
+        /// 独立验证源码的Dedicated分支，沿正式Build工具与原Rendering保护Scope；
+        /// 每次输出到唯一验证目录，不覆盖业务菜单正在使用的ServerPath，不启动任何玩家或服务。
+        /// </summary>
+        public static void BuildServerVerification()
+        {
+            OnlineMovementTools.Verify();
+            string stamp = DateTime.UtcNow.ToString("yyyyMMddTHHmmssZ");
+            string output = "Builds/OnlineValidation/RoomServer/" + stamp + "/NornRoomServer.exe";
+            OnlineBuildTools.Build(true, ScenePath, output, "room-server-verification-" + stamp);
+        }
+        /// <summary>
+        /// 显式Native库存回归复用正式OnlineRoom的Scope、Camera和原UI，再加私有Ticket准入探针。
+        /// 历史Lab只有技术HUD，不能据它声称测试过Tab。独立副本不保存原Scene或修改全局Build列表。
+        /// </summary>
+        public static void BuildInventoryRegressionClient()
+        {
+            OnlineSceneSetup.RequireCleanEditor();
+            OnlineMovementTools.Verify();
+            CreateInventoryRegressionScene();
+            string stamp = DateTime.UtcNow.ToString("yyyyMMddTHHmmssZ");
+            OnlineBuildTools.Build(false, InventoryRegressionScenePath, "Builds/OnlineValidation/InventoryClient/" + stamp + "/NornInventoryClient.exe",
+                "inventory-client-verification-" + stamp);
+        }
+
+        private static void CreateInventoryRegressionScene()
+        {
+            // 先由Unity生成完整Scene副本与.meta，不能手写GUID或在正式场景插入诊断组件。
+            // 不覆盖用户正在查看/编辑的旧验证场景；正常构建从MainMenu执行，原Scene始终不保存。
+            var existing = SceneManager.GetSceneByPath(InventoryRegressionScenePath);
+            if (existing.IsValid() && existing.isLoaded)
+                throw new InvalidOperationException("请先关闭已打开的库存验证场景，再从干净Editor构建。");
+            var template = SceneManager.GetSceneByPath(PortalScenePath);
+            bool openedTemplate = !template.IsValid() || !template.isLoaded;
+            if (openedTemplate) template = EditorSceneManager.OpenScene(PortalScenePath, OpenSceneMode.Additive);
+            try
+            {
+                if (!EditorSceneManager.SaveScene(template, InventoryRegressionScenePath, true))
+                    throw new InvalidOperationException("正式OnlineRoom的独立验证副本保存失败。");
+            }
+            finally { if (openedTemplate) EditorSceneManager.CloseScene(template, true); }
+            AssetDatabase.ImportAsset(InventoryRegressionScenePath, ImportAssetOptions.ForceSynchronousImport);
+            var scene = EditorSceneManager.OpenScene(InventoryRegressionScenePath, OpenSceneMode.Additive);
+            try
+            {
+                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ConnectionPrefabPath);
+                if (prefab == null || prefab.GetComponent<RoomNetworkManager>() == null || prefab.GetComponent<JoinTicketAuthenticator>() == null)
+                    throw new InvalidOperationException("正式RoomConnection准入Prefab缺失，不能用替代认证构建验收。");
+                foreach (var root in scene.GetRootGameObjects())
+                    if (root.GetComponentInChildren<RoomNetworkManager>(true) != null)
+                        throw new InvalidOperationException("OnlineRoom模板已含连接Owner，拒绝额外生成第二个Manager。");
+                var connection = (GameObject)PrefabUtility.InstantiatePrefab(prefab, scene);
+                connection.AddComponent<RoomAdmissionProbe>();
+                CombatPresentationTools.InstallOnline(scene);
+                if (!EditorSceneManager.SaveScene(scene)) throw new InvalidOperationException("库存验证场景装配保存失败。");
+            }
+            finally { EditorSceneManager.CloseScene(scene, true); }
+        }
     }
 }

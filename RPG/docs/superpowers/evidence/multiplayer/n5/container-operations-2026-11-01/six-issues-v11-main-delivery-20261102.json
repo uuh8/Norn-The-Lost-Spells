@@ -1,0 +1,116 @@
+{
+  "RecordedAtUtc": "2026-11-02T17:53:54.563360+00:00",
+  "ProtocolVersion": 11,
+  "ReadyStatusCode": 200,
+  "Ready": "ready",
+  "SystemInfo": {
+    "service": "norn.business",
+    "version": "0.1.0",
+    "protocolVersion": 11
+  },
+  "AppliedMigrations": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "Migration010Scope": "New independent checkpoint journal tables only; no asset or lease rewrite",
+  "OriginalAssetTables": [
+    {
+      "Table": "Accounts",
+      "Rows": 127,
+      "OriginalColumnsUnchanged": true,
+      "Sha256": "a848fe364e4e213bf154534d0243b29c4e658d5c216d845970cea2c71f7e8fa0"
+    },
+    {
+      "Table": "Characters",
+      "Rows": 127,
+      "OriginalColumnsUnchanged": true,
+      "Sha256": "63515bccdd2984f1695d5ff638d91c4fd79f6ce3f0f9c1359afe00e35f2c3905"
+    },
+    {
+      "Table": "Wallets",
+      "Rows": 127,
+      "OriginalColumnsUnchanged": true,
+      "Sha256": "4fdbd4ebb51d07278435905db867fe8f9bca6ef4e8b9f4bd714b8a65b0a27499"
+    },
+    {
+      "Table": "Items",
+      "Rows": 256,
+      "OriginalColumnsUnchanged": true,
+      "Sha256": "18680e0e50adaac9922e44d111a304bf240c2c58b406cab7741e88872e10172e"
+    },
+    {
+      "Table": "ItemLocations",
+      "Rows": 256,
+      "OriginalColumnsUnchanged": true,
+      "Sha256": "5bd699cd42ed6ef9fb20e021119df236a9f745a44353bbaa79dcb9cc0ee9db8b"
+    },
+    {
+      "Table": "CharacterCombatLoadouts",
+      "Rows": 120,
+      "OriginalColumnsUnchanged": true,
+      "Sha256": "d1241b2fe422c359ca1e306a670492b68807827fc2869c50336b56ea1ec0c094"
+    },
+    {
+      "Table": "OwnedCombatStarterAudits",
+      "Rows": 127,
+      "OriginalColumnsUnchanged": true,
+      "Sha256": "51159434f750faeddf396bd98c0e746513334780e2c506e09acab9f40cdd7480"
+    },
+    {
+      "Table": "InventoryCommands",
+      "Rows": 9,
+      "OriginalColumnsUnchanged": true,
+      "Sha256": "58fb31a8cf4577fd5ddcb87b08992f8a20cdf0d72d263ddf81acb6ba53229df1"
+    },
+    {
+      "Table": "EntryBackpackGrants",
+      "Rows": 2,
+      "OriginalColumnsUnchanged": true,
+      "Sha256": "bf18ae7412b482e65626dbd4c345725b60b1d93d1f522d0d9630ab633bb9ae2f"
+    },
+    {
+      "Table": "ItemContainerStates",
+      "Rows": 0,
+      "OriginalColumnsUnchanged": true,
+      "Sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "Table": "ItemContainerComponents",
+      "Rows": 0,
+      "OriginalColumnsUnchanged": true,
+      "Sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "Table": "ItemMaterialStates",
+      "Rows": 0,
+      "OriginalColumnsUnchanged": true,
+      "Sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "Table": "ItemSpellAttachmentStates",
+      "Rows": 0,
+      "OriginalColumnsUnchanged": true,
+      "Sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "NewJournalRowCounts": {
+    "RunAssetCheckpointReceipts": 0,
+    "RunAssetCheckpointHeads": 0,
+    "RunAssetCheckpointIdentities": 0
+  },
+  "BusinessProcessId": 14912,
+  "BusinessStartUnix": 1793641970.1064987,
+  "DatabaseProcessId": 29780,
+  "BackupBytes": 484282,
+  "BackupSha256": "2a6fcf11359c6ef717d0fe518cb4993b72a679874b97dd6e5ff24f6d510ecb3d",
+  "ActualGameplayValidated": false,
+  "EditorClosed": false
+}

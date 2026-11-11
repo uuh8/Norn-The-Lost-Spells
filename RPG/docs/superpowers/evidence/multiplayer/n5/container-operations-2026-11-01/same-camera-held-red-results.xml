@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-01 15:15:08Z" end-time="2026-11-01 15:15:09Z" duration="1.2310474">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3572" result="Failed" site="Child" start-time="2026-11-01 15:15:08Z" end-time="2026-11-01 15:15:09Z" duration="1.231047" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1389" name="Game.Character.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.Tests.dll" runstate="Runnable" testcasecount="318" result="Failed" site="Child" start-time="2026-11-01 15:15:08Z" end-time="2026-11-01 15:15:09Z" duration="1.134094" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1390" name="Game" fullname="Game" runstate="Runnable" testcasecount="318" result="Failed" site="Child" start-time="2026-11-01 15:15:08Z" end-time="2026-11-01 15:15:09Z" duration="1.039624" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1391" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="318" result="Failed" site="Child" start-time="2026-11-01 15:15:08Z" end-time="2026-11-01 15:15:09Z" duration="0.940245" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1392" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="318" result="Failed" site="Child" start-time="2026-11-01 15:15:08Z" end-time="2026-11-01 15:15:09Z" duration="0.840502" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1222" name="OnlineCastDriverTests" fullname="Game.Character.Tests.OnlineCastDriverTests" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" testcasecount="85" result="Failed" site="Child" start-time="2026-11-01 15:15:08Z" end-time="2026-11-01 15:15:09Z" duration="0.739344" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1301" name="RepeatedSameCameraBindingDoesNotInterruptHeldPour" fullname="Game.Character.Tests.OnlineCastDriverTests.RepeatedSameCameraBindingDoesNotInterruptHeldPour" methodname="RepeatedSameCameraBindingDoesNotInterruptHeldPour" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="1945335617" result="Failed" start-time="2026-11-01 15:15:08Z" end-time="2026-11-01 15:15:09Z" duration="0.626101" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  重复通知不能清除已积累的持键时间或要求再松键。
+  Expected: 1
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.RepeatedSameCameraBindingDoesNotInterruptHeldPour () [0x00075] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:1317
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

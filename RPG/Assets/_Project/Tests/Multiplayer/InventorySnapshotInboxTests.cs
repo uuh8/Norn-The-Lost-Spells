@@ -60,6 +60,47 @@ namespace Game.Multiplayer.Tests
             Assert.That(Queue(wrong), Is.False); Assert.That(Queue(Snapshot(1)), Is.True);
         }
 
+        [Test] public void RejectedCatalogBatchDoesNotPoisonTheInstalledSequence()
+        {
+            Assert.That(Queue(Snapshot(999)), Is.True);
+            var take = new object[] { null };
+            Assert.That(_type.GetMethod("TryTake").Invoke(_inbox, take), Is.True);
+            Assert.That(Confirm(999, false), Is.True);
+            Assert.That(Queue(Snapshot(1)), Is.True, "尚未通过Run目录安装的高序号不能堵住正常快照。");
+            Assert.That(_type.GetMethod("TryTake").Invoke(_inbox, take), Is.True);
+            Assert.That(Confirm(1, true), Is.True);
+            Assert.That(Queue(Snapshot(1)), Is.False);
+        }
+
+        [Test] public void InvalidDomainBatchIsRejectedBeforeItCanReplaceSameFrameNormalCandidate()
+        {
+            var ctor = _type.GetConstructor(new[] { typeof(JoinConnectionIdentity), typeof(string), typeof(Func<OnlineInventoryPresentationSnapshot, bool>) });
+            Assert.That(ctor, Is.Not.Null, "未验证候选不能作为序号栅栏；先做纯Run领域验证。");
+            Func<OnlineInventoryPresentationSnapshot, bool> validator = value => value.Assets.SelectedWandInstanceId != "invalid-content";
+            _inbox = ctor.Invoke(new object[] { Identity(), Hash, validator });
+            var invalid = Snapshot(999); Assets(invalid).SelectedWandInstanceId = "invalid-content";
+            Assert.That(Queue(invalid), Is.False);
+            Assert.That(Queue(Snapshot(1)), Is.True);
+            var take = new object[] { null };
+            Assert.That(_type.GetMethod("TryTake").Invoke(_inbox, take), Is.True);
+            Assert.That((ulong)_snapshot.GetField("SnapshotSequence").GetValue(take[0]), Is.EqualTo(1ul));
+        }
+
+        [Test] public void InstallConfirmationMustMatchTheTakenCandidateAndKeepsNewPendingData()
+        {
+            Assert.That(Queue(Snapshot(1)), Is.True);
+            var take = new object[] { null };
+            Assert.That(_type.GetMethod("TryTake").Invoke(_inbox, take), Is.True);
+            Assert.That(Queue(Snapshot(2)), Is.True);
+            Assert.That(Confirm(2, true), Is.False, "不能确认尚未交给Run安装的候选。");
+            Assert.That(Confirm(1, true), Is.True);
+            Assert.That(_type.GetMethod("TryTake").Invoke(_inbox, take), Is.True);
+            Assert.That((ulong)_snapshot.GetField("SnapshotSequence").GetValue(take[0]), Is.EqualTo(2ul));
+            Assert.That(Confirm(2, false), Is.True);
+            Assert.That(Queue(Snapshot(2)), Is.True, "失败候选可由后续合法同序号重新尝试，已安装1不得回退。");
+            Assert.That(Queue(Snapshot(1)), Is.False);
+        }
+
         [Test] public void ActualInventoryEnvelopeDoesNotCollideWithMirrorOrExistingMessages()
         {
             var envelope = typeof(OnlineWorldBootstrap).Assembly.GetType("Game.Multiplayer.InventorySnapshotEnvelope");
@@ -90,16 +131,44 @@ namespace Game.Multiplayer.Tests
             Assert.That(truncated.InnerException, Is.TypeOf<InvalidDataException>());
         }
 
+        [Test] public void ReliableEnvelopeCarriesBoundedPageIdentityInsteadOfTheWholeLargeSnapshot()
+        {
+            var envelope = typeof(OnlineWorldBootstrap).Assembly.GetType("Game.Multiplayer.InventorySnapshotEnvelope");
+            var serializer = typeof(OnlineWorldBootstrap).Assembly.GetType("Game.Multiplayer.InventorySnapshotEnvelopeSerialization");
+            object value = Activator.CreateInstance(envelope);
+            void Field(string name, object data)
+            {
+                var field = envelope.GetField(name);
+                Assert.That(field, Is.Not.Null, "可靠传输须有独立有界页头：" + name);
+                field.SetValue(value, data);
+            }
+            Field("ConnectionEpoch", 2u); Field("SnapshotSequence", 7ul);
+            Field("TotalBytes", 20000); Field("PageIndex", 0); Field("PageCount", 2); Field("Checksum", 19u);
+            Field("Payload", new ArraySegment<byte>(new byte[16384]));
+            using var writer = NetworkWriterPool.Get();
+            serializer.GetMethod("WriteInventorySnapshotEnvelope").Invoke(null, new[] { writer, value });
+            Assert.That(writer.Position, Is.EqualTo(16384 + 32));
+            var read = serializer.GetMethod("ReadInventorySnapshotEnvelope").Invoke(null, new object[] { new NetworkReader(writer.ToArraySegment()) });
+            Assert.That(envelope.GetField("SnapshotSequence").GetValue(read), Is.EqualTo(7ul));
+            Assert.That(((ArraySegment<byte>)envelope.GetField("Payload").GetValue(read)).Count, Is.EqualTo(16384));
+        }
+
         private static JoinConnectionIdentity Identity() => new JoinConnectionIdentity(Player, "room", Run, 1, 2, 1, "p7");
         private object Snapshot(ulong sequence)
         {
             var value = Activator.CreateInstance(_snapshot);
             Set(value, "SchemaVersion", 1u); Set(value, "ConnectionEpoch", 2u); Set(value, "SnapshotSequence", sequence);
-            Set(value, "Assets", new OnlineOwnedAssetSnapshot { SchemaVersion = 1, ActorId = 1, PlayerId = Player,
+            Set(value, "Assets", new OnlineOwnedAssetSnapshot { SchemaVersion = OnlineOwnedAssetSnapshot.CurrentSchemaVersion, ActorId = 1, PlayerId = Player,
                 RunId = Run, InventoryId = Run + "/" + Player, GameplayConfigHash = Hash });
             return value;
         }
         private bool Queue(object value) => (bool)_type.GetMethod("TryQueue").Invoke(_inbox, new[] { value });
+        private bool Confirm(ulong sequence, bool installed)
+        {
+            var method = _type.GetMethod("ConfirmInstalled");
+            Assert.That(method, Is.Not.Null, "必须在Run完整原子安装成功之后才提交Inbox水位。");
+            return (bool)method.Invoke(_inbox, new object[] { sequence, installed });
+        }
         private OnlineOwnedAssetSnapshot Assets(object value) => (OnlineOwnedAssetSnapshot)_snapshot.GetField("Assets").GetValue(value);
         private void Set(object value, string field, object data) => _snapshot.GetField(field).SetValue(value, data);
     }

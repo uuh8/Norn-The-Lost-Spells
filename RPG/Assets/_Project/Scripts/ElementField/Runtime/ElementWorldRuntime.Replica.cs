@@ -12,7 +12,73 @@ namespace Game.ElementField
         private WorldReplicaSolidReadModel _replicaSolids;
         private WorldReplicaVolumeReadModel _replicaGases;
         private LiquidVolumeSettings _replicaVolumeSettings;
+        private bool _replicaPresentationSubscribed;
+        private Transform _replicaPresentationInterest;
+        private Camera _replicaPresentationCamera;
         public WorldReplicaStore ReplicaStore => _replicaStore;
+
+        /// <summary>
+        /// 表现距离中心与固定Geometry Origin分离。不授予模拟、网络Interest或资源写权限。
+        /// Actor/Camera可能先销毁、后广播解绑，也可能跨Scene移动；查询时按Unity假null及Scene归属兜底，
+        /// 绝不让旧世界继续跟随新图角色。无可信绑定时保持有限的世界位置回退，不搜索/猜测其他角色。
+        /// </summary>
+        private Vector3 ReplicaPresentationInterestPosition
+        {
+            get
+            {
+                if (!_replicaPresentationSubscribed || _replicaPresentationInterest == null
+                    || _replicaPresentationCamera == null || !_replicaPresentationCamera.isActiveAndEnabled
+                    || !_replicaPresentationInterest.gameObject.activeInHierarchy
+                    || _replicaPresentationInterest.gameObject.scene != gameObject.scene)
+                    return transform.position;
+                return _replicaPresentationInterest.position;
+            }
+        }
+
+        private void EnableReplicaPresentationInterest()
+        {
+            if (_replicaStore == null || !IsInitialized) return;
+            if (!_replicaPresentationSubscribed)
+            {
+                _replicaPresentationSubscribed = true;
+                EventBus<LocalActorPresentationEvent>.Subscribe(OnReplicaLocalActorChanged);
+                EventBus<LocalActorCameraBoundEvent>.Subscribe(OnReplicaLocalCameraChanged);
+            }
+            // 场景、Actor和原Camera加载顺序不固定；晚启用必须补读当前注册而不是等下一次重连。
+            RefreshReplicaPresentationInterest();
+        }
+
+        private void DisableReplicaPresentationInterest()
+        {
+            if (_replicaPresentationSubscribed)
+            {
+                EventBus<LocalActorPresentationEvent>.Unsubscribe(OnReplicaLocalActorChanged);
+                EventBus<LocalActorCameraBoundEvent>.Unsubscribe(OnReplicaLocalCameraChanged);
+                _replicaPresentationSubscribed = false;
+            }
+            // 消费者只清自己的缓存，不能Clear全局Owner，否则会影响HUD、相机或较晚的新Scene。
+            _replicaPresentationInterest = null;
+            _replicaPresentationCamera = null;
+        }
+
+        private void OnReplicaLocalActorChanged(LocalActorPresentationEvent _) => RefreshReplicaPresentationInterest();
+        private void OnReplicaLocalCameraChanged(LocalActorCameraBoundEvent _) => RefreshReplicaPresentationInterest();
+
+        private void RefreshReplicaPresentationInterest()
+        {
+            _replicaPresentationInterest = null;
+            _replicaPresentationCamera = null;
+            if (!_replicaPresentationSubscribed) return;
+            // 事件只是刷新通知，不能凭任意Actor载荷接管本地目标。两个既有注册必须指向同一本地Actor。
+            // Clear(owner)先更新注册再发布default同一Bound事件，因而原解绑合同无需修改。
+            var actor = LocalActorPresentation.Actor;
+            // 可信身份与瞬时active分开：晚订阅时Camera/Actor可能暂时失活，单纯恢复active不会再发绑定事件。
+            // 仍缓存合法引用，由位置getter每次检查active/假null；否则恢复后会永久回退到世界原点。
+            if (actor == null || actor.scene != gameObject.scene
+                || !LocalActorCameraPresentation.TryGet(actor, out var camera)) return;
+            _replicaPresentationInterest = actor.transform;
+            _replicaPresentationCamera = camera;
+        }
 
         /// <summary>
         /// inactive内容激活前装配只读缓存。只读Profile用于Geometry、Density、Mesh容量，

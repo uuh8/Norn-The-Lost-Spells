@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using NUnit.Framework;
+using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Game.Multiplayer.Tests
 {
@@ -52,6 +55,215 @@ namespace Game.Multiplayer.Tests
             Assert.That(File.ReadAllBytes(path), Is.EqualTo(before));
         }
 
+        [Test]
+        public void HomePreviewKeepsTheOriginalPeacefulWorldWithoutInventingEncountersOrWritingCombatExports()
+        {
+            var protectedFiles = new Dictionary<string, byte[]>();
+            foreach (string path in new[] { "Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Home.unity",
+                "Assets/_Project/Prefabs/World/Online/P7World.prefab", "Assets/_Project/Prefabs/World/Online/P8World.prefab",
+                "Assets/_Project/ScriptableObjects/World/Online/P7.asset", "Assets/_Project/ScriptableObjects/World/Online/P8.asset",
+                "Assets/_Project/Resources/Online/DungeonCatalog.asset", "ProjectSettings/EditorBuildSettings.asset" })
+                protectedFiles.Add(path, File.ReadAllBytes(path));
+            var root = Preview("home");
+            Assert.That(root.activeSelf, Is.False);
+            var source = EditorSceneManager.OpenPreviewScene("Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Home.unity");
+            try
+            {
+                // 和平实验室的原静态内容本来很少。按原场景逐项计数，比任意“至少六个”的战斗地图阈值更能证明保真。
+                int renderers = CountHomeWorldComponents<Renderer>(source), colliders = CountHomeWorldComponents<Collider>(source);
+                Assert.That(renderers, Is.GreaterThan(0)); Assert.That(colliders, Is.GreaterThan(0));
+                Assert.That(root.GetComponentsInChildren<Renderer>(true).Length, Is.EqualTo(renderers));
+                Assert.That(root.GetComponentsInChildren<Collider>(true).Length, Is.EqualTo(colliders));
+            }
+            finally { EditorSceneManager.ClosePreviewScene(source); }
+            var info = RequireExporter().GetMethod("InspectSource").Invoke(null, new object[] { "home" });
+            Assert.That(Get<int>(info, "NpcCount"), Is.Zero); Assert.That(Get<int>(info, "EncounterCount"), Is.Zero);
+            Assert.That(Get<int>(info, "EntryVolumeCount"), Is.Zero); Assert.That(Get<int>(info, "GateCount"), Is.Zero);
+            Assert.That(Get<int>(info, "LootTableCount"), Is.Zero); Assert.That(Get<int>(info, "FixedSolidCount"), Is.Zero);
+            Assert.That(Get<bool>(info, "ShowEncounterHud"), Is.False); Assert.That(Get<string>(info, "SourceHash").Length, Is.EqualTo(64));
+            Assert.That(Get<Vector3>(info, "SourcePlayerPosition"), Is.Not.EqualTo(Vector3.zero));
+            foreach (var pair in protectedFiles) Assert.That(File.ReadAllBytes(pair.Key), Is.EqualTo(pair.Value), pair.Key);
+        }
+
+        [Test]
+        public void HomePreviewRetainsTheExactAuthoredResearchAndReturnPortalGeometryWithoutOldOwners()
+        {
+            const string sourcePath = "Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Home.unity";
+            byte[] before = File.ReadAllBytes(sourcePath); var root = Preview("home");
+            var bindings = FindNamed(root, "Game.Character.OnlineHomeWorldBindings");
+            Assert.That(bindings, Is.Not.Null, "Home需要原区域/门几何的只读载体，不能重新用3m距离代替作者Box。");
+            var source = EditorSceneManager.OpenPreviewScene(sourcePath);
+            try
+            {
+                var hub = FindNamed(source, "Game.Run.HubInteractionController"); Assert.That(hub, Is.Not.Null);
+                var volume = new SerializedObject(hub).FindProperty("_researchArea").objectReferenceValue as Component;
+                Assert.That(volume, Is.Not.Null);
+                var originalBox = new SerializedObject(volume).FindProperty("_volume").objectReferenceValue as BoxCollider;
+                if (originalBox == null) originalBox = volume.GetComponent<BoxCollider>();
+                var portal = FindNamed(source, "Game.Run.HomePortal"); Assert.That(portal, Is.Not.Null);
+                Assert.That(new SerializedObject(portal).FindProperty("_returnToHub").boolValue, Is.True);
+                var originalReturn = portal.GetComponent<BoxCollider>();
+                var copiedBox = Property<BoxCollider>(bindings, "ResearchVolume");
+                var copiedReturn = Property<Collider>(bindings, "ReturnPortalCollider") as BoxCollider;
+                var copiedPortal = Property<Transform>(bindings, "ReturnPortalTransform");
+                AssertSameBox(originalBox, copiedBox, root.transform); AssertSameBox(originalReturn, copiedReturn, root.transform);
+                Assert.That(copiedPortal, Is.SameAs(copiedReturn.transform));
+                var validate = bindings.GetType().GetMethod("TryValidate"); Assert.That(validate, Is.Not.Null);
+                var args = new object[] { null }; Assert.That((bool)validate.Invoke(bindings, args), Is.True, args[0] as string);
+                Assert.That(root.GetComponentsInChildren<Canvas>(true), Is.Empty);
+                int surfaces = 0;
+                foreach (var component in root.GetComponentsInChildren<Component>(true))
+                {
+                    if (component == null) Assert.Fail("Home导出不能有Missing Script。");
+                    string name = component.GetType().FullName;
+                    if (name == "Unity.AI.Navigation.NavMeshSurface") surfaces++;
+                    if (!(component is MonoBehaviour) || !(component.GetType().Namespace ?? "").StartsWith("Game.", StringComparison.Ordinal)) continue;
+                    Assert.That(name == "Game.Character.OnlineHomeWorldBindings" || name == "Game.Character.OnlineDungeonWorldBindings"
+                        || name == "Game.Character.OnlineDungeonEnvironment" || AllowedInactiveMaterial(name), Is.True,
+                        "Home静态世界不能保留旧Session/Actor/Canvas/Portal/Account Owner：" + name);
+                }
+                Assert.That(surfaces, Is.Zero, "原和平Home没有NavMesh，导出不能为满足战斗地图规则伪造一个。");
+            }
+            finally { EditorSceneManager.ClosePreviewScene(source); }
+            Assert.That(File.ReadAllBytes(sourcePath), Is.EqualTo(before));
+        }
+        private static Component FindNamed(GameObject root, string name)
+        {
+            foreach (var value in root.GetComponentsInChildren<Component>(true)) if (value != null && value.GetType().FullName == name) return value;
+            return null;
+        }
+        private static Component FindNamed(Scene scene, string name)
+        { foreach (var root in scene.GetRootGameObjects()) { var found = FindNamed(root, name); if (found != null) return found; } return null; }
+        private static int CountHomeWorldComponents<T>(Scene source) where T : Component
+        {
+            int count = 0;
+            foreach (var root in source.GetRootGameObjects()) foreach (var value in root.GetComponentsInChildren<T>(true))
+            {
+                bool actorOrUi = false;
+                for (var parent = value.transform; parent != null && !actorOrUi; parent = parent.parent)
+                {
+                    if (parent.GetComponent<Canvas>() != null) { actorOrUi = true; break; }
+                    foreach (var component in parent.GetComponents<MonoBehaviour>())
+                        if (component != null) for (var type = component.GetType(); type != null; type = type.BaseType)
+                            if (type.FullName == "Game.Character.PlayerControllerBase") { actorOrUi = true; break; }
+                }
+                if (!actorOrUi) count++;
+            }
+            return count;
+        }
+        private static T Property<T>(Component value, string name) where T : UnityEngine.Object
+        { var property = value.GetType().GetProperty(name); Assert.That(property, Is.Not.Null, name); return property.GetValue(value) as T; }
+        private static void AssertSameBox(BoxCollider original, BoxCollider copied, Transform root)
+        {
+            Assert.That(original, Is.Not.Null); Assert.That(copied, Is.Not.Null);
+            Assert.That(copied.transform.IsChildOf(root), Is.True);
+            Assert.That(copied.center, Is.EqualTo(original.center)); Assert.That(copied.size, Is.EqualTo(original.size));
+            Assert.That(copied.isTrigger, Is.EqualTo(original.isTrigger)); Assert.That(copied.enabled, Is.EqualTo(original.enabled));
+            Assert.That(Vector3.Distance(copied.transform.position, original.transform.position), Is.LessThan(.0001f));
+            Assert.That(Quaternion.Angle(copied.transform.rotation, original.transform.rotation), Is.LessThan(.01f));
+            Assert.That(copied.transform.lossyScale, Is.EqualTo(original.transform.lossyScale));
+        }
+
+        [Test]
+        public void P7PreviewKeepsTheExactSuccessfulReturnPortalWithoutItsOldStageOwner()
+        {
+            const string path="Assets/_Project/Scenes/P7_DemoRun.unity";
+            byte[] before=File.ReadAllBytes(path); var root=Preview("p7");
+            var binding=FindNamed(root,"Game.Character.OnlineDungeonReturnBindings");
+            Assert.That(binding,Is.Not.Null,"静态成功出口的GameObject不能随旧StageExitPortal Owner一起被删掉。");
+            var source=EditorSceneManager.OpenPreviewScene(path);
+            try
+            {
+                var original=FindNamed(source,"Game.Run.StageExitPortal"); Assert.That(original,Is.Not.Null);
+                var copied=Property<Collider>(binding,"PortalCollider") as BoxCollider;
+                AssertSameBox(original.GetComponent<BoxCollider>(),copied,root.transform);
+                Assert.That(Property<Transform>(binding,"PortalTransform"),Is.SameAs(copied.transform));
+                var originalData=new SerializedObject(original);
+                Assert.That(binding.GetType().GetProperty("EncounterIndex").GetValue(binding),Is.EqualTo(originalData.FindProperty("_encounterIndex").intValue));
+                Assert.That(((LayerMask)binding.GetType().GetProperty("PlayerLayers").GetValue(binding)).value,
+                    Is.EqualTo(originalData.FindProperty("_playerLayers").intValue));
+                Assert.That(binding.GetComponentsInChildren<Renderer>(true).Length,Is.EqualTo(original.GetComponentsInChildren<Renderer>(true).Length));
+                Assert.That(FindNamed(root,"Game.Run.StageExitPortal"),Is.Null);
+                Assert.That(FindNamed(root,"Game.Run.HubPracticePortal"),Is.Null);
+                Assert.That(FindNamed(root,"Game.Run.SinglePlayerInventorySession"),Is.Null);
+            }
+            finally { EditorSceneManager.ClosePreviewScene(source); }
+            Assert.That(File.ReadAllBytes(path),Is.EqualTo(before));
+        }
+
+        [Test]
+        public void P8PreviewKeepsTheOriginalInactiveDynamicReturnSphereTemplateWithoutInventingAFixedDoor()
+        {
+            const string path="Assets/_Project/Scenes/P8_BossField.unity";
+            byte[] before=File.ReadAllBytes(path);var root=Preview("p8");
+            var binding=FindNamed(root,"Game.Character.OnlineDungeonReturnBindings");
+            Assert.That(binding,Is.Not.Null,"P8只导出原动态门模板，不能凭空填写一个不存在的StageExit场景位置。");
+            var source=EditorSceneManager.OpenPreviewScene(path);
+            try
+            {
+                Assert.That(FindNamed(source,"Game.Run.StageExitPortal"),Is.Null,"原P8的门来自Boss胜利后的放门算法。");
+                var bootstrap=FindNamed(source,"Game.Run.PracticeInventorySceneBootstrap");Assert.That(bootstrap,Is.Not.Null);
+                var prefab=new SerializedObject(bootstrap).FindProperty("_returnPortalPrefab").objectReferenceValue as GameObject;
+                Assert.That(prefab,Is.Not.Null);byte[] prefabBefore=File.ReadAllBytes(AssetDatabase.GetAssetPath(prefab));
+                var original=prefab.GetComponent<SphereCollider>();var copied=Property<Collider>(binding,"PortalCollider") as SphereCollider;
+                Assert.That(original,Is.Not.Null);Assert.That(copied,Is.Not.Null);
+                Assert.That(copied.center,Is.EqualTo(original.center));Assert.That(copied.radius,Is.EqualTo(original.radius));
+                Assert.That(copied.isTrigger,Is.EqualTo(original.isTrigger));Assert.That(copied.enabled,Is.EqualTo(original.enabled));
+                var template=Property<GameObject>(binding,"InactiveTemplateRoot");Assert.That(template,Is.SameAs(binding.gameObject));
+                Assert.That(template.activeSelf,Is.False);Assert.That(template.transform.IsChildOf(root.transform),Is.True);
+                Assert.That(binding.GetType().GetProperty("DynamicPlacement").GetValue(binding),Is.True);
+                Assert.That(template.GetComponentsInChildren<Renderer>(true).Length,Is.EqualTo(prefab.GetComponentsInChildren<Renderer>(true).Length));
+                Assert.That(FindNamed(template,"Game.Run.HubPracticePortal"),Is.Null);Assert.That(FindNamed(template,"Game.Run.StageExitPortal"),Is.Null);
+                Assert.That(File.ReadAllBytes(AssetDatabase.GetAssetPath(prefab)),Is.EqualTo(prefabBefore));
+            }
+            finally { EditorSceneManager.ClosePreviewScene(source); }
+            Assert.That(File.ReadAllBytes(path),Is.EqualTo(before));
+        }
+
+        [TestCase("p7")] [TestCase("p8")]
+        public void NarrowReturnRefreshBuildsOnlyAMemoryCandidateAndPreservesExistingNavigationAndMaterialAssets(string id)
+        {
+            string worldPath="Assets/_Project/Prefabs/World/Online/"+id.ToUpperInvariant()+"World.prefab";
+            string definitionPath="Assets/_Project/ScriptableObjects/World/Online/"+id.ToUpperInvariant()+".asset";
+            var protectedFiles=new Dictionary<string,byte[]>();
+            foreach(string path in new[]{worldPath,definitionPath,"Assets/_Project/Resources/Online/DungeonCatalog.asset",
+                "Assets/_Project/Scenes/P7_DemoRun.unity","Assets/_Project/Scenes/P8_BossField.unity","ProjectSettings/EditorBuildSettings.asset"})
+                protectedFiles.Add(path,File.ReadAllBytes(path));
+            var original=AssetDatabase.LoadAssetAtPath<GameObject>(worldPath);Assert.That(original,Is.Not.Null);
+            var method=RequireExporter().GetMethod("BuildReturnRefreshPreview");Assert.That(method,Is.Not.Null);
+            var candidate=method.Invoke(null,new object[]{id}) as GameObject;Assert.That(candidate,Is.Not.Null);_previews.Add(candidate);
+            Assert.That(candidate.activeSelf,Is.False);Assert.That(FindNamed(candidate,"Game.Character.OnlineDungeonReturnBindings"),Is.Not.Null);
+            foreach(string componentType in new[]{"Unity.AI.Navigation.NavMeshSurface","Game.ElementField.OnlineMaterialWorldBinding"})
+            {
+                var before=FindNamed(original,componentType);var after=FindNamed(candidate,componentType);
+                Assert.That(before,Is.Not.Null);Assert.That(after,Is.Not.Null);
+                var data=new SerializedObject(before);var property=data.GetIterator();
+                while(property.Next(true))
+                    if(property.propertyType==SerializedPropertyType.ObjectReference && property.objectReferenceValue!=null
+                        // Prefab contents中的Scene副本有自己的GameObject/Prefab装配身份；这些不是NavMesh或材料配置。
+                        && property.propertyPath!="m_PrefabAsset" && property.propertyPath!="m_PrefabInstance"
+                        && property.propertyPath!="m_CorrespondingSourceObject" && property.propertyPath!="m_GameObject"
+                        && EditorUtility.IsPersistent(property.objectReferenceValue))
+                    {
+                        var expected=property.objectReferenceValue;
+                        var actual=new SerializedObject(after).FindProperty(property.propertyPath).objectReferenceValue;
+                        Transform originalNode=expected is Component oldComponent?oldComponent.transform:expected is GameObject oldObject?oldObject.transform:null;
+                        if(originalNode!=null && originalNode.IsChildOf(original.transform))
+                        {
+                            // 原Prefab子组件也是Persistent，但内存候选必须指向自己的对应组件，不能串回原Prefab实例。
+                            Assert.That(actual,Is.Not.Null,componentType+"."+property.propertyPath);
+                            Assert.That(actual.GetType(),Is.EqualTo(expected.GetType()));
+                            Transform clonedNode=actual is Component newComponent?newComponent.transform:actual is GameObject newObject?newObject.transform:null;
+                            Assert.That(clonedNode,Is.Not.Null);Assert.That(clonedNode.IsChildOf(candidate.transform),Is.True);
+                            Assert.That(AnimationUtility.CalculateTransformPath(clonedNode,candidate.transform),
+                                Is.EqualTo(AnimationUtility.CalculateTransformPath(originalNode,original.transform)),componentType+"."+property.propertyPath);
+                        }
+                        else Assert.That(actual,Is.SameAs(expected),componentType+"."+property.propertyPath);
+                    }
+            }
+            foreach(var pair in protectedFiles)Assert.That(File.ReadAllBytes(pair.Key),Is.EqualTo(pair.Value),pair.Key);
+        }
+
         [TestCase("p7", 4, 7)][TestCase("p8", 1, 0)]
         public void InactiveWorldKeepsOriginalGeometryNavigationAndEntryBindingsButNoSinglePlayerAuthority(string id, int areas, int gates)
         {
@@ -71,7 +283,7 @@ namespace Game.Multiplayer.Tests
                 string ns = component.GetType().Namespace ?? "";
                 if (ns.StartsWith("Game.", StringComparison.Ordinal))
                     Assert.That(name == "Game.Character.OnlineDungeonWorldBindings" || name == "Game.Character.OnlineDungeonEnvironment"
-                        || name == "Game.Run.ArenaGate" || AllowedInactiveMaterial(name), Is.True,
+                        || name == "Game.Run.ArenaGate" || AllowedInactiveMaterial(name) || AllowedOriginalReturnPresentation(component), Is.True,
                         "地图仅保留inactive材料装配，不能启动单机Session/Actor或GPU玩法Owner：" + name);
             }
             Assert.That(surfaces, Is.EqualTo(1)); Assert.That(actualGates, Is.EqualTo(gates)); Assert.That(bindings, Is.Not.Null);
@@ -86,7 +298,44 @@ namespace Game.Multiplayer.Tests
             }
         }
 
+        [TestCase("p7", 12)][TestCase("p8", 1)]
+        public void EveryOriginalNpcProgramMatchesExportAndRoundTripsItsActualOutputPrefabKey(string dungeon, int expectedNpcs)
+        {
+            var inspect = RequireExporter().GetMethod("InspectNpcProgramMappings", new[] { typeof(string) });
+            Assert.That(inspect, Is.Not.Null, "需要原Scene→导出NPC→各program→受控PrefabKey的逐敌人只读观测，不能由截图猜测毒球被替换。");
+            var reports = (Array)inspect.Invoke(null, new object[] { dungeon });
+            Assert.That(reports.Length, Is.EqualTo(expectedNpcs));
+            int bossPrograms = 0;
+            for (int i = 0; i < reports.Length; i++)
+            {
+                var row = reports.GetValue(i); var programs = Get<string[]>(row, "ProgramPaths");
+                Assert.That(Get<ulong>(row, "ActorId"), Is.EqualTo((ulong)i + 5));
+                Assert.That(Get<string>(row, "SourcePrefabPath"), Is.Not.Empty);
+                Assert.That(Get<bool>(row, "MatchesExportedPrograms"), Is.True, dungeon + "/" + (i + 5));
+                var paths = Get<string[]>(row, "OutputPrefabPaths"); var keys = Get<uint[]>(row, "OutputKeys");
+                Assert.That(keys.Length, Is.EqualTo(paths.Length));
+                for (int j = 0; j < keys.Length; j++) Assert.That(keys[j], Is.GreaterThan(0), paths[j]);
+                if (dungeon == "p7" && (i + 5 == 10 || i + 5 == 16))
+                    Assert.That(programs, Is.EqualTo(new[] { "Assets/_Project/ScriptableObjects/Spell/Programs/Enemy/Wand_Enemy_Wizard_Poisonball.asset" }));
+                if (dungeon == "p7" && i + 5 == 12)
+                    Assert.That(programs, Is.EqualTo(new[] { "Assets/_Project/ScriptableObjects/Spell/Programs/Enemy/Wand_Enemy_Wizard_Stickyball.asset" }));
+                if (dungeon == "p8") bossPrograms += programs.Length;
+            }
+            if (dungeon == "p8") Assert.That(bossPrograms, Is.EqualTo(9), "P8必须逐一检查原9套Boss程序，不能只检查第一阶段火球。");
+        }
+
         // N5沿用原材料内容与Renderer，激活前再由Binding选择Authority/Replica；不扩大为整模块通配白名单。
+        private static bool AllowedOriginalReturnPresentation(Component value)
+        {
+            string name=value.GetType().FullName;
+            if(name=="Game.Character.OnlineDungeonReturnBindings")return true;
+            if(name!="Game.Run.PortalVisualPlacement" && name!="Game.UI.PortalVfxController")return false;
+            for(var parent=value.transform;parent!=null;parent=parent.parent)
+                foreach(var component in parent.GetComponents<Component>())
+                    if(component!=null && component.GetType().FullName=="Game.Character.OnlineDungeonReturnBindings")return true;
+            return false;
+        }
+
         private static bool AllowedInactiveMaterial(string name) => name == "Game.ElementField.OnlineMaterialWorldBinding"
             || name == "Game.ElementField.ElementWorldRuntime" || name == "Game.ElementField.ElementFieldSolidBaker"
             || name == "Game.ElementField.ElementWorldExposureSystem" || name == "Game.ElementField.LiquidWorldRuntime"

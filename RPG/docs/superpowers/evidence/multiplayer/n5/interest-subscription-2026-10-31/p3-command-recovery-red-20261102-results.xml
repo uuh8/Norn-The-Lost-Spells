@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Failed(Child)" total="8" passed="2" failed="6" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 02:15:59Z" end-time="2026-11-02 02:16:00Z" duration="0.7007277">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3690" result="Failed" site="Child" start-time="2026-11-02 02:15:59Z" end-time="2026-11-02 02:16:00Z" duration="0.700728" total="8" passed="2" failed="6" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3156" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="296" result="Failed" site="Child" start-time="2026-11-02 02:15:59Z" end-time="2026-11-02 02:16:00Z" duration="0.602197" total="8" passed="2" failed="6" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3157" name="Game" fullname="Game" runstate="Runnable" testcasecount="296" result="Failed" site="Child" start-time="2026-11-02 02:16:00Z" end-time="2026-11-02 02:16:00Z" duration="0.508924" total="8" passed="2" failed="6" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3158" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="296" result="Failed" site="Child" start-time="2026-11-02 02:16:00Z" end-time="2026-11-02 02:16:00Z" duration="0.408753" total="8" passed="2" failed="6" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3159" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="296" result="Failed" site="Child" start-time="2026-11-02 02:16:00Z" end-time="2026-11-02 02:16:00Z" duration="0.310303" total="8" passed="2" failed="6" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3012" name="OnlineRuntimeRoleTests" fullname="Game.Multiplayer.Tests.OnlineRuntimeRoleTests" classname="Game.Multiplayer.Tests.OnlineRuntimeRoleTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-11-02 02:16:00Z" end-time="2026-11-02 02:16:00Z" duration="0.209923" total="8" passed="2" failed="6" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3014" name="ExplicitInterestProbe_InvalidThenHomeRecovers" fullname="Game.Multiplayer.Tests.OnlineRuntimeRoleTests.ExplicitInterestProbe_InvalidThenHomeRecovers" methodname="ExplicitInterestProbe_InvalidThenHomeRecovers" classname="Game.Multiplayer.Tests.OnlineRuntimeRoleTests" runstate="Runnable" seed="726934174" result="Failed" start-time="2026-11-02 02:16:00Z" end-time="2026-11-02 02:16:00Z" duration="0.017471" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  显式诊断需要每请求重算结果，旧错误不得永久锁存。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineRuntimeRoleTests.ResolveProbe (System.String command, System.Boolean authenticated, System.String& error, UnityEngine.Vector3& offset) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineRuntimeRoleTests.cs:54
+at Game.Multiplayer.Tests.OnlineRuntimeRoleTests.ExplicitInterestProbe_InvalidThenHomeRecovers () [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineRuntimeRoleTests.cs:17
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3015" name="ExplicitInterestProbe_NoAuthThenAuthenticatedAwayRecovers" fullname="Game.Multiplayer.Tests.OnlineRuntimeRoleTests.ExplicitInterestProbe_NoAuthThenAuthenticatedAwayRecovers" methodname="ExplicitInterestProbe_NoAuthThenAuthenticatedAwayRecovers" classname="Game.Multiplayer.Tests.OnlineRuntimeRoleTests" runstate="Runnable" seed="1902878496" result="Failed" start-time="2026-11-02 02:16:00Z" end-time="2026-11-02 02:16:00Z" duration="0.001258" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  显式诊断需要每请求重算结果，旧错误不得永久锁存。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineRuntimeRoleTests.ResolveProbe (System.String command, System.Boolean authenticated, System.String& error, UnityEngine.Vector3& offset) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineRuntimeRoleTests.cs:54
+at Game.Multiplayer.Tests.OnlineRuntimeRoleTests.ExplicitInterestProbe_NoAuthThenAuthenticatedAwayRecovers () [0x00003] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineRuntimeRoleTests.cs:28
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="3020" name="ExplicitInterestProbe_UnknownCommandsRemainRejected" fullname="Game.Multiplayer.Tests.OnlineRuntimeRoleTests.ExplicitInterestProbe_UnknownCommandsRemainRejected" classname="Game.Multiplayer.Tests.OnlineRuntimeRoleTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-11-02 02:16:00Z" end-time="2026-11-02 02:16:00Z" duration="0.078652" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="3016" name="ExplicitInterestProbe_UnknownCommandsRemainRejected(null)" fullname="Game.Multiplayer.Tests.OnlineRuntimeRoleTests.ExplicitInterestProbe_UnknownCommandsRemainRejected(null)" methodname="ExplicitInterestProbe_UnknownCommandsRemainRejected" classname="Game.Multiplayer.Tests.OnlineRuntimeRoleTests" runstate="Runnable" seed="1356232731" result="Failed" start-time="2026-11-02 02:16:00Z" end-time="2026-11-02 02:16:00Z" duration="0.001514" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  显式诊断需要每请求重算结果，旧错误不得永久锁存。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineRuntimeRoleTests.ResolveProbe (System.String command, System.Boolean authenticated, System.String& error, UnityEngine.Vector3& offset) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineRuntimeRoleTests.cs:54
+at Game.Multiplayer.Tests.OnlineRuntimeRoleTests.ExplicitInterestProbe_UnknownCommandsRemainRejected (System.String command) [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineRuntimeRoleTests.cs:40
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3017" name="ExplicitInterestProbe_UnknownCommandsRemainRejected(&quot;&quot;)" fullname="Game.Multiplayer.Tests.OnlineRuntimeRoleTests.ExplicitInterestProbe_UnknownCommandsRemainRejected(&quot;&quot;)" methodname="ExplicitInterestProbe_UnknownCommandsRemainRejected" classname="Game.Multiplayer.Tests.OnlineRuntimeRoleTests" runstate="Runnable" seed="1261188857" result="Failed" start-time="2026-11-02 02:16:00Z" end-time="2026-11-02 02:16:00Z" duration="0.000688" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  显式诊断需要每请求重算结果，旧错误不得永久锁存。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineRuntimeRoleTests.ResolveProbe (System.String command, System.Boolean authenticated, System.String& error, UnityEngine.Vector3& offset) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineRuntimeRoleTests.cs:54
+at Game.Multiplayer.Tests.OnlineRuntimeRoleTests.ExplicitInterestProbe_UnknownCommandsRemainRejected (System.String command) [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineRuntimeRoleTests.cs:40
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3018" name="ExplicitInterestProbe_UnknownCommandsRemainRejected(&quot;HOME&quot;)" fullname="Game.Multiplayer.Tests.OnlineRuntimeRoleTests.ExplicitInterestProbe_UnknownCommandsRemainRejected(&quot;HOME&quot;)" methodname="ExplicitInterestProbe_UnknownCommandsRemainRejected" classname="Game.Multiplayer.Tests.OnlineRuntimeRoleTests" runstate="Runnable" seed="277364677" result="Failed" start-time="2026-11-02 02:16:00Z" end-time="2026-11-02 02:16:00Z" duration="0.000564" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  显式诊断需要每请求重算结果，旧错误不得永久锁存。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineRuntimeRoleTests.ResolveProbe (System.String command, System.Boolean authenticated, System.String& error, UnityEngine.Vector3& offset) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineRuntimeRoleTests.cs:54
+at Game.Multiplayer.Tests.OnlineRuntimeRoleTests.ExplicitInterestProbe_UnknownCommandsRemainRejected (System.String command) [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineRuntimeRoleTests.cs:40
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3019" name="ExplicitInterestProbe_UnknownCommandsRemainRejected(&quot;Away&quot;)" fullname="Game.Multiplayer.Tests.OnlineRuntimeRoleTests.ExplicitInterestProbe_UnknownCommandsRemainRejected(&quot;Away&quot;)" methodname="ExplicitInterestProbe_UnknownCommandsRemainRejected" classname="Game.Multiplayer.Tests.OnlineRuntimeRoleTests" runstate="Runnable" seed="1700674723" result="Failed" start-time="2026-11-02 02:16:00Z" end-time="2026-11-02 02:16:00Z" duration="0.000572" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  显式诊断需要每请求重算结果，旧错误不得永久锁存。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineRuntimeRoleTests.ResolveProbe (System.String command, System.Boolean authenticated, System.String& error, UnityEngine.Vector3& offset) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineRuntimeRoleTests.cs:54
+at Game.Multiplayer.Tests.OnlineRuntimeRoleTests.ExplicitInterestProbe_UnknownCommandsRemainRejected (System.String command) [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineRuntimeRoleTests.cs:40
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="3013" name="MissingMovementWorldCannotReportInstanceReady" fullname="Game.Multiplayer.Tests.OnlineRuntimeRoleTests.MissingMovementWorldCannotReportInstanceReady" methodname="MissingMovementWorldCannotReportInstanceReady" classname="Game.Multiplayer.Tests.OnlineRuntimeRoleTests" runstate="Runnable" seed="1968415248" result="Passed" start-time="2026-11-02 02:16:00Z" end-time="2026-11-02 02:16:00Z" duration="0.002834" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3021" name="OpenEditorRemainsClientAfterBuildingDedicatedServer" fullname="Game.Multiplayer.Tests.OnlineRuntimeRoleTests.OpenEditorRemainsClientAfterBuildingDedicatedServer" methodname="OpenEditorRemainsClientAfterBuildingDedicatedServer" classname="Game.Multiplayer.Tests.OnlineRuntimeRoleTests" runstate="Runnable" seed="1146392275" result="Passed" start-time="2026-11-02 02:16:00Z" end-time="2026-11-02 02:16:00Z" duration="0.000286" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

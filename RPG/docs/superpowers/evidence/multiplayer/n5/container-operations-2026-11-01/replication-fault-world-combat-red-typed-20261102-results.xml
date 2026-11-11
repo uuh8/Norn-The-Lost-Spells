@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Failed(Child)" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 04:09:37Z" end-time="2026-11-02 04:09:39Z" duration="1.6445919">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3730" result="Failed" site="Child" start-time="2026-11-02 04:09:37Z" end-time="2026-11-02 04:09:39Z" duration="1.644592" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1586" name="Game.Combat.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Combat.Tests.dll" runstate="Runnable" testcasecount="140" result="Failed" site="Child" start-time="2026-11-02 04:09:37Z" end-time="2026-11-02 04:09:38Z" duration="0.530574" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1587" name="Game" fullname="Game" runstate="Runnable" testcasecount="140" result="Failed" site="Child" start-time="2026-11-02 04:09:37Z" end-time="2026-11-02 04:09:38Z" duration="0.437584" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1588" name="Combat" fullname="Game.Combat" runstate="Runnable" testcasecount="140" result="Failed" site="Child" start-time="2026-11-02 04:09:38Z" end-time="2026-11-02 04:09:38Z" duration="0.337401" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1589" name="Tests" fullname="Game.Combat.Tests" runstate="Runnable" testcasecount="140" result="Failed" site="Child" start-time="2026-11-02 04:09:38Z" end-time="2026-11-02 04:09:38Z" duration="0.237226" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1427" name="CombatExecutionModeTests" fullname="Game.Combat.Tests.CombatExecutionModeTests" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" testcasecount="20" result="Failed" site="Child" start-time="2026-11-02 04:09:38Z" end-time="2026-11-02 04:09:38Z" duration="0.138027" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1446" name="AnAuthorityAreaRechecksItsWriteGateBetweenTargetsAfterOneHitClosesIt" fullname="Game.Combat.Tests.CombatExecutionModeTests.AnAuthorityAreaRechecksItsWriteGateBetweenTargetsAfterOneHitClosesIt" methodname="AnAuthorityAreaRechecksItsWriteGateBetweenTargetsAfterOneHitClosesIt" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="467835051" result="Failed" start-time="2026-11-02 04:09:38Z" end-time="2026-11-02 04:09:38Z" duration="0.022277" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Combat必须复用当前世界的动态最终写门；只挡Tick不能保护raw伤害/状态/Physics回调。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatExecutionModeTests.ConfigureWriteGate (System.Object world, System.Func`1[TResult] gate) [0x00025] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:377
+at Game.Combat.Tests.CombatExecutionModeTests.AnAuthorityAreaRechecksItsWriteGateBetweenTargetsAfterOneHitClosesIt () [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:346
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1443" name="AuthorityWriteGateBlocksRawDamageManaAndStatusButDoesNotPreventInitialAssembly" fullname="Game.Combat.Tests.CombatExecutionModeTests.AuthorityWriteGateBlocksRawDamageManaAndStatusButDoesNotPreventInitialAssembly" methodname="AuthorityWriteGateBlocksRawDamageManaAndStatusButDoesNotPreventInitialAssembly" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="1116251111" result="Failed" start-time="2026-11-02 04:09:38Z" end-time="2026-11-02 04:09:38Z" duration="0.001363" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Combat必须复用当前世界的动态最终写门；只挡Tick不能保护raw伤害/状态/Physics回调。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatExecutionModeTests.ConfigureWriteGate (System.Object world, System.Func`1[TResult] gate) [0x00025] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:377
+at Game.Combat.Tests.CombatExecutionModeTests.AuthorityWriteGateBlocksRawDamageManaAndStatusButDoesNotPreventInitialAssembly () [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:294
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1444" name="AWriteGateClosedByTheFirstDamageCallbackRejectsTheNextRawTargetInTheSameFrame" fullname="Game.Combat.Tests.CombatExecutionModeTests.AWriteGateClosedByTheFirstDamageCallbackRejectsTheNextRawTargetInTheSameFrame" methodname="AWriteGateClosedByTheFirstDamageCallbackRejectsTheNextRawTargetInTheSameFrame" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="1865763551" result="Failed" start-time="2026-11-02 04:09:38Z" end-time="2026-11-02 04:09:38Z" duration="0.000712" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Combat必须复用当前世界的动态最终写门；只挡Tick不能保护raw伤害/状态/Physics回调。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatExecutionModeTests.ConfigureWriteGate (System.Object world, System.Func`1[TResult] gate) [0x00025] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:377
+at Game.Combat.Tests.CombatExecutionModeTests.AWriteGateClosedByTheFirstDamageCallbackRejectsTheNextRawTargetInTheSameFrame () [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:308
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1447" name="ClosedAuthorityWriteGateRejectsReflectionWithoutChangingSinglePlayerOrReplicaRules" fullname="Game.Combat.Tests.CombatExecutionModeTests.ClosedAuthorityWriteGateRejectsReflectionWithoutChangingSinglePlayerOrReplicaRules" methodname="ClosedAuthorityWriteGateRejectsReflectionWithoutChangingSinglePlayerOrReplicaRules" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="105450295" result="Failed" start-time="2026-11-02 04:09:38Z" end-time="2026-11-02 04:09:38Z" duration="0.000947" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Combat必须复用当前世界的动态最终写门；只挡Tick不能保护raw伤害/状态/Physics回调。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatExecutionModeTests.ConfigureWriteGate (System.Object world, System.Func`1[TResult] gate) [0x00025] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:377
+at Game.Combat.Tests.CombatExecutionModeTests.ClosedAuthorityWriteGateRejectsReflectionWithoutChangingSinglePlayerOrReplicaRules () [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:363
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1445" name="ClosedWriteGatePreservesExistingProjectileTriggerStatusAndManaWithoutAdvancingOrCancellingThem" fullname="Game.Combat.Tests.CombatExecutionModeTests.ClosedWriteGatePreservesExistingProjectileTriggerStatusAndManaWithoutAdvancingOrCancellingThem" methodname="ClosedWriteGatePreservesExistingProjectileTriggerStatusAndManaWithoutAdvancingOrCancellingThem" classname="Game.Combat.Tests.CombatExecutionModeTests" runstate="Runnable" seed="827396456" result="Failed" start-time="2026-11-02 04:09:38Z" end-time="2026-11-02 04:09:38Z" duration="0.000962" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Combat必须复用当前世界的动态最终写门；只挡Tick不能保护raw伤害/状态/Physics回调。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Combat.Tests.CombatExecutionModeTests.ConfigureWriteGate (System.Object world, System.Func`1[TResult] gate) [0x00025] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:377
+at Game.Combat.Tests.CombatExecutionModeTests.ClosedWriteGatePreservesExistingProjectileTriggerStatusAndManaWithoutAdvancingOrCancellingThem () [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Combat\CombatExecutionModeTests.cs:324
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="3186" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="298" result="Failed" site="Child" start-time="2026-11-02 04:09:38Z" end-time="2026-11-02 04:09:39Z" duration="1.015673" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3187" name="Game" fullname="Game" runstate="Runnable" testcasecount="298" result="Failed" site="Child" start-time="2026-11-02 04:09:38Z" end-time="2026-11-02 04:09:39Z" duration="0.954417" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3188" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="298" result="Failed" site="Child" start-time="2026-11-02 04:09:38Z" end-time="2026-11-02 04:09:39Z" duration="0.856347" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3189" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="298" result="Failed" site="Child" start-time="2026-11-02 04:09:38Z" end-time="2026-11-02 04:09:39Z" duration="0.756350" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2815" name="AuthorityTickFailureTests" fullname="Game.Multiplayer.Tests.AuthorityTickFailureTests" classname="Game.Multiplayer.Tests.AuthorityTickFailureTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-11-02 04:09:38Z" end-time="2026-11-02 04:09:39Z" duration="0.656067" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="2822" name="ReplicationCapacityFaultPreservesWorldAndStopsNewStepsAcrossLeaseRenewal" fullname="Game.Multiplayer.Tests.AuthorityTickFailureTests.ReplicationCapacityFaultPreservesWorldAndStopsNewStepsAcrossLeaseRenewal" classname="Game.Multiplayer.Tests.AuthorityTickFailureTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-02 04:09:38Z" end-time="2026-11-02 04:09:39Z" duration="0.555009" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2820" name="ReplicationCapacityFaultPreservesWorldAndStopsNewStepsAcrossLeaseRenewal(1,True)" fullname="Game.Multiplayer.Tests.AuthorityTickFailureTests.ReplicationCapacityFaultPreservesWorldAndStopsNewStepsAcrossLeaseRenewal(1,True)" methodname="ReplicationCapacityFaultPreservesWorldAndStopsNewStepsAcrossLeaseRenewal" classname="Game.Multiplayer.Tests.AuthorityTickFailureTests" runstate="Runnable" seed="512930046" result="Failed" start-time="2026-11-02 04:09:38Z" end-time="2026-11-02 04:09:39Z" duration="0.443988" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: False
+  But was:  True
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.AuthorityTickFailureTests.ReplicationCapacityFaultPreservesWorldAndStopsNewStepsAcrossLeaseRenewal (System.Int32 capacity, System.Boolean shouldFault) [0x001d9] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AuthorityTickFailureTests.cs:226
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2821" name="ReplicationCapacityFaultPreservesWorldAndStopsNewStepsAcrossLeaseRenewal(2,False)" fullname="Game.Multiplayer.Tests.AuthorityTickFailureTests.ReplicationCapacityFaultPreservesWorldAndStopsNewStepsAcrossLeaseRenewal(2,False)" methodname="ReplicationCapacityFaultPreservesWorldAndStopsNewStepsAcrossLeaseRenewal" classname="Game.Multiplayer.Tests.AuthorityTickFailureTests" runstate="Runnable" seed="1750305485" result="Failed" start-time="2026-11-02 04:09:39Z" end-time="2026-11-02 04:09:39Z" duration="0.011815" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: 2
+  But was:  1
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.AuthorityTickFailureTests.ReplicationCapacityFaultPreservesWorldAndStopsNewStepsAcrossLeaseRenewal (System.Int32 capacity, System.Boolean shouldFault) [0x0032b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AuthorityTickFailureTests.cs:236
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

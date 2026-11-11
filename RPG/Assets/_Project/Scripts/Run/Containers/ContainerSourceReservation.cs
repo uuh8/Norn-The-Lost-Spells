@@ -30,7 +30,8 @@ namespace Game.Run
                     ulong total = 0; for (int i = 0; i < count; i++) total += amounts[i].Quantity;
                     if (total != _item.Composition.Total) { failure = MaterialTransferFailure.InvalidRequest; return false; }
                     if (!_store.TryGetLocation(_item.InstanceId, out var location) || location.Kind != ItemLocationKind.ThrownContainer
-                        || !_store.TryPrepareMaterialChange(_item.InstanceId, null, location, out _prepared)) return false;
+                        || !_store.TryPrepareMaterialChange(_item.InstanceId, null, location, out _prepared,
+                            OnlineItemRetirementReason.Destroyed)) return false;
                 }
                 else if (!_store.TryLockMaterial(_version)) return false;
             }
@@ -43,7 +44,8 @@ namespace Game.Run
                 RuntimeItemState replacement = remaining == 0 ? null : new RuntimeItemState(_item.InstanceId, _item.ContentId,
                     _item.RemainingCharges, _item.HasUnlimitedCharges, _item.StackStateKey, material: new MaterialItemState(_item.Material.MaterialKey, remaining));
                 _store.TryGetLocation(_item.InstanceId, out var location);
-                if (!_store.TryPrepareMaterialChange(_item.InstanceId, replacement, location, out _prepared)) return false;
+                if (!_store.TryPrepareMaterialChange(_item.InstanceId, replacement, location, out _prepared,
+                    remaining == 0 ? OnlineItemRetirementReason.Consumed : OnlineItemRetirementReason.None)) return false;
             }
             for (int i = 0; i < count; i++) _amounts[i] = amounts[i];
             _count = count; _reserved = true; failure = MaterialTransferFailure.None; return true;

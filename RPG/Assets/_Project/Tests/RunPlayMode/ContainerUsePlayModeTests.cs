@@ -109,6 +109,68 @@ namespace Game.Run.Tests
             Assert.That(_world.TryCaptureMaterialQuantityFamily(MaterialQuantityFamily.Toxic, out var toxic), Is.True); Assert.That(toxic.IsBalanced, Is.True);
             Assert.That(_session.Save().Success, Is.True); yield return null;
         }
+        [UnityTest] public IEnumerator OnlineOwnedTransfersUseRealWorldPortsAndInstallConfirmedContainerQuantities()
+        {
+            // 只创建独立内存Owner，复用现有小型Sandbox的真实Liquid/Port；不读取或保存线上/本地真实资产。
+            // 本例直接提供可信几何上下文，验证数量事务与Owner安装；不能代替镜头输入、KCP或原生端验收。
+            var definition = Resources.Load<OnlineCombatDefinition>("Online/CombatDefinition");
+            Assert.That(definition.Catalog.TryCreateIndex(out var catalog, out string error), Is.True, error);
+            const string wand = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", card = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", bottle = "cccccccccccccccccccccccccccccccc";
+            var assets = new OnlineOwnedAssetSnapshot
+            {
+                SchemaVersion = OnlineOwnedAssetSnapshot.CurrentSchemaVersion, ActorId = 1, RunId = "real-world-transfer",
+                PlayerId = "real-world-owner", InventoryId = "real-world-owner-inventory", InventoryVersion = 1,
+                GameplayConfigHash = definition.GameplayConfigHash, SelectedWandInstanceId = wand,
+                Items = new[]
+                {
+                    new OnlineOwnedItemSnapshot { InstanceId = wand, ContentId = "wandtest.wand.a", Revision = 1, LocationKind = 3, UseTemplateWandStats = true },
+                    new OnlineOwnedItemSnapshot { InstanceId = card, ContentId = "wandtest.fire", Revision = 1, LocationKind = 2, ParentInstanceId = wand, RemainingCharges = 30 },
+                    new OnlineOwnedItemSnapshot { InstanceId = bottle, ContentId = "item.container.container_01", Revision = 1, LocationKind = (int)ItemLocationKind.EquippedTool, Slot = 0,
+                        ContainerState = new OnlineOwnedContainerStateSnapshot { SchemaVersion = 1, Components = Array.Empty<OnlineOwnedMaterialAmountSnapshot>() } }
+                }
+            };
+            Assert.That(OnlineOwnedWorkspaceFactory.TryCreate(catalog, assets, definition.GameplayConfigHash, out var owner, out error), Is.True, error);
+            using (owner)
+            {
+                owner.ConfigureContainerActions(definition.ContainerUse, "container-world");
+                Assert.That(owner.ExecuteInventoryCommand(new OnlineInventoryCommandIntent { CommandId = 1, ConnectionEpoch = 7,
+                    ExpectedInventoryVersion = owner.InventoryVersion, Kind = OnlineInventoryCommandKind.SelectTool, ItemId = bottle, TargetSlot = 0 }).Success, Is.True);
+                owner.StepAuthority(.1f, 1);
+                Vector3 point = _supply.MixedSamplePosition;
+                var cell = Vector3Int.FloorToInt((point - _world.Origin) / _world.CellSize);
+                _world.TryGetQuantity(cell, MaterialId.Water, out uint waterBefore); _world.TryGetQuantity(cell, MaterialId.Poison, out uint poisonBefore);
+                var context = new OnlineContainerAuthorityContext { CanAdvance = true, WorldId = "container-world", ActorPosition = point, TargetPosition = point };
+                var collect = new OnlineInventoryCommandIntent { CommandId = 2, ConnectionEpoch = 7, ExpectedInventoryVersion = owner.InventoryVersion,
+                    Kind = OnlineInventoryCommandKind.CollectMaterial, ItemId = bottle, TargetSlot = 0, TransferBudget = 30, AimDirection = Vector3.forward };
+                var collected = owner.ExecuteInventoryCommand(collect, context);
+                Assert.That(collected.Success, Is.True, collected.TransferFailure.ToString()); Assert.That(collected.Transferred, Is.EqualTo(30ul));
+                Assert.That(owner.TryGetItem(bottle, out var actual), Is.True); Assert.That(actual.Composition.Total, Is.EqualTo(30ul));
+                _world.TryGetQuantity(cell, MaterialId.Water, out uint waterAfter); _world.TryGetQuantity(cell, MaterialId.Poison, out uint poisonAfter);
+                Assert.That((ulong)waterBefore + poisonBefore, Is.EqualTo((ulong)waterAfter + poisonAfter + actual.Composition.Total));
+                var replay = owner.ExecuteInventoryCommand(collect, context);
+                Assert.That(replay.Transferred, Is.EqualTo(30ul)); Assert.That(actual.Composition.Total, Is.EqualTo(30ul));
+                Assert.That(_world.ExportedMaterialQuantity(MaterialId.Water) + _world.ExportedMaterialQuantity(MaterialId.Poison), Is.EqualTo(30ul));
+                context.TargetPosition = new Vector3(1.25f, .25f, .25f);
+                var poured = owner.ExecuteInventoryCommand(new OnlineInventoryCommandIntent { CommandId = 3, ConnectionEpoch = 7, ExpectedInventoryVersion = owner.InventoryVersion,
+                    Kind = OnlineInventoryCommandKind.PourContainer, ItemId = bottle, TargetSlot = 0, TransferBudget = 15, AimDirection = Vector3.forward }, context);
+                Assert.That(poured.Success, Is.True, poured.TransferFailure.ToString()); Assert.That(poured.Transferred, Is.EqualTo(15ul));
+                Assert.That(actual.Composition.Total, Is.EqualTo(15ul));
+                Assert.That(_world.ImportedMaterialQuantity(MaterialId.Water) + _world.ImportedMaterialQuantity(MaterialId.Poison), Is.EqualTo(15ul));
+                Assert.That(_world.TryCaptureMaterialQuantityFamily(MaterialQuantityFamily.WaterBased, out var waterFamily), Is.True); Assert.That(waterFamily.IsBalanced, Is.True);
+                Assert.That(_world.TryCaptureMaterialQuantityFamily(MaterialQuantityFamily.Toxic, out var poisonFamily), Is.True); Assert.That(poisonFamily.IsBalanced, Is.True);
+                Assert.That(owner.TryCapturePresentation(7, 1, 2, out var snapshot), Is.True);
+                var identity = new OnlineInventoryPresentationIdentity(assets.RunId, assets.PlayerId, 1, assets.InventoryId, definition.GameplayConfigHash, 7, _scene.name);
+                Assert.That(OnlineInventoryPresentationSource.TryCreate(catalog, identity, snapshot, out var source, out error), Is.True, error);
+                using (source)
+                {
+                    Assert.That(source.ReadOnly.TryGetView(bottle, out var view), Is.True); Assert.That(view.ContainerTotal, Is.EqualTo(15ul));
+                    var amounts = new MaterialAmount[8]; Assert.That(source.TryCopyContainer(bottle, amounts, out int count, out ulong total, out _), Is.True);
+                    Assert.That(count, Is.EqualTo(2)); Assert.That(total, Is.EqualTo(actual.Composition.Total));
+                }
+            }
+            yield return null;
+        }
+
         [UnityTest] public IEnumerator HeldPourIsRateBoundedAndReleaseOrPauseStops()
         {
             Fill(150); AimDown(); string item = _collection.SelectedContainerId; _keyboard = InputSystem.AddDevice<Keyboard>();

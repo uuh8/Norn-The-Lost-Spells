@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="383a0a58-c0b4-4a75-aedd-41eaa77f452b" name="zhy@ZHY 2026-11-01 16:04:12" runUser="ZHY\zhy" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T16:04:12.0747124+08:00" queuing="2026-11-01T16:04:12.0747131+08:00" start="2026-11-01T16:04:09.9178611+08:00" finish="2026-11-01T16:04:12.0907892+08:00" />
+  <TestSettings name="default" id="2ac71c39-c464-4e64-84d0-6e72a64eee40">
+    <Deployment runDeploymentRoot="zhy_ZHY_2026-11-01_16_04_12" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="c4b23481-ff0d-45ed-bd2e-1a785ec48384" testId="7383a529-c88e-1d10-7c7c-442e863f3512" testName="Norn.Business.Tests.OwnedCombatContractTests.MissingComponentArray_RemainsUnknownRatherThanBecomingAnExplicitEmptyBottle" computerName="ZHY" duration="00:00:00.0482895" startTime="2026-11-01T16:04:11.8003151+08:00" endTime="2026-11-01T16:04:11.8153837+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c4b23481-ff0d-45ed-bd2e-1a785ec48384">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Null() Failure: Value is not null&#xD;
+Expected: null&#xD;
+Actual:   []</Message>
+          <StackTrace>   at Norn.Business.Tests.OwnedCombatContractTests.MissingComponentArray_RemainsUnknownRatherThanBecomingAnExplicitEmptyBottle() in F:\Develop Project\RPG\Server\Norn.Business.Tests\OwnedCombatContractTests.cs:line 16&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="197f8e0a-7aa7-4de4-a189-300fb458f44a" testId="86463053-9a44-113e-9873-37c227e29e4d" testName="Norn.Business.Tests.SchemaMigrationPreflightTests.ExactLegacyPredicateIsAccepted_ButSameTokensWithDifferentGroupingAreRejected(wrongGrouping: False)" computerName="ZHY" duration="00:00:00.0130069" startTime="2026-11-01T16:04:11.7065564+08:00" endTime="2026-11-01T16:04:11.7616744+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="197f8e0a-7aa7-4de4-a189-300fb458f44a">
+      <Output>
+        <ErrorInfo>
+          <Message>不可重写已应用006；执行器仍缺少保留AND/OR分组的前置门禁。</Message>
+          <StackTrace>   at Norn.Business.Tests.SchemaMigrationPreflightTests.ExactLegacyPredicateIsAccepted_ButSameTokensWithDifferentGroupingAreRejected(Boolean wrongGrouping) in F:\Develop Project\RPG\Server\Norn.Business.Tests\SchemaMigrationPreflightTests.cs:line 18&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6dd72179-7603-4272-b5e1-7e5f55f9e5b8" testId="c8073bde-a172-66b9-eaa9-98dc71744803" testName="Norn.Business.Tests.SchemaMigrationPreflightTests.ExactLegacyPredicateIsAccepted_ButSameTokensWithDifferentGroupingAreRejected(wrongGrouping: True)" computerName="ZHY" duration="00:00:00.0004589" startTime="2026-11-01T16:04:11.7918182+08:00" endTime="2026-11-01T16:04:11.7919563+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6dd72179-7603-4272-b5e1-7e5f55f9e5b8">
+      <Output>
+        <ErrorInfo>
+          <Message>不可重写已应用006；执行器仍缺少保留AND/OR分组的前置门禁。</Message>
+          <StackTrace>   at Norn.Business.Tests.SchemaMigrationPreflightTests.ExactLegacyPredicateIsAccepted_ButSameTokensWithDifferentGroupingAreRejected(Boolean wrongGrouping) in F:\Develop Project\RPG\Server\Norn.Business.Tests\SchemaMigrationPreflightTests.cs:line 18&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Norn.Business.Tests.SchemaMigrationPreflightTests.ExactLegacyPredicateIsAccepted_ButSameTokensWithDifferentGroupingAreRejected(wrongGrouping: True)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="c8073bde-a172-66b9-eaa9-98dc71744803">
+      <Execution id="6dd72179-7603-4272-b5e1-7e5f55f9e5b8" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.SchemaMigrationPreflightTests" name="ExactLegacyPredicateIsAccepted_ButSameTokensWithDifferentGroupingAreRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.SchemaMigrationPreflightTests.ExactLegacyPredicateIsAccepted_ButSameTokensWithDifferentGroupingAreRejected(wrongGrouping: False)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="86463053-9a44-113e-9873-37c227e29e4d">
+      <Execution id="197f8e0a-7aa7-4de4-a189-300fb458f44a" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.SchemaMigrationPreflightTests" name="ExactLegacyPredicateIsAccepted_ButSameTokensWithDifferentGroupingAreRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatContractTests.MissingComponentArray_RemainsUnknownRatherThanBecomingAnExplicitEmptyBottle" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="7383a529-c88e-1d10-7c7c-442e863f3512">
+      <Execution id="c4b23481-ff0d-45ed-bd2e-1a785ec48384" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatContractTests" name="MissingComponentArray_RemainsUnknownRatherThanBecomingAnExplicitEmptyBottle" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="7383a529-c88e-1d10-7c7c-442e863f3512" executionId="c4b23481-ff0d-45ed-bd2e-1a785ec48384" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="86463053-9a44-113e-9873-37c227e29e4d" executionId="197f8e0a-7aa7-4de4-a189-300fb458f44a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c8073bde-a172-66b9-eaa9-98dc71744803" executionId="6dd72179-7603-4272-b5e1-7e5f55f9e5b8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="3" executed="3" passed="0" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.13)&#xD;
+[xUnit.net 00:00:00.39]   Discovering: Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.57]   Discovered:  Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.65]   Starting:    Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.76]       不可重写已应用006；执行器仍缺少保留AND/OR分组的前置门禁。&#xD;
+[xUnit.net 00:00:00.76]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.76]         F:\Develop Project\RPG\Server\Norn.Business.Tests\SchemaMigrationPreflightTests.cs(18,0): at Norn.Business.Tests.SchemaMigrationPreflightTests.ExactLegacyPredicateIsAccepted_ButSameTokensWithDifferentGroupingAreRejected(Boolean wrongGrouping)&#xD;
+[xUnit.net 00:00:00.76]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.78]       不可重写已应用006；执行器仍缺少保留AND/OR分组的前置门禁。&#xD;
+[xUnit.net 00:00:00.78]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.78]         F:\Develop Project\RPG\Server\Norn.Business.Tests\SchemaMigrationPreflightTests.cs(18,0): at Norn.Business.Tests.SchemaMigrationPreflightTests.ExactLegacyPredicateIsAccepted_ButSameTokensWithDifferentGroupingAreRejected(Boolean wrongGrouping)&#xD;
+[xUnit.net 00:00:00.78]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.80]       Assert.Null() Failure: Value is not null&#xD;
+[xUnit.net 00:00:00.80]       Expected: null&#xD;
+[xUnit.net 00:00:00.80]       Actual:   []&#xD;
+[xUnit.net 00:00:00.80]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.80]         F:\Develop Project\RPG\Server\Norn.Business.Tests\OwnedCombatContractTests.cs(16,0): at Norn.Business.Tests.OwnedCombatContractTests.MissingComponentArray_RemainsUnknownRatherThanBecomingAnExplicitEmptyBottle()&#xD;
+[xUnit.net 00:00:00.80]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.80]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.81]   Finished:    Norn.Business.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-01T16:04:11.7662260+08:00">
+        <Text>[xUnit.net 00:00:00.75]     Norn.Business.Tests.SchemaMigrationPreflightTests.ExactLegacyPredicateIsAccepted_ButSameTokensWithDifferentGroupingAreRejected(wrongGrouping: False) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-01T16:04:11.7928722+08:00">
+        <Text>[xUnit.net 00:00:00.78]     Norn.Business.Tests.SchemaMigrationPreflightTests.ExactLegacyPredicateIsAccepted_ButSameTokensWithDifferentGroupingAreRejected(wrongGrouping: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-01T16:04:11.8160113+08:00">
+        <Text>[xUnit.net 00:00:00.80]     Norn.Business.Tests.OwnedCombatContractTests.MissingComponentArray_RemainsUnknownRatherThanBecomingAnExplicitEmptyBottle [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

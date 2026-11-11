@@ -1,0 +1,165 @@
+{
+  "RecordedAtUtc": "2026-11-03T08:50:11.142797+00:00",
+  "Approved": "013源码+隔离验证；每位原成员可靠保存后末人离开即销毁遗留世界物/金币并结束实例；主库和发布另批。",
+  "Implemented": [
+    "账号Op3原合并再排布，GMU守恒；完全耗尽ID永久退休，Profile/旧Op0/新操作/入局/检查点/个人退出均有栅栏。",
+    "Op4/5私人Hub地面原ID/杖子卡/容器组分/实际材料保真；WorldOwner与pose持久化，固定正文/收据+完整Profile安装，部分GMU保持原Spawn及余量。",
+    "原拖放/附近/F/批拾/按钮真实账号Source及同一模型中心；原五点探地/3m/站点优先级，Scope失效/停用再启用不回灌旧模型。",
+    "全员实际退出收据+终态Head确认后，在同事务退休精确世界闭包和正常Completed，不发钱包/背包尾物；重放和后续Fail不能重复或覆盖。原冻结/Heartbeat/Idle边界保留。",
+    "Replica只在首次真正命中重放原Prefab VFX，保留原位置/旋转，超时/取消/重复不播放，不运行伤害/材料/payload。"
+  ],
+  "SourceFiles": [
+    "Shared/Protocol/Runtime/Business/OnlineContracts.cs",
+    "Server/Norn.Business/Migrations/013_account_hub_inventory.sql",
+    "Server/Norn.Business/Features/Inventory/AccountInventoryMoves.cs",
+    "Server/Norn.Business/Features/Inventory/InventoryService.cs",
+    "Server/Norn.Business/Features/Inventory/OwnedCombatAssetRules.cs",
+    "Server/Norn.Business/Features/Runs/RunAssetCheckpointService.cs",
+    "Server/Norn.Business/Features/Runs/RunCheckpointCompleteRules.cs",
+    "Server/Norn.Business/Features/Runs/RunMemberExitService.cs",
+    "Server/Norn.Business/Features/Rooms/RoomInstanceService.cs",
+    "RPG/Assets/_Project/Scripts/Core/Online/OnlineAccountInventoryCommands.cs",
+    "RPG/Assets/_Project/Scripts/Multiplayer/Accounts/OnlineAccountClient.Inventory.cs",
+    "RPG/Assets/_Project/Scripts/Multiplayer/Accounts/OnlineAccountInventoryMapping.cs",
+    "RPG/Assets/_Project/Scripts/Networking/Authentication/InstanceCheckpointJson.cs",
+    "RPG/Assets/_Project/Scripts/Run/Runtime/SinglePlayerInventorySession.cs",
+    "RPG/Assets/_Project/Scripts/Run/Hub/NearbyPickupController.cs",
+    "RPG/Assets/_Project/Scripts/Run/Inventory/AccountInventoryPresentationSource.cs",
+    "RPG/Assets/_Project/Scripts/Run/Runtime/SinglePlayerInventorySession.AccountGround.cs",
+    "RPG/Assets/_Project/Scripts/Run/Hub/NearbyPickupController.Account.cs",
+    "RPG/Assets/_Project/Scripts/UI/Inventory/SinglePlayerInventoryController.cs",
+    "RPG/Assets/_Project/Scripts/UI/Inventory/SinglePlayerInventoryController.AccountCommands.cs",
+    "RPG/Assets/_Project/Scripts/UI/Inventory/NearbyPickupListView.cs",
+    "RPG/Assets/_Project/Scripts/UI/Inventory/InventoryWorkspaceView.cs",
+    "RPG/Assets/_Project/Scripts/Multiplayer/Combat/OnlineCombatWorld.cs",
+    "RPG/Assets/_Project/Scripts/Multiplayer/Combat/OnlineCombatWorld.Checkpoint.cs",
+    "RPG/Assets/_Project/Scripts/Combat/Projectiles/ProjectileBase.cs",
+    "RPG/Assets/_Project/Scripts/Rendering/ProjectileImpactVfx.cs"
+  ],
+  "SourceProtocol": 14,
+  "ContentHash": "e79b64af2167407e1bf412c982ca526faf17ef3e356e3d02a1024fcf3037e369",
+  "GameplayHash": "a2439a6a88f10fd9917dd5d28c8a11ad72c9621a43dc0349082ed4a9a5c88476",
+  "Migration013": {
+    "Path": "Server\\Norn.Business\\Migrations\\013_account_hub_inventory.sql",
+    "Sha256": "581d756c5ff9a6a05fdf85b45564abea9a3993ce99f1c925b3cbe27e20449924",
+    "Status": "新增源码，已由真实隔离测试库应用；未应用主库，未修改旧迁移/回填资产。"
+  },
+  "FinalChecks": {
+    "Business4": {
+      "ExitCode": 0,
+      "Label": "hub-ground-terminal-final3-20261103",
+      "RecordedAtUtc": "2026-11-03T08:36:40.5732866Z",
+      "Total": 4,
+      "Failed": 0,
+      "Trx": "F:\\Develop Project\\RPG\\Server\\TestResults\\coin-member-exit-20261103\\hub-ground-terminal-final3-20261103.trx",
+      "Passed": 4
+    },
+    "Unity3": {
+      "State": "Finished",
+      "StartedUtc": "2026-11-03T08:41:30.6436924Z",
+      "UpdatedUtc": "2026-11-03T08:41:41.0916310Z",
+      "OriginalScene": "Assets/_Project/Scenes/P7_MainMenu.unity",
+      "CurrentScene": "",
+      "Error": "",
+      "SceneDirty": false,
+      "Passed": 3,
+      "Failed": 0,
+      "TestNames": []
+    },
+    "OfficialHashRefresh": {
+      "Command": "refresh-online-hashes",
+      "Error": "",
+      "RecordedAtUtc": "2026-11-03T08:45:15.1745490Z",
+      "Passed": true
+    }
+  },
+  "PriorFailuresPreserved": [
+    "hub-organize-ground-red-20261103 0/2；首次新2 GREEN为增强GMU前2/0，最终以后述4/0为准。",
+    "replica-impact-vfx-red-20261103为缺using导致编译Blocked0/0；replica-impact-vfx-behavior-red-20261103才是真实0/1。",
+    "hub-ground-terminal-direct-green为测试DTO坐标名编译失败；green2为3/1，终态夹具Parent违背既有空字符串合同；后续400为TestServer缺HasBody特征，保留错误并只脱敏临时测试控制Header。",
+    "hub-ground-terminal-final/final2为3/1；013隔离库已应用却被旧原始元数据LIKE能力门拒503。final2补丁Python语法错误确认未写入，旧分支又跑一次；现已修受控元数据精确归一化。",
+    "hub-ground-impact-direct为1/2；VFX EditMode未建立OnEnable订阅、Nearby夹具误将Spawn填Parent，修夹具前置，不降低生产校验/断言。"
+  ],
+  "UnresolvedUserReports": [
+    "普通法术从法杖拖动：现有正式普通卡路径/Prefab事件均未发现一概禁拆代码，AlwaysCast仍按原规则；本轮未GUI复现，不能报用户问题已解决。",
+    "毒法师显示火球：原毒Actor10/16→毒程序→PoisonPrefab键3→Codec/Reset→Replica，无Fire回退；Actor13原为火/毒/粘混合程序。原现象未定位，命中VFX修复不等同解释飞行球串型。"
+  ],
+  "NotVerified": [
+    "实际玩家/Native/同局重连手测",
+    "新Dedicated条件独立构建",
+    "Source14部署及主库011–013迁移",
+    "公网/完整发布/材料丢包Jitter验收设施",
+    "四人性能由用户延期"
+  ],
+  "RemainingDevelopment": [
+    "账号商店持久交易/研究UI与部分Hub材料权威写完整适配（复用原规则，未新设计经济/炼金）"
+  ],
+  "Deployment": "主库最后已知010，本轮未查询/改写；旧v11四产物Hash不变。需单独审批备份、011–013官方迁移、匹配v14业务/DS发布和ready检查。",
+  "Protection": {
+    "RecordedAtUtc": "2026-11-03T08:50:11.112938+00:00",
+    "Protected": [
+      {
+        "Path": "RPG/ProjectSettings/DynamicsManager.asset",
+        "Unchanged": true
+      },
+      {
+        "Path": "RPG/ProjectSettings/QualitySettings.asset",
+        "Unchanged": true
+      },
+      {
+        "Path": "RPG/ProjectSettings/TimeManager.asset",
+        "Unchanged": true
+      },
+      {
+        "Path": "RPG/ProjectSettings/EditorBuildSettings.asset",
+        "Unchanged": true
+      },
+      {
+        "Path": "RPG/Assets/_Project/Scenes/P7_MainMenu.unity",
+        "Unchanged": true
+      },
+      {
+        "Path": "RPG/Assets/_Project/Scenes/P7_DemoRun.unity",
+        "Unchanged": true
+      },
+      {
+        "Path": "RPG/Assets/_Project/Scenes/P8_BossField.unity",
+        "Unchanged": true
+      }
+    ],
+    "OldPublished": [
+      {
+        "Path": "RPG/Builds/OnlineRooms/Server/NornRoomServer.exe",
+        "Unchanged": true
+      },
+      {
+        "Path": "RPG/Builds/OnlineRooms/Server/NornRoomServer_Data/Managed/Game.Multiplayer.dll",
+        "Unchanged": true
+      },
+      {
+        "Path": "RPG/Builds/OnlineRooms/Server/NornRoomServer_Data/Managed/Game.NetworkProtocol.dll",
+        "Unchanged": true
+      },
+      {
+        "Path": "Server/.artifacts/publish/online/Norn.Business.dll",
+        "Unchanged": true
+      }
+    ]
+  },
+  "ApprovalDenial": "Heartbeat409后延长等待补丁此前被拒，未重试/未换路。原401/409与Idle退出保持，成功响应丢失不保证DS收到200，但Completed不被Fail回写。",
+  "FinalEditorSafety": {
+    "Playing": false,
+    "Compiling": false,
+    "Updating": false,
+    "CompilationFailed": false,
+    "Building": false,
+    "TestsRunning": false,
+    "DirtyScene": false,
+    "RecordedUtc": "2026-11-03T08:50:52.2518052Z"
+  },
+  "DiffCheck": {
+    "ExitCode": 0,
+    "Scope": "本轮目标源文件与5份文档；旧工作区保留"
+  },
+  "NewUnityMetaGenerated": true
+}

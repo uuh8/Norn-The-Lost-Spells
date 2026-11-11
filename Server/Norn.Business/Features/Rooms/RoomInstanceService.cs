@@ -34,6 +34,8 @@ public sealed class RoomInstanceService(OnlineDatabase database, RoomTransaction
             // DungeonId 只在建房事务中写入，现有 API 不允许换图；在同一 Room Gate 事务读取，
             // 避免进程启动重试从调用者或旧 launch.json 猜地图。未来允许换图时必须改为读取冻结 Run 字段。
             string dungeon = RequireKnownDungeon(party.DungeonId);
+            if (dungeon == "home" && !await RoomTransactions.IsSinglePlayerRun(db, tx, run.RunId, run.RoomEpoch, ct))
+                throw new OnlineFailure(409, "HomeSinglePlayerOnly");
             var previous = await db.QuerySingleOrDefaultAsync<InstanceRow>(new CommandDefinition("SELECT * FROM ServerInstances WHERE RunId=@Run", new { Run = run.RunId }, tx, cancellationToken: ct));
             if (previous != null) return new InstanceLaunchGrant(Descriptor(previous, dungeon), null, false);
             var reserved = (await db.QueryAsync<int>(new CommandDefinition("SELECT ActivePort FROM ServerInstances WHERE ActivePort IS NOT NULL", transaction: tx, cancellationToken: ct))).ToHashSet();
@@ -66,6 +68,8 @@ public sealed class RoomInstanceService(OnlineDatabase database, RoomTransaction
         if (request.BuildVersion != content.Manifest.BuildVersion || string.IsNullOrEmpty(content.GameplayConfigHash) || request.GameplayConfigHash != content.GameplayConfigHash)
             throw new OnlineFailure(409, "ContentVersionMismatch");
         var party = await RequireCurrent(db, tx, row, request.RoomEpoch, false, ct);
+        bool singlePlayer = await RoomTransactions.IsSinglePlayerRun(db, tx, row.RunId, row.RoomEpoch, ct);
+        if (party.DungeonId == "home" && !singlePlayer) throw new OnlineFailure(409, "HomeSinglePlayerOnly");
         // Ready 不只是证明进程在监听：DS 必须确认它实际装配的副本与业务授权相同。
         // 放在所有 UPDATE 前，错误/旧描述既不能发布 Running，也不能污染正确 DS 随后的重试。
         if (!DungeonIdentityRules.Matches(party.DungeonId, request.DungeonId)) throw new OnlineFailure(409, "DungeonMismatch");
@@ -78,15 +82,17 @@ public sealed class RoomInstanceService(OnlineDatabase database, RoomTransaction
             """, new { Id = instance, Now, Until = until, Run = row.RunId, Room = row.RoomId }, tx, cancellationToken: ct));
         var entries = await db.QueryAsync<EntryRow>(new CommandDefinition("SELECT r.EntrySnapshot,m.Seat FROM RunMembers r JOIN PartyMembers m ON m.CharacterId=r.CharacterId AND m.RoomId=@Room WHERE r.RunId=@Run ORDER BY m.Seat", new { Run = row.RunId, Room = row.RoomId }, tx, cancellationToken: ct));
         var profiles = entries.Select(e => new InstanceEntryMember { ActorId = (ulong)e.Seat + 1, Profile = JsonSerializer.Deserialize<OnlineProfileReply>(e.EntrySnapshot, ContentManifestValidator.Json)! }).ToArray();
-        if (profiles.Length is < 2 or > 4 || profiles.Any(p => p.Profile.ContentManifestHash != content.Manifest.Hash)) throw new OnlineFailure(409, "EntrySnapshotMismatch");
+        if ((singlePlayer ? profiles.Length != 1 : profiles.Length is < 2 or > 4)
+            || profiles.Any(p => p.Profile.ContentManifestHash != content.Manifest.Hash)) throw new OnlineFailure(409, "EntrySnapshotMismatch");
         foreach (var member in profiles)
         {
             var assets = member.Profile.CombatAssets;
-            OwnedCombatAssetRules.Require(assets, member.Profile.PlayerId, content.GameplayConfigHash, content, true);
+            OwnedCombatAssetRules.RequirePersisted(assets, member.Profile.PlayerId, content.GameplayConfigHash, content);
             if (assets.RunId != row.RunId || assets.ActorId != member.ActorId || assets.InventoryVersion != member.Profile.Version)
                 throw new OnlineFailure(409, "EntrySnapshotMismatch");
         }
-        return new InstanceReadyReply { DungeonId = party.DungeonId, LeaseExpiresUnixMilliseconds = Unix(until), Members = profiles };
+        return new InstanceReadyReply { SinglePlayer = singlePlayer, DungeonId = party.DungeonId, CheckpointSchemaVersion = OnlineRunAssetCheckpoint.CompleteSchemaVersion,
+            LeaseExpiresUnixMilliseconds = Unix(until), Members = profiles };
     }, ct);
     public Task<InstanceLeaseReply> HeartbeatAsync(string instance, string secret, uint epoch, CancellationToken ct) => transactions.MutateAsync(async (db, tx) =>
     {
@@ -94,14 +100,71 @@ public sealed class RoomInstanceService(OnlineDatabase database, RoomTransaction
         await db.ExecuteAsync(new CommandDefinition("UPDATE ServerInstances SET LastHeartbeatUtc=@Now,LeaseExpiresUtc=@Until WHERE InstanceId=@Id", new { Id = instance, Now, Until = until }, tx, cancellationToken: ct));
         return new InstanceLeaseReply { LeaseExpiresUnixMilliseconds = Unix(until) };
     }, ct);
+    /// <summary>
+    /// 全员个人终态可靠提交后，按已确认规则将剩余世界物随副本销毁；瞬断/空连接不构成条件。
+    /// 同一Room Gate内确认Head并改变三个生命周期状态，重复请求只读回原Head，不重复结算资产。
+    /// </summary>
+    public Task<InstanceCompleteReply> CompleteAsync(string instance, string secret, InstanceCompleteRequest request, CancellationToken ct)
+        => transactions.MutateAsync(async (db, tx) =>
+        {
+            var row = await Credential(db, tx, instance, secret, ct);
+            if (request == null || request.RunId != row.RunId || request.RoomEpoch != row.RoomEpoch
+                || request.Sequence == 0 || !Guid.TryParseExact(request.CheckpointId, "N", out _) || !IsToken(request.PayloadHash))
+                throw new OnlineFailure(409, "InstanceCompletionIdentityMismatch");
+            await RunAssetCheckpointService.RequireTerminalMembersAsync(db, tx, row, ct);
+            var discarded = await RunAssetCheckpointService.RequireTerminalHeadAsync(db, tx, row, request, ct);
+            string runState = await db.ExecuteScalarAsync<string>(new CommandDefinition(
+                "SELECT State FROM Runs WHERE RunId=@Run AND RoomEpoch=@Epoch", new { Run = row.RunId, Epoch = row.RoomEpoch }, tx, cancellationToken: ct)) ?? "";
+            if (row.State == "Completed" ? runState != "Completed" : runState != "Running")
+                throw new OnlineFailure(409, "InstanceCompletionStateMismatch");
+            var reply = new InstanceCompleteReply { InstanceId = row.InstanceId, RunId = row.RunId, RoomEpoch = row.RoomEpoch,
+                CheckpointId = request.CheckpointId, Sequence = request.Sequence, PayloadHash = request.PayloadHash, Completed = true };
+            if (row.State == "Completed") return reply; // 成功后租约/Party已解除，幂等读取不能再要求活跃租约。
+            _ = await RequireCurrent(db, tx, row, request.RoomEpoch, true, ct);
+            // 当前旧schema明确禁止Completed。缺增量约束时显式停在此，不写Failed冒充正常结束。
+            // INFORMATION_SCHEMA按平台可能保留小写表名、_ascii前缀与反斜线；沿006/013受控归一化，
+            // 精确验证完整State集合，不用任意约束提到Completed就放行，也不在此执行DDL。
+            int schemas = await db.ExecuteScalarAsync<int>(new CommandDefinition("""
+                SELECT COUNT(DISTINCT table_name) FROM (
+                  SELECT LOWER(t.TABLE_NAME) table_name,
+                    REGEXP_REPLACE(REGEXP_REPLACE(LOWER(REPLACE(c.CHECK_CLAUSE,CHAR(92),'')), '_[[:alnum:]]+(?='')', ''), '[[:space:]`()]+', '') state_clause
+                  FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS t
+                  JOIN INFORMATION_SCHEMA.CHECK_CONSTRAINTS c ON c.CONSTRAINT_SCHEMA=t.CONSTRAINT_SCHEMA
+                    AND CAST(c.CONSTRAINT_NAME AS BINARY)=CAST(t.CONSTRAINT_NAME AS BINARY)
+                  WHERE t.CONSTRAINT_SCHEMA=DATABASE() AND LOWER(t.TABLE_NAME) IN ('runs','serverinstances')
+                    AND t.CONSTRAINT_TYPE='CHECK'
+                ) checked_state
+                WHERE (table_name='runs' AND state_clause='statein''starting'',''running'',''failed'',''completed''')
+                  OR (table_name='serverinstances' AND state_clause='statein''launching'',''ready'',''failed'',''completed''')
+                """, transaction: tx, cancellationToken: ct));
+            if (schemas != 2) throw new OnlineFailure(503, "InstanceCompletionSchemaUnavailable");
+            // 最终Head/收据保持原文以供审计，不重写历史正文。只退休这批经精确闭包校验的世界ID，
+            // 不碰已Returned的个人资产，不发金币/物品补偿；若后续状态写失败，同一事务整体回滚。
+            foreach (string[] batch in discarded.Chunk(256))
+                await db.ExecuteAsync(new CommandDefinition("""
+                    UPDATE RunItemCustody SET State='Retired' WHERE RunId=@Run AND State='Active' AND InstanceId IN @Ids;
+                    UPDATE RunAssetCheckpointIdentities SET IsRetired=TRUE WHERE RunId=@Run AND InstanceId IN @Ids
+                    """, new { Run = row.RunId, Ids = batch }, tx, cancellationToken: ct));
+            await db.ExecuteAsync(new CommandDefinition("""
+                UPDATE Runs SET State='Completed',FailureCode=NULL WHERE RunId=@Run AND State='Running';
+                UPDATE Parties SET State='Closed',ActiveRunId=NULL WHERE RoomId=@Room AND ActiveRunId=@Run AND RoomEpoch=@Epoch;
+                UPDATE ServerInstances SET State='Completed',ActivePort=NULL,FailureCode=NULL WHERE InstanceId=@Instance;
+                INSERT INTO RunLifecycleEvents(RunId,RoomEpoch,EventCode,RecordedAtUtc) VALUES(@Run,@Epoch,'Completed',@Now)
+                """, new { Run = row.RunId, Room = row.RoomId, Epoch = row.RoomEpoch, Instance = row.InstanceId, Now }, tx, cancellationToken: ct));
+            return reply;
+        }, ct);
     public Task<JoinTicketReply> MintTicketAsync(string player, string room, CancellationToken ct) => transactions.MutateAsync(async (db, tx) =>
     {
         await RoomTransactions.RequireMember(db, tx, room, player, ct); var party = await RoomTransactions.Party(db, tx, room, ct);
         var row = await db.QuerySingleOrDefaultAsync<InstanceRow>(new CommandDefinition("SELECT * FROM ServerInstances WHERE RunId=@Run", new { Run = party.ActiveRunId }, tx, cancellationToken: ct));
         if (row == null || row.State != "Ready") throw new OnlineFailure(409, "InstanceNotReady");
         await RequireCurrent(db, tx, row, party.RoomEpoch, true, ct);
-        DateTime? last = await db.QuerySingleOrDefaultAsync<DateTime?>(new CommandDefinition("SELECT LastTicketUtc FROM RunMembers WHERE RunId=@Run AND CharacterId=@Player", new { Run = row.RunId, Player = player }, tx, cancellationToken: ct));
-        if (last.HasValue && Now < last.Value.AddSeconds(5)) throw new OnlineFailure(429, "TicketRateLimited");
+        // Party席位不等于仍有本Run资格：最终退出/回滚/资产租约解除后，不再签发无法合法兑换的新票。
+        // 与Consume共用同一事实查询，且仍在Room Gate内，防资格变更在检查与INSERT之间穿插。
+        // 已认证账号仍有效；本Run资格失败用409，不用会令Client清账号Session的HTTP401。
+        var member = await ReadAdmissionAsync(db, tx, row, player, ct);
+        if (member == null || member.ConnectionEpoch == uint.MaxValue) throw new OnlineFailure(409, "RunMemberNotActive");
+        if (member.LastTicketUtc.HasValue && Now < member.LastTicketUtc.Value.AddSeconds(5)) throw new OnlineFailure(429, "TicketRateLimited");
         string token = Convert.ToHexStringLower(RandomNumberGenerator.GetBytes(32)); DateTime expires = Now.AddSeconds(60);
         // 每成员至多一票（含消费票），替换后旧摘要查不到仍拒绝；限频持久化，不随Host重启归零。
         await db.ExecuteAsync(new CommandDefinition("""
@@ -121,35 +184,47 @@ public sealed class RoomInstanceService(OnlineDatabase database, RoomTransaction
         if (!IsToken(request.Ticket)) throw new OnlineFailure(401, "InvalidJoinTicket");
         var ticket = await db.QuerySingleOrDefaultAsync<TicketRow>(new CommandDefinition("SELECT * FROM JoinTickets WHERE TicketHash=@Hash", new { Hash = AccountService.HashToken(request.Ticket) }, tx, cancellationToken: ct));
         if (ticket == null || ticket.InstanceId != instance || ticket.CharacterId != request.PlayerId || ticket.RoomEpoch != row.RoomEpoch || ticket.ConsumedUtc != null || Now >= ticket.ExpiresUtc || ticket.ProtocolVersion != content.Manifest.ProtocolVersion || ticket.BuildVersion != content.Manifest.BuildVersion || ticket.ManifestHash != content.Manifest.Hash) throw new OnlineFailure(401, "InvalidJoinTicket");
-        var member = await db.QuerySingleOrDefaultAsync<AdmissionRow>(new CommandDefinition("""
-            SELECT r.ConnectionEpoch,m.Seat FROM RunMembers r JOIN PartyMembers m ON m.CharacterId=r.CharacterId AND m.RoomId=@Room
-            JOIN AssetLeases l ON l.CharacterId=r.CharacterId AND l.RunId=r.RunId AND l.RoomEpoch=@Epoch
-            WHERE r.RunId=@Run AND r.CharacterId=@Player AND r.State IN ('Reserved','Admitted')
-            """, new { Room = row.RoomId, Run = row.RunId, Player = request.PlayerId, Epoch = row.RoomEpoch }, tx, cancellationToken: ct));
+        var member = await ReadAdmissionAsync(db, tx, row, request.PlayerId, ct);
         if (member == null || member.ConnectionEpoch == uint.MaxValue) throw new OnlineFailure(401, "InvalidJoinTicket");
         uint connectionEpoch = member.ConnectionEpoch + 1;
         await db.ExecuteAsync(new CommandDefinition("UPDATE JoinTickets SET ConsumedUtc=@Now WHERE TicketHash=@Hash; UPDATE RunMembers SET State='Admitted',ConnectionEpoch=@ConnectionEpoch WHERE RunId=@Run AND CharacterId=@Player", new { Now, Hash = AccountService.HashToken(request.Ticket), ConnectionEpoch = connectionEpoch, Run = row.RunId, Player = request.PlayerId }, tx, cancellationToken: ct));
         // Client 没有提交 Dungeon 选择字段；兑换结果只从受保护的 Party 取得，DS 还须与自己的启动身份再比对。
         return new ConsumeJoinTicketReply { PlayerId = request.PlayerId, RoomId = row.RoomId, RunId = row.RunId, DungeonId = party.DungeonId, RoomEpoch = row.RoomEpoch, ConnectionEpoch = connectionEpoch, ActorId = (ulong)member.Seat + 1 };
     }, ct);
+
+    /// <summary>
+    /// 签票与兑换共享的只读成员资格：Run/Party/资产租约必须指向同一房间Epoch。
+    /// 返回事实，由各调用方保持自己的HTTP错误层级；这里不续租、不改席位或提升ConnectionEpoch。
+    /// </summary>
+    private static Task<AdmissionRow?> ReadAdmissionAsync(MySqlConnection db, MySqlTransaction tx, InstanceRow instance,
+        string player, CancellationToken ct)
+        => db.QuerySingleOrDefaultAsync<AdmissionRow>(new CommandDefinition("""
+            SELECT r.ConnectionEpoch,r.LastTicketUtc,m.Seat FROM RunMembers r
+            JOIN PartyMembers m ON m.CharacterId=r.CharacterId AND m.RoomId=@Room
+            JOIN AssetLeases l ON l.CharacterId=r.CharacterId AND l.RunId=r.RunId AND l.RoomEpoch=@Epoch
+            WHERE r.RunId=@Run AND r.CharacterId=@Player AND r.State IN ('Reserved','Admitted')
+            """, new { Room = instance.RoomId, Run = instance.RunId, Player = player, Epoch = instance.RoomEpoch }, tx, cancellationToken: ct));
     public Task<bool> FailAsync(string instance, string code, CancellationToken ct)
     {
         if (code is not ("ReadyTimeout" or "LaunchFailed" or "Cancelled" or "ProcessExited" or "LeaseExpired")) throw new ArgumentException("只允许固定Code，不记录含凭据的异常文本。", nameof(code));
         return transactions.MutateAsync(async (db, tx) =>
         {
             var row = await Get(db, tx, instance, ct);
-            if (row.State == "Failed" || code == "ReadyTimeout" && (row.State != "Launching" || Now < row.ReadyDeadlineUtc) || code == "LeaseExpired" && (row.State != "Ready" || Now < row.LeaseExpiresUtc)) return false;
+            if (row.State is "Failed" or "Completed" || code == "ReadyTimeout" && (row.State != "Launching" || Now < row.ReadyDeadlineUtc) || code == "LeaseExpired" && (row.State != "Ready" || Now < row.LeaseExpiresUtc)) return false;
             var party = await RoomTransactions.Party(db, tx, row.RoomId, ct);
             if (party.ActiveRunId == row.RunId && party.RoomEpoch == row.RoomEpoch)
             {
                 var players = await db.QueryAsync<string>(new CommandDefinition("SELECT CharacterId FROM RunMembers WHERE RunId=@Run ORDER BY CharacterId", new { Run = row.RunId }, tx, cancellationToken: ct));
                 foreach (string player in players) _ = await db.ExecuteScalarAsync<uint>(new CommandDefinition("SELECT Version FROM Characters WHERE CharacterId=@Player FOR UPDATE", new { Player = player }, tx, cancellationToken: ct));
+                // 个人Home首次入场会冻结原地面。只撤销尚未admit且无Journal/收据的seed；
+                // 局中事实存在时继续保留原恢复栅栏，不把旧SQL现场重新授予。
+                if (party.DungeonId == "home") await HomePracticeAssets.ReleaseUnstartedSeedAsync(db, tx, row.RunId, ct);
                 // N2没有局中资产写入，只解除原位资产托管。N6必须按成员结算状态恢复，不能照搬此启动/只读阶段逻辑。
                 await db.ExecuteAsync(new CommandDefinition("""
                     UPDATE Parties SET State='Open',RoomEpoch=@NextEpoch,ActiveRunId=NULL,ReadyRevision=@Revision WHERE RoomId=@Room;
                     UPDATE PartyMembers SET IsReady=FALSE,ReadyInventoryVersion=0 WHERE RoomId=@Room;
                     UPDATE Runs SET State='Failed',FailureCode=@Code WHERE RunId=@Run;
-                    UPDATE RunMembers SET State='RolledBack' WHERE RunId=@Run;
+                    UPDATE RunMembers SET State='RolledBack' WHERE RunId=@Run AND State IN ('Reserved','Admitted');
                     DELETE FROM AssetLeases WHERE RunId=@Run AND RoomEpoch=@Epoch;
                     INSERT INTO RunLifecycleEvents(RunId,RoomEpoch,EventCode,RecordedAtUtc) VALUES(@Run,@Epoch,@Code,@Now)
                     """, new { Room = row.RoomId, Run = row.RunId, Epoch = row.RoomEpoch, NextEpoch = RoomTransactions.Next(row.RoomEpoch), Revision = RoomTransactions.Next(party.ReadyRevision), Code = code, Now }, tx, cancellationToken: ct));
@@ -195,12 +270,30 @@ public sealed class RoomInstanceService(OnlineDatabase database, RoomTransaction
         return await db.QuerySingleOrDefaultAsync<InstanceRow>(new CommandDefinition("SELECT * FROM ServerInstances WHERE InstanceId=@Id AND SecretHash=@Hash", new { Id = id, Hash = AccountService.HashToken(secret) }, tx, cancellationToken: ct)) ?? throw new OnlineFailure(401, "InvalidInstanceCredential");
     }
     /// <summary>
+    /// 检查点复用同一实例凭据及当前Run/Epoch/租约门。调用方已持Room Gate，不能自行构造“已认证”布尔值。
+    /// 只读收据查询可在旧租约到期后查既成事实；它不续租、不恢复模拟、不授予任何新的资产写权限。
+    /// </summary>
+    internal async Task<InstanceRow> RequireCheckpointAuthorityAsync(MySqlConnection db, MySqlTransaction tx,
+        string instance, string secret, uint epoch, bool requireLease, CancellationToken ct)
+    {
+        RoomTransactions.RequireId(instance);
+        var row = await Credential(db, tx, instance, secret, ct);
+        if (epoch == 0 || row.RoomEpoch != epoch) throw new OnlineFailure(409, "InstanceEpochExpired");
+        if (requireLease) _ = await RequireCurrent(db, tx, row, epoch, true, ct);
+        return row;
+    }
+
+    // 最终收据查询只验证实例凭据，不能要求已被本次成功提交解除的成员lease仍存在。
+    // 新退出提交随后仍调用RequireCheckpointAuthority(requireLease:true)，不借查询口授予写权限。
+    internal Task<InstanceRow> RequireExitCredentialAsync(MySqlConnection db,MySqlTransaction tx,string instance,string secret,CancellationToken ct)
+        =>Credential(db,tx,instance,secret,ct);
+    /// <summary>
     /// 验证数据库中当前授权并返回同一事务快照中的 Party，调用者不要再从 Client/文件重建地图身份。
     /// 所有调用方已取得 RoomMutationGate，期间 ActiveRun/Epoch/Dungeon 不会被另一业务写请求拆开修改。
     /// </summary>
     private async Task<RoomTransactions.PartyRow> RequireCurrent(MySqlConnection db, MySqlTransaction tx, InstanceRow row, uint epoch, bool ready, CancellationToken ct)
     {
-        if (row.RoomEpoch != epoch || row.State == "Failed" || ready && row.State != "Ready" || row.State == "Ready" && (row.LeaseExpiresUtc == null || Now >= row.LeaseExpiresUtc)) throw new OnlineFailure(409, "InstanceEpochExpired");
+        if (row.RoomEpoch != epoch || row.State is "Failed" or "Completed" || ready && row.State != "Ready" || row.State == "Ready" && (row.LeaseExpiresUtc == null || Now >= row.LeaseExpiresUtc)) throw new OnlineFailure(409, "InstanceEpochExpired");
         var party = await RoomTransactions.Party(db, tx, row.RoomId, ct);
         if (party.ActiveRunId != row.RunId || party.RoomEpoch != row.RoomEpoch || party.State is not ("Starting" or "Running")) throw new OnlineFailure(409, "InstanceEpochExpired");
         RequireKnownDungeon(party.DungeonId);
@@ -215,7 +308,7 @@ public sealed class RoomInstanceService(OnlineDatabase database, RoomTransaction
     private string RequireKnownDungeon(string dungeon)
     {
         // 格式检查不能取代业务白名单：一个看起来合法的新字符串也不能创建尚未部署的地图。
-        if (!DungeonIdentityRules.IsValidId(dungeon) || !options.DungeonIds.Contains(dungeon, StringComparer.Ordinal))
+        if (!DungeonIdentityRules.IsValidId(dungeon) || dungeon != "home" && !options.DungeonIds.Contains(dungeon, StringComparer.Ordinal))
             throw new OnlineFailure(409, "UnknownDungeon");
         return dungeon;
     }
@@ -229,7 +322,8 @@ public sealed class RoomInstanceService(OnlineDatabase database, RoomTransaction
         public InstanceProcessIdentity? Identity => ProcessId.HasValue && ProcessStartTicks.HasValue ? new(ProcessId.Value, ProcessStartTicks.Value, Executable) : null;
     }
     private sealed class EntryRow { public string EntrySnapshot { get; set; } = ""; public int Seat { get; set; } }
-    private sealed class AdmissionRow { public uint ConnectionEpoch { get; set; } public int Seat { get; set; } }
+    private sealed class AdmissionRow
+    { public uint ConnectionEpoch { get; set; } public int Seat { get; set; } public DateTime? LastTicketUtc { get; set; } }
     private sealed class TicketRow
     {
         public string InstanceId { get; set; } = ""; public string CharacterId { get; set; } = ""; public uint RoomEpoch { get; set; } public uint ProtocolVersion { get; set; }

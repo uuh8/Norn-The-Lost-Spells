@@ -10,6 +10,20 @@ namespace Game.Networking.Tests
         private const string Run = "11111111111111111111111111111111";
         private Type _type, _progress;
         private object _codec;
+        [Test] public void SuccessfulReturnGateCarriesTheAuthorityPoseAndCannotExistBeforeStageClear()
+        {
+            var value = Progress(3);
+            var presence = _progress.GetField("HasReturnPortal"); Assert.That(presence, Is.Not.Null);
+            presence.SetValue(value, true);
+            _progress.GetField("ReturnPortalPosition").SetValue(value, new UnityEngine.Vector3(3, 4, 5));
+            _progress.GetField("ReturnPortalRotation").SetValue(value, UnityEngine.Quaternion.Euler(0, 37, 0));
+            Assert.That(Decode(Encode(value), Run, "p7", 1234, out var read), Is.True);
+            Assert.That(presence.GetValue(read), Is.True);
+            Assert.That(_progress.GetField("ReturnPortalPosition").GetValue(read), Is.EqualTo(new UnityEngine.Vector3(3, 4, 5)));
+            var phase = _progress.GetField("Phase"); phase.SetValue(value, Enum.ToObject(phase.FieldType, 2));
+            var args = new object[] { value, Run, "p7", 1234ul, new ArraySegment<byte>(new byte[256]), 0 };
+            Assert.That(_type.GetMethod("TryEncode").Invoke(_codec, args), Is.False);
+        }
         [SetUp] public void RequireBoundedProgressCodec()
         {
             _type = typeof(MovementCodec).Assembly.GetType("Game.Networking.DungeonProgressCodec");
@@ -36,7 +50,7 @@ namespace Game.Networking.Tests
             var truncated = new byte[bytes.Length - 1]; Array.Copy(bytes,truncated,truncated.Length);
             Assert.That(Decode(truncated,Run,"p7",1234,out _),Is.False);
             Assert.That(Decode(Append(bytes,new byte[]{8,2}),Run,"p7",1234,out _),Is.False);
-            Assert.That(Decode(Append(bytes,new byte[]{80,1}),Run,"p7",1234,out _),Is.False);
+            Assert.That(Decode(Append(bytes,new byte[]{160,1,1}),Run,"p7",1234,out _),Is.False);
         }
         [TestCase("Revision",0u)][TestCase("ServerTick",0u)][TestCase("EncounterIndexPlusOne",0u)]
         [TestCase("EncounterIndexPlusOne",5u)][TestCase("RemainingEnemies",13u)]

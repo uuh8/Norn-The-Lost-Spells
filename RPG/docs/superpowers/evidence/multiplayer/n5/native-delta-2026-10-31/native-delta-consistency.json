@@ -1,0 +1,93 @@
+{
+  "RecordedUtc": "2026-10-31T13:14:35.587390+00:00",
+  "Dungeon": "p7",
+  "WorldEpoch": 6869361087090086539,
+  "FirstTick": 5,
+  "SecondStartTick": 5,
+  "SecondTick": 10,
+  "FirstChunks": 4,
+  "FinalChunks": 5,
+  "ChangedExistingChunks": 1,
+  "PagesBefore": 8,
+  "PagesAfter": 22,
+  "AcksBefore": 8,
+  "AcksAfter": 22,
+  "Clients": [
+    {
+      "ActorId": 1,
+      "ConnectionEpoch": 1,
+      "InstalledBefore": 4,
+      "InstalledAfter": 11,
+      "ExactChunks": 5,
+      "ActualDeltaChunks": [
+        {
+          "Domain": 1,
+          "X": 0,
+          "Y": 0,
+          "Z": 0,
+          "Words": 39,
+          "WorldEpoch": 6869361087090086539,
+          "Generation": 1,
+          "Revision": 8,
+          "BaseRevision": 7,
+          "SnapshotId": 8,
+          "ServerTick": 10,
+          "Checksum": 1627955361,
+          "Resident": true
+        }
+      ]
+    },
+    {
+      "ActorId": 2,
+      "ConnectionEpoch": 1,
+      "InstalledBefore": 4,
+      "InstalledAfter": 11,
+      "ExactChunks": 5,
+      "ActualDeltaChunks": [
+        {
+          "Domain": 1,
+          "X": 0,
+          "Y": 0,
+          "Z": 0,
+          "Words": 39,
+          "WorldEpoch": 6869361087090086539,
+          "Generation": 1,
+          "Revision": 8,
+          "BaseRevision": 7,
+          "SnapshotId": 8,
+          "ServerTick": 10,
+          "Checksum": 1627955361,
+          "Resident": true
+        }
+      ]
+    }
+  ],
+  "Logs": [
+    {
+      "Label": "p7",
+      "BuiltInResourceErrors": 2,
+      "OtherErrors": []
+    },
+    {
+      "Label": "p7-client0",
+      "BuiltInResourceErrors": 0,
+      "OtherErrors": []
+    },
+    {
+      "Label": "p7-client1",
+      "BuiltInResourceErrors": 0,
+      "OtherErrors": []
+    }
+  ],
+  "Mode": "Two paused checkpoints with at least five real material ticks running between them",
+  "AckEvidence": "DS aggregate accepted-install ACK count increased; final ACK receipt not attributed separately to each connection",
+  "NotVerified": [
+    "Unbounded continuous reactions",
+    "Native missing revision/history overwrite/corrupt page recovery",
+    "Interest subscription",
+    "Stress/performance",
+    "Same-process auto reconnect",
+    "Consumption persistence",
+    "Full player path"
+  ]
+}

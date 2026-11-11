@@ -19,14 +19,15 @@ namespace Game.Run
             if(from.Kind==ItemLocationKind.ThrownContainer||to.Kind==ItemLocationKind.ThrownContainer||to.Kind==ItemLocationKind.WorldItem)return store.Result(false,InventoryFailureReason.InvalidOwnership);
             store.Catalog.TryGetRules(target.ContentId,out var rules);ulong amount=Math.Min(source.Material.Quantity,rules.MaterialItemCapacity-target.Material.Quantity);
             if(amount==0)return store.Result(false,InventoryFailureReason.Capacity);
-            var candidate=store.CopyCandidate();MergeCandidate(candidate,sourceId,targetId,amount);
-            return store.CommitMaterialLayout(candidate,version);
+            var candidate=store.CopyCandidate();var merged=new List<string>();MergeCandidate(candidate,sourceId,targetId,amount,merged);
+            return store.CommitMaterialLayout(candidate,version,merged);
         }
-        internal static void MergeCandidate(Dictionary<string,InventoryEntry> candidate,string sourceId,string targetId,ulong amount)
+        internal static void MergeCandidate(Dictionary<string,InventoryEntry> candidate,string sourceId,string targetId,ulong amount,
+            List<string> mergedIds=null)
         {
             var source=candidate[sourceId];var target=candidate[targetId];
             candidate[targetId]=new InventoryEntry(WithQuantity(target.Item,target.Item.Material.Quantity+amount),target.Location);
-            if(amount==source.Item.Material.Quantity)candidate.Remove(sourceId);
+            if(amount==source.Item.Material.Quantity){candidate.Remove(sourceId);mergedIds?.Add(sourceId);}
             else candidate[sourceId]=new InventoryEntry(WithQuantity(source.Item,source.Item.Material.Quantity-amount),source.Location);
         }
     }

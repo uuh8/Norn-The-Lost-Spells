@@ -1,0 +1,305 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="f35617ea-fb68-4ff0-98a8-4a619552c682" name="zhy@ZHY 2026-11-01 15:41:45" runUser="ZHY\zhy" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T15:41:45.8689210+08:00" queuing="2026-11-01T15:41:45.8689225+08:00" start="2026-11-01T15:41:44.8282997+08:00" finish="2026-11-01T15:41:45.9621807+08:00" />
+  <TestSettings name="default" id="b9057cec-e637-4ad1-9d40-779f49c6df39">
+    <Deployment runDeploymentRoot="zhy_ZHY_2026-11-01_15_41_45" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="0bafe2c7-93c8-408d-9a7d-38a518fc1ce2" testId="1e3a2d85-b2d9-7391-b218-07a3016ea813" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidContainerState_IsRejectedWithoutOmittingTheBadItem(defect: &quot;schema&quot;)" computerName="ZHY" duration="00:00:00.0557383" startTime="2026-11-01T15:41:45.7038948+08:00" endTime="2026-11-01T15:41:45.7667372+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0bafe2c7-93c8-408d-9a7d-38a518fc1ce2" />
+    <UnitTestResult executionId="c70354d3-c8a9-45d5-8505-ffd9817a3c51" testId="59457baf-a608-d36a-4685-7c674e6d36df" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidContainerState_IsRejectedWithoutOmittingTheBadItem(defect: &quot;zero&quot;)" computerName="ZHY" duration="00:00:00.0029359" startTime="2026-11-01T15:41:45.7827109+08:00" endTime="2026-11-01T15:41:45.7857435+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c70354d3-c8a9-45d5-8505-ffd9817a3c51" />
+    <UnitTestResult executionId="20df545a-7407-41cb-b242-af92f01e59ea" testId="020675fc-c69e-7f7e-f5a8-4a0ea9943ee9" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.RealBackpack_MixedContainer_Tool_AndSpareWandProgram_AreAcceptedAsOneClosure" computerName="ZHY" duration="00:00:00.0028504" startTime="2026-11-01T15:41:45.8656938+08:00" endTime="2026-11-01T15:41:45.8677396+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="20df545a-7407-41cb-b242-af92f01e59ea">
+      <Output>
+        <ErrorInfo>
+          <Message>Norn.Business.Infrastructure.OnlineFailure : CombatAssetsUnavailable</Message>
+          <StackTrace>   at Norn.Business.Features.Inventory.OwnedCombatAssetRules.Require(OnlineOwnedAssetSnapshot assets, String player, String gameplayHash, ContentManifestValidator content, Boolean frozen) in F:\Develop Project\RPG\Server\Norn.Business\Features\Inventory\OwnedCombatAssetRules.cs:line 16&#xD;
+   at Norn.Business.Tests.OwnedCombatAssetRulesTests.RealBackpack_MixedContainer_Tool_AndSpareWandProgram_AreAcceptedAsOneClosure() in F:\Develop Project\RPG\Server\Norn.Business.Tests\OwnedCombatAssetRulesTests.cs:line 103&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="cf293dc8-0790-40ad-bc9a-0d955e067b2f" testId="04a7e921-4365-be64-d119-6503029ae6ba" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidContainerState_IsRejectedWithoutOmittingTheBadItem(defect: &quot;overflow&quot;)" computerName="ZHY" duration="00:00:00.0030566" startTime="2026-11-01T15:41:45.7798609+08:00" endTime="2026-11-01T15:41:45.7799494+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cf293dc8-0790-40ad-bc9a-0d955e067b2f" />
+    <UnitTestResult executionId="4502618f-4f67-49e7-ba98-eec0d13f56fd" testId="ad98f529-62bb-8bdd-ed23-7607974bd867" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidRealLocationsAndParents_AreRejected(defect: &quot;missing-bag&quot;)" computerName="ZHY" duration="00:00:00.0031336" startTime="2026-11-01T15:41:45.8187658+08:00" endTime="2026-11-01T15:41:45.8192770+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4502618f-4f67-49e7-ba98-eec0d13f56fd" />
+    <UnitTestResult executionId="ebdabf6b-3aa1-4eca-93d3-2848034a3534" testId="b762fbce-1c18-9308-459a-1ef527b1ae1f" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.ForeignParent_UnknownLocation_AndDuplicateSlot_AreRejected" computerName="ZHY" duration="00:00:00.0031100" startTime="2026-11-01T15:41:45.8831739+08:00" endTime="2026-11-01T15:41:45.8862044+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ebdabf6b-3aa1-4eca-93d3-2848034a3534" />
+    <UnitTestResult executionId="fc74be71-f229-4805-902a-7d5968f1cbc4" testId="3190038a-9672-e243-6305-9a90ce18c1a2" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidRealLocationsAndParents_AreRejected(defect: &quot;rotation&quot;)" computerName="ZHY" duration="00:00:00.0040004" startTime="2026-11-01T15:41:45.8349704+08:00" endTime="2026-11-01T15:41:45.8389756+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fc74be71-f229-4805-902a-7d5968f1cbc4" />
+    <UnitTestResult executionId="7e427038-1008-4d7b-8266-33002e723747" testId="427387d0-b4fb-c6a0-faef-047fc1f58ff7" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidContainerState_IsRejectedWithoutOmittingTheBadItem(defect: &quot;unknown-key&quot;)" computerName="ZHY" duration="00:00:00.0034075" startTime="2026-11-01T15:41:45.7800354+08:00" endTime="2026-11-01T15:41:45.7800991+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7e427038-1008-4d7b-8266-33002e723747" />
+    <UnitTestResult executionId="537cce09-3919-4195-9871-ad96a4e9fd79" testId="b67f2788-a212-ffbd-cdb3-bf14bdd383da" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.CardOutsideRuntimeMaximumCannotBecomeFrozenCombatAsset(slot: 32)" computerName="ZHY" duration="00:00:00.0035115" startTime="2026-11-01T15:41:45.8542070+08:00" endTime="2026-11-01T15:41:45.8577218+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="537cce09-3919-4195-9871-ad96a4e9fd79" />
+    <UnitTestResult executionId="8d74c036-ee2e-4aaf-9f40-bfa7ae2946c9" testId="295e8fba-3bd9-e722-5b3a-5ad16c0c0bb5" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidRealLocationsAndParents_AreRejected(defect: &quot;bag-root-grid&quot;)" computerName="ZHY" duration="00:00:00.0030838" startTime="2026-11-01T15:41:45.8391830+08:00" endTime="2026-11-01T15:41:45.8421523+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8d74c036-ee2e-4aaf-9f40-bfa7ae2946c9" />
+    <UnitTestResult executionId="aae247f0-8785-4fa1-abd5-6ca369719ee5" testId="e87237df-312f-ffa7-5157-a49447dd68f8" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidRealLocationsAndParents_AreRejected(defect: &quot;legacy-flat&quot;)" computerName="ZHY" duration="00:00:00.0022074" startTime="2026-11-01T15:41:45.8325825+08:00" endTime="2026-11-01T15:41:45.8348145+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aae247f0-8785-4fa1-abd5-6ca369719ee5" />
+    <UnitTestResult executionId="acf238ca-de3e-4213-a765-3cfd21f38577" testId="e7b9db9b-5a43-8820-40bc-2f32f03b9db8" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.MissingLegacySchema_AndMissingRulesHash_AreRejected" computerName="ZHY" duration="00:00:00.0050395" startTime="2026-11-01T15:41:45.8723262+08:00" endTime="2026-11-01T15:41:45.8769554+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="acf238ca-de3e-4213-a765-3cfd21f38577" />
+    <UnitTestResult executionId="49deff39-0fdc-4bcb-bcde-6007f711a206" testId="f8dfc2b7-3cda-8118-c7db-e7c93a19a482" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidRealLocationsAndParents_AreRejected(defect: &quot;grid-overflow&quot;)" computerName="ZHY" duration="00:00:00.0026115" startTime="2026-11-01T15:41:45.8422753+08:00" endTime="2026-11-01T15:41:45.8449739+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="49deff39-0fdc-4bcb-bcde-6007f711a206" />
+    <UnitTestResult executionId="f5631ba8-f7e6-4a25-9cd5-91163e8dd5f3" testId="213f2a2b-98a9-6ae9-1466-40592cfbff8c" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidRealLocationsAndParents_AreRejected(defect: &quot;bag-slot&quot;)" computerName="ZHY" duration="00:00:00.0031116" startTime="2026-11-01T15:41:45.8185477+08:00" endTime="2026-11-01T15:41:45.8186138+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f5631ba8-f7e6-4a25-9cd5-91163e8dd5f3" />
+    <UnitTestResult executionId="049afccf-27e2-49e9-959e-001cb4ca0028" testId="d59da06a-d2e4-8f82-42d1-ef5133e719c3" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.SparseShapeHole_IsUsableButOccupiedCellStillRejectsOverlap" computerName="ZHY" duration="00:00:00.0028429" startTime="2026-11-01T15:41:45.8777814+08:00" endTime="2026-11-01T15:41:45.8802131+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="049afccf-27e2-49e9-959e-001cb4ca0028">
+      <Output>
+        <ErrorInfo>
+          <Message>Norn.Business.Infrastructure.OnlineFailure : CombatAssetsUnavailable</Message>
+          <StackTrace>   at Norn.Business.Features.Inventory.OwnedCombatAssetRules.Require(OnlineOwnedAssetSnapshot assets, String player, String gameplayHash, ContentManifestValidator content, Boolean frozen) in F:\Develop Project\RPG\Server\Norn.Business\Features\Inventory\OwnedCombatAssetRules.cs:line 16&#xD;
+   at Norn.Business.Tests.OwnedCombatAssetRulesTests.SparseShapeHole_IsUsableButOccupiedCellStillRejectsOverlap() in F:\Develop Project\RPG\Server\Norn.Business.Tests\OwnedCombatAssetRulesTests.cs:line 115&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="33960a20-35f2-4de3-974b-91dba9f63507" testId="1dab6e34-424a-66ce-ceac-b9c8ef95ad6d" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidRealLocationsAndParents_AreRejected(defect: &quot;tool-grid&quot;)" computerName="ZHY" duration="00:00:00.0016947" startTime="2026-11-01T15:41:45.8485466+08:00" endTime="2026-11-01T15:41:45.8501873+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="33960a20-35f2-4de3-974b-91dba9f63507" />
+    <UnitTestResult executionId="d5f67e48-f545-42a6-a630-538317d7026f" testId="d1cc1a75-c136-827f-689c-6a61087f41cb" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.FiniteOwnedProgram_IsAcceptedWithoutGrantingUnlimited" computerName="ZHY" duration="00:00:00.0028665" startTime="2026-11-01T15:41:45.8073214+08:00" endTime="2026-11-01T15:41:45.8133461+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d5f67e48-f545-42a6-a630-538317d7026f">
+      <Output>
+        <ErrorInfo>
+          <Message>Norn.Business.Infrastructure.OnlineFailure : CombatAssetsUnavailable</Message>
+          <StackTrace>   at Norn.Business.Features.Inventory.OwnedCombatAssetRules.Require(OnlineOwnedAssetSnapshot assets, String player, String gameplayHash, ContentManifestValidator content, Boolean frozen) in F:\Develop Project\RPG\Server\Norn.Business\Features\Inventory\OwnedCombatAssetRules.cs:line 16&#xD;
+   at Norn.Business.Tests.OwnedCombatAssetRulesTests.FiniteOwnedProgram_IsAcceptedWithoutGrantingUnlimited() in F:\Develop Project\RPG\Server\Norn.Business.Tests\OwnedCombatAssetRulesTests.cs:line 38&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="970913ff-5360-4a36-af58-3c0b0ff1d0aa" testId="68aec0e6-e67d-f0b0-be64-8ef1a4a38357" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidRealLocationsAndParents_AreRejected(defect: &quot;tool-slot&quot;)" computerName="ZHY" duration="00:00:00.0033374" startTime="2026-11-01T15:41:45.8463974+08:00" endTime="2026-11-01T15:41:45.8484378+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="970913ff-5360-4a36-af58-3c0b0ff1d0aa" />
+    <UnitTestResult executionId="50bc4da5-baed-47e8-b40f-126b7e6ee528" testId="f62a0080-c855-b3b7-6644-1d292d82c36f" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidContainerState_IsRejectedWithoutOmittingTheBadItem(defect: &quot;missing&quot;)" computerName="ZHY" duration="00:00:00.0026705" startTime="2026-11-01T15:41:45.7801683+08:00" endTime="2026-11-01T15:41:45.7825907+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="50bc4da5-baed-47e8-b40f-126b7e6ee528" />
+    <UnitTestResult executionId="b4bb36d1-58d3-40d8-a96c-c3298ac7c179" testId="b3b9b98d-bee1-571a-1c59-13e62b23aa14" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidContainerState_IsRejectedWithoutOmittingTheBadItem(defect: &quot;capacity&quot;)" computerName="ZHY" duration="00:00:00.0046765" startTime="2026-11-01T15:41:45.7886994+08:00" endTime="2026-11-01T15:41:45.7932527+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b4bb36d1-58d3-40d8-a96c-c3298ac7c179" />
+    <UnitTestResult executionId="d28e26a3-661d-421d-8475-c1c57bfd5e48" testId="3b3b5012-5717-d885-1c90-57ded33eb7c1" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidContainerState_IsRejectedWithoutOmittingTheBadItem(defect: &quot;duplicate-key&quot;)" computerName="ZHY" duration="00:00:00.0022686" startTime="2026-11-01T15:41:45.7795433+08:00" endTime="2026-11-01T15:41:45.7796920+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d28e26a3-661d-421d-8475-c1c57bfd5e48" />
+    <UnitTestResult executionId="c15423a8-0269-478e-9bcd-748c11246cce" testId="ea6a43ce-7fe4-0aad-b026-7e9c7eb7c755" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidContainerState_IsRejectedWithoutOmittingTheBadItem(defect: &quot;null-components&quot;)" computerName="ZHY" duration="00:00:00.0026203" startTime="2026-11-01T15:41:45.7859261+08:00" endTime="2026-11-01T15:41:45.7884390+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c15423a8-0269-478e-9bcd-748c11246cce" />
+    <UnitTestResult executionId="7193b4eb-88ad-4bac-9288-0ee25fd3d592" testId="fdc038d6-64b4-7835-d4d6-e3e6e343aa72" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.NonContainerCannotSmuggleState_AndStateCannotMakeANonUsableTool" computerName="ZHY" duration="00:00:00.0037351" startTime="2026-11-01T15:41:45.8503178+08:00" endTime="2026-11-01T15:41:45.8540535+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7193b4eb-88ad-4bac-9288-0ee25fd3d592" />
+    <UnitTestResult executionId="7c085c91-af2a-46b5-949a-ce6a30329f76" testId="f5fe0d14-616a-1005-235d-e138da47b01d" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.CardOutsideRuntimeMaximumCannotBecomeFrozenCombatAsset(slot: 63)" computerName="ZHY" duration="00:00:00.0034892" startTime="2026-11-01T15:41:45.8580670+08:00" endTime="2026-11-01T15:41:45.8613873+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7c085c91-af2a-46b5-949a-ce6a30329f76" />
+    <UnitTestResult executionId="5ad9be1f-2b64-4005-b010-8a6dd5371bf6" testId="7fe5db2a-655d-1da2-3326-ba25b3f3c4ab" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.WrongOwner_SelectedForeignWand_AndForgedWandResources_AreRejected" computerName="ZHY" duration="00:00:00.0025732" startTime="2026-11-01T15:41:45.8809053+08:00" endTime="2026-11-01T15:41:45.8829889+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5ad9be1f-2b64-4005-b010-8a6dd5371bf6" />
+    <UnitTestResult executionId="9526c5c6-d785-4828-892c-ad3758cea012" testId="0bd3d2aa-8feb-4db8-ecaa-ad2e40698a90" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidRealLocationsAndParents_AreRejected(defect: &quot;card-parent&quot;)" computerName="ZHY" duration="00:00:00.0033905" startTime="2026-11-01T15:41:45.8293315+08:00" endTime="2026-11-01T15:41:45.8324789+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9526c5c6-d785-4828-892c-ad3758cea012" />
+    <UnitTestResult executionId="2f487f3a-2e66-4da5-aecc-fef753ce607c" testId="4047011b-4284-350f-2bc5-01b4ca4b39a1" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidRealLocationsAndParents_AreRejected(defect: &quot;trusted-card-capacity&quot;)" computerName="ZHY" duration="00:00:00.0028619" startTime="2026-11-01T15:41:45.8193734+08:00" endTime="2026-11-01T15:41:45.8291243+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2f487f3a-2e66-4da5-aecc-fef753ce607c" />
+    <UnitTestResult executionId="ca5a459d-5101-42e5-b283-58a9a8e93206" testId="de43ea3a-04c0-863c-a6f1-57e079f07006" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.RotatedSparseShape_UsesActualRotatedCellsRatherThanItsOldOutline" computerName="ZHY" duration="00:00:00.0037263" startTime="2026-11-01T15:41:45.8692330+08:00" endTime="2026-11-01T15:41:45.8717751+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ca5a459d-5101-42e5-b283-58a9a8e93206">
+      <Output>
+        <ErrorInfo>
+          <Message>Norn.Business.Infrastructure.OnlineFailure : CombatAssetsUnavailable</Message>
+          <StackTrace>   at Norn.Business.Features.Inventory.OwnedCombatAssetRules.Require(OnlineOwnedAssetSnapshot assets, String player, String gameplayHash, ContentManifestValidator content, Boolean frozen) in F:\Develop Project\RPG\Server\Norn.Business\Features\Inventory\OwnedCombatAssetRules.cs:line 16&#xD;
+   at Norn.Business.Tests.OwnedCombatAssetRulesTests.RotatedSparseShape_UsesActualRotatedCellsRatherThanItsOldOutline() in F:\Develop Project\RPG\Server\Norn.Business.Tests\OwnedCombatAssetRulesTests.cs:line 128&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="3856f632-61c2-4507-921e-20d91fab9e47" testId="12500d32-5365-ceff-db7e-9f1ea54ac402" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidContainerState_IsRejectedWithoutOmittingTheBadItem(defect: &quot;incompatible&quot;)" computerName="ZHY" duration="00:00:00.0038318" startTime="2026-11-01T15:41:45.7783122+08:00" endTime="2026-11-01T15:41:45.7784518+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3856f632-61c2-4507-921e-20d91fab9e47" />
+    <UnitTestResult executionId="a5ac1d89-e0e7-4390-bb43-16ba2de86e47" testId="20426f60-d4d1-3a7a-c62a-7a967e4d9cee" testName="Norn.Business.Tests.OwnedCombatAssetRulesTests.BackpackSpareWandProgramsMayExceed171Items_WithoutExceedingTheSharedMaximum" computerName="ZHY" duration="00:00:00.0030284" startTime="2026-11-01T15:41:45.8615268+08:00" endTime="2026-11-01T15:41:45.8646629+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a5ac1d89-e0e7-4390-bb43-16ba2de86e47">
+      <Output>
+        <ErrorInfo>
+          <Message>Norn.Business.Infrastructure.OnlineFailure : CombatAssetsUnavailable</Message>
+          <StackTrace>   at Norn.Business.Features.Inventory.OwnedCombatAssetRules.Require(OnlineOwnedAssetSnapshot assets, String player, String gameplayHash, ContentManifestValidator content, Boolean frozen) in F:\Develop Project\RPG\Server\Norn.Business\Features\Inventory\OwnedCombatAssetRules.cs:line 16&#xD;
+   at Norn.Business.Tests.OwnedCombatAssetRulesTests.BackpackSpareWandProgramsMayExceed171Items_WithoutExceedingTheSharedMaximum() in F:\Develop Project\RPG\Server\Norn.Business.Tests\OwnedCombatAssetRulesTests.cs:line 207&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.RotatedSparseShape_UsesActualRotatedCellsRatherThanItsOldOutline" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="de43ea3a-04c0-863c-a6f1-57e079f07006">
+      <Execution id="ca5a459d-5101-42e5-b283-58a9a8e93206" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="RotatedSparseShape_UsesActualRotatedCellsRatherThanItsOldOutline" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidRealLocationsAndParents_AreRejected(defect: &quot;tool-grid&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="1dab6e34-424a-66ce-ceac-b9c8ef95ad6d">
+      <Execution id="33960a20-35f2-4de3-974b-91dba9f63507" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="InvalidRealLocationsAndParents_AreRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.BackpackSpareWandProgramsMayExceed171Items_WithoutExceedingTheSharedMaximum" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="20426f60-d4d1-3a7a-c62a-7a967e4d9cee">
+      <Execution id="a5ac1d89-e0e7-4390-bb43-16ba2de86e47" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="BackpackSpareWandProgramsMayExceed171Items_WithoutExceedingTheSharedMaximum" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidRealLocationsAndParents_AreRejected(defect: &quot;bag-slot&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="213f2a2b-98a9-6ae9-1466-40592cfbff8c">
+      <Execution id="f5631ba8-f7e6-4a25-9cd5-91163e8dd5f3" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="InvalidRealLocationsAndParents_AreRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidRealLocationsAndParents_AreRejected(defect: &quot;rotation&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="3190038a-9672-e243-6305-9a90ce18c1a2">
+      <Execution id="fc74be71-f229-4805-902a-7d5968f1cbc4" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="InvalidRealLocationsAndParents_AreRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.MissingLegacySchema_AndMissingRulesHash_AreRejected" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="e7b9db9b-5a43-8820-40bc-2f32f03b9db8">
+      <Execution id="acf238ca-de3e-4213-a765-3cfd21f38577" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="MissingLegacySchema_AndMissingRulesHash_AreRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.SparseShapeHole_IsUsableButOccupiedCellStillRejectsOverlap" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="d59da06a-d2e4-8f82-42d1-ef5133e719c3">
+      <Execution id="049afccf-27e2-49e9-959e-001cb4ca0028" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="SparseShapeHole_IsUsableButOccupiedCellStillRejectsOverlap" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.RealBackpack_MixedContainer_Tool_AndSpareWandProgram_AreAcceptedAsOneClosure" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="020675fc-c69e-7f7e-f5a8-4a0ea9943ee9">
+      <Execution id="20df545a-7407-41cb-b242-af92f01e59ea" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="RealBackpack_MixedContainer_Tool_AndSpareWandProgram_AreAcceptedAsOneClosure" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidRealLocationsAndParents_AreRejected(defect: &quot;tool-slot&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="68aec0e6-e67d-f0b0-be64-8ef1a4a38357">
+      <Execution id="970913ff-5360-4a36-af58-3c0b0ff1d0aa" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="InvalidRealLocationsAndParents_AreRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidContainerState_IsRejectedWithoutOmittingTheBadItem(defect: &quot;schema&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="1e3a2d85-b2d9-7391-b218-07a3016ea813">
+      <Execution id="0bafe2c7-93c8-408d-9a7d-38a518fc1ce2" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="InvalidContainerState_IsRejectedWithoutOmittingTheBadItem" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidContainerState_IsRejectedWithoutOmittingTheBadItem(defect: &quot;missing&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="f62a0080-c855-b3b7-6644-1d292d82c36f">
+      <Execution id="50bc4da5-baed-47e8-b40f-126b7e6ee528" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="InvalidContainerState_IsRejectedWithoutOmittingTheBadItem" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidContainerState_IsRejectedWithoutOmittingTheBadItem(defect: &quot;unknown-key&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="427387d0-b4fb-c6a0-faef-047fc1f58ff7">
+      <Execution id="7e427038-1008-4d7b-8266-33002e723747" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="InvalidContainerState_IsRejectedWithoutOmittingTheBadItem" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.FiniteOwnedProgram_IsAcceptedWithoutGrantingUnlimited" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="d1cc1a75-c136-827f-689c-6a61087f41cb">
+      <Execution id="d5f67e48-f545-42a6-a630-538317d7026f" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="FiniteOwnedProgram_IsAcceptedWithoutGrantingUnlimited" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidContainerState_IsRejectedWithoutOmittingTheBadItem(defect: &quot;null-components&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="ea6a43ce-7fe4-0aad-b026-7e9c7eb7c755">
+      <Execution id="c15423a8-0269-478e-9bcd-748c11246cce" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="InvalidContainerState_IsRejectedWithoutOmittingTheBadItem" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.ForeignParent_UnknownLocation_AndDuplicateSlot_AreRejected" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="b762fbce-1c18-9308-459a-1ef527b1ae1f">
+      <Execution id="ebdabf6b-3aa1-4eca-93d3-2848034a3534" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="ForeignParent_UnknownLocation_AndDuplicateSlot_AreRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.NonContainerCannotSmuggleState_AndStateCannotMakeANonUsableTool" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="fdc038d6-64b4-7835-d4d6-e3e6e343aa72">
+      <Execution id="7193b4eb-88ad-4bac-9288-0ee25fd3d592" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="NonContainerCannotSmuggleState_AndStateCannotMakeANonUsableTool" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidContainerState_IsRejectedWithoutOmittingTheBadItem(defect: &quot;duplicate-key&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="3b3b5012-5717-d885-1c90-57ded33eb7c1">
+      <Execution id="d28e26a3-661d-421d-8475-c1c57bfd5e48" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="InvalidContainerState_IsRejectedWithoutOmittingTheBadItem" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidRealLocationsAndParents_AreRejected(defect: &quot;card-parent&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="0bd3d2aa-8feb-4db8-ecaa-ad2e40698a90">
+      <Execution id="9526c5c6-d785-4828-892c-ad3758cea012" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="InvalidRealLocationsAndParents_AreRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.WrongOwner_SelectedForeignWand_AndForgedWandResources_AreRejected" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="7fe5db2a-655d-1da2-3326-ba25b3f3c4ab">
+      <Execution id="5ad9be1f-2b64-4005-b010-8a6dd5371bf6" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="WrongOwner_SelectedForeignWand_AndForgedWandResources_AreRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidRealLocationsAndParents_AreRejected(defect: &quot;trusted-card-capacity&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="4047011b-4284-350f-2bc5-01b4ca4b39a1">
+      <Execution id="2f487f3a-2e66-4da5-aecc-fef753ce607c" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="InvalidRealLocationsAndParents_AreRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.CardOutsideRuntimeMaximumCannotBecomeFrozenCombatAsset(slot: 63)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="f5fe0d14-616a-1005-235d-e138da47b01d">
+      <Execution id="7c085c91-af2a-46b5-949a-ce6a30329f76" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="CardOutsideRuntimeMaximumCannotBecomeFrozenCombatAsset" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidRealLocationsAndParents_AreRejected(defect: &quot;bag-root-grid&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="295e8fba-3bd9-e722-5b3a-5ad16c0c0bb5">
+      <Execution id="8d74c036-ee2e-4aaf-9f40-bfa7ae2946c9" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="InvalidRealLocationsAndParents_AreRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.CardOutsideRuntimeMaximumCannotBecomeFrozenCombatAsset(slot: 32)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="b67f2788-a212-ffbd-cdb3-bf14bdd383da">
+      <Execution id="537cce09-3919-4195-9871-ad96a4e9fd79" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="CardOutsideRuntimeMaximumCannotBecomeFrozenCombatAsset" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidContainerState_IsRejectedWithoutOmittingTheBadItem(defect: &quot;incompatible&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="12500d32-5365-ceff-db7e-9f1ea54ac402">
+      <Execution id="3856f632-61c2-4507-921e-20d91fab9e47" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="InvalidContainerState_IsRejectedWithoutOmittingTheBadItem" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidRealLocationsAndParents_AreRejected(defect: &quot;missing-bag&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="ad98f529-62bb-8bdd-ed23-7607974bd867">
+      <Execution id="4502618f-4f67-49e7-ba98-eec0d13f56fd" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="InvalidRealLocationsAndParents_AreRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidContainerState_IsRejectedWithoutOmittingTheBadItem(defect: &quot;overflow&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="04a7e921-4365-be64-d119-6503029ae6ba">
+      <Execution id="cf293dc8-0790-40ad-bc9a-0d955e067b2f" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="InvalidContainerState_IsRejectedWithoutOmittingTheBadItem" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidRealLocationsAndParents_AreRejected(defect: &quot;legacy-flat&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="e87237df-312f-ffa7-5157-a49447dd68f8">
+      <Execution id="aae247f0-8785-4fa1-abd5-6ca369719ee5" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="InvalidRealLocationsAndParents_AreRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidRealLocationsAndParents_AreRejected(defect: &quot;grid-overflow&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="f8dfc2b7-3cda-8118-c7db-e7c93a19a482">
+      <Execution id="49deff39-0fdc-4bcb-bcde-6007f711a206" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="InvalidRealLocationsAndParents_AreRejected" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidContainerState_IsRejectedWithoutOmittingTheBadItem(defect: &quot;capacity&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="b3b9b98d-bee1-571a-1c59-13e62b23aa14">
+      <Execution id="b4bb36d1-58d3-40d8-a96c-c3298ac7c179" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="InvalidContainerState_IsRejectedWithoutOmittingTheBadItem" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.OwnedCombatAssetRulesTests.InvalidContainerState_IsRejectedWithoutOmittingTheBadItem(defect: &quot;zero&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="59457baf-a608-d36a-4685-7c674e6d36df">
+      <Execution id="c70354d3-c8a9-45d5-8505-ffd9817a3c51" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.OwnedCombatAssetRulesTests" name="InvalidContainerState_IsRejectedWithoutOmittingTheBadItem" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="1e3a2d85-b2d9-7391-b218-07a3016ea813" executionId="0bafe2c7-93c8-408d-9a7d-38a518fc1ce2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="59457baf-a608-d36a-4685-7c674e6d36df" executionId="c70354d3-c8a9-45d5-8505-ffd9817a3c51" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="020675fc-c69e-7f7e-f5a8-4a0ea9943ee9" executionId="20df545a-7407-41cb-b242-af92f01e59ea" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="04a7e921-4365-be64-d119-6503029ae6ba" executionId="cf293dc8-0790-40ad-bc9a-0d955e067b2f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ad98f529-62bb-8bdd-ed23-7607974bd867" executionId="4502618f-4f67-49e7-ba98-eec0d13f56fd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b762fbce-1c18-9308-459a-1ef527b1ae1f" executionId="ebdabf6b-3aa1-4eca-93d3-2848034a3534" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3190038a-9672-e243-6305-9a90ce18c1a2" executionId="fc74be71-f229-4805-902a-7d5968f1cbc4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="427387d0-b4fb-c6a0-faef-047fc1f58ff7" executionId="7e427038-1008-4d7b-8266-33002e723747" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b67f2788-a212-ffbd-cdb3-bf14bdd383da" executionId="537cce09-3919-4195-9871-ad96a4e9fd79" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="295e8fba-3bd9-e722-5b3a-5ad16c0c0bb5" executionId="8d74c036-ee2e-4aaf-9f40-bfa7ae2946c9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e87237df-312f-ffa7-5157-a49447dd68f8" executionId="aae247f0-8785-4fa1-abd5-6ca369719ee5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e7b9db9b-5a43-8820-40bc-2f32f03b9db8" executionId="acf238ca-de3e-4213-a765-3cfd21f38577" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f8dfc2b7-3cda-8118-c7db-e7c93a19a482" executionId="49deff39-0fdc-4bcb-bcde-6007f711a206" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="213f2a2b-98a9-6ae9-1466-40592cfbff8c" executionId="f5631ba8-f7e6-4a25-9cd5-91163e8dd5f3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d59da06a-d2e4-8f82-42d1-ef5133e719c3" executionId="049afccf-27e2-49e9-959e-001cb4ca0028" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1dab6e34-424a-66ce-ceac-b9c8ef95ad6d" executionId="33960a20-35f2-4de3-974b-91dba9f63507" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d1cc1a75-c136-827f-689c-6a61087f41cb" executionId="d5f67e48-f545-42a6-a630-538317d7026f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="68aec0e6-e67d-f0b0-be64-8ef1a4a38357" executionId="970913ff-5360-4a36-af58-3c0b0ff1d0aa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f62a0080-c855-b3b7-6644-1d292d82c36f" executionId="50bc4da5-baed-47e8-b40f-126b7e6ee528" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b3b9b98d-bee1-571a-1c59-13e62b23aa14" executionId="b4bb36d1-58d3-40d8-a96c-c3298ac7c179" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3b3b5012-5717-d885-1c90-57ded33eb7c1" executionId="d28e26a3-661d-421d-8475-c1c57bfd5e48" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ea6a43ce-7fe4-0aad-b026-7e9c7eb7c755" executionId="c15423a8-0269-478e-9bcd-748c11246cce" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fdc038d6-64b4-7835-d4d6-e3e6e343aa72" executionId="7193b4eb-88ad-4bac-9288-0ee25fd3d592" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f5fe0d14-616a-1005-235d-e138da47b01d" executionId="7c085c91-af2a-46b5-949a-ce6a30329f76" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7fe5db2a-655d-1da2-3326-ba25b3f3c4ab" executionId="5ad9be1f-2b64-4005-b010-8a6dd5371bf6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0bd3d2aa-8feb-4db8-ecaa-ad2e40698a90" executionId="9526c5c6-d785-4828-892c-ad3758cea012" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4047011b-4284-350f-2bc5-01b4ca4b39a1" executionId="2f487f3a-2e66-4da5-aecc-fef753ce607c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="de43ea3a-04c0-863c-a6f1-57e079f07006" executionId="ca5a459d-5101-42e5-b283-58a9a8e93206" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="12500d32-5365-ceff-db7e-9f1ea54ac402" executionId="3856f632-61c2-4507-921e-20d91fab9e47" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="20426f60-d4d1-3a7a-c62a-7a967e4d9cee" executionId="a5ac1d89-e0e7-4390-bb43-16ba2de86e47" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="30" executed="30" passed="25" failed="5" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.13)&#xD;
+[xUnit.net 00:00:00.14]   Discovering: Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.23]   Discovered:  Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.28]   Starting:    Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.41]       Norn.Business.Infrastructure.OnlineFailure : CombatAssetsUnavailable&#xD;
+[xUnit.net 00:00:00.41]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.41]         F:\Develop Project\RPG\Server\Norn.Business\Features\Inventory\OwnedCombatAssetRules.cs(16,0): at Norn.Business.Features.Inventory.OwnedCombatAssetRules.Require(OnlineOwnedAssetSnapshot assets, String player, String gameplayHash, ContentManifestValidator content, Boolean frozen)&#xD;
+[xUnit.net 00:00:00.42]         F:\Develop Project\RPG\Server\Norn.Business.Tests\OwnedCombatAssetRulesTests.cs(38,0): at Norn.Business.Tests.OwnedCombatAssetRulesTests.FiniteOwnedProgram_IsAcceptedWithoutGrantingUnlimited()&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.42]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.46]       Norn.Business.Infrastructure.OnlineFailure : CombatAssetsUnavailable&#xD;
+[xUnit.net 00:00:00.46]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.46]         F:\Develop Project\RPG\Server\Norn.Business\Features\Inventory\OwnedCombatAssetRules.cs(16,0): at Norn.Business.Features.Inventory.OwnedCombatAssetRules.Require(OnlineOwnedAssetSnapshot assets, String player, String gameplayHash, ContentManifestValidator content, Boolean frozen)&#xD;
+[xUnit.net 00:00:00.46]         F:\Develop Project\RPG\Server\Norn.Business.Tests\OwnedCombatAssetRulesTests.cs(207,0): at Norn.Business.Tests.OwnedCombatAssetRulesTests.BackpackSpareWandProgramsMayExceed171Items_WithoutExceedingTheSharedMaximum()&#xD;
+[xUnit.net 00:00:00.46]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.46]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.47]       Norn.Business.Infrastructure.OnlineFailure : CombatAssetsUnavailable&#xD;
+[xUnit.net 00:00:00.47]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.47]         F:\Develop Project\RPG\Server\Norn.Business\Features\Inventory\OwnedCombatAssetRules.cs(16,0): at Norn.Business.Features.Inventory.OwnedCombatAssetRules.Require(OnlineOwnedAssetSnapshot assets, String player, String gameplayHash, ContentManifestValidator content, Boolean frozen)&#xD;
+[xUnit.net 00:00:00.47]         F:\Develop Project\RPG\Server\Norn.Business.Tests\OwnedCombatAssetRulesTests.cs(103,0): at Norn.Business.Tests.OwnedCombatAssetRulesTests.RealBackpack_MixedContainer_Tool_AndSpareWandProgram_AreAcceptedAsOneClosure()&#xD;
+[xUnit.net 00:00:00.47]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.47]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.47]       Norn.Business.Infrastructure.OnlineFailure : CombatAssetsUnavailable&#xD;
+[xUnit.net 00:00:00.47]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.47]         F:\Develop Project\RPG\Server\Norn.Business\Features\Inventory\OwnedCombatAssetRules.cs(16,0): at Norn.Business.Features.Inventory.OwnedCombatAssetRules.Require(OnlineOwnedAssetSnapshot assets, String player, String gameplayHash, ContentManifestValidator content, Boolean frozen)&#xD;
+[xUnit.net 00:00:00.47]         F:\Develop Project\RPG\Server\Norn.Business.Tests\OwnedCombatAssetRulesTests.cs(128,0): at Norn.Business.Tests.OwnedCombatAssetRulesTests.RotatedSparseShape_UsesActualRotatedCellsRatherThanItsOldOutline()&#xD;
+[xUnit.net 00:00:00.47]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.47]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.48]       Norn.Business.Infrastructure.OnlineFailure : CombatAssetsUnavailable&#xD;
+[xUnit.net 00:00:00.48]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.48]         F:\Develop Project\RPG\Server\Norn.Business\Features\Inventory\OwnedCombatAssetRules.cs(16,0): at Norn.Business.Features.Inventory.OwnedCombatAssetRules.Require(OnlineOwnedAssetSnapshot assets, String player, String gameplayHash, ContentManifestValidator content, Boolean frozen)&#xD;
+[xUnit.net 00:00:00.48]         F:\Develop Project\RPG\Server\Norn.Business.Tests\OwnedCombatAssetRulesTests.cs(115,0): at Norn.Business.Tests.OwnedCombatAssetRulesTests.SparseShapeHole_IsUsableButOccupiedCellStillRejectsOverlap()&#xD;
+[xUnit.net 00:00:00.48]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:00.48]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.49]   Finished:    Norn.Business.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-01T15:41:45.8776723+08:00">
+        <Text>[xUnit.net 00:00:00.41]     Norn.Business.Tests.OwnedCombatAssetRulesTests.FiniteOwnedProgram_IsAcceptedWithoutGrantingUnlimited [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-01T15:41:45.8812683+08:00">
+        <Text>[xUnit.net 00:00:00.46]     Norn.Business.Tests.OwnedCombatAssetRulesTests.BackpackSpareWandProgramsMayExceed171Items_WithoutExceedingTheSharedMaximum [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-01T15:41:45.8813418+08:00">
+        <Text>[xUnit.net 00:00:00.47]     Norn.Business.Tests.OwnedCombatAssetRulesTests.RealBackpack_MixedContainer_Tool_AndSpareWandProgram_AreAcceptedAsOneClosure [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-01T15:41:45.8813856+08:00">
+        <Text>[xUnit.net 00:00:00.47]     Norn.Business.Tests.OwnedCombatAssetRulesTests.RotatedSparseShape_UsesActualRotatedCellsRatherThanItsOldOutline [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-01T15:41:45.8821723+08:00">
+        <Text>[xUnit.net 00:00:00.48]     Norn.Business.Tests.OwnedCombatAssetRulesTests.SparseShapeHole_IsUsableButOccupiedCellStillRejectsOverlap [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

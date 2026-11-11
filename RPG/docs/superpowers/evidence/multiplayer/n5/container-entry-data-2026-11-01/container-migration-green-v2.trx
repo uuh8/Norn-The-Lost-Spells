@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="357a5d53-71de-4dbe-9df5-8b7c7822608b" name="zhy@ZHY 2026-11-01 15:53:17" runUser="ZHY\zhy" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T15:53:17.0852850+08:00" queuing="2026-11-01T15:53:17.0852867+08:00" start="2026-11-01T15:53:14.7566300+08:00" finish="2026-11-01T15:53:17.0969981+08:00" />
+  <TestSettings name="default" id="7730ee2a-6a63-413b-aa18-49f7b45475fa">
+    <Deployment runDeploymentRoot="zhy_ZHY_2026-11-01_15_53_17" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="a6af3878-25ab-47ac-8c45-f3b795bc5564" testId="02c41314-f638-6c7e-8a4e-dc4b6591132e" testName="Norn.Business.Tests.ContainerInventoryMigrationTests.AddedSchemaPreservesLegacyAssets_AllowsSeveralGridItems_AndEnforcesContainerAndParentConstraints" computerName="ZHY" duration="00:00:00.9900522" startTime="2026-11-01T15:53:15.8922321+08:00" endTime="2026-11-01T15:53:16.9173873+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a6af3878-25ab-47ac-8c45-f3b795bc5564">
+      <Output>
+        <StdOut>ContainerMigrationFixtureEmptyTablesPrefix=n5ci_3b812cf8_</StdOut>
+        <ErrorInfo>
+          <Message>MySqlConnector.MySqlException : You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'NULL' at line 1</Message>
+          <StackTrace>   at MySqlConnector.Core.ServerSession.ReceiveReplyAsync(IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 1185&#xD;
+   at MySqlConnector.Core.ResultSet.ReadResultSetHeaderAsync(IOBehavior ioBehavior) in /_/src/MySqlConnector/Core/ResultSet.cs:line 37&#xD;
+   at MySqlConnector.MySqlDataReader.ActivateResultSet(CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlDataReader.cs:line 133&#xD;
+   at MySqlConnector.MySqlDataReader.InitAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, IDictionary`2 cachedProcedures, IMySqlCommand command, CommandBehavior behavior, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlDataReader.cs:line 489&#xD;
+   at MySqlConnector.Core.CommandExecutor.ExecuteReaderAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, CommandBehavior behavior, Activity activity, MySqlConnectorSemanticConventionsKinds conventionsKinds, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/CommandExecutor.cs:line 58&#xD;
+   at MySqlConnector.MySqlCommand.ExecuteNonQueryAsync(IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlCommand.cs:line 304&#xD;
+   at Dapper.SqlMapper.ExecuteImplAsync(IDbConnection cnn, CommandDefinition command, Object param) in /_/Dapper/SqlMapper.Async.cs:line 663&#xD;
+   at Norn.Business.Tests.ContainerInventoryMigrationTests.AddedSchemaPreservesLegacyAssets_AllowsSeveralGridItems_AndEnforcesContainerAndParentConstraints() in F:\Develop Project\RPG\Server\Norn.Business.Tests\ContainerInventoryMigrationTests.cs:line 42&#xD;
+   at Norn.Business.Tests.ContainerInventoryMigrationTests.AddedSchemaPreservesLegacyAssets_AllowsSeveralGridItems_AndEnforcesContainerAndParentConstraints() in F:\Develop Project\RPG\Server\Norn.Business.Tests\ContainerInventoryMigrationTests.cs:line 83&#xD;
+   at Norn.Business.Tests.ContainerInventoryMigrationTests.AddedSchemaPreservesLegacyAssets_AllowsSeveralGridItems_AndEnforcesContainerAndParentConstraints() in F:\Develop Project\RPG\Server\Norn.Business.Tests\ContainerInventoryMigrationTests.cs:line 83&#xD;
+   at Norn.Business.Tests.ContainerInventoryMigrationTests.AddedSchemaPreservesLegacyAssets_AllowsSeveralGridItems_AndEnforcesContainerAndParentConstraints() in F:\Develop Project\RPG\Server\Norn.Business.Tests\ContainerInventoryMigrationTests.cs:line 83&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Norn.Business.Tests.ContainerInventoryMigrationTests.AddedSchemaPreservesLegacyAssets_AllowsSeveralGridItems_AndEnforcesContainerAndParentConstraints" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="02c41314-f638-6c7e-8a4e-dc4b6591132e">
+      <Execution id="a6af3878-25ab-47ac-8c45-f3b795bc5564" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.ContainerInventoryMigrationTests" name="AddedSchemaPreservesLegacyAssets_AllowsSeveralGridItems_AndEnforcesContainerAndParentConstraints" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="02c41314-f638-6c7e-8a4e-dc4b6591132e" executionId="a6af3878-25ab-47ac-8c45-f3b795bc5564" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.13)&#xD;
+[xUnit.net 00:00:00.24]   Discovering: Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.37]   Discovered:  Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.42]   Starting:    Norn.Business.Tests&#xD;
+[xUnit.net 00:00:01.48]       MySqlConnector.MySqlException : You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'NULL' at line 1&#xD;
+[xUnit.net 00:00:01.48]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.48]         /_/src/MySqlConnector/Core/ServerSession.cs(1185,0): at MySqlConnector.Core.ServerSession.ReceiveReplyAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.48]         /_/src/MySqlConnector/Core/ResultSet.cs(37,0): at MySqlConnector.Core.ResultSet.ReadResultSetHeaderAsync(IOBehavior ioBehavior)&#xD;
+[xUnit.net 00:00:01.48]         /_/src/MySqlConnector/MySqlDataReader.cs(133,0): at MySqlConnector.MySqlDataReader.ActivateResultSet(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.48]         /_/src/MySqlConnector/MySqlDataReader.cs(489,0): at MySqlConnector.MySqlDataReader.InitAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, IDictionary`2 cachedProcedures, IMySqlCommand command, CommandBehavior behavior, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.48]         /_/src/MySqlConnector/Core/CommandExecutor.cs(58,0): at MySqlConnector.Core.CommandExecutor.ExecuteReaderAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, CommandBehavior behavior, Activity activity, MySqlConnectorSemanticConventionsKinds conventionsKinds, IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.48]         /_/src/MySqlConnector/MySqlCommand.cs(304,0): at MySqlConnector.MySqlCommand.ExecuteNonQueryAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.48]         /_/Dapper/SqlMapper.Async.cs(663,0): at Dapper.SqlMapper.ExecuteImplAsync(IDbConnection cnn, CommandDefinition command, Object param)&#xD;
+[xUnit.net 00:00:01.48]         F:\Develop Project\RPG\Server\Norn.Business.Tests\ContainerInventoryMigrationTests.cs(42,0): at Norn.Business.Tests.ContainerInventoryMigrationTests.AddedSchemaPreservesLegacyAssets_AllowsSeveralGridItems_AndEnforcesContainerAndParentConstraints()&#xD;
+[xUnit.net 00:00:01.48]         F:\Develop Project\RPG\Server\Norn.Business.Tests\ContainerInventoryMigrationTests.cs(83,0): at Norn.Business.Tests.ContainerInventoryMigrationTests.AddedSchemaPreservesLegacyAssets_AllowsSeveralGridItems_AndEnforcesContainerAndParentConstraints()&#xD;
+[xUnit.net 00:00:01.48]         F:\Develop Project\RPG\Server\Norn.Business.Tests\ContainerInventoryMigrationTests.cs(83,0): at Norn.Business.Tests.ContainerInventoryMigrationTests.AddedSchemaPreservesLegacyAssets_AllowsSeveralGridItems_AndEnforcesContainerAndParentConstraints()&#xD;
+[xUnit.net 00:00:01.48]         F:\Develop Project\RPG\Server\Norn.Business.Tests\ContainerInventoryMigrationTests.cs(83,0): at Norn.Business.Tests.ContainerInventoryMigrationTests.AddedSchemaPreservesLegacyAssets_AllowsSeveralGridItems_AndEnforcesContainerAndParentConstraints()&#xD;
+[xUnit.net 00:00:01.48]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.48]       Output:&#xD;
+[xUnit.net 00:00:01.48]         ContainerMigrationFixtureEmptyTablesPrefix=n5ci_3b812cf8_&#xD;
+[xUnit.net 00:00:01.51]   Finished:    Norn.Business.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-01T15:53:16.9358105+08:00">
+        <Text>[xUnit.net 00:00:01.48]     Norn.Business.Tests.ContainerInventoryMigrationTests.AddedSchemaPreservesLegacyAssets_AllowsSeveralGridItems_AndEnforcesContainerAndParentConstraints [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

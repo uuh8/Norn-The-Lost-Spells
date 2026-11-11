@@ -24,17 +24,23 @@ namespace Game.NetworkProtocol {
     static DungeonReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "Cg1kdW5nZW9uLnByb3RvEg1ub3JuLnByb3RvY29sIuABChZEdW5nZW9uUHJv",
+            "Cg1kdW5nZW9uLnByb3RvEg1ub3JuLnByb3RvY29sIukDChZEdW5nZW9uUHJv",
             "Z3Jlc3NNZXNzYWdlEhgKEHByb3RvY29sX3ZlcnNpb24YASABKA0SFQoNZ2Ft",
             "ZXBsYXlfaGFzaBgCIAEoBhIOCgZydW5faWQYAyABKAkSEgoKZHVuZ2Vvbl9p",
             "ZBgEIAEoCRIQCghyZXZpc2lvbhgFIAEoDRITCgtzZXJ2ZXJfdGljaxgGIAEo",
             "DRIgChhlbmNvdW50ZXJfaW5kZXhfcGx1c19vbmUYByABKA0SDQoFcGhhc2UY",
-            "CCABKA0SGQoRcmVtYWluaW5nX2VuZW1pZXMYCSABKA1CF6oCFEdhbWUuTmV0",
-            "d29ya1Byb3RvY29sYgZwcm90bzM="));
+            "CCABKA0SGQoRcmVtYWluaW5nX2VuZW1pZXMYCSABKA0SGQoRaGFzX3JldHVy",
+            "bl9wb3J0YWwYCiABKAgSIAoYcmV0dXJuX3BvcnRhbF9wb3NpdGlvbl94GAsg",
+            "ASgCEiAKGHJldHVybl9wb3J0YWxfcG9zaXRpb25feRgMIAEoAhIgChhyZXR1",
+            "cm5fcG9ydGFsX3Bvc2l0aW9uX3oYDSABKAISIAoYcmV0dXJuX3BvcnRhbF9y",
+            "b3RhdGlvbl94GA4gASgCEiAKGHJldHVybl9wb3J0YWxfcm90YXRpb25feRgP",
+            "IAEoAhIgChhyZXR1cm5fcG9ydGFsX3JvdGF0aW9uX3oYECABKAISIAoYcmV0",
+            "dXJuX3BvcnRhbF9yb3RhdGlvbl93GBEgASgCQheqAhRHYW1lLk5ldHdvcmtQ",
+            "cm90b2NvbGIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.DungeonProgressMessage), global::Game.NetworkProtocol.DungeonProgressMessage.Parser, new[]{ "ProtocolVersion", "GameplayHash", "RunId", "DungeonId", "Revision", "ServerTick", "EncounterIndexPlusOne", "Phase", "RemainingEnemies" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.DungeonProgressMessage), global::Game.NetworkProtocol.DungeonProgressMessage.Parser, new[]{ "ProtocolVersion", "GameplayHash", "RunId", "DungeonId", "Revision", "ServerTick", "EncounterIndexPlusOne", "Phase", "RemainingEnemies", "HasReturnPortal", "ReturnPortalPositionX", "ReturnPortalPositionY", "ReturnPortalPositionZ", "ReturnPortalRotationX", "ReturnPortalRotationY", "ReturnPortalRotationZ", "ReturnPortalRotationW" }, null, null, null, null)
           }));
     }
     #endregion
@@ -88,6 +94,14 @@ namespace Game.NetworkProtocol {
       encounterIndexPlusOne_ = other.encounterIndexPlusOne_;
       phase_ = other.phase_;
       remainingEnemies_ = other.remainingEnemies_;
+      hasReturnPortal_ = other.hasReturnPortal_;
+      returnPortalPositionX_ = other.returnPortalPositionX_;
+      returnPortalPositionY_ = other.returnPortalPositionY_;
+      returnPortalPositionZ_ = other.returnPortalPositionZ_;
+      returnPortalRotationX_ = other.returnPortalRotationX_;
+      returnPortalRotationY_ = other.returnPortalRotationY_;
+      returnPortalRotationZ_ = other.returnPortalRotationZ_;
+      returnPortalRotationW_ = other.returnPortalRotationW_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -232,6 +246,126 @@ namespace Game.NetworkProtocol {
       }
     }
 
+    /// <summary>Field number for the "has_return_portal" field.</summary>
+    public const int HasReturnPortalFieldNumber = 10;
+    private bool hasReturnPortal_;
+    /// <summary>
+    /// 只有DS真实清场并生成/开启原返回门后为true；不赋予结算成功权。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool HasReturnPortal {
+      get { return hasReturnPortal_; }
+      set {
+        hasReturnPortal_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "return_portal_position_x" field.</summary>
+    public const int ReturnPortalPositionXFieldNumber = 11;
+    private float returnPortalPositionX_;
+    /// <summary>
+    /// DS按原场景几何/动态placement选中的有限世界位置X。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float ReturnPortalPositionX {
+      get { return returnPortalPositionX_; }
+      set {
+        returnPortalPositionX_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "return_portal_position_y" field.</summary>
+    public const int ReturnPortalPositionYFieldNumber = 12;
+    private float returnPortalPositionY_;
+    /// <summary>
+    /// DS实际门世界位置Y，Client不重新接地选位置。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float ReturnPortalPositionY {
+      get { return returnPortalPositionY_; }
+      set {
+        returnPortalPositionY_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "return_portal_position_z" field.</summary>
+    public const int ReturnPortalPositionZFieldNumber = 13;
+    private float returnPortalPositionZ_;
+    /// <summary>
+    /// DS实际门世界位置Z，false时三位置分量必须全0。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float ReturnPortalPositionZ {
+      get { return returnPortalPositionZ_; }
+      set {
+        returnPortalPositionZ_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "return_portal_rotation_x" field.</summary>
+    public const int ReturnPortalRotationXFieldNumber = 14;
+    private float returnPortalRotationX_;
+    /// <summary>
+    /// 真实Quaternion X，存在时四分量单位长度，无门时全0。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float ReturnPortalRotationX {
+      get { return returnPortalRotationX_; }
+      set {
+        returnPortalRotationX_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "return_portal_rotation_y" field.</summary>
+    public const int ReturnPortalRotationYFieldNumber = 15;
+    private float returnPortalRotationY_;
+    /// <summary>
+    /// 真实Quaternion Y，Client只安装原姿态。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float ReturnPortalRotationY {
+      get { return returnPortalRotationY_; }
+      set {
+        returnPortalRotationY_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "return_portal_rotation_z" field.</summary>
+    public const int ReturnPortalRotationZFieldNumber = 16;
+    private float returnPortalRotationZ_;
+    /// <summary>
+    /// 真实Quaternion Z，与XYZW共同验证有限性。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float ReturnPortalRotationZ {
+      get { return returnPortalRotationZ_; }
+      set {
+        returnPortalRotationZ_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "return_portal_rotation_w" field.</summary>
+    public const int ReturnPortalRotationWFieldNumber = 17;
+    private float returnPortalRotationW_;
+    /// <summary>
+    /// 真实Quaternion W，存在时零Quaternion无效。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float ReturnPortalRotationW {
+      get { return returnPortalRotationW_; }
+      set {
+        returnPortalRotationW_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -256,6 +390,14 @@ namespace Game.NetworkProtocol {
       if (EncounterIndexPlusOne != other.EncounterIndexPlusOne) return false;
       if (Phase != other.Phase) return false;
       if (RemainingEnemies != other.RemainingEnemies) return false;
+      if (HasReturnPortal != other.HasReturnPortal) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(ReturnPortalPositionX, other.ReturnPortalPositionX)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(ReturnPortalPositionY, other.ReturnPortalPositionY)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(ReturnPortalPositionZ, other.ReturnPortalPositionZ)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(ReturnPortalRotationX, other.ReturnPortalRotationX)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(ReturnPortalRotationY, other.ReturnPortalRotationY)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(ReturnPortalRotationZ, other.ReturnPortalRotationZ)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(ReturnPortalRotationW, other.ReturnPortalRotationW)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -272,6 +414,14 @@ namespace Game.NetworkProtocol {
       if (EncounterIndexPlusOne != 0) hash ^= EncounterIndexPlusOne.GetHashCode();
       if (Phase != 0) hash ^= Phase.GetHashCode();
       if (RemainingEnemies != 0) hash ^= RemainingEnemies.GetHashCode();
+      if (HasReturnPortal != false) hash ^= HasReturnPortal.GetHashCode();
+      if (ReturnPortalPositionX != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(ReturnPortalPositionX);
+      if (ReturnPortalPositionY != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(ReturnPortalPositionY);
+      if (ReturnPortalPositionZ != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(ReturnPortalPositionZ);
+      if (ReturnPortalRotationX != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(ReturnPortalRotationX);
+      if (ReturnPortalRotationY != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(ReturnPortalRotationY);
+      if (ReturnPortalRotationZ != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(ReturnPortalRotationZ);
+      if (ReturnPortalRotationW != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(ReturnPortalRotationW);
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -326,6 +476,38 @@ namespace Game.NetworkProtocol {
         output.WriteRawTag(72);
         output.WriteUInt32(RemainingEnemies);
       }
+      if (HasReturnPortal != false) {
+        output.WriteRawTag(80);
+        output.WriteBool(HasReturnPortal);
+      }
+      if (ReturnPortalPositionX != 0F) {
+        output.WriteRawTag(93);
+        output.WriteFloat(ReturnPortalPositionX);
+      }
+      if (ReturnPortalPositionY != 0F) {
+        output.WriteRawTag(101);
+        output.WriteFloat(ReturnPortalPositionY);
+      }
+      if (ReturnPortalPositionZ != 0F) {
+        output.WriteRawTag(109);
+        output.WriteFloat(ReturnPortalPositionZ);
+      }
+      if (ReturnPortalRotationX != 0F) {
+        output.WriteRawTag(117);
+        output.WriteFloat(ReturnPortalRotationX);
+      }
+      if (ReturnPortalRotationY != 0F) {
+        output.WriteRawTag(125);
+        output.WriteFloat(ReturnPortalRotationY);
+      }
+      if (ReturnPortalRotationZ != 0F) {
+        output.WriteRawTag(133, 1);
+        output.WriteFloat(ReturnPortalRotationZ);
+      }
+      if (ReturnPortalRotationW != 0F) {
+        output.WriteRawTag(141, 1);
+        output.WriteFloat(ReturnPortalRotationW);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -372,6 +554,38 @@ namespace Game.NetworkProtocol {
         output.WriteRawTag(72);
         output.WriteUInt32(RemainingEnemies);
       }
+      if (HasReturnPortal != false) {
+        output.WriteRawTag(80);
+        output.WriteBool(HasReturnPortal);
+      }
+      if (ReturnPortalPositionX != 0F) {
+        output.WriteRawTag(93);
+        output.WriteFloat(ReturnPortalPositionX);
+      }
+      if (ReturnPortalPositionY != 0F) {
+        output.WriteRawTag(101);
+        output.WriteFloat(ReturnPortalPositionY);
+      }
+      if (ReturnPortalPositionZ != 0F) {
+        output.WriteRawTag(109);
+        output.WriteFloat(ReturnPortalPositionZ);
+      }
+      if (ReturnPortalRotationX != 0F) {
+        output.WriteRawTag(117);
+        output.WriteFloat(ReturnPortalRotationX);
+      }
+      if (ReturnPortalRotationY != 0F) {
+        output.WriteRawTag(125);
+        output.WriteFloat(ReturnPortalRotationY);
+      }
+      if (ReturnPortalRotationZ != 0F) {
+        output.WriteRawTag(133, 1);
+        output.WriteFloat(ReturnPortalRotationZ);
+      }
+      if (ReturnPortalRotationW != 0F) {
+        output.WriteRawTag(141, 1);
+        output.WriteFloat(ReturnPortalRotationW);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -408,6 +622,30 @@ namespace Game.NetworkProtocol {
       }
       if (RemainingEnemies != 0) {
         size += 1 + pb::CodedOutputStream.ComputeUInt32Size(RemainingEnemies);
+      }
+      if (HasReturnPortal != false) {
+        size += 1 + 1;
+      }
+      if (ReturnPortalPositionX != 0F) {
+        size += 1 + 4;
+      }
+      if (ReturnPortalPositionY != 0F) {
+        size += 1 + 4;
+      }
+      if (ReturnPortalPositionZ != 0F) {
+        size += 1 + 4;
+      }
+      if (ReturnPortalRotationX != 0F) {
+        size += 1 + 4;
+      }
+      if (ReturnPortalRotationY != 0F) {
+        size += 1 + 4;
+      }
+      if (ReturnPortalRotationZ != 0F) {
+        size += 2 + 4;
+      }
+      if (ReturnPortalRotationW != 0F) {
+        size += 2 + 4;
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -447,6 +685,30 @@ namespace Game.NetworkProtocol {
       }
       if (other.RemainingEnemies != 0) {
         RemainingEnemies = other.RemainingEnemies;
+      }
+      if (other.HasReturnPortal != false) {
+        HasReturnPortal = other.HasReturnPortal;
+      }
+      if (other.ReturnPortalPositionX != 0F) {
+        ReturnPortalPositionX = other.ReturnPortalPositionX;
+      }
+      if (other.ReturnPortalPositionY != 0F) {
+        ReturnPortalPositionY = other.ReturnPortalPositionY;
+      }
+      if (other.ReturnPortalPositionZ != 0F) {
+        ReturnPortalPositionZ = other.ReturnPortalPositionZ;
+      }
+      if (other.ReturnPortalRotationX != 0F) {
+        ReturnPortalRotationX = other.ReturnPortalRotationX;
+      }
+      if (other.ReturnPortalRotationY != 0F) {
+        ReturnPortalRotationY = other.ReturnPortalRotationY;
+      }
+      if (other.ReturnPortalRotationZ != 0F) {
+        ReturnPortalRotationZ = other.ReturnPortalRotationZ;
+      }
+      if (other.ReturnPortalRotationW != 0F) {
+        ReturnPortalRotationW = other.ReturnPortalRotationW;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -503,6 +765,38 @@ namespace Game.NetworkProtocol {
             RemainingEnemies = input.ReadUInt32();
             break;
           }
+          case 80: {
+            HasReturnPortal = input.ReadBool();
+            break;
+          }
+          case 93: {
+            ReturnPortalPositionX = input.ReadFloat();
+            break;
+          }
+          case 101: {
+            ReturnPortalPositionY = input.ReadFloat();
+            break;
+          }
+          case 109: {
+            ReturnPortalPositionZ = input.ReadFloat();
+            break;
+          }
+          case 117: {
+            ReturnPortalRotationX = input.ReadFloat();
+            break;
+          }
+          case 125: {
+            ReturnPortalRotationY = input.ReadFloat();
+            break;
+          }
+          case 133: {
+            ReturnPortalRotationZ = input.ReadFloat();
+            break;
+          }
+          case 141: {
+            ReturnPortalRotationW = input.ReadFloat();
+            break;
+          }
         }
       }
     #endif
@@ -556,6 +850,38 @@ namespace Game.NetworkProtocol {
           }
           case 72: {
             RemainingEnemies = input.ReadUInt32();
+            break;
+          }
+          case 80: {
+            HasReturnPortal = input.ReadBool();
+            break;
+          }
+          case 93: {
+            ReturnPortalPositionX = input.ReadFloat();
+            break;
+          }
+          case 101: {
+            ReturnPortalPositionY = input.ReadFloat();
+            break;
+          }
+          case 109: {
+            ReturnPortalPositionZ = input.ReadFloat();
+            break;
+          }
+          case 117: {
+            ReturnPortalRotationX = input.ReadFloat();
+            break;
+          }
+          case 125: {
+            ReturnPortalRotationY = input.ReadFloat();
+            break;
+          }
+          case 133: {
+            ReturnPortalRotationZ = input.ReadFloat();
+            break;
+          }
+          case 141: {
+            ReturnPortalRotationW = input.ReadFloat();
             break;
           }
         }

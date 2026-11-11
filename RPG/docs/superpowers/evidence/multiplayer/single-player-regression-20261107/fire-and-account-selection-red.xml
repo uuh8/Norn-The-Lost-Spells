@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="24" result="Failed(Child)" total="24" passed="16" failed="8" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-06 16:25:25Z" end-time="2026-11-06 16:25:26Z" duration="1.4981461">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="4390" result="Failed" site="Child" start-time="2026-11-06 16:25:25Z" end-time="2026-11-06 16:25:26Z" duration="1.498146" total="24" passed="16" failed="8" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="4503" name="Game.Rendering.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Rendering.Tests.dll" runstate="Runnable" testcasecount="328" result="Failed" site="Child" start-time="2026-11-06 16:25:25Z" end-time="2026-11-06 16:25:26Z" duration="0.652871" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="30736" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="4504" name="Game" fullname="Game" runstate="Runnable" testcasecount="328" result="Failed" site="Child" start-time="2026-11-06 16:25:25Z" end-time="2026-11-06 16:25:26Z" duration="0.558342" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="4505" name="Rendering" fullname="Game.Rendering" runstate="Runnable" testcasecount="328" result="Failed" site="Child" start-time="2026-11-06 16:25:25Z" end-time="2026-11-06 16:25:26Z" duration="0.455916" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="4506" name="Tests" fullname="Game.Rendering.Tests" runstate="Runnable" testcasecount="328" result="Failed" site="Child" start-time="2026-11-06 16:25:25Z" end-time="2026-11-06 16:25:26Z" duration="0.353923" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="4215" name="GpuFireParcelSurfaceTests" fullname="Game.Rendering.Tests.GpuFireParcelSurfaceTests" classname="Game.Rendering.Tests.GpuFireParcelSurfaceTests" runstate="Runnable" testcasecount="12" result="Failed" site="Child" start-time="2026-11-06 16:25:25Z" end-time="2026-11-06 16:25:26Z" duration="0.254071" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="4220" name="FireLifecycleAgesByElapsedTimeWhileMotionStaysClamped" fullname="Game.Rendering.Tests.GpuFireParcelSurfaceTests.FireLifecycleAgesByElapsedTimeWhileMotionStaysClamped" methodname="FireLifecycleAgesByElapsedTimeWhileMotionStaysClamped" classname="Game.Rendering.Tests.GpuFireParcelSurfaceTests" runstate="Runnable" seed="1558082721" result="Failed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.092144" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  低FPS不能把真实100ms写成33.3ms年龄，否则更快发种会累积过量长寿粒子。
+  Expected: 0.100000001f +/- 9.99999975E-06f
+  But was:  0.0333000012f
+]]></message>
+                  <stack-trace><![CDATA[at Game.Rendering.Tests.GpuFireParcelSurfaceTests.FireLifecycleAgesByElapsedTimeWhileMotionStaysClamped () [0x00085] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Rendering\GpuFireParcelSurfaceTests.cs:70
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4218" name="FireSpawnScheduleDoesNotSlowDownWithClampedIntegration" fullname="Game.Rendering.Tests.GpuFireParcelSurfaceTests.FireSpawnScheduleDoesNotSlowDownWithClampedIntegration" classname="Game.Rendering.Tests.GpuFireParcelSurfaceTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.009621" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="4216" name="FireSpawnScheduleDoesNotSlowDownWithClampedIntegration(0.081f,1)" fullname="Game.Rendering.Tests.GpuFireParcelSurfaceTests.FireSpawnScheduleDoesNotSlowDownWithClampedIntegration(0.081f,1)" methodname="FireSpawnScheduleDoesNotSlowDownWithClampedIntegration" classname="Game.Rendering.Tests.GpuFireParcelSurfaceTests" runstate="Runnable" seed="1315664154" result="Failed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.002207" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  80ms采样间隔应由已经经过的scaled时间决定，不能把33.3ms的运动稳定性上限叠加成额外等待。
+  Expected: 1
+  But was:  0
+]]></message>
+                    <stack-trace><![CDATA[at Game.Rendering.Tests.GpuFireParcelSurfaceTests.FireSpawnScheduleDoesNotSlowDownWithClampedIntegration (System.Single elapsed, System.Int32 frames) [0x00031] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Rendering\GpuFireParcelSurfaceTests.cs:26
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="4217" name="FireSpawnScheduleDoesNotSlowDownWithClampedIntegration(0.06666667f,2)" fullname="Game.Rendering.Tests.GpuFireParcelSurfaceTests.FireSpawnScheduleDoesNotSlowDownWithClampedIntegration(0.06666667f,2)" methodname="FireSpawnScheduleDoesNotSlowDownWithClampedIntegration" classname="Game.Rendering.Tests.GpuFireParcelSurfaceTests" runstate="Runnable" seed="1859517933" result="Failed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.000780" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  80ms采样间隔应由已经经过的scaled时间决定，不能把33.3ms的运动稳定性上限叠加成额外等待。
+  Expected: 1
+  But was:  0
+]]></message>
+                    <stack-trace><![CDATA[at Game.Rendering.Tests.GpuFireParcelSurfaceTests.FireSpawnScheduleDoesNotSlowDownWithClampedIntegration (System.Single elapsed, System.Int32 frames) [0x00031] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Rendering\GpuFireParcelSurfaceTests.cs:26
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="4219" name="FireSpawnScheduleHasNoCatchUpDebtAndFitsTheProductionPool" fullname="Game.Rendering.Tests.GpuFireParcelSurfaceTests.FireSpawnScheduleHasNoCatchUpDebtAndFitsTheProductionPool" methodname="FireSpawnScheduleHasNoCatchUpDebtAndFitsTheProductionPool" classname="Game.Rendering.Tests.GpuFireParcelSurfaceTests" runstate="Runnable" seed="1749715176" result="Failed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.042774" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  长卡顿最多执行本帧的一次扫描。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Rendering.Tests.GpuFireParcelSurfaceTests.FireSpawnScheduleHasNoCatchUpDebtAndFitsTheProductionPool () [0x00118] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Rendering\GpuFireParcelSurfaceTests.cs:52
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="5887" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="1146" result="Failed" site="Child" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.749626" total="20" passed="16" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="30736" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="5888" name="Game" fullname="Game" runstate="Runnable" testcasecount="1146" result="Failed" site="Child" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.698704" total="20" passed="16" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="5889" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="1146" result="Failed" site="Child" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.598778" total="20" passed="16" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="5890" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="1146" result="Failed" site="Child" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.497798" total="20" passed="16" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="4522" name="AccountInventoryPresentationTests" fullname="Game.Run.Tests.AccountInventoryPresentationTests" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" testcasecount="20" result="Failed" site="Child" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.397381" total="20" passed="16" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="4524" name="AccountProfileRefreshPreservesRealToolSlotAndClearsItWhenTheItemLeaves" fullname="Game.Run.Tests.AccountInventoryPresentationTests.AccountProfileRefreshPreservesRealToolSlotAndClearsItWhenTheItemLeaves" methodname="AccountProfileRefreshPreservesRealToolSlotAndClearsItWhenTheItemLeaves" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="1783117246" result="Failed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.032792" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.AccountInventoryPresentationTests.Create (System.Object snapshot) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\AccountInventoryPresentationTests.cs:359
+at Game.Run.Tests.AccountInventoryPresentationTests.AccountProfileRefreshPreservesRealToolSlotAndClearsItWhenTheItemLeaves () [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\AccountInventoryPresentationTests.cs:51
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4523" name="AccountToolChoiceIsSharedAcrossIndependentViewsWithoutChangingConfirmedAssets" fullname="Game.Run.Tests.AccountInventoryPresentationTests.AccountToolChoiceIsSharedAcrossIndependentViewsWithoutChangingConfirmedAssets" methodname="AccountToolChoiceIsSharedAcrossIndependentViewsWithoutChangingConfirmedAssets" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="1406786297" result="Failed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.003616" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.AccountInventoryPresentationTests.Create (System.Object snapshot) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\AccountInventoryPresentationTests.cs:359
+at Game.Run.Tests.AccountInventoryPresentationTests.AccountToolChoiceIsSharedAcrossIndependentViewsWithoutChangingConfirmedAssets () [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\AccountInventoryPresentationTests.cs:30
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4525" name="AccountToolChoiceRejectsEmptySlotsAndCannotCrossAccountOrDisposedSources" fullname="Game.Run.Tests.AccountInventoryPresentationTests.AccountToolChoiceRejectsEmptySlotsAndCannotCrossAccountOrDisposedSources" methodname="AccountToolChoiceRejectsEmptySlotsAndCannotCrossAccountOrDisposedSources" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="280227907" result="Failed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.002266" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.AccountInventoryPresentationTests.Create (System.Object snapshot) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\AccountInventoryPresentationTests.cs:359
+at Game.Run.Tests.AccountInventoryPresentationTests.AccountToolChoiceRejectsEmptySlotsAndCannotCrossAccountOrDisposedSources () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\AccountInventoryPresentationTests.cs:75
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4538" name="BrokenParentIsRejectedInsteadOfDroppingTheMissingItem" fullname="Game.Run.Tests.AccountInventoryPresentationTests.BrokenParentIsRejectedInsteadOfDroppingTheMissingItem" methodname="BrokenParentIsRejectedInsteadOfDroppingTheMissingItem" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="651839312" result="Passed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.008143" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4543" name="CoreConsumerAndControllerOfferInactiveHubPreparationWithoutNetworkDependency" fullname="Game.Run.Tests.AccountInventoryPresentationTests.CoreConsumerAndControllerOfferInactiveHubPreparationWithoutNetworkDependency" methodname="CoreConsumerAndControllerOfferInactiveHubPreparationWithoutNetworkDependency" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="1193573579" result="Passed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.001657" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4541" name="DisposedSourceRemovesReadCapabilitiesInsteadOfFallingBackToLocalOrZero" fullname="Game.Run.Tests.AccountInventoryPresentationTests.DisposedSourceRemovesReadCapabilitiesInsteadOfFallingBackToLocalOrZero" methodname="DisposedSourceRemovesReadCapabilitiesInsteadOfFallingBackToLocalOrZero" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="450191513" result="Passed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.010817" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4530" name="FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity" fullname="Game.Run.Tests.AccountInventoryPresentationTests.FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.047610" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4527" name="FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity(0L)" fullname="Game.Run.Tests.AccountInventoryPresentationTests.FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity(0L)" methodname="FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="372802952" result="Passed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.006804" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4528" name="FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity(12347L)" fullname="Game.Run.Tests.AccountInventoryPresentationTests.FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity(12347L)" methodname="FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="2008263643" result="Passed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.001555" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4529" name="FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity(long.MaxValue)" fullname="Game.Run.Tests.AccountInventoryPresentationTests.FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity(long.MaxValue)" methodname="FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="1566864581" result="Passed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.000926" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="4526" name="HubHeldInputSelectsTheConfirmedAccountToolAndKeepsAllLocalGameplayWritesBlocked" fullname="Game.Run.Tests.AccountInventoryPresentationTests.HubHeldInputSelectsTheConfirmedAccountToolAndKeepsAllLocalGameplayWritesBlocked" methodname="HubHeldInputSelectsTheConfirmedAccountToolAndKeepsAllLocalGameplayWritesBlocked" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="2130822580" result="Failed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.004174" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.AccountInventoryPresentationTests.Create (System.Object snapshot) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\AccountInventoryPresentationTests.cs:359
+at Game.Run.Tests.AccountInventoryPresentationTests.HubHeldInputSelectsTheConfirmedAccountToolAndKeepsAllLocalGameplayWritesBlocked () [0x0007e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\AccountInventoryPresentationTests.cs:116
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4534" name="LockedOrStillRunningAccountCannotBecomeUnlockedHubSource" fullname="Game.Run.Tests.AccountInventoryPresentationTests.LockedOrStillRunningAccountCannotBecomeUnlockedHubSource" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.085893" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4532" name="LockedOrStillRunningAccountCannotBecomeUnlockedHubSource(True,&quot;&quot;)" fullname="Game.Run.Tests.AccountInventoryPresentationTests.LockedOrStillRunningAccountCannotBecomeUnlockedHubSource(True,&quot;&quot;)" methodname="LockedOrStillRunningAccountCannotBecomeUnlockedHubSource" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="1931658295" result="Passed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.001496" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4533" name="LockedOrStillRunningAccountCannotBecomeUnlockedHubSource(False,&quot;bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb&quot;)" fullname="Game.Run.Tests.AccountInventoryPresentationTests.LockedOrStillRunningAccountCannotBecomeUnlockedHubSource(False,&quot;bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb&quot;)" methodname="LockedOrStillRunningAccountCannotBecomeUnlockedHubSource" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="1558399937" result="Passed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.001096" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="4540" name="MaximumAccountVersionStillBuildsTheActualFirstWandProgram" fullname="Game.Run.Tests.AccountInventoryPresentationTests.MaximumAccountVersionStillBuildsTheActualFirstWandProgram" methodname="MaximumAccountVersionStillBuildsTheActualFirstWandProgram" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="1824411913" result="Passed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.002026" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4539" name="NonCanonicalWideLocationCannotAliasWarehouseThroughByteNarrowing" fullname="Game.Run.Tests.AccountInventoryPresentationTests.NonCanonicalWideLocationCannotAliasWarehouseThroughByteNarrowing" methodname="NonCanonicalWideLocationCannotAliasWarehouseThroughByteNarrowing" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="1509912403" result="Passed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.001724" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4531" name="SourceOwnsValuesAndDoesNotKeepMutableProfileItems" fullname="Game.Run.Tests.AccountInventoryPresentationTests.SourceOwnsValuesAndDoesNotKeepMutableProfileItems" methodname="SourceOwnsValuesAndDoesNotKeepMutableProfileItems" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="1513490501" result="Passed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.001871" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4545" name="SpecifiedAccountHubCanChooseMatchThroughBothOriginalPortalsWithoutLocalWrites" fullname="Game.Run.Tests.AccountInventoryPresentationTests.SpecifiedAccountHubCanChooseMatchThroughBothOriginalPortalsWithoutLocalWrites" methodname="SpecifiedAccountHubCanChooseMatchThroughBothOriginalPortalsWithoutLocalWrites" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="424516127" result="Passed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.020108" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4544" name="SpecifiedAccountHubCoordinatorCannotCheckpointTheLegacyRepository" fullname="Game.Run.Tests.AccountInventoryPresentationTests.SpecifiedAccountHubCoordinatorCannotCheckpointTheLegacyRepository" methodname="SpecifiedAccountHubCoordinatorCannotCheckpointTheLegacyRepository" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="1441867666" result="Passed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.001716" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4542" name="SpecifiedHubReadOnlyGuardSurvivesEnableAndBlocksLocalSave" fullname="Game.Run.Tests.AccountInventoryPresentationTests.SpecifiedHubReadOnlyGuardSurvivesEnableAndBlocksLocalSave" methodname="SpecifiedHubReadOnlyGuardSurvivesEnableAndBlocksLocalSave" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="36232979" result="Passed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.005708" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4537" name="UnknownVersionOrNegativeBalanceCannotBecomeRealAccountInventory" fullname="Game.Run.Tests.AccountInventoryPresentationTests.UnknownVersionOrNegativeBalanceCannotBecomeRealAccountInventory" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.065045" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4535" name="UnknownVersionOrNegativeBalanceCannotBecomeRealAccountInventory(-1L,9)" fullname="Game.Run.Tests.AccountInventoryPresentationTests.UnknownVersionOrNegativeBalanceCannotBecomeRealAccountInventory(-1L,9)" methodname="UnknownVersionOrNegativeBalanceCannotBecomeRealAccountInventory" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="1652163778" result="Passed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.002010" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4536" name="UnknownVersionOrNegativeBalanceCannotBecomeRealAccountInventory(100L,uint.MinValue)" fullname="Game.Run.Tests.AccountInventoryPresentationTests.UnknownVersionOrNegativeBalanceCannotBecomeRealAccountInventory(100L,uint.MinValue)" methodname="UnknownVersionOrNegativeBalanceCannotBecomeRealAccountInventory" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="48169183" result="Passed" start-time="2026-11-06 16:25:26Z" end-time="2026-11-06 16:25:26Z" duration="0.000925" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

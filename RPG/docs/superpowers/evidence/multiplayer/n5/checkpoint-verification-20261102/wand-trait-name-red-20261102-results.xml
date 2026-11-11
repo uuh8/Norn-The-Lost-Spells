@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 22:31:03Z" end-time="2026-11-02 22:31:04Z" duration="0.7764609">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3970" result="Failed" site="Child" start-time="2026-11-02 22:31:03Z" end-time="2026-11-02 22:31:04Z" duration="0.776461" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="5435" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="978" result="Failed" site="Child" start-time="2026-11-02 22:31:03Z" end-time="2026-11-02 22:31:04Z" duration="0.658365" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="5436" name="Game" fullname="Game" runstate="Runnable" testcasecount="978" result="Failed" site="Child" start-time="2026-11-02 22:31:03Z" end-time="2026-11-02 22:31:04Z" duration="0.585960" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="5437" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="978" result="Failed" site="Child" start-time="2026-11-02 22:31:03Z" end-time="2026-11-02 22:31:04Z" duration="0.485800" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="5438" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="978" result="Failed" site="Child" start-time="2026-11-02 22:31:03Z" end-time="2026-11-02 22:31:04Z" duration="0.385013" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="4488" name="InventoryWandDetailsTests" fullname="Game.Run.Tests.InventoryWandDetailsTests" classname="Game.Run.Tests.InventoryWandDetailsTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-11-02 22:31:03Z" end-time="2026-11-02 22:31:04Z" duration="0.283264" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="4497" name="PopupUsesTheExistingSpellNameInsteadOfExposingItsInternalContentKey" fullname="Game.Run.Tests.InventoryWandDetailsTests.PopupUsesTheExistingSpellNameInsteadOfExposingItsInternalContentKey" methodname="PopupUsesTheExistingSpellNameInsteadOfExposingItsInternalContentKey" classname="Game.Run.Tests.InventoryWandDetailsTests" runstate="Runnable" seed="104830990" result="Failed" start-time="2026-11-02 22:31:04Z" end-time="2026-11-02 22:31:04Z" duration="0.169710" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: String containing "毒球" and not containing "internal.spell.poison.001"
+  But was:  "Mana上限：237.25
+Mana恢复：17.5 /s
+基础施法延迟：0.125 s
+基础重载时间：0.625 s
+基础散布：2.75°
+程序容量：32
+基础抽取：3
+乱序：是
+固定法术（原顺序）：
+1. internal.spell.poison.001"
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.InventoryWandDetailsTests.PopupUsesTheExistingSpellNameInsteadOfExposingItsInternalContentKey () [0x000af] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\InventoryWandDetailsTests.cs:166
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,65 @@
+{
+  "RecordedAtUtc": "2026-11-03T09:01:29.708541+00:00",
+  "Stage": "BackupReady",
+  "MainDatabase": "norn_online_dev",
+  "MainAppliedVersionsBefore": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "PendingMigrations": [
+    {
+      "Version": 11,
+      "File": "Server\\Norn.Business\\Migrations\\011_item_wand_states.sql",
+      "Sha256": "a6a91b69c22029f47348fcf38917ff3376043572163afcc71f7e825e7428b08b"
+    },
+    {
+      "Version": 12,
+      "File": "Server\\Norn.Business\\Migrations\\012_run_member_exit.sql",
+      "Sha256": "eeecdd2fe5433942a66b77deb3e0534882f38fd16eab9ccd06a458bb53cb5831"
+    },
+    {
+      "Version": 13,
+      "File": "Server\\Norn.Business\\Migrations\\013_account_hub_inventory.sql",
+      "Sha256": "581d756c5ff9a6a05fdf85b45564abea9a3993ce99f1c925b3cbe27e20449924"
+    }
+  ],
+  "DatabaseBackup": {
+    "File": "F:\\Develop Project\\RPG\\RPG\\.tools\\local-online\\backups\\delivery-v14-20261103T090129Z\\norn_online_dev-before-v14.sql",
+    "Bytes": 490487,
+    "Sha256": "40df7c5d03b1d5ed4d2759ededcd30410967f1826eced694d29bca240a3e0b08",
+    "Utf8Readable": true,
+    "CompleteFooter": true,
+    "Tables": 27,
+    "Scope": "tables/data/triggers; no events/routines changed"
+  },
+  "Packages": [
+    {
+      "Kind": "Business",
+      "Source": "F:\\Develop Project\\RPG\\Server\\.artifacts\\publish\\online",
+      "Backup": "F:\\Develop Project\\RPG\\RPG\\.tools\\local-online\\backups\\delivery-v14-20261103T090129Z\\business-before-v14",
+      "Files": 13,
+      "Bytes": 2474749,
+      "AllFileHashesMatch": true
+    },
+    {
+      "Kind": "DedicatedServer",
+      "Source": "F:\\Develop Project\\RPG\\RPG\\Builds\\OnlineRooms\\Server",
+      "Backup": "F:\\Develop Project\\RPG\\RPG\\.tools\\local-online\\backups\\delivery-v14-20261103T090129Z\\dedicatedserver-before-v14",
+      "Files": 361,
+      "Bytes": 242538398,
+      "AllFileHashesMatch": true
+    }
+  ],
+  "ClientExecutablesUnchangedBaseline": {
+    "RPG\\Builds\\OnlineAccounts\\Menu\\NornMenuClient.exe": "0393adf14f2bf99db259e7f089d59e9e76cd3428a8224b153dce3ad5cd98e020",
+    "RPG\\Builds\\OnlineAccounts\\Menu\\UnityCrashHandler64.exe": "0ead33f8feb8167665326fe739e512bc9b976fd8a91c69ba8a0fb285083c8f15"
+  }
+}

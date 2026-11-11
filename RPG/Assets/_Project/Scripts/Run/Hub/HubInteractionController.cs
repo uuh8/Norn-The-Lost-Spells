@@ -16,6 +16,16 @@ namespace Game.Run
         [SerializeField]private RunPauseCoordinator _researchPause;
         private readonly string _researchCaller = System.Guid.NewGuid().ToString("N");
         private ulong _researchSequence, _researchGrant, _consumedGrant;
+        private SinglePlayerShopSession _accountShop;
+        /// <summary>商店适配主动登记；不靠Scene名字开放，也不要求给既有Scene新增序列化跨组件接线。</summary>
+        internal void BindAccountShop(SinglePlayerShopSession shop)
+        {
+            if (shop != null && shop.InventorySession == _session && shop.gameObject.scene == gameObject.scene) _accountShop = shop;
+        }
+        internal void ReleaseAccountShop(SinglePlayerShopSession shop) { if (_accountShop == shop) _accountShop = null; }
+        private bool AccountShopAvailable => _accountShop != null && _accountShop.isActiveAndEnabled && _accountShop.AccountEntryAvailable;
+        private bool AccountInteractionAllowed(HubInteractionKind kind) => kind == HubInteractionKind.Warehouse
+            || kind == HubInteractionKind.Expedition || kind == HubInteractionKind.Shop && AccountShopAvailable;
         // 老教学的Legacy程序不能借V2研究台展示另一套执行语义。
         public bool CanResearch => isActiveAndEnabled && _session != null && _session.ReadOnly != null && _session.UseSpellProgrammingV2
             && !_session.IsAwayRuntime && !_session.RaidWriteLocked && !_session.Profile.RaidActionsFrozen
@@ -24,14 +34,33 @@ namespace Game.Run
             && _researchArea != null && _player != null && _researchArea.Contains(_player.position);
         private static readonly ProfilerMarker QueryMarker=new ProfilerMarker("Norn.Hub.RegionQuery");
         public HubDefinition Definition=>_definition;
+        private bool TryGetInteractionIdentity(out string inventoryId, out bool account)
+        {
+            inventoryId = null; account = false;
+            if (_session == null) return false;
+            if (_session.AccountInventoryReadOnly)
+            {
+                account = true;
+                if (!_session.TryGetAccountHubSummary(out var summary)) return false;
+                inventoryId = summary.InventoryId; return true;
+            }
+            if (_session.ReadOnly == null || _session.RunCoordinator?.State.Phase != RaidPhase.HubReady) return false;
+            inventoryId = _session.ReadOnly.InventoryId; return true;
+        }
         public bool TryGetStation(out HubDefinition.Station station)
         {
             using var sample=QueryMarker.Auto();station=default;
-            if(_session?.ReadOnly==null || _session.RunCoordinator?.State.Phase!=RaidPhase.HubReady || _definition?.Stations==null || _player==null)return false;
+            if(!TryGetInteractionIdentity(out _, out bool account) || _definition?.Stations==null || _player==null)return false;
+            if(account && (!isActiveAndEnabled || !gameObject.scene.isLoaded
+                || _session.gameObject.scene!=gameObject.scene || _player.gameObject.scene!=gameObject.scene))return false;
             Vector3 point=_player.position;float best=float.PositiveInfinity;bool found=false;
             for(int i=0;i<_definition.Stations.Length;i++)
             {
-                var candidate=_definition.Stations[i];HubAreaVolume area=candidate.Kind==HubStationKind.Shop?_shopArea:candidate.Kind==HubStationKind.Warehouse?_warehouseArea:
+                var candidate=_definition.Stations[i];
+                // 账号商店只有静态配置已冻结、账号HTTP适配已订阅时才出现；研究台仍维持独立未接通的门。
+                if(account && candidate.Kind!=HubStationKind.Warehouse && candidate.Kind!=HubStationKind.Expedition
+                    && !(candidate.Kind == HubStationKind.Shop && AccountShopAvailable))continue;
+                HubAreaVolume area=candidate.Kind==HubStationKind.Shop?_shopArea:candidate.Kind==HubStationKind.Warehouse?_warehouseArea:
                     candidate.Kind==HubStationKind.SpellResearch?_researchArea:null;
                 if (candidate.Kind==HubStationKind.SpellResearch && !CanResearch) continue;
                 if(area!=null)
@@ -61,6 +90,13 @@ namespace Game.Run
         }
         private void OnDepartureReview(HubDepartureReviewRequestedEvent request)
         {
+            if(_session!=null && _session.AccountInventoryReadOnly)
+            {
+                if(TryGetInteractionIdentity(out var accountId, out _) && request.InventoryId==accountId)
+                    EventBus<HubDepartureReviewResultEvent>.Publish(new HubDepartureReviewResultEvent{InventoryId=accountId,
+                        Message="单人服务器入场尚未接通；原本地资产入口保持禁用。"});
+                return;
+            }
             // 移走实验区后，远征确认仍由据点负责；旧实验测试场景有原Controller时避免双处理。
             if(_session?.ExperimentArea!=null||request.InventoryId!=_session?.ReadOnly?.InventoryId
                 ||_session.RunCoordinator?.State.Phase!=RaidPhase.HubReady)return;
@@ -73,8 +109,10 @@ namespace Game.Run
         }
         public void Request(HubInteractionKind kind)
         {
-            if (_session?.ReadOnly == null) return;
-            EventBus<HubInteractionRequestedEvent>.Publish(new HubInteractionRequestedEvent { InventoryId=_session.ReadOnly.InventoryId,
+            if (!TryGetInteractionIdentity(out var inventoryId, out bool account)) return;
+            if(account && !AccountInteractionAllowed(kind))
+            {PublishAccountRejection(inventoryId,kind,null,0);return;}
+            EventBus<HubInteractionRequestedEvent>.Publish(new HubInteractionRequestedEvent { InventoryId=inventoryId,
                 Kind=kind, CallerId=kind==HubInteractionKind.SpellResearch?_researchCaller:null,
                 RequestId=kind==HubInteractionKind.SpellResearch?++_researchSequence:0 });
         }
@@ -87,7 +125,9 @@ namespace Game.Run
         }
         private void OnRequest(HubInteractionRequestedEvent command)
         {
-            if(command.InventoryId!=_session?.ReadOnly?.InventoryId)return;
+            if(!TryGetInteractionIdentity(out var inventoryId,out bool account)||command.InventoryId!=inventoryId)return;
+            if(account && !AccountInteractionAllowed(command.Kind))
+            {PublishAccountRejection(inventoryId,command.Kind,command.CallerId,command.RequestId);return;}
             bool success=TryGetStation(out var station) && (byte)station.Kind==(byte)command.Kind;
             if(command.Kind==HubInteractionKind.SpellResearch)
             {
@@ -97,5 +137,8 @@ namespace Game.Run
             EventBus<HubInteractionResultEvent>.Publish(new HubInteractionResultEvent{InventoryId=command.InventoryId,Kind=command.Kind,Success=success,
                 CallerId=command.CallerId,RequestId=command.RequestId,Message=success?station.DisplayName:"请进入对应交互区域。"});
         }
+        private static void PublishAccountRejection(string inventoryId,HubInteractionKind kind,string caller,ulong request)
+            =>EventBus<HubInteractionResultEvent>.Publish(new HubInteractionResultEvent{InventoryId=inventoryId,Kind=kind,
+                CallerId=caller,RequestId=request,Success=false,Message="该账号交易/研究尚未接通服务器，原本地资产操作保持禁用。"});
     }
 }

@@ -7,11 +7,12 @@ using Game.Networking;
 using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Security.Cryptography;
 
 namespace Game.Multiplayer
 {
     /// <summary>N3组合根：只存在正式在线Scene，不接管单机Session、不让网络适配拥有角色规则。</summary>
-    public sealed class OnlineWorldBootstrap : MonoBehaviour
+    public sealed partial class OnlineWorldBootstrap : MonoBehaviour
     {
         public static OnlineWorldBootstrap Active { get; private set; }
         public static bool IsDedicatedRuntime
@@ -35,6 +36,9 @@ namespace Game.Multiplayer
         private DungeonProgressNetworkChannel _progressChannel;
         private GameObject _worldContent;
         private string _runId;
+        private IOnlineMaterialWorldBinding _materialWorld;
+        /// <summary>当前World生命期身份。DS创建、认证后告知Client；不取RoomEpoch/ConnectionEpoch或渲染版本。</summary>
+        public ulong WorldEpoch { get; private set; }
         private bool _initializing;
         private readonly uint[] _progressRevisions = new uint[4], _progressEpochs = new uint[4];
         private RoomNetworkManager _manager;
@@ -55,10 +59,27 @@ namespace Game.Multiplayer
         private readonly SnapshotSendClock _snapshotClock = new SnapshotSendClock();
         public long SnapshotBatchesSent { get; private set; }
         private bool _stopped, _frozen, _announced, _localInputSuppressed;
+        // 运行期同步失败属于本World的不可自动解除事实，不能借Heartbeat恢复Manager.Frozen而解锁。
+        // 只关闭新玩法写口；原Owner、已提交量与现场对象一直保留到明确StopWorld。
+        private string _authoritySynchronizationFailure;
+        private bool _authorityFailureReported, _materialSuspensionFailed, _materialSuspensionInProgress;
         // UI 开闭是离散操作；HashSet 仅保存 Owner，不在 Tick 中查 Scene 或创建集合。
         private readonly HashSet<int> _inventoryInputOwners = new HashSet<int>(4);
         public bool WorldReady { get; private set; }
         public string DungeonId => _dungeonDefinition != null ? _dungeonDefinition.DungeonId : null;
+        // 组合层只读取可信导出配置；Run的库存/生成写口仍由Character facade隐藏。
+        public OnlineDungeonDefinition DungeonDefinition => _dungeonDefinition;
+        public bool CanAwardDungeonNpcLoot(ulong actorId) => IsAuthority && CanAdvance
+            && _dungeonDefinition != null && _dungeonDefinition.LootTableCount != 0
+            && _dungeonRuntime != null && _dungeonRuntime.CanAwardNpcDeath(actorId);
+
+        internal string MaterialRunId => _runId;
+        internal string MaterialTransferWorldId => (_materialWorld as IOnlineMaterialTransferWorld)?.TransferWorldId;
+        private WorldReplicationCoordinator _materialReplication;
+        private bool _replicationPauseReported;
+        private bool MaterialReplicationFaulted => IsAuthority && _materialReplication != null && _materialReplication.Faulted;
+        private WorldReplicationNetworkChannel _materialChannel;
+        public WorldReplicationCoordinator MaterialReplication => _materialReplication;
         public bool IsConfiguredActor(ulong actor) => actor >= 1 && actor <= OnlineActorLimits.PlayerCount ||
             _dungeonDefinition != null && _dungeonDefinition.TryGetNpc(actor, out _);
         public bool IsAuthority { get; private set; }
@@ -70,11 +91,17 @@ namespace Game.Multiplayer
         public uint LastInputSequence => _localSequence;
         public int PredictionReplayCount => _prediction.LastReplayCount;
         public float LastCorrectionDistance => _prediction.LastCorrectionDistance;
-        public bool Frozen => IsAuthority ? _manager == null || !_manager.CanSimulate : _frozen;
-        public bool CanAdvance => WorldReady && !_stopped && _combat != null && !_combat.Faulted && _manager != null && (IsAuthority ? _manager.CanSimulate : NetworkClient.isConnected && LocalPlayer != null && !_frozen);
+        // 复制/材料故障属于整个世界的暂停事实；Client须收到既有Frozen标记，而不是继续本地预测。
+        public bool Frozen => IsAuthority ? _authoritySynchronizationFailure != null || _manager == null || !_manager.CanSimulate || !MaterialCanAdvance
+            || _combat != null && _combat.Faulted : _frozen;
+        public bool CanAdvance => WorldReady && !_stopped && _authoritySynchronizationFailure == null && MaterialCanAdvance && _combat != null && !_combat.Faulted && _manager != null
+            && (IsAuthority ? _manager.CanSimulate : NetworkClient.isConnected && LocalPlayer != null && !_frozen
+                && (WorldEpoch == 0 || _auth != null && _auth.ClientWorldEpoch == WorldEpoch));
+        private bool MaterialCanAdvance => !MaterialReplicationFaulted && (_materialWorld == null || MaterialBindingAlive && _materialWorld.IsReady && !_materialWorld.Faulted);
+        private bool MaterialBindingAlive => _materialWorld != null && !(_materialWorld is UnityEngine.Object value && value == null);
         public bool LocalInputSuppressed
         {
-            get => _localInputSuppressed || _inventoryInputOwners.Count != 0;
+            get => _localMemberExitPending || _localInputSuppressed || _inventoryInputOwners.Count != 0;
             set { if (_localInputSuppressed == value) return; _localInputSuppressed = value; ApplyImmediateInputGate(); PublishView(); }
         }
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -97,7 +124,15 @@ namespace Game.Multiplayer
             ResolveManager();
             if (!IsAuthority || _instance == null || !_instance.HasValidatedLaunch ||
                 !string.Equals(_instance.DungeonId, dungeonId, StringComparison.Ordinal)) return false;
-            return InitializeDungeon(dungeonId, _instance.RunId);
+            return InitializeDungeon(dungeonId, _instance.RunId, WorldEpoch != 0 ? WorldEpoch : CreateWorldEpoch());
+        }
+
+        private static ulong CreateWorldEpoch()
+        {
+            // 只在DS建立新World时分配，随机不透明身份不作为可排序Revision；同World重连不调用这里。
+            Span<byte> bytes = stackalloc byte[8]; ulong value;
+            do { RandomNumberGenerator.Fill(bytes); value = BitConverter.ToUInt64(bytes); } while (value == 0);
+            return value;
         }
 
         private void ResolveManager()
@@ -107,10 +142,10 @@ namespace Game.Multiplayer
             if (_manager == null) return;
             _auth = _manager.GetComponent<JoinTicketAuthenticator>(); _instance = _manager.GetComponent<RoomInstanceBootstrap>();
         }
-        private bool InitializeDungeon(string dungeonId, string runId)
+        private bool InitializeDungeon(string dungeonId, string runId, ulong worldEpoch)
         {
-            if (_stopped || _initializing || string.IsNullOrEmpty(dungeonId) || string.IsNullOrEmpty(runId)) return false;
-            if (WorldReady) return DungeonId == dungeonId && _runId == runId;
+            if (_stopped || _initializing || worldEpoch == 0 || string.IsNullOrEmpty(dungeonId) || string.IsNullOrEmpty(runId)) return false;
+            if (WorldReady) return DungeonId == dungeonId && _runId == runId && WorldEpoch == worldEpoch;
             var catalog = Resources.Load<OnlineDungeonCatalog>("Online/DungeonCatalog");
             if (_profile == null || _profile.SimulationHash == 0 || _profile.PlayerPrefab == null ||
                 _combatDefinition == null || _combatDefinition.WireHash == 0 || _manager == null ||
@@ -123,13 +158,30 @@ namespace Game.Multiplayer
                 if (transform.position != Vector3.zero || transform.rotation != Quaternion.identity || transform.lossyScale != Vector3.one)
                     throw new InvalidOperationException("在线世界根必须是单位变换。");
                 _dungeonDefinition = definition; _runId = runId;
+                if (definition.WorldPrefab.activeSelf) throw new InvalidOperationException("正式World Prefab必须以inactive根导出，不能先Awake再配置材料权威。");
                 _worldContent = Instantiate(definition.WorldPrefab, transform, false);
                 _dungeonBindings = _worldContent.GetComponent<OnlineDungeonWorldBindings>();
                 string bindingError = "缺少WorldBindings";
                 if (_dungeonBindings == null || !_dungeonBindings.TryValidate(definition.EncounterCount, out bindingError))
                     throw new InvalidOperationException("正式地图入口/门接线缺失：" + bindingError);
-                _worldContent.SetActive(true); // 离线导出根inactive，只有完成剥离的静态内容在此启用。
+                ConfigureMaterialWorldBeforeActivation(_worldContent, worldEpoch);
+                _worldContent.SetActive(true);
+                if (!_materialWorld.IsReady || _materialWorld.Faulted) throw new InvalidOperationException("材料World激活后未完成可信模式初始化。");
+                // 复制状态跟随 World，换连接/Manager 不重建已安装版本；无 Installer 的正式 Replica 禁止启动。
+                if (!IsAuthority && _materialWorld.ReplicaInstaller == null) throw new InvalidOperationException("Replica缺少原子Installer。");
+                var capture = _materialWorld.CaptureBuffer;
+                _materialReplication = new WorldReplicationCoordinator(WorldEpoch, _combatDefinition.WireHash,
+                    WorldReplicationCoordinator.DefaultChunks, WorldReplicationCoordinator.DefaultWords,
+                    capture != null ? capture.Cells.Length : 65536, capture != null ? capture.Pending.Length : 1024,
+                    capture != null ? capture.InspectionBudget : 2000000, IsAuthority ? null : _materialWorld.ReplicaInstaller);
+                if (IsAuthority) _materialReplication.SetFaultHandler(SynchronizeMaterialLifecycle);
+                // 独立网络配置属于两端兼容输入；不能借单机活动半径隐式改变DS模拟，也不能缺失时静默全量发送。
+                var materialProfile=Resources.Load<OnlineWorldReplicationProfile>("Online/WorldReplicationProfile");
+                if(materialProfile==null || !materialProfile.Validate(out _) || !_materialReplication.ConfigureInterest(
+                    materialProfile.ReferenceChunkWorldSize,materialProfile.RadiusXZChunks,materialProfile.RadiusYChunks))
+                    throw new InvalidOperationException("缺少有效的独立联机材料Interest配置。");
                 _combatSimulation = new CombatSimulationWorld();
+                if (IsAuthority) _combatSimulation.ConfigureAuthorityWriteGate(() => CanAdvance);
                 Registry = new NetworkActorRegistry(_profile, transform, _combatDefinition, _combatSimulation, definition);
                 BindNetwork();
                 if (_combat == null) throw new InvalidOperationException("正式网络组合根缺失。");
@@ -149,6 +201,111 @@ namespace Game.Multiplayer
             { GameLog.Error("正式副本装配被拒绝：" + error.Message, "OnlineDungeon"); StopWorld(); return false; }
             finally { _initializing = false; }
         }
+        private void ConfigureMaterialWorldBeforeActivation(GameObject content, ulong worldEpoch)
+        {
+            if (content == null || content.activeSelf || content.activeInHierarchy || worldEpoch == 0 || _materialWorld != null)
+                throw new InvalidOperationException("材料World必须在inactive边界绑定唯一非零世界身份。");
+            IOnlineMaterialWorldBinding found = null;
+            // 仅离散装配扫描一次，Tick通过缓存Core合同调用，不向ElementField/Rendering加程序集依赖。
+            foreach (var component in content.GetComponentsInChildren<MonoBehaviour>(true))
+                if (component is IOnlineMaterialWorldBinding binding)
+                {
+                    if (found != null) throw new InvalidOperationException("正式地图存在多个材料Binding。");
+                    found = binding;
+                }
+            if (found == null) throw new InvalidOperationException("正式地图缺少材料Binding，请重新导出CPU世界资源。");
+            // 失败也保留候选引用供StopWorld.Detach清理，不把半份配置当作原状退回单机。
+            _materialWorld = found;
+            if (!found.TryConfigure(IsAuthority ? WorldExecutionMode.Authority : WorldExecutionMode.Replica, worldEpoch))
+                throw new InvalidOperationException("材料World模式/身份配置失败。");
+            WorldEpoch = worldEpoch; found.SetSuspended(true);
+        }
+
+        internal void SynchronizeMaterialLifecycle()
+        {
+            if (_materialWorld == null) return;
+            try
+            {
+                if (!MaterialBindingAlive)
+                {
+                    if (IsAuthority) PauseAuthorityForFailure("MaterialBindingUnavailable");
+                    else StopWorld();
+                    return;
+                }
+                // 挂起边界本身已抛异常时，不从Render/After/catch再次进入同一失败回调。
+                // 自身sticky门已锁住Combat、Owned与后续外部Step，即使材料Owner无法确认暂停也不继续推进。
+                if (_materialSuspensionFailed) return;
+                // 每Render帧也执行：Frozen可能让逻辑步数为0，不能仅在Step中传暂停。
+                // Replica始终不运行材料规则；安装数据和Rendering不由此授予模拟权。
+                SetMaterialSuspended(_stopped || !WorldReady || !IsAuthority || Frozen || ResearchPaused);
+                if (_stopped || _materialWorld == null || !MaterialBindingAlive) return;
+                if ((MaterialReplicationFaulted || _materialWorld.Faulted) && !_replicationPauseReported)
+                {
+                    _replicationPauseReported = true;
+                    // 挂起先于日志回调；保留Material/Combat/Owned/在途对象，不调用会销毁现场的StopWorld。
+                    string reason = MaterialReplicationFaulted ? _materialReplication.Failure : "MaterialSimulationFaulted";
+                    GameLog.Error("材料复制故障，已暂停该世界的新玩法写入并保留现场：" + reason, "OnlineWorld");
+                }
+            }
+            catch (Exception error) { PauseAuthorityAfterException(error); throw; }
+        }
+
+        /// <summary>
+        /// Authority所有运行期异常共用最终门。调用者随后使用throw保留原异常栈；这里不退款、不回滚、
+        /// 不StopDriver/Detach/Dispose。若尝试挂起又抛异常，只记录次因，不能用它替换最初故障。
+        /// </summary>
+        internal void PauseAuthorityAfterException(Exception error)
+        {
+            if (!IsAuthority || _stopped) return;
+            LatchAuthorityFailure(error.GetType().Name + ": " + error.Message);
+            if (_authorityFailureReported) return;
+            try { SetMaterialSuspended(true); }
+            catch
+            {
+                // SetMaterialSuspended已锁存失败并记录次因；外层仍须原样传播最初的error。
+                // 后续帧由_materialSuspensionFailed阻止重复回调，并非吞掉最初异常后继续模拟。
+            }
+            finally { ReportAuthorityFailure(); }
+        }
+
+        private void PauseAuthorityForFailure(string reason)
+        {
+            if (!IsAuthority || _stopped || _authoritySynchronizationFailure != null) return;
+            LatchAuthorityFailure(reason);
+            try { SetMaterialSuspended(true); }
+            finally { ReportAuthorityFailure(); }
+        }
+
+        private void LatchAuthorityFailure(string reason)
+        {
+            if (_authoritySynchronizationFailure == null) _authoritySynchronizationFailure = reason;
+        }
+
+        private void ReportAuthorityFailure()
+        {
+            if (_authorityFailureReported || _authoritySynchronizationFailure == null) return;
+            _authorityFailureReported = true;
+            GameLog.Error("世界同步故障，已暂停新玩法写入并保留现场：" + _authoritySynchronizationFailure, "OnlineWorld");
+        }
+
+        private void SetMaterialSuspended(bool suspended)
+        {
+            if (_materialSuspensionFailed || _materialSuspensionInProgress || !MaterialBindingAlive) return;
+            _materialSuspensionInProgress = true;
+            try { _materialWorld.SetSuspended(suspended); }
+            catch (Exception error)
+            {
+                _materialSuspensionFailed = true;
+                if (IsAuthority && !_stopped)
+                {
+                    if (_authoritySynchronizationFailure == null) LatchAuthorityFailure("SetSuspended: " + error.Message);
+                    else _authoritySynchronizationFailure += "; SetSuspended: " + error.Message;
+                    ReportAuthorityFailure();
+                }
+                throw;
+            }
+            finally { _materialSuspensionInProgress = false; }
+        }
         private void SetNpcActive(ulong actor, bool active)
         { if (!Registry.SetNpcActive(actor, active)) throw new InvalidOperationException("遭遇引用未知NPC。"); }
         private void ActivateDungeonBoss(ulong actor)
@@ -159,6 +316,8 @@ namespace Game.Multiplayer
             EventBus<OnlineMovementViewRequestedEvent>.Subscribe(OnViewRequested);
             EventBus<InventoryPresentationVisibilityEvent>.Subscribe(OnInventoryVisibility);
             EventBus<LocalActorCameraBoundEvent>.Subscribe(OnCameraBound);
+            EventBus<OnlineRunExitRequestedEvent>.Subscribe(OnLocalMemberExitRequested);
+            EventBus<OnlineRunExitStatusChangedEvent>.Subscribe(OnLocalMemberExitStatus);
         }
         private void OnDisable()
         {
@@ -166,6 +325,8 @@ namespace Game.Multiplayer
             EventBus<OnlineMovementViewRequestedEvent>.Unsubscribe(OnViewRequested);
             EventBus<InventoryPresentationVisibilityEvent>.Unsubscribe(OnInventoryVisibility);
             EventBus<LocalActorCameraBoundEvent>.Unsubscribe(OnCameraBound);
+            EventBus<OnlineRunExitRequestedEvent>.Unsubscribe(OnLocalMemberExitRequested);
+            EventBus<OnlineRunExitStatusChangedEvent>.Unsubscribe(OnLocalMemberExitStatus);
             StopWorld();
         }
         private void OnMenu(OnlineMovementMenuRequestEvent request) { if (!IsAuthority) LocalInputSuppressed = request.Open; }
@@ -198,36 +359,86 @@ namespace Game.Multiplayer
         }
         private void BindNetwork()
         {
+            var nextManager = NetworkManager.singleton as RoomNetworkManager;
+            var nextInstance = nextManager != null ? nextManager.GetComponent<RoomInstanceBootstrap>() : null;
+            if (nextManager != null)
+            {
+                // Dedicated拒绝更换原Entry/Receipt Owner后保留故障现场；同一坏Manager不在每帧反复报错。
+                if (IsAuthority && _combat != null && _combat.Faulted && _authoritySynchronizationFailure != null
+                    && !ReferenceEquals(nextInstance, _combat.GameplayInstanceOwner)) return;
+                var nextCombat = nextManager.GetComponent<CombatNetworkChannel>();
+                if (nextCombat == null) nextCombat = nextManager.gameObject.AddComponent<CombatNetworkChannel>();
+                if (_combat == null)
+                {
+                    // Manager可被后续World复用；上一World网络gap留下的disabled Adapter不代表新World应失去消息入口。
+                    nextCombat.enabled = true;
+                    var initialMovement = nextManager.GetComponent<MovementNetworkChannel>();
+                    if (initialMovement != null) initialMovement.enabled = true;
+                    var initialInventory = nextManager.GetComponent<InventoryNetworkChannel>();
+                    if (initialInventory != null) initialInventory.enabled = true;
+                    _combat = new OnlineCombatWorld(this, _combatDefinition, _combatSimulation, nextCombat, nextManager, nextInstance);
+                }
+                else if (!_combat.RebindNetworking(nextManager, nextCombat, nextInstance, out var rebindError))
+                {
+                    // ResolveManager可能已看见新单例，但玩法Owner必须仍指向原Instance，不能先换Entry再验证。
+                    _manager = _combat.NetworkingManager; _instance = _combat.GameplayInstanceOwner;
+                    _auth = _manager != null ? _manager.GetComponent<JoinTicketAuthenticator>() : null;
+                    if (IsAuthority) PauseAuthorityForFailure("NetworkingRebindRejected: " + rebindError);
+                    else { GameLog.Error("客户端网络重绑被拒绝：" + rebindError, "OnlineWorld"); StopWorld(); }
+                    return;
+                }
+            }
+
+            var nextProgress = nextManager != null ? nextManager.GetComponent<DungeonProgressNetworkChannel>() : null;
+            var nextMaterial = nextManager != null ? nextManager.GetComponent<WorldReplicationNetworkChannel>() : null;
+            var nextExit = nextManager != null ? nextManager.GetComponent<RunExitNetworkChannel>() : null;
+            if (nextProgress != null && !ReferenceEquals(nextProgress, _progressChannel)) nextProgress.enabled = false;
+            if (nextMaterial != null && !ReferenceEquals(nextMaterial, _materialChannel)) nextMaterial.enabled = false;
+            if (nextExit != null && !ReferenceEquals(nextExit, _memberExitChannel)) nextExit.enabled = false;
+            var previousExit = _memberExitChannel;
+            ClearMemberExitChannel();
+            if (previousExit != null && !ReferenceEquals(previousExit, nextExit)) previousExit.enabled = false;
             if (_boundManager != null)
             {
                 _boundManager.ServerActorJoined -= OnJoined; _boundManager.ServerActorLeft -= OnLeft;
             }
             if (_channel != null) { _channel.InputReceived -= OnInput; _channel.StateReceived -= OnState; }
-            // 先结束上一代传输适配器，保留同Run的Registry/DungeonRuntime/资源工作区。
-            // Configure清空有界候选并使迟到的旧身份包无法通过；enabled=false让活跃组件退订Mirror handler。
+            // 结束的只有上一代传输Adapter；Combat及其Ground/Home/输出状态保留同一对象。
             if (_progressChannel != null)
             {
                 _progressChannel.Configure(null, null, 0);
                 _progressChannel.enabled = false;
             }
-            _combat?.Dispose(); _combat = null;
+            if (_materialChannel != null) { _materialChannel.Configure(null, null); _materialChannel.enabled = false; }
+            _materialChannel = null;
             _channel = null; _progressChannel = null; _boundManager = null;
-            _manager = NetworkManager.singleton as RoomNetworkManager;
-            if (_manager == null) { _auth = null; _instance = null; return; }
+            _manager = nextManager;
+            if (_manager == null)
+            {
+                _combat?.SuspendNetworking(); _auth = null;
+                if (!IsAuthority) _instance = null;
+                return;
+            }
             _auth = _manager.GetComponent<JoinTicketAuthenticator>(); _instance = _manager.GetComponent<RoomInstanceBootstrap>();
             _channel = _manager.GetComponent<MovementNetworkChannel>();
             if (_channel == null) _channel = _manager.gameObject.AddComponent<MovementNetworkChannel>();
+            _channel.enabled = true;
             _channel.SimulationHash = _profile.SimulationHash;
             _channel.InputReceived += OnInput; _channel.StateReceived += OnState;
-            var combatChannel = _manager.GetComponent<CombatNetworkChannel>();
-            if (combatChannel == null) combatChannel = _manager.gameObject.AddComponent<CombatNetworkChannel>();
-            _combat = new OnlineCombatWorld(this, _combatDefinition, _combatSimulation, combatChannel, _manager, _instance);
+            if (nextExit != null) nextExit.enabled = true;
+            BindMemberExitChannel();
             // 配置只取当前已通过Launch/ClientIdentity核验的World字段，不从新连接自报的字符串重新选图。
             // 首次初始化与同World换Manager共用这个入口，进度通道不会遗留在被销毁的上一代对象上。
             _progressChannel = _manager.GetComponent<DungeonProgressNetworkChannel>();
             if (_progressChannel == null) _progressChannel = _manager.gameObject.AddComponent<DungeonProgressNetworkChannel>();
             _progressChannel.Configure(_runId, DungeonId, _combatDefinition.WireHash);
             _progressChannel.enabled = true;
+            if (_materialReplication != null)
+            {
+                _materialChannel = _manager.GetComponent<WorldReplicationNetworkChannel>();
+                if (_materialChannel == null) _materialChannel = _manager.gameObject.AddComponent<WorldReplicationNetworkChannel>();
+                _materialChannel.Configure(this, _materialReplication); _materialChannel.enabled = true;
+            }
             Array.Clear(_progressRevisions, 0, _progressRevisions.Length);
             Array.Clear(_progressEpochs, 0, _progressEpochs.Length);
             // Awake 跨物体无顺序保证；若 Manager 较晚建立，在 Bind 成功时补登记已创建的 NPC。
@@ -251,7 +462,8 @@ namespace Game.Multiplayer
                 if (!IsAuthority && _auth != null && _auth.ClientAuthenticated && NetworkClient.isConnected && _auth.ClientIdentity != null)
                 {
                     var identity = _auth.ClientIdentity;
-                    if (!InitializeDungeon(identity.DungeonId, identity.RunId))
+                    if (_auth.ClientWorldEpoch == 0) return;
+                    if (!InitializeDungeon(identity.DungeonId, identity.RunId, _auth.ClientWorldEpoch))
                     { if (NetworkClient.active) NetworkClient.Disconnect(); return; }
                 }
                 else return;
@@ -259,6 +471,7 @@ namespace Game.Multiplayer
             if (_manager == null || _manager != NetworkManager.singleton || _boundManager != _manager) BindNetwork();
             if (IsAuthority)
             {
+                SynchronizeMaterialLifecycle();
                 if (!CanAdvance) Registry.Neutralize();
                 return;
             }
@@ -269,7 +482,8 @@ namespace Game.Multiplayer
             _combat?.PumpClientInventory();
             // 通道固定最多缓存8份候选，按到达顺序逐份交给领域校验；非法高Revision不能挤掉同帧合法进度。
             // 此处没有await或网络泵，取空即结束，不会变成持续接收网络消息的无界循环。
-            while (_progressChannel != null && _progressChannel.TryTake(out var progress)) _dungeonRuntime.ApplyReplica(progress);
+            while (_progressChannel != null && _progressChannel.TryTake(out var progress))
+            { _dungeonRuntime.ApplyReplica(progress); ApplyReturnPortalProgress(progress); }
             if (LocalPlayer != null) ApplyImmediateInputGate();
             if (_auth != null && _auth.ClientAuthenticated && NetworkClient.isConnected && _auth.ClientIdentity != null)
             {
@@ -286,12 +500,18 @@ namespace Game.Multiplayer
             if (!WorldReady || _auth == null || !_auth.ClientAuthenticated || !NetworkClient.isConnected || _auth.ClientIdentity == null) return;
             if (_auth.ClientIdentity.DungeonId != DungeonId || _auth.ClientIdentity.RunId != _runId)
             { GameLog.Error("存活世界拒绝跨Run/副本身份替换。", "OnlineDungeon"); StopWorld(); NetworkClient.Disconnect(); return; }
+            if (WorldEpoch != 0 && _auth.ClientWorldEpoch != WorldEpoch)
+            {
+                if (_auth.ClientWorldEpoch == 0) return; // 新认证上下文还在等可靠世界握手，不重置原世界。
+                GameLog.Error("存活世界拒绝未经重建的WorldEpoch替换。", "OnlineDungeon"); StopWorld(); NetworkClient.Disconnect(); return;
+            }
             var id = _auth.ClientIdentity; if (_localEpoch == id.ConnectionEpoch) return;
             _localActor = id.ActorId; _localEpoch = id.ConnectionEpoch; _localSequence = _lastLocalSnapshot = 0;
             _prediction.Reset(_localEpoch); _frozen = false; _announced = false; _localInputSuppressed = false;
             var slot = Registry.EnsurePlayer((int)_localActor - 1, PlayerExecutionMode.Prediction);
             slot.Epoch = _localEpoch; slot.Connected = true; LocalPlayer = slot.Player; LocalPlayer.ClearOnlineInput();
             _combat.BindClient(slot, _localActor, _localEpoch, true);
+            BindLocalReturnInteraction();
             _smoother = LocalPlayer.GetComponent<MovementPresentationSmoother>();
             if (_smoother == null) { _smoother = LocalPlayer.gameObject.AddComponent<MovementPresentationSmoother>(); _smoother.Bind(LocalPlayer); }
             if (_cameraTarget == null)
@@ -352,7 +572,13 @@ namespace Game.Multiplayer
             var slot = Registry.EnsurePlayer((int)identity.ActorId - 1, PlayerExecutionMode.Authority);
             slot.Epoch = identity.ConnectionEpoch; slot.ConnectionId = connection.connectionId; slot.Connected = true; slot.SimulationReady = false;
             slot.Input.Reset(identity.ConnectionEpoch); slot.Player.ClearOnlineInput();
-            if (!_combat.BindAuthority(slot, identity)) { slot.Connected = false; connection.Disconnect(); }
+            if (!_combat.BindAuthority(slot, identity) || !_auth.SendWorldIdentity(connection, identity, WorldEpoch))
+            { slot.Connected = false; connection.Disconnect(); }
+            else if (HasMemberExitFence(slot))
+            {
+                slot.SimulationReady = true;
+                _instance.RefreshMemberExitStatus(identity);
+            }
         }
         private void OnLeft(NetworkConnectionToClient connection, JoinConnectionIdentity identity)
         {
@@ -365,12 +591,18 @@ namespace Game.Multiplayer
         {
             if (!CanAdvance || Registry == null) return;
             var slot = Registry[(int)identity.ActorId - 1];
-            if (slot.Connected && slot.Epoch == identity.ConnectionEpoch &&
+            if (slot.Connected && !HasMemberExitFence(slot) && slot.Epoch == identity.ConnectionEpoch &&
                 slot.Input.TryEnqueue(frame, identity.ConnectionEpoch, Time.realtimeSinceStartupAsDouble)) slot.SimulationReady = true;
         }
         public void Step(float dt, uint tick)
         {
-            if (!CanAdvance) return;
+            // 角色、遭遇、施法和Combat Before属于同一权威阶段；直接调用Step也不能漏掉异常锁存。
+            try { StepGameplay(dt, tick); }
+            catch (Exception error) { PauseAuthorityAfterException(error); throw; }
+        }
+        private void StepGameplay(float dt, uint tick)
+        {
+            if (!CanAdvance || ResearchPaused) return;
             if (IsAuthority)
             {
                 ServerTick = tick;
@@ -378,23 +610,35 @@ namespace Game.Multiplayer
                 _combatSimulation.BeginTick(tick);
                 for (int i = 0; i < 4; i++)
                 {
+                    if (!CanAdvance) return;
                     var slot = Registry[i]; if (slot.Player == null || !slot.Targetable) continue;
                     var frame = slot.Input.Consume(Time.realtimeSinceStartupAsDouble);
+                    if (HasMemberExitFence(slot))
+                    {
+                        frame.MoveAxis = Vector2.zero; frame.JumpPressed = frame.JumpHeld = frame.DashPressed = false;
+                        frame.InputSuppressed = true;
+                    }
                     slot.Player.Simulate(frame, dt);
                 }
+                if (!CanAdvance) return;
                 _dungeonRuntime?.Step(dt, tick);
+                EnsureAuthorityReturnPortal();
+                if (!CanAdvance) return;
                 _combat.StepAuthority(dt, tick);
                 if (!CanAdvance) return; // 出生容量/配置错误可在施法内使世界 Faulted；同一 Tick 不再推进 AI/Physics。
                 for (int i = 4; i < Registry.Capacity; i++)
                 {
+                    if (!CanAdvance) return;
                     var slot = Registry[i];
                     if (!slot.Connected || slot.Root == null || !slot.Root.activeInHierarchy) continue;
                     if (slot.Enemy != null) slot.Enemy.StepAuthority(dt, tick);
+                    if (!CanAdvance) return;
                     if (slot.Boss != null)
                     {
                         // 保留单机 encounter 的接近触发含义，认证/加载完成本身不等于主动开战。
                         if (_dungeonDefinition == null && !slot.Boss.IsEncounterActive && OnlineEncounterEntry.CanActivate(Registry, slot.Body.position, _combatDefinition.BossActivationRadius))
                             slot.Boss.TryActivateAuthorityEncounter();
+                        if (!CanAdvance) return;
                         slot.Boss.StepAuthority(dt, tick);
                     }
                     if (!CanAdvance) return;
@@ -417,7 +661,51 @@ namespace Game.Multiplayer
             }
         }
         public void AfterPhysics(float dt, uint tick)
-        { if (IsAuthority && CanAdvance) _combatSimulation.StepAfterPhysics(dt, tick); }
+        {
+            if (!IsAuthority) return;
+            try
+            {
+                // 挂起与Combat回调也在保护范围内，不能让原try外的异常绕过最终世界写门。
+                SynchronizeMaterialLifecycle();
+                if (!CanAdvance) return;
+                _combatSimulation.StepAfterPhysics(dt, tick);
+                SynchronizeMaterialLifecycle();
+                if (!CanAdvance) return;
+                if (_materialWorld == null) { CompleteMemberExitCaptures(tick); return; }
+                var material = _materialWorld;
+                // 与角色本Tick完成后的Pose一致，四槽不会轮转漏掉远处玩家。认证/首输入/生命资格沿原Roster。
+                for (int i = 0; i < OnlineActorLimits.PlayerCount; i++)
+                {
+                    if (!CanAdvance) return;
+                    var slot = Registry[i];
+                    if (slot.Targetable && slot.Body != null)
+                    {
+                        if (!material.TrySetActor(i, (ulong)i + 1, slot.Body.position))
+                        { PauseAuthorityForFailure("MaterialActorSynchronizationRejected: " + ((ulong)i + 1)); return; }
+                    }
+                    else material.ClearActor(i);
+                }
+                if (!CanAdvance) return;
+                // 唯一外部30Hz喂时点；内部既有累加器保持材料10Hz，不从Update再推进一遍。
+                material.AuthoritySimulation.StepAuthority(dt, tick);
+                // 材料反应回调可以同步停止世界；StopWorld 已解绑并释放 Owner，不能再读取它。
+                if (_stopped || !WorldReady || !ReferenceEquals(_materialWorld, material)) return;
+                if (material.Faulted) SynchronizeMaterialLifecycle();
+                else if (tick % 3 == 0 && _materialReplication != null)
+                {
+                    if (!_materialReplication.Capture(material.ReplicationSource, material.CaptureBuffer))
+                        SynchronizeMaterialLifecycle(); // 含回调未绑定的隔离Owner，失败当次也不留一帧写窗口。
+                    else CompleteRequestedRunCheckpoint(tick);
+                }
+                if (CanAdvance) CompleteMemberExitCaptures(tick);
+            }
+            catch (Exception error) { PauseAuthorityAfterException(error); throw; }
+        }
+        public void PumpMaterialReplication(double now)
+        {
+            // Manager可能已经由Unity销毁，但CLR字段尚待下一轮Bind清理；必须使用Unity的存活判定。
+            if (_materialChannel != null) _materialChannel.Pump(now);
+        }
         public void PumpSnapshots(double now)
         {
             _combat?.Pump(now);
@@ -487,6 +775,7 @@ namespace Game.Multiplayer
         {
             if (!IsAuthority || !WorldReady || _progressChannel == null || _dungeonRuntime == null ||
                 !_dungeonRuntime.TryCapture(out var progress)) return;
+            AddReturnPortalProgress(ref progress);
             var movement = _manager.GetComponent<MovementNetworkChannel>();
             for (int i = 0; i < OnlineActorLimits.PlayerCount; i++)
             {
@@ -536,10 +825,19 @@ namespace Game.Multiplayer
         }
         public void StopWorld()
         {
+            ClearReturnPortalRuntime();
+            ClearMemberExitChannel();
+            CancelRequestedRunCheckpoint();
             if (_stopped) return; _stopped = true;
             if (!IsAuthority) LocalActorPresentation.Clear(GetInstanceID());
             _inventoryInputOwners.Clear();
             if (_driver != null) _driver.StopDriver();
+            if (_materialChannel != null) { _materialChannel.Configure(null, null); _materialChannel.enabled = false; }
+            _materialChannel = null;
+            _materialReplication?.SetFaultHandler(null);
+            _materialReplication?.Stop(); _materialReplication = null;
+            var material = _materialWorld; _materialWorld = null;
+            if (material != null && !(material is UnityEngine.Object value && value == null)) material.Detach();
             if (LocalPlayer != null) LocalPlayer.ClearOnlineInput(); _prediction.ClearHistory();
             if (_boundManager != null) { _boundManager.ServerActorJoined -= OnJoined; _boundManager.ServerActorLeft -= OnLeft; }
             if (_channel != null) { _channel.InputReceived -= OnInput; _channel.StateReceived -= OnState; }

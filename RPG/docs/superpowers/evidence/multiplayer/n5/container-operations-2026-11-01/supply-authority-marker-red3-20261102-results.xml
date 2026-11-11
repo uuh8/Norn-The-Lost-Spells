@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 08:29:42Z" end-time="2026-11-02 08:29:46Z" duration="4.2592">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3812" result="Failed" site="Child" start-time="2026-11-02 08:29:42Z" end-time="2026-11-02 08:29:46Z" duration="4.259200" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1424" name="Game.Character.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.Tests.dll" runstate="Runnable" testcasecount="352" result="Failed" site="Child" start-time="2026-11-02 08:29:42Z" end-time="2026-11-02 08:29:45Z" duration="3.608061" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1425" name="Game" fullname="Game" runstate="Runnable" testcasecount="352" result="Failed" site="Child" start-time="2026-11-02 08:29:42Z" end-time="2026-11-02 08:29:45Z" duration="3.522171" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1426" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="352" result="Failed" site="Child" start-time="2026-11-02 08:29:42Z" end-time="2026-11-02 08:29:45Z" duration="3.423155" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1427" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="352" result="Failed" site="Child" start-time="2026-11-02 08:29:42Z" end-time="2026-11-02 08:29:45Z" duration="3.324287" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1222" name="OnlineCastDriverTests" fullname="Game.Character.Tests.OnlineCastDriverTests" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" testcasecount="101" result="Failed" site="Child" start-time="2026-11-02 08:29:42Z" end-time="2026-11-02 08:29:45Z" duration="3.222603" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1283" name="AuthoritySupplyFallbackUsesUniqueTicksAndDoesNotAccumulateFrozenTime" fullname="Game.Character.Tests.OnlineCastDriverTests.AuthoritySupplyFallbackUsesUniqueTicksAndDoesNotAccumulateFrozenTime" methodname="AuthoritySupplyFallbackUsesUniqueTicksAndDoesNotAccumulateFrozenTime" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="3370911" result="Failed" start-time="2026-11-02 08:29:42Z" end-time="2026-11-02 08:29:42Z" duration="0.026163" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  原材料代理需在创建时取得Authority时钟/身份，且可显式不创建视觉。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.CreateAuthoritySupplyProxy (Game.Combat.CombatSimulationWorld world, System.Boolean visuals) [0x000e9] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:1172
+at Game.Character.Tests.OnlineCastDriverTests.AuthoritySupplyFallbackUsesUniqueTicksAndDoesNotAccumulateFrozenTime () [0x00030] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:1198
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1281" name="AuthoritySupplyUsesExplicitWorldIdAcrossSameRunReconnect" fullname="Game.Character.Tests.OnlineCastDriverTests.AuthoritySupplyUsesExplicitWorldIdAcrossSameRunReconnect" methodname="AuthoritySupplyUsesExplicitWorldIdAcrossSameRunReconnect" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="858252" result="Failed" start-time="2026-11-02 08:29:42Z" end-time="2026-11-02 08:29:45Z" duration="3.082490" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  正式供料必须沿实际绑定World，重连不能退回Prefab默认container-world。
+  Expected string length 22 but was 15. Strings differ at index 0.
+  Expected: "authority-supply-world"
+  But was:  "container-world"
+  -----------^
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.AuthoritySupplyUsesExplicitWorldIdAcrossSameRunReconnect () [0x00106] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:1157
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1284" name="FrozenAuthoritySupplyCallbacksAndDisableRetainCommittedOutputWithoutEnded" fullname="Game.Character.Tests.OnlineCastDriverTests.FrozenAuthoritySupplyCallbacksAndDisableRetainCommittedOutputWithoutEnded" methodname="FrozenAuthoritySupplyCallbacksAndDisableRetainCommittedOutputWithoutEnded" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="1824376435" result="Failed" start-time="2026-11-02 08:29:45Z" end-time="2026-11-02 08:29:45Z" duration="0.001242" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  原材料代理需在创建时取得Authority时钟/身份，且可显式不创建视觉。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.CreateAuthoritySupplyProxy (Game.Combat.CombatSimulationWorld world, System.Boolean visuals) [0x000e9] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:1172
+at Game.Character.Tests.OnlineCastDriverTests.FrozenAuthoritySupplyCallbacksAndDisableRetainCommittedOutputWithoutEnded () [0x00030] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:1222
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1282" name="HeadlessAuthoritySupplyCreatesNoRendererAndPublishesOneCommittedBirth" fullname="Game.Character.Tests.OnlineCastDriverTests.HeadlessAuthoritySupplyCreatesNoRendererAndPublishesOneCommittedBirth" methodname="HeadlessAuthoritySupplyCreatesNoRendererAndPublishesOneCommittedBirth" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="1131844221" result="Failed" start-time="2026-11-02 08:29:45Z" end-time="2026-11-02 08:29:45Z" duration="0.001670" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  原材料代理需在创建时取得Authority时钟/身份，且可显式不创建视觉。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.CreateAuthoritySupplyProxy (Game.Combat.CombatSimulationWorld world, System.Boolean visuals) [0x000e9] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:1172
+at Game.Character.Tests.OnlineCastDriverTests.HeadlessAuthoritySupplyCreatesNoRendererAndPublishesOneCommittedBirth () [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:1182
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="3220" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="314" result="Failed" site="Child" start-time="2026-11-02 08:29:45Z" end-time="2026-11-02 08:29:46Z" duration="0.544293" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3221" name="Game" fullname="Game" runstate="Runnable" testcasecount="314" result="Failed" site="Child" start-time="2026-11-02 08:29:45Z" end-time="2026-11-02 08:29:46Z" duration="0.517067" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3222" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="314" result="Failed" site="Child" start-time="2026-11-02 08:29:46Z" end-time="2026-11-02 08:29:46Z" duration="0.418397" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3223" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="314" result="Failed" site="Child" start-time="2026-11-02 08:29:46Z" end-time="2026-11-02 08:29:46Z" duration="0.319180" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2979" name="OnlineCombatReplicationTests" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" testcasecount="13" result="Failed" site="Child" start-time="2026-11-02 08:29:46Z" end-time="2026-11-02 08:29:46Z" duration="0.218782" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2981" name="LocalReconnectClearsOldMaterialMarkersAndReplaysTheSameLiveOutput" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests.LocalReconnectClearsOldMaterialMarkersAndReplaysTheSameLiveOutput" methodname="LocalReconnectClearsOldMaterialMarkersAndReplaysTheSameLiveOutput" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" seed="510861968" result="Failed" start-time="2026-11-02 08:29:46Z" end-time="2026-11-02 08:29:46Z" duration="0.113234" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineCombatReplicationTests.LocalReconnectClearsOldMaterialMarkersAndReplaysTheSameLiveOutput () [0x00045] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineCombatReplicationTests.cs:121
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2980" name="MaterialMarkerBirthAndStateAreVisualOnlyAndWaitingCannotRegress" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests.MaterialMarkerBirthAndStateAreVisualOnlyAndWaitingCannotRegress" methodname="MaterialMarkerBirthAndStateAreVisualOnlyAndWaitingCannotRegress" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" seed="1209265417" result="Failed" start-time="2026-11-02 08:29:46Z" end-time="2026-11-02 08:29:46Z" duration="0.005256" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1
+  But was:  0
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineCombatReplicationTests.MaterialMarkerBirthAndStateAreVisualOnlyAndWaitingCannotRegress () [0x00067] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineCombatReplicationTests.cs:96
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

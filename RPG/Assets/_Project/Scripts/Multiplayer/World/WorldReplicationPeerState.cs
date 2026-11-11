@@ -8,6 +8,8 @@ namespace Game.Multiplayer
     /// 安装ACK不是Transport页收据，因此绝不能把“四页在途”误写成发四页后等待整块ACK。
     /// 本类限制入Mirror的bytes/s、burst及每轮两页；它不声称能限制Mirror/KCP内部所有队列或证明HOL。
     /// </summary>
+    /// <summary>只读诊断说明本次成功冻结的真实分支，不改变Baseline/Delta选择。</summary>
+    public enum WorldReplicationFreezeKind {None,InitialBaseline,ForcedBaseline,GenerationBaseline,HistoryGapBaseline,Delta}
     public sealed class WorldReplicationPeerState
     {
         private readonly uint[] _frozen;
@@ -20,9 +22,12 @@ namespace Game.Multiplayer
         public int ConnectionId {get;private set;}
         public uint ConnectionEpoch {get;private set;}
         public bool HasPending {get;private set;}
+        public WorldReplicationFreezeKind LastFreezeKind {get;private set;}
         public WorldChunkPayloadHeader PendingHeader {get;private set;}
         public int PageCursor {get;private set;}
         public int PagesSentThisRound {get;private set;}
+        /// <summary>显式计时诊断只读实际余额；读取不会补充、预留或消耗token，也不参与发送裁决。</summary>
+        public double Tokens=>_tokens;
         public int PageCount=>PendingHeader.WordCount==0?1:1+(PendingHeader.WordCount-1)/_pageWords;
         public bool AwaitingInstallAck=>HasPending && PageCursor==PageCount;
         public WorldReplicationPeerState(int chunks,int maxWords,int pageWords,double bytesPerSecond,double burst)
@@ -34,7 +39,7 @@ namespace Game.Multiplayer
         public void Reset(int connectionId,uint epoch)
         {
             ConnectionId=connectionId;ConnectionEpoch=epoch;_slots=0;HasPending=false;PageCursor=0;PagesSentThisRound=0;
-            _tokens=_burst;_lastRefill=double.NaN;PendingHeader=default;
+            _tokens=_burst;_lastRefill=double.NaN;PendingHeader=default;LastFreezeKind=WorldReplicationFreezeKind.None;
         }
         public void BeginRound(double now)
         {
@@ -51,13 +56,21 @@ namespace Game.Multiplayer
             int slot=Find(key);
             if(slot>=0 && _generations[slot]==current.Generation && _revisions[slot]==current.Revision)return false;
             if(slot<0 && _slots==_keys.Length)return false;
+            var reason=slot<0?WorldReplicationFreezeKind.InitialBaseline:
+                _generations[slot]==0?WorldReplicationFreezeKind.ForcedBaseline:WorldReplicationFreezeKind.GenerationBaseline;
             if(slot>=0 && _generations[slot]==current.Generation && _revisions[slot]!=0)
             {
                 // 历史缺口明确退回当前Baseline；不是把一条缺Base的Delta当成合法覆盖。
-                if(owner.TryCopyDelta(key,_generations[slot],_revisions[slot],_frozen,out var delta))current=delta;
-                else if(!owner.TryCopyChunk(key,_frozen,out current))return false;
+                if(owner.TryCopyDelta(key,_generations[slot],_revisions[slot],_frozen,out var delta))
+                {current=delta;reason=WorldReplicationFreezeKind.Delta;}
+                else
+                {
+                    // 必须在TryCopyDelta真正失败的此处记录；后续成功Baseline copy会清Owner.LastFailure。
+                    if(!owner.TryCopyChunk(key,_frozen,out current))return false;
+                    reason=WorldReplicationFreezeKind.HistoryGapBaseline;
+                }
             }
-            PendingHeader=current;PageCursor=0;HasPending=true;_lastSend=now;return true;
+            PendingHeader=current;PageCursor=0;HasPending=true;_lastSend=now;LastFreezeKind=reason;return true;
         }
         public bool TryPeekPage(uint[] destination,out int count,out int pageIndex)
         {
@@ -69,8 +82,14 @@ namespace Game.Multiplayer
         }
         public bool TryMarkPageSent(double now,int encodedBytes)
         {
-            if(!HasPending || AwaitingInstallAck || PagesSentThisRound>=2 || encodedBytes<1 || !double.IsFinite(now) || now<_lastRefill || _tokens<encodedBytes)return false;
-            _tokens-=encodedBytes;PageCursor++;PagesSentThisRound++;_lastSend=now;return true;
+            if(!HasPending || AwaitingInstallAck || !TryMarkControlSent(now,encodedBytes))return false;
+            PageCursor++;_lastSend=now;return true;
+        }
+        /// <summary>订阅控制与材料页共用同一字节/突发/每轮预算；控制不是绕过限流的额外可靠流。</summary>
+        public bool TryMarkControlSent(double now,int encodedBytes)
+        {
+            if(PagesSentThisRound>=2 || encodedBytes<1 || !double.IsFinite(now) || now<_lastRefill || _tokens<encodedBytes)return false;
+            _tokens-=encodedBytes;PagesSentThisRound++;return true;
         }
         public bool TryAcknowledge(int connectionId,uint epoch,WorldChunkKey key,ulong generation,ulong revision,ulong snapshotId,uint checksum)
         {

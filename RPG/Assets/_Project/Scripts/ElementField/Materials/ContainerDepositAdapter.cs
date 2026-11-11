@@ -10,6 +10,7 @@ namespace Game.ElementField
         [SerializeField] private string _worldId = "container-world";
         private MaterialInventoryDepositPort _port;
         private bool _executing;
+        public string WorldId => _worldId;
         private void Awake() { if (_world == null) _world = GetComponent<ElementWorldRuntime>(); if (_world != null) _port = new MaterialInventoryDepositPort(_world); }
         private void OnEnable() => EventBus<MaterialWorldDepositRequestedEvent>.Subscribe(OnRequest);
         private void OnDisable() => EventBus<MaterialWorldDepositRequestedEvent>.Unsubscribe(OnRequest);

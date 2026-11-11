@@ -1,0 +1,109 @@
+{
+  "Stage": "N5-assembler-lifecycle-minimal-repair",
+  "RecordedUtc": "2026-10-31T09:35:40.9127078Z",
+  "GitHead": "0d87d0da931ec2b39f7cd569661e750bafa0df84",
+  "State": "TwoMissingLifecycleApisRepairedAndSameScopeRegressionPassed",
+  "LocalTaskComplete": true,
+  "N5Complete": false,
+  "N4FormalExperienceGatePreserved": true,
+  "Scope": {
+    "SchemaOrWireSemanticsChanged": false,
+    "ChangedSources": [
+      "RPG/Assets/_Project/Scripts/Core/Online/WorldChunkReplicaAssembler.cs",
+      "RPG/Assets/_Project/Tests/Core/WorldChunkReplicaAssemblerTests.cs"
+    ],
+    "AlchemyImplemented": false,
+    "AsmdefChanged": false,
+    "FormalReplicationWiringChanged": false,
+    "NewSourceDirectories": 0,
+    "PlayerOrAssetRulesChanged": false
+  },
+  "Authorization": {
+    "ContractReview": "contract-review.md",
+    "N4AcceptanceLine": 5,
+    "N5PlanLines": [
+      3,
+      23,
+      63,
+      80
+    ],
+    "Scope": "Current explicit instruction allows contract review and minimal repair of these two APIs only"
+  },
+  "Methods": {
+    "PerPageAuthenticationStillRequired": true,
+    "TryBindUnusedKey": "Only a healthy, noninstalling slot with no installed state or pending transfer may bind a valid native domain key",
+    "ResetConnectionEpoch": "Reject zero/older; same identity idempotent; newer identity cancels pending only, retains installed payload/version; rejects installer reentry and fault bypass"
+  },
+  "Tests": {
+    "OriginalTwoAndHistoricalNineAllPassed": true,
+    "Full": {
+      "Inconclusive": 0,
+      "Fixtures": 20,
+      "Passed": 196,
+      "Xml": "full-results.xml",
+      "Failed": 0,
+      "Skipped": 0,
+      "Cases": 196
+    },
+    "OriginalAssemblerCasesUnchanged": 11,
+    "Green": {
+      "Passed": 19,
+      "Failed": 0,
+      "Xml": "green-results.xml",
+      "Cases": 19
+    },
+    "FullProjectRunAll": false,
+    "AddedBoundaryCases": 8,
+    "Red": {
+      "Passed": 9,
+      "Failed": 10,
+      "Xml": "red-results.xml",
+      "ProductionUnchangedAtRun": true,
+      "Cases": 19
+    },
+    "RepeatedRunsNotSummed": true,
+    "SourceAssertionsWeakened": false
+  },
+  "Review": {
+    "BlockingFindings": 0,
+    "ProductDefectIdentifiedForDeferredCoverage": false,
+    "Evidence": "review.md",
+    "IndependentReadOnly": true,
+    "DeferredNonblockingCoverage": [
+      "Same-Epoch call at original TTL expiry boundary",
+      "Tombstone combined with reset/rebinding"
+    ]
+  },
+  "Preservation": {
+    "MetaGuidsMovedOrRecreated": false,
+    "OtherSourcesUnchanged": 1483,
+    "ProtectedFilesUnchanged": 12,
+    "ProtectedFiles": 12,
+    "ExpectedChangedSources": 2,
+    "RelatedSourceFiles": 1485
+  },
+  "Editor": {
+    "FinalCompiling": false,
+    "NoProcessesClosed": true,
+    "Pid": 25660,
+    "FinalScene": "Assets/_Project/Scenes/P7_MainMenu.unity",
+    "FinalDirty": false,
+    "FinalPlaying": false,
+    "Version": "6000.3.16f1",
+    "ExistingProcessReused": true
+  },
+  "NotTested": [
+    "Full-project Run All",
+    "Complete material regression suite",
+    "PlayMode",
+    "Business/MySQL",
+    "Client/DS builds",
+    "Formal material network wiring",
+    "Two/four native clients",
+    "Loss/HOL/frame-time/native full-frame or new lifecycle method allocations",
+    "Linux/public/IL2CPP/D3D12",
+    "N6 settlement"
+  ],
+  "NextScope": "Existing Bootstrap inactive material Binding, authority/replica mode, unique clock/authenticated Actor/Frozen/Detach, followed by existing authenticated channel; not implemented in this task",
+  "CommitOrPush": false
+}

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="21" result="Passed" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-03 03:02:29Z" end-time="2026-11-03 03:02:30Z" duration="1.1616364">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="4104" result="Passed" start-time="2026-11-03 03:02:29Z" end-time="2026-11-03 03:02:30Z" duration="1.161636" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="5609" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="1053" result="Passed" start-time="2026-11-03 03:02:29Z" end-time="2026-11-03 03:02:30Z" duration="1.039084" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="5610" name="Game" fullname="Game" runstate="Runnable" testcasecount="1053" result="Passed" start-time="2026-11-03 03:02:29Z" end-time="2026-11-03 03:02:30Z" duration="0.971655" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="5611" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="1053" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.872475" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="5612" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="1053" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.772941" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="4732" name="OnlineCoinWorldTests" fullname="Game.Run.Tests.OnlineCoinWorldTests" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" testcasecount="14" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.478717" total="14" passed="14" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="4742" name="FrozenWorldOrClosedOwnerGateDoesNotConsumeCoinOrGold" fullname="Game.Run.Tests.OnlineCoinWorldTests.FrozenWorldOrClosedOwnerGateDoesNotConsumeCoinOrGold" methodname="FrozenWorldOrClosedOwnerGateDoesNotConsumeCoinOrGold" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="1801922063" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.134965" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4745" name="GoldOrCurrencyRevisionOverflowFailsWithoutConsumingCoin" fullname="Game.Run.Tests.OnlineCoinWorldTests.GoldOrCurrencyRevisionOverflowFailsWithoutConsumingCoin" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.008534" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4743" name="GoldOrCurrencyRevisionOverflowFailsWithoutConsumingCoin(long.MaxValue,1)" fullname="Game.Run.Tests.OnlineCoinWorldTests.GoldOrCurrencyRevisionOverflowFailsWithoutConsumingCoin(long.MaxValue,1)" methodname="GoldOrCurrencyRevisionOverflowFailsWithoutConsumingCoin" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="640167468" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.001624" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4744" name="GoldOrCurrencyRevisionOverflowFailsWithoutConsumingCoin(10000L,uint.MaxValue)" fullname="Game.Run.Tests.OnlineCoinWorldTests.GoldOrCurrencyRevisionOverflowFailsWithoutConsumingCoin(10000L,uint.MaxValue)" methodname="GoldOrCurrencyRevisionOverflowFailsWithoutConsumingCoin" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="1586290028" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.000689" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="4738" name="InvalidNpcIdentityNeverConsumesWorldMetadata" fullname="Game.Run.Tests.OnlineCoinWorldTests.InvalidNpcIdentityNeverConsumesWorldMetadata" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.100854" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4735" name="InvalidNpcIdentityNeverConsumesWorldMetadata(ulong.MinValue)" fullname="Game.Run.Tests.OnlineCoinWorldTests.InvalidNpcIdentityNeverConsumesWorldMetadata(ulong.MinValue)" methodname="InvalidNpcIdentityNeverConsumesWorldMetadata" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="566751946" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.003707" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4736" name="InvalidNpcIdentityNeverConsumesWorldMetadata(4UL)" fullname="Game.Run.Tests.OnlineCoinWorldTests.InvalidNpcIdentityNeverConsumesWorldMetadata(4UL)" methodname="InvalidNpcIdentityNeverConsumesWorldMetadata" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="743133681" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.001032" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4737" name="InvalidNpcIdentityNeverConsumesWorldMetadata(17UL)" fullname="Game.Run.Tests.OnlineCoinWorldTests.InvalidNpcIdentityNeverConsumesWorldMetadata(17UL)" methodname="InvalidNpcIdentityNeverConsumesWorldMetadata" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="1412004883" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.000556" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="4748" name="LootRetryConsumesOnlyTheOriginalCompleteCoinRollAtDeathPosition" fullname="Game.Run.Tests.OnlineCoinWorldTests.LootRetryConsumesOnlyTheOriginalCompleteCoinRollAtDeathPosition" methodname="LootRetryConsumesOnlyTheOriginalCompleteCoinRollAtDeathPosition" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="2088552734" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.015008" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4741" name="NonpositiveAmountNeverCreatesCoin" fullname="Game.Run.Tests.OnlineCoinWorldTests.NonpositiveAmountNeverCreatesCoin" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.082372" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4739" name="NonpositiveAmountNeverCreatesCoin(0L)" fullname="Game.Run.Tests.OnlineCoinWorldTests.NonpositiveAmountNeverCreatesCoin(0L)" methodname="NonpositiveAmountNeverCreatesCoin" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="842012836" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.001999" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4740" name="NonpositiveAmountNeverCreatesCoin(-1L)" fullname="Game.Run.Tests.OnlineCoinWorldTests.NonpositiveAmountNeverCreatesCoin(-1L)" methodname="NonpositiveAmountNeverCreatesCoin" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="1695261108" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.000709" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="4734" name="OneWinnerCreditsExactlyOnceAndTombstoneCannotRespawn" fullname="Game.Run.Tests.OnlineCoinWorldTests.OneWinnerCreditsExactlyOnceAndTombstoneCannotRespawn" methodname="OneWinnerCreditsExactlyOnceAndTombstoneCannotRespawn" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="267344369" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.003438" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4749" name="ReplicaCoinOnlyPresentsCollectionAndKeepsOriginalTriggerGeometry" fullname="Game.Run.Tests.OnlineCoinWorldTests.ReplicaCoinOnlyPresentsCollectionAndKeepsOriginalTriggerGeometry" methodname="ReplicaCoinOnlyPresentsCollectionAndKeepsOriginalTriggerGeometry" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="1429920454" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.009574" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4733" name="SameCoinRegistrationIsIdempotentButChangedFactsConflict" fullname="Game.Run.Tests.OnlineCoinWorldTests.SameCoinRegistrationIsIdempotentButChangedFactsConflict" methodname="SameCoinRegistrationIsIdempotentButChangedFactsConflict" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="1094795701" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.001855" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4747" name="TwelveRegisteredIdentitiesRemainBoundedIncludingAllCollectedTombstones" fullname="Game.Run.Tests.OnlineCoinWorldTests.TwelveRegisteredIdentitiesRemainBoundedIncludingAllCollectedTombstones" methodname="TwelveRegisteredIdentitiesRemainBoundedIncludingAllCollectedTombstones" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="1248254668" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.001928" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4746" name="WrongActorForeignRunNullAndDisposedOwnerCannotCollect" fullname="Game.Run.Tests.OnlineCoinWorldTests.WrongActorForeignRunNullAndDisposedOwnerCannotCollect" methodname="WrongActorForeignRunNullAndDisposedOwnerCannotCollect" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="205994748" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.000853" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="5179" name="RunMemberExitWorkspaceTests" fullname="Game.Run.Tests.RunMemberExitWorkspaceTests" classname="Game.Run.Tests.RunMemberExitWorkspaceTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.193645" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="5186" name="CaptureRequiresMatchingFenceAndCopiesCurrentOwnedGoldAndInstances" fullname="Game.Run.Tests.RunMemberExitWorkspaceTests.CaptureRequiresMatchingFenceAndCopiesCurrentOwnedGoldAndInstances" methodname="CaptureRequiresMatchingFenceAndCopiesCurrentOwnedGoldAndInstances" classname="Game.Run.Tests.RunMemberExitWorkspaceTests" runstate="Runnable" seed="230677205" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.024569" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="5183" name="InvalidCommandCannotFenceTheOwner" fullname="Game.Run.Tests.RunMemberExitWorkspaceTests.InvalidCommandCannotFenceTheOwner" classname="Game.Run.Tests.RunMemberExitWorkspaceTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.080195" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="5180" name="InvalidCommandCannotFenceTheOwner(null)" fullname="Game.Run.Tests.RunMemberExitWorkspaceTests.InvalidCommandCannotFenceTheOwner(null)" methodname="InvalidCommandCannotFenceTheOwner" classname="Game.Run.Tests.RunMemberExitWorkspaceTests" runstate="Runnable" seed="1207298697" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.002899" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="5181" name="InvalidCommandCannotFenceTheOwner(&quot;&quot;)" fullname="Game.Run.Tests.RunMemberExitWorkspaceTests.InvalidCommandCannotFenceTheOwner(&quot;&quot;)" methodname="InvalidCommandCannotFenceTheOwner" classname="Game.Run.Tests.RunMemberExitWorkspaceTests" runstate="Runnable" seed="1075454560" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.001050" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="5182" name="InvalidCommandCannotFenceTheOwner(&quot;not-a-stable-id&quot;)" fullname="Game.Run.Tests.RunMemberExitWorkspaceTests.InvalidCommandCannotFenceTheOwner(&quot;not-a-stable-id&quot;)" methodname="InvalidCommandCannotFenceTheOwner" classname="Game.Run.Tests.RunMemberExitWorkspaceTests" runstate="Runnable" seed="773481096" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.000775" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="5187" name="OutstandingMaterialOwnerPreventsExitCaptureWithoutDiscardingItsQuantity" fullname="Game.Run.Tests.RunMemberExitWorkspaceTests.OutstandingMaterialOwnerPreventsExitCaptureWithoutDiscardingItsQuantity" methodname="OutstandingMaterialOwnerPreventsExitCaptureWithoutDiscardingItsQuantity" classname="Game.Run.Tests.RunMemberExitWorkspaceTests" runstate="Runnable" seed="824431097" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.001639" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="5185" name="PersonalFenceRejectsNewInventoryButRetainsOriginalReceiptAndWorldOutputGate" fullname="Game.Run.Tests.RunMemberExitWorkspaceTests.PersonalFenceRejectsNewInventoryButRetainsOriginalReceiptAndWorldOutputGate" methodname="PersonalFenceRejectsNewInventoryButRetainsOriginalReceiptAndWorldOutputGate" classname="Game.Run.Tests.RunMemberExitWorkspaceTests" runstate="Runnable" seed="589663757" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.006850" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="5184" name="SameCommandReplaysFenceAndAnotherCommandCannotReplaceIt" fullname="Game.Run.Tests.RunMemberExitWorkspaceTests.SameCommandReplaysFenceAndAnotherCommandCannotReplaceIt" methodname="SameCommandReplaysFenceAndAnotherCommandCannotReplaceIt" classname="Game.Run.Tests.RunMemberExitWorkspaceTests" runstate="Runnable" seed="102435004" result="Passed" start-time="2026-11-03 03:02:30Z" end-time="2026-11-03 03:02:30Z" duration="0.001217" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

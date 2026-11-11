@@ -10,6 +10,7 @@ public sealed class RoomService(OnlineDatabase database, RoomTransactions transa
 {
     public Task<RoomReply> CreateAsync(string player, CreateRoomRequest request, CancellationToken ct)
     {
+        if (request.DungeonId == "home") throw new OnlineFailure(400, "HomeSinglePlayerOnly");
         if (!options.DungeonIds.Contains(request.DungeonId, StringComparer.Ordinal)) throw new OnlineFailure(400, "UnknownDungeon");
         return transactions.MutateAsync(async (db, tx) =>
         {
@@ -29,10 +30,12 @@ public sealed class RoomService(OnlineDatabase database, RoomTransactions transa
         return transactions.MutateAsync(async (db, tx) =>
         {
             var party = await RoomTransactions.Party(db, tx, room, ct);
+            if (party.DungeonId == "home") throw new OnlineFailure(400, "HomeSinglePlayerOnly");
             string? existing = await db.QuerySingleOrDefaultAsync<string>(new CommandDefinition("SELECT RoomId FROM PartyMembers WHERE CharacterId=@Player", new { Player = player }, tx, cancellationToken: ct));
             if (existing == room) return await RoomTransactions.Read(db, tx, room, ct); // 响应丢失后的重复加入不推进Revision。
             if (existing != null) throw new OnlineFailure(409, "AlreadyInRoom");
             RoomTransactions.RequireOpen(party);
+            if (await RoomTransactions.IsSinglePlayerRoom(db, tx, room, ct)) throw new OnlineFailure(409, "SinglePlayerRoom");
             int[] seats = (await db.QueryAsync<int>(new CommandDefinition("SELECT Seat FROM PartyMembers WHERE RoomId=@Room", new { Room = room }, tx, cancellationToken: ct))).ToArray();
             int seat = 0; while (seat < 4 && Array.IndexOf(seats, seat) >= 0) seat++;
             if (seat == 4) throw new OnlineFailure(409, "RoomFull");
@@ -72,6 +75,8 @@ public sealed class RoomService(OnlineDatabase database, RoomTransactions transa
         {
             await RoomTransactions.RequireMember(db, tx, room, player, ct);
             var party = await RoomTransactions.Party(db, tx, room, ct); RoomTransactions.RequireOpen(party);
+            if (party.DungeonId == "home") throw new OnlineFailure(400, "HomeSinglePlayerOnly");
+            if (await RoomTransactions.IsSinglePlayerRoom(db, tx, room, ct)) throw new OnlineFailure(409, "SinglePlayerRoom");
             if (party.ReadyRevision != request.ExpectedRevision) throw new OnlineFailure(409, "RoomRevisionConflict");
             uint version = await db.ExecuteScalarAsync<uint>(new CommandDefinition("SELECT Version FROM Characters WHERE CharacterId=@Player FOR UPDATE", new { Player = player }, tx, cancellationToken: ct));
             if (request.Ready && version != request.ExpectedInventoryVersion) throw new OnlineFailure(409, "ProfileVersionConflict");

@@ -33,9 +33,26 @@ namespace Game.Multiplayer
             _nextReport = Time.realtimeSinceStartupAsDouble + 1;
             bool done = Time.realtimeSinceStartupAsDouble - _started >= Mathf.Clamp(_config.DurationSeconds, 10, 300);
             var identity = _auth.ClientIdentity;
+            var world = OnlineWorldBootstrap.Active;
             var report = new Report { Done = done, Passed = _config.ExpectRejection ? _auth.HandshakeAttempted && !_auth.ClientAuthenticated && !NetworkClient.active : _auth.ClientAuthenticated && _manager.Replies >= 3,
                 HandshakeAttempted = _auth.HandshakeAttempted, Authenticated = _auth.ClientAuthenticated, Connected = NetworkClient.isConnected, Replies = _manager.Replies,
-                ActorId = identity == null ? 0 : identity.ActorId, ConnectionEpoch = identity == null ? 0 : identity.ConnectionEpoch, RecordedAtUtc = DateTime.UtcNow.ToString("O") };
+                ActorId = identity == null ? 0 : identity.ActorId, ConnectionEpoch = identity == null ? 0 : identity.ConnectionEpoch,
+                // 只读记录真实认证握手与场景安装的交界，不能从 Ticket 或测试配置伪造 WorldEpoch。
+                AuthenticatedWorldEpoch = _auth.ClientWorldEpoch, WorldEpoch = world != null ? world.WorldEpoch : 0,
+                WorldReady = world != null && world.WorldReady, Authority = world != null && world.IsAuthority,
+                // 稀疏诊断的值副本：逐Chunk核对实际安装版本/数量payload校验，不把消息已收到当作成功。
+                MaterialChunks = world != null ? world.MaterialReplication?.DescribeChunks() : null,
+                MaterialInstalled = world != null && world.MaterialReplication != null ? world.MaterialReplication.Installed : 0,
+                MaterialFaulted = world != null && world.MaterialReplication != null && world.MaterialReplication.Faulted,
+                MaterialRejected=world!=null && world.MaterialReplication!=null?world.MaterialReplication.Rejected:0,
+                MaterialResyncRequested=world!=null && world.MaterialReplication!=null?world.MaterialReplication.ResyncRequested:0,
+                MaterialBaselines=world!=null && world.MaterialReplication!=null?world.MaterialReplication.BaselineInstalled:0,
+                MaterialDeltas=world!=null && world.MaterialReplication!=null?world.MaterialReplication.DeltaInstalled:0,
+                MaterialLastFailure=world!=null && world.MaterialReplication!=null?world.MaterialReplication.LastAssemblyFailure.ToString():null,
+                MaterialRejectedCandidate=world!=null && world.MaterialReplication!=null?world.MaterialReplication.LastRejectedCandidate:default,
+                MaterialRejectedInstalled=world!=null && world.MaterialReplication!=null?world.MaterialReplication.LastRejectedInstalled:default,
+                MaterialRejectedPayloadAvailable=world!=null && world.MaterialReplication!=null && world.MaterialReplication.LastRejectedPayloadAvailable,
+                RecordedAtUtc = DateTime.UtcNow.ToString("O") };
             // 诊断路径的JSON/IO每秒分配，不装入正式场景，不将此探针用于Zero-GC验收。
             Directory.CreateDirectory(Path.GetDirectoryName(_config.Output)); File.WriteAllText(_config.Output, JsonUtility.ToJson(report, true));
             if (done) Application.Quit(report.Passed ? 0 : 1);
@@ -51,6 +68,10 @@ namespace Game.Multiplayer
             if (GUI.Button(new Rect(40, 135, 150, 30), "Quit Client")) Application.Quit();
         }
 #endif
-        [Serializable] private sealed class Report { public bool Done, Passed, HandshakeAttempted, Authenticated, Connected; public long Replies; public ulong ActorId; public uint ConnectionEpoch; public string RecordedAtUtc; }
+        [Serializable] private sealed class Report { public bool Done, Passed, HandshakeAttempted, Authenticated, Connected; public long Replies; public ulong ActorId; public uint ConnectionEpoch; public string RecordedAtUtc;
+            public ulong AuthenticatedWorldEpoch, WorldEpoch; public bool WorldReady, Authority;
+            public WorldReplicationChunkStamp[] MaterialChunks; public long MaterialInstalled,MaterialRejected,MaterialResyncRequested,MaterialBaselines,MaterialDeltas;
+            public bool MaterialFaulted,MaterialRejectedPayloadAvailable;public string MaterialLastFailure;
+            public WorldReplicationChunkStamp MaterialRejectedCandidate,MaterialRejectedInstalled; }
     }
 }

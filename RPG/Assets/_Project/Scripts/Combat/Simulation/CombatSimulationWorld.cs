@@ -30,8 +30,18 @@ namespace Game.Combat
         private int _immediateCount;
         private bool _hasTick, _hasBefore, _hasAfter, _stepping;
         private uint _tick, _beforeTick, _afterTick;
+        private Func<bool> _authorityWriteGate;
         public int Capacity => _entries.Length;
         public uint CurrentTick => _tick;
+        /// <summary>
+        /// 每次写入都读取当前权限，不能缓存帧初结果：某个同步命中回调可能已使整个世界进入故障保护。
+        /// 未接入在线世界时保持既有独立 Combat 行为；SinglePlayer 组件不消费这道 Authority 门。
+        /// </summary>
+        public bool AllowsAuthorityWrites => _authorityWriteGate == null || _authorityWriteGate();
+
+        /// <summary>世界装配时配置一次中立谓词；Combat 不反向依赖网络状态，也不因关门清理既有对象。</summary>
+        public void ConfigureAuthorityWriteGate(Func<bool> gate)
+        { _authorityWriteGate = gate ?? throw new ArgumentNullException(nameof(gate)); }
 
         public CombatSimulationWorld() : this(512) { }
         public CombatSimulationWorld(int capacity)
@@ -44,6 +54,7 @@ namespace Game.Combat
         /// <summary>必须在本 Tick 的角色/动作生成之前调用，保证新生对象不消耗出生前已流逝的时间。</summary>
         public void BeginTick(uint serverTick)
         {
+            if (!AllowsAuthorityWrites) return;
             if (_stepping) throw new InvalidOperationException("不能在 Combat 回调中切换当前 Tick。");
             if (_hasTick && !Newer(serverTick, _tick)) return;
             _tick = serverTick; _hasTick = true;
@@ -126,35 +137,53 @@ namespace Game.Combat
 
         public void StepBeforePhysics(float deltaTime, uint serverTick)
         {
-            if (!ValidDelta(deltaTime) || _hasTick && Newer(_tick, serverTick) || (_hasBefore && !Newer(serverTick, _beforeTick))) return;
+            if (!AllowsAuthorityWrites || !ValidDelta(deltaTime) || _hasTick && Newer(_tick, serverTick) || (_hasBefore && !Newer(serverTick, _beforeTick))) return;
             BeginTick(serverTick);
+            if (!AllowsAuthorityWrites) return;
             _hasBefore = true; _beforeTick = serverTick;
             Step(CombatTickPhase.BeforePhysics, deltaTime, serverTick);
         }
 
         public void StepAfterPhysics(float deltaTime, uint serverTick)
         {
-            if (!ValidDelta(deltaTime) || _hasTick && Newer(_tick, serverTick) || (_hasAfter && !Newer(serverTick, _afterTick))) return;
+            if (!AllowsAuthorityWrites || !ValidDelta(deltaTime) || _hasTick && Newer(_tick, serverTick) || (_hasAfter && !Newer(serverTick, _afterTick))) return;
             BeginTick(serverTick);
+            if (!AllowsAuthorityWrites) return;
             _hasAfter = true; _afterTick = serverTick;
             Step(CombatTickPhase.AfterPhysics, deltaTime, serverTick);
             // 首跳队列允许回调继续追加，但有固定总预算；它不重复扣减持续伤害计时器。
-            for (int i = 0; i < _immediateCount; i++)
+            // 关门只暂停尚未执行的首跳，不能把已有输出当成 Cancel。仅移走确实访问过的槽位。
+            int processed = 0;
+            try
             {
-                AreaDamage area = _immediateAreas[i]; _immediateAreas[i] = null;
-                if (area != null && area.isActiveAndEnabled) area.ActivateAuthority(serverTick);
+                while (processed < _immediateCount && AllowsAuthorityWrites)
+                {
+                    AreaDamage area = _immediateAreas[processed]; _immediateAreas[processed++] = null;
+                    if (area != null && area.isActiveAndEnabled) area.ActivateAuthority(serverTick);
+                }
             }
-            _immediateCount = 0;
+            finally
+            {
+                int remaining = _immediateCount - processed;
+                if (processed > 0)
+                {
+                    Array.Copy(_immediateAreas, processed, _immediateAreas, 0, remaining);
+                    Array.Clear(_immediateAreas, remaining, processed);
+                }
+                _immediateCount = remaining;
+            }
         }
 
         private void Step(CombatTickPhase phase, float deltaTime, uint tick)
         {
+            if (!AllowsAuthorityWrites) return;
             if (_stepping) throw new InvalidOperationException("Combat Tick 不允许在伤害回调中重入。");
             _tick = tick; _hasTick = true; _stepping = true;
             try
             {
                 for (int i = 0; i < _entries.Length; i++)
                 {
+                    if (!AllowsAuthorityWrites) break;
                     Entry entry = _entries[i];
                     if (entry.Phase != phase || entry.Component == null || !entry.Component.isActiveAndEnabled) continue;
                     if (entry.HasBirthTick && !Newer(tick, entry.BirthTick)) continue;
@@ -173,6 +202,9 @@ namespace Game.Combat
     {
         internal CombatExecutionMode Mode;
         internal CombatSimulationWorld World;
+        // 新玩法写入与离散装配分开：Configure/Init 可以在 Ready 前完成，真正扣血/扣费/推进必须过此门。
+        internal bool AllowsGameplayWrites => Mode == CombatExecutionMode.SinglePlayer
+            || Mode == CombatExecutionMode.Authority && (World == null || World.AllowsAuthorityWrites);
         private bool _hasTick;
         private uint _lastTick;
 
@@ -190,7 +222,7 @@ namespace Game.Combat
 
         internal bool TryStep(float deltaTime, uint tick)
         {
-            if (Mode != CombatExecutionMode.Authority || !CombatSimulationWorld.ValidDelta(deltaTime)
+            if (Mode != CombatExecutionMode.Authority || !AllowsGameplayWrites || !CombatSimulationWorld.ValidDelta(deltaTime)
                 || (_hasTick && !CombatSimulationWorld.Newer(tick, _lastTick))) return false;
             _hasTick = true; _lastTick = tick; return true;
         }

@@ -34,13 +34,18 @@ namespace Game.Run
         public ExtractionProgress Extraction { get; private set; }
         public RaidSettlementReceipt LastResult => _session?.Profile?.LastRaidReceipt;
         public string Message { get; private set; } = "据点：选择携带卡保护，整备后出发。";
-        public bool ActionsAllowed => !_practiceLoading && (State.Phase == RaidPhase.HubReady || State.Phase == RaidPhase.Exploring || State.Phase == RaidPhase.Extracting);
-        public bool TryBeginDungeonEntryChoice() => _pause != null && !_pause.IsPaused && ActionsAllowed
-            && State.Phase == RaidPhase.HubReady && _pause.RequestPause(RunPauseReason.DungeonEntryChoice);
+        // 退出桥只锁指定Hub；原协调器不能在恢复根后再次把旧档当成账号的写入源。
+        private bool AccountHubReadOnly => _session != null && _session.AccountInventoryReadOnly;
+        public bool ActionsAllowed => !AccountHubReadOnly && !_practiceLoading && (State.Phase == RaidPhase.HubReady || State.Phase == RaidPhase.Exploring || State.Phase == RaidPhase.Extracting);
+        // 打开方式选择只取得本地UI暂停，不保存/携带旧档。账号Hub仍可走正式匹配，旧资产写锁不因此解除。
+        public bool CanChooseDungeonEntry => !_practiceLoading && State.Phase == RaidPhase.HubReady;
+        public bool TryBeginDungeonEntryChoice() => _pause != null && !_pause.IsPaused && CanChooseDungeonEntry
+            && _pause.RequestPause(RunPauseReason.DungeonEntryChoice);
         public void EndDungeonEntryChoice() => _pause?.ReleasePause(RunPauseReason.DungeonEntryChoice);
         private bool _practiceLoading;
         internal void SetPracticeTransition(bool loading)
         {
+            if (AccountHubReadOnly) return;
             // 独立练习不创建PendingRaid，但保存后的异步窗口同样必须锁资产/输入，防止提交后继续消费。
             _practiceLoading=loading;if(_session?.Profile!=null)_session.Profile.RaidActionsFrozen=loading;
             if(loading)_pause?.RequestPause(RunPauseReason.SceneTransition);else _pause?.ReleasePause(RunPauseReason.SceneTransition);
@@ -64,6 +69,7 @@ namespace Game.Run
         }
         private void OnEnable()
         {
+            if (AccountHubReadOnly) return;
             EventBus<RaidDepartureRequestedEvent>.Subscribe(OnCommand); EventBus<ExtractionRequestedEvent>.Subscribe(OnExtraction);
             EventBus<RaidConditionCompletedEvent>.Subscribe(OnCondition); EventBus<MaterialTransferResultEvent>.Subscribe(OnCollected);
             EventBus<InventoryChangedEvent>.Subscribe(OnInventory); EventBus<DeathEvent>.Subscribe(OnDeath);
@@ -85,6 +91,7 @@ namespace Game.Run
         }
         private void OnCommand(RaidDepartureRequestedEvent command)
         {
+            if (AccountHubReadOnly) return;
             if (_session?.ReadOnly == null || command.InventoryId != _session.ReadOnly.InventoryId) return;
             if(_practiceLoading)return;
             switch (command.Command)
@@ -103,6 +110,7 @@ namespace Game.Run
         public void SetDeparturePortal(Transform portal, int id) { _departurePortal = portal; _departurePortalId = id; }
         public bool Depart()
         {
+            if (AccountHubReadOnly) return false;
             if (State.Phase != RaidPhase.HubReady || _session?.Profile == null || _loading || _finishing || _practiceLoading) return false;
             if(_session.HubInteraction!=null && (!_session.HubInteraction.TryGetStation(out var station) || station.Kind!=HubStationKind.Expedition))
             {Publish("请靠近据点地图入口再出发。",false);return false;}
@@ -122,6 +130,7 @@ namespace Game.Run
         }
         private IEnumerator LoadWorld()
         {
+            if (AccountHubReadOnly) yield break;
             yield return PortalTransitionCoordinator.CloseAndFade(_player.transform, _departurePortal, _departurePortalId);
             SetHubEnvironment(false);
             AsyncOperation operation = null; string error = null;
@@ -137,6 +146,8 @@ namespace Game.Run
             }
             catch (Exception e) { error = e.Message; }
             if (operation != null) yield return operation;
+            // 异步加载前后都核实所有权；不能在等待期间切换到账号Hub后再落旧档。
+            if (AccountHubReadOnly) yield break;
             _loading = false; _world = SceneManager.GetSceneByPath(_definition.WorldScenePath);
             if (error != null || !HasWorld) { RollbackDeparture(error ?? "加载地图失败。"); yield break; }
             var candidate = RaidProfileOps.Clone(_session.Profile); candidate.PendingRaid.Phase = RaidPhase.Exploring;
@@ -164,6 +175,7 @@ namespace Game.Run
         }
         private void RollbackDeparture(string error)
         {
+            if (AccountHubReadOnly) return;
             _committing = true;
             var result = _prepare.TryRollback(_session.Profile, _session.Repository, out var hub);
             if (result.Success)
@@ -180,6 +192,7 @@ namespace Game.Run
         private IEnumerator UnloadFailedWorld() { yield return SceneManager.UnloadSceneAsync(_world); _world = default; SetHubEnvironment(true); _pause?.ReleasePause(RunPauseReason.SceneTransition); PortalTransitionCoordinator.Reveal(_player.transform); }
         private void Supply()
         {
+            if (AccountHubReadOnly) return;
             if (State.Phase != RaidPhase.HubReady || _session.Profile == null) return;
             _committing = true; var result = _kit.TrySupply(_session.Profile, _session.Repository, _starter, out var next);
             if (result.Success) _session.AdoptCommitted(next); _committing = false;
@@ -190,6 +203,8 @@ namespace Game.Run
             && (State.Phase == RaidPhase.Exploring || State.Phase == RaidPhase.Extracting)) Checkpoint(); }
         public ProfilePersistenceResult Checkpoint()
         {
+            if (AccountHubReadOnly)
+                return new ProfilePersistenceResult(ProfilePersistenceStatus.WriteBlocked, "账号资产由服务器保存，原据点检查点不可写入旧档。");
             using var marker = CheckpointMarker.Auto();
             var result = _session.Repository.TrySave(_session.Profile);
             if (!result.Success) { _checkpointFailure = true; State.Phase = RaidPhase.SaveFailed; _pause?.RequestPause(RunPauseReason.SceneTransition);
@@ -207,6 +222,7 @@ namespace Game.Run
         { if (_player != null && death.TargetId == _player.Id && (State.Phase == RaidPhase.Exploring || State.Phase == RaidPhase.Extracting)) State.RequestOutcome(RaidOutcome.Death); }
         private void Update()
         {
+            if (AccountHubReadOnly) return;
             using var marker = TickMarker.Auto();
             if (Extraction == null || (State.Phase != RaidPhase.Exploring && State.Phase != RaidPhase.Extracting)) return;
             if (Extraction.Tick(Time.deltaTime)) State.RequestOutcome(RaidOutcome.Success);
@@ -221,9 +237,10 @@ namespace Game.Run
         }
         private ulong _lastCollected; private bool _lastReady, _lastInside, _lastCancelled, _lastRunning;
         private void LateUpdate()
-        { if (!_finishing && (State.Phase == RaidPhase.Exploring || State.Phase == RaidPhase.Extracting) && State.TryResolve(out var outcome)) Finish(outcome); }
+        { if (!AccountHubReadOnly && !_finishing && (State.Phase == RaidPhase.Exploring || State.Phase == RaidPhase.Extracting) && State.TryResolve(out var outcome)) Finish(outcome); }
         private void Finish(RaidOutcome outcome)
         {
+            if (AccountHubReadOnly) return;
             if (_session.Profile.PendingRaid == null) return;
             _retryOutcome = outcome; State.Phase = RaidPhase.Settling; _pause?.RequestPause(RunPauseReason.SceneTransition); Publish("结算写盘中…");
             _committing = true;
@@ -265,6 +282,7 @@ namespace Game.Run
         }
         private void Retry()
         {
+            if (AccountHubReadOnly) return;
             if (State.Phase != RaidPhase.SaveFailed) return;
             if (_needsRollback) { RollbackDeparture("重试未开始出发的回滚"); return; }
             if (_checkpointFailure)
@@ -278,6 +296,7 @@ namespace Game.Run
         }
         public bool CloseSynchronously()
         {
+            if (AccountHubReadOnly) return true;
             if (_session?.Profile?.PendingRaid == null) return true;
             _committing = true; _session.EndWorldResources();
             SinglePlayerProfile next; ProfilePersistenceResult result;

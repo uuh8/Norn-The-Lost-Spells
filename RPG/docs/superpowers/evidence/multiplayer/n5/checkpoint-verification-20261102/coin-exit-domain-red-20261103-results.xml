@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="30" result="Failed(Child)" total="30" passed="0" failed="30" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-03 02:07:54Z" end-time="2026-11-03 02:07:56Z" duration="1.8960935">
+  <test-suite type="TestSuite" id="5953" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="4055" result="Failed" site="Child" start-time="2026-11-03 02:07:54Z" end-time="2026-11-03 02:07:56Z" duration="1.896094" total="30" passed="0" failed="30" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3318" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="380" result="Failed" site="Child" start-time="2026-11-03 02:07:54Z" end-time="2026-11-03 02:07:55Z" duration="0.798175" total="9" passed="0" failed="9" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3319" name="Game" fullname="Game" runstate="Runnable" testcasecount="380" result="Failed" site="Child" start-time="2026-11-03 02:07:54Z" end-time="2026-11-03 02:07:55Z" duration="0.699444" total="9" passed="0" failed="9" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3320" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="380" result="Failed" site="Child" start-time="2026-11-03 02:07:54Z" end-time="2026-11-03 02:07:55Z" duration="0.600048" total="9" passed="0" failed="9" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3321" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="380" result="Failed" site="Child" start-time="2026-11-03 02:07:54Z" end-time="2026-11-03 02:07:55Z" duration="0.499801" total="9" passed="0" failed="9" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3179" name="RunMemberExitClientTests" fullname="Game.Multiplayer.Tests.RunMemberExitClientTests" classname="Game.Multiplayer.Tests.RunMemberExitClientTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-11-03 02:07:54Z" end-time="2026-11-03 02:07:55Z" duration="0.399655" total="9" passed="0" failed="9" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="3190" name="ClaimedSuccessWithoutFullReceiptIsNotCommitted" fullname="Game.Multiplayer.Tests.RunMemberExitClientTests.ClaimedSuccessWithoutFullReceiptIsNotCommitted" classname="Game.Multiplayer.Tests.RunMemberExitClientTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:55Z" duration="0.102009" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="3188" name="ClaimedSuccessWithoutFullReceiptIsNotCommitted(uint.MinValue,&quot;0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef&quot;)" fullname="Game.Multiplayer.Tests.RunMemberExitClientTests.ClaimedSuccessWithoutFullReceiptIsNotCommitted(uint.MinValue,&quot;0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef&quot;)" methodname="ClaimedSuccessWithoutFullReceiptIsNotCommitted" classname="Game.Multiplayer.Tests.RunMemberExitClientTests" runstate="Runnable" seed="682883587" result="Failed" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:55Z" duration="0.000650" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少固定退出请求本地状态：_exitCommandId
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunMemberExitClientTests.SetClient (System.String field, System.Object value) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:37
+at Game.Multiplayer.Tests.RunMemberExitClientTests.BeginPending () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:31
+at Game.Multiplayer.Tests.RunMemberExitClientTests.ClaimedSuccessWithoutFullReceiptIsNotCommitted (System.UInt32 version, System.String hash) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:90
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3189" name="ClaimedSuccessWithoutFullReceiptIsNotCommitted(10,&quot;&quot;)" fullname="Game.Multiplayer.Tests.RunMemberExitClientTests.ClaimedSuccessWithoutFullReceiptIsNotCommitted(10,&quot;&quot;)" methodname="ClaimedSuccessWithoutFullReceiptIsNotCommitted" classname="Game.Multiplayer.Tests.RunMemberExitClientTests" runstate="Runnable" seed="70737474" result="Failed" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:55Z" duration="0.000463" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少固定退出请求本地状态：_exitCommandId
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunMemberExitClientTests.SetClient (System.String field, System.Object value) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:37
+at Game.Multiplayer.Tests.RunMemberExitClientTests.BeginPending () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:31
+at Game.Multiplayer.Tests.RunMemberExitClientTests.ClaimedSuccessWithoutFullReceiptIsNotCommitted (System.UInt32 version, System.String hash) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:90
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="3191" name="CommittedReceiptIsStableAgainstLatePendingAndDoesNotChangeCommandId" fullname="Game.Multiplayer.Tests.RunMemberExitClientTests.CommittedReceiptIsStableAgainstLatePendingAndDoesNotChangeCommandId" methodname="CommittedReceiptIsStableAgainstLatePendingAndDoesNotChangeCommandId" classname="Game.Multiplayer.Tests.RunMemberExitClientTests" runstate="Runnable" seed="147531948" result="Failed" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:55Z" duration="0.000439" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少固定退出请求本地状态：_exitCommandId
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunMemberExitClientTests.SetClient (System.String field, System.Object value) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:37
+at Game.Multiplayer.Tests.RunMemberExitClientTests.BeginPending () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:31
+at Game.Multiplayer.Tests.RunMemberExitClientTests.CommittedReceiptIsStableAgainstLatePendingAndDoesNotChangeCommandId () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:96
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="3182" name="DifferentCommandOrPreviousTransportEpochCannotConfirmExit" fullname="Game.Multiplayer.Tests.RunMemberExitClientTests.DifferentCommandOrPreviousTransportEpochCannotConfirmExit" classname="Game.Multiplayer.Tests.RunMemberExitClientTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:55Z" duration="0.100335" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="3180" name="DifferentCommandOrPreviousTransportEpochCannotConfirmExit(&quot;bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb&quot;,7)" fullname="Game.Multiplayer.Tests.RunMemberExitClientTests.DifferentCommandOrPreviousTransportEpochCannotConfirmExit(&quot;bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb&quot;,7)" methodname="DifferentCommandOrPreviousTransportEpochCannotConfirmExit" classname="Game.Multiplayer.Tests.RunMemberExitClientTests" runstate="Runnable" seed="762136656" result="Failed" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:55Z" duration="0.001805" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少固定退出请求本地状态：_exitCommandId
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunMemberExitClientTests.SetClient (System.String field, System.Object value) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:37
+at Game.Multiplayer.Tests.RunMemberExitClientTests.BeginPending () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:31
+at Game.Multiplayer.Tests.RunMemberExitClientTests.DifferentCommandOrPreviousTransportEpochCannotConfirmExit (System.String command, System.UInt32 epoch) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:69
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3181" name="DifferentCommandOrPreviousTransportEpochCannotConfirmExit(&quot;aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&quot;,6)" fullname="Game.Multiplayer.Tests.RunMemberExitClientTests.DifferentCommandOrPreviousTransportEpochCannotConfirmExit(&quot;aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa&quot;,6)" methodname="DifferentCommandOrPreviousTransportEpochCannotConfirmExit" classname="Game.Multiplayer.Tests.RunMemberExitClientTests" runstate="Runnable" seed="377671507" result="Failed" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:55Z" duration="0.001015" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少固定退出请求本地状态：_exitCommandId
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunMemberExitClientTests.SetClient (System.String field, System.Object value) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:37
+at Game.Multiplayer.Tests.RunMemberExitClientTests.BeginPending () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:31
+at Game.Multiplayer.Tests.RunMemberExitClientTests.DifferentCommandOrPreviousTransportEpochCannotConfirmExit (System.String command, System.UInt32 epoch) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:69
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="3187" name="NonCommittedResultCannotUnlockAssetsOrReturnToHub" fullname="Game.Multiplayer.Tests.RunMemberExitClientTests.NonCommittedResultCannotUnlockAssetsOrReturnToHub" classname="Game.Multiplayer.Tests.RunMemberExitClientTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:55Z" duration="0.097782" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="3183" name="NonCommittedResultCannotUnlockAssetsOrReturnToHub(&quot;Draining&quot;)" fullname="Game.Multiplayer.Tests.RunMemberExitClientTests.NonCommittedResultCannotUnlockAssetsOrReturnToHub(&quot;Draining&quot;)" methodname="NonCommittedResultCannotUnlockAssetsOrReturnToHub" classname="Game.Multiplayer.Tests.RunMemberExitClientTests" runstate="Runnable" seed="1009851425" result="Failed" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:55Z" duration="0.000640" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少固定退出请求本地状态：_exitCommandId
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunMemberExitClientTests.SetClient (System.String field, System.Object value) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:37
+at Game.Multiplayer.Tests.RunMemberExitClientTests.BeginPending () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:31
+at Game.Multiplayer.Tests.RunMemberExitClientTests.NonCommittedResultCannotUnlockAssetsOrReturnToHub (System.String phase) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:79
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3184" name="NonCommittedResultCannotUnlockAssetsOrReturnToHub(&quot;Submitting&quot;)" fullname="Game.Multiplayer.Tests.RunMemberExitClientTests.NonCommittedResultCannotUnlockAssetsOrReturnToHub(&quot;Submitting&quot;)" methodname="NonCommittedResultCannotUnlockAssetsOrReturnToHub" classname="Game.Multiplayer.Tests.RunMemberExitClientTests" runstate="Runnable" seed="699135717" result="Failed" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:55Z" duration="0.000389" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少固定退出请求本地状态：_exitCommandId
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunMemberExitClientTests.SetClient (System.String field, System.Object value) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:37
+at Game.Multiplayer.Tests.RunMemberExitClientTests.BeginPending () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:31
+at Game.Multiplayer.Tests.RunMemberExitClientTests.NonCommittedResultCannotUnlockAssetsOrReturnToHub (System.String phase) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:79
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3185" name="NonCommittedResultCannotUnlockAssetsOrReturnToHub(&quot;Uncertain&quot;)" fullname="Game.Multiplayer.Tests.RunMemberExitClientTests.NonCommittedResultCannotUnlockAssetsOrReturnToHub(&quot;Uncertain&quot;)" methodname="NonCommittedResultCannotUnlockAssetsOrReturnToHub" classname="Game.Multiplayer.Tests.RunMemberExitClientTests" runstate="Runnable" seed="1486409043" result="Failed" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:55Z" duration="0.000363" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少固定退出请求本地状态：_exitCommandId
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunMemberExitClientTests.SetClient (System.String field, System.Object value) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:37
+at Game.Multiplayer.Tests.RunMemberExitClientTests.BeginPending () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:31
+at Game.Multiplayer.Tests.RunMemberExitClientTests.NonCommittedResultCannotUnlockAssetsOrReturnToHub (System.String phase) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:79
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3186" name="NonCommittedResultCannotUnlockAssetsOrReturnToHub(&quot;Rejected&quot;)" fullname="Game.Multiplayer.Tests.RunMemberExitClientTests.NonCommittedResultCannotUnlockAssetsOrReturnToHub(&quot;Rejected&quot;)" methodname="NonCommittedResultCannotUnlockAssetsOrReturnToHub" classname="Game.Multiplayer.Tests.RunMemberExitClientTests" runstate="Runnable" seed="853370881" result="Failed" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:55Z" duration="0.000405" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少固定退出请求本地状态：_exitCommandId
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunMemberExitClientTests.SetClient (System.String field, System.Object value) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:37
+at Game.Multiplayer.Tests.RunMemberExitClientTests.BeginPending () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:31
+at Game.Multiplayer.Tests.RunMemberExitClientTests.NonCommittedResultCannotUnlockAssetsOrReturnToHub (System.String phase) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitClientTests.cs:79
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="5547" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="1033" result="Failed" site="Child" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:56Z" duration="0.998987" total="21" passed="0" failed="21" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="5548" name="Game" fullname="Game" runstate="Runnable" testcasecount="1033" result="Failed" site="Child" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:56Z" duration="0.903780" total="21" passed="0" failed="21" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="5549" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="1033" result="Failed" site="Child" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:56Z" duration="0.803893" total="21" passed="0" failed="21" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="5550" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="1033" result="Failed" site="Child" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:56Z" duration="0.704112" total="21" passed="0" failed="21" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="4670" name="OnlineCoinWorldTests" fullname="Game.Run.Tests.OnlineCoinWorldTests" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" testcasecount="14" result="Failed" site="Child" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:56Z" duration="0.408237" total="14" passed="0" failed="14" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="4680" name="FrozenWorldOrClosedOwnerGateDoesNotConsumeCoinOrGold" fullname="Game.Run.Tests.OnlineCoinWorldTests.FrozenWorldOrClosedOwnerGateDoesNotConsumeCoinOrGold" methodname="FrozenWorldOrClosedOwnerGateDoesNotConsumeCoinOrGold" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="1936227325" result="Failed" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:55Z" duration="0.001457" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少正式有界Coin领域；不能把金币伪装成Item或GMU。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinWorldTests.WorldType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:34
+at Game.Run.Tests.OnlineCoinWorldTests.World (System.Func`1[TResult] gate) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:36
+at Game.Run.Tests.OnlineCoinWorldTests.FrozenWorldOrClosedOwnerGateDoesNotConsumeCoinOrGold () [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:94
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4683" name="GoldOrCurrencyRevisionOverflowFailsWithoutConsumingCoin" fullname="Game.Run.Tests.OnlineCoinWorldTests.GoldOrCurrencyRevisionOverflowFailsWithoutConsumingCoin" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:55Z" duration="0.101321" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="4681" name="GoldOrCurrencyRevisionOverflowFailsWithoutConsumingCoin(long.MaxValue,1)" fullname="Game.Run.Tests.OnlineCoinWorldTests.GoldOrCurrencyRevisionOverflowFailsWithoutConsumingCoin(long.MaxValue,1)" methodname="GoldOrCurrencyRevisionOverflowFailsWithoutConsumingCoin" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="2073284056" result="Failed" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:55Z" duration="0.001612" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少正式有界Coin领域；不能把金币伪装成Item或GMU。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinWorldTests.WorldType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:34
+at Game.Run.Tests.OnlineCoinWorldTests.World (System.Func`1[TResult] gate) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:36
+at Game.Run.Tests.OnlineCoinWorldTests.GoldOrCurrencyRevisionOverflowFailsWithoutConsumingCoin (System.Int64 balance, System.UInt32 revision) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:106
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="4682" name="GoldOrCurrencyRevisionOverflowFailsWithoutConsumingCoin(10000L,uint.MaxValue)" fullname="Game.Run.Tests.OnlineCoinWorldTests.GoldOrCurrencyRevisionOverflowFailsWithoutConsumingCoin(10000L,uint.MaxValue)" methodname="GoldOrCurrencyRevisionOverflowFailsWithoutConsumingCoin" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="1474754232" result="Failed" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:55Z" duration="0.001108" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少正式有界Coin领域；不能把金币伪装成Item或GMU。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinWorldTests.WorldType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:34
+at Game.Run.Tests.OnlineCoinWorldTests.World (System.Func`1[TResult] gate) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:36
+at Game.Run.Tests.OnlineCoinWorldTests.GoldOrCurrencyRevisionOverflowFailsWithoutConsumingCoin (System.Int64 balance, System.UInt32 revision) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:106
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="4676" name="InvalidNpcIdentityNeverConsumesWorldMetadata" fullname="Game.Run.Tests.OnlineCoinWorldTests.InvalidNpcIdentityNeverConsumesWorldMetadata" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-11-03 02:07:55Z" end-time="2026-11-03 02:07:56Z" duration="0.099023" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="4673" name="InvalidNpcIdentityNeverConsumesWorldMetadata(ulong.MinValue)" fullname="Game.Run.Tests.OnlineCoinWorldTests.InvalidNpcIdentityNeverConsumesWorldMetadata(ulong.MinValue)" methodname="InvalidNpcIdentityNeverConsumesWorldMetadata" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="1154215677" result="Failed" start-time="2026-11-03 02:07:56Z" end-time="2026-11-03 02:07:56Z" duration="0.001322" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少正式有界Coin领域；不能把金币伪装成Item或GMU。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinWorldTests.WorldType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:34
+at Game.Run.Tests.OnlineCoinWorldTests.World (System.Func`1[TResult] gate) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:36
+at Game.Run.Tests.OnlineCoinWorldTests.InvalidNpcIdentityNeverConsumesWorldMetadata (System.UInt64 id) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:84
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="4674" name="InvalidNpcIdentityNeverConsumesWorldMetadata(4UL)" fullname="Game.Run.Tests.OnlineCoinWorldTests.InvalidNpcIdentityNeverConsumesWorldMetadata(4UL)" methodname="InvalidNpcIdentityNeverConsumesWorldMetadata" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="774469934" result="Failed" start-time="2026-11-03 02:07:56Z" end-time="2026-11-03 02:07:56Z" duration="0.000704" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少正式有界Coin领域；不能把金币伪装成Item或GMU。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinWorldTests.WorldType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:34
+at Game.Run.Tests.OnlineCoinWorldTests.World (System.Func`1[TResult] gate) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:36
+at Game.Run.Tests.OnlineCoinWorldTests.InvalidNpcIdentityNeverConsumesWorldMetadata (System.UInt64 id) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:84
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="4675" name="InvalidNpcIdentityNeverConsumesWorldMetadata(17UL)" fullname="Game.Run.Tests.OnlineCoinWorldTests.InvalidNpcIdentityNeverConsumesWorldMetadata(17UL)" methodname="InvalidNpcIdentityNeverConsumesWorldMetadata" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="398178377" result="Failed" start-time="2026-11-03 02:07:56Z" end-time="2026-11-03 02:07:56Z" duration="0.000547" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少正式有界Coin领域；不能把金币伪装成Item或GMU。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinWorldTests.WorldType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:34
+at Game.Run.Tests.OnlineCoinWorldTests.World (System.Func`1[TResult] gate) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:36
+at Game.Run.Tests.OnlineCoinWorldTests.InvalidNpcIdentityNeverConsumesWorldMetadata (System.UInt64 id) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:84
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="4686" name="LootRetryConsumesOnlyTheOriginalCompleteCoinRollAtDeathPosition" fullname="Game.Run.Tests.OnlineCoinWorldTests.LootRetryConsumesOnlyTheOriginalCompleteCoinRollAtDeathPosition" methodname="LootRetryConsumesOnlyTheOriginalCompleteCoinRollAtDeathPosition" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="423442385" result="Failed" start-time="2026-11-03 02:07:56Z" end-time="2026-11-03 02:07:56Z" duration="0.000596" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少正式有界Coin领域；不能把金币伪装成Item或GMU。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinWorldTests.WorldType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:34
+at Game.Run.Tests.OnlineCoinWorldTests.World (System.Func`1[TResult] gate) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:36
+at Game.Run.Tests.OnlineCoinWorldTests.LootRetryConsumesOnlyTheOriginalCompleteCoinRollAtDeathPosition () [0x0007e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:151
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4679" name="NonpositiveAmountNeverCreatesCoin" fullname="Game.Run.Tests.OnlineCoinWorldTests.NonpositiveAmountNeverCreatesCoin" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-03 02:07:56Z" end-time="2026-11-03 02:07:56Z" duration="0.097524" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="4677" name="NonpositiveAmountNeverCreatesCoin(0L)" fullname="Game.Run.Tests.OnlineCoinWorldTests.NonpositiveAmountNeverCreatesCoin(0L)" methodname="NonpositiveAmountNeverCreatesCoin" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="766631082" result="Failed" start-time="2026-11-03 02:07:56Z" end-time="2026-11-03 02:07:56Z" duration="0.001164" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少正式有界Coin领域；不能把金币伪装成Item或GMU。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinWorldTests.WorldType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:34
+at Game.Run.Tests.OnlineCoinWorldTests.World (System.Func`1[TResult] gate) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:36
+at Game.Run.Tests.OnlineCoinWorldTests.NonpositiveAmountNeverCreatesCoin (System.Int64 amount) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:90
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="4678" name="NonpositiveAmountNeverCreatesCoin(-1L)" fullname="Game.Run.Tests.OnlineCoinWorldTests.NonpositiveAmountNeverCreatesCoin(-1L)" methodname="NonpositiveAmountNeverCreatesCoin" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="89649594" result="Failed" start-time="2026-11-03 02:07:56Z" end-time="2026-11-03 02:07:56Z" duration="0.001260" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少正式有界Coin领域；不能把金币伪装成Item或GMU。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinWorldTests.WorldType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:34
+at Game.Run.Tests.OnlineCoinWorldTests.World (System.Func`1[TResult] gate) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:36
+at Game.Run.Tests.OnlineCoinWorldTests.NonpositiveAmountNeverCreatesCoin (System.Int64 amount) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:90
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="4672" name="OneWinnerCreditsExactlyOnceAndTombstoneCannotRespawn" fullname="Game.Run.Tests.OnlineCoinWorldTests.OneWinnerCreditsExactlyOnceAndTombstoneCannotRespawn" methodname="OneWinnerCreditsExactlyOnceAndTombstoneCannotRespawn" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="350374488" result="Failed" start-time="2026-11-03 02:07:56Z" end-time="2026-11-03 02:07:56Z" duration="0.001696" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少正式有界Coin领域；不能把金币伪装成Item或GMU。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinWorldTests.WorldType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:34
+at Game.Run.Tests.OnlineCoinWorldTests.World (System.Func`1[TResult] gate) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:36
+at Game.Run.Tests.OnlineCoinWorldTests.OneWinnerCreditsExactlyOnceAndTombstoneCannotRespawn () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:71
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4687" name="ReplicaCoinOnlyPresentsCollectionAndKeepsOriginalTriggerGeometry" fullname="Game.Run.Tests.OnlineCoinWorldTests.ReplicaCoinOnlyPresentsCollectionAndKeepsOriginalTriggerGeometry" methodname="ReplicaCoinOnlyPresentsCollectionAndKeepsOriginalTriggerGeometry" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="1809846994" result="Failed" start-time="2026-11-03 02:07:56Z" end-time="2026-11-03 02:07:56Z" duration="0.001205" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Coin领域缺少正式调用：ConfigureReplica
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinWorldTests.Call (System.Object target, System.String method, System.Object[] args) [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:40
+at Game.Run.Tests.OnlineCoinWorldTests.ReplicaCoinOnlyPresentsCollectionAndKeepsOriginalTriggerGeometry () [0x00068] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:178
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4671" name="SameCoinRegistrationIsIdempotentButChangedFactsConflict" fullname="Game.Run.Tests.OnlineCoinWorldTests.SameCoinRegistrationIsIdempotentButChangedFactsConflict" methodname="SameCoinRegistrationIsIdempotentButChangedFactsConflict" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="2144184886" result="Failed" start-time="2026-11-03 02:07:56Z" end-time="2026-11-03 02:07:56Z" duration="0.001054" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少正式有界Coin领域；不能把金币伪装成Item或GMU。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinWorldTests.WorldType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:34
+at Game.Run.Tests.OnlineCoinWorldTests.World (System.Func`1[TResult] gate) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:36
+at Game.Run.Tests.OnlineCoinWorldTests.SameCoinRegistrationIsIdempotentButChangedFactsConflict () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:61
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4685" name="TwelveRegisteredIdentitiesRemainBoundedIncludingAllCollectedTombstones" fullname="Game.Run.Tests.OnlineCoinWorldTests.TwelveRegisteredIdentitiesRemainBoundedIncludingAllCollectedTombstones" methodname="TwelveRegisteredIdentitiesRemainBoundedIncludingAllCollectedTombstones" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="607773424" result="Failed" start-time="2026-11-03 02:07:56Z" end-time="2026-11-03 02:07:56Z" duration="0.000901" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少正式有界Coin领域；不能把金币伪装成Item或GMU。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinWorldTests.WorldType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:34
+at Game.Run.Tests.OnlineCoinWorldTests.World (System.Func`1[TResult] gate) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:36
+at Game.Run.Tests.OnlineCoinWorldTests.TwelveRegisteredIdentitiesRemainBoundedIncludingAllCollectedTombstones () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:127
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4684" name="WrongActorForeignRunNullAndDisposedOwnerCannotCollect" fullname="Game.Run.Tests.OnlineCoinWorldTests.WrongActorForeignRunNullAndDisposedOwnerCannotCollect" methodname="WrongActorForeignRunNullAndDisposedOwnerCannotCollect" classname="Game.Run.Tests.OnlineCoinWorldTests" runstate="Runnable" seed="1884368964" result="Failed" start-time="2026-11-03 02:07:56Z" end-time="2026-11-03 02:07:56Z" duration="0.000778" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少正式有界Coin领域；不能把金币伪装成Item或GMU。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinWorldTests.WorldType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:34
+at Game.Run.Tests.OnlineCoinWorldTests.World (System.Func`1[TResult] gate) [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:36
+at Game.Run.Tests.OnlineCoinWorldTests.WrongActorForeignRunNullAndDisposedOwnerCannotCollect () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinWorldTests.cs:117
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="5117" name="RunMemberExitWorkspaceTests" fullname="Game.Run.Tests.RunMemberExitWorkspaceTests" classname="Game.Run.Tests.RunMemberExitWorkspaceTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-11-03 02:07:56Z" end-time="2026-11-03 02:07:56Z" duration="0.195581" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="5124" name="CaptureRequiresMatchingFenceAndCopiesCurrentOwnedGoldAndInstances" fullname="Game.Run.Tests.RunMemberExitWorkspaceTests.CaptureRequiresMatchingFenceAndCopiesCurrentOwnedGoldAndInstances" methodname="CaptureRequiresMatchingFenceAndCopiesCurrentOwnedGoldAndInstances" classname="Game.Run.Tests.RunMemberExitWorkspaceTests" runstate="Runnable" seed="1008590737" result="Failed" start-time="2026-11-03 02:07:56Z" end-time="2026-11-03 02:07:56Z" duration="0.000974" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  必须从存活Owner取安全当前值，不能回Entry或由Client上传资产。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.RunMemberExitWorkspaceTests.Capture (Game.Run.OnlineOwnedWorkspace workspace, System.String command, Game.Core.OnlineOwnedAssetSnapshot& assets) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\RunMemberExitWorkspaceTests.cs:60
+at Game.Run.Tests.RunMemberExitWorkspaceTests.CaptureRequiresMatchingFenceAndCopiesCurrentOwnedGoldAndInstances () [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\RunMemberExitWorkspaceTests.cs:111
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="5121" name="InvalidCommandCannotFenceTheOwner" fullname="Game.Run.Tests.RunMemberExitWorkspaceTests.InvalidCommandCannotFenceTheOwner" classname="Game.Run.Tests.RunMemberExitWorkspaceTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-11-03 02:07:56Z" end-time="2026-11-03 02:07:56Z" duration="0.103528" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="5118" name="InvalidCommandCannotFenceTheOwner(null)" fullname="Game.Run.Tests.RunMemberExitWorkspaceTests.InvalidCommandCannotFenceTheOwner(null)" methodname="InvalidCommandCannotFenceTheOwner" classname="Game.Run.Tests.RunMemberExitWorkspaceTests" runstate="Runnable" seed="2137825767" result="Failed" start-time="2026-11-03 02:07:56Z" end-time="2026-11-03 02:07:56Z" duration="0.001202" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少只针对本Owner的退出意图栅栏，不能套全局Frozen。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.RunMemberExitWorkspaceTests.Begin (Game.Run.OnlineOwnedWorkspace workspace, System.String command) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\RunMemberExitWorkspaceTests.cs:48
+at Game.Run.Tests.RunMemberExitWorkspaceTests.InvalidCommandCannotFenceTheOwner (System.String command) [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\RunMemberExitWorkspaceTests.cs:69
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="5119" name="InvalidCommandCannotFenceTheOwner(&quot;&quot;)" fullname="Game.Run.Tests.RunMemberExitWorkspaceTests.InvalidCommandCannotFenceTheOwner(&quot;&quot;)" methodname="InvalidCommandCannotFenceTheOwner" classname="Game.Run.Tests.RunMemberExitWorkspaceTests" runstate="Runnable" seed="1518621060" result="Failed" start-time="2026-11-03 02:07:56Z" end-time="2026-11-03 02:07:56Z" duration="0.001109" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少只针对本Owner的退出意图栅栏，不能套全局Frozen。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.RunMemberExitWorkspaceTests.Begin (Game.Run.OnlineOwnedWorkspace workspace, System.String command) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\RunMemberExitWorkspaceTests.cs:48
+at Game.Run.Tests.RunMemberExitWorkspaceTests.InvalidCommandCannotFenceTheOwner (System.String command) [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\RunMemberExitWorkspaceTests.cs:69
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="5120" name="InvalidCommandCannotFenceTheOwner(&quot;not-a-stable-id&quot;)" fullname="Game.Run.Tests.RunMemberExitWorkspaceTests.InvalidCommandCannotFenceTheOwner(&quot;not-a-stable-id&quot;)" methodname="InvalidCommandCannotFenceTheOwner" classname="Game.Run.Tests.RunMemberExitWorkspaceTests" runstate="Runnable" seed="871684089" result="Failed" start-time="2026-11-03 02:07:56Z" end-time="2026-11-03 02:07:56Z" duration="0.001002" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少只针对本Owner的退出意图栅栏，不能套全局Frozen。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.RunMemberExitWorkspaceTests.Begin (Game.Run.OnlineOwnedWorkspace workspace, System.String command) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\RunMemberExitWorkspaceTests.cs:48
+at Game.Run.Tests.RunMemberExitWorkspaceTests.InvalidCommandCannotFenceTheOwner (System.String command) [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\RunMemberExitWorkspaceTests.cs:69
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="5125" name="OutstandingMaterialOwnerPreventsExitCaptureWithoutDiscardingItsQuantity" fullname="Game.Run.Tests.RunMemberExitWorkspaceTests.OutstandingMaterialOwnerPreventsExitCaptureWithoutDiscardingItsQuantity" methodname="OutstandingMaterialOwnerPreventsExitCaptureWithoutDiscardingItsQuantity" classname="Game.Run.Tests.RunMemberExitWorkspaceTests" runstate="Runnable" seed="490450223" result="Failed" start-time="2026-11-03 02:07:56Z" end-time="2026-11-03 02:07:56Z" duration="0.000914" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少只针对本Owner的退出意图栅栏，不能套全局Frozen。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.RunMemberExitWorkspaceTests.Begin (Game.Run.OnlineOwnedWorkspace workspace, System.String command) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\RunMemberExitWorkspaceTests.cs:48
+at Game.Run.Tests.RunMemberExitWorkspaceTests.OutstandingMaterialOwnerPreventsExitCaptureWithoutDiscardingItsQuantity () [0x0002a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\RunMemberExitWorkspaceTests.cs:128
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="5123" name="PersonalFenceRejectsNewInventoryButRetainsOriginalReceiptAndWorldOutputGate" fullname="Game.Run.Tests.RunMemberExitWorkspaceTests.PersonalFenceRejectsNewInventoryButRetainsOriginalReceiptAndWorldOutputGate" methodname="PersonalFenceRejectsNewInventoryButRetainsOriginalReceiptAndWorldOutputGate" classname="Game.Run.Tests.RunMemberExitWorkspaceTests" runstate="Runnable" seed="1252236974" result="Failed" start-time="2026-11-03 02:07:56Z" end-time="2026-11-03 02:07:56Z" duration="0.000879" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少只针对本Owner的退出意图栅栏，不能套全局Frozen。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.RunMemberExitWorkspaceTests.Begin (Game.Run.OnlineOwnedWorkspace workspace, System.String command) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\RunMemberExitWorkspaceTests.cs:48
+at Game.Run.Tests.RunMemberExitWorkspaceTests.PersonalFenceRejectsNewInventoryButRetainsOriginalReceiptAndWorldOutputGate () [0x00095] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\RunMemberExitWorkspaceTests.cs:94
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="5122" name="SameCommandReplaysFenceAndAnotherCommandCannotReplaceIt" fullname="Game.Run.Tests.RunMemberExitWorkspaceTests.SameCommandReplaysFenceAndAnotherCommandCannotReplaceIt" methodname="SameCommandReplaysFenceAndAnotherCommandCannotReplaceIt" classname="Game.Run.Tests.RunMemberExitWorkspaceTests" runstate="Runnable" seed="1124914790" result="Failed" start-time="2026-11-03 02:07:56Z" end-time="2026-11-03 02:07:56Z" duration="0.000769" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少只针对本Owner的退出意图栅栏，不能套全局Frozen。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.RunMemberExitWorkspaceTests.Begin (Game.Run.OnlineOwnedWorkspace workspace, System.String command) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\RunMemberExitWorkspaceTests.cs:48
+at Game.Run.Tests.RunMemberExitWorkspaceTests.SameCommandReplaysFenceAndAnotherCommandCannotReplaceIt () [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\RunMemberExitWorkspaceTests.cs:76
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

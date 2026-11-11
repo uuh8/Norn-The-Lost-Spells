@@ -34,10 +34,14 @@ namespace Game.Networking
         private string _secret, _ticket;
         private JoinTicketReply _expected;
         private ulong _nonce;
+        private readonly WorldIdentityCodec _worldIdentityCodec = new WorldIdentityCodec();
+        private double _worldIdentityDeadline;
         public bool Frozen { get; set; }
         public bool ClientAuthenticated { get; private set; }
         public bool HandshakeAttempted { get; private set; }
         public JoinConnectionIdentity ClientIdentity { get; private set; }
+        /// <summary>仅当前认证上下文安装的DS世界身份；未收到独立握手时为0，不能据此配置材料世界。</summary>
+        public ulong ClientWorldEpoch { get; private set; }
         public long Accepted { get; private set; }
         public long Rejected { get; private set; }
         public void ConfigureServer(InstanceLaunchDescriptor launch, string secret)
@@ -51,13 +55,20 @@ namespace Game.Networking
             if (ticket == null || ticket.Host != "127.0.0.1" || ticket.Ticket == null || ticket.Ticket.Length != 64 || !DungeonIdentityRules.IsValidId(ticket.DungeonId))
                 throw new ArgumentException("本阶段只允许含有效副本身份的 loopback Ticket。");
             _ticket = ticket.Ticket;
+            ClientWorldEpoch = 0; _worldIdentityDeadline = 0;
             // 复制期望身份，避免外部随后复用/修改可变 DTO 影响在途握手；副本不保留 Ticket 密钥。
             _expected = new JoinTicketReply { PlayerId = ticket.PlayerId, RoomId = ticket.RoomId,
                 RunId = ticket.RunId, RoomEpoch = ticket.RoomEpoch, DungeonId = ticket.DungeonId };
             _nonce = BitConverter.ToUInt64(Guid.NewGuid().ToByteArray(), 0); if (_nonce == 0) _nonce = 1;
         }
         public override void OnStartServer() => NetworkServer.RegisterHandler<JoinTicketRequestEnvelope>(OnTicket, false);
-        public override void OnStartClient() => NetworkClient.RegisterHandler<JoinTicketReplyEnvelope>(OnReply, false);
+        public override void OnStartClient()
+        {
+            NetworkClient.RegisterHandler<JoinTicketReplyEnvelope>(OnReply, false);
+            // 预注册于准入前，但Mirror要求认证后才接收世界身份。不能等在线Scene加载后注册，
+            // 因为Server在JoinReply之后可立即发送同一可靠通道的世界握手。
+            NetworkClient.RegisterHandler<WorldIdentityEnvelope>(OnWorldIdentity, true);
+        }
         public override void OnServerAuthenticate(NetworkConnectionToClient connection)
         {
             if (Frozen || _launch == null || !IPAddress.TryParse(connection.address, out var ip) || !IPAddress.IsLoopback(ip.IsIPv4MappedToIPv6 ? ip.MapToIPv4() : ip)) { Reject(connection); return; }
@@ -66,6 +77,10 @@ namespace Game.Networking
         }
         private void Update()
         {
+            // 只约束尚未完成的离散世界握手，不产生玩法时间；旧协议已由v3门禁拒绝。
+            if (ClientAuthenticated && ClientWorldEpoch == 0 && _worldIdentityDeadline > 0
+                && Time.realtimeSinceStartupAsDouble > _worldIdentityDeadline)
+            { _worldIdentityDeadline = 0; ClientReject(); }
             if (!NetworkServer.active) return;
             for (int i = 0; i < _pending.Length; i++)
             {
@@ -133,7 +148,33 @@ namespace Game.Networking
             catch (InvalidProtocolBufferException) { ClientReject(); return; }
             if (!JoinAdmissionRules.AcceptsClientReply(reply, _expected, _nonce)) { ClientReject(); return; }
             ClientIdentity = new JoinConnectionIdentity(reply.PlayerId, reply.RoomId, reply.RunId, reply.RoomEpoch, reply.ConnectionEpoch, reply.ActorId, reply.DungeonId);
+            ClientWorldEpoch = 0; _worldIdentityDeadline = Time.realtimeSinceStartupAsDouble + 10;
             NetworkClient.connection.authenticationData = ClientIdentity; ClientAuthenticated = true; ClientAccept();
+        }
+        /// <summary>
+        /// 由真实World Owner在ServerActorJoined之后调用。只给当前已认证Actor连接发送元数据，
+        /// 仍沿原可靠有序通道位于JoinReply之后；不消费Ticket、不生成第二个Gameplay Owner。
+        /// </summary>
+        public bool SendWorldIdentity(NetworkConnectionToClient connection, JoinConnectionIdentity identity, ulong worldEpoch)
+        {
+            if (connection == null || !connection.isAuthenticated || identity == null || _launch == null
+                || identity.ActorId < 1 || identity.ActorId > 4 || !ReferenceEquals(connection.authenticationData, identity)
+                || !ReferenceEquals(_actors[(int)identity.ActorId - 1], connection)
+                || identity.RunId != _launch.RunId || identity.DungeonId != _launch.DungeonId || identity.RoomEpoch != _launch.RoomEpoch
+                || !_worldIdentityCodec.TryEncode(identity, worldEpoch, new ArraySegment<byte>(_buffer), out int count)) return false;
+            connection.Send(new WorldIdentityEnvelope { Payload = new ArraySegment<byte>(_buffer, 0, count) }, Channels.Reliable);
+            return true;
+        }
+        private void OnWorldIdentity(WorldIdentityEnvelope envelope)
+        {
+            var connection = NetworkClient.connection;
+            if (!ClientAuthenticated || ClientIdentity == null || connection == null || !connection.isAuthenticated
+                || !ReferenceEquals(connection.authenticationData, ClientIdentity)
+                || !_worldIdentityCodec.TryDecode(envelope.Payload, ClientIdentity, out ulong epoch)
+                || ClientWorldEpoch != 0 && ClientWorldEpoch != epoch)
+            { Rejected++; return; }
+            // 重复同值幂等；任意不同值都不能热换存活世界。新认证上下文由原OnReply重新建立。
+            ClientWorldEpoch = epoch; _worldIdentityDeadline = 0;
         }
         public override void OnStopServer()
         {
@@ -144,6 +185,7 @@ namespace Game.Networking
         public override void OnStopClient()
         {
             NetworkClient.UnregisterHandler<JoinTicketReplyEnvelope>(); _ticket = null; _expected = null; _nonce = 0;
+            NetworkClient.UnregisterHandler<WorldIdentityEnvelope>(); ClientWorldEpoch = 0; _worldIdentityDeadline = 0;
             ClientAuthenticated = false; ClientIdentity = null;
         }
     }

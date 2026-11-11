@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="14" result="Failed(Child)" total="14" passed="0" failed="14" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-03 03:56:52Z" end-time="2026-11-03 03:56:53Z" duration="0.8000673">
+  <test-suite type="TestSuite" id="6065" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="4146" result="Failed" site="Child" start-time="2026-11-03 03:56:52Z" end-time="2026-11-03 03:56:53Z" duration="0.800067" total="14" passed="0" failed="14" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3349" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="405" result="Failed" site="Child" start-time="2026-11-03 03:56:53Z" end-time="2026-11-03 03:56:53Z" duration="0.701453" total="14" passed="0" failed="14" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34452" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3350" name="Game" fullname="Game" runstate="Runnable" testcasecount="405" result="Failed" site="Child" start-time="2026-11-03 03:56:53Z" end-time="2026-11-03 03:56:53Z" duration="0.603444" total="14" passed="0" failed="14" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3351" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="405" result="Failed" site="Child" start-time="2026-11-03 03:56:53Z" end-time="2026-11-03 03:56:53Z" duration="0.501461" total="14" passed="0" failed="14" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3352" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="405" result="Failed" site="Child" start-time="2026-11-03 03:56:53Z" end-time="2026-11-03 03:56:53Z" duration="0.403200" total="14" passed="0" failed="14" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3181" name="RunCoinCheckpointTests" fullname="Game.Multiplayer.Tests.RunCoinCheckpointTests" classname="Game.Multiplayer.Tests.RunCoinCheckpointTests" runstate="Runnable" testcasecount="14" result="Failed" site="Child" start-time="2026-11-03 03:56:53Z" end-time="2026-11-03 03:56:53Z" duration="0.304894" total="14" passed="0" failed="14" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="3197" name="ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks" fullname="Game.Multiplayer.Tests.RunCoinCheckpointTests.ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks" classname="Game.Multiplayer.Tests.RunCoinCheckpointTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-11-03 03:56:53Z" end-time="2026-11-03 03:56:53Z" duration="0.111906" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="3192" name="ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks(&quot;amount&quot;)" fullname="Game.Multiplayer.Tests.RunCoinCheckpointTests.ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks(&quot;amount&quot;)" methodname="ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks" classname="Game.Multiplayer.Tests.RunCoinCheckpointTests" runstate="Runnable" seed="455583834" result="Failed" start-time="2026-11-03 03:56:53Z" end-time="2026-11-03 03:56:53Z" duration="0.008480" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少显式Coin事实字段:Coins
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCoinCheckpointTests.Set (System.Object value, System.String name, System.Object content) [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:70
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.Input () [0x000a1] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:61
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.Capture () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:63
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks (System.String defect) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:46
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3193" name="ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks(&quot;position&quot;)" fullname="Game.Multiplayer.Tests.RunCoinCheckpointTests.ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks(&quot;position&quot;)" methodname="ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks" classname="Game.Multiplayer.Tests.RunCoinCheckpointTests" runstate="Runnable" seed="1969204833" result="Failed" start-time="2026-11-03 03:56:53Z" end-time="2026-11-03 03:56:53Z" duration="0.000992" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少显式Coin事实字段:Coins
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCoinCheckpointTests.Set (System.Object value, System.String name, System.Object content) [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:70
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.Input () [0x000a1] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:61
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.Capture () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:63
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks (System.String defect) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:46
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3194" name="ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks(&quot;winner&quot;)" fullname="Game.Multiplayer.Tests.RunCoinCheckpointTests.ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks(&quot;winner&quot;)" methodname="ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks" classname="Game.Multiplayer.Tests.RunCoinCheckpointTests" runstate="Runnable" seed="1654183924" result="Failed" start-time="2026-11-03 03:56:53Z" end-time="2026-11-03 03:56:53Z" duration="0.000530" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少显式Coin事实字段:Coins
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCoinCheckpointTests.Set (System.Object value, System.String name, System.Object content) [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:70
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.Input () [0x000a1] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:61
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.Capture () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:63
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks (System.String defect) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:46
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3195" name="ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks(&quot;collected&quot;)" fullname="Game.Multiplayer.Tests.RunCoinCheckpointTests.ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks(&quot;collected&quot;)" methodname="ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks" classname="Game.Multiplayer.Tests.RunCoinCheckpointTests" runstate="Runnable" seed="533427638" result="Failed" start-time="2026-11-03 03:56:53Z" end-time="2026-11-03 03:56:53Z" duration="0.000385" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少显式Coin事实字段:Coins
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCoinCheckpointTests.Set (System.Object value, System.String name, System.Object content) [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:70
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.Input () [0x000a1] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:61
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.Capture () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:63
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks (System.String defect) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:46
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3196" name="ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks(&quot;missing&quot;)" fullname="Game.Multiplayer.Tests.RunCoinCheckpointTests.ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks(&quot;missing&quot;)" methodname="ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks" classname="Game.Multiplayer.Tests.RunCoinCheckpointTests" runstate="Runnable" seed="1955539455" result="Failed" start-time="2026-11-03 03:56:53Z" end-time="2026-11-03 03:56:53Z" duration="0.000493" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少显式Coin事实字段:Coins
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCoinCheckpointTests.Set (System.Object value, System.String name, System.Object content) [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:70
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.Input () [0x000a1] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:61
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.Capture () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:63
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.ChangedOrMissingCoinCannotAdvanceReceiptAndHeadWatermarks (System.String defect) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:46
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="3182" name="CompleteFourIncludesCollectedTombstoneAndDeepCopiesOriginalFacts" fullname="Game.Multiplayer.Tests.RunCoinCheckpointTests.CompleteFourIncludesCollectedTombstoneAndDeepCopiesOriginalFacts" methodname="CompleteFourIncludesCollectedTombstoneAndDeepCopiesOriginalFacts" classname="Game.Multiplayer.Tests.RunCoinCheckpointTests" runstate="Runnable" seed="1873025560" result="Failed" start-time="2026-11-03 03:56:53Z" end-time="2026-11-03 03:56:53Z" duration="0.001664" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少显式Coin事实字段:Coins
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCoinCheckpointTests.Set (System.Object value, System.String name, System.Object content) [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:70
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.Input () [0x000a1] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:61
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.CompleteFourIncludesCollectedTombstoneAndDeepCopiesOriginalFacts () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:15
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3191" name="FixedBodyRetainsCoinsAndAReorderedEquivalentHeadCanConfirm" fullname="Game.Multiplayer.Tests.RunCoinCheckpointTests.FixedBodyRetainsCoinsAndAReorderedEquivalentHeadCanConfirm" methodname="FixedBodyRetainsCoinsAndAReorderedEquivalentHeadCanConfirm" classname="Game.Multiplayer.Tests.RunCoinCheckpointTests" runstate="Runnable" seed="894403916" result="Failed" start-time="2026-11-03 03:56:53Z" end-time="2026-11-03 03:56:53Z" duration="0.001566" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少显式Coin事实字段:Coins
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCoinCheckpointTests.Set (System.Object value, System.String name, System.Object content) [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:70
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.Input () [0x000a1] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:61
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.Capture () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:63
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.FixedBodyRetainsCoinsAndAReorderedEquivalentHeadCanConfirm () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:36
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="3190" name="InvalidCoinPartitionRejectsTheWholeCapturedCandidate" fullname="Game.Multiplayer.Tests.RunCoinCheckpointTests.InvalidCoinPartitionRejectsTheWholeCapturedCandidate" classname="Game.Multiplayer.Tests.RunCoinCheckpointTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-11-03 03:56:53Z" end-time="2026-11-03 03:56:53Z" duration="0.088328" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="3184" name="InvalidCoinPartitionRejectsTheWholeCapturedCandidate(&quot;duplicate&quot;)" fullname="Game.Multiplayer.Tests.RunCoinCheckpointTests.InvalidCoinPartitionRejectsTheWholeCapturedCandidate(&quot;duplicate&quot;)" methodname="InvalidCoinPartitionRejectsTheWholeCapturedCandidate" classname="Game.Multiplayer.Tests.RunCoinCheckpointTests" runstate="Runnable" seed="1362931655" result="Failed" start-time="2026-11-03 03:56:53Z" end-time="2026-11-03 03:56:53Z" duration="0.001870" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少显式Coin事实字段:Coins
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCoinCheckpointTests.Set (System.Object value, System.String name, System.Object content) [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:70
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.Input () [0x000a1] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:61
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.InvalidCoinPartitionRejectsTheWholeCapturedCandidate (System.String defect) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:28
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3185" name="InvalidCoinPartitionRejectsTheWholeCapturedCandidate(&quot;id&quot;)" fullname="Game.Multiplayer.Tests.RunCoinCheckpointTests.InvalidCoinPartitionRejectsTheWholeCapturedCandidate(&quot;id&quot;)" methodname="InvalidCoinPartitionRejectsTheWholeCapturedCandidate" classname="Game.Multiplayer.Tests.RunCoinCheckpointTests" runstate="Runnable" seed="141442209" result="Failed" start-time="2026-11-03 03:56:53Z" end-time="2026-11-03 03:56:53Z" duration="0.000490" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少显式Coin事实字段:Coins
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCoinCheckpointTests.Set (System.Object value, System.String name, System.Object content) [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:70
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.Input () [0x000a1] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:61
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.InvalidCoinPartitionRejectsTheWholeCapturedCandidate (System.String defect) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:28
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3186" name="InvalidCoinPartitionRejectsTheWholeCapturedCandidate(&quot;amount&quot;)" fullname="Game.Multiplayer.Tests.RunCoinCheckpointTests.InvalidCoinPartitionRejectsTheWholeCapturedCandidate(&quot;amount&quot;)" methodname="InvalidCoinPartitionRejectsTheWholeCapturedCandidate" classname="Game.Multiplayer.Tests.RunCoinCheckpointTests" runstate="Runnable" seed="1504010654" result="Failed" start-time="2026-11-03 03:56:53Z" end-time="2026-11-03 03:56:53Z" duration="0.000457" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少显式Coin事实字段:Coins
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCoinCheckpointTests.Set (System.Object value, System.String name, System.Object content) [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:70
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.Input () [0x000a1] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:61
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.InvalidCoinPartitionRejectsTheWholeCapturedCandidate (System.String defect) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:28
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3187" name="InvalidCoinPartitionRejectsTheWholeCapturedCandidate(&quot;position&quot;)" fullname="Game.Multiplayer.Tests.RunCoinCheckpointTests.InvalidCoinPartitionRejectsTheWholeCapturedCandidate(&quot;position&quot;)" methodname="InvalidCoinPartitionRejectsTheWholeCapturedCandidate" classname="Game.Multiplayer.Tests.RunCoinCheckpointTests" runstate="Runnable" seed="66280841" result="Failed" start-time="2026-11-03 03:56:53Z" end-time="2026-11-03 03:56:53Z" duration="0.000289" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少显式Coin事实字段:Coins
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCoinCheckpointTests.Set (System.Object value, System.String name, System.Object content) [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:70
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.Input () [0x000a1] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:61
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.InvalidCoinPartitionRejectsTheWholeCapturedCandidate (System.String defect) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:28
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3188" name="InvalidCoinPartitionRejectsTheWholeCapturedCandidate(&quot;collector&quot;)" fullname="Game.Multiplayer.Tests.RunCoinCheckpointTests.InvalidCoinPartitionRejectsTheWholeCapturedCandidate(&quot;collector&quot;)" methodname="InvalidCoinPartitionRejectsTheWholeCapturedCandidate" classname="Game.Multiplayer.Tests.RunCoinCheckpointTests" runstate="Runnable" seed="680154400" result="Failed" start-time="2026-11-03 03:56:53Z" end-time="2026-11-03 03:56:53Z" duration="0.000261" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少显式Coin事实字段:Coins
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCoinCheckpointTests.Set (System.Object value, System.String name, System.Object content) [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:70
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.Input () [0x000a1] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:61
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.InvalidCoinPartitionRejectsTheWholeCapturedCandidate (System.String defect) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:28
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3189" name="InvalidCoinPartitionRejectsTheWholeCapturedCandidate(&quot;active-view&quot;)" fullname="Game.Multiplayer.Tests.RunCoinCheckpointTests.InvalidCoinPartitionRejectsTheWholeCapturedCandidate(&quot;active-view&quot;)" methodname="InvalidCoinPartitionRejectsTheWholeCapturedCandidate" classname="Game.Multiplayer.Tests.RunCoinCheckpointTests" runstate="Runnable" seed="619258487" result="Failed" start-time="2026-11-03 03:56:53Z" end-time="2026-11-03 03:56:53Z" duration="0.000252" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少显式Coin事实字段:Coins
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCoinCheckpointTests.Set (System.Object value, System.String name, System.Object content) [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:70
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.Input () [0x000a1] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:61
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.InvalidCoinPartitionRejectsTheWholeCapturedCandidate (System.String defect) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:28
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="3183" name="MissingCoinPartitionCannotMasqueradeAsKnownEmptyWorld" fullname="Game.Multiplayer.Tests.RunCoinCheckpointTests.MissingCoinPartitionCannotMasqueradeAsKnownEmptyWorld" methodname="MissingCoinPartitionCannotMasqueradeAsKnownEmptyWorld" classname="Game.Multiplayer.Tests.RunCoinCheckpointTests" runstate="Runnable" seed="738795672" result="Failed" start-time="2026-11-03 03:56:53Z" end-time="2026-11-03 03:56:53Z" duration="0.000467" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少显式Coin事实字段:Coins
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCoinCheckpointTests.Set (System.Object value, System.String name, System.Object content) [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:70
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.Input () [0x000a1] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:61
+at Game.Multiplayer.Tests.RunCoinCheckpointTests.MissingCoinPartitionCannotMasqueradeAsKnownEmptyWorld () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCoinCheckpointTests.cs:24
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

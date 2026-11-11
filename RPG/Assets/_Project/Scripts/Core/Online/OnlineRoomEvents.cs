@@ -1,6 +1,6 @@
 namespace Game.Core
 {
-    public enum OnlineRoomAction : byte { Ready, Start, Cancel, Disconnect, Reconnect, Observe }
+    public enum OnlineRoomAction : byte { Ready, Start, Cancel, Disconnect, Reconnect, Observe, ExitRun }
     public enum OnlineRoomPhase : byte { None, Matching, Lobby, Starting, Connecting, Connected, Disconnected, Error }
 
     /// <summary>UI只传意图，不传Token/玩家ID或任意Scene；Multiplayer从真实Session取得身份。</summary>
@@ -16,7 +16,7 @@ namespace Game.Core
     {
         public int PortalId;
         public OnlineRoomPhase Phase;
-        public bool Busy, SelfReady, CanStart;
+        public bool Busy, SelfReady, CanStart, SinglePlayer;
         public string RoomId, Status;
         public OnlineRoomMemberView[] Members;
         public ulong ActorId;

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-31 10:30:31Z" end-time="2026-10-31 10:30:34Z" duration="2.5927861">
+  <test-suite type="TestSuite" id="1959" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="861" result="Failed" site="Child" start-time="2026-10-31 10:30:31Z" end-time="2026-10-31 10:30:34Z" duration="2.592786" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1952" name="Game.Run.PlayMode.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.PlayMode.Tests.dll" runstate="Runnable" testcasecount="840" result="Failed" site="Child" start-time="2026-10-31 10:30:31Z" end-time="2026-10-31 10:30:34Z" duration="2.576376" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25660" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1953" name="Game" fullname="Game" runstate="Runnable" testcasecount="840" result="Failed" site="Child" start-time="2026-10-31 10:30:31Z" end-time="2026-10-31 10:30:34Z" duration="2.569995" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1954" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="840" result="Failed" site="Child" start-time="2026-10-31 10:30:31Z" end-time="2026-10-31 10:30:34Z" duration="2.550235" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1955" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="840" result="Failed" site="Child" start-time="2026-10-31 10:30:31Z" end-time="2026-10-31 10:30:34Z" duration="2.533649" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1198" name="FormalDungeonWorldPlayModeTests" fullname="Game.Run.Tests.FormalDungeonWorldPlayModeTests" classname="Game.Run.Tests.FormalDungeonWorldPlayModeTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-31 10:30:31Z" end-time="2026-10-31 10:30:34Z" duration="2.514106" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1199" name="P7OriginalEntryActivatesOnlyTheFirstTwoOfTwelveAuthoredEnemies" fullname="Game.Run.Tests.FormalDungeonWorldPlayModeTests.P7OriginalEntryActivatesOnlyTheFirstTwoOfTwelveAuthoredEnemies" methodname="P7OriginalEntryActivatesOnlyTheFirstTwoOfTwelveAuthoredEnemies" classname="Game.Run.Tests.FormalDungeonWorldPlayModeTests" runstate="Runnable" seed="790112515" result="Failed" start-time="2026-10-31 10:30:31Z" end-time="2026-10-31 10:30:33Z" duration="1.795610" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[Unhandled log message: '[Error] [Rendering] Gas Renderer 缺少初始化世界或 Material。'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                  <stack-trace><![CDATA[Game.Core.GameLog:Error (string,string) (at Assets/_Project/Scripts/Core/GameLog.cs:28)
+Game.Rendering.GasFieldVolumeRenderer:Start () (at Assets/_Project/Scripts/Rendering/ElementField/GasFieldVolumeRenderer.cs:68)
+
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Rendering] Gas Renderer 缺少初始化世界或 Material。
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+[Combat] 受击动画状态名为空，CrossFade 将无法切换动画
+]]></output>
+              </test-case>
+              <test-case id="1200" name="P8VisibleBossStartsOnlyAfterRealSafetyVolumeExit" fullname="Game.Run.Tests.FormalDungeonWorldPlayModeTests.P8VisibleBossStartsOnlyAfterRealSafetyVolumeExit" methodname="P8VisibleBossStartsOnlyAfterRealSafetyVolumeExit" classname="Game.Run.Tests.FormalDungeonWorldPlayModeTests" runstate="Runnable" seed="1634015930" result="Failed" start-time="2026-10-31 10:30:33Z" end-time="2026-10-31 10:30:34Z" duration="0.693955" asserts="0">
+                <properties>
+                  <property name="_JOINTYPE" value="UnityCombinatorial" />
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[Unhandled log message: '[Error] [Rendering] Gas Renderer 缺少初始化世界或 Material。'. Use UnityEngine.TestTools.LogAssert.Expect]]></message>
+                  <stack-trace><![CDATA[Game.Core.GameLog:Error (string,string) (at Assets/_Project/Scripts/Core/GameLog.cs:28)
+Game.Rendering.GasFieldVolumeRenderer:Start () (at Assets/_Project/Scripts/Rendering/ElementField/GasFieldVolumeRenderer.cs:68)
+
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[Rendering] Gas Renderer 缺少初始化世界或 Material。
+Saving results to: Temp/SinglePlayer/playmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

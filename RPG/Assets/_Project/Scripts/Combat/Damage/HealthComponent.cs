@@ -65,7 +65,8 @@ namespace Game.Combat
         public void ReceiveHit(in DamageRequest req)
         {
             // ── 1. 入口拦截 ──
-            if (_execution.Mode == CombatExecutionMode.Replica || !IsAlive || _isInvulnerable) return;
+            // ReceiveHit 也可能由同步事件直接调用，不能只依赖外层 Tick 已检查过世界权限。
+            if (!_execution.AllowsGameplayWrites || !IsAlive || _isInvulnerable) return;
 
             // ── 2. 纯计算 ──
             // DamagePipeline 是无副作用的静态工具：只根据 req 和 defenseProfile 算出最终伤害结果，不直接碰 MonoBehaviour 状态。

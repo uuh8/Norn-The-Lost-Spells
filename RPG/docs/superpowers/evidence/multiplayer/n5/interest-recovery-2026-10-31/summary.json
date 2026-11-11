@@ -1,0 +1,62 @@
+{
+  "RecordedUtc": "2026-10-31T12:48:36.019747+00:00",
+  "Scope": "Contract audit and independent ReplicaStore eviction version fence; production spatial path paused",
+  "StoreRed": {
+    "Passed": 22,
+    "Failed": 4
+  },
+  "StoreGreen": {
+    "Passed": 26,
+    "Failed": 0
+  },
+  "NewCases": 13,
+  "NewRealRedCases": 4,
+  "EditMode": {
+    "Fixtures": 26,
+    "Passed": 307,
+    "Failed": 0
+  },
+  "PlayMode": "Not run this stage",
+  "Native": "Not built or run this stage",
+  "RuntimeModified": [
+    "ElementField/Replication/WorldReplicaStore.cs"
+  ],
+  "TestsModified": [
+    "Tests/ElementField/WorldReplicaStoreTests.cs"
+  ],
+  "SchemaChanged": false,
+  "NewSourceDirectories": 0,
+  "PreservedFiles": 12,
+  "FormalAssetsUnchanged": 13,
+  "DocumentLinksChecked": 39,
+  "MissingLinks": 0,
+  "TextDiffCheckExitCode": 0,
+  "Blockers": [
+    {
+      "Action": "Production authenticated position -> Interest bounds and chunk selection",
+      "Target": "WorldReplicationNetworkChannel/Coordinator",
+      "Reason": "No confirmed network radius/shape/chunk intersection choice",
+      "Status": "Pending user decision; not attempted"
+    },
+    {
+      "Action": "Production exit/re-entry and late-page isolation; Native spatial validation",
+      "Target": "Shared WorldPage/Codec/Reset and Client/DS consumers",
+      "Reason": "No approved independent Interest lifecycle/recovery identifier; existing delete/ConnectionEpoch/SnapshotId meanings preserved",
+      "Status": "Pending user decision; not attempted"
+    }
+  ],
+  "PermissionBlocker": false,
+  "N5Complete": false,
+  "NoCommitOrPush": true,
+  "Remaining": [
+    "Formal spatial path and Native per-end evidence",
+    "Dynamic four-player Interest/evict/re-entry",
+    "Continuous reactions/Native delta/fault/stress/performance",
+    "Same-process auto reconnect",
+    "Consumed resources not refilled",
+    "P8 Native material path/full player path",
+    "Known DS Built-in Resource startup errors",
+    "N4/N6/remote platform Gates"
+  ],
+  "PreviousNativeEvidence": "authenticated-material-channel-2026-10-31: P7 stable checkpoint only; not rerun after this Store fix"
+}

@@ -11,6 +11,7 @@ using Norn.Business.Features.Accounts;
 using Norn.Business.Features.Inventory;
 using Norn.Business.Features.Rooms;
 using Norn.Business.Features.Runs;
+using Norn.Business.Features.Trading;
 using Norn.Business.Infrastructure;
 
 namespace Norn.Business;
@@ -30,6 +31,7 @@ public sealed class Program
             builder.Services.AddSingleton<ContentManifestValidator>();
             builder.Services.AddSingleton<AccountService>();
             builder.Services.AddSingleton<InventoryService>();
+            builder.Services.AddSingleton<AccountShopService>();
             builder.Services.AddSingleton<RoomTransactions>();
             builder.Services.AddSingleton<RoomService>();
             builder.Services.AddSingleton<RoomMatchmakingService>();
@@ -37,6 +39,8 @@ public sealed class Program
             builder.Services.AddSingleton<RoomLauncher>();
             builder.Services.AddHostedService<RoomInstanceSupervisor>();
             builder.Services.AddSingleton<RunEntryService>();
+            builder.Services.AddSingleton<RunAssetCheckpointService>(); // 独立权威检查点Journal，不在此决定退出/死亡/撤离结算。
+            builder.Services.AddSingleton<RunMemberExitService>(); // 仅已批准个人ESC最终提交，不承载死亡/通关规则。
             builder.Services.ConfigureHttpJsonOptions(options =>
             {
                 options.SerializerOptions.IncludeFields = true;
@@ -79,6 +83,7 @@ public sealed class Program
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapOnlineEndpoints();
+            app.MapAccountShopEndpoints();
             if (online.RoomsEnabled && online.Instances.Enabled) app.MapInstanceEndpoints();
             if (online.RoomsEnabled) app.MapRoomEndpoints(); // N2-2真实实例与入场尚未接好，部署默认不开放房间。
         }

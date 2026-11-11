@@ -19,9 +19,11 @@ public sealed class OnlineProfileTests
         using var attempted = await client.PostAsync("/api/online/accounts", body);
         Assert.Equal(HttpStatusCode.BadRequest, attempted.StatusCode);
         var player = await factory.NewPlayerAsync(username);
-        Assert.Equal(0, player.Profile.Gold);
+        Assert.Equal(10000, player.Profile.Gold);
         Assert.Equal(1u, player.Profile.Version);
-        Assert.Equal(2, player.Profile.Items.Length);
+        // 注册事务现已同时提交一杖一卡和唯一基础包；这三项仍全部来自服务端目录，绝不导入LocalSave。
+        Assert.Equal(3, player.Profile.Items.Length);
+        Assert.Single(player.Profile.Items, item => item.LocationKind == 4 && item.EntryBoundBackpack);
         Assert.All(player.Profile.Items, item => Assert.Contains(factory.Manifest.Items, definition => definition.ContentId == item.ContentId));
     }
 

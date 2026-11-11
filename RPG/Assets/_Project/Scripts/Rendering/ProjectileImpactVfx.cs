@@ -35,7 +35,10 @@ namespace Game.Rendering
                 _projectile = GetComponent<ProjectileBase>();
 
             if (_projectile != null)
+            {
                 _projectile.Impacted += OnProjectileImpacted;
+                _projectile.ReplicaImpactPresented += OnReplicaImpactPresented;
+            }
         }
 
         private void Start()
@@ -52,7 +55,10 @@ namespace Game.Rendering
         {
             // Projectile 可能通过 Destroy 离场；成对退订可避免对象池或重新启用时重复生成 VFX。
             if (_projectile != null)
+            {
                 _projectile.Impacted -= OnProjectileImpacted;
+                _projectile.ReplicaImpactPresented -= OnReplicaImpactPresented;
+            }
         }
 
         private void OnProjectileImpacted(Vector3 hitPoint, Vector3 hitDirection)
@@ -61,6 +67,10 @@ namespace Game.Rendering
             // Decal，应扩展独立的 Surface Impact 契约，而不是把 hitDirection 当成 Surface Normal。
             SpawnImpact(hitPoint);
         }
+
+        // Replica只重放当前Prefab已有的纯视觉配置；不回调Projectile的玩法命中通道。
+        // 现有VFX只使用命中点和美术旋转，不猜造网络消息没有携带的接触法线/命中方向。
+        private void OnReplicaImpactPresented(Vector3 hitPoint) { SpawnImpact(hitPoint); }
 
         /// <summary>
         /// 生成一次命中特效。保留 Prefab 根节点的美术旋转，避免 WaterExplosion 已配置的

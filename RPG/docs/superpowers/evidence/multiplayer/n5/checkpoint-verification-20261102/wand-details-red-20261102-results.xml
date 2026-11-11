@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Failed(Child)" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 22:13:45Z" end-time="2026-11-02 22:13:46Z" duration="0.8682875">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3968" result="Failed" site="Child" start-time="2026-11-02 22:13:45Z" end-time="2026-11-02 22:13:46Z" duration="0.868288" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="5433" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="977" result="Failed" site="Child" start-time="2026-11-02 22:13:45Z" end-time="2026-11-02 22:13:46Z" duration="0.745991" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="5434" name="Game" fullname="Game" runstate="Runnable" testcasecount="977" result="Failed" site="Child" start-time="2026-11-02 22:13:45Z" end-time="2026-11-02 22:13:46Z" duration="0.638473" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="5435" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="977" result="Failed" site="Child" start-time="2026-11-02 22:13:45Z" end-time="2026-11-02 22:13:46Z" duration="0.540534" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="5436" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="977" result="Failed" site="Child" start-time="2026-11-02 22:13:45Z" end-time="2026-11-02 22:13:46Z" duration="0.440588" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="4487" name="InventoryWandDetailsTests" fullname="Game.Run.Tests.InventoryWandDetailsTests" classname="Game.Run.Tests.InventoryWandDetailsTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-11-02 22:13:45Z" end-time="2026-11-02 22:13:46Z" duration="0.339304" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="4495" name="LongDetailsStayInsideParentAndCanScrollToLastTrait" fullname="Game.Run.Tests.InventoryWandDetailsTests.LongDetailsStayInsideParentAndCanScrollToLastTrait" classname="Game.Run.Tests.InventoryWandDetailsTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-02 22:13:45Z" end-time="2026-11-02 22:13:46Z" duration="0.184932" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="4493" name="LongDetailsStayInsideParentAndCanScrollToLastTrait(360,230)" fullname="Game.Run.Tests.InventoryWandDetailsTests.LongDetailsStayInsideParentAndCanScrollToLastTrait(360,230)" methodname="LongDetailsStayInsideParentAndCanScrollToLastTrait" classname="Game.Run.Tests.InventoryWandDetailsTests" runstate="Runnable" seed="1111279443" result="Failed" start-time="2026-11-02 22:13:46Z" end-time="2026-11-02 22:13:46Z" duration="0.075841" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  正式Popup缺少接收选中实例值快照的只读入口。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.InventoryWandDetailsTests.Show (Game.UI.InventoryInfoPopup popup, Game.Run.InventoryItemSnapshot& item) [0x00055] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\InventoryWandDetailsTests.cs:183
+at Game.Run.Tests.InventoryWandDetailsTests.LongDetailsStayInsideParentAndCanScrollToLastTrait (System.Int32 width, System.Int32 height) [0x000a0] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\InventoryWandDetailsTests.cs:137
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="4494" name="LongDetailsStayInsideParentAndCanScrollToLastTrait(240,180)" fullname="Game.Run.Tests.InventoryWandDetailsTests.LongDetailsStayInsideParentAndCanScrollToLastTrait(240,180)" methodname="LongDetailsStayInsideParentAndCanScrollToLastTrait" classname="Game.Run.Tests.InventoryWandDetailsTests" runstate="Runnable" seed="208179733" result="Failed" start-time="2026-11-02 22:13:46Z" end-time="2026-11-02 22:13:46Z" duration="0.002757" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  正式Popup缺少接收选中实例值快照的只读入口。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.InventoryWandDetailsTests.Show (Game.UI.InventoryInfoPopup popup, Game.Run.InventoryItemSnapshot& item) [0x00055] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\InventoryWandDetailsTests.cs:183
+at Game.Run.Tests.InventoryWandDetailsTests.LongDetailsStayInsideParentAndCanScrollToLastTrait (System.Int32 width, System.Int32 height) [0x000a0] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\InventoryWandDetailsTests.cs:137
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="4496" name="NonWandAndLegacyStringEntryKeepTheOriginalPlaceholder" fullname="Game.Run.Tests.InventoryWandDetailsTests.NonWandAndLegacyStringEntryKeepTheOriginalPlaceholder" methodname="NonWandAndLegacyStringEntryKeepTheOriginalPlaceholder" classname="Game.Run.Tests.InventoryWandDetailsTests" runstate="Runnable" seed="319836706" result="Failed" start-time="2026-11-02 22:13:46Z" end-time="2026-11-02 22:13:46Z" duration="0.003256" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  正式Popup缺少接收选中实例值快照的只读入口。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.InventoryWandDetailsTests.Show (Game.UI.InventoryInfoPopup popup, Game.Run.InventoryItemSnapshot& item) [0x00055] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\InventoryWandDetailsTests.cs:183
+at Game.Run.Tests.InventoryWandDetailsTests.NonWandAndLegacyStringEntryKeepTheOriginalPlaceholder () [0x00076] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\InventoryWandDetailsTests.cs:163
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4492" name="OriginalRightClickReadsCurrentSourceAndReopeningDoesNotReuseAnotherSource" fullname="Game.Run.Tests.InventoryWandDetailsTests.OriginalRightClickReadsCurrentSourceAndReopeningDoesNotReuseAnotherSource" methodname="OriginalRightClickReadsCurrentSourceAndReopeningDoesNotReuseAnotherSource" classname="Game.Run.Tests.InventoryWandDetailsTests" runstate="Runnable" seed="1723360935" result="Failed" start-time="2026-11-02 22:13:46Z" end-time="2026-11-02 22:13:46Z" duration="0.037495" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: String containing "237.25"
+  But was:  "详细信息待开发"
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.InventoryWandDetailsTests.OriginalRightClickReadsCurrentSourceAndReopeningDoesNotReuseAnotherSource () [0x00119] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\InventoryWandDetailsTests.cs:117
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4491" name="PopupShowsAllFixedParametersAndTraitsWithoutSortingOrRoundingAwayFractions" fullname="Game.Run.Tests.InventoryWandDetailsTests.PopupShowsAllFixedParametersAndTraitsWithoutSortingOrRoundingAwayFractions" methodname="PopupShowsAllFixedParametersAndTraitsWithoutSortingOrRoundingAwayFractions" classname="Game.Run.Tests.InventoryWandDetailsTests" runstate="Runnable" seed="737387243" result="Failed" start-time="2026-11-02 22:13:46Z" end-time="2026-11-02 22:13:46Z" duration="0.002699" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  正式Popup缺少接收选中实例值快照的只读入口。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.InventoryWandDetailsTests.Show (Game.UI.InventoryInfoPopup popup, Game.Run.InventoryItemSnapshot& item) [0x00055] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\InventoryWandDetailsTests.cs:183
+at Game.Run.Tests.InventoryWandDetailsTests.PopupShowsAllFixedParametersAndTraitsWithoutSortingOrRoundingAwayFractions () [0x0006e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\InventoryWandDetailsTests.cs:92
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4488" name="RolledSnapshotKeepsEveryFixedValueAndOrderedImmutableTraits" fullname="Game.Run.Tests.InventoryWandDetailsTests.RolledSnapshotKeepsEveryFixedValueAndOrderedImmutableTraits" methodname="RolledSnapshotKeepsEveryFixedValueAndOrderedImmutableTraits" classname="Game.Run.Tests.InventoryWandDetailsTests" runstate="Runnable" seed="788196759" result="Failed" start-time="2026-11-02 22:13:46Z" end-time="2026-11-02 22:13:46Z" duration="0.002271" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少随当前实例导出的不可变固定属性，不能让UI按ContentId重取模板。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.InventoryWandDetailsTests.Fixed (Game.Run.InventoryItemSnapshot& snapshot) [0x00016] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\InventoryWandDetailsTests.cs:39
+at Game.Run.Tests.InventoryWandDetailsTests.RolledSnapshotKeepsEveryFixedValueAndOrderedImmutableTraits () [0x0006e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\InventoryWandDetailsTests.cs:54
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4490" name="SameContentDifferentInstancesKeepTheirOwnFixedValues" fullname="Game.Run.Tests.InventoryWandDetailsTests.SameContentDifferentInstancesKeepTheirOwnFixedValues" methodname="SameContentDifferentInstancesKeepTheirOwnFixedValues" classname="Game.Run.Tests.InventoryWandDetailsTests" runstate="Runnable" seed="640298988" result="Failed" start-time="2026-11-02 22:13:46Z" end-time="2026-11-02 22:13:46Z" duration="0.001529" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少随当前实例导出的不可变固定属性，不能让UI按ContentId重取模板。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.InventoryWandDetailsTests.Fixed (Game.Run.InventoryItemSnapshot& snapshot) [0x00016] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\InventoryWandDetailsTests.cs:39
+at Game.Run.Tests.InventoryWandDetailsTests.SameContentDifferentInstancesKeepTheirOwnFixedValues () [0x0009d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\InventoryWandDetailsTests.cs:83
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4489" name="TemplateSnapshotUsesFrozenCatalogInsteadOfLaterAuthoringEdits" fullname="Game.Run.Tests.InventoryWandDetailsTests.TemplateSnapshotUsesFrozenCatalogInsteadOfLaterAuthoringEdits" methodname="TemplateSnapshotUsesFrozenCatalogInsteadOfLaterAuthoringEdits" classname="Game.Run.Tests.InventoryWandDetailsTests" runstate="Runnable" seed="325532850" result="Failed" start-time="2026-11-02 22:13:46Z" end-time="2026-11-02 22:13:46Z" duration="0.002290" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少随当前实例导出的不可变固定属性，不能让UI按ContentId重取模板。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.InventoryWandDetailsTests.Fixed (Game.Run.InventoryItemSnapshot& snapshot) [0x00016] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\InventoryWandDetailsTests.cs:39
+at Game.Run.Tests.InventoryWandDetailsTests.TemplateSnapshotUsesFrozenCatalogInsteadOfLaterAuthoringEdits () [0x0009b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\InventoryWandDetailsTests.cs:71
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

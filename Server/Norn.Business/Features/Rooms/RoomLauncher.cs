@@ -10,6 +10,19 @@ namespace Norn.Business.Features.Rooms;
 /// <summary>数据库唯一实例声明决定谁可 Start；启动发生在预留 Transaction 提交之后。</summary>
 public sealed class RoomLauncher(RoomService rooms, RunEntryService entries, RoomInstanceService instances, OnlineOptions options, OnlineDatabase database)
 {
+    public async Task<RoomReply> StartSinglePlayerAsync(string player, SinglePlayerEntryRequest request, CancellationToken ct, string? practiceSessionScope = null)
+    {
+        if (!options.Instances.Enabled) throw new OnlineFailure(503, "InstancesDisabled");
+        if (request == null || request.DungeonId != "home" && !options.DungeonIds.Contains(request.DungeonId, StringComparer.Ordinal)) throw new OnlineFailure(400, "UnknownDungeon");
+        var reserved = await entries.PrepareSingleAsync(player, request, ct, practiceSessionScope);
+        var view = await rooms.GetAsync(player, reserved.RoomId, ct);
+        if (view.SinglePlayer && view.State == "Open" && string.IsNullOrEmpty(view.RunId)) return view; // 原命令启动失败的大厅，允许本人明确取消，不新起Run。
+        // 已结束命令只能返回既成事实/明确失败，不因原ID重放再发装备或建新Run。
+        if (!view.SinglePlayer || view.RunId != reserved.RunId || view.RoomEpoch != reserved.RoomEpoch
+            || view.State is not ("Starting" or "Running")) throw new OnlineFailure(409, "SinglePlayerEntryFinished");
+        if (view.State == "Starting") await StartReservedAsync(reserved, ct);
+        return await rooms.GetAsync(player, reserved.RoomId, ct);
+    }
     public async Task<RoomInstanceReply> StartRunAsync(string player, string room, uint revision, CancellationToken ct)
     {
         var view = await rooms.GetAsync(player, room, ct);

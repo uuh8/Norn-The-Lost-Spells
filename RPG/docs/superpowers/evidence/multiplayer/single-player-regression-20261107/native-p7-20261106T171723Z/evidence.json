@@ -1,0 +1,268 @@
+{
+  "CaseId": "20261106-171724-c86eb0d7",
+  "Passed": false,
+  "Failure": "ContainerImpactCheckpointUnconfirmed",
+  "Stage": "ContainerImpactsConfirmed",
+  "CoreOnly": false,
+  "DungeonId": "p7",
+  "EntryCount": 1,
+  "PlayerId": "e473226914d4414b9f3de995768c04c5",
+  "RunId": "358ed161ff9a458582c6eb8034ceda21",
+  "InstanceId": "86003af76e4d434db8a45e75471f059d",
+  "Checks": [
+    {
+      "Stage": "AccountLoadoutPurchase",
+      "Passed": true,
+      "InstanceId": "342eedebc8a348e4aad1ecc4907ac672",
+      "ContentId": "wandtest.wand.b",
+      "ActualLocationKind": 1,
+      "ActualParentId": "746e3b19f13f4c55b3a2c045a5c4c8bc",
+      "InventoryVersion": 2,
+      "WarehouseQuantity": 0
+    },
+    {
+      "Stage": "AccountLoadoutPurchase",
+      "Passed": true,
+      "InstanceId": "06a51dc2bdd441918505f5c5b226c9a7",
+      "ContentId": "containertest.bottle",
+      "ActualLocationKind": 1,
+      "ActualParentId": "746e3b19f13f4c55b3a2c045a5c4c8bc",
+      "InventoryVersion": 4,
+      "WarehouseQuantity": 0
+    },
+    {
+      "Stage": "AccountLoadoutPurchase",
+      "Passed": true,
+      "InstanceId": "9d1d82c900234cf5b837b9f7fba68259",
+      "ContentId": "containertest.bottle",
+      "ActualLocationKind": 1,
+      "ActualParentId": "746e3b19f13f4c55b3a2c045a5c4c8bc",
+      "InventoryVersion": 6,
+      "WarehouseQuantity": 0
+    },
+    {
+      "Stage": "AccountLoadoutPurchase",
+      "Passed": true,
+      "InstanceId": "e572de703a1b464e88e1cff86f0ff80f",
+      "ContentId": "containertest.bottle",
+      "ActualLocationKind": 1,
+      "ActualParentId": "746e3b19f13f4c55b3a2c045a5c4c8bc",
+      "InventoryVersion": 8,
+      "WarehouseQuantity": 0
+    },
+    {
+      "Stage": "AccountTwoWandsThreeContainers",
+      "Passed": true,
+      "InitialGold": 10000,
+      "FinalGold": 9798,
+      "Bottles": [
+        "06a51dc2bdd441918505f5c5b226c9a7",
+        "9d1d82c900234cf5b837b9f7fba68259",
+        "e572de703a1b464e88e1cff86f0ff80f"
+      ],
+      "FilledContainers": 3,
+      "EmptyContainers": 0,
+      "AddedWaterGmu": 51,
+      "Covered": "Original shop HTTP purchases and confirmed Profile; the fourth empty bottle belongs to the later P7 entry reward"
+    },
+    {
+      "Stage": "OwnerReady",
+      "Passed": true,
+      "InventoryVersion": 13,
+      "SnapshotSequence": 1
+    },
+    {
+      "Stage": "NativeTwoWandsFourContainers",
+      "Passed": true,
+      "FilledContainers": 3,
+      "EmptyContainers": 1,
+      "AddedWaterGmu": 51,
+      "AccountBottles": [
+        "06a51dc2bdd441918505f5c5b226c9a7",
+        "9d1d82c900234cf5b837b9f7fba68259",
+        "e572de703a1b464e88e1cff86f0ff80f"
+      ],
+      "EntryRewardBottle": "6c323c24f0f24769bf6a4f371e1b69da",
+      "Covered": "Three purchased filled containers plus the original P7 slot-zero empty reward"
+    },
+    {
+      "Stage": "RenderedBadge30",
+      "Passed": true,
+      "InventoryVersion": 13,
+      "SnapshotSequence": 1
+    },
+    {
+      "Stage": "CastInstalled29",
+      "Passed": true,
+      "InventoryVersion": 14,
+      "SnapshotSequence": 2
+    },
+    {
+      "Stage": "RenderedBadge29",
+      "Passed": true,
+      "InventoryVersion": 14,
+      "SnapshotSequence": 2
+    },
+    {
+      "Stage": "CastInstalled28",
+      "Passed": true,
+      "InventoryVersion": 15,
+      "SnapshotSequence": 3
+    },
+    {
+      "Stage": "RenderedBadge28",
+      "Passed": true,
+      "InventoryVersion": 15,
+      "SnapshotSequence": 3
+    },
+    {
+      "Stage": "UiMoveSpellStorage",
+      "Passed": true,
+      "InventoryVersion": 16,
+      "SnapshotSequence": 4
+    },
+    {
+      "Stage": "UiMoveProgramSlot",
+      "Passed": true,
+      "InventoryVersion": 17,
+      "SnapshotSequence": 5
+    },
+    {
+      "Stage": "CardMovementCoverage",
+      "Covered": true,
+      "Reason": "Original UI callbacks and real receipts"
+    },
+    {
+      "Stage": "RenderedBadge28",
+      "Passed": true,
+      "InventoryVersion": 17,
+      "SnapshotSequence": 5
+    },
+    {
+      "Stage": "UiMoveProgramSlot",
+      "Passed": true,
+      "InventoryVersion": 18,
+      "SnapshotSequence": 6
+    },
+    {
+      "Stage": "EmptyFirstWandProgramWithFireOnSecond",
+      "Passed": true,
+      "EmptyProgramWandId": "79f73910ba7144eba24a884e6fa96e67",
+      "FireWandId": "342eedebc8a348e4aad1ecc4907ac672",
+      "FireCardId": "7068a4d7810e48a1b65e50174d7fd9b2",
+      "RemainingCharges": 28,
+      "Covered": "Original UI moved the same consumed Fire card from wand slot zero to wand slot one; no new card or charge refill"
+    },
+    {
+      "Stage": "SecondWandFireProgramInstalled",
+      "Passed": true,
+      "InventoryVersion": 18,
+      "SnapshotSequence": 6
+    },
+    {
+      "Stage": "UiMoveBackpack",
+      "Passed": true,
+      "InventoryVersion": 19,
+      "SnapshotSequence": 7
+    },
+    {
+      "Stage": "UiMoveEquippedWand",
+      "Passed": true,
+      "InventoryVersion": 20,
+      "SnapshotSequence": 8
+    },
+    {
+      "Stage": "UiMoveBackpack",
+      "Passed": true,
+      "InventoryVersion": 21,
+      "SnapshotSequence": 9
+    },
+    {
+      "Stage": "UiMoveShortcut",
+      "Passed": true,
+      "InventoryVersion": 22,
+      "SnapshotSequence": 10
+    },
+    {
+      "Stage": "UiMoveGround",
+      "Passed": true,
+      "InventoryVersion": 23,
+      "SnapshotSequence": 11
+    },
+    {
+      "Stage": "UiMoveBackpack",
+      "Passed": true,
+      "InventoryVersion": 24,
+      "SnapshotSequence": 12
+    },
+    {
+      "Stage": "UiMoveShortcut",
+      "Passed": true,
+      "InventoryVersion": 25,
+      "SnapshotSequence": 13
+    },
+    {
+      "Stage": "InventorySelection",
+      "Passed": true,
+      "InventoryVersion": 25,
+      "SnapshotSequence": 14
+    },
+    {
+      "Stage": "InventorySelection",
+      "Passed": true,
+      "InventoryVersion": 25,
+      "SnapshotSequence": 15
+    },
+    {
+      "Stage": "ContainerThrowOwnerInstalled",
+      "Passed": true,
+      "InventoryVersion": 27,
+      "SnapshotSequence": 17
+    },
+    {
+      "Stage": "InventorySelection",
+      "Passed": true,
+      "InventoryVersion": 27,
+      "SnapshotSequence": 18
+    },
+    {
+      "Stage": "ContainerThrowOwnerInstalled",
+      "Passed": true,
+      "InventoryVersion": 29,
+      "SnapshotSequence": 20
+    },
+    {
+      "Stage": "InventorySelection",
+      "Passed": true,
+      "InventoryVersion": 29,
+      "SnapshotSequence": 21
+    },
+    {
+      "Stage": "ContainerThrowOwnerInstalled",
+      "Passed": true,
+      "InventoryVersion": 31,
+      "SnapshotSequence": 23
+    },
+    {
+      "Stage": "UiMoveBackpack",
+      "Passed": true,
+      "InventoryVersion": 32,
+      "SnapshotSequence": 24
+    },
+    {
+      "Stage": "InventorySelection",
+      "Passed": true,
+      "InventoryVersion": 32,
+      "SnapshotSequence": 25
+    },
+    {
+      "Stage": "ContainerThrowOwnerInstalled",
+      "Passed": true,
+      "InventoryVersion": 34,
+      "SnapshotSequence": 27
+    }
+  ],
+  "HostErrors": [],
+  "RecordedAtUtc": "2026-11-06T17:20:25.6202889Z",
+  "Scope": "Real loopback Kestrel/MySQL/Native DS/Native Client and original UI callbacks; pointer Raycast and subjective combat feel are not covered"
+}

@@ -2,7 +2,10 @@ using System;
 using System.Reflection;
 using Game.Core;
 using Game.Skills;
+using Game.UI;
 using NUnit.Framework;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Game.Run.Tests
 {
@@ -99,6 +102,128 @@ namespace Game.Run.Tests
             Assert.That(state.CurrentMana, Is.EqualTo(37f));
         }
 
+        [TestCase(0L)]
+        [TestCase(10000L)]
+        [TestCase(long.MaxValue)]
+        public void OriginalBackpackWalletReadsCurrentSourceWithoutNarrowingBalance(long balance)
+        {
+            // 钱包只是现有Source的一项只读能力。用原目录/ReadModel保证库存合法，
+            // 不创建Repository、线上账号或会自动扣量的Authority Workspace。
+            var store = Store(Define("wallet.view.item", ItemKind.Wand));
+            var profile = new SinglePlayerProfile("wallet-view-player", store);
+            var read = new InventoryReadModel(profile, "wallet-view");
+            var source = new WalletPresentationSource(read, new WalletValue(balance));
+            var root = Track(new GameObject("Inactive wallet UI fixture")); root.SetActive(false);
+            var controller = root.AddComponent<SinglePlayerInventoryController>();
+            var view = root.AddComponent<BackpackWorkspaceView>();
+            var textRoot = Track(new GameObject("Wallet text", typeof(RectTransform), typeof(CanvasRenderer), typeof(Text)));
+            textRoot.SetActive(false); var text = textRoot.GetComponent<Text>();
+            view.Configure(null, text, null); controller.BindPresentationSource(source);
+            uint inventoryVersion = store.Version;
+
+            view.Refresh(controller, Array.Empty<InventoryItemSnapshot>(), 0, null);
+
+            Assert.That(text.text, Is.EqualTo(balance.ToString()), "必须沿当前Source读完整long；合法0不能显示不可用。");
+            Assert.That(store.Version, Is.EqualTo(inventoryVersion));
+            Assert.That(profile.Currency, Is.Zero, "显示外部钱包不把余额写入另一份本地Profile。");
+            Assert.That(source.WalletReadOnly.Currency, Is.EqualTo(balance));
+        }
+
+        [Test]
+        public void OriginalBackpackWalletSwitchesSourceAndExplicitUnbindClearsPreviousValue()
+        {
+            var store = Store(Define("wallet.switch.item", ItemKind.Wand));
+            var read = new InventoryReadModel(new SinglePlayerProfile("wallet-switch-player", store), "wallet-switch");
+            var first = new WalletPresentationSource(read, new WalletValue(10000));
+            var second = new WalletPresentationSource(read, new WalletValue(23));
+            var root = Track(new GameObject("Inactive wallet switch fixture")); root.SetActive(false);
+            var controller = root.AddComponent<SinglePlayerInventoryController>();
+            // 模拟Inspector仍有另一份本地Session引用，证明显式缺能力/解绑不会静默回落。
+            // 此Session从不初始化、无Repository且对象始终inactive，只持有夹具内存余额。
+            var local = root.AddComponent<SinglePlayerInventorySession>();
+            typeof(SinglePlayerInventorySession).GetField("_profile", BindingFlags.Instance | BindingFlags.NonPublic)
+                .SetValue(local, new SinglePlayerProfile("local-wallet-sentinel", store, currency: 777777));
+            typeof(SinglePlayerInventoryController).GetField("_session", BindingFlags.Instance | BindingFlags.NonPublic)
+                .SetValue(controller, local);
+            var view = root.AddComponent<BackpackWorkspaceView>();
+            var textRoot = Track(new GameObject("Wallet switch text", typeof(RectTransform), typeof(CanvasRenderer), typeof(Text)));
+            textRoot.SetActive(false); var text = textRoot.GetComponent<Text>(); view.Configure(null, text, null);
+            controller.BindPresentationSource(first); view.Refresh(controller, Array.Empty<InventoryItemSnapshot>(), 0, null);
+            Assert.That(text.text, Is.EqualTo("10000"));
+            controller.BindPresentationSource(second); view.Refresh(controller, Array.Empty<InventoryItemSnapshot>(), 0, null);
+            Assert.That(text.text, Is.EqualTo("23"));
+
+            // 缺钱包能力和显式解绑均不能继续显示旧Source的23，也不能伪造为余额0。
+            controller.BindPresentationSource(new WalletPresentationSource(read, null));
+            view.Refresh(controller, Array.Empty<InventoryItemSnapshot>(), 0, null);
+            Assert.That(text.text, Is.EqualTo("—"));
+            controller.BindPresentationSource(first); view.Refresh(controller, Array.Empty<InventoryItemSnapshot>(), 0, null);
+            Assert.That(text.text, Is.EqualTo("10000"));
+            controller.BindPresentationSource(null); view.Refresh(controller, Array.Empty<InventoryItemSnapshot>(), 0, null);
+            Assert.That(text.text, Is.EqualTo("—"));
+            Assert.That(controller.PresentationSource, Is.Null);
+            Assert.That(local.Currency, Is.EqualTo(777777), "外部钱包展示/解绑既不采用本地值也不写回本地余额。");
+        }
+
+        [Test]
+        public void OriginalBackpackWalletDoesNotRewriteTextWhenBalanceAndAvailabilityStayUnchanged()
+        {
+            var store = Store(Define("wallet.stable.item", ItemKind.Wand));
+            var read = new InventoryReadModel(new SinglePlayerProfile("wallet-stable-player", store), "wallet-stable");
+            var wallet = new WalletValue(10000);
+            var source = new WalletPresentationSource(read, wallet);
+            var root = Track(new GameObject("Inactive stable wallet fixture")); root.SetActive(false);
+            var controller = root.AddComponent<SinglePlayerInventoryController>();
+            var view = root.AddComponent<BackpackWorkspaceView>();
+            var textRoot = Track(new GameObject("Wallet stable text", typeof(RectTransform), typeof(CanvasRenderer), typeof(Text)));
+            textRoot.SetActive(false); var text = textRoot.GetComponent<Text>(); view.Configure(null, text, null);
+            controller.BindPresentationSource(source); view.Refresh(controller, Array.Empty<InventoryItemSnapshot>(), 0, null);
+            Assert.That(text.text, Is.EqualTo("10000"));
+            // 只在夹具中放哨兵，区分稳定分支提前return与重新ToString后赋同值的伪稳定。
+            // 不据此声称整个Unity帧零GC；这里只证原文本缓存路径不重复写入。
+            text.text = "stable-text-sentinel";
+            var refresh = typeof(BackpackWorkspaceView).GetMethod("RefreshWallet", BindingFlags.Instance | BindingFlags.NonPublic);
+            for (int i = 0; i < 4; i++) refresh.Invoke(view, null);
+            Assert.That(text.text, Is.EqualTo("stable-text-sentinel"));
+            wallet.Value = 10001;
+            refresh.Invoke(view, null);
+            Assert.That(text.text, Is.EqualTo("10001"), "真实余额变化仍必须立即刷新。");
+        }
+
+        /// <summary>借用既有合法库存读口，仅提供钱包能力；不实现资产写入/保存或模拟网络余额。</summary>
+        private sealed class WalletPresentationSource : IInventoryPresentationSource
+        {
+            public WalletPresentationSource(IInventoryReadOnly read, IWalletReadOnly wallet) { ReadOnly = read; WalletReadOnly = wallet; }
+            public IInventoryReadOnly ReadOnly { get; }
+            public IWalletReadOnly WalletReadOnly { get; }
+            public IToolbeltReadOnly ToolbeltReadOnly => null;
+            public IWandLoadoutReadOnly WandsReadOnly => null;
+            public ISpellUseReadOnly SpellUsesReadOnly => null;
+            public bool UseSpellProgrammingV2 => true;
+            public bool CanAccessWarehouse => false;
+            public string WorldSceneKey => "wallet-view";
+            public string EquippedBackpackId => null;
+            public int SpellStorageCapacity => 0;
+            public string InitializationMessage => "read-only wallet view fixture";
+            public bool HasUnsavedChanges => false;
+            public bool TryCaptureWandResearch(string id, out WandResearchSnapshot snapshot) { snapshot = default; return false; }
+            public bool TryCopyContainer(string id, MaterialAmount[] buffer, out int count, out ulong total, out ulong capacity)
+            { count = 0; total = capacity = 0; return false; }
+        }
+        private sealed class WalletValue : IWalletReadOnly
+        {
+            private long _value;
+            private uint _version = 1;
+            public long Value
+            {
+                get => _value;
+                set { if (_value == value) return; _value = value; _version++; }
+            }
+            public WalletValue(long value) => _value = value;
+            public long Currency => _value;
+            public uint Version => _version;
+        }
+
         private IInventoryPresentationSource CreateSource()
         {
             var identity = Activator.CreateInstance(Contract("OnlineInventoryPresentationIdentity"), "run", "player", 1ul,
@@ -124,7 +249,8 @@ namespace Game.Run.Tests
         }
         private static OnlineOwnedAssetSnapshot Assets(int charges) => new OnlineOwnedAssetSnapshot
         {
-            SchemaVersion = 1, ActorId = 1, RunId = "run", PlayerId = "player", InventoryId = "inventory", InventoryVersion = 9,
+            SchemaVersion = OnlineOwnedAssetSnapshot.CurrentSchemaVersion, ActorId = 1, RunId = "run", PlayerId = "player", InventoryId = "inventory", InventoryVersion = 9,
+            Gold = 0, CurrencyVersion = 1,
             GameplayConfigHash = Hash, SelectedWandInstanceId = "wand", Items = new[]
             {
                 new OnlineOwnedItemSnapshot { InstanceId = "wand", ContentId = "bridge.wand", Revision = 7,

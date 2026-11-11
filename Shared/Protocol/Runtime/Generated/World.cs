@@ -24,7 +24,7 @@ namespace Game.NetworkProtocol {
     static WorldReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "Cgt3b3JsZC5wcm90bxINbm9ybi5wcm90b2NvbCKdAwoQV29ybGRQYWdlTWVz",
+            "Cgt3b3JsZC5wcm90bxINbm9ybi5wcm90b2NvbCK5AwoQV29ybGRQYWdlTWVz",
             "c2FnZRIYChBwcm90b2NvbF92ZXJzaW9uGAEgASgNEhUKDWdhbWVwbGF5X2hh",
             "c2gYAiABKAYSGAoQY29ubmVjdGlvbl9lcG9jaBgDIAEoDRITCgt3b3JsZF9l",
             "cG9jaBgEIAEoBhITCgtzbmFwc2hvdF9pZBgFIAEoBhIMCgRraW5kGAYgASgN",
@@ -33,12 +33,17 @@ namespace Game.NetworkProtocol {
             "DWJhc2VfcmV2aXNpb24YDCABKAYSEAoIcmV2aXNpb24YDSABKAYSEgoKcGFn",
             "ZV9pbmRleBgOIAEoDRISCgpwYWdlX2NvdW50GA8gASgNEhMKC3NlcnZlcl90",
             "aWNrGBAgASgNEhAKCGNoZWNrc3VtGBEgASgGEhMKC3dvcmRfb2Zmc2V0GBIg",
-            "ASgNEhMKC3RvdGFsX3dvcmRzGBMgASgNEg0KBXdvcmRzGBQgAygHQheqAhRH",
-            "YW1lLk5ldHdvcmtQcm90b2NvbGIGcHJvdG8z"));
+            "ASgNEhMKC3RvdGFsX3dvcmRzGBMgASgNEg0KBXdvcmRzGBQgAygHEhoKEnN1",
+            "YnNjcmlwdGlvbl9lcG9jaBgVIAEoBiKXAQoUV29ybGRJZGVudGl0eU1lc3Nh",
+            "Z2USGAoQcHJvdG9jb2xfdmVyc2lvbhgBIAEoDRIOCgZydW5faWQYAiABKAkS",
+            "EgoKZHVuZ2Vvbl9pZBgDIAEoCRISCgpyb29tX2Vwb2NoGAQgASgNEhgKEGNv",
+            "bm5lY3Rpb25fZXBvY2gYBSABKA0SEwoLd29ybGRfZXBvY2gYBiABKAZCF6oC",
+            "FEdhbWUuTmV0d29ya1Byb3RvY29sYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.WorldPageMessage), global::Game.NetworkProtocol.WorldPageMessage.Parser, new[]{ "ProtocolVersion", "GameplayHash", "ConnectionEpoch", "WorldEpoch", "SnapshotId", "Kind", "Domain", "ChunkX", "ChunkY", "ChunkZ", "Generation", "BaseRevision", "Revision", "PageIndex", "PageCount", "ServerTick", "Checksum", "WordOffset", "TotalWords", "Words" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.WorldPageMessage), global::Game.NetworkProtocol.WorldPageMessage.Parser, new[]{ "ProtocolVersion", "GameplayHash", "ConnectionEpoch", "WorldEpoch", "SnapshotId", "Kind", "Domain", "ChunkX", "ChunkY", "ChunkZ", "Generation", "BaseRevision", "Revision", "PageIndex", "PageCount", "ServerTick", "Checksum", "WordOffset", "TotalWords", "Words", "SubscriptionEpoch" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.WorldIdentityMessage), global::Game.NetworkProtocol.WorldIdentityMessage.Parser, new[]{ "ProtocolVersion", "RunId", "DungeonId", "RoomEpoch", "ConnectionEpoch", "WorldEpoch" }, null, null, null, null)
           }));
     }
     #endregion
@@ -48,6 +53,8 @@ namespace Game.NetworkProtocol {
   /// <summary>
   /// 每条业务消息上限900B。words为预热的packed fixed32，避免ByteString或嵌套对象解析分配。
   /// 客户端必须完整校验身份、页集合、Checksum和数量后才安装/ACK；不能凭高Revision抢占合法候选。
+  /// 订阅生命期独立于材料版本：只有可信Enter激活Key，Leave失效后旧代数据/ACK/Resync均不得复活它。
+  /// Enter/Leave仅携带公共身份、原生Key与subscription_epoch；Snapshot/材料版本/分页/内容字段必须为0。
   /// </summary>
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
   public sealed partial class WorldPageMessage : pb::IMessage<WorldPageMessage>
@@ -104,6 +111,7 @@ namespace Game.NetworkProtocol {
       wordOffset_ = other.wordOffset_;
       totalWords_ = other.totalWords_;
       words_ = other.words_.Clone();
+      subscriptionEpoch_ = other.subscriptionEpoch_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -177,7 +185,7 @@ namespace Game.NetworkProtocol {
     public const int SnapshotIdFieldNumber = 5;
     private ulong snapshotId_;
     /// <summary>
-    /// 本次冻结传输身份，非零；重发沿用原身份。
+    /// 材料消息的非零冻结传输身份，重发沿用；Enter/Leave必须为0。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -192,7 +200,7 @@ namespace Game.NetworkProtocol {
     public const int KindFieldNumber = 6;
     private uint kind_;
     /// <summary>
-    /// 1=Baseline、2=Delta、3=安装ACK、4=Resync、5=删除。
+    /// 1=Baseline、2=Delta、3=安装ACK、4=Resync、5=权威删除、6=订阅Enter、7=订阅Leave。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -267,7 +275,7 @@ namespace Game.NetworkProtocol {
     public const int GenerationFieldNumber = 11;
     private ulong generation_;
     /// <summary>
-    /// 同坐标Chunk重建代次，旧代不得污染新数据。
+    /// 同坐标Chunk重建代次，材料消息非零；Enter/Leave为0，不借材料代次表示订阅。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -282,7 +290,7 @@ namespace Game.NetworkProtocol {
     public const int BaseRevisionFieldNumber = 12;
     private ulong baseRevision_;
     /// <summary>
-    /// Delta依赖的已安装版本；Baseline为0。
+    /// Delta依赖的已安装版本；Baseline与Enter/Leave为0。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -297,7 +305,7 @@ namespace Game.NetworkProtocol {
     public const int RevisionFieldNumber = 13;
     private ulong revision_;
     /// <summary>
-    /// 本候选完整安装后的版本，未安装前不得推进水位。
+    /// 完整安装后才推进的材料版本；Enter/Leave为0，不表示材料发生变化。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -412,6 +420,21 @@ namespace Game.NetworkProtocol {
       get { return words_; }
     }
 
+    /// <summary>Field number for the "subscription_epoch" field.</summary>
+    public const int SubscriptionEpochFieldNumber = 21;
+    private ulong subscriptionEpoch_;
+    /// <summary>
+    /// 每认证连接每原生Key的非零订阅代次；退出失效、重入增代，1–7种消息均必需。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public ulong SubscriptionEpoch {
+      get { return subscriptionEpoch_; }
+      set {
+        subscriptionEpoch_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -447,6 +470,7 @@ namespace Game.NetworkProtocol {
       if (WordOffset != other.WordOffset) return false;
       if (TotalWords != other.TotalWords) return false;
       if(!words_.Equals(other.words_)) return false;
+      if (SubscriptionEpoch != other.SubscriptionEpoch) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -474,6 +498,7 @@ namespace Game.NetworkProtocol {
       if (WordOffset != 0) hash ^= WordOffset.GetHashCode();
       if (TotalWords != 0) hash ^= TotalWords.GetHashCode();
       hash ^= words_.GetHashCode();
+      if (SubscriptionEpoch != 0UL) hash ^= SubscriptionEpoch.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -569,6 +594,10 @@ namespace Game.NetworkProtocol {
         output.WriteUInt32(TotalWords);
       }
       words_.WriteTo(output, _repeated_words_codec);
+      if (SubscriptionEpoch != 0UL) {
+        output.WriteRawTag(169, 1);
+        output.WriteFixed64(SubscriptionEpoch);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -656,6 +685,10 @@ namespace Game.NetworkProtocol {
         output.WriteUInt32(TotalWords);
       }
       words_.WriteTo(ref output, _repeated_words_codec);
+      if (SubscriptionEpoch != 0UL) {
+        output.WriteRawTag(169, 1);
+        output.WriteFixed64(SubscriptionEpoch);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -724,6 +757,9 @@ namespace Game.NetworkProtocol {
         size += 2 + pb::CodedOutputStream.ComputeUInt32Size(TotalWords);
       }
       size += words_.CalculateSize(_repeated_words_codec);
+      if (SubscriptionEpoch != 0UL) {
+        size += 2 + 8;
+      }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -794,6 +830,9 @@ namespace Game.NetworkProtocol {
         TotalWords = other.TotalWords;
       }
       words_.Add(other.words_);
+      if (other.SubscriptionEpoch != 0UL) {
+        SubscriptionEpoch = other.SubscriptionEpoch;
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -894,6 +933,10 @@ namespace Game.NetworkProtocol {
             words_.AddEntriesFrom(input, _repeated_words_codec);
             break;
           }
+          case 169: {
+            SubscriptionEpoch = input.ReadFixed64();
+            break;
+          }
         }
       }
     #endif
@@ -992,6 +1035,415 @@ namespace Game.NetworkProtocol {
           case 162:
           case 165: {
             words_.AddEntriesFrom(ref input, _repeated_words_codec);
+            break;
+          }
+          case 169: {
+            SubscriptionEpoch = input.ReadFixed64();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  /// <summary>
+  /// DS在账户准入成功后发送的独立世界身份；不是Chunk页，也不授予材料或玩家资源写权。
+  /// Client必须以当前认证上下文校验Run/地图/房间与连接代次，再以该Epoch配置inactive材料世界。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+  public sealed partial class WorldIdentityMessage : pb::IMessage<WorldIdentityMessage>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<WorldIdentityMessage> _parser = new pb::MessageParser<WorldIdentityMessage>(() => new WorldIdentityMessage());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<WorldIdentityMessage> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Game.NetworkProtocol.WorldReflection.Descriptor.MessageTypes[1]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public WorldIdentityMessage() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public WorldIdentityMessage(WorldIdentityMessage other) : this() {
+      protocolVersion_ = other.protocolVersion_;
+      runId_ = other.runId_;
+      dungeonId_ = other.dungeonId_;
+      roomEpoch_ = other.roomEpoch_;
+      connectionEpoch_ = other.connectionEpoch_;
+      worldEpoch_ = other.worldEpoch_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public WorldIdentityMessage Clone() {
+      return new WorldIdentityMessage(this);
+    }
+
+    /// <summary>Field number for the "protocol_version" field.</summary>
+    public const int ProtocolVersionFieldNumber = 1;
+    private uint protocolVersion_;
+    /// <summary>
+    /// 应用协议v4；0与旧版本缺少必需世界握手或订阅生命期语义，明确拒绝。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint ProtocolVersion {
+      get { return protocolVersion_; }
+      set {
+        protocolVersion_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "run_id" field.</summary>
+    public const int RunIdFieldNumber = 2;
+    private string runId_ = "";
+    /// <summary>
+    /// 当前认证Run的32位小写hex身份，不能从消息自建信任。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string RunId {
+      get { return runId_; }
+      set {
+        runId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "dungeon_id" field.</summary>
+    public const int DungeonIdFieldNumber = 3;
+    private string dungeonId_ = "";
+    /// <summary>
+    /// 已认证地图键，1–32个合法ASCII字符，与本次准入严格相等。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string DungeonId {
+      get { return dungeonId_; }
+      set {
+        dungeonId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "room_epoch" field.</summary>
+    public const int RoomEpochFieldNumber = 4;
+    private uint roomEpoch_;
+    /// <summary>
+    /// 房间实例栅栏，只用于核对认证上下文，不作为WorldEpoch。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint RoomEpoch {
+      get { return roomEpoch_; }
+      set {
+        roomEpoch_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "connection_epoch" field.</summary>
+    public const int ConnectionEpochFieldNumber = 5;
+    private uint connectionEpoch_;
+    /// <summary>
+    /// 当前认证连接代次，旧连接的握手不能污染新上下文。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint ConnectionEpoch {
+      get { return connectionEpoch_; }
+      set {
+        connectionEpoch_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "world_epoch" field.</summary>
+    public const int WorldEpochFieldNumber = 6;
+    private ulong worldEpoch_;
+    /// <summary>
+    /// DS创建当前世界时分配的非零身份；重连同一世界保持，不按数值大小替换。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public ulong WorldEpoch {
+      get { return worldEpoch_; }
+      set {
+        worldEpoch_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as WorldIdentityMessage);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(WorldIdentityMessage other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (ProtocolVersion != other.ProtocolVersion) return false;
+      if (RunId != other.RunId) return false;
+      if (DungeonId != other.DungeonId) return false;
+      if (RoomEpoch != other.RoomEpoch) return false;
+      if (ConnectionEpoch != other.ConnectionEpoch) return false;
+      if (WorldEpoch != other.WorldEpoch) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (ProtocolVersion != 0) hash ^= ProtocolVersion.GetHashCode();
+      if (RunId.Length != 0) hash ^= RunId.GetHashCode();
+      if (DungeonId.Length != 0) hash ^= DungeonId.GetHashCode();
+      if (RoomEpoch != 0) hash ^= RoomEpoch.GetHashCode();
+      if (ConnectionEpoch != 0) hash ^= ConnectionEpoch.GetHashCode();
+      if (WorldEpoch != 0UL) hash ^= WorldEpoch.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (ProtocolVersion != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(ProtocolVersion);
+      }
+      if (RunId.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(RunId);
+      }
+      if (DungeonId.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(DungeonId);
+      }
+      if (RoomEpoch != 0) {
+        output.WriteRawTag(32);
+        output.WriteUInt32(RoomEpoch);
+      }
+      if (ConnectionEpoch != 0) {
+        output.WriteRawTag(40);
+        output.WriteUInt32(ConnectionEpoch);
+      }
+      if (WorldEpoch != 0UL) {
+        output.WriteRawTag(49);
+        output.WriteFixed64(WorldEpoch);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (ProtocolVersion != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(ProtocolVersion);
+      }
+      if (RunId.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(RunId);
+      }
+      if (DungeonId.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(DungeonId);
+      }
+      if (RoomEpoch != 0) {
+        output.WriteRawTag(32);
+        output.WriteUInt32(RoomEpoch);
+      }
+      if (ConnectionEpoch != 0) {
+        output.WriteRawTag(40);
+        output.WriteUInt32(ConnectionEpoch);
+      }
+      if (WorldEpoch != 0UL) {
+        output.WriteRawTag(49);
+        output.WriteFixed64(WorldEpoch);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (ProtocolVersion != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(ProtocolVersion);
+      }
+      if (RunId.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(RunId);
+      }
+      if (DungeonId.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(DungeonId);
+      }
+      if (RoomEpoch != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(RoomEpoch);
+      }
+      if (ConnectionEpoch != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(ConnectionEpoch);
+      }
+      if (WorldEpoch != 0UL) {
+        size += 1 + 8;
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(WorldIdentityMessage other) {
+      if (other == null) {
+        return;
+      }
+      if (other.ProtocolVersion != 0) {
+        ProtocolVersion = other.ProtocolVersion;
+      }
+      if (other.RunId.Length != 0) {
+        RunId = other.RunId;
+      }
+      if (other.DungeonId.Length != 0) {
+        DungeonId = other.DungeonId;
+      }
+      if (other.RoomEpoch != 0) {
+        RoomEpoch = other.RoomEpoch;
+      }
+      if (other.ConnectionEpoch != 0) {
+        ConnectionEpoch = other.ConnectionEpoch;
+      }
+      if (other.WorldEpoch != 0UL) {
+        WorldEpoch = other.WorldEpoch;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            ProtocolVersion = input.ReadUInt32();
+            break;
+          }
+          case 18: {
+            RunId = input.ReadString();
+            break;
+          }
+          case 26: {
+            DungeonId = input.ReadString();
+            break;
+          }
+          case 32: {
+            RoomEpoch = input.ReadUInt32();
+            break;
+          }
+          case 40: {
+            ConnectionEpoch = input.ReadUInt32();
+            break;
+          }
+          case 49: {
+            WorldEpoch = input.ReadFixed64();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 8: {
+            ProtocolVersion = input.ReadUInt32();
+            break;
+          }
+          case 18: {
+            RunId = input.ReadString();
+            break;
+          }
+          case 26: {
+            DungeonId = input.ReadString();
+            break;
+          }
+          case 32: {
+            RoomEpoch = input.ReadUInt32();
+            break;
+          }
+          case 40: {
+            ConnectionEpoch = input.ReadUInt32();
+            break;
+          }
+          case 49: {
+            WorldEpoch = input.ReadFixed64();
             break;
           }
         }

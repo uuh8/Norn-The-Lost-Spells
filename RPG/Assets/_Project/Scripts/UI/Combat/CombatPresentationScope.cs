@@ -16,6 +16,9 @@ namespace Game.UI
         private CombatPresentationContext _context;
         private GameObject _onlineInventoryRoot;
         private SinglePlayerInventoryController _onlineInventory;
+        private NearbyPickupListView _onlineNearbyList;
+        private WandResearchController _onlineResearch;
+        private GameObject _onlineResearchRoot;
         private bool _warnedInventoryMissing;
         public const string InventoryResourcePath = "Presentation/CombatInventory";
         public bool IsBound => CombatPresentationHost.IsCurrent(_lease);
@@ -31,6 +34,7 @@ namespace Game.UI
             if (!_online) return;
             EventBus<LocalActorPresentationEvent>.Subscribe(OnLocalActor);
             EventBus<OnlineInventoryPresentationEvent>.Subscribe(OnOnlineInventory);
+            EventBus<OnlineHomeResearchAccessChangedEvent>.Subscribe(OnHomeResearchAccessChanged);
             // Scene 与网络 Actor 的创建顺序不固定；晚启用 Scope 重放已有事实，不轮询全场景。
             OnLocalActor(new LocalActorPresentationEvent
             { Actor = LocalActorPresentation.Actor, CrosshairVisible = LocalActorPresentation.CrosshairVisible });
@@ -63,11 +67,12 @@ namespace Game.UI
         /// <summary>先清本地引用再申请 Host 释放；即使已经失去 lease，也不会影响新使用者。</summary>
         public void Clear()
         {
+            ClearOnlineResearch();
             var lease = _lease; _lease = default; _context = default; LastBindSucceeded = false;
             CombatPresentationHost.Release(lease);
             // Controller 留在本 Scene。退出先正常 Close 释放本机输入，再销毁 View；只有纯 HUD 留在 DDOL。
             if (_onlineInventory != null) _onlineInventory.Close();
-            var root = _onlineInventoryRoot; _onlineInventory = null; _onlineInventoryRoot = null;
+            var root = _onlineInventoryRoot; _onlineInventory = null; _onlineNearbyList = null; _onlineInventoryRoot = null;
             if (root != null) { if (Application.isPlaying) Destroy(root); else DestroyImmediate(root); }
         }
         private void OnDisable()
@@ -76,6 +81,7 @@ namespace Game.UI
             SceneManager.sceneLoaded -= OnWorldLoaded;
             EventBus<LocalActorPresentationEvent>.Unsubscribe(OnLocalActor);
             EventBus<OnlineInventoryPresentationEvent>.Unsubscribe(OnOnlineInventory);
+            EventBus<OnlineHomeResearchAccessChangedEvent>.Unsubscribe(OnHomeResearchAccessChanged);
             Clear();
         }
 
@@ -106,8 +112,19 @@ namespace Game.UI
             if (!EnsureOnlineInventory()) return false;
             if (!_onlineInventory.PresentationIsReadOnly || !ReferenceEquals(_onlineInventory.PresentationSource, source))
                 _onlineInventory.BindPresentationSource(source);
+            // 附近候选属于Scene Actor，不随DDOL HUD常驻，也不能继续引用预制体里的单机Session。
+            // Character的原F输入从同Actor晚绑定这一个Controller；UI层不反向引用Character程序集。
+            var nearby = actor.GetComponent<NearbyPickupController>();
+            if (nearby == null) nearby = actor.AddComponent<NearbyPickupController>();
+            nearby.ConfigureOnline(source, actor.transform);
+            _onlineInventory.ConfigureOnlineNearby(nearby);
+            // F 的候选与屏幕提示必须使用同一个 Nearby Controller；只接 Tab 网格会导致能拾取却无提示。
+            // 列表从原工作区同源导出，随此 Scene UI 释放，不能跟随 DDOL HUD 保留旧角色/门引用。
+            _onlineNearbyList.ConfigureOnline(_onlineInventory, nearby, actor.GetComponent<Collider>());
             var next = _context; next.InventoryController = _onlineInventory; next.InventorySource = source;
-            Bind(next); return LastBindSucceeded;
+            Bind(next);
+            if (LastBindSucceeded) BindOnlineResearch();
+            return LastBindSucceeded;
 #endif
         }
 
@@ -127,11 +144,12 @@ namespace Game.UI
             _onlineInventoryRoot = Instantiate(prefab, transform, false);
             _onlineInventoryRoot.name = "SharedCombatInventory";
             _onlineInventory = _onlineInventoryRoot.GetComponentInChildren<SinglePlayerInventoryController>(true);
-            if (_onlineInventory == null)
+            _onlineNearbyList = _onlineInventoryRoot.GetComponentInChildren<NearbyPickupListView>(true);
+            if (_onlineInventory == null || _onlineNearbyList == null)
             {
-                var invalid = _onlineInventoryRoot; _onlineInventoryRoot = null;
+                var invalid = _onlineInventoryRoot; _onlineInventoryRoot = null; _onlineInventory = null; _onlineNearbyList = null;
                 if (Application.isPlaying) Destroy(invalid); else DestroyImmediate(invalid);
-                GameLog.Warn("共同库存资源缺少原 Controller，拒绝启用。", "CombatPresentation"); return false;
+                GameLog.Warn("共同库存资源缺少原 Controller 或附近提示，请重新 Export Shared Combat Inventory。", "CombatPresentation"); return false;
             }
             // Instantiate 保留 inactive 根，所以原 Controller 尚未订阅输入或执行 Start。
             // 显式 null override 的含义是等待线上数据；即使作者误留字段，也不能自动读取单机 Session。
@@ -153,6 +171,35 @@ namespace Game.UI
             if (state.Actor == _context.Actor) TryBindOnlineInventory(state.Actor, state.Source);
             else if (state.Actor == null && OnlineInventoryPresentation.Actor == null)
                 TryBindOnlineInventory(_context.Actor, null);
+        }
+        private void OnHomeResearchAccessChanged(OnlineHomeResearchAccessChangedEvent change)
+        {
+            if (!_online || !IsBound || change.WorldSceneHandle!=0 && change.WorldSceneHandle!=gameObject.scene.handle) return;
+            BindOnlineResearch();
+        }
+        private void BindOnlineResearch()
+        {
+            // 和平区域能力可能晚于Actor/库存到达。只重放同Actor同Scene的Core缓存；普通副本没有该能力，
+            // 不创建研究UI，更不能沿保留Hub的HubInteractionController猜测权限或引用旧Session。
+            if (_context.Actor==null || !(_context.InventorySource is OnlineInventoryPresentationSource source)
+                || !OnlineHomeResearchPresentation.TryGet((int)gameObject.scene.handle,_context.Actor,out var access))
+            { ClearOnlineResearch(); return; }
+            if (_onlineResearch==null)
+            {
+                _onlineResearchRoot=new GameObject("SharedHomeResearch"); _onlineResearchRoot.SetActive(false);
+                _onlineResearchRoot.transform.SetParent(transform,false);
+                _onlineResearch=_onlineResearchRoot.AddComponent<WandResearchController>();
+                _onlineResearch.BindOnlineInventory(_onlineInventory);
+                _onlineResearch.ConfigureOnline(source,access);
+                _onlineResearchRoot.SetActive(true);
+            }
+            else { _onlineResearch.BindOnlineInventory(_onlineInventory); _onlineResearch.ConfigureOnline(source,access); }
+        }
+        private void ClearOnlineResearch()
+        {
+            if (_onlineResearch!=null) _onlineResearch.ConfigureOnline(null,null);
+            var root=_onlineResearchRoot; _onlineResearch=null; _onlineResearchRoot=null;
+            if (root!=null) { if (Application.isPlaying) Destroy(root); else DestroyImmediate(root); }
         }
         private void OnWorldLoaded(Scene scene, LoadSceneMode mode)
         {

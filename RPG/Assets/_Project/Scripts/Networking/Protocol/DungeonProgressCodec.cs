@@ -19,7 +19,11 @@ namespace Game.Networking
             if (!Valid(progress) || !RunId(runId) || !DungeonId(dungeonId) || gameplayHash == 0 || output.Array == null) return false;
             var message = new DungeonProgressMessage { ProtocolVersion = ProtocolCompatibility.CurrentVersion, GameplayHash = gameplayHash,
                 RunId = runId, DungeonId = dungeonId, Revision = progress.Revision, ServerTick = progress.ServerTick,
-                EncounterIndexPlusOne = progress.EncounterIndexPlusOne, Phase = (uint)progress.Phase, RemainingEnemies = progress.RemainingEnemies };
+                EncounterIndexPlusOne = progress.EncounterIndexPlusOne, Phase = (uint)progress.Phase, RemainingEnemies = progress.RemainingEnemies,
+                HasReturnPortal = progress.HasReturnPortal, ReturnPortalPositionX = progress.ReturnPortalPosition.x,
+                ReturnPortalPositionY = progress.ReturnPortalPosition.y, ReturnPortalPositionZ = progress.ReturnPortalPosition.z,
+                ReturnPortalRotationX = progress.ReturnPortalRotation.x, ReturnPortalRotationY = progress.ReturnPortalRotation.y,
+                ReturnPortalRotationZ = progress.ReturnPortalRotation.z, ReturnPortalRotationW = progress.ReturnPortalRotation.w };
             int size = message.CalculateSize(); if (size < 1 || size > MaxPayloadBytes || size > output.Count) return false;
             var bytes = new Span<byte>(output.Array, output.Offset, size); message.WriteTo(bytes);
             if (!Wire(bytes)) return false;
@@ -40,14 +44,25 @@ namespace Game.Networking
                 message.RunId != expectedRunId || message.DungeonId != expectedDungeonId || message.Phase < 1 || message.Phase > 3) return false;
             var candidate = new Core.OnlineDungeonProgress { Revision = message.Revision, ServerTick = message.ServerTick,
                 EncounterIndexPlusOne = message.EncounterIndexPlusOne, Phase = (Core.OnlineDungeonPhase)message.Phase,
-                RemainingEnemies = message.RemainingEnemies };
+                RemainingEnemies = message.RemainingEnemies, HasReturnPortal = message.HasReturnPortal,
+                ReturnPortalPosition = new UnityEngine.Vector3(message.ReturnPortalPositionX, message.ReturnPortalPositionY, message.ReturnPortalPositionZ),
+                ReturnPortalRotation = new UnityEngine.Quaternion(message.ReturnPortalRotationX, message.ReturnPortalRotationY,
+                    message.ReturnPortalRotationZ, message.ReturnPortalRotationW) };
             if (!Valid(candidate)) return false;
             progress = candidate; return true;
         }
         private static bool Valid(in Core.OnlineDungeonProgress p) => p.Revision > 0 && p.ServerTick > 0 &&
             p.EncounterIndexPlusOne >= 1 && p.EncounterIndexPlusOne <= 4 && p.Phase >= Core.OnlineDungeonPhase.Armed &&
             p.Phase <= Core.OnlineDungeonPhase.StageCleared && p.RemainingEnemies <= 12 &&
-            (p.Phase != Core.OnlineDungeonPhase.StageCleared || p.RemainingEnemies == 0);
+            (p.Phase != Core.OnlineDungeonPhase.StageCleared || p.RemainingEnemies == 0) && ValidPortal(p);
+        private static bool ValidPortal(in Core.OnlineDungeonProgress p)
+        {
+            var v = p.ReturnPortalPosition; var q = p.ReturnPortalRotation;
+            if (!p.HasReturnPortal) return v.x == 0 && v.y == 0 && v.z == 0 && q.x == 0 && q.y == 0 && q.z == 0 && q.w == 0;
+            float norm = q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w;
+            return p.Phase == Core.OnlineDungeonPhase.StageCleared && float.IsFinite(v.x) && float.IsFinite(v.y) && float.IsFinite(v.z)
+                && float.IsFinite(q.x) && float.IsFinite(q.y) && float.IsFinite(q.z) && float.IsFinite(q.w) && norm >= .99f && norm <= 1.01f;
+        }
         private static bool RunId(string value)
         {
             if (value == null || value.Length != 32) return false;
@@ -66,11 +81,12 @@ namespace Game.Networking
             while (offset < bytes.Length)
             {
                 if (!Varint(bytes, ref offset, out ulong tag) || tag > uint.MaxValue) return false;
-                int field = (int)(tag >> 3); if (field < 1 || field > 9 || (seen & 1u << field) != 0) return false;
+                int field = (int)(tag >> 3); if (field < 1 || field > 17 || (seen & 1u << field) != 0) return false;
                 seen |= 1u << field;
-                int expected = field == 2 ? 1 : field == 3 || field == 4 ? 2 : 0;
+                int expected = field >= 11 ? 5 : field == 2 ? 1 : field == 3 || field == 4 ? 2 : 0;
                 if ((tag & 7) != (ulong)expected) return false;
                 if (expected == 1) { if (bytes.Length - offset < 8) return false; offset += 8; }
+                else if (expected == 5) { if (bytes.Length - offset < 4) return false; offset += 4; }
                 else if (expected == 2)
                 {
                     if (!Varint(bytes, ref offset, out ulong size) || size > (ulong)(bytes.Length - offset) || size > 32 ||
@@ -84,7 +100,8 @@ namespace Game.Networking
                     }
                     offset += (int)size;
                 }
-                else if (!Varint(bytes, ref offset, out ulong value) || value > uint.MaxValue || field == 8 && (value < 1 || value > 3)) return false;
+                else if (!Varint(bytes, ref offset, out ulong value) || value > uint.MaxValue || field == 8 && (value < 1 || value > 3)
+                    || field == 10 && value > 1) return false;
             }
             return true;
         }

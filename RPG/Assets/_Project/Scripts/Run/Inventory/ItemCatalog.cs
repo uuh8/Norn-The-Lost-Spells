@@ -102,6 +102,8 @@ namespace Game.Run
         }
 
         public int Count => _definitions.Count;
+        // 仅Run启动离散预算证明枚举冻结规则，不向外暴露可写Dictionary，也不在Tick中构建新集合。
+        internal IEnumerable<InventoryItemRules> Rules => _rules.Values;
         // 材料身份属于数据规则；采集不能把所有固体硬编码成冰。
         public bool TryFindMaterialContent(byte key, out string contentId)
         {

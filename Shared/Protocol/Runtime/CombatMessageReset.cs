@@ -24,6 +24,8 @@ namespace Game.NetworkProtocol
             VelocityX = VelocityY = VelocityZ = CurrentHp = MaxHp = CurrentMana = MaxMana = Cooldown = 0;
             Burning = Wet = Poisoned = Sticky = MoveMultiplier = Amount = 0;
             WandInstanceId = string.Empty;
+            ContainerContentId = string.Empty; ContainerWaiting = false;
+            MaterialOutput = MaterialWaiting = false; // pooled marker元数据不能泄露到下一个普通输出/Actor。
             _unknownFields = null;
         }
     }

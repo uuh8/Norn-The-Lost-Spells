@@ -1,0 +1,94 @@
+{
+  "Phase": "ContainerEntryDataSlice",
+  "ProtocolVersion": 5,
+  "FinalEditMode": {
+    "Passed": 615,
+    "Failed": 0,
+    "Fixtures": 40,
+    "Result": "final-n5-data-regression-results.xml"
+  },
+  "NoitaCandidates": {
+    "ImplementationAuthorized": false,
+    "Recorded": true,
+    "PlanSection": 26
+  },
+  "NativeV5Built": false,
+  "ManifestHash": "de0ca9a275e6ac947dbe6e4531b5a7f62e7e3efe3d1466c271bb51f9351a4273",
+  "BusinessRelease": {
+    "ExcludedUnfixedCase": "RoomInstanceTests.OldServerEpoch_CannotRenewOrAdmit_AndLeaseExpiryReleasesAssets",
+    "FirstAllPassed": 143,
+    "Reason": "Global ExpireDue count expected 1 actual 2; preserved assertion and data",
+    "CompatibilityFixtureFixed": true,
+    "FirstAllFailed": 2,
+    "FinalScopedPassed": 144,
+    "FinalScopedFailed": 0
+  },
+  "DataSliceRelatedVerificationPassed": true,
+  "MaximumProfileItems": 4120,
+  "Blockers": [
+    "Owner TryCapturePresentation rejects bags/containers; OnlineCombatWorld would Faulted",
+    "Full Native container player path not implemented/tested",
+    "One global business expiry count isolation failure remains",
+    "Broad sweep other 34 cases not rerun"
+  ],
+  "RecordedUtc": "2026-11-01T08:28:46.6736876Z",
+  "BroadProjectSweep": {
+    "OwnedSeedFailuresCorrectedAndRegressed": 32,
+    "Filters": 392,
+    "MissingTempDirectoryCases": 16,
+    "NotAllDiscoverableTests": true,
+    "Failed": 66,
+    "ObserverTimedOutButTestFinishedNaturally": true,
+    "OtherFailuresNotRerun": 34,
+    "OtherResourceOrAssertionCases": 18,
+    "Passed": 2989
+  },
+  "Next": "Owner presentation/Codec bounded complete container projection before any container Native acceptance",
+  "Cleanup": {
+    "Port13384Listeners": 0,
+    "PrivateMySqlStopped": true,
+    "UserEditorRetained": true,
+    "NativeStartedThisPhase": false,
+    "PrivateMySqlPid": 27144
+  },
+  "OwnedSchemaVersion": 2,
+  "N5Complete": false,
+  "Editor": {
+    "TestsRunning": false,
+    "Compiling": false,
+    "Playing": false,
+    "DirtyScene": false,
+    "Scene": [
+      "Assets/_Project/Scenes/P7_MainMenu.unity"
+    ],
+    "Pid": 31012,
+    "CompilationFailed": false
+  },
+  "PlayMode": {
+    "Passed": 11,
+    "Failed": 0,
+    "Result": "formal-shared-inventory-playmode-results.xml"
+  },
+  "Migration006": {
+    "SHA256": "770ab11b00f07c2fa97b3dc647b579a1815bd1e5180f5d5770a89b5f07941957",
+    "StrictGroupingGuardAddedToExecutor": true,
+    "FrozenAfterApplied": true,
+    "Old001To005Unchanged": true,
+    "AppliedSchema": "norn_online_test"
+  },
+  "GameplayHashRefreshed": false,
+  "ContainerOnlineUsable": false,
+  "ManifestSchemaVersion": 2,
+  "Protection": {
+    "PhysicsRestoreNotRetried": true,
+    "Pushed": false,
+    "PhysicsSHA256": "53cf96c365b85eefe78b3cda76af21f68246744277ae6ca21ffd6a67bdb72a1c",
+    "Committed": false
+  },
+  "DataSliceImplemented": true,
+  "ProtocolGeneration": {
+    "Passed": true,
+    "Files": 8
+  },
+  "MaximumOwnedItems": 4096
+}

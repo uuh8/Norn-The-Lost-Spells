@@ -166,11 +166,16 @@ namespace Game.ElementField
         /// </summary>
         public void TickExposure(float deltaTime)
         {
+            if (!CanApplyExposure)
+            {
+                // 只丢弃未提交的采样时间，不禁用组件、不清Status/真实材料或上一份已完成计量。
+                // 暂停时的渲染帧仍会进这里，不能把墙钟时长变成恢复后的补施加债务。
+                _elapsed = 0f;
+                return;
+            }
             if (deltaTime <= 0f
                 || float.IsNaN(deltaTime)
-                || float.IsInfinity(deltaTime)
-                || _runtime == null
-                || !_runtime.IsInitialized || _statusProjection == null)
+                || float.IsInfinity(deltaTime))
             {
                 return;
             }
@@ -192,11 +197,25 @@ namespace Game.ElementField
 
             while (_elapsed >= interval)
             {
+                // Status通知同步派发，上一轮真实施加可以立即挂起世界；旧补采样预算不是继续写权限。
+                if (!CanApplyExposure)
+                {
+                    _elapsed = 0f;
+                    return;
+                }
                 _elapsed -= interval;
                 using (ExposureMarker.Auto())
                     ApplyExposureOnce();
             }
         }
+
+        // Exposure有独立Update/公开Tick入口，不能只借上层AuthorityTick是否运行推断写权限。
+        // Replica只读；Authority挂起或任意模式材料故障均不能让残留可查询Store继续施加状态。
+        // 单机空间暂停与Debug暂停的既有实验行为不在本次网络保护中改写。
+        private bool CanApplyExposure => _runtime != null && _runtime.IsInitialized
+            && !_runtime.IsSimulationFaulted && _statusProjection != null
+            && _runtime.ExecutionMode != WorldExecutionMode.Replica
+            && (_runtime.ExecutionMode != WorldExecutionMode.Authority || !_runtime.SimulationSuspended);
 
         private bool TryConsumeNewLiquidSnapshot()
         {
@@ -223,6 +242,11 @@ namespace Game.ElementField
 
         private void ApplyExposureOnce(float doseScale = 1f)
         {
+            if (!CanApplyExposure)
+            {
+                _elapsed = 0f;
+                return;
+            }
             _hasAppliedExposure = true;
             // 上一轮的去重表和最大值只能服务上一轮；先清空保证离开材料区域的目标不会继续被错误刷新。
             ClearPreviousTargets();
@@ -272,6 +296,14 @@ namespace Game.ElementField
                     byte amount = _maximumAmounts[i * _statusProjection.Count + bindingIndex];
                     if (amount == 0 || binding.MaximumApplyPerExposureTick <= 0f)
                         continue;
+
+                    // 同一目标的前一个状态或前一个目标都可能在同步回调中触发暂停/故障。
+                    // 每次真实Status写入前重查，保留已经提交的剂量，不继续本轮尚未执行的部分。
+                    if (!CanApplyExposure)
+                    {
+                        _elapsed = 0f;
+                        return;
+                    }
 
                     // byte Amount 归一化到 [0,1] 后乘 Authoring 的每 Tick 上限；映射数据与采样机制分离，
                     // 新材料/新状态只需添加 Projection Binding，不需要在此处添加新的 if 分支。

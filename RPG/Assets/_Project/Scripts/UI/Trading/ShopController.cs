@@ -39,7 +39,9 @@ namespace Game.UI
         private string _statusText = "", _purchaseRequest;
         private ScrollRect _offersScroll;
         private InputAction _escape;
-        private void Awake(){_escape=new InputAction("CloseShop",InputActionType.Button,"<Keyboard>/escape");_escape.performed+=Escape;}
+        private void Awake(){ConfigureViewportLayout();_escape=new InputAction("CloseShop",InputActionType.Button,"<Keyboard>/escape");_escape.performed+=Escape;}
+        // 商店展示Panel可移到另一张Canvas，跟随实际Panel整体适配，保持商品/背包/详情三栏相对布局。
+        private void ConfigureViewportLayout() => UiViewportLayout.FitFixedPanel(_panel);
         private void Escape(InputAction.CallbackContext _)
         { if (!_open) return; if (_purchaseDialog != null && _purchaseDialog.IsOpen) _purchaseDialog.Hide(); else if (_quickPurchasePopup != null && _quickPurchasePopup.IsOpen) _quickPurchasePopup.Hide(); else Close(); }
         private void OnDestroy(){_escape.performed-=Escape;_escape.Dispose();}
@@ -51,6 +53,7 @@ namespace Game.UI
         private uint _inventoryVersion=uint.MaxValue;
         private long _shopVersion=-1;
         private bool _open,_available;
+        private bool _accountPresentationDirty;
         private static readonly ProfilerMarker UpdateMarker=new ProfilerMarker("Norn.Shop.UiUpdate");
         public bool IsOpen=>_open;
         public string SelectedItemId=>_itemId;
@@ -58,6 +61,33 @@ namespace Game.UI
         private bool Confirming => _purchaseDialog != null && _purchaseDialog.IsOpen;
         private void SetStatus(string message) { _statusText = message ?? ""; if (_status != null) _status.text = _statusText; }
         private Font Font=>_inventoryUi!=null?_inventoryUi.UiFont:null;
+        private IInventoryPresentationSource InventorySource
+        {
+            get
+            {
+                if (_inventory == null) return null;
+                if (!_inventory.AccountInventoryReadOnly) return _inventory;
+                var source = _inventoryUi != null ? _inventoryUi.PresentationSource : null;
+                // 账号Hub故意没有旧Session.ReadOnly。所有商品详情、容器目标和发送版本都必须
+                // 跟随原库存UI当前确认的同一Source，不能因异步读取失败借旧档补一份“可用库存”。
+                return source is IAccountInventoryCommandContext account && _inventory.TryGetAccountHubSummary(out var summary)
+                    && account.PlayerId == summary.PlayerId && account.ProfileVersion == summary.Version
+                    && source.ReadOnly != null && source.ReadOnly.InventoryId == summary.InventoryId ? source : null;
+            }
+        }
+        private IInventoryReadOnly InventoryRead => InventorySource?.ReadOnly;
+        private void SynchronizeEmbeddedSource()
+        {
+            if (_embeddedInventory == null || _inventory == null || !_inventory.AccountInventoryReadOnly) return;
+            var source = InventorySource;
+            if (!_embeddedInventory.PresentationIsReadOnly || !ReferenceEquals(_embeddedInventory.PresentationSource, source))
+                _embeddedInventory.BindPresentationSource(source);
+            _embeddedInventory.SetEmbeddedOpen(_open && source != null);
+        }
+        private void OnAccountInventoryChanged(OnlineAccountInventoryHubChangedEvent change)
+        { if (change.SceneHandle == gameObject.scene.handle) _accountPresentationDirty = true; }
+        private void OnAccountShopChanged(OnlineAccountShopChangedEvent change)
+        { if (_shop != null && change.SceneHandle == gameObject.scene.handle && change.CallerId == _shop.GetInstanceID()) _accountPresentationDirty = true; }
         private void OnEnable()
         {
             if (_embeddedInventory != null) _embeddedInventory.SelectionChanged += SelectOwned;
@@ -69,6 +99,8 @@ namespace Game.UI
             _offersScroll?.onValueChanged.AddListener(OnOffersScroll);
             EventBus<ShopTradeResultEvent>.Subscribe(OnResult);
             EventBus<HubInteractionResultEvent>.Subscribe(OnHubInteraction);
+            EventBus<OnlineAccountInventoryHubChangedEvent>.Subscribe(OnAccountInventoryChanged);
+            EventBus<OnlineAccountShopChangedEvent>.Subscribe(OnAccountShopChanged);
             if(_toggleAction!=null){_toggleAction.action.performed+=Toggle;_toggleAction.action.Enable();}
             _openButton?.onClick.AddListener(Open);_closeButton?.onClick.AddListener(Close);
             _buyButton?.onClick.AddListener(Buy);_sellItemButton?.onClick.AddListener(SellItem);_sellMaterialButton?.onClick.AddListener(SellMaterial);
@@ -82,6 +114,8 @@ namespace Game.UI
             _offersScroll?.onValueChanged.RemoveListener(OnOffersScroll);
             EventBus<ShopTradeResultEvent>.Unsubscribe(OnResult);
             EventBus<HubInteractionResultEvent>.Unsubscribe(OnHubInteraction);
+            EventBus<OnlineAccountInventoryHubChangedEvent>.Unsubscribe(OnAccountInventoryChanged);
+            EventBus<OnlineAccountShopChangedEvent>.Unsubscribe(OnAccountShopChanged);
             if(_toggleAction!=null){_toggleAction.action.performed-=Toggle;_toggleAction.action.Disable();}
             _openButton?.onClick.RemoveListener(Open);_closeButton?.onClick.RemoveListener(Close);
             _buyButton?.onClick.RemoveListener(Buy);_sellItemButton?.onClick.RemoveListener(SellItem);_sellMaterialButton?.onClick.RemoveListener(SellMaterial);
@@ -89,7 +123,7 @@ namespace Game.UI
         }
         private IEnumerator Start()
         {
-            while(_inventory.ReadOnly==null || Font==null)yield return null;
+            while(InventoryRead==null || Font==null)yield return null;
             // 展示Panel可以由用户搬到另一张Canvas；字体跟随实际Panel，不能依赖控制器的旧层级。
             var labels=_panel.GetComponentsInChildren<Text>(true);for(int i=0;i<labels.Length;i++)labels[i].font=Font;
             // DefaultControls默认Toggle黑字适合浅色面板；占位暗面板需要显式对比度，随后美术可替换背景。
@@ -109,7 +143,7 @@ namespace Game.UI
         private void OnQuantity(string _){if(_open){_quickPurchasePopup?.Hide();RefreshDetails();ExplainMaterialTarget();}}
         private void OnHubInteraction(HubInteractionResultEvent result)
         {
-            if(!result.Success || result.InventoryId!=_inventory.ReadOnly?.InventoryId)return;
+            if(!result.Success || result.InventoryId!=InventoryRead?.InventoryId)return;
             // 业务入口由常驻面板控制器消费；用户隐藏提示Canvas时，不能连带切断F交互。
             if(result.Kind==HubInteractionKind.Shop)Open();
             else if(result.Kind==HubInteractionKind.Warehouse)Close();
@@ -118,9 +152,17 @@ namespace Game.UI
         {
             if(_hubAccess!=null && (!_hubAccess.TryGetStation(out var station) || station.Kind!=HubStationKind.Shop))return;
             if(_shop.ReadOnly==null)_shop.InitializeConfigured();
-            if(!_shop.CanTrade || !_shop.Synchronize())
-            {_panel.SetActive(true);_open=true;_pause?.RequestPause(RunPauseReason.Shop);SetStatus(_shop.Message??"商店初始化尚未完成。");return;}
+            // 账号商店的首次供货来自异步HTTP。即使尚未CanTrade，也必须执行Synchronize发起读取，
+            // 不能沿旧短路判断永远停在“尚未就绪”。等待期间仍由原Shop reason持有本地鼠标/暂停。
+            bool synchronized = _shop.Synchronize();
+            if(!_shop.CanTrade || !synchronized)
+            {
+                _panel.SetActive(true);_open=true;_pause?.RequestPause(RunPauseReason.Shop);_inventoryUi?.Close();
+                SynchronizeEmbeddedSource(); HideAfter(_offerViews, 0); HideAfter(_ownedViews, 0); SetButtons(false, false, false);
+                SetStatus(_shop.Message??"商店初始化尚未完成。");return;
+            }
             _pause?.RequestPause(RunPauseReason.Shop);_inventoryUi?.Close();_panel.SetActive(true);_open=true;
+            SynchronizeEmbeddedSource();
             _embeddedInventory?.SetEmbeddedOpen(true);if(_quickPurchase)_itemId=_embeddedInventory?.SelectedItemId;Refresh();
             if(_quickPurchase)SetStatus("选择商品后点击购买，在购买框中确认数量与总价。");
         }
@@ -131,9 +173,24 @@ namespace Game.UI
             {
             if(!_open)return;
             if(_inventoryUi!=null && _inventoryUi.IsOpen){Close();return;}
+            if (_accountPresentationDirty)
+            {
+                _accountPresentationDirty = false; SynchronizeEmbeddedSource();
+                SetStatus(_shop.Message);
+                if (_shop.ReadOnly != null && InventoryRead != null) Refresh();
+                else { HideAfter(_offerViews, 0); HideAfter(_ownedViews, 0); SetButtons(false, false, false); }
+            }
+            if (_shop.IsAccountSession && !_shop.AccountPanelAvailable) { Close(); return; }
             if(_shop.ReadOnly==null)return;
-            if(!_shop.CanTrade){Close();return;}
-            if(_inventoryVersion==_inventory.ReadOnly.Version && _shopVersion==_shop.ReadOnly.Version && _available==_shop.CanTrade)return;
+            if(!_shop.CanTrade)
+            {
+                if (_shop.IsAccountSession && _shop.AccountPanelAvailable)
+                { SetButtons(false, false, false); return; }
+                Close();return;
+            }
+            var inventory = InventoryRead;
+            if (inventory == null) { SetButtons(false, false, false); return; }
+            if(_inventoryVersion==inventory.Version && _shopVersion==_shop.ReadOnly.Version && _available==_shop.CanTrade)return;
             // 只有资产版本或阶段变化才刷新；字符串/列表分配是离散UI操作，稳定帧不重新生成。
             Refresh();
             }
@@ -149,7 +206,7 @@ namespace Game.UI
         public void SelectOwned(string id){if(Confirming)return;_quickPurchasePopup?.Hide();_itemId=id;if(!_quickPurchase)_offerId=null;RefreshDetails();ExplainMaterialTarget();}
         private void Refresh()
         {
-            var shop=_shop.ReadOnly;var inventory=_inventory.ReadOnly;if(shop==null || inventory==null)return;
+            var shop=_shop.ReadOnly;var inventory=InventoryRead;if(shop==null || inventory==null)return;
             _quickPurchasePopup?.Hide();
             _inventoryVersion=inventory.Version;_shopVersion=shop.Version;_available=_shop.CanTrade;
             if(_summary!=null)_summary.text=_quickPurchase?"收购额度："+shop.RemainingBudget+" · 补货还需 "+shop.ProgressUntilRefresh+" 次成功冒险\n普通商品先入背包，放不下自动入仓。":
@@ -175,7 +232,7 @@ namespace Game.UI
                     var row=Row(_ownedViews,_ownedRoot,shown++);
                     string state=item.Kind==ItemKind.Spell?_inventoryUi.DescribeSpellUse(item,true):
                         item.Kind==ItemKind.Container?item.ContainerTotal+" / "+item.ContainerCapacity+" GMU":item.Kind==ItemKind.Material?item.MaterialQuantity+" GMU":"独立实例";
-                    row.Bind(this,item.InstanceId,item.DisplayName+" · "+state+"\n"+(item.IsStarterEquipment?"免费基础本体 · 禁止出售":item.Location.Kind==ItemLocationKind.Warehouse?"仓库":"携带 / 已装备"),true,Font);
+                    row.Bind(this,item.InstanceId,item.DisplayName+" · "+state+"\n"+(item.EntryBoundBackpack?"账号基础背包 · 禁止出售":item.IsStarterEquipment?"免费基础本体 · 禁止出售":item.Location.Kind==ItemLocationKind.Warehouse?"仓库":"携带 / 已装备"),true,Font);
                 }
                 if(choices!=null && item.Kind==ItemKind.Container){_containerIds.Add(item.InstanceId);choices.Add(new Dropdown.OptionData(item.DisplayName+" #"+_containerIds.Count+"（"+item.ContainerTotal+"/"+item.ContainerCapacity+"）"));}
             }
@@ -208,8 +265,8 @@ namespace Game.UI
                 bool continuous = TrySelectedOffer(_offerId, out var selected) && selected.IsMaterial;
                 buy = _offerId != null && TrySelectedOffer(_offerId, out selected) && selected.Stock > 0;
                 if(_quickPurchase && continuous)buy=buy && TryMaterialTarget(selected,out _,out _);
-                if (_itemId != null && _inventory.ReadOnly.TryGetView(_itemId, out var owned))
-                { sell = owned.Kind != ItemKind.Material; material = owned.Kind == ItemKind.Container || owned.Kind == ItemKind.Material; }
+                if (_itemId != null && InventoryRead != null && InventoryRead.TryGetView(_itemId, out var owned))
+                { sell = owned.Kind != ItemKind.Material && !owned.EntryBoundBackpack; material = owned.Kind == ItemKind.Container || owned.Kind == ItemKind.Material; }
                 _details.text = "物品详情待后续开发";
                 if(_containers!=null)_containers.gameObject.SetActive(!_quickPurchase && continuous);
                 SetButtons(buy, sell, material);
@@ -221,8 +278,8 @@ namespace Game.UI
                 +(offer.IsMaterial?"\n\n购买后转入下方选中的兼容容器，保留原有组分。":"\n\n购买产生独立物品实例，默认放入仓库；勾选后尝试放入背包。法杖/背包本体请先买入仓库，再装备。");
                 if(offer.IsSpell)_details.text+="\n到手状态："+(offer.Unlimited?(offer.IsQualification?"无限入局":"无限使用"):offer.InitialCharges+(offer.IsQualification?" 次入局":" 次施法"))+"。";
                 break;}
-            if(_itemId!=null && _inventory.ReadOnly.TryGetView(_itemId,out var item))
-            {sell=item.Kind!=ItemKind.Material;material=item.Kind==ItemKind.Container || item.Kind==ItemKind.Material;
+            if(_itemId!=null && InventoryRead != null && InventoryRead.TryGetView(_itemId,out var item))
+            {sell=item.Kind!=ItemKind.Material && !item.EntryBoundBackpack;material=item.Kind==ItemKind.Container || item.Kind==ItemKind.Material;
                 _details.text=item.DisplayName+"\n\n当前位置："+(item.Location.Kind==ItemLocationKind.Warehouse?"仓库":item.Location.Kind==ItemLocationKind.Backpack?"携带背包":"已装备 / 法杖程序")+"\n"+(item.Kind==ItemKind.Spell?(item.HasUnlimitedCharges?"无限使用":"剩余 "+item.RemainingCharges+" 次"):item.Kind==ItemKind.Container?"材料储量 "+item.ContainerTotal+" / "+item.ContainerCapacity+" GMU":"实际持有的一份物品")
                     +"\n\n出售物品：只出售这一份，有限法术按剩余次数折价。\n出售材料：扣实际GMU，混样保持比例，瓶壳保留。\n非空容器须先处理材料，装有程序的法杖须先卸下法术。";}
             if(_quickPurchase && TrySelectedOffer(_offerId,out var quickOffer) && quickOffer.IsMaterial)buy=buy && TryMaterialTarget(quickOffer,out _,out _);
@@ -269,10 +326,14 @@ namespace Game.UI
         {
             if(!_open || !_shop.CanTrade)return;
             var read=_shop.ReadOnly;if(read==null)return;
+            var inventory = InventoryRead; if (inventory == null) { SetStatus("账号库存尚未读取完成，请稍后重试。"); return; }
+            // 账号保底包和旧免费Starter来源是两个独立字段。按钮与直接调用都需保护，不能每次让后台拒绝才解释。
+            if (kind == ShopTradeKind.SellItem && _itemId != null && inventory.TryGetView(_itemId, out var selected) && selected.EntryBoundBackpack)
+            { SetStatus("账号基础背包必须保留，不能出售；可在本人仓库中原子更换装备。"); return; }
             if(quantity==0){SetStatus("数量必须是正整数。");return;}
             string bag=null;for(int i=0;i<_itemCount;i++)if(_items[i].Location.Kind==ItemLocationKind.EquippedBackpack){bag=_items[i].InstanceId;break;}
             EventBus<ShopTradeRequestedEvent>.Publish(new ShopTradeRequestedEvent{InventoryId=read.InventoryId,RequestId=requestId??Guid.NewGuid().ToString("N"),
-                InventoryVersion=_inventory.ReadOnly.Version,ShopVersion=read.Version,OfferId=_offerId,ItemInstanceId=_itemId,Kind=kind,
+                InventoryVersion=inventory.Version,ShopVersion=read.Version,OfferId=_offerId,ItemInstanceId=_itemId,Kind=kind,
                 Quantity=kind==ShopTradeKind.SellItem?1:quantity,ToBackpack=_quickPurchase || _toBackpack!=null && _toBackpack.isOn,AllowWarehouseFallback=_quickPurchase,BackpackId=bag,
                 ContainerId=target??SelectedContainerId});
         }
@@ -281,7 +342,7 @@ namespace Game.UI
         private bool TryMaterialTarget(in ShopOfferSnapshot offer,string id,out InventoryItemSnapshot target,out string reason,bool allowFull=false)
         {
             target=default;reason="请在中间的背包或仓库选中一个兼容容器。";
-            var read=_inventory.ReadOnly;
+            var read=InventoryRead;
             if(id==null || read==null || !read.TryGetView(id,out target) || target.Kind!=ItemKind.Container)return false;
             bool accessible=target.Location.Kind==ItemLocationKind.Warehouse;
             if (target.Location.Kind == ItemLocationKind.EquippedTool) accessible = target.Location.OwnerId == read.ActorId;
@@ -331,7 +392,7 @@ namespace Game.UI
         }
         private void OnResult(ShopTradeResultEvent result)
         {
-            if(result.InventoryId!=_inventory.ReadOnly?.InventoryId)return;
+            if(result.InventoryId!=InventoryRead?.InventoryId)return;
             bool confirmingResult=_purchaseRequest!=null && result.RequestId==_purchaseRequest;
             if(confirmingResult){_purchaseRequest=null;if(result.Success)_purchaseDialog.Hide();else _purchaseDialog.SetPending(false);}
             SetStatus(result.Success?(result.Replayed?"原成交收据，未重复交易。":"成交 "+result.ActualQuantity+"，货币变化 "+result.CurrencyDelta+"。"):

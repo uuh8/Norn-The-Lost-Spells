@@ -1,0 +1,224 @@
+{
+  "RecordedUtc": "2026-11-01T14:39:56.598911+00:00",
+  "UserQuestion": "两次进入P8后自动退出是否卡任务",
+  "Rounds": [
+    {
+      "Stage": "Owner native-7（历史v5）",
+      "Instances": [
+        {
+          "Pid": 7292,
+          "StartedUtc": "2026-11-01T10:56:11.858682+00:00",
+          "Role": "NativeClient",
+          "ExitCode": null,
+          "ExitCodeRecorded": false
+        },
+        {
+          "Pid": 7252,
+          "StartedUtc": "2026-11-01T10:56:38.824331+00:00",
+          "Role": "NativeClient",
+          "ExitCode": null,
+          "ExitCodeRecorded": false
+        }
+      ],
+      "EndedUtc": "2026-11-01T10:57:44.9218745Z",
+      "Cause": "Owner安装/施法消耗/同进程重连检查点完成后脚本finally正常收尾",
+      "Guard": {
+        "RecordedUtc": "2026-11-01T10:57:44.902878+00:00",
+        "SelfTest": false,
+        "Trigger": {
+          "Utc": "2026-11-01T10:57:44.882229+00:00",
+          "Reason": "normal-owner-stop",
+          "SimulatedMemory": false,
+          "AvailableBytes": 19963338752,
+          "OwnedPidsAtTrigger": []
+        },
+        "NormalCloseRequests": [],
+        "RemainingOwnedPids": [],
+        "ForcedTerminationUsed": false
+      },
+      "Cleanup": {
+        "RecordedUtc": "2026-11-01T10:57:44.9218745Z",
+        "GuardPid": 34192,
+        "BusinessCleanupAttempted": true,
+        "Errors": [],
+        "OnlyOwned": true,
+        "PrivateDatabaseShutdownAttempted": true
+      },
+      "CompletedEvidence": [
+        {
+          "Path": "docs\\superpowers\\evidence\\multiplayer\\n5\\container-owner-projection-2026-11-01\\native-7\\p8\\owner-after-cast\\owner-comparison.json",
+          "RecordedUtc": "2026-11-01T10:57:37.754869+00:00",
+          "Label": "owner-after-cast",
+          "ContinuousSimulation": true,
+          "Paused": false,
+          "Roles": {
+            "a": {
+              "ActorId": 1,
+              "ProcessId": 7292,
+              "ConnectionEpoch": 1,
+              "InstalledSequence": 2,
+              "TotalItemCount": 665,
+              "MatchingCurrentAuthorityItems": 665,
+              "ExactContainerComponents": true,
+              "OnlyOwnInventoryVisible": true,
+              "SelectedCharges": 29
+            },
+            "b": {
+              "ActorId": 2,
+              "ProcessId": 7252,
+              "ConnectionEpoch": 1,
+              "InstalledSequence": 1,
+              "TotalItemCount": 38,
+              "MatchingCurrentAuthorityItems": 38,
+              "ExactContainerComponents": true,
+              "OnlyOwnInventoryVisible": true,
+              "SelectedCharges": 30
+            }
+          }
+        },
+        {
+          "Path": "docs\\superpowers\\evidence\\multiplayer\\n5\\container-owner-projection-2026-11-01\\native-7\\p8\\owner-initial\\owner-comparison.json",
+          "RecordedUtc": "2026-11-01T10:57:28.101345+00:00",
+          "Label": "owner-initial",
+          "ContinuousSimulation": true,
+          "Paused": false,
+          "Roles": {
+            "a": {
+              "ActorId": 1,
+              "ProcessId": 7292,
+              "ConnectionEpoch": 1,
+              "InstalledSequence": 1,
+              "TotalItemCount": 665,
+              "MatchingCurrentAuthorityItems": 665,
+              "ExactContainerComponents": true,
+              "OnlyOwnInventoryVisible": true,
+              "SelectedCharges": 30
+            },
+            "b": {
+              "ActorId": 2,
+              "ProcessId": 7252,
+              "ConnectionEpoch": 1,
+              "InstalledSequence": 1,
+              "TotalItemCount": 38,
+              "MatchingCurrentAuthorityItems": 38,
+              "ExactContainerComponents": true,
+              "OnlyOwnInventoryVisible": true,
+              "SelectedCharges": 30
+            }
+          }
+        },
+        {
+          "Path": "docs\\superpowers\\evidence\\multiplayer\\n5\\container-owner-projection-2026-11-01\\native-7\\p8\\owner-reconnected\\owner-comparison.json",
+          "RecordedUtc": "2026-11-01T10:57:41.901235+00:00",
+          "Label": "owner-reconnected",
+          "ContinuousSimulation": true,
+          "Paused": false,
+          "Roles": {
+            "a": {
+              "ActorId": 1,
+              "ProcessId": 7292,
+              "ConnectionEpoch": 2,
+              "InstalledSequence": 3,
+              "TotalItemCount": 665,
+              "MatchingCurrentAuthorityItems": 665,
+              "ExactContainerComponents": true,
+              "OnlyOwnInventoryVisible": true,
+              "SelectedCharges": 29
+            },
+            "b": {
+              "ActorId": 2,
+              "ProcessId": 7252,
+              "ConnectionEpoch": 1,
+              "InstalledSequence": 1,
+              "TotalItemCount": 38,
+              "MatchingCurrentAuthorityItems": 38,
+              "ExactContainerComponents": true,
+              "OnlyOwnInventoryVisible": true,
+              "SelectedCharges": 30
+            }
+          }
+        }
+      ],
+      "NotCovered": [
+        "F/H",
+        "容器拖放",
+        "共享转交",
+        "N5全部验收"
+      ]
+    },
+    {
+      "Stage": "Container operations native-1（本轮v6）",
+      "Instances": [
+        {
+          "Pid": 7668,
+          "StartedUtc": "2026-11-01T14:19:57.525704+00:00",
+          "Role": "NativeClient",
+          "ExitCode": null,
+          "ExitCodeRecorded": false
+        },
+        {
+          "Pid": 11628,
+          "StartedUtc": "2026-11-01T14:20:28.538280+00:00",
+          "Role": "NativeClient",
+          "ExitCode": null,
+          "ExitCodeRecorded": false
+        }
+      ],
+      "EndedUtc": "2026-11-01T14:21:37.0263604Z",
+      "Cause": "真实可用内存低于原3GiB，守卫向两个窗口发送WM_CLOSE后脚本finally清理",
+      "Guard": {
+        "RecordedUtc": "2026-11-01T14:21:36.267947+00:00",
+        "SelfTest": false,
+        "Trigger": {
+          "Utc": "2026-11-01T14:21:34.347189+00:00",
+          "Reason": "memory-below-3GiB",
+          "SimulatedMemory": false,
+          "AvailableBytes": 3021119488,
+          "OwnedPidsAtTrigger": [
+            7668,
+            11628
+          ]
+        },
+        "NormalCloseRequests": [
+          {
+            "Pid": 7668,
+            "WindowTitle": "Norn：The Lost Spells"
+          },
+          {
+            "Pid": 11628,
+            "WindowTitle": "Norn：The Lost Spells"
+          }
+        ],
+        "RemainingOwnedPids": [],
+        "ForcedTerminationUsed": false
+      },
+      "Cleanup": {
+        "Errors": [],
+        "GuardPid": 23096,
+        "BusinessCleanupAttempted": true,
+        "RecordedUtc": "2026-11-01T14:21:37.0263604Z",
+        "PrivateDatabaseShutdownAttempted": true,
+        "OnlyOwned": true
+      },
+      "Completed": [
+        "实际菜单登录/Hub走门/Ready/Start",
+        "两端KCP认证Connected"
+      ],
+      "NotCovered": [
+        "Owner安装（两端ready=false/count0）",
+        "拖瓶绑定",
+        "H倾倒",
+        "F采集",
+        "预览屏幕",
+        "共享转交"
+      ]
+    }
+  ],
+  "SecondClientIsNotSecondRound": true,
+  "PreparedNative2Executed": false,
+  "CurrentNativeProcessesObserved": [],
+  "EditorPidKeptOpen": 15628,
+  "CurrentBlocker": "双图形端+DS+Editor触及内存守卫，非构建或工具调用仍在等待",
+  "ReportingDelay": "主线程未及时获得阶段结果；不将进入关卡后关闭当成功",
+  "Next": "保留原失败；不复跑双端组合。单图形端+DS方案已准备未启动，双端如需暂关Editor必须用户本次明确许可。"
+}

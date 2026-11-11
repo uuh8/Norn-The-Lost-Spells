@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Game.NetworkProtocol;
 using Norn.Business.Content;
+using Norn.Business.Features.Accounts;
 using Norn.Business.Infrastructure;
 
 namespace Norn.Business.Features.Rooms;
@@ -23,6 +24,9 @@ public static class RoomEndpoints
         group.MapPost("/{room}/presence", async (string room, HttpContext c, RoomMatchmakingService matchmaking) => Results.Json(await matchmaking.PresenceAsync(Player(c), room, c.RequestAborted)));
         if (app.Services.GetRequiredService<OnlineOptions>().Instances.Enabled)
         {
+            group.MapPost("/single-entry", async (SinglePlayerEntryRequest request, HttpContext c, RoomLauncher launcher)
+                => Results.Json(await launcher.StartSinglePlayerAsync(Player(c), request, c.RequestAborted,
+                    AccountService.PracticeSessionScope(SessionAuthenticationHandler.ReadToken(c.Request)!)), statusCode: 202));
             group.MapPost("/{room}/start", async (string room, StartRoomRequest request, HttpContext c, RoomLauncher launcher) => Results.Json(await launcher.StartRunAsync(Player(c), room, request.ExpectedRevision, c.RequestAborted), statusCode: 202));
             group.MapGet("/{room}/instance", async (string room, HttpContext c, RoomInstanceService instances) => Results.Json(await instances.ViewAsync(Player(c), room, c.RequestAborted)));
             group.MapPost("/{room}/ticket", async (string room, HttpContext c, RoomInstanceService instances) => Results.Json(await instances.MintTicketAsync(Player(c), room, c.RequestAborted)));

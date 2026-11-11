@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="25" result="Failed(Child)" total="25" passed="20" failed="5" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-03 03:51:22Z" end-time="2026-11-03 03:51:24Z" duration="1.5948339">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="4132" result="Failed" site="Child" start-time="2026-11-03 03:51:22Z" end-time="2026-11-03 03:51:24Z" duration="1.594834" total="25" passed="20" failed="5" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3332" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="391" result="Failed" site="Child" start-time="2026-11-03 03:51:22Z" end-time="2026-11-03 03:51:23Z" duration="0.704387" total="9" passed="5" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34452" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3333" name="Game" fullname="Game" runstate="Runnable" testcasecount="391" result="Failed" site="Child" start-time="2026-11-03 03:51:22Z" end-time="2026-11-03 03:51:23Z" duration="0.608184" total="9" passed="5" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3334" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="391" result="Failed" site="Child" start-time="2026-11-03 03:51:22Z" end-time="2026-11-03 03:51:23Z" duration="0.510181" total="9" passed="5" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3335" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="391" result="Failed" site="Child" start-time="2026-11-03 03:51:23Z" end-time="2026-11-03 03:51:23Z" duration="0.409584" total="9" passed="5" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3194" name="RunMemberExitReceiptTests" fullname="Game.Multiplayer.Tests.RunMemberExitReceiptTests" classname="Game.Multiplayer.Tests.RunMemberExitReceiptTests" runstate="Runnable" testcasecount="9" result="Failed" site="Child" start-time="2026-11-03 03:51:23Z" end-time="2026-11-03 03:51:23Z" duration="0.311073" total="9" passed="5" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="3205" name="NewCommandRequiresRealEpochButKnownFixedCommandSurvivesReconnect" fullname="Game.Multiplayer.Tests.RunMemberExitReceiptTests.NewCommandRequiresRealEpochButKnownFixedCommandSurvivesReconnect" classname="Game.Multiplayer.Tests.RunMemberExitReceiptTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-11-03 03:51:23Z" end-time="2026-11-03 03:51:23Z" duration="0.136400" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="3201" name="NewCommandRequiresRealEpochButKnownFixedCommandSurvivesReconnect(null,null,uint.MinValue,&quot;00000008aaaaaaaaaaaaaaaaaaaaaaaa&quot;,7,False)" fullname="Game.Multiplayer.Tests.RunMemberExitReceiptTests.NewCommandRequiresRealEpochButKnownFixedCommandSurvivesReconnect(null,null,uint.MinValue,&quot;00000008aaaaaaaaaaaaaaaaaaaaaaaa&quot;,7,False)" methodname="NewCommandRequiresRealEpochButKnownFixedCommandSurvivesReconnect" classname="Game.Multiplayer.Tests.RunMemberExitReceiptTests" runstate="Runnable" seed="1959373028" result="Failed" start-time="2026-11-03 03:51:23Z" end-time="2026-11-03 03:51:23Z" duration="0.024708" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  有界候选历史必须拒绝伪造未来前缀和遗忘的隔代旧ID，不能靠无限HashSet。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunMemberExitReceiptTests.NewCommandRequiresRealEpochButKnownFixedCommandSurvivesReconnect (System.String current, System.String previous, System.UInt32 origin, System.String incoming, System.UInt32 epoch, System.Boolean expected) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitReceiptTests.cs:28
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3202" name="NewCommandRequiresRealEpochButKnownFixedCommandSurvivesReconnect(&quot;00000007aaaaaaaaaaaaaaaaaaaaaaaa&quot;,null,7,&quot;00000007aaaaaaaaaaaaaaaaaaaaaaaa&quot;,9,True)" fullname="Game.Multiplayer.Tests.RunMemberExitReceiptTests.NewCommandRequiresRealEpochButKnownFixedCommandSurvivesReconnect(&quot;00000007aaaaaaaaaaaaaaaaaaaaaaaa&quot;,null,7,&quot;00000007aaaaaaaaaaaaaaaaaaaaaaaa&quot;,9,True)" methodname="NewCommandRequiresRealEpochButKnownFixedCommandSurvivesReconnect" classname="Game.Multiplayer.Tests.RunMemberExitReceiptTests" runstate="Runnable" seed="797324143" result="Failed" start-time="2026-11-03 03:51:23Z" end-time="2026-11-03 03:51:23Z" duration="0.000724" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  有界候选历史必须拒绝伪造未来前缀和遗忘的隔代旧ID，不能靠无限HashSet。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunMemberExitReceiptTests.NewCommandRequiresRealEpochButKnownFixedCommandSurvivesReconnect (System.String current, System.String previous, System.UInt32 origin, System.String incoming, System.UInt32 epoch, System.Boolean expected) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitReceiptTests.cs:28
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3203" name="NewCommandRequiresRealEpochButKnownFixedCommandSurvivesReconnect(&quot;00000008bbbbbbbbbbbbbbbbbbbbbbbb&quot;,&quot;00000007aaaaaaaaaaaaaaaaaaaaaaaa&quot;,8,&quot;00000006cccccccccccccccccccccccc&quot;,9,False)" fullname="Game.Multiplayer.Tests.RunMemberExitReceiptTests.NewCommandRequiresRealEpochButKnownFixedCommandSurvivesReconnect(&quot;00000008bbbbbbbbbbbbbbbbbbbbbbbb&quot;,&quot;00000007aaaaaaaaaaaaaaaaaaaaaaaa&quot;,8,&quot;00000006cccccccccccccccccccccccc&quot;,9,False)" methodname="NewCommandRequiresRealEpochButKnownFixedCommandSurvivesReconnect" classname="Game.Multiplayer.Tests.RunMemberExitReceiptTests" runstate="Runnable" seed="935400037" result="Failed" start-time="2026-11-03 03:51:23Z" end-time="2026-11-03 03:51:23Z" duration="0.000302" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  有界候选历史必须拒绝伪造未来前缀和遗忘的隔代旧ID，不能靠无限HashSet。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunMemberExitReceiptTests.NewCommandRequiresRealEpochButKnownFixedCommandSurvivesReconnect (System.String current, System.String previous, System.UInt32 origin, System.String incoming, System.UInt32 epoch, System.Boolean expected) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitReceiptTests.cs:28
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3204" name="NewCommandRequiresRealEpochButKnownFixedCommandSurvivesReconnect(&quot;00000008bbbbbbbbbbbbbbbbbbbbbbbb&quot;,&quot;00000007aaaaaaaaaaaaaaaaaaaaaaaa&quot;,8,&quot;00000009dddddddddddddddddddddddd&quot;,9,True)" fullname="Game.Multiplayer.Tests.RunMemberExitReceiptTests.NewCommandRequiresRealEpochButKnownFixedCommandSurvivesReconnect(&quot;00000008bbbbbbbbbbbbbbbbbbbbbbbb&quot;,&quot;00000007aaaaaaaaaaaaaaaaaaaaaaaa&quot;,8,&quot;00000009dddddddddddddddddddddddd&quot;,9,True)" methodname="NewCommandRequiresRealEpochButKnownFixedCommandSurvivesReconnect" classname="Game.Multiplayer.Tests.RunMemberExitReceiptTests" runstate="Runnable" seed="1622178256" result="Failed" start-time="2026-11-03 03:51:23Z" end-time="2026-11-03 03:51:23Z" duration="0.000291" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  有界候选历史必须拒绝伪造未来前缀和遗忘的隔代旧ID，不能靠无限HashSet。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunMemberExitReceiptTests.NewCommandRequiresRealEpochButKnownFixedCommandSurvivesReconnect (System.String current, System.String previous, System.UInt32 origin, System.String incoming, System.UInt32 epoch, System.Boolean expected) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunMemberExitReceiptTests.cs:28
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="3200" name="OnlyAuthenticatedPermanentSupersededProofAllowsNewCandidate" fullname="Game.Multiplayer.Tests.RunMemberExitReceiptTests.OnlyAuthenticatedPermanentSupersededProofAllowsNewCandidate" classname="Game.Multiplayer.Tests.RunMemberExitReceiptTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-11-03 03:51:23Z" end-time="2026-11-03 03:51:23Z" duration="0.071493" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="3195" name="OnlyAuthenticatedPermanentSupersededProofAllowsNewCandidate(409L,&quot;RunMemberExitConnectionSuperseded&quot;,404L,True)" fullname="Game.Multiplayer.Tests.RunMemberExitReceiptTests.OnlyAuthenticatedPermanentSupersededProofAllowsNewCandidate(409L,&quot;RunMemberExitConnectionSuperseded&quot;,404L,True)" methodname="OnlyAuthenticatedPermanentSupersededProofAllowsNewCandidate" classname="Game.Multiplayer.Tests.RunMemberExitReceiptTests" runstate="Runnable" seed="72410099" result="Passed" start-time="2026-11-03 03:51:23Z" end-time="2026-11-03 03:51:23Z" duration="0.008847" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="3196" name="OnlyAuthenticatedPermanentSupersededProofAllowsNewCandidate(0L,&quot;RunMemberExitConnectionSuperseded&quot;,404L,False)" fullname="Game.Multiplayer.Tests.RunMemberExitReceiptTests.OnlyAuthenticatedPermanentSupersededProofAllowsNewCandidate(0L,&quot;RunMemberExitConnectionSuperseded&quot;,404L,False)" methodname="OnlyAuthenticatedPermanentSupersededProofAllowsNewCandidate" classname="Game.Multiplayer.Tests.RunMemberExitReceiptTests" runstate="Runnable" seed="1744622102" result="Passed" start-time="2026-11-03 03:51:23Z" end-time="2026-11-03 03:51:23Z" duration="0.000240" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="3197" name="OnlyAuthenticatedPermanentSupersededProofAllowsNewCandidate(409L,&quot;RunMemberExitStateConflict&quot;,404L,False)" fullname="Game.Multiplayer.Tests.RunMemberExitReceiptTests.OnlyAuthenticatedPermanentSupersededProofAllowsNewCandidate(409L,&quot;RunMemberExitStateConflict&quot;,404L,False)" methodname="OnlyAuthenticatedPermanentSupersededProofAllowsNewCandidate" classname="Game.Multiplayer.Tests.RunMemberExitReceiptTests" runstate="Runnable" seed="1307094917" result="Passed" start-time="2026-11-03 03:51:23Z" end-time="2026-11-03 03:51:23Z" duration="0.000265" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="3198" name="OnlyAuthenticatedPermanentSupersededProofAllowsNewCandidate(409L,&quot;RunMemberExitConnectionSuperseded&quot;,0L,False)" fullname="Game.Multiplayer.Tests.RunMemberExitReceiptTests.OnlyAuthenticatedPermanentSupersededProofAllowsNewCandidate(409L,&quot;RunMemberExitConnectionSuperseded&quot;,0L,False)" methodname="OnlyAuthenticatedPermanentSupersededProofAllowsNewCandidate" classname="Game.Multiplayer.Tests.RunMemberExitReceiptTests" runstate="Runnable" seed="2058546873" result="Passed" start-time="2026-11-03 03:51:23Z" end-time="2026-11-03 03:51:23Z" duration="0.000253" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="3199" name="OnlyAuthenticatedPermanentSupersededProofAllowsNewCandidate(409L,&quot;RunMemberExitConnectionSuperseded&quot;,401L,False)" fullname="Game.Multiplayer.Tests.RunMemberExitReceiptTests.OnlyAuthenticatedPermanentSupersededProofAllowsNewCandidate(409L,&quot;RunMemberExitConnectionSuperseded&quot;,401L,False)" methodname="OnlyAuthenticatedPermanentSupersededProofAllowsNewCandidate" classname="Game.Multiplayer.Tests.RunMemberExitReceiptTests" runstate="Runnable" seed="314773503" result="Passed" start-time="2026-11-03 03:51:23Z" end-time="2026-11-03 03:51:23Z" duration="0.000216" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="5642" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="1062" result="Failed" site="Child" start-time="2026-11-03 03:51:23Z" end-time="2026-11-03 03:51:24Z" duration="0.791235" total="16" passed="15" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34452" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="5643" name="Game" fullname="Game" runstate="Runnable" testcasecount="1062" result="Failed" site="Child" start-time="2026-11-03 03:51:23Z" end-time="2026-11-03 03:51:24Z" duration="0.703929" total="16" passed="15" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="5644" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="1062" result="Failed" site="Child" start-time="2026-11-03 03:51:23Z" end-time="2026-11-03 03:51:24Z" duration="0.602794" total="16" passed="15" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="5645" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="1062" result="Failed" site="Child" start-time="2026-11-03 03:51:23Z" end-time="2026-11-03 03:51:24Z" duration="0.502387" total="16" passed="15" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="4360" name="AccountInventoryPresentationTests" fullname="Game.Run.Tests.AccountInventoryPresentationTests" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" testcasecount="16" result="Failed" site="Child" start-time="2026-11-03 03:51:23Z" end-time="2026-11-03 03:51:24Z" duration="0.405539" total="16" passed="15" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="4372" name="BrokenParentIsRejectedInsteadOfDroppingTheMissingItem" fullname="Game.Run.Tests.AccountInventoryPresentationTests.BrokenParentIsRejectedInsteadOfDroppingTheMissingItem" methodname="BrokenParentIsRejectedInsteadOfDroppingTheMissingItem" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="959569301" result="Passed" start-time="2026-11-03 03:51:23Z" end-time="2026-11-03 03:51:23Z" duration="0.038751" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4377" name="CoreConsumerAndControllerOfferInactiveHubPreparationWithoutNetworkDependency" fullname="Game.Run.Tests.AccountInventoryPresentationTests.CoreConsumerAndControllerOfferInactiveHubPreparationWithoutNetworkDependency" methodname="CoreConsumerAndControllerOfferInactiveHubPreparationWithoutNetworkDependency" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="1208126543" result="Passed" start-time="2026-11-03 03:51:23Z" end-time="2026-11-03 03:51:23Z" duration="0.001695" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4375" name="DisposedSourceRemovesReadCapabilitiesInsteadOfFallingBackToLocalOrZero" fullname="Game.Run.Tests.AccountInventoryPresentationTests.DisposedSourceRemovesReadCapabilitiesInsteadOfFallingBackToLocalOrZero" methodname="DisposedSourceRemovesReadCapabilitiesInsteadOfFallingBackToLocalOrZero" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="2073365581" result="Passed" start-time="2026-11-03 03:51:23Z" end-time="2026-11-03 03:51:24Z" duration="0.008319" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4364" name="FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity" fullname="Game.Run.Tests.AccountInventoryPresentationTests.FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-11-03 03:51:24Z" end-time="2026-11-03 03:51:24Z" duration="0.062713" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4361" name="FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity(0L)" fullname="Game.Run.Tests.AccountInventoryPresentationTests.FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity(0L)" methodname="FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="1619577222" result="Passed" start-time="2026-11-03 03:51:24Z" end-time="2026-11-03 03:51:24Z" duration="0.009071" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4362" name="FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity(12347L)" fullname="Game.Run.Tests.AccountInventoryPresentationTests.FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity(12347L)" methodname="FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="1255266669" result="Passed" start-time="2026-11-03 03:51:24Z" end-time="2026-11-03 03:51:24Z" duration="0.001582" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4363" name="FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity(long.MaxValue)" fullname="Game.Run.Tests.AccountInventoryPresentationTests.FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity(long.MaxValue)" methodname="FullAccountSourceShowsRealWalletCarriedAndWarehouseWithoutRunIdentity" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="436125158" result="Passed" start-time="2026-11-03 03:51:24Z" end-time="2026-11-03 03:51:24Z" duration="0.001519" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="4368" name="LockedOrStillRunningAccountCannotBecomeUnlockedHubSource" fullname="Game.Run.Tests.AccountInventoryPresentationTests.LockedOrStillRunningAccountCannotBecomeUnlockedHubSource" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-03 03:51:24Z" end-time="2026-11-03 03:51:24Z" duration="0.090169" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4366" name="LockedOrStillRunningAccountCannotBecomeUnlockedHubSource(True,&quot;&quot;)" fullname="Game.Run.Tests.AccountInventoryPresentationTests.LockedOrStillRunningAccountCannotBecomeUnlockedHubSource(True,&quot;&quot;)" methodname="LockedOrStillRunningAccountCannotBecomeUnlockedHubSource" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="409466214" result="Passed" start-time="2026-11-03 03:51:24Z" end-time="2026-11-03 03:51:24Z" duration="0.003021" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4367" name="LockedOrStillRunningAccountCannotBecomeUnlockedHubSource(False,&quot;bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb&quot;)" fullname="Game.Run.Tests.AccountInventoryPresentationTests.LockedOrStillRunningAccountCannotBecomeUnlockedHubSource(False,&quot;bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb&quot;)" methodname="LockedOrStillRunningAccountCannotBecomeUnlockedHubSource" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="998409448" result="Passed" start-time="2026-11-03 03:51:24Z" end-time="2026-11-03 03:51:24Z" duration="0.001619" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="4374" name="MaximumAccountVersionStillBuildsTheActualFirstWandProgram" fullname="Game.Run.Tests.AccountInventoryPresentationTests.MaximumAccountVersionStillBuildsTheActualFirstWandProgram" methodname="MaximumAccountVersionStillBuildsTheActualFirstWandProgram" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="1243867872" result="Passed" start-time="2026-11-03 03:51:24Z" end-time="2026-11-03 03:51:24Z" duration="0.002563" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4373" name="NonCanonicalWideLocationCannotAliasWarehouseThroughByteNarrowing" fullname="Game.Run.Tests.AccountInventoryPresentationTests.NonCanonicalWideLocationCannotAliasWarehouseThroughByteNarrowing" methodname="NonCanonicalWideLocationCannotAliasWarehouseThroughByteNarrowing" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="1607442311" result="Passed" start-time="2026-11-03 03:51:24Z" end-time="2026-11-03 03:51:24Z" duration="0.001999" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4365" name="SourceOwnsValuesAndDoesNotKeepMutableProfileItems" fullname="Game.Run.Tests.AccountInventoryPresentationTests.SourceOwnsValuesAndDoesNotKeepMutableProfileItems" methodname="SourceOwnsValuesAndDoesNotKeepMutableProfileItems" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="1216904131" result="Passed" start-time="2026-11-03 03:51:24Z" end-time="2026-11-03 03:51:24Z" duration="0.002516" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4379" name="SpecifiedAccountHubCanChooseMatchThroughBothOriginalPortalsWithoutLocalWrites" fullname="Game.Run.Tests.AccountInventoryPresentationTests.SpecifiedAccountHubCanChooseMatchThroughBothOriginalPortalsWithoutLocalWrites" methodname="SpecifiedAccountHubCanChooseMatchThroughBothOriginalPortalsWithoutLocalWrites" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="1936837540" result="Failed" start-time="2026-11-03 03:51:24Z" end-time="2026-11-03 03:51:24Z" duration="0.040486" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  HubExpeditionPortal不能把旧档写锁当成禁止打开无写选择。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.AccountInventoryPresentationTests.SpecifiedAccountHubCanChooseMatchThroughBothOriginalPortalsWithoutLocalWrites () [0x00246] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\AccountInventoryPresentationTests.cs:185
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4378" name="SpecifiedAccountHubCoordinatorCannotCheckpointTheLegacyRepository" fullname="Game.Run.Tests.AccountInventoryPresentationTests.SpecifiedAccountHubCoordinatorCannotCheckpointTheLegacyRepository" methodname="SpecifiedAccountHubCoordinatorCannotCheckpointTheLegacyRepository" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="586664445" result="Passed" start-time="2026-11-03 03:51:24Z" end-time="2026-11-03 03:51:24Z" duration="0.002696" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4376" name="SpecifiedHubReadOnlyGuardSurvivesEnableAndBlocksLocalSave" fullname="Game.Run.Tests.AccountInventoryPresentationTests.SpecifiedHubReadOnlyGuardSurvivesEnableAndBlocksLocalSave" methodname="SpecifiedHubReadOnlyGuardSurvivesEnableAndBlocksLocalSave" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="1941828445" result="Passed" start-time="2026-11-03 03:51:24Z" end-time="2026-11-03 03:51:24Z" duration="0.003260" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4371" name="UnknownVersionOrNegativeBalanceCannotBecomeRealAccountInventory" fullname="Game.Run.Tests.AccountInventoryPresentationTests.UnknownVersionOrNegativeBalanceCannotBecomeRealAccountInventory" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-03 03:51:24Z" end-time="2026-11-03 03:51:24Z" duration="0.042902" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4369" name="UnknownVersionOrNegativeBalanceCannotBecomeRealAccountInventory(-1L,9)" fullname="Game.Run.Tests.AccountInventoryPresentationTests.UnknownVersionOrNegativeBalanceCannotBecomeRealAccountInventory(-1L,9)" methodname="UnknownVersionOrNegativeBalanceCannotBecomeRealAccountInventory" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="930320201" result="Passed" start-time="2026-11-03 03:51:24Z" end-time="2026-11-03 03:51:24Z" duration="0.001830" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4370" name="UnknownVersionOrNegativeBalanceCannotBecomeRealAccountInventory(100L,uint.MinValue)" fullname="Game.Run.Tests.AccountInventoryPresentationTests.UnknownVersionOrNegativeBalanceCannotBecomeRealAccountInventory(100L,uint.MinValue)" methodname="UnknownVersionOrNegativeBalanceCannotBecomeRealAccountInventory" classname="Game.Run.Tests.AccountInventoryPresentationTests" runstate="Runnable" seed="449455147" result="Passed" start-time="2026-11-03 03:51:24Z" end-time="2026-11-03 03:51:24Z" duration="0.001398" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

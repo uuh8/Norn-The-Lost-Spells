@@ -38,6 +38,7 @@ namespace Game.Combat
 
         private bool _consumed; // 防同一物理步多次碰撞重复结算/销毁
         private bool _terminated;
+        private bool _replicaTerminationPresented;
         private float _lifetimeRemaining, _lifetimeOverride=-1, _lifetimeDelta, _lifetimeMultiplier=1;
         public event System.Action<ProjectileTerminationReason,Vector3,Vector3> Terminated;
         private Vector3 _launchVelocity; // Init 注入的初速度快照：同队穿过时据此恢复被弹偏的直线投射物速度
@@ -130,6 +131,26 @@ namespace Game.Combat
         // event 只允许本类触发 Invoke，外部只能 += 订阅或 -= 取消订阅，避免上层伪造命中。
         public event System.Action<Vector3, Vector3> Impacted;
         /// <summary>
+        /// 可信网络终止的纯视觉通知，只供已有命中表现组件使用。它与Impacted刻意分离：
+        /// 后者还承载法术Payload，SurfaceImpacted还会沉积材料，Replica不得重放这些玩法。
+        /// </summary>
+        public event System.Action<Vector3> ReplicaImpactPresented;
+
+        /// <summary>
+        /// 只消费已有终止原因和命中点，不执行碰撞、OnImpact、伤害或原生命周期事件。
+        /// 第一条合法终止就封住该实例；超时/取消后迟到的Impact不能再生成一次命中特效。
+        /// 非Replica保持原单机/Authority路径，避免同进程重复表现。
+        /// </summary>
+        public bool TryPresentReplicaTermination(ProjectileTerminationReason reason, Vector3 point)
+        {
+            if (_execution.Mode != CombatExecutionMode.Replica || _replicaTerminationPresented
+                || (uint)reason > (uint)ProjectileTerminationReason.TimedTrigger
+                || !float.IsFinite(point.x) || !float.IsFinite(point.y) || !float.IsFinite(point.z)) return false;
+            _replicaTerminationPresented = true;
+            if (reason != ProjectileTerminationReason.Impact) return false;
+            ReplicaImpactPresented?.Invoke(point); return true;
+        }
+        /// <summary>
         /// 需要真实接触法线的消费者使用该通道；旧 Impacted 继续服务 Spell Payload/VFX，
         /// 两个事件由同一次 ContactPoint 构造，避免不同模块各自猜测表面朝向。
         /// </summary>
@@ -201,6 +222,7 @@ namespace Game.Combat
 
         private bool TickLifetime(float deltaTime)
         {
+            if (!_execution.AllowsGameplayWrites) return false;
             if(_initialized && !_consumed && !_terminated)
             {
                 _lifetimeRemaining-=deltaTime;
@@ -226,7 +248,7 @@ namespace Game.Combat
 
         private void StepMotion(float deltaTime)
         {
-            if (_consumed || _rb == null) return;
+            if (!_execution.AllowsGameplayWrites || _consumed || _rb == null) return;
 
             // Rigidbody 属于 Physics Step，FixedUpdate 按固定时间步调用；使用 fixedDeltaTime 才与物理更新频率一致。
             using (s_motionMarker.Auto())
@@ -251,7 +273,8 @@ namespace Game.Combat
 
         private void TickTimedTrigger(float deltaTime)
         {
-            if (_consumed || !_timedTriggerArmed) return;
+            // 关门保留已装配的定时载荷与剩余时间；它不等价于命中、寿命到点或 Cancel。
+            if (!_execution.AllowsGameplayWrites || _consumed || !_timedTriggerArmed) return;
 
             // Time.deltaTime 是上一渲染帧消耗的缩放后游戏时间，因此倒计时基本不受帧率影响。
             _timedTriggerRemaining -= deltaTime;
@@ -371,7 +394,8 @@ namespace Game.Combat
         /// </summary>
         public bool ReflectByShield(Vector3 shieldNormal, byte newTeam, int newAttackerId)
         {
-            if (_execution.Mode == CombatExecutionMode.Replica || _consumed || _rb == null)
+            // 反射是物理回调的直接写口，不保证先经过本 Tick 的 StepAuthority。
+            if (!_execution.AllowsGameplayWrites || _consumed || _rb == null)
                 return false;
 
             Vector3 velocity = _rb.linearVelocity;
@@ -443,7 +467,7 @@ namespace Game.Combat
         {
             // OnCollisionEnter 由 Unity Physics 在刚体开始接触另一个 Collider 时调用，参数包含碰撞体和接触点。
             // _consumed 保证复杂碰撞在同一物理步产生多个回调时，伤害与 Payload 仍只结算一次。
-            if (_execution.Mode == CombatExecutionMode.Replica || _consumed || _terminated) return;
+            if (!_execution.AllowsGameplayWrites || _consumed || _terminated) return;
 
             // GetComponentInParent 从发生接触的 Collider 开始向父节点查找接口，兼容“子节点碰撞体、根节点生命组件”。
             IDamageable target = collision.collider.GetComponentInParent<IDamageable>();

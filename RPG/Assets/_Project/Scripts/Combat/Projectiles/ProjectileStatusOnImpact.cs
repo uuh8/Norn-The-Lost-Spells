@@ -14,10 +14,10 @@ namespace Game.Combat
         [SerializeField, Min(0f)] private float _amount = 15f;
 
         private ProjectileBase _projectile;
-        private CombatExecutionMode _executionMode;
-        public CombatExecutionMode ExecutionMode => _executionMode;
+        private CombatExecutionState _execution;
+        public CombatExecutionMode ExecutionMode => _execution.Mode;
         public void ConfigureExecutionMode(CombatExecutionMode mode, CombatSimulationWorld world = null)
-        { _executionMode = mode; }
+        { _execution.Configure(this, mode, world, CombatTickPhase.AfterPhysics); }
 
         private void Awake()
         {
@@ -50,14 +50,15 @@ namespace Game.Combat
         /// </summary>
         public bool TryApply(in ProjectileImpactContext context)
         {
-            if (_executionMode == CombatExecutionMode.Replica || _amount <= 0f || context.Target == null)
+            if (!_execution.AllowsGameplayWrites || _amount <= 0f || context.Target == null)
                 return false;
 
             Component targetComponent = context.Target as Component;
             StatusController controller = targetComponent != null
                 ? targetComponent.GetComponent<StatusController>()
                 : null;
-            if (controller == null || controller.ExecutionMode == CombatExecutionMode.Replica)
+            // 来源和目标各守自己的门；不能把冻结目标的拒绝误报为已经成功施加。
+            if (controller == null || !controller.AllowsGameplayWrites)
                 return false;
 
             controller.ApplyStatus(

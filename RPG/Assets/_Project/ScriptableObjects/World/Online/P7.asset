@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Character::Game.Character.OnlineDungeonDefinition
   _dungeonId: p7
   _sourceScenePath: Assets/_Project/Scenes/P7_DemoRun.unity
-  _sourceHash: f06f1dabf378ffc749be0e4d55315a90a5fc17462b39e13a4435f716526a3493
+  _sourceHash: 67124b6895832c4db18cb5b1b3ae6495f447706ddfaa17cb27c67df924ea44f7
+  _sourceSceneHash: f06f1dabf378ffc749be0e4d55315a90a5fc17462b39e13a4435f716526a3493
   _worldPrefab: {fileID: 7441788102841895005, guid: dbd35991b63efa343aa1681bea3e3192, type: 3}
   _showEncounterHud: 1
   _playerSpawns:
@@ -30,6 +31,8 @@ MonoBehaviour:
     AttackClipDuration: 0.6666667
     EncounterIndex: 0
     InitiallyVisible: 0
+    LootStageIndex: 0
+    LootEnemyIndex: 0
   - ActorId: 6
     Prefab: {fileID: 2173437361377640752, guid: 10c80dd87e964044dba8133a2e8d2e6d, type: 3}
     Position: {x: -5.943538, y: 0, z: 24.03454}
@@ -37,6 +40,8 @@ MonoBehaviour:
     AttackClipDuration: 1.3333334
     EncounterIndex: 0
     InitiallyVisible: 0
+    LootStageIndex: 0
+    LootEnemyIndex: 1
   - ActorId: 7
     Prefab: {fileID: 6268165980588763037, guid: 556b290667be3a6429fa1f66c8b41fcc, type: 3}
     Position: {x: 31.993298, y: 0, z: 22.106802}
@@ -44,6 +49,8 @@ MonoBehaviour:
     AttackClipDuration: 0.6666667
     EncounterIndex: 1
     InitiallyVisible: 0
+    LootStageIndex: 1
+    LootEnemyIndex: 0
   - ActorId: 8
     Prefab: {fileID: 8006176729156108738, guid: a2b92ee1e6865a04c84a26cd2e1b0793, type: 3}
     Position: {x: 21.74, y: 0, z: 10.09}
@@ -51,6 +58,8 @@ MonoBehaviour:
     AttackClipDuration: 0.6666667
     EncounterIndex: 1
     InitiallyVisible: 0
+    LootStageIndex: 1
+    LootEnemyIndex: 1
   - ActorId: 9
     Prefab: {fileID: 4011715918187213683, guid: 34b4944a246d270419536c18dc17160d, type: 3}
     Position: {x: 31.552107, y: 0, z: 11.823621}
@@ -58,6 +67,8 @@ MonoBehaviour:
     AttackClipDuration: 1.3333334
     EncounterIndex: 1
     InitiallyVisible: 0
+    LootStageIndex: 1
+    LootEnemyIndex: 2
   - ActorId: 10
     Prefab: {fileID: 8473741756309557522, guid: 64c8c660389540f4c9f43906733e30b4, type: 3}
     Position: {x: 28.455671, y: 0, z: 50.529774}
@@ -65,6 +76,8 @@ MonoBehaviour:
     AttackClipDuration: 0.6666667
     EncounterIndex: 2
     InitiallyVisible: 0
+    LootStageIndex: 2
+    LootEnemyIndex: 0
   - ActorId: 11
     Prefab: {fileID: 3731781655026796709, guid: 4195ed73d33fedd478a64ccf92e5789a, type: 3}
     Position: {x: 32.92, y: 1.96, z: 41.66}
@@ -72,6 +85,8 @@ MonoBehaviour:
     AttackClipDuration: 0.6666667
     EncounterIndex: 2
     InitiallyVisible: 0
+    LootStageIndex: 2
+    LootEnemyIndex: 1
   - ActorId: 12
     Prefab: {fileID: 2056935721741196072, guid: 64dd15fc078176c4cb4262b804ca04b6, type: 3}
     Position: {x: 19.8, y: 0, z: 49.41}
@@ -79,6 +94,8 @@ MonoBehaviour:
     AttackClipDuration: 0.6666667
     EncounterIndex: 2
     InitiallyVisible: 0
+    LootStageIndex: 2
+    LootEnemyIndex: 2
   - ActorId: 13
     Prefab: {fileID: 4999223027628375365, guid: f83171014ebdcd34f988e3f26a9898ae, type: 3}
     Position: {x: -11.56, y: 6.28, z: 40.16}
@@ -86,6 +103,8 @@ MonoBehaviour:
     AttackClipDuration: 0.6666667
     EncounterIndex: 3
     InitiallyVisible: 0
+    LootStageIndex: 3
+    LootEnemyIndex: 0
   - ActorId: 14
     Prefab: {fileID: 2566624465002752331, guid: 55be67924aeefa143accfdc3b0771a65, type: 3}
     Position: {x: -5.71, y: 0, z: 46.74}
@@ -93,6 +112,8 @@ MonoBehaviour:
     AttackClipDuration: 0.6666667
     EncounterIndex: 3
     InitiallyVisible: 0
+    LootStageIndex: 3
+    LootEnemyIndex: 1
   - ActorId: 15
     Prefab: {fileID: 5481845486144353699, guid: 5db290c206666454fb2fad4a0535c3d9, type: 3}
     Position: {x: 0.82, y: 5.489, z: 40.37}
@@ -100,6 +121,8 @@ MonoBehaviour:
     AttackClipDuration: 1.3333334
     EncounterIndex: 3
     InitiallyVisible: 0
+    LootStageIndex: 3
+    LootEnemyIndex: 2
   - ActorId: 16
     Prefab: {fileID: 5388079502935870496, guid: 6aa17fea797958646847d126a11f8c7d, type: 3}
     Position: {x: -11.107, y: 5.459, z: 53.59}
@@ -107,6 +130,8 @@ MonoBehaviour:
     AttackClipDuration: 0.6666667
     EncounterIndex: 3
     InitiallyVisible: 0
+    LootStageIndex: 3
+    LootEnemyIndex: 3
   _encounters:
   - DisplayName: "\u57FA\u7840\u6218\u6597\u533A\u57DF"
     ObjectiveText: "\u8BD5\u8BD5\u5728\u706B\u7403\u524D\u52A0\u5165\u591A\u4E2A\u201C\u6CD5\u672F\u589E\u5E45\u201D\u4FEE\u6B63
@@ -122,3 +147,16 @@ MonoBehaviour:
   - DisplayName: "Boss\u533A\u57DF"
     ObjectiveText: "\u51FB\u8D25Boss"
     ExitToStart: 0
+  _lootTables:
+  - {fileID: 11400000, guid: ead643d2e2066334e93867546ef39f97, type: 2}
+  - {fileID: 11400000, guid: 42a6c4c0ccf6db24197ba1bd0211b770, type: 2}
+  - {fileID: 11400000, guid: 471a725931d475c438128d8d60a9a9be, type: 2}
+  - {fileID: 11400000, guid: c98c19998ca968e40898b4a92fd66999, type: 2}
+  _coinPrefab: {fileID: 4716638534992856213, guid: a98e2fd260c82834aaa53a0e168b3e1c, type: 3}
+  _fixedSolidSpawns:
+  - SpawnId: p7.explore.0
+    ContentId: containertest.ice
+    MaterialKey: 5
+    Quantity: 256
+    Position: {x: -16, y: 0, z: 25}
+    Rotation: {x: -0, y: -0, z: -0, w: 1}

@@ -1,0 +1,45 @@
+{
+  "SchemaVersion": 1,
+  "DeliveredAtUtc": "2026-11-04T11:41:06Z",
+  "ProtocolVersion": 15,
+  "LocalDeploymentCompleted": true,
+  "OriginalManualExperienceAccepted": false,
+  "ReleaseReady": false,
+  "Verification": {
+    "RelatedUnityUiRebindExit": { "Passed": 151, "Failed": 0, "Evidence": "rebind-ui-exit-green-20261104.xml" },
+    "UnityCastPresentationFocusDriver": { "Passed": 123, "Failed": 0, "Evidence": "air-cast-driver-green-20261104.xml" },
+    "RelatedBusinessTransactions": { "Passed": 82, "Failed": 0, "Skipped": 0, "Evidence": "final-shop-home-exit-20261104.trx" },
+    "ProtocolGeneratedFilesChecked": 9,
+    "NativeP7": { "Passed": true, "ExplicitPassedChecks": 20, "CardMovementCovered": true, "Evidence": "native-20261104T112818Z/evidence.json" },
+    "NativeHome": { "Passed": true, "ExplicitPassedChecks": 15, "EntryCount": 2, "SameScopeCardAnd28Charges": true, "ResearchCardMovementCovered": false, "ManaCooldownContinuityAsserted": false, "Evidence": "native-20261104T112944Z/evidence.json" }
+  },
+  "Deployment": {
+    "Business": "Server/.artifacts/publish/online/Norn.Business.dll",
+    "DedicatedServer": "RPG/Builds/OnlineRooms/Server/NornRoomServer.exe",
+    "MenuClient": "RPG/Builds/OnlineAccounts/Menu/NornMenuClient.exe",
+    "BuildErrors": { "DedicatedServer": 0, "InventoryClient": 0, "MenuClient": 0 },
+    "BusinessPid": 34812,
+    "HealthReady": true,
+    "PrivateDatabasePort": 13384,
+    "AppliedMigrationCount": 16,
+    "MigrationSourceHashesVerified": true,
+    "OriginalBaseTableCountsAndAssetAggregatesPreserved": true,
+    "ProgramSwitchEvidence": "deployment-programs-20261104T113830216Z-5d0ba1.json",
+    "DatabaseEvidence": "database-postdeploy-20261104T114029005Z-bde394.json",
+    "HttpSmokeEvidence": "deployed-http-smoke-20261104.json",
+    "BackupSummary": "RPG/.tools/regression-backups/20261104T112944769Z-965fc3/backup-summary.private.json",
+    "FullDatabaseDumpAndOriginalProgramsBackedUp": true,
+    "BackupRestoreTested": false
+  },
+  "PendingManualChecks": [
+    "Original Hub F interactions and physical Tab/pointer/number-key input in the player's full menu-to-dungeon workflow",
+    "Home research edits inside the original research volume, and visible Mana/CD continuity across Home visits",
+    "Ground and air attack animation subjective feel and visible Mana bar during physical input",
+    "Full P7/P8 clear and original F return portal gameplay"
+  ],
+  "KnownLimits": [
+    "Native inventory runs use the original UI callbacks, real network, authority, snapshots and final receipts; physical pointer Raycast is not covered",
+    "Two pre-existing Built-in Resource startup errors remain in each Native DS log",
+    "No public-network, four-player, performance, IL2CPP or D3D12 release acceptance is claimed"
+  ]
+}

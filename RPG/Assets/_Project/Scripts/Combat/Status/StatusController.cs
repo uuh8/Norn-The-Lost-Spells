@@ -33,6 +33,7 @@ namespace Game.Combat
         private CombatExecutionState _execution;
         private bool _replicaPresentationRetired;
         public CombatExecutionMode ExecutionMode => _execution.Mode;
+        internal bool AllowsGameplayWrites => _execution.AllowsGameplayWrites;
 
         /// <summary>在线尸体到期后只退休纯表现；迟到快照仍安装强度读模型，但不能重新创建身体特效。</summary>
         public void RetireReplicaPresentation()
@@ -142,7 +143,7 @@ namespace Game.Combat
             // Invulnerability 是 Gameplay Effect 的统一权限门：保护期既不能扣血，也不能提前堆积
             // Burning/Poison 等状态，避免解除保护后的第一帧由预埋 DoT 或 Reaction 突然结算。
             // 已存在的状态仍可自然衰减；其伤害 Tick 继续由 HealthComponent 的 Damage Gate 拒绝。
-            if (_execution.Mode == CombatExecutionMode.Replica || !float.IsFinite(amount)
+            if (!_execution.AllowsGameplayWrites || !float.IsFinite(amount)
                 || amount <= 0f || (_health != null && (!_health.IsAlive || _health.IsInvulnerable)))
                 return;
 
@@ -173,6 +174,7 @@ namespace Game.Combat
                 ElementReactionFrame startFrame = _reactionRuntime.Tick(in snapshot, 0f);
                 ApplyReactionFrame(in startFrame);
             }
+            if (!_execution.AllowsGameplayWrites) return;
             EnsureVfx(kind);
             RecalculateMoveSpeedMultiplier();
             PublishStatusChanged(kind);
@@ -237,7 +239,7 @@ namespace Game.Combat
 
         private void Tick(float deltaTime)
         {
-            if (_execution.Mode == CombatExecutionMode.Replica || deltaTime <= 0f)
+            if (!_execution.AllowsGameplayWrites || deltaTime <= 0f)
                 return;
 
             if (_health != null && !_health.IsAlive)
@@ -262,8 +264,10 @@ namespace Game.Combat
 
             // 反应优先于自然衰减。正在被反应主动消耗/生成的通道会通过 mask 抑制本帧普通衰减，
             // 防止同一状态在一次 Tick 中被两套规则重复扣减。
+            if (!_execution.AllowsGameplayWrites) return;
             ApplyNaturalDecay(deltaTime, suppressed);
             TickDamageOverTime(deltaTime);
+            if (!_execution.AllowsGameplayWrites) return;
             FinalizeStatusesAndPublish();
             RecalculateMoveSpeedMultiplier();
         }
@@ -303,6 +307,7 @@ namespace Game.Combat
         {
             for (int i = 0; i < StatusCount; i++)
             {
+                if (!_execution.AllowsGameplayWrites) break;
                 StatusInstance instance = _instances[i];
                 if (!instance.Active)
                     continue;
@@ -341,6 +346,7 @@ namespace Game.Combat
         {
             for (int i = 0; i < StatusCount; i++)
             {
+                if (!_execution.AllowsGameplayWrites) break;
                 StatusInstance instance = _instances[i];
                 StatusKind kind = (StatusKind)i;
                 if (instance.Intensity <= 0f)
@@ -359,7 +365,7 @@ namespace Game.Combat
 
         private void ApplyReactionFrame(in ElementReactionFrame frame)
         {
-            if (_execution.Mode == CombatExecutionMode.Replica) return;
+            if (!_execution.AllowsGameplayWrites) return;
             // 先统一应用四通道 Delta，再发布离散信号和执行命令；Runtime 从不持有 MonoBehaviour 引用。
             AddIntensityDelta(StatusKind.Burning, frame.FireDelta);
             AddIntensityDelta(StatusKind.Wet, frame.WaterDelta);
@@ -368,17 +374,19 @@ namespace Game.Combat
 
             if (frame.SignalCount > 0)
                 PublishReactionSignal(in frame.Signal0);
-            if (frame.SignalCount > 1)
+            // Signal/EventBus 是同步外部回调；关门后保留现有 Process，不继续派发新的信号或范围命令。
+            if (frame.SignalCount > 1 && _execution.AllowsGameplayWrites)
                 PublishReactionSignal(in frame.Signal1);
-            if (frame.SignalCount > 2)
+            if (frame.SignalCount > 2 && _execution.AllowsGameplayWrites)
                 PublishReactionSignal(in frame.Signal2);
 
-            if (frame.HasAreaDamage)
+            if (frame.HasAreaDamage && _execution.AllowsGameplayWrites)
             {
                 // 正常由 Awake 预创建；EditMode 测试/工具若先调用公开 API，再做一次低频兜底。
                 if (_areaReactionDamageResolver == null)
                     _areaReactionDamageResolver = new AreaReactionDamageResolver();
-                _areaReactionDamageResolver.Resolve(in frame.AreaDamage, transform.position);
+                _areaReactionDamageResolver.Resolve(in frame.AreaDamage, transform.position,
+                    _execution.Mode == CombatExecutionMode.Authority ? _execution.World : null);
             }
         }
 

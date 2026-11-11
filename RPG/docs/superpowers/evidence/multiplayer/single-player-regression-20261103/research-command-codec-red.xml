@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="8" result="Failed(Child)" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-03 11:38:23Z" end-time="2026-11-03 11:38:24Z" duration="0.7903221">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="4294" result="Failed" site="Child" start-time="2026-11-03 11:38:23Z" end-time="2026-11-03 11:38:24Z" duration="0.790322" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="4051" name="Game.Networking.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Networking.Tests.dll" runstate="Runnable" testcasecount="538" result="Failed" site="Child" start-time="2026-11-03 11:38:23Z" end-time="2026-11-03 11:38:24Z" duration="0.688551" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34452" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="4052" name="Game" fullname="Game" runstate="Runnable" testcasecount="538" result="Failed" site="Child" start-time="2026-11-03 11:38:24Z" end-time="2026-11-03 11:38:24Z" duration="0.602858" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="4053" name="Networking" fullname="Game.Networking" runstate="Runnable" testcasecount="538" result="Failed" site="Child" start-time="2026-11-03 11:38:24Z" end-time="2026-11-03 11:38:24Z" duration="0.501288" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="4054" name="Tests" fullname="Game.Networking.Tests" runstate="Runnable" testcasecount="538" result="Failed" site="Child" start-time="2026-11-03 11:38:24Z" end-time="2026-11-03 11:38:24Z" duration="0.401030" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3491" name="InventoryCommandCodecTests" fullname="Game.Networking.Tests.InventoryCommandCodecTests" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" testcasecount="145" result="Failed" site="Child" start-time="2026-11-03 11:38:24Z" end-time="2026-11-03 11:38:24Z" duration="0.301138" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="3501" name="PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload" fullname="Game.Networking.Tests.InventoryCommandCodecTests.PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-11-03 11:38:24Z" end-time="2026-11-03 11:38:24Z" duration="0.145414" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="3495" name="PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload(&quot;ItemId&quot;)" fullname="Game.Networking.Tests.InventoryCommandCodecTests.PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload(&quot;ItemId&quot;)" methodname="PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="1888037804" result="Failed" start-time="2026-11-03 11:38:24Z" end-time="2026-11-03 11:38:24Z" duration="0.033220" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.Encode (System.Object value, System.String kind) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:849
+at Game.Networking.Tests.InventoryCommandCodecTests.PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload (System.String field) [0x0002c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:34
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3496" name="PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload(&quot;TargetLocationKind&quot;)" fullname="Game.Networking.Tests.InventoryCommandCodecTests.PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload(&quot;TargetLocationKind&quot;)" methodname="PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="801123628" result="Failed" start-time="2026-11-03 11:38:24Z" end-time="2026-11-03 11:38:24Z" duration="0.000884" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.Encode (System.Object value, System.String kind) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:849
+at Game.Networking.Tests.InventoryCommandCodecTests.PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload (System.String field) [0x0002c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:34
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3497" name="PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload(&quot;TargetSlot&quot;)" fullname="Game.Networking.Tests.InventoryCommandCodecTests.PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload(&quot;TargetSlot&quot;)" methodname="PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="1907505439" result="Failed" start-time="2026-11-03 11:38:24Z" end-time="2026-11-03 11:38:24Z" duration="0.000682" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.Encode (System.Object value, System.String kind) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:849
+at Game.Networking.Tests.InventoryCommandCodecTests.PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload (System.String field) [0x0002c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:34
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3498" name="PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload(&quot;SourceWandId&quot;)" fullname="Game.Networking.Tests.InventoryCommandCodecTests.PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload(&quot;SourceWandId&quot;)" methodname="PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="1011704190" result="Failed" start-time="2026-11-03 11:38:24Z" end-time="2026-11-03 11:38:24Z" duration="0.000873" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.Encode (System.Object value, System.String kind) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:849
+at Game.Networking.Tests.InventoryCommandCodecTests.PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload (System.String field) [0x0002c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:34
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3499" name="PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload(&quot;TransferBudget&quot;)" fullname="Game.Networking.Tests.InventoryCommandCodecTests.PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload(&quot;TransferBudget&quot;)" methodname="PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="1966401367" result="Failed" start-time="2026-11-03 11:38:24Z" end-time="2026-11-03 11:38:24Z" duration="0.000719" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.Encode (System.Object value, System.String kind) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:849
+at Game.Networking.Tests.InventoryCommandCodecTests.PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload (System.String field) [0x0002c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:34
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3500" name="PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload(&quot;AimOrigin&quot;)" fullname="Game.Networking.Tests.InventoryCommandCodecTests.PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload(&quot;AimOrigin&quot;)" methodname="PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="650223731" result="Failed" start-time="2026-11-03 11:38:24Z" end-time="2026-11-03 11:38:24Z" duration="0.000656" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.Encode (System.Object value, System.String kind) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:849
+at Game.Networking.Tests.InventoryCommandCodecTests.PeacefulResearchSessionCommandsRejectAnySmuggledItemOrWorldPayload (System.String field) [0x0002c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:34
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="3494" name="PeacefulResearchSessionCommandsRoundTripWithoutInventingAnItem" fullname="Game.Networking.Tests.InventoryCommandCodecTests.PeacefulResearchSessionCommandsRoundTripWithoutInventingAnItem" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-03 11:38:24Z" end-time="2026-11-03 11:38:24Z" duration="0.052878" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="3492" name="PeacefulResearchSessionCommandsRoundTripWithoutInventingAnItem(16)" fullname="Game.Networking.Tests.InventoryCommandCodecTests.PeacefulResearchSessionCommandsRoundTripWithoutInventingAnItem(16)" methodname="PeacefulResearchSessionCommandsRoundTripWithoutInventingAnItem" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="1325524500" result="Failed" start-time="2026-11-03 11:38:24Z" end-time="2026-11-03 11:38:24Z" duration="0.001471" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.Encode (System.Object value, System.String kind) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:849
+at Game.Networking.Tests.InventoryCommandCodecTests.PeacefulResearchSessionCommandsRoundTripWithoutInventingAnItem (System.Int32 kind) [0x0002b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:24
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3493" name="PeacefulResearchSessionCommandsRoundTripWithoutInventingAnItem(17)" fullname="Game.Networking.Tests.InventoryCommandCodecTests.PeacefulResearchSessionCommandsRoundTripWithoutInventingAnItem(17)" methodname="PeacefulResearchSessionCommandsRoundTripWithoutInventingAnItem" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="41799014" result="Failed" start-time="2026-11-03 11:38:24Z" end-time="2026-11-03 11:38:24Z" duration="0.000512" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.Encode (System.Object value, System.String kind) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:849
+at Game.Networking.Tests.InventoryCommandCodecTests.PeacefulResearchSessionCommandsRoundTripWithoutInventingAnItem (System.Int32 kind) [0x0002b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:24
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="29" result="Failed(Child)" total="29" passed="28" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 20:30:50Z" end-time="2026-11-02 20:30:51Z" duration="0.7446653">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3932" result="Failed" site="Child" start-time="2026-11-02 20:30:50Z" end-time="2026-11-02 20:30:51Z" duration="0.744665" total="29" passed="28" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3257" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="334" result="Passed" start-time="2026-11-02 20:30:50Z" end-time="2026-11-02 20:30:51Z" duration="0.208901" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="3258" name="Game" fullname="Game" runstate="Runnable" testcasecount="334" result="Passed" start-time="2026-11-02 20:30:50Z" end-time="2026-11-02 20:30:51Z" duration="0.183469" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3259" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="334" result="Passed" start-time="2026-11-02 20:30:50Z" end-time="2026-11-02 20:30:51Z" duration="0.154441" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="3260" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="334" result="Passed" start-time="2026-11-02 20:30:50Z" end-time="2026-11-02 20:30:51Z" duration="0.133966" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="3134" name="RunCheckpointMappingTests" fullname="Game.Multiplayer.Tests.RunCheckpointMappingTests" classname="Game.Multiplayer.Tests.RunCheckpointMappingTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-02 20:30:50Z" end-time="2026-11-02 20:30:51Z" duration="0.078954" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="3135" name="ReverseMappingKeepsRealRollOrderChargesAndDoesNotLendSourceArrays" fullname="Game.Multiplayer.Tests.RunCheckpointMappingTests.ReverseMappingKeepsRealRollOrderChargesAndDoesNotLendSourceArrays" methodname="ReverseMappingKeepsRealRollOrderChargesAndDoesNotLendSourceArrays" classname="Game.Multiplayer.Tests.RunCheckpointMappingTests" runstate="Runnable" seed="1826879078" result="Passed" start-time="2026-11-02 20:30:50Z" end-time="2026-11-02 20:30:51Z" duration="0.054638" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3136" name="TransitAndMaterialFactsKeepTheirOriginalIdentityAndDeepCopyComponents" fullname="Game.Multiplayer.Tests.RunCheckpointMappingTests.TransitAndMaterialFactsKeepTheirOriginalIdentityAndDeepCopyComponents" methodname="TransitAndMaterialFactsKeepTheirOriginalIdentityAndDeepCopyComponents" classname="Game.Multiplayer.Tests.RunCheckpointMappingTests" runstate="Runnable" seed="1863231578" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.000974" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="3137" name="RunWorldCheckpointCaptureTests" fullname="Game.Multiplayer.Tests.RunWorldCheckpointCaptureTests" classname="Game.Multiplayer.Tests.RunWorldCheckpointCaptureTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.050371" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="3142" name="ARealEmptyCommitIsDifferentFromNoCapture" fullname="Game.Multiplayer.Tests.RunWorldCheckpointCaptureTests.ARealEmptyCommitIsDifferentFromNoCapture" methodname="ARealEmptyCommitIsDifferentFromNoCapture" classname="Game.Multiplayer.Tests.RunWorldCheckpointCaptureTests" runstate="Runnable" seed="1584788380" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.029260" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3140" name="CallerMutationCannotChangeLiveOwnerOrAnotherFrozenCandidate" fullname="Game.Multiplayer.Tests.RunWorldCheckpointCaptureTests.CallerMutationCannotChangeLiveOwnerOrAnotherFrozenCandidate" methodname="CallerMutationCannotChangeLiveOwnerOrAnotherFrozenCandidate" classname="Game.Multiplayer.Tests.RunWorldCheckpointCaptureTests" runstate="Runnable" seed="1770788696" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.004866" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3139" name="FullCommittedPayloadKeepsNativeAddressQuantityAndDistinctMaterialTick" fullname="Game.Multiplayer.Tests.RunWorldCheckpointCaptureTests.FullCommittedPayloadKeepsNativeAddressQuantityAndDistinctMaterialTick" methodname="FullCommittedPayloadKeepsNativeAddressQuantityAndDistinctMaterialTick" classname="Game.Multiplayer.Tests.RunWorldCheckpointCaptureTests" runstate="Runnable" seed="146512712" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.000974" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3141" name="HistoricalKeyRemainsAsTombstoneAfterMaterialDisappears" fullname="Game.Multiplayer.Tests.RunWorldCheckpointCaptureTests.HistoricalKeyRemainsAsTombstoneAfterMaterialDisappears" methodname="HistoricalKeyRemainsAsTombstoneAfterMaterialDisappears" classname="Game.Multiplayer.Tests.RunWorldCheckpointCaptureTests" runstate="Runnable" seed="387279181" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.004171" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="3146" name="MissingWorldIdentityCannotProduceACompleteCheckpoint" fullname="Game.Multiplayer.Tests.RunWorldCheckpointCaptureTests.MissingWorldIdentityCannotProduceACompleteCheckpoint" classname="Game.Multiplayer.Tests.RunWorldCheckpointCaptureTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.004703" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="3143" name="MissingWorldIdentityCannotProduceACompleteCheckpoint(null)" fullname="Game.Multiplayer.Tests.RunWorldCheckpointCaptureTests.MissingWorldIdentityCannotProduceACompleteCheckpoint(null)" methodname="MissingWorldIdentityCannotProduceACompleteCheckpoint" classname="Game.Multiplayer.Tests.RunWorldCheckpointCaptureTests" runstate="Runnable" seed="1342182977" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.000701" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="3144" name="MissingWorldIdentityCannotProduceACompleteCheckpoint(&quot;&quot;)" fullname="Game.Multiplayer.Tests.RunWorldCheckpointCaptureTests.MissingWorldIdentityCannotProduceACompleteCheckpoint(&quot;&quot;)" methodname="MissingWorldIdentityCannotProduceACompleteCheckpoint" classname="Game.Multiplayer.Tests.RunWorldCheckpointCaptureTests" runstate="Runnable" seed="816138724" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.000268" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="3145" name="MissingWorldIdentityCannotProduceACompleteCheckpoint(&quot; &quot;)" fullname="Game.Multiplayer.Tests.RunWorldCheckpointCaptureTests.MissingWorldIdentityCannotProduceACompleteCheckpoint(&quot; &quot;)" methodname="MissingWorldIdentityCannotProduceACompleteCheckpoint" classname="Game.Multiplayer.Tests.RunWorldCheckpointCaptureTests" runstate="Runnable" seed="1471404809" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.000194" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="3138" name="UncapturedOrStoppedOwnerDoesNotPublishAnEmptyReplacement" fullname="Game.Multiplayer.Tests.RunWorldCheckpointCaptureTests.UncapturedOrStoppedOwnerDoesNotPublishAnEmptyReplacement" methodname="UncapturedOrStoppedOwnerDoesNotPublishAnEmptyReplacement" classname="Game.Multiplayer.Tests.RunWorldCheckpointCaptureTests" runstate="Runnable" seed="238537815" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.001325" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="3821" name="Game.Networking.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Networking.Tests.dll" runstate="Runnable" testcasecount="478" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.114053" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="3822" name="Game" fullname="Game" runstate="Runnable" testcasecount="478" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.088651" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3823" name="Networking" fullname="Game.Networking" runstate="Runnable" testcasecount="478" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.058401" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="3824" name="Tests" fullname="Game.Networking.Tests" runstate="Runnable" testcasecount="478" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.030672" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="3318" name="InstanceCheckpointControlTests" fullname="Game.Networking.Tests.InstanceCheckpointControlTests" classname="Game.Networking.Tests.InstanceCheckpointControlTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.026690" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="ParameterizedMethod" id="3325" name="CheckpointControlCannotSilentlyUseARemoteHost" fullname="Game.Networking.Tests.InstanceCheckpointControlTests.CheckpointControlCannotSilentlyUseARemoteHost" classname="Game.Networking.Tests.InstanceCheckpointControlTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.007689" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="3323" name="CheckpointControlCannotSilentlyUseARemoteHost(&quot;https://example.com&quot;)" fullname="Game.Networking.Tests.InstanceCheckpointControlTests.CheckpointControlCannotSilentlyUseARemoteHost(&quot;https://example.com&quot;)" methodname="CheckpointControlCannotSilentlyUseARemoteHost" classname="Game.Networking.Tests.InstanceCheckpointControlTests" runstate="Runnable" seed="878451780" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.004250" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="3324" name="CheckpointControlCannotSilentlyUseARemoteHost(&quot;http://192.168.1.10:5080&quot;)" fullname="Game.Networking.Tests.InstanceCheckpointControlTests.CheckpointControlCannotSilentlyUseARemoteHost(&quot;http://192.168.1.10:5080&quot;)" methodname="CheckpointControlCannotSilentlyUseARemoteHost" classname="Game.Networking.Tests.InstanceCheckpointControlTests" runstate="Runnable" seed="1403952811" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.000220" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="3319" name="CompleteJsonKeepsNullOptionalStatesAndEscapesActualStringValues" fullname="Game.Networking.Tests.InstanceCheckpointControlTests.CompleteJsonKeepsNullOptionalStatesAndEscapesActualStringValues" methodname="CompleteJsonKeepsNullOptionalStatesAndEscapesActualStringValues" classname="Game.Networking.Tests.InstanceCheckpointControlTests" runstate="Runnable" seed="539465518" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.005152" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3320" name="FloatingPointWireTextIsInvariantAndTheFrozenBodyCannotChangeWithLaterDtoEdits" fullname="Game.Networking.Tests.InstanceCheckpointControlTests.FloatingPointWireTextIsInvariantAndTheFrozenBodyCannotChangeWithLaterDtoEdits" methodname="FloatingPointWireTextIsInvariantAndTheFrozenBodyCannotChangeWithLaterDtoEdits" classname="Game.Networking.Tests.InstanceCheckpointControlTests" runstate="Runnable" seed="542644970" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.001028" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3321" name="NonFiniteResourcesAreRejectedBeforeCreatingAnUpload" fullname="Game.Networking.Tests.InstanceCheckpointControlTests.NonFiniteResourcesAreRejectedBeforeCreatingAnUpload" methodname="NonFiniteResourcesAreRejectedBeforeCreatingAnUpload" classname="Game.Networking.Tests.InstanceCheckpointControlTests" runstate="Runnable" seed="346781745" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.001529" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="3322" name="PostAndQueriesUseOnlyTheAuthorisedInstanceAndEpochWithoutMakingANetworkCall" fullname="Game.Networking.Tests.InstanceCheckpointControlTests.PostAndQueriesUseOnlyTheAuthorisedInstanceAndEpochWithoutMakingANetworkCall" methodname="PostAndQueriesUseOnlyTheAuthorisedInstanceAndEpochWithoutMakingANetworkCall" classname="Game.Networking.Tests.InstanceCheckpointControlTests" runstate="Runnable" seed="1934433590" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.006187" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="5389" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="968" result="Failed" site="Child" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.285771" total="13" passed="12" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="5390" name="Game" fullname="Game" runstate="Runnable" testcasecount="968" result="Failed" site="Child" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.263449" total="13" passed="12" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="5391" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="968" result="Failed" site="Child" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.240669" total="13" passed="12" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="5392" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="968" result="Failed" site="Child" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.218176" total="13" passed="12" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="4875" name="OnlineCheckpointMaterialOutputTests" fullname="Game.Run.Tests.OnlineCheckpointMaterialOutputTests" classname="Game.Run.Tests.OnlineCheckpointMaterialOutputTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.111666" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="4876" name="CommittedOutputBudgetsAreIndependentOwnersAndCapturedComponentsCannotMutateThem" fullname="Game.Run.Tests.OnlineCheckpointMaterialOutputTests.CommittedOutputBudgetsAreIndependentOwnersAndCapturedComponentsCannotMutateThem" methodname="CommittedOutputBudgetsAreIndependentOwnersAndCapturedComponentsCannotMutateThem" classname="Game.Run.Tests.OnlineCheckpointMaterialOutputTests" runstate="Runnable" seed="747100629" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.083254" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[SpellMaterials] 附着输出世界归属结束：0bb1cef246734e9bb56ffa02b394c03e, 20 GMU；未返还库存。
+[SpellMaterials] 附着输出世界归属结束：2113d2a046394df7808afb40efdc3c5c, 10 GMU；未返还库存。
+]]></output>
+              </test-case>
+              <test-case id="4877" name="ExistingOutputEndLossIsCapturedWithoutReturningItToTheBottle" fullname="Game.Run.Tests.OnlineCheckpointMaterialOutputTests.ExistingOutputEndLossIsCapturedWithoutReturningItToTheBottle" methodname="ExistingOutputEndLossIsCapturedWithoutReturningItToTheBottle" classname="Game.Run.Tests.OnlineCheckpointMaterialOutputTests" runstate="Runnable" seed="1716260509" result="Failed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.011125" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineCheckpointMaterialOutputTests.ExistingOutputEndLossIsCapturedWithoutReturningItToTheBottle () [0x0007f] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineRunCheckpointFactsTests.cs:247
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[[SpellMaterials] 附着输出世界归属结束：e6da3702a4c24c16b62b4473af597529, 20 GMU；未返还库存。
+[SpellMaterials] 附着输出世界归属结束：cce878bb1a044b59ac54d3eb1ae9c9cf, 10 GMU；未返还库存。
+]]></output>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="4878" name="OnlineCheckpointMaterialRetirementTests" fullname="Game.Run.Tests.OnlineCheckpointMaterialRetirementTests" classname="Game.Run.Tests.OnlineCheckpointMaterialRetirementTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.036345" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="ParameterizedMethod" id="4881" name="OnlyTheCompletelyMergedSourceIdRetires" fullname="Game.Run.Tests.OnlineCheckpointMaterialRetirementTests.OnlyTheCompletelyMergedSourceIdRetires" classname="Game.Run.Tests.OnlineCheckpointMaterialRetirementTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.013533" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="4879" name="OnlyTheCompletelyMergedSourceIdRetires(True)" fullname="Game.Run.Tests.OnlineCheckpointMaterialRetirementTests.OnlyTheCompletelyMergedSourceIdRetires(True)" methodname="OnlyTheCompletelyMergedSourceIdRetires" classname="Game.Run.Tests.OnlineCheckpointMaterialRetirementTests" runstate="Runnable" seed="627174391" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.007571" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="4880" name="OnlyTheCompletelyMergedSourceIdRetires(False)" fullname="Game.Run.Tests.OnlineCheckpointMaterialRetirementTests.OnlyTheCompletelyMergedSourceIdRetires(False)" methodname="OnlyTheCompletelyMergedSourceIdRetires" classname="Game.Run.Tests.OnlineCheckpointMaterialRetirementTests" runstate="Runnable" seed="1054354826" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.000874" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="4882" name="PendingRetirementIsInvisibleAndCancellationReturnsCapacityWithoutInventingARecord" fullname="Game.Run.Tests.OnlineCheckpointMaterialRetirementTests.PendingRetirementIsInvisibleAndCancellationReturnsCapacityWithoutInventingARecord" methodname="PendingRetirementIsInvisibleAndCancellationReturnsCapacityWithoutInventingARecord" classname="Game.Run.Tests.OnlineCheckpointMaterialRetirementTests" runstate="Runnable" seed="1277172247" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.000835" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="4870" name="OnlineCheckpointRetirementTests" fullname="Game.Run.Tests.OnlineCheckpointRetirementTests" classname="Game.Run.Tests.OnlineCheckpointRetirementTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.015174" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="4872" name="CancelledLastUseKeepsTheOriginalItemAndDoesNotRetireIt" fullname="Game.Run.Tests.OnlineCheckpointRetirementTests.CancelledLastUseKeepsTheOriginalItemAndDoesNotRetireIt" methodname="CancelledLastUseKeepsTheOriginalItemAndDoesNotRetireIt" classname="Game.Run.Tests.OnlineCheckpointRetirementTests" runstate="Runnable" seed="1131551211" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.002686" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4873" name="FullRetirementBudgetRejectsBeforePayingManaOrRemovingTheLastUse" fullname="Game.Run.Tests.OnlineCheckpointRetirementTests.FullRetirementBudgetRejectsBeforePayingManaOrRemovingTheLastUse" methodname="FullRetirementBudgetRejectsBeforePayingManaOrRemovingTheLastUse" classname="Game.Run.Tests.OnlineCheckpointRetirementTests" runstate="Runnable" seed="615463384" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.002249" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4871" name="LastFiniteUseIsRetiredOnlyAfterSuccessfulCommitAndReplayDoesNotDuplicateIt" fullname="Game.Run.Tests.OnlineCheckpointRetirementTests.LastFiniteUseIsRetiredOnlyAfterSuccessfulCommitAndReplayDoesNotDuplicateIt" methodname="LastFiniteUseIsRetiredOnlyAfterSuccessfulCommitAndReplayDoesNotDuplicateIt" classname="Game.Run.Tests.OnlineCheckpointRetirementTests" runstate="Runnable" seed="1216894039" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.003088" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4874" name="UnboundSinglePlayerStoreKeepsItsOriginalLastUseBehavior" fullname="Game.Run.Tests.OnlineCheckpointRetirementTests.UnboundSinglePlayerStoreKeepsItsOriginalLastUseBehavior" methodname="UnboundSinglePlayerStoreKeepsItsOriginalLastUseBehavior" classname="Game.Run.Tests.OnlineCheckpointRetirementTests" runstate="Runnable" seed="99257632" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.001388" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="4865" name="OnlineRunCheckpointFactsTests" fullname="Game.Run.Tests.OnlineRunCheckpointFactsTests" classname="Game.Run.Tests.OnlineRunCheckpointFactsTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.049194" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="4866" name="CurrentOwnerFactsPreserveRealRollAndCannotBeMutatedThroughACapturedArray" fullname="Game.Run.Tests.OnlineRunCheckpointFactsTests.CurrentOwnerFactsPreserveRealRollAndCannotBeMutatedThroughACapturedArray" methodname="CurrentOwnerFactsPreserveRealRollAndCannotBeMutatedThroughACapturedArray" classname="Game.Run.Tests.OnlineRunCheckpointFactsTests" runstate="Runnable" seed="732272714" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.015855" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4868" name="InFlightBottleIsIncludedInCheckpointWhileUiProjectionStillExcludesIt" fullname="Game.Run.Tests.OnlineRunCheckpointFactsTests.InFlightBottleIsIncludedInCheckpointWhileUiProjectionStillExcludesIt" methodname="InFlightBottleIsIncludedInCheckpointWhileUiProjectionStillExcludesIt" classname="Game.Run.Tests.OnlineRunCheckpointFactsTests" runstate="Runnable" seed="1834382465" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.011425" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4869" name="MovingTheSameWandTreeToGroundDoesNotProduceRetirement" fullname="Game.Run.Tests.OnlineRunCheckpointFactsTests.MovingTheSameWandTreeToGroundDoesNotProduceRetirement" methodname="MovingTheSameWandTreeToGroundDoesNotProduceRetirement" classname="Game.Run.Tests.OnlineRunCheckpointFactsTests" runstate="Runnable" seed="800656896" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.010753" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4867" name="PreparedInventoryCannotBeCapturedButCommittedChangesUseCurrentAmounts" fullname="Game.Run.Tests.OnlineRunCheckpointFactsTests.PreparedInventoryCannotBeCapturedButCommittedChangesUseCurrentAmounts" methodname="PreparedInventoryCannotBeCapturedButCommittedChangesUseCurrentAmounts" classname="Game.Run.Tests.OnlineRunCheckpointFactsTests" runstate="Runnable" seed="710589782" result="Passed" start-time="2026-11-02 20:30:51Z" end-time="2026-11-02 20:30:51Z" duration="0.002979" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

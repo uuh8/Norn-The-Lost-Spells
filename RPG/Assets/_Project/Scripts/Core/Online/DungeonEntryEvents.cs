@@ -20,5 +20,7 @@ namespace Game.Core
     /// <summary>取消、完成或门被卸载时关闭相同门的Presentation；不是副本进入成功通知。</summary>
     public struct DungeonEntryChoiceClosedEvent : IGameEvent { public int PortalId; }
     public struct DungeonMatchRequestedEvent : IGameEvent { public int PortalId; public string DestinationKey; }
+    /// <summary>单人同样预留账号资产并进入DS；不使用本地存档过门。</summary>
+    public struct DungeonSinglePlayerRequestedEvent : IGameEvent { public int PortalId; public string DestinationKey; }
     public struct DungeonMatchStatusEvent : IGameEvent { public int PortalId; public string Message; }
 }

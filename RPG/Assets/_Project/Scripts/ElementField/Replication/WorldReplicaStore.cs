@@ -124,8 +124,14 @@ namespace Game.ElementField
                     if (_hasMaterialConfiguration[d] && !_supported[d, _decode.Pending[i].MaterialId]) return false;
             }
             else if (count != 0 || header.Checksum != 2166136261u) return false;
-            if (slot >= 0 && (chunk.Interested || !chunk.Header.IsResident) && chunk.Header.Generation == header.Generation && chunk.Header.Revision == header.Revision)
-                return chunk.Header.Checksum == header.Checksum && chunk.Header.WordCount == count && chunk.Header.IsResident == header.IsResident;
+            if (slot >= 0 && chunk.Header.Generation == header.Generation && chunk.Header.Revision == header.Revision)
+            {
+                // Interest释放只清占据，不删除版本事实。同版本重入必须先与保留Header核对内容，
+                // 不能因!Interested绕过一致性检查，把“有合法CRC的另一份数据”当成原版本。
+                // 内容一致的resident重入仍继续原子重装；已可见或权威tombstone保持原幂等返回。
+                if (chunk.Header.Checksum != header.Checksum || chunk.Header.WordCount != count || chunk.Header.IsResident != header.IsResident) return false;
+                if (chunk.Interested || !chunk.Header.IsResident) return true;
+            }
             if (incomingCells > _cellCapacity - (_cells - chunk.Count) ||
                 incomingPending > _pendingCapacity - (_pending - chunk.PendingCount)) return false;
             int residentDelta = (header.IsResident ? 1 : 0) - (slot >= 0 && chunk.Header.IsResident && chunk.Interested ? 1 : 0);
@@ -152,8 +158,36 @@ namespace Game.ElementField
             chunk.PresentationVersion++; _domainChunks[d] += residentDelta;
             _totals[d] = _totals[d] - oldTotal + newTotal; _pendingTotals[d] = _pendingTotals[d] - oldPending + newPending;
             WorldTick = Math.Max(WorldTick, header.ServerTick); PresentationVersion++; _versions[d]++;
+            // 显式诊断只观察已成功发布的Current，不能把收页/CRC通过或幂等重送伪记为安装。
+            // 默认没有Active实例；启用时也只复制值到预分配前缀，不在此做JSON、文件IO或渲染操作。
+            var timing = WorldReplicationTimingTrace.Active;
+            if (timing != null) timing.Record(new WorldReplicationTimingEvent
+            {
+                Stage = WorldReplicationTimingStage.Installed, Header = header,
+                PresentationVersion = chunk.PresentationVersion, Frame = Time.frameCount,
+                Count0 = incomingCells, Count1 = incomingPending,
+                InstalledPresent = header.IsResident, InstalledGeneration = header.Generation,
+                InstalledRevision = header.Revision
+            });
             return true;
         }
+        /// <summary>
+        /// 只读取得实际已发布且仍在Interest中的网络Header，供显式诊断关联安装与表现。
+        /// Header与Current在TryInstall的同一主线程边界交换；CRC失败的候选绝不经过这里发布。
+        /// 返回的presentationVersion仅标识本地渲染脏版本，不能代替Header中的Generation/Revision。
+        /// Interest已退出的元数据仍可能保留版本栅栏，但不是当前可读的材料快照，故返回false。
+        /// </summary>
+        public bool TryGetInstalledChunkHeader(WorldChunkKey key, out WorldChunkPayloadHeader header,
+            out uint presentationVersion)
+        {
+            header = default; presentationVersion = 0;
+            if (!_indices.TryGetValue(key, out int index)) return false;
+            var chunk = _chunks[index];
+            if (!chunk.Interested || !chunk.Header.IsResident) return false;
+            header = chunk.Header; presentationVersion = chunk.PresentationVersion;
+            return true;
+        }
+
         public bool TryGetQuantity(WorldMaterialDomain domain, Vector3Int cell, byte material, out uint quantity)
         {
             quantity = 0;

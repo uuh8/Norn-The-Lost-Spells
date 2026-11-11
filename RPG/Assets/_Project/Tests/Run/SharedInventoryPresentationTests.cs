@@ -9,6 +9,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 namespace Game.Run.Tests
@@ -51,7 +52,9 @@ namespace Game.Run.Tests
             var sourcePanel = (GameObject)original.FindProperty("_panelRoot").objectReferenceValue;
             var targetPanel = (GameObject)copied.FindProperty("_panelRoot").objectReferenceValue;
             Assert.That(targetPanel, Is.Not.Null);
-            AssertLayouts(sourcePanel.transform, targetPanel.transform);
+            var feedback = copied.FindProperty("_status").objectReferenceValue as Text;
+            var addedFeedback = original.FindProperty("_status").objectReferenceValue == null && feedback != null ? feedback.transform : null;
+            AssertLayouts(sourcePanel.transform, targetPanel.transform, addedFeedback);
             Assert.That(File.ReadAllBytes(SourcePath), Is.EqualTo(before), "Preview 导出不得回写原工作区资源。");
         }
 
@@ -72,6 +75,52 @@ namespace Game.Run.Tests
             Assert.That(_preview.GetComponentInChildren<HeldItemHud>(true), Is.Null, "十格由共同 Host 拥有，Tab 不能再复制一份。");
         }
 
+        [Test] public void PreviewIncludesTheOriginalNearbyPromptWithoutSinglePlayerOwners()
+        {
+            var source = AssetDatabase.LoadAssetAtPath<GameObject>(SourcePath).GetComponentInChildren<NearbyPickupListView>(true);
+            Assert.That(source, Is.Not.Null);
+            byte[] before = File.ReadAllBytes(SourcePath);
+            _preview = (GameObject)RequireExporter().GetMethod("BuildPreview").Invoke(null, null);
+            var views = _preview.GetComponentsInChildren<NearbyPickupListView>(true);
+            Assert.That(views.Length, Is.EqualTo(1), "F输入已有附近候选，正式共享资源还必须包含原固定屏幕提示列表。");
+            var data = new SerializedObject(views[0]); var original = new SerializedObject(source);
+            foreach (string field in new[] { "_session", "_nearby", "_hub" })
+                Assert.That(data.FindProperty(field).objectReferenceValue, Is.Null, "列表不携带单机Gameplay Owner：" + field);
+            Assert.That(data.FindProperty("_inventory").objectReferenceValue,
+                Is.SameAs(_preview.GetComponentInChildren<SinglePlayerInventoryController>(true)));
+            Assert.That(data.FindProperty("_rows").arraySize, Is.EqualTo(original.FindProperty("_rows").arraySize));
+            AssertLayouts(source.Panel, views[0].Panel, null);
+            Assert.That(views[0].GetComponentInParent<Canvas>(true), Is.Not.Null);
+            Assert.That(File.ReadAllBytes(SourcePath), Is.EqualTo(before));
+        }
+
+        [Test] public void PreviewAddsReadableFeedbackInTheFreeHeaderWithoutTakingPointerEvents()
+        {
+            byte[] before = File.ReadAllBytes(SourcePath);
+            _preview = (GameObject)RequireExporter().GetMethod("BuildPreview").Invoke(null, null);
+            var controller = _preview.GetComponentInChildren<SinglePlayerInventoryController>(true);
+            var data = new SerializedObject(controller);
+            var status = data.FindProperty("_status").objectReferenceValue as Text;
+            Assert.That(status, Is.Not.Null, "正式共享库存不能再静默丢失所有拖放失败/等待原因。");
+            var panel = (GameObject)data.FindProperty("_panelRoot").objectReferenceValue;
+            Assert.That(status.transform.parent, Is.SameAs(panel.transform));
+            Assert.That(status.enabled && status.gameObject.activeSelf, Is.True); Assert.That(status.font, Is.Not.Null);
+            Assert.That(status.raycastTarget, Is.False, "反馈文字不能成为鼠标的新遮挡层。");
+            var rect = status.rectTransform;
+            Assert.That(rect.rect.width, Is.GreaterThan(600)); Assert.That(rect.rect.height, Is.GreaterThanOrEqualTo(36));
+            var bounds = InParent(rect);
+            Assert.That(bounds.Overlaps(InParent((RectTransform)panel.transform.Find("Logo"))), Is.False);
+            Assert.That(bounds.Overlaps(InParent((RectTransform)panel.transform.Find("Close"))), Is.False);
+            Assert.That(bounds.yMin, Is.GreaterThanOrEqualTo(-100), "反馈位于原内容区上方的header空白，不能盖住法杖或背包格。");
+            Assert.That(File.ReadAllBytes(SourcePath), Is.EqualTo(before), "增加导出反馈不得改写原作者工作区。");
+        }
+        private static Rect InParent(RectTransform rect)
+        {
+            Vector3 point = rect.localPosition;
+            return new Rect(point.x - rect.pivot.x * rect.rect.width, point.y - rect.pivot.y * rect.rect.height,
+                rect.rect.width, rect.rect.height);
+        }
+
         [Test] public void SameSourceReplayKeepsOneSceneInventoryAndOpenTabWhileWrongActorIsRejected()
         {
             var method = typeof(CombatPresentationScope).GetMethod("TryBindOnlineInventory", BindingFlags.Instance | BindingFlags.Public);
@@ -85,6 +134,7 @@ namespace Game.Run.Tests
             var scope = root.AddComponent<CombatPresentationScope>();
             var setting = new SerializedObject(scope); setting.FindProperty("_online").boolValue = true; setting.ApplyModifiedPropertiesWithoutUndo();
             var actor = new GameObject("CurrentActor"); actor.SetActive(false); SceneManager.MoveGameObjectToScene(actor, _area);
+            actor.AddComponent<CharacterController>();
             LocalActorPresentation.Bind(97531, actor, true);
             scope.Bind(new CombatPresentationContext { Actor = actor, WorldScene = _area, CrosshairVisible = true });
             _host = CombatPresentationHost.Active;
@@ -93,6 +143,12 @@ namespace Game.Run.Tests
             var inventory = root.GetComponentInChildren<SinglePlayerInventoryController>(true);
             Assert.That(inventory, Is.Not.Null); Assert.That(inventory.gameObject.scene, Is.EqualTo(_area));
             Assert.That(inventory.PresentationSource, Is.SameAs(source)); Assert.That(inventory.Session, Is.Null);
+            var prompt = root.GetComponentInChildren<NearbyPickupListView>(true);
+            Assert.That(prompt, Is.Not.Null, "在线Scope必须装配原F提示，不只装配Tab内附近网格。");
+            Assert.That(typeof(NearbyPickupListView).GetField("_nearby", Private).GetValue(prompt),
+                Is.SameAs(actor.GetComponent<NearbyPickupController>()));
+            Assert.That(typeof(NearbyPickupListView).GetField("_portalActor", Private).GetValue(prompt),
+                Is.SameAs(actor.GetComponent<Collider>()));
             typeof(SinglePlayerInventoryController).GetField("_open", Private).SetValue(inventory, true);
             Assert.That((bool)method.Invoke(scope, new object[] { actor, source }), Is.True);
             Assert.That(inventory.IsOpen, Is.True, "同一稳定 Source 重放不应调用 BindPresentationSource 关闭 Tab。");
@@ -130,16 +186,18 @@ namespace Game.Run.Tests
             Assert.That(type.GetMethod("BuildPreview"), Is.Not.Null); Assert.That(type.GetMethod("ReleasePreview"), Is.Not.Null);
             Assert.That(type.GetMethod("ExportResource"), Is.Not.Null); Assert.That(type.GetMethod("VerifyResource"), Is.Not.Null); return type;
         }
-        private static void AssertLayouts(Transform source, Transform target)
+        private static void AssertLayouts(Transform source, Transform target, Transform addedFeedback)
         {
-            Assert.That(target.name, Is.EqualTo(source.name)); Assert.That(target.childCount, Is.EqualTo(source.childCount));
+            Assert.That(target.name, Is.EqualTo(source.name));
+            int extra = addedFeedback != null && addedFeedback.parent == target ? 1 : 0;
+            Assert.That(target.childCount, Is.EqualTo(source.childCount + extra), "只允许追加独立反馈，原布局子树数量必须保留。");
             if (source is RectTransform a && target is RectTransform b)
             {
                 Assert.That(b.anchorMin, Is.EqualTo(a.anchorMin)); Assert.That(b.anchorMax, Is.EqualTo(a.anchorMax));
                 Assert.That(b.pivot, Is.EqualTo(a.pivot)); Assert.That(b.anchoredPosition, Is.EqualTo(a.anchoredPosition));
                 Assert.That(b.sizeDelta, Is.EqualTo(a.sizeDelta));
             }
-            for (int i = 0; i < source.childCount; i++) AssertLayouts(source.GetChild(i), target.GetChild(i));
+            for (int i = 0; i < source.childCount; i++) AssertLayouts(source.GetChild(i), target.GetChild(i), addedFeedback);
         }
         private sealed class EmptySource : IInventoryPresentationSource
         {

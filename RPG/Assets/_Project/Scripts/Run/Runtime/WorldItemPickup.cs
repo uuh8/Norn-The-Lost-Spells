@@ -20,6 +20,8 @@ namespace Game.Run
         private bool _subscribed;
         private Transform _collector;
         private float _reach;
+        private IInventoryPresentationSource _onlineSource;
+        private bool _onlineReadOnly;
         public static int RegisteredCount=>_proxies.Count;
         public static int CopyNearby(string inventoryId,Transform player,float reach,WorldItemPickup[] buffer)
         {
@@ -70,7 +72,7 @@ namespace Game.Run
             if (_store == null) return;
             var key = (_store, ItemId);
             if (_proxies.TryGetValue(key, out WorldItemPickup current) && ReferenceEquals(current, this))
-            {_proxies.Remove(key);EventBus<WorldItemVisualBoundEvent>.Publish(new WorldItemVisualBoundEvent{Root=transform,InventoryId=InventoryId,RegisteredCount=_proxies.Count});}
+            {_proxies.Remove(key);PublishVisualBinding(false);}
         }
 
         public static bool CanBind(ItemOwnershipStore store, string itemId) =>
@@ -84,7 +86,90 @@ namespace Game.Run
             if (_proxies.TryGetValue(key, out WorldItemPickup existing) && existing != null) return false;
             _proxies[key] = this;
             _store = store; ItemId = itemId; WorldOwner = worldOwner; InventoryId = inventoryId;
-            EventBus<WorldItemVisualBoundEvent>.Publish(new WorldItemVisualBoundEvent{Root=transform,InventoryId=inventoryId,RegisteredCount=_proxies.Count,Added=true});return true;
+            PublishVisualBinding(true);return true;
+        }
+
+        private void PublishVisualBinding(bool added)
+        {
+            var fact = new WorldItemVisualBoundEvent
+            { Root = transform, InventoryId = InventoryId, RegisteredCount = _proxies.Count, Added = added };
+            if (!_onlineReadOnly) { EventBus<WorldItemVisualBoundEvent>.Publish(fact); return; }
+            // 线上注册/移除发生在权威账本提交之后；表现订阅异常不能撤销资产或使原收据丢失。
+            try { EventBus<WorldItemVisualBoundEvent>.Publish(fact); }
+            catch (Exception error) { GameLog.Error("线上地面表现通知失败：" + error.Message, "OnlineInventory"); }
+        }
+
+        /// <summary>
+        /// Client只绑定已完整安装的线上投影；模型位置和注册Store均来自当前Source，不能由UI授予资产。
+        /// Source安装新快照会换Store，重绑前先释放旧key，避免同一实例留下两份附近物注册。
+        /// </summary>
+        public bool BindOnline(IInventoryPresentationSource source, string itemId, string worldOwner, Transform actor)
+        {
+            if (string.IsNullOrEmpty(itemId) || string.IsNullOrEmpty(worldOwner)) return false;
+            if (!(source is OnlineInventoryPresentationSource online) || !(source is IOnlineInventoryCommandContext context)
+                || context.ActorId == 0 || context.ConnectionEpoch == 0 || actor == null || gameObject.scene != actor.gameObject.scene
+                || online.PresentationItems == null || !online.PresentationItems.TryGetLocation(itemId, out var location)
+                || location.Kind != ItemLocationKind.WorldItem || !string.Equals(location.OwnerId, worldOwner, StringComparison.Ordinal)
+                || !online.TryGetGroundPose(itemId, out var position, out var rotation) || _store != null && !_onlineReadOnly) return false;
+            ReleaseIdentity(); _store = null;
+            _onlineSource = source; _onlineReadOnly = true; _collector = actor; _reach = 3; _collected = false;
+            transform.SetPositionAndRotation(position, rotation);
+            if (TryBind(online.PresentationItems, itemId, worldOwner, source.ReadOnly.InventoryId)) return true;
+            _onlineSource = null; _onlineReadOnly = false; return false;
+        }
+
+        /// <summary>私人账号Hub只绑定已确认的地面记录；不借副本Actor/Epoch，也不开放本地TryMove。</summary>
+        public bool BindAccount(AccountInventoryPresentationSource source, string itemId, Transform actor)
+        {
+            if (source == null || actor == null || gameObject.scene != actor.gameObject.scene
+                || !source.TryGetGroundItem(itemId, out var world) || source.PresentationItems == null
+                || !source.PresentationItems.TryGetLocation(itemId, out var location) || location.Kind != ItemLocationKind.WorldItem
+                || location.OwnerId != world.WorldOwnerId || _store != null && !_onlineReadOnly) return false;
+            ReleaseIdentity(); _store = null;
+            _onlineSource = source; _onlineReadOnly = true; _collector = actor; _reach = 3; _collected = false;
+            var pose = world.Pose;
+            transform.SetPositionAndRotation(new Vector3(pose.PositionX, pose.PositionY, pose.PositionZ),
+                new Quaternion(pose.RotationX, pose.RotationY, pose.RotationZ, pose.RotationW));
+            if (TryBind(source.PresentationItems, itemId, world.WorldOwnerId, source.InventoryId)) return true;
+            _onlineSource = null; _onlineReadOnly = false; return false;
+        }
+
+        // DS的共享模型也只是代理；即使收到旧单机EventBus命令，也不能越过Workspace事务直接TryMove。
+        internal bool TryBindOnlineAuthority(ItemOwnershipStore store, string itemId, string worldOwner)
+        {
+            if (_store != null) return false;
+            _onlineReadOnly = true;
+            if (TryBind(store, itemId, worldOwner)) return true;
+            _onlineReadOnly = false; return false;
+        }
+
+        internal void ReleaseOnlineBinding()
+        {
+            if (!_onlineReadOnly) return;
+            ReleaseIdentity(); _store = null; _onlineSource = null; _collected = true;
+        }
+
+        /// <summary>附近F只提交当前Source的拾取意图；成功发送不等于资产成功，不提前隐藏模型或改变组分。</summary>
+        public bool RequestOnlinePickup()
+        {
+            if (!_onlineReadOnly || !isActiveAndEnabled || _collector == null
+                || !(_onlineSource is OnlineInventoryPresentationSource source)
+                || !(_onlineSource is IOnlineInventoryCommandContext context) || context.ActorId == 0 || context.ConnectionEpoch == 0
+                || gameObject.scene != _collector.gameObject.scene || !source.ReadOnly.TryGetView(ItemId, out var item)
+                || item.Location.Kind != ItemLocationKind.WorldItem || !string.Equals(item.Location.OwnerId, WorldOwner, StringComparison.Ordinal)
+                || !source.TryGetGroundPose(ItemId, out var position, out _) || (position - _collector.position).sqrMagnitude > 9) return false;
+            EventBus<OnlineInventoryCommandRequestedEvent>.Publish(new OnlineInventoryCommandRequestedEvent
+            {
+                ActorId = context.ActorId, CallerId = GetInstanceID(), Intent = new OnlineInventoryCommandIntent
+                {
+                    CommandId = OnlineInventoryCommandIds.Next(), ConnectionEpoch = context.ConnectionEpoch,
+                    // 容器/固体保留已验收的数量通道；普通Item/卡/法杖使用通用意图，完整实例仍由DS唯一转交。
+                    ExpectedInventoryVersion = source.ReadOnly.Version, Kind = item.Kind == ItemKind.Container || item.Kind == ItemKind.Material
+                        ? OnlineInventoryCommandKind.PickupContainer : OnlineInventoryCommandKind.PickupItem,
+                    ItemId = ItemId, WorldOwnerId = item.Location.OwnerId, AutoPlace = true
+                }
+            });
+            return true;
         }
 
         public InventoryOperationResult TryCollect(string backpackId, in GridPlacement placement, uint expectedVersion)
@@ -92,6 +177,8 @@ namespace Game.Run
 
         public InventoryOperationResult TryCollect(in ItemLocation destination, uint expectedVersion)
         {
+            if (_onlineReadOnly) return new InventoryOperationResult(false, InventoryFailureReason.InvalidOwnership,
+                _onlineSource != null ? _onlineSource.ReadOnly.Version : _store != null ? _store.Version : 0);
             if (_store == null) return new InventoryOperationResult(false, InventoryFailureReason.InvalidOwnership, 0);
             // UI拖拽和自动拾取共用此Gate；列表显示曾经在附近，不等于执行时仍可远程拿走。
             if(_collector!=null && (gameObject.scene!=_collector.gameObject.scene || (transform.position-_collector.position).sqrMagnitude>_reach*_reach))
@@ -118,6 +205,7 @@ namespace Game.Run
 
         private void OnCommand(InventoryCommandEvent command)
         {
+            if (_onlineReadOnly) return;
             if (_store == null || _collected || !string.Equals(command.InventoryId, InventoryId, StringComparison.Ordinal)
                 || command.Kind != InventoryCommandKind.Pickup || !string.Equals(command.ItemId, ItemId, StringComparison.Ordinal)
                 || !string.Equals(command.WorldOwner, WorldOwner, StringComparison.Ordinal)) return;

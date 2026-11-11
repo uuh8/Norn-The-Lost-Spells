@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -10,6 +10,7 @@ using Game.Combat;
 using Game.Core;
 using Game.ElementField;
 using Game.Run;
+using Game.Skills;
 using Game.UI;
 using Unity.AI.Navigation;
 using UnityEditor;
@@ -28,7 +29,7 @@ namespace Game.Project.Editor
     /// 正式地图的离线导出边界：只读原Scene，把静态世界、原NPC实例覆盖值与空间接线分开保存。
     /// 所有克隆先放进inactive父根，再剥离单机Owner；永远不在运行时加载整张单机图后才删除Session。
     /// </summary>
-    public static class OnlineDungeonTools
+    public static partial class OnlineDungeonTools
     {
         public const string CatalogPath = "Assets/_Project/Resources/Online/DungeonCatalog.asset";
         public const string WorldFolder = "Assets/_Project/Prefabs/World/Online";
@@ -43,6 +44,18 @@ namespace Game.Project.Editor
             public Vector3 SourcePlayerPosition;
             public bool MissingLightingDataAsset;
             public bool ShowEncounterHud;
+            public int LootTableCount;
+            public int FixedSolidCount;
+            public int[] NpcLootStages, NpcLootEnemies;
+        }
+        /// <summary>逐NPC的只读导出审计；只记录资源路径/受控key，不赋予客户端选程序或生成Gameplay的权限。</summary>
+        public sealed class NpcProgramMappingInfo
+        {
+            public ulong ActorId;
+            public string SourcePrefabPath;
+            public string[] ProgramPaths, OutputPrefabPaths;
+            public uint[] OutputKeys;
+            public bool MatchesExportedPrograms;
         }
         public sealed class PlayerSpawnInfo
         {
@@ -58,6 +71,7 @@ namespace Game.Project.Editor
             internal Vector3 Position, Scale;
             internal Quaternion Rotation;
             internal int Encounter;
+            internal int LootStage = -1, LootEnemy = -1;
             internal float Duration;
         }
         private sealed class Preview
@@ -72,7 +86,34 @@ namespace Game.Project.Editor
             internal readonly Dictionary<int, Transform> Clones = new Dictionary<int, Transform>();
             internal SourceInfo Info;
             internal bool ShowEncounterHud = true;
+            internal DungeonLootTable[] LootTables = Array.Empty<DungeonLootTable>();
+            internal GameObject CoinPrefab;
+            internal OnlineDungeonFixedSolidSpawn[] FixedSolidSpawns = Array.Empty<OnlineDungeonFixedSolidSpawn>();
             internal readonly List<ScriptableObject> MaterialProfiles = new List<ScriptableObject>();
+            internal bool LoadedPrefabContents;
+        }
+
+        private sealed class SourceLoot
+        {
+            internal DungeonLootTable[] Tables = Array.Empty<DungeonLootTable>();
+            internal GameObject CoinPrefab;
+            internal readonly List<HealthComponent> Members = new List<HealthComponent>();
+            internal readonly List<int> Stages = new List<int>(), Enemies = new List<int>();
+        }
+        private sealed class LootRefresh
+        {
+            internal OnlineDungeonDefinition Definition;
+            internal DungeonLootTable[] Tables;
+            internal GameObject CoinPrefab;
+            internal int[] Stages, Enemies;
+            internal string SceneHash, SourceHash;
+            internal OnlineDungeonFixedSolidSpawn[] FixedSolidSpawns;
+        }
+
+        private sealed class SourceFixedSolids
+        {
+            internal OnlineDungeonFixedSolidSpawn[] Spawns = Array.Empty<OnlineDungeonFixedSolidSpawn>();
+            internal readonly SortedSet<string> HashInputs = new SortedSet<string>(StringComparer.Ordinal);
         }
 
         [MenuItem("Tools/Norn/Online/Export Formal Dungeon Worlds")]
@@ -103,7 +144,8 @@ namespace Game.Project.Editor
                             if (saved == null) throw new InvalidOperationException("NPC导出失败：" + original.Root.name);
                             npcs[i] = new OnlineDungeonNpcSpawn { ActorId = (ulong)i + 5, Prefab = saved,
                                 Position = original.Position, Rotation = original.Rotation, AttackClipDuration = original.Duration,
-                                EncounterIndex = original.Encounter, InitiallyVisible = Ids[d] == "p8" };
+                                EncounterIndex = original.Encounter, InitiallyVisible = Ids[d] == "p8",
+                                LootStageIndex = original.LootStage, LootEnemyIndex = original.LootEnemy };
                         }
                         finally { Object.DestroyImmediate(holder); }
                     }
@@ -116,20 +158,35 @@ namespace Game.Project.Editor
                     var data = new SerializedObject(definition);
                     data.FindProperty("_dungeonId").stringValue = Ids[d]; data.FindProperty("_sourceScenePath").stringValue = preview.Path;
                     data.FindProperty("_sourceHash").stringValue = preview.Hash; data.FindProperty("_worldPrefab").objectReferenceValue = world;
+                    data.FindProperty("_sourceSceneHash").stringValue = Hash(preview.Path);
                     data.FindProperty("_showEncounterHud").boolValue = preview.ShowEncounterHud;
+                    data.FindProperty("_coinPrefab").objectReferenceValue = preview.CoinPrefab;
                     var positions = data.FindProperty("_playerSpawns"); positions.arraySize = spawns.Length;
                     for (int i = 0; i < spawns.Length; i++) positions.GetArrayElementAtIndex(i).vector3Value = spawns[i];
                     data.ApplyModifiedPropertiesWithoutUndo();
                     // 公共数组合同仅在Editor通过反射写入序列化字段，保留Unity对象引用；Runtime不会执行反射。
                     WriteObjectArray(definition, "_npcs", npcs); WriteObjectArray(definition, "_encounters", preview.Encounters);
+                    WriteObjectArray(definition, "_lootTables", preview.LootTables);
+                    WriteObjectArray(definition, "_fixedSolidSpawns", preview.FixedSolidSpawns);
                     EditorUtility.SetDirty(definition); definitions[d] = definition;
                 }
                 finally { ReleasePreview(root); }
             }
             var catalog = AssetDatabase.LoadAssetAtPath<OnlineDungeonCatalog>(CatalogPath);
             if (catalog == null) { catalog = ScriptableObject.CreateInstance<OnlineDungeonCatalog>(); AssetDatabase.CreateAsset(catalog, CatalogPath); }
-            var catalogData = new SerializedObject(catalog); var entries = catalogData.FindProperty("_dungeons"); entries.arraySize = definitions.Length;
-            for (int i = 0; i < definitions.Length; i++) entries.GetArrayElementAtIndex(i).objectReferenceValue = definitions[i];
+            var catalogData = new SerializedObject(catalog); var entries = catalogData.FindProperty("_dungeons");
+            // 原菜单只重导P7/P8。已独立导出的Home或后续地图仍保留原引用，不能被两张战斗图的刷新删掉。
+            var merged = new List<OnlineDungeonDefinition>(definitions);
+            for (int i = 0; i < entries.arraySize; i++)
+            {
+                var existing = entries.GetArrayElementAtIndex(i).objectReferenceValue as OnlineDungeonDefinition;
+                if (existing == null) continue;
+                bool replaced = false;
+                foreach (var updated in definitions) if (updated.DungeonId == existing.DungeonId) { replaced = true; break; }
+                if (!replaced) merged.Add(existing);
+            }
+            entries.arraySize = merged.Count;
+            for (int i = 0; i < merged.Count; i++) entries.GetArrayElementAtIndex(i).objectReferenceValue = merged[i];
             catalogData.ApplyModifiedPropertiesWithoutUndo(); EditorUtility.SetDirty(catalog); AssetDatabase.SaveAssets(); Verify();
             GameLog.Info("已从原P7/P8导出地图、NPC、入口及独立CPU材料配置；网络权威、恢复、掉落和交易仍需各自实际验收。", "OnlineDungeon");
         }
@@ -141,13 +198,19 @@ namespace Game.Project.Editor
             if (catalog == null || !catalog.TryValidate(out error)) throw new InvalidOperationException("正式副本目录无效：" + error);
             foreach (string id in Ids)
             {
-                if (!catalog.TryGet(id, out var definition) || definition.SourceHash != Hash(SourcePath(id)))
-                    throw new InvalidOperationException("正式地图缺失或源Scene已变化，请重新Export：" + id);
+                if (!catalog.TryGet(id, out var definition)) throw new InvalidOperationException("正式地图缺失：" + id);
                 // 源场景的文本皮肤与显隐策略是两份信息。只核对 SourceHash 无法发现新增字段
                 // 仍停留在默认值的旧导出资产；只读 Preview 防止把 P8 再默认为普通遭遇 HUD。
                 var source = EditorSceneManager.OpenPreviewScene(SourcePath(id));
                 try
                 {
+                    var loot = ReadSourceLoot(source, id);
+                    var solids = ReadFixedSolidSource(source, id);
+                    if (definition.SourceSceneHash != Hash(SourcePath(id)) || definition.SourceHash != ComputeSourceHash(SourcePath(id), loot.Tables, solids, loot.CoinPrefab))
+                        throw new InvalidOperationException("正式地图Scene或原掉落依赖已变化，请走对应官方刷新/Export：" + id);
+                    ValidateLootMapping(definition, loot, true);
+                    if (!SameFixedSolidSpawns(definition, solids.Spawns))
+                        throw new InvalidOperationException("正式固体来源与原Scene世界姿态/数量不一致，请窄刷新：" + id);
                     if (definition.ShowEncounterHud != ReadSourceHudPolicy(source))
                         throw new InvalidOperationException("正式地图HUD显隐策略与原场景不一致，请重新Export：" + id);
                 }
@@ -180,8 +243,10 @@ namespace Game.Project.Editor
                 RemapSceneReferences(preview);
                 Gather(preview);
                 PrepareMaterialWorld(preview);
+                AttachOriginalReturnPortals(preview);
                 RemoveActorsAndOwnership(preview);
                 var bindings = preview.Root.AddComponent<OnlineDungeonWorldBindings>(); WriteObjectArray(bindings, "_areas", preview.Areas);
+                if (preview.Id == "home") AttachPeacefulHomeBindings(preview);
                 var environment = preview.Root.AddComponent<OnlineDungeonEnvironment>(); CaptureEnvironment(preview, environment);
                 ClearOutsideReferences(preview.Root); ValidateWorld(preview.Root, preview.Areas.Length);
                 preview.Info = new SourceInfo { SourceHash = preview.Hash, SourceScenePath = preview.Path, NpcCount = preview.Npcs.Count,
@@ -189,6 +254,11 @@ namespace Game.Project.Editor
                     ShowEncounterHud = preview.ShowEncounterHud,
                     GateCount = preview.Root.GetComponentsInChildren<ArenaGate>(true).Length,
                     MissingLightingDataAsset = environment.SourceLightingDataMissing };
+                preview.Info.LootTableCount = preview.LootTables.Length;
+                preview.Info.FixedSolidCount = preview.FixedSolidSpawns.Length;
+                preview.Info.NpcLootStages = new int[preview.Npcs.Count]; preview.Info.NpcLootEnemies = new int[preview.Npcs.Count];
+                for (int i = 0; i < preview.Npcs.Count; i++)
+                { preview.Info.NpcLootStages[i] = preview.Npcs[i].LootStage; preview.Info.NpcLootEnemies[i] = preview.Npcs[i].LootEnemy; }
                 foreach (var area in preview.Areas) preview.Info.EntryVolumeCount += area.EntryVolumes.Length;
                 Previews.Add(preview.Root, preview); return preview.Root;
             }
@@ -201,6 +271,114 @@ namespace Game.Project.Editor
         }
         public static SourceInfo InspectSource(string id)
         { var root = BuildPreview(id); try { return Previews[root].Info; } finally { ReleasePreview(root); } }
+
+        /// <summary>
+        /// 按原遭遇成员顺序核对原Scene→导出NPC→程序→受控PrefabKey。不实例化敌人、不运行AI、不保存资源。
+        /// 毒/粘/火是不同原程序；该报告只能证实静态映射，真实运行时选中哪一套仍须看DS出生事实。
+        /// </summary>
+        public static NpcProgramMappingInfo[] InspectNpcProgramMappings(string id)
+        {
+            var definition = AssetDatabase.LoadAssetAtPath<OnlineDungeonDefinition>(DefinitionPath(id));
+            var combat = AssetDatabase.LoadAssetAtPath<OnlineCombatDefinition>("Assets/_Project/Resources/Online/CombatDefinition.asset");
+            if (definition == null || combat == null) throw new InvalidOperationException("逐NPC审计缺正式Definition或受控输出表。");
+            var scene = EditorSceneManager.OpenPreviewScene(SourcePath(id));
+            try
+            {
+                var originals = new List<GameObject>();
+                if (id == "p7")
+                {
+                    var source = ReadSourceLoot(scene, id);
+                    foreach (var member in source.Members) originals.Add(member.gameObject);
+                }
+                else
+                {
+                    var owners = Find<BossEncounterController>(scene);
+                    if (owners.Count != 1) throw new InvalidOperationException("P8逐NPC审计需要唯一原Boss Encounter。");
+                    var health = new SerializedObject(owners[0]).FindProperty("_bossHealth").objectReferenceValue as HealthComponent;
+                    if (health == null) throw new InvalidOperationException("原Boss Encounter没有可信Boss Health。");
+                    originals.Add(health.gameObject);
+                }
+                if (originals.Count != definition.NpcCount) throw new InvalidOperationException("原NPC与导出NPC数量不一致。");
+                var result = new NpcProgramMappingInfo[originals.Count];
+                for (int i = 0; i < result.Length; i++)
+                {
+                    var original = originals[i]; var exported = definition.GetNpc(i).Prefab;
+                    var programs = ReadNpcPrograms(original); var copied = ReadNpcPrograms(exported);
+                    bool same = SameNpcDefinition(original, exported) && programs.Length == copied.Length;
+                    for (int p = 0; p < programs.Length && same; p++) same = programs[p] == copied[p];
+                    var paths = new string[programs.Length];
+                    var outputs = new SortedDictionary<string, GameObject>(StringComparer.Ordinal);
+                    for (int p = 0; p < programs.Length; p++)
+                    {
+                        paths[p] = AssetDatabase.GetAssetPath(programs[p]);
+                        if (string.IsNullOrEmpty(paths[p]) || programs[p].Spells == null)
+                            throw new InvalidOperationException("原NPC程序不是持久化资源或缺少指令序列。");
+                        foreach (var spell in programs[p].Spells)
+                        {
+                            if (spell == null) throw new InvalidOperationException("原NPC程序含空法术。");
+                            AddProgramOutput(outputs, spell.ProjectilePrefab); AddProgramOutput(outputs, spell.LandingSitePrefab);
+                        }
+                        // 继续检查命中/爆炸等Prefab依赖，避免只核对根投射物却漏掉其后继Gameplay。
+                        foreach (string dependency in AssetDatabase.GetDependencies(paths[p], true))
+                        {
+                            if (!dependency.EndsWith(".prefab", StringComparison.Ordinal)) continue;
+                            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(dependency);
+                            if (prefab != null && (prefab.GetComponentInChildren<ProjectileBase>(true) != null
+                                || prefab.GetComponentInChildren<AreaDamage>(true) != null)) AddProgramOutput(outputs, prefab);
+                        }
+                    }
+                    var prefabPaths = new string[outputs.Count]; var keys = new uint[outputs.Count]; int next = 0;
+                    foreach (var pair in outputs)
+                    {
+                        prefabPaths[next] = pair.Key; uint key = combat.FindOutputKey(pair.Value);
+                        keys[next++] = combat.OutputPrefab(key) == pair.Value ? key : 0;
+                    }
+                    result[i] = new NpcProgramMappingInfo { ActorId = definition.GetNpc(i).ActorId,
+                        SourcePrefabPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(original),
+                        ProgramPaths = paths, OutputPrefabPaths = prefabPaths, OutputKeys = keys, MatchesExportedPrograms = same };
+                }
+                return result;
+            }
+            finally { EditorSceneManager.ClosePreviewScene(scene); }
+        }
+        private static void AddProgramOutput(SortedDictionary<string, GameObject> outputs, GameObject prefab)
+        {
+            if (prefab == null) return;
+            string path = AssetDatabase.GetAssetPath(prefab);
+            if (string.IsNullOrEmpty(path)) throw new InvalidOperationException("原程序输出不是持久化Prefab。");
+            outputs[path] = prefab;
+        }
+        private static WandLoadout[] ReadNpcPrograms(GameObject root)
+        {
+            if (root == null) throw new InvalidOperationException("原NPC或导出NPC引用缺失。");
+            var ranged = root.GetComponent<RangedEnemyController>();
+            if (ranged != null)
+            {
+                var values = new SerializedObject(ranged).FindProperty("_spellPrograms"); var result = new WandLoadout[values.arraySize];
+                for (int i = 0; i < result.Length; i++) result[i] = values.GetArrayElementAtIndex(i).objectReferenceValue as WandLoadout;
+                foreach (var program in result) if (program == null) throw new InvalidOperationException("原远程NPC含空程序。");
+                return result;
+            }
+            var boss = root.GetComponent<WizardBossController>();
+            if (boss == null) return Array.Empty<WandLoadout>(); // 近战没有远程程序，不能替它填默认火球。
+            if (boss.Definition == null || boss.Definition.Programs == null) throw new InvalidOperationException("原Boss缺程序配置。");
+            var programs = new WandLoadout[boss.Definition.Programs.Length];
+            for (int i = 0; i < programs.Length; i++)
+            {
+                var selection = boss.Definition.Programs[i];
+                if (selection == null || selection.Wand == null) throw new InvalidOperationException("原Boss含空程序选择。");
+                programs[i] = selection.Wand;
+            }
+            return programs;
+        }
+        private static bool SameNpcDefinition(GameObject original, GameObject exported)
+        {
+            if (exported == null) return false;
+            var sourceEnemy = original.GetComponent<EnemyControllerBase>(); var copiedEnemy = exported.GetComponent<EnemyControllerBase>();
+            if (sourceEnemy != null) return copiedEnemy != null && sourceEnemy.GetType() == copiedEnemy.GetType() && sourceEnemy.Definition == copiedEnemy.Definition;
+            var sourceBoss = original.GetComponent<WizardBossController>(); var copiedBoss = exported.GetComponent<WizardBossController>();
+            return sourceBoss != null && copiedBoss != null && sourceBoss.Definition == copiedBoss.Definition;
+        }
         /// <summary>与Export共用真实出生验证，供Editor测试检查有界搜索和临时Scene清理，不保存任何资产。</summary>
         public static PlayerSpawnInfo InspectPlayerSpawns(GameObject preview)
         {
@@ -209,14 +387,19 @@ namespace Game.Project.Editor
         }
         private static void Close(Preview preview)
         {
-            if (preview.Root != null) Object.DestroyImmediate(preview.Root);
+            if (preview.Root != null)
+            {
+                if (preview.LoadedPrefabContents) PrefabUtility.UnloadPrefabContents(preview.Root);
+                else Object.DestroyImmediate(preview.Root);
+            }
             foreach (var profile in preview.MaterialProfiles) if (profile != null) Object.DestroyImmediate(profile);
-            if (preview.World.IsValid()) EditorSceneManager.ClosePreviewScene(preview.World);
+            if (!preview.LoadedPrefabContents && preview.World.IsValid()) EditorSceneManager.ClosePreviewScene(preview.World);
             if (preview.Source.IsValid()) EditorSceneManager.ClosePreviewScene(preview.Source);
         }
 
         private static void Gather(Preview preview)
         {
+            if (preview.Id == "home") { GatherPeacefulHome(preview); return; }
             // 原 P8 的 Stage Adapter 已禁用，Boss HUD 再负责其专属栏；离线读这个实际选择，
             // 不在 Client 按 DungeonId 特判，也不借进度/血量猜皮肤。没有旧 Adapter 的区域
             // 使用公共遭遇 HUD（例如当前 P7）；多个来源无法确定 authoring，显式拒绝导出。
@@ -260,6 +443,285 @@ namespace Game.Project.Editor
                 preview.Encounters = new[] { new OnlineDungeonEncounterDefinition { DisplayName = "Boss区域", ObjectiveText = "击败Boss", ExitToStart = true } };
             }
             if (preview.Player == null || preview.Npcs.Count != (preview.Id == "p7" ? 12 : 1)) throw new InvalidOperationException("源图玩家/NPC引用不完整。");
+            // 在移除单机Owner前取原配置；不把剥离后的空Prefab误判成原图没有掉落，也不挂回单机会话。
+            var loot = ReadSourceLoot(preview.Source, preview.Id); preview.LootTables = loot.Tables; preview.CoinPrefab = loot.CoinPrefab;
+            var solids = ReadFixedSolidSource(preview.Source, preview.Id); preview.FixedSolidSpawns = solids.Spawns;
+            for (int i = 0; i < loot.Members.Count; i++)
+            {
+                if (i >= preview.Npcs.Count || preview.Npcs[i].Root != loot.Members[i].gameObject)
+                    throw new InvalidOperationException("原掉落成员次序与正式NPC导出次序不一致。");
+                preview.Npcs[i].LootStage = loot.Stages[i]; preview.Npcs[i].LootEnemy = loot.Enemies[i];
+            }
+            preview.Hash = ComputeSourceHash(preview.Path, loot.Tables, solids, loot.CoinPrefab);
+        }
+
+        /// <summary>只读原Scene的固定固体值；在单机Owner剥离前捕获实际Layout实例的世界Transform。</summary>
+        public static OnlineDungeonFixedSolidSpawn[] InspectFixedSolidSpawns(string dungeonId)
+        {
+            var scene = EditorSceneManager.OpenPreviewScene(SourcePath(dungeonId));
+            try { return ReadFixedSolidSource(scene, dungeonId).Spawns; }
+            finally { EditorSceneManager.ClosePreviewScene(scene); }
+        }
+
+        private static SourceFixedSolids ReadFixedSolidSource(Scene scene, string dungeonId)
+        {
+            var result = new SourceFixedSolids(); WorldItemSpawnPoint original = null;
+            foreach (var point in Find<WorldItemSpawnPoint>(scene))
+            {
+                // food和其它原作者点仍不在本次线上范围；一旦原固体来源变更则显式拒绝，不能悄悄多发或改量。
+                if (point.SpawnId != "p7.explore.0" && (point.Definition == null || point.Definition.Kind != ItemKind.Material)) continue;
+                if (dungeonId != "p7" || point.SpawnId != "p7.explore.0" || original != null
+                    || !point.enabled || !point.gameObject.activeInHierarchy || point.Definition == null
+                    || point.Definition.Kind != ItemKind.Material || point.Definition.ContentId != "containertest.ice")
+                    throw new InvalidOperationException("固定固体仅允许原P7有效且唯一的p7.explore.0冰来源。");
+                original = point;
+            }
+            if (dungeonId == "p8") return result;
+            if (original == null) throw new InvalidOperationException("原P7固定冰来源缺失，拒绝把缺失默认成新空地图。");
+            var pointData = new SerializedObject(original); var definition = original.Definition;
+            var itemData = new SerializedObject(definition);
+            int quantity = pointData.FindProperty("_initialMaterialQuantity").intValue;
+            int key = itemData.FindProperty("_materialKey").intValue;
+            if (quantity != 256 || key != 5 || itemData.FindProperty("_materialItemCapacityGmu").intValue < quantity)
+                throw new InvalidOperationException("原固定冰必须保留显式Key5/256GMU，不能从模板容量补满或自动接受新来源量。");
+            var combat = AssetDatabase.LoadAssetAtPath<OnlineCombatDefinition>("Assets/_Project/Resources/Online/CombatDefinition.asset");
+            if (combat == null || combat.Catalog == null || !combat.Catalog.TryCreateIndex(out var catalog, out _)
+                || !catalog.TryGet(definition.ContentId, out var trusted) || trusted != definition)
+                throw new InvalidOperationException("原固定冰定义必须与受信Catalog为同一资源。");
+            result.Spawns = new[] { new OnlineDungeonFixedSolidSpawn { SpawnId = original.SpawnId, ContentId = definition.ContentId,
+                MaterialKey = (byte)key, Quantity = (ulong)quantity, Position = original.transform.position, Rotation = original.transform.rotation } };
+            var proof = ScriptableObject.CreateInstance<OnlineDungeonDefinition>();
+            try
+            {
+                var data = new SerializedObject(proof); data.FindProperty("_dungeonId").stringValue = dungeonId; data.ApplyModifiedPropertiesWithoutUndo();
+                WriteObjectArray(proof, "_fixedSolidSpawns", result.Spawns);
+                if (!proof.TryValidateFixedSolidSpawns(out var error)) throw new InvalidOperationException(error);
+            }
+            finally { Object.DestroyImmediate(proof); }
+
+            // Scene只保存Prefab引用GUID；把原Layout、SpawnPoint规则和冰/模型源及meta也纳入依赖，避免字节改变却沿旧Hash。
+            var prefabSource = PrefabUtility.GetCorrespondingObjectFromSource(original);
+            if (prefabSource == null || AssetDatabase.GetAssetPath(prefabSource) != "Assets/_Project/Prefabs/SinglePlayer/P7Dungeon/FixedFourStageLayout.prefab")
+                throw new InvalidOperationException("原固定冰不再来自已批准的FixedFourStageLayout，拒绝窄刷新掩盖来源变更。");
+            AddLootSource(prefabSource, result.HashInputs); AddLootSource(MonoScript.FromMonoBehaviour(original), result.HashInputs);
+            AddLootSource(definition, result.HashInputs);
+            if (definition.PickupPrefab != null) AddLootSource(definition.PickupPrefab, result.HashInputs);
+            if (definition.WorldModel != null) AddLootSource(definition.WorldModel, result.HashInputs);
+            return result;
+        }
+
+        private static bool SameFixedSolidSpawns(OnlineDungeonDefinition definition, OnlineDungeonFixedSolidSpawn[] source)
+        {
+            if (definition.FixedSolidCount != source.Length) return false;
+            for (int i = 0; i < source.Length; i++)
+            {
+                var actual = definition.GetFixedSolid(i); var expected = source[i];
+                if (actual == null || actual.SpawnId != expected.SpawnId || actual.ContentId != expected.ContentId
+                    || actual.MaterialKey != expected.MaterialKey || actual.Quantity != expected.Quantity
+                    || !actual.Position.Equals(expected.Position) || !actual.Rotation.Equals(expected.Rotation)) return false;
+            }
+            return true;
+        }
+
+        private static SourceLoot ReadSourceLoot(Scene scene, string id)
+        {
+            var result = new SourceLoot(); var contents = Find<DungeonRunContent>(scene);
+            if (id == "p8")
+            {
+                if (contents.Count != 0) throw new InvalidOperationException("原P8新增了掉落Owner，不能自动套用P7规则。");
+                return result;
+            }
+            var runs = Find<DemoRunController>(scene);
+            if (contents.Count != 1 || runs.Count != 1 || contents[0].StageCount != 4)
+                throw new InvalidOperationException("P7需要唯一原DungeonRunContent及四阶段映射。");
+            var content = contents[0]; var source = new SerializedObject(content);
+            var coin = source.FindProperty("_coinPrefab").objectReferenceValue as WorldCurrencyPickup;
+            if (coin == null || !PrefabUtility.IsPartOfPrefabAsset(coin))
+                throw new InvalidOperationException("原P7缺少可复用的CoinPrefab资产，不能以程序替代品更改Trigger或视觉。");
+            result.CoinPrefab = coin.gameObject;
+            var tables = source.FindProperty("_tables"); var encounters = new SerializedObject(runs[0]).FindProperty("_encounters");
+            if (tables.arraySize != 4 || encounters.arraySize != 4) throw new InvalidOperationException("原P7掉落表/遭遇不是四阶段。");
+            result.Tables = new DungeonLootTable[4];
+            for (int stage = 0; stage < 4; stage++)
+            {
+                var encounter = content.GetEncounter(stage);
+                if (encounter == null || encounter != encounters.GetArrayElementAtIndex(stage).objectReferenceValue)
+                    throw new InvalidOperationException("掉落与原遭遇次序不一致，不能重新排序敌人。");
+                result.Tables[stage] = content.GetTable(stage);
+                for (int enemy = 0; enemy < encounter.EnemyCount; enemy++)
+                {
+                    var member = encounter.GetEnemy(enemy); if (member == null) throw new InvalidOperationException("原掉落敌人引用缺失。");
+                    result.Members.Add(member); result.Stages.Add(stage); result.Enemies.Add(enemy);
+                }
+            }
+            // 用同一纯配置验证器证明最多12敌、完整原表最多48个Item key。只创建内存SO，不改原Scene或表。
+            var proof = ScriptableObject.CreateInstance<OnlineDungeonDefinition>();
+            try
+            {
+                var data = new SerializedObject(proof); data.FindProperty("_dungeonId").stringValue = id; data.ApplyModifiedPropertiesWithoutUndo();
+                var npcs = new OnlineDungeonNpcSpawn[result.Members.Count]; var areas = new OnlineDungeonEncounterDefinition[result.Tables.Length];
+                for (int i = 0; i < areas.Length; i++) areas[i] = new OnlineDungeonEncounterDefinition { DisplayName = "source" };
+                for (int i = 0; i < npcs.Length; i++) npcs[i] = new OnlineDungeonNpcSpawn { ActorId = (ulong)i + 5,
+                    EncounterIndex = result.Stages[i], LootStageIndex = result.Stages[i], LootEnemyIndex = result.Enemies[i] };
+                WriteObjectArray(proof, "_npcs", npcs); WriteObjectArray(proof, "_encounters", areas); WriteObjectArray(proof, "_lootTables", result.Tables);
+                if (!proof.TryValidateItemDrops(out var error)) throw new InvalidOperationException(error);
+            }
+            finally { Object.DestroyImmediate(proof); }
+            return result;
+        }
+
+        private static void ValidateLootMapping(OnlineDungeonDefinition definition, SourceLoot source, bool configured)
+        {
+            if (source.Tables.Length != 0 && definition.NpcCount != source.Members.Count)
+                throw new InvalidOperationException("原掉落敌人数与已导出NPC不一致，需要正式Export。");
+            if (configured)
+            {
+                if (definition.CoinPrefab != source.CoinPrefab) throw new InvalidOperationException("正式CoinPrefab与原Scene引用不一致，请窄刷新掉落配置。");
+                if (definition.LootTableCount != source.Tables.Length) throw new InvalidOperationException("正式Definition缺少原掉落表，请刷新掉落配置。");
+                for (int i = 0; i < source.Tables.Length; i++)
+                    if (definition.GetLootTable(i) != source.Tables[i]) throw new InvalidOperationException("正式掉落表引用与原Scene不一致。");
+            }
+            for (int i = 0; i < definition.NpcCount; i++)
+            {
+                var npc = definition.GetNpc(i); int stage = source.Tables.Length == 0 ? -1 : source.Stages[i];
+                int enemy = source.Tables.Length == 0 ? -1 : source.Enemies[i];
+                if (source.Tables.Length != 0 && (npc.EncounterIndex != stage
+                    || !npc.Position.Equals(source.Members[i].transform.position) || !npc.Rotation.Equals(source.Members[i].transform.rotation)))
+                    throw new InvalidOperationException("原NPC布局与现有导出不一致，窄刷新不能改写静态地图来源。");
+                if (configured && (npc.LootStageIndex != stage || npc.LootEnemyIndex != enemy))
+                    throw new InvalidOperationException("正式NPC原stage/enemy索引不一致，请刷新掉落配置。");
+            }
+        }
+
+        /// <summary>
+        /// 官方窄刷新：只读原Scene，先验证全部候选，再只保存受影响Definition。不会克隆/重导WorldPrefab、
+        /// 不改Build Scenes、不SaveAllAssets，也不能用刷新Hash掩盖原Scene几何变化。
+        /// </summary>
+        public static void RefreshLootConfiguration()
+        {
+            OnlineSceneSetup.RequireCleanEditor();
+            // 与正式Authority使用同一可信目录与来源界；Ground满时由事务拒绝/pending，不扩大传输边界。
+            var combat = AssetDatabase.LoadAssetAtPath<OnlineCombatDefinition>("Assets/_Project/Resources/Online/CombatDefinition.asset");
+            if (combat == null || combat.Catalog == null || !combat.Catalog.TryCreateIndex(out var catalog, out var catalogError))
+                throw new InvalidOperationException("正式Item来源缺少可信物品目录。");
+            long itemBound = DungeonLootPlanner.CalculateItemLootBound(catalog);
+            GameLog.Info("原P7完整Item来源key上界=" + itemBound + "，原Ground总条目上限=" + OnlineGroundInventorySnapshot.MaximumItems, "OnlineDungeon");
+            var pending = new List<LootRefresh>();
+            foreach (string id in Ids)
+            {
+                var definition = AssetDatabase.LoadAssetAtPath<OnlineDungeonDefinition>(DefinitionPath(id));
+                if (definition == null || definition.DungeonId != id || definition.SourceScenePath != SourcePath(id))
+                    throw new InvalidOperationException("缺少已正式导出的Definition，不能靠掉落刷新建立地图：" + id);
+                string sceneHash = Hash(SourcePath(id));
+                // 首次迁移接受旧纯Scene Hash；之后只接受独立Scene基线。源Scene变化必须由原正式Export处理。
+                string baseline = string.IsNullOrEmpty(definition.SourceSceneHash) ? definition.SourceHash : definition.SourceSceneHash;
+                if (baseline != sceneHash) throw new InvalidOperationException("原Scene已变化；窄掉落刷新拒绝更新基线，请正式Export：" + id);
+                var scene = EditorSceneManager.OpenPreviewScene(SourcePath(id));
+                try
+                {
+                    var loot = ReadSourceLoot(scene, id); ValidateLootMapping(definition, loot, false);
+                    var solids = ReadFixedSolidSource(scene, id);
+                    if (definition.ShowEncounterHud != ReadSourceHudPolicy(scene)) throw new InvalidOperationException("原HUD策略与正式导出不一致。");
+                    var candidate = Object.Instantiate(definition);
+                    try
+                    {
+                        var npcs = new OnlineDungeonNpcSpawn[definition.NpcCount]; var stages = new int[npcs.Length]; var enemies = new int[npcs.Length];
+                        for (int i = 0; i < npcs.Length; i++)
+                        {
+                            var old = definition.GetNpc(i); stages[i] = loot.Tables.Length == 0 ? -1 : loot.Stages[i]; enemies[i] = loot.Tables.Length == 0 ? -1 : loot.Enemies[i];
+                            npcs[i] = new OnlineDungeonNpcSpawn { ActorId = old.ActorId, Prefab = old.Prefab, Position = old.Position,
+                                Rotation = old.Rotation, AttackClipDuration = old.AttackClipDuration, EncounterIndex = old.EncounterIndex,
+                                InitiallyVisible = old.InitiallyVisible, LootStageIndex = stages[i], LootEnemyIndex = enemies[i] };
+                        }
+                        WriteObjectArray(candidate, "_npcs", npcs); WriteObjectArray(candidate, "_lootTables", loot.Tables);
+                        WriteObjectArray(candidate, "_fixedSolidSpawns", solids.Spawns);
+                        var coinData = new SerializedObject(candidate);
+                        coinData.FindProperty("_coinPrefab").objectReferenceValue = loot.CoinPrefab; coinData.ApplyModifiedPropertiesWithoutUndo();
+                        if (!candidate.TryValidate(out var error)) throw new InvalidOperationException("掉落刷新候选非法：" + error);
+                        ValidateWorld(candidate.WorldPrefab, candidate.EncounterCount);
+                        pending.Add(new LootRefresh { Definition = definition, Tables = loot.Tables, CoinPrefab = loot.CoinPrefab, Stages = stages, Enemies = enemies,
+                            FixedSolidSpawns = solids.Spawns, SceneHash = sceneHash, SourceHash = ComputeSourceHash(SourcePath(id), loot.Tables, solids, loot.CoinPrefab) });
+                    }
+                    finally { Object.DestroyImmediate(candidate); }
+                }
+                finally { EditorSceneManager.ClosePreviewScene(scene); }
+            }
+            foreach (var next in pending)
+            {
+                var data = new SerializedObject(next.Definition); var tables = data.FindProperty("_lootTables");
+                data.FindProperty("_coinPrefab").objectReferenceValue = next.CoinPrefab;
+                tables.arraySize = next.Tables.Length;
+                for (int i = 0; i < next.Tables.Length; i++) tables.GetArrayElementAtIndex(i).objectReferenceValue = next.Tables[i];
+                var npcs = data.FindProperty("_npcs");
+                for (int i = 0; i < npcs.arraySize; i++)
+                { var npc = npcs.GetArrayElementAtIndex(i); npc.FindPropertyRelative("LootStageIndex").intValue = next.Stages[i]; npc.FindPropertyRelative("LootEnemyIndex").intValue = next.Enemies[i]; }
+                data.FindProperty("_sourceSceneHash").stringValue = next.SceneHash; data.FindProperty("_sourceHash").stringValue = next.SourceHash;
+                bool changed = data.ApplyModifiedPropertiesWithoutUndo();
+                if (!SameFixedSolidSpawns(next.Definition, next.FixedSolidSpawns))
+                { WriteObjectArray(next.Definition, "_fixedSolidSpawns", next.FixedSolidSpawns); changed = true; }
+                if (changed) { EditorUtility.SetDirty(next.Definition); AssetDatabase.SaveAssetIfDirty(next.Definition); }
+            }
+            Verify();
+        }
+
+        /// <summary>规则依赖只遍历原SO引用图；视觉仅直接PickupPrefab/WorldModel源与meta，不递归无关材质纹理或Library产物。</summary>
+        public static IEnumerable<string> EnumerateLootHashInputs(string dungeonId)
+        {
+            var scene = EditorSceneManager.OpenPreviewScene(SourcePath(dungeonId));
+            try
+            {
+                var loot = ReadSourceLoot(scene, dungeonId);
+                var paths = LootHashInputs(loot.Tables);
+                if (loot.CoinPrefab != null) AddLootSource(loot.CoinPrefab, paths);
+                paths.UnionWith(ReadFixedSolidSource(scene, dungeonId).HashInputs); return paths;
+            }
+            finally { EditorSceneManager.ClosePreviewScene(scene); }
+        }
+        public static string ComputeSourceHash(string dungeonId)
+        {
+            if (dungeonId == "home") return Hash(HomeSourcePath);
+            var scene = EditorSceneManager.OpenPreviewScene(SourcePath(dungeonId));
+            try
+            {
+                var loot = ReadSourceLoot(scene, dungeonId);
+                return ComputeSourceHash(SourcePath(dungeonId), loot.Tables, ReadFixedSolidSource(scene, dungeonId), loot.CoinPrefab);
+            }
+            finally { EditorSceneManager.ClosePreviewScene(scene); }
+        }
+        private static string ComputeSourceHash(string scenePath, DungeonLootTable[] tables, SourceFixedSolids solids, GameObject coinPrefab)
+        {
+            var returns = ReturnHashInputs(scenePath);
+            if (tables.Length == 0 && solids.Spawns.Length == 0 && returns.Count == 0) return Hash(scenePath);
+            var paths = LootHashInputs(tables); paths.UnionWith(solids.HashInputs); paths.UnionWith(returns); paths.Add(scenePath);
+            if (coinPrefab != null) AddLootSource(coinPrefab, paths);
+            var body = new StringBuilder("NornDungeonSource4\n");
+            foreach (string path in paths) body.Append(path).Append('\n').Append(Hash(path)).Append('\n');
+            using var sha = SHA256.Create();
+            return BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(body.ToString()))).Replace("-", "").ToLowerInvariant();
+        }
+        private static SortedSet<string> LootHashInputs(DungeonLootTable[] tables)
+        {
+            var paths = new SortedSet<string>(StringComparer.Ordinal); var queue = new Queue<ScriptableObject>(); var seen = new HashSet<int>();
+            foreach (var table in tables) queue.Enqueue(table);
+            while (queue.Count != 0)
+            {
+                var rule = queue.Dequeue(); if (rule == null || !seen.Add(rule.GetInstanceID())) continue;
+                AddLootSource(rule, paths);
+                if (rule is ItemDefinition item) { if (item.PickupPrefab != null) AddLootSource(item.PickupPrefab, paths); if (item.WorldModel != null) AddLootSource(item.WorldModel, paths); }
+                // 只追SO直接引用；进入Item/Wand/Spell规则和WandRolls，不沿模型去追材质、贴图和导入缓存。
+                var data = new SerializedObject(rule); var property = data.GetIterator();
+                while (property.Next(true))
+                    if (property.propertyType == SerializedPropertyType.ObjectReference && property.objectReferenceValue is ScriptableObject child) queue.Enqueue(child);
+            }
+            return paths;
+        }
+        private static void AddLootSource(Object value, SortedSet<string> paths)
+        {
+            string path = AssetDatabase.GetAssetPath(value);
+            if (string.IsNullOrEmpty(path) || !path.StartsWith("Assets/", StringComparison.Ordinal) || !File.Exists(path))
+                throw new InvalidOperationException("原掉落依赖必须是可定位的Assets源文件：" + value.name);
+            if (EditorUtility.IsDirty(value)) throw new InvalidOperationException("原掉落源资产尚未保存，拒绝给内存配置签旧字节Hash：" + path);
+            paths.Add(path); if (File.Exists(path + ".meta")) paths.Add(path + ".meta");
         }
 
         private static bool ReadSourceHudPolicy(Scene scene)
@@ -313,14 +775,14 @@ namespace Game.Project.Editor
             foreach (var gate in preview.Root.GetComponentsInChildren<ArenaGate>(true)) gate.SetClosed(false);
         }
         private static bool IsOwnedObject(string name) => name == "WorldItemSpawnPoint" || name == "WorldItemPickup" ||
-            name == "WorldCurrencyPickup" || name == "SpellRewardPickup" || name == "DungeonFinalRewardPickup" || name == "StageExitPortal";
-        private static bool AllowedWorld(MonoBehaviour value) => value is ArenaGate || value is OnlineDungeonWorldBindings ||
-            value is OnlineDungeonEnvironment || value is NavMeshSurface || value is NavMeshModifier || value is NavMeshModifierVolume ||
+            name == "WorldCurrencyPickup" || name == "SpellRewardPickup" || name == "DungeonFinalRewardPickup";
+        private static bool AllowedWorld(MonoBehaviour value) => value is ArenaGate || value is OnlineDungeonWorldBindings || value is OnlineHomeWorldBindings ||
+            value is OnlineDungeonReturnBindings || IsControlledReturnPresentation(value) || value is OnlineDungeonEnvironment || value is NavMeshSurface || value is NavMeshModifier || value is NavMeshModifierVolume ||
             value is Volume || value is UniversalAdditionalLightData || value is OnlineMaterialWorldBinding ||
             value is ElementWorldRuntime || value is ElementFieldSolidBaker || value is ElementWorldExposureSystem ||
             value is LiquidWorldRuntime || value is FixedSolidWorldRuntime || value is GasWorldRuntime ||
             value is MaterialEnvironmentAuthoring || value is ContainerDepositAdapter || value is MaterialInventoryTransferAdapter ||
-            IsMaterialRenderer(value.GetType().FullName);
+            IsMaterialRenderer(value.GetType().FullName) || value.GetType().FullName == "Game.Rendering.ReactionBurstVisualController";
 
         private static bool IsMaterialRenderer(string name) => name == "Game.Rendering.GridLiquidFieldSurfaceRenderer"
             || name == "Game.Rendering.LiquidSurfaceRenderer" || name == "Game.Rendering.StableLiquidSurfaceRenderer"
@@ -486,6 +948,14 @@ namespace Game.Project.Editor
             var bindings = root.GetComponent<OnlineDungeonWorldBindings>(); string error = null;
             if (bindings == null || !bindings.TryValidate(encounters, out error)) throw new InvalidOperationException("地图入口接线无效：" + error);
             var surfaces = root.GetComponentsInChildren<NavMeshSurface>(true);
+            var home = root.GetComponent<OnlineHomeWorldBindings>();
+            if (encounters == 0 && home != null)
+            {
+                // 原Home没有NPC和NavMeshSurface。保留真实原图，不能为通过战斗地图检查伪造NavMesh。
+                if (surfaces.Length != 0 || !home.TryValidate(out error))
+                    throw new InvalidOperationException("和平Home几何或原无NavMesh布局不一致：" + error);
+                return;
+            }
             if (surfaces.Length != 1 || surfaces[0].navMeshData == null) throw new InvalidOperationException("必须保留原唯一NavMeshData，不能重新Bake另一张图。");
         }
 
@@ -620,6 +1090,8 @@ namespace Game.Project.Editor
             foreach (string root in new[] { SourcePath("p7"), SourcePath("p8") })
                 foreach (string path in AssetDatabase.GetDependencies(root, true))
                     if (File.Exists(path) && !path.EndsWith(".cs", StringComparison.Ordinal)) paths.Add(path);
+            // 与SourceHash共用新增原规则/直接模型源及其meta，不能只保护Scene里的GUID而漏掉被引用配置字节。
+            foreach (string id in Ids) foreach (string path in EnumerateLootHashInputs(id)) paths.Add(path);
             return paths;
         }
         public static IEnumerable<GameObject> OutputPrefabs()
@@ -791,7 +1263,7 @@ namespace Game.Project.Editor
                 data.ApplyModifiedPropertiesWithoutUndo();
             }
         }
-        private static string SourcePath(string id) => id == "p7" ? "Assets/_Project/Scenes/P7_DemoRun.unity" : id == "p8" ? "Assets/_Project/Scenes/P8_BossField.unity" : throw new ArgumentException("副本ID未注册。", nameof(id));
+        private static string SourcePath(string id) => id == "p7" ? "Assets/_Project/Scenes/P7_DemoRun.unity" : id == "p8" ? "Assets/_Project/Scenes/P8_BossField.unity" : id == "home" ? HomeSourcePath : throw new ArgumentException("副本ID未注册。", nameof(id));
         private static string WorldPath(string id) => WorldFolder + "/" + id.ToUpperInvariant() + "World.prefab";
         private static string DefinitionPath(string id) => DataFolder + "/" + id.ToUpperInvariant() + ".asset";
         private static string Hash(string path)

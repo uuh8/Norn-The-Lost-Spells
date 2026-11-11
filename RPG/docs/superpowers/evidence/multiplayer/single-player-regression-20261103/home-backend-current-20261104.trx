@@ -1,0 +1,553 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d2c1fb7f-4088-4c84-95fb-145b915bced1" name="zhy@ZHY 2026-11-04 18:03:31" runUser="ZHY\zhy" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-04T18:03:31.5777146+08:00" queuing="2026-11-04T18:03:31.5777151+08:00" start="2026-11-04T18:03:24.5869775+08:00" finish="2026-11-04T18:03:42.1399798+08:00" />
+  <TestSettings name="default" id="dab610fa-55aa-41bc-8940-03f6ae0c40dc">
+    <Deployment runDeploymentRoot="zhy_ZHY_2026-11-04_18_03_31" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="30a38924-d137-4484-b8b0-b1923d245810" testId="621b64ca-060c-b921-9faf-84d1c5bf21c6" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: &quot;consume&quot;, checkpointFirst: False)" computerName="ZHY" duration="00:00:00.3750332" startTime="2026-11-04T18:03:33.6621704+08:00" endTime="2026-11-04T18:03:34.0376192+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="30a38924-d137-4484-b8b0-b1923d245810" />
+    <UnitTestResult executionId="fe106794-8cf3-4942-9c26-953c3a1f725b" testId="2b89ee45-4d9f-5c8b-75db-c9e653212e02" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeCannotClearCarriedAssetsClaimSuccessProgressOrReplaceTheFrozenSessionScope(defect: &quot;death&quot;)" computerName="ZHY" duration="00:00:00.3973935" startTime="2026-11-04T18:03:33.2640813+08:00" endTime="2026-11-04T18:03:33.6620088+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fe106794-8cf3-4942-9c26-953c3a1f725b" />
+    <UnitTestResult executionId="f098760f-673e-408e-97b8-796f0fe13bc6" testId="183873f3-d55d-fc5b-fcdc-d3718ec7d19e" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets(mapLegacyOwner: False)" computerName="ZHY" duration="00:00:00.5122685" startTime="2026-11-04T18:03:31.5387711+08:00" endTime="2026-11-04T18:03:32.0410088+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f098760f-673e-408e-97b8-796f0fe13bc6" />
+    <UnitTestResult executionId="371d2d6a-b59d-417a-8479-e97acb73cbb6" testId="301b99d7-b242-915f-cd74-c7283b195f46" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeCannotClearCarriedAssetsClaimSuccessProgressOrReplaceTheFrozenSessionScope(defect: &quot;success&quot;)" computerName="ZHY" duration="00:00:00.3563759" startTime="2026-11-04T18:03:32.9071316+08:00" endTime="2026-11-04T18:03:33.2639051+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="371d2d6a-b59d-417a-8479-e97acb73cbb6" />
+    <UnitTestResult executionId="7e4248ed-246c-4842-9406-87ae3b0ac3e1" testId="bb82466d-e5d4-6fc5-05b4-9c55b2457a6d" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: &quot;merge&quot;, checkpointFirst: True)" computerName="ZHY" duration="00:00:00.4610751" startTime="2026-11-04T18:03:34.4715976+08:00" endTime="2026-11-04T18:03:34.9476370+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7e4248ed-246c-4842-9406-87ae3b0ac3e1">
+      <Output>
+        <ErrorInfo>
+          <Message>Norn.Business.Infrastructure.OnlineFailure : RunMemberExitOwnershipConflict</Message>
+          <StackTrace>   at Norn.Business.Features.Runs.RunMemberExitService.PersistCarried(MySqlConnection db, MySqlTransaction tx, OnlineRunMemberExitRequest value, Dictionary`2 originals, Dictionary`2 custody, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs:line 396&#xD;
+   at Norn.Business.Features.Runs.RunMemberExitService.&lt;&gt;c__DisplayClass7_0.&lt;&lt;CommitAsync&gt;b__0&gt;d.MoveNext() in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs:line 149&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 19&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 20&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 20&#xD;
+   at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause, Boolean checkpointFirst) in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 165&#xD;
+   at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause, Boolean checkpointFirst) in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 174&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="a5c68852-d5c2-4c5e-b219-c9bfc495901d" testId="277652c7-82ef-088c-97ca-6fc570bb75e0" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeMissingOriginalWithoutAnExplicitRetirementKeepsTheLiveRunAndAllAssets" computerName="ZHY" duration="00:00:00.5096519" startTime="2026-11-04T18:03:39.6472723+08:00" endTime="2026-11-04T18:03:40.1573682+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a5c68852-d5c2-4c5e-b219-c9bfc495901d" />
+    <UnitTestResult executionId="8e1b8bd5-d8e3-4a80-9112-de4129935de3" testId="6b264915-0d6a-b749-78cf-609848ea0822" testName="Norn.Business.Tests.HomeSessionBackendTests.HistoricalExitCannotSilentlyDropNewSuccessOrPracticeFields(field: &quot;PracticeGroundItems&quot;)" computerName="ZHY" duration="00:00:00.0001787" startTime="2026-11-04T18:03:40.1651399+08:00" endTime="2026-11-04T18:03:40.1652509+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8e1b8bd5-d8e3-4a80-9112-de4129935de3" />
+    <UnitTestResult executionId="1bee0e71-aa64-455b-93ec-6749bdad9bb7" testId="a41f8931-fde9-e239-e1f7-022fbb81e122" testName="Norn.Business.Tests.HomeSessionBackendTests.CancelledUnadmittedHomeReleasesOnlyItsFreezeSeedAndCanEnterAgain(instanceAllocated: False)" computerName="ZHY" duration="00:00:00.4535582" startTime="2026-11-04T18:03:40.1653794+08:00" endTime="2026-11-04T18:03:40.6194570+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1bee0e71-aa64-455b-93ec-6749bdad9bb7" />
+    <UnitTestResult executionId="c23a1998-2b9e-4698-baa4-e720d2b36f8c" testId="d2cd86db-5147-8fbc-5385-450d86a47c2e" testName="Norn.Business.Tests.HomeSessionBackendTests.ExitSchemaThreeExplicitlyCarriesAnEmptyPeacefulSessionAndSuccessMetadata" computerName="ZHY" duration="00:00:00.0003846" startTime="2026-11-04T18:03:41.0535671+08:00" endTime="2026-11-04T18:03:41.0538951+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c23a1998-2b9e-4698-baa4-e720d2b36f8c" />
+    <UnitTestResult executionId="2058eda0-592d-4978-965d-1d6cf3bf92e4" testId="05874b7d-4daf-6e68-3511-fd81714c0e83" testName="Norn.Business.Tests.HomeSessionBackendTests.HomeCannotBeCreatedOrMatchedCooperativelyEvenWhenItsIdIsConfigured(suffix: &quot;/match&quot;)" computerName="ZHY" duration="00:00:00.2964804" startTime="2026-11-04T18:03:41.4017798+08:00" endTime="2026-11-04T18:03:41.6989343+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2058eda0-592d-4978-965d-1d6cf3bf92e4" />
+    <UnitTestResult executionId="71b1c51c-af4c-42db-85c9-2ec7b42a658d" testId="3594cc3c-df5c-e59f-6386-2b3f2e55ec34" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: &quot;destroy&quot;, checkpointFirst: True)" computerName="ZHY" duration="00:00:00.4132220" startTime="2026-11-04T18:03:34.9526578+08:00" endTime="2026-11-04T18:03:35.3614871+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="71b1c51c-af4c-42db-85c9-2ec7b42a658d">
+      <Output>
+        <ErrorInfo>
+          <Message>Norn.Business.Infrastructure.OnlineFailure : RunMemberExitOwnershipConflict</Message>
+          <StackTrace>   at Norn.Business.Features.Runs.RunMemberExitService.PersistCarried(MySqlConnection db, MySqlTransaction tx, OnlineRunMemberExitRequest value, Dictionary`2 originals, Dictionary`2 custody, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs:line 396&#xD;
+   at Norn.Business.Features.Runs.RunMemberExitService.&lt;&gt;c__DisplayClass7_0.&lt;&lt;CommitAsync&gt;b__0&gt;d.MoveNext() in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs:line 149&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 19&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 20&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 20&#xD;
+   at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause, Boolean checkpointFirst) in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 165&#xD;
+   at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause, Boolean checkpointFirst) in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 174&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="28ea2596-d347-4085-a5c2-f92b5c807579" testId="3663408c-d852-6700-8e2c-5739089ce416" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: &quot;consume&quot;, checkpointFirst: True)" computerName="ZHY" duration="00:00:00.4204994" startTime="2026-11-04T18:03:35.3623071+08:00" endTime="2026-11-04T18:03:35.7832962+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="28ea2596-d347-4085-a5c2-f92b5c807579">
+      <Output>
+        <ErrorInfo>
+          <Message>Norn.Business.Infrastructure.OnlineFailure : RunMemberExitOwnershipConflict</Message>
+          <StackTrace>   at Norn.Business.Features.Runs.RunMemberExitService.PersistCarried(MySqlConnection db, MySqlTransaction tx, OnlineRunMemberExitRequest value, Dictionary`2 originals, Dictionary`2 custody, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs:line 396&#xD;
+   at Norn.Business.Features.Runs.RunMemberExitService.&lt;&gt;c__DisplayClass7_0.&lt;&lt;CommitAsync&gt;b__0&gt;d.MoveNext() in F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs:line 149&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 19&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 20&#xD;
+   at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs:line 20&#xD;
+   at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause, Boolean checkpointFirst) in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 165&#xD;
+   at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause, Boolean checkpointFirst) in F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs:line 174&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="52a9ac98-bc5a-4a02-ad05-50bb0f891ad2" testId="b725de6c-16be-d944-83fb-ebc4d1373a91" testName="Norn.Business.Tests.HomeSessionBackendTests.HistoricalExitCanonicalKeepsItsExactFieldOrderAndBytes(schema: 1)" computerName="ZHY" duration="00:00:00.0028263" startTime="2026-11-04T18:03:41.0507516+08:00" endTime="2026-11-04T18:03:41.0534421+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="52a9ac98-bc5a-4a02-ad05-50bb0f891ad2" />
+    <UnitTestResult executionId="781bafa3-d066-4531-a9c1-adb57bfbd614" testId="e239e246-104b-4a74-2a50-a4d68f00f93a" testName="Norn.Business.Tests.HomeSessionBackendTests.HistoricalExitCannotSilentlyDropNewSuccessOrPracticeFields(field: &quot;SuccessfulExtraction&quot;)" computerName="ZHY" duration="00:00:00.0023988" startTime="2026-11-04T18:03:40.1619656+08:00" endTime="2026-11-04T18:03:40.1645127+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="781bafa3-d066-4531-a9c1-adb57bfbd614" />
+    <UnitTestResult executionId="97c48430-524e-45e4-94bb-6ddec8e97c7c" testId="c2f718de-3d48-5ad4-d6c6-ce11f1abc624" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeCannotClearCarriedAssetsClaimSuccessProgressOrReplaceTheFrozenSessionScope(defect: &quot;scope&quot;)" computerName="ZHY" duration="00:00:00.3764715" startTime="2026-11-04T18:03:32.5302571+08:00" endTime="2026-11-04T18:03:32.9069843+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="97c48430-524e-45e4-94bb-6ddec8e97c7c" />
+    <UnitTestResult executionId="1b0f98e8-d86b-40ec-9655-8559ec9bcbca" testId="aa8a219a-9f6c-066a-2650-c0566a755455" testName="Norn.Business.Tests.HomeSessionBackendTests.HomeSingleEntryFreezesExactlyOneExistingLoadoutWithoutAFreeEntryBottle" computerName="ZHY" duration="00:00:00.3472193" startTime="2026-11-04T18:03:41.0540092+08:00" endTime="2026-11-04T18:03:41.4016081+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1b0f98e8-d86b-40ec-9655-8559ec9bcbca" />
+    <UnitTestResult executionId="74d361ec-3f40-49e4-8423-2dc1203de11f" testId="2f085dd3-5e45-a8ae-3c3b-e4354fea8cef" testName="Norn.Business.Tests.HomeSessionBackendTests.CancelledUnadmittedHomeReleasesOnlyItsFreezeSeedAndCanEnterAgain(instanceAllocated: True)" computerName="ZHY" duration="00:00:00.4250920" startTime="2026-11-04T18:03:40.6196338+08:00" endTime="2026-11-04T18:03:41.0452287+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="74d361ec-3f40-49e4-8423-2dc1203de11f" />
+    <UnitTestResult executionId="b6b4fa9f-f343-4cbd-8123-7db4c8a5cc84" testId="6fc12184-bb41-30c1-4bf0-90cec19db0aa" testName="Norn.Business.Tests.HomePracticeTransactionTests.TrustedRaidSuccessRefreshesOriginalShopRulesExactlyOnceWhileIdleEscDoesNot(success: True, collected: 1, refresh: True)" computerName="ZHY" duration="00:00:00.5179175" startTime="2026-11-04T18:03:37.5211482+08:00" endTime="2026-11-04T18:03:38.0395874+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b6b4fa9f-f343-4cbd-8123-7db4c8a5cc84" />
+    <UnitTestResult executionId="4dc6ff37-fe04-472a-8207-2b0de4c20d47" testId="7175fabb-8e17-0137-8eea-48a1e0858398" testName="Norn.Business.Tests.HomeSessionBackendTests.HistoricalExitCanonicalKeepsItsExactFieldOrderAndBytes(schema: 2)" computerName="ZHY" duration="00:00:00.0051318" startTime="2026-11-04T18:03:41.0454196+08:00" endTime="2026-11-04T18:03:41.0505400+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4dc6ff37-fe04-472a-8207-2b0de4c20d47" />
+    <UnitTestResult executionId="5525f496-c105-453f-8c67-05219871e51a" testId="6a4ee120-bcc5-1d4e-8236-e525a94ee387" testName="Norn.Business.Tests.HomePracticeTransactionTests.FailureAfterHomeAdmissionPreservesTheCustodyInsteadOfRegrantingTheFrozenEntry" computerName="ZHY" duration="00:00:00.4382891" startTime="2026-11-04T18:03:38.0398253+08:00" endTime="2026-11-04T18:03:38.4784582+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5525f496-c105-453f-8c67-05219871e51a" />
+    <UnitTestResult executionId="609b1394-65b3-4d5f-b196-718bb5588e4a" testId="eb2eb853-306e-f51a-04f4-30b4a7ca575f" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetirementCannotOverlapAnItemStillPresentInTheGroundClosure" computerName="ZHY" duration="00:00:00.3639164" startTime="2026-11-04T18:03:36.1869297+08:00" endTime="2026-11-04T18:03:36.5512808+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="609b1394-65b3-4d5f-b196-718bb5588e4a" />
+    <UnitTestResult executionId="e7c1da08-bf62-48ef-8df7-a2f3ed69162d" testId="b09aace0-b70f-0ade-dbbd-b4d0d3af847a" testName="Norn.Business.Tests.HomePracticeTransactionTests.SameSessionReadsBackTheCommittedContinuityAndReloginHidesItWithoutDeletingHistory" computerName="ZHY" duration="00:00:00.4870688" startTime="2026-11-04T18:03:32.0428587+08:00" endTime="2026-11-04T18:03:32.5299466+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e7c1da08-bf62-48ef-8df7-a2f3ed69162d" />
+    <UnitTestResult executionId="99182117-88c4-4b9a-a140-d9f1828881fd" testId="3c0b3443-28e0-512c-7623-f9929c5ae8bc" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundCannotAdoptAnotherAccountsRealWandOrItsInstalledCard" computerName="ZHY" duration="00:00:00.6490218" startTime="2026-11-04T18:03:38.4786901+08:00" endTime="2026-11-04T18:03:39.1281468+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="99182117-88c4-4b9a-a140-d9f1828881fd" />
+    <UnitTestResult executionId="d90f32c0-1255-4bd4-a0de-d93d2e6098e0" testId="215d2400-7228-a74f-1b52-a0c56ed3b1d0" testName="Norn.Business.Tests.HomePracticeTransactionTests.TrustedRaidSuccessRefreshesOriginalShopRulesExactlyOnceWhileIdleEscDoesNot(success: False, collected: 0, refresh: False)" computerName="ZHY" duration="00:00:00.4581411" startTime="2026-11-04T18:03:36.5514714+08:00" endTime="2026-11-04T18:03:37.0102209+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d90f32c0-1255-4bd4-a0de-d93d2e6098e0" />
+    <UnitTestResult executionId="26a999db-1bf2-4b3e-9186-5e57917c6c38" testId="f2d8225b-d16f-4e46-d7d4-ad4363828672" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundReplacementNeverDeletesTheSeparateHubSceneRecord" computerName="ZHY" duration="00:00:00.5182399" startTime="2026-11-04T18:03:39.1283108+08:00" endTime="2026-11-04T18:03:39.6470784+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="26a999db-1bf2-4b3e-9186-5e57917c6c38" />
+    <UnitTestResult executionId="e75619b3-8967-405d-a7d9-0d621445de26" testId="27605f37-9a3b-8140-a636-1120ae292080" testName="Norn.Business.Tests.HomeSessionBackendTests.HomeCannotBeCreatedOrMatchedCooperativelyEvenWhenItsIdIsConfigured(suffix: &quot;&quot;)" computerName="ZHY" duration="00:00:00.3619213" startTime="2026-11-04T18:03:41.6991299+08:00" endTime="2026-11-04T18:03:42.0614783+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e75619b3-8967-405d-a7d9-0d621445de26" />
+    <UnitTestResult executionId="36e142d5-d330-493f-b66b-efc304bd3231" testId="46a394c3-2d87-d4dd-1b9c-906b627f8671" testName="Norn.Business.Tests.HomeSessionBackendTests.HistoricalExitCannotSilentlyDropNewSuccessOrPracticeFields(field: &quot;PracticeSessionScope&quot;)" computerName="ZHY" duration="00:00:00.0004495" startTime="2026-11-04T18:03:40.1646900+08:00" endTime="2026-11-04T18:03:40.1650293+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="36e142d5-d330-493f-b66b-efc304bd3231" />
+    <UnitTestResult executionId="719fde3f-4e68-462e-acd4-df382cc704a7" testId="7b49760d-6b84-5318-909d-301a3f341947" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: &quot;merge&quot;, checkpointFirst: False)" computerName="ZHY" duration="00:00:00.4029724" startTime="2026-11-04T18:03:35.7846960+08:00" endTime="2026-11-04T18:03:36.1867748+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="719fde3f-4e68-462e-acd4-df382cc704a7" />
+    <UnitTestResult executionId="7ca52174-3ed9-4eac-9ba6-d0fa128033e3" testId="31ec896e-2252-5e4e-fdb2-859defb68188" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets(mapLegacyOwner: True)" computerName="ZHY" duration="00:00:03.5782489" startTime="2026-11-04T18:03:27.9479917+08:00" endTime="2026-11-04T18:03:31.5268384+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7ca52174-3ed9-4eac-9ba6-d0fa128033e3" />
+    <UnitTestResult executionId="71f01031-7fe5-4573-8250-e821ac2a17d5" testId="501b7294-05f3-7c3d-9f47-d817e64a41c0" testName="Norn.Business.Tests.HomePracticeTransactionTests.TrustedRaidSuccessRefreshesOriginalShopRulesExactlyOnceWhileIdleEscDoesNot(success: True, collected: 0, refresh: False)" computerName="ZHY" duration="00:00:00.5101186" startTime="2026-11-04T18:03:37.0104013+08:00" endTime="2026-11-04T18:03:37.5209394+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="71f01031-7fe5-4573-8250-e821ac2a17d5" />
+    <UnitTestResult executionId="bd312588-a9f1-4705-b305-5942c047be67" testId="6c989077-d652-35d8-d1e5-f6bf207a061c" testName="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: &quot;destroy&quot;, checkpointFirst: False)" computerName="ZHY" duration="00:00:00.4332227" startTime="2026-11-04T18:03:34.0378086+08:00" endTime="2026-11-04T18:03:34.4714243+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bd312588-a9f1-4705-b305-5942c047be67" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Norn.Business.Tests.HomeSessionBackendTests.HistoricalExitCannotSilentlyDropNewSuccessOrPracticeFields(field: &quot;PracticeGroundItems&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="6b264915-0d6a-b749-78cf-609848ea0822">
+      <Execution id="8e1b8bd5-d8e3-4a80-9112-de4129935de3" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomeSessionBackendTests" name="HistoricalExitCannotSilentlyDropNewSuccessOrPracticeFields" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: &quot;consume&quot;, checkpointFirst: False)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="621b64ca-060c-b921-9faf-84d1c5bf21c6">
+      <Execution id="30a38924-d137-4484-b8b0-b1923d245810" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets(mapLegacyOwner: True)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="31ec896e-2252-5e4e-fdb2-859defb68188">
+      <Execution id="7ca52174-3ed9-4eac-9ba6-d0fa128033e3" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomeSessionBackendTests.HistoricalExitCannotSilentlyDropNewSuccessOrPracticeFields(field: &quot;PracticeSessionScope&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="46a394c3-2d87-d4dd-1b9c-906b627f8671">
+      <Execution id="36e142d5-d330-493f-b66b-efc304bd3231" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomeSessionBackendTests" name="HistoricalExitCannotSilentlyDropNewSuccessOrPracticeFields" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: &quot;destroy&quot;, checkpointFirst: False)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="6c989077-d652-35d8-d1e5-f6bf207a061c">
+      <Execution id="bd312588-a9f1-4705-b305-5942c047be67" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetirementCannotOverlapAnItemStillPresentInTheGroundClosure" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="eb2eb853-306e-f51a-04f4-30b4a7ca575f">
+      <Execution id="609b1394-65b3-4d5f-b196-718bb5588e4a" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeRetirementCannotOverlapAnItemStillPresentInTheGroundClosure" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.TrustedRaidSuccessRefreshesOriginalShopRulesExactlyOnceWhileIdleEscDoesNot(success: False, collected: 0, refresh: False)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="215d2400-7228-a74f-1b52-a0c56ed3b1d0">
+      <Execution id="d90f32c0-1255-4bd4-a0de-d93d2e6098e0" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="TrustedRaidSuccessRefreshesOriginalShopRulesExactlyOnceWhileIdleEscDoesNot" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.TrustedRaidSuccessRefreshesOriginalShopRulesExactlyOnceWhileIdleEscDoesNot(success: True, collected: 0, refresh: False)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="501b7294-05f3-7c3d-9f47-d817e64a41c0">
+      <Execution id="71f01031-7fe5-4573-8250-e821ac2a17d5" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="TrustedRaidSuccessRefreshesOriginalShopRulesExactlyOnceWhileIdleEscDoesNot" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomeSessionBackendTests.HomeCannotBeCreatedOrMatchedCooperativelyEvenWhenItsIdIsConfigured(suffix: &quot;/match&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="05874b7d-4daf-6e68-3511-fd81714c0e83">
+      <Execution id="2058eda0-592d-4978-965d-1d6cf3bf92e4" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomeSessionBackendTests" name="HomeCannotBeCreatedOrMatchedCooperativelyEvenWhenItsIdIsConfigured" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeCannotClearCarriedAssetsClaimSuccessProgressOrReplaceTheFrozenSessionScope(defect: &quot;scope&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="c2f718de-3d48-5ad4-d6c6-ce11f1abc624">
+      <Execution id="97c48430-524e-45e4-94bb-6ddec8e97c7c" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeCannotClearCarriedAssetsClaimSuccessProgressOrReplaceTheFrozenSessionScope" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomeSessionBackendTests.HistoricalExitCanonicalKeepsItsExactFieldOrderAndBytes(schema: 2)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="7175fabb-8e17-0137-8eea-48a1e0858398">
+      <Execution id="4dc6ff37-fe04-472a-8207-2b0de4c20d47" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomeSessionBackendTests" name="HistoricalExitCanonicalKeepsItsExactFieldOrderAndBytes" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomeSessionBackendTests.CancelledUnadmittedHomeReleasesOnlyItsFreezeSeedAndCanEnterAgain(instanceAllocated: False)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="a41f8931-fde9-e239-e1f7-022fbb81e122">
+      <Execution id="1bee0e71-aa64-455b-93ec-6749bdad9bb7" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomeSessionBackendTests" name="CancelledUnadmittedHomeReleasesOnlyItsFreezeSeedAndCanEnterAgain" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeMissingOriginalWithoutAnExplicitRetirementKeepsTheLiveRunAndAllAssets" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="277652c7-82ef-088c-97ca-6fc570bb75e0">
+      <Execution id="a5c68852-d5c2-4c5e-b219-c9bfc495901d" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeMissingOriginalWithoutAnExplicitRetirementKeepsTheLiveRunAndAllAssets" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundReplacementNeverDeletesTheSeparateHubSceneRecord" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="f2d8225b-d16f-4e46-d7d4-ad4363828672">
+      <Execution id="26a999db-1bf2-4b3e-9186-5e57917c6c38" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeGroundReplacementNeverDeletesTheSeparateHubSceneRecord" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.FailureAfterHomeAdmissionPreservesTheCustodyInsteadOfRegrantingTheFrozenEntry" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="6a4ee120-bcc5-1d4e-8236-e525a94ee387">
+      <Execution id="5525f496-c105-453f-8c67-05219871e51a" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="FailureAfterHomeAdmissionPreservesTheCustodyInsteadOfRegrantingTheFrozenEntry" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomeSessionBackendTests.HomeCannotBeCreatedOrMatchedCooperativelyEvenWhenItsIdIsConfigured(suffix: &quot;&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="27605f37-9a3b-8140-a636-1120ae292080">
+      <Execution id="e75619b3-8967-405d-a7d9-0d621445de26" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomeSessionBackendTests" name="HomeCannotBeCreatedOrMatchedCooperativelyEvenWhenItsIdIsConfigured" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets(mapLegacyOwner: False)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="183873f3-d55d-fc5b-fcdc-d3718ec7d19e">
+      <Execution id="f098760f-673e-408e-97b8-796f0fe13bc6" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeGroundPreservesTheOriginalWandChildrenAndPoseAndReentersAsKnownWorldAssets" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: &quot;consume&quot;, checkpointFirst: True)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="3663408c-d852-6700-8e2c-5739089ce416">
+      <Execution id="28ea2596-d347-4085-a5c2-f92b5c807579" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomeSessionBackendTests.HomeSingleEntryFreezesExactlyOneExistingLoadoutWithoutAFreeEntryBottle" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="aa8a219a-9f6c-066a-2650-c0566a755455">
+      <Execution id="1b0f98e8-d86b-40ec-9655-8559ec9bcbca" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomeSessionBackendTests" name="HomeSingleEntryFreezesExactlyOneExistingLoadoutWithoutAFreeEntryBottle" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.TrustedRaidSuccessRefreshesOriginalShopRulesExactlyOnceWhileIdleEscDoesNot(success: True, collected: 1, refresh: True)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="6fc12184-bb41-30c1-4bf0-90cec19db0aa">
+      <Execution id="b6b4fa9f-f343-4cbd-8123-7db4c8a5cc84" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="TrustedRaidSuccessRefreshesOriginalShopRulesExactlyOnceWhileIdleEscDoesNot" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: &quot;merge&quot;, checkpointFirst: True)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="bb82466d-e5d4-6fc5-05b4-9c55b2457a6d">
+      <Execution id="7e4248ed-246c-4842-9406-87ae3b0ac3e1" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: &quot;merge&quot;, checkpointFirst: False)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="7b49760d-6b84-5318-909d-301a3f341947">
+      <Execution id="719fde3f-4e68-462e-acd4-df382cc704a7" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomeSessionBackendTests.HistoricalExitCannotSilentlyDropNewSuccessOrPracticeFields(field: &quot;SuccessfulExtraction&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="e239e246-104b-4a74-2a50-a4d68f00f93a">
+      <Execution id="781bafa3-d066-4531-a9c1-adb57bfbd614" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomeSessionBackendTests" name="HistoricalExitCannotSilentlyDropNewSuccessOrPracticeFields" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeGroundCannotAdoptAnotherAccountsRealWandOrItsInstalledCard" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="3c0b3443-28e0-512c-7623-f9929c5ae8bc">
+      <Execution id="99182117-88c4-4b9a-a140-d9f1828881fd" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeGroundCannotAdoptAnotherAccountsRealWandOrItsInstalledCard" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeCannotClearCarriedAssetsClaimSuccessProgressOrReplaceTheFrozenSessionScope(defect: &quot;death&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="2b89ee45-4d9f-5c8b-75db-c9e653212e02">
+      <Execution id="fe106794-8cf3-4942-9c26-953c3a1f725b" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeCannotClearCarriedAssetsClaimSuccessProgressOrReplaceTheFrozenSessionScope" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomeSessionBackendTests.CancelledUnadmittedHomeReleasesOnlyItsFreezeSeedAndCanEnterAgain(instanceAllocated: True)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="2f085dd3-5e45-a8ae-3c3b-e4354fea8cef">
+      <Execution id="74d361ec-3f40-49e4-8423-2dc1203de11f" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomeSessionBackendTests" name="CancelledUnadmittedHomeReleasesOnlyItsFreezeSeedAndCanEnterAgain" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeCannotClearCarriedAssetsClaimSuccessProgressOrReplaceTheFrozenSessionScope(defect: &quot;success&quot;)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="301b99d7-b242-915f-cd74-c7283b195f46">
+      <Execution id="371d2d6a-b59d-417a-8479-e97acb73cbb6" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeCannotClearCarriedAssetsClaimSuccessProgressOrReplaceTheFrozenSessionScope" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomeSessionBackendTests.HistoricalExitCanonicalKeepsItsExactFieldOrderAndBytes(schema: 1)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="b725de6c-16be-d944-83fb-ebc4d1373a91">
+      <Execution id="52a9ac98-bc5a-4a02-ad05-50bb0f891ad2" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomeSessionBackendTests" name="HistoricalExitCanonicalKeepsItsExactFieldOrderAndBytes" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.SameSessionReadsBackTheCommittedContinuityAndReloginHidesItWithoutDeletingHistory" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="b09aace0-b70f-0ade-dbbd-b4d0d3af847a">
+      <Execution id="e7c1da08-bf62-48ef-8df7-a2f3ed69162d" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="SameSessionReadsBackTheCommittedContinuityAndReloginHidesItWithoutDeletingHistory" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomeSessionBackendTests.ExitSchemaThreeExplicitlyCarriesAnEmptyPeacefulSessionAndSuccessMetadata" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="d2cd86db-5147-8fbc-5385-450d86a47c2e">
+      <Execution id="c23a1998-2b9e-4698-baa4-e720d2b36f8c" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomeSessionBackendTests" name="ExitSchemaThreeExplicitlyCarriesAnEmptyPeacefulSessionAndSuccessMetadata" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: &quot;destroy&quot;, checkpointFirst: True)" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="3594cc3c-df5c-e59f-6386-2b3f2e55ec34">
+      <Execution id="71b1c51c-af4c-42db-85c9-2ec7b42a658d" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.HomePracticeTransactionTests" name="HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="621b64ca-060c-b921-9faf-84d1c5bf21c6" executionId="30a38924-d137-4484-b8b0-b1923d245810" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2b89ee45-4d9f-5c8b-75db-c9e653212e02" executionId="fe106794-8cf3-4942-9c26-953c3a1f725b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="183873f3-d55d-fc5b-fcdc-d3718ec7d19e" executionId="f098760f-673e-408e-97b8-796f0fe13bc6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="301b99d7-b242-915f-cd74-c7283b195f46" executionId="371d2d6a-b59d-417a-8479-e97acb73cbb6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bb82466d-e5d4-6fc5-05b4-9c55b2457a6d" executionId="7e4248ed-246c-4842-9406-87ae3b0ac3e1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="277652c7-82ef-088c-97ca-6fc570bb75e0" executionId="a5c68852-d5c2-4c5e-b219-c9bfc495901d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6b264915-0d6a-b749-78cf-609848ea0822" executionId="8e1b8bd5-d8e3-4a80-9112-de4129935de3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a41f8931-fde9-e239-e1f7-022fbb81e122" executionId="1bee0e71-aa64-455b-93ec-6749bdad9bb7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d2cd86db-5147-8fbc-5385-450d86a47c2e" executionId="c23a1998-2b9e-4698-baa4-e720d2b36f8c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="05874b7d-4daf-6e68-3511-fd81714c0e83" executionId="2058eda0-592d-4978-965d-1d6cf3bf92e4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3594cc3c-df5c-e59f-6386-2b3f2e55ec34" executionId="71b1c51c-af4c-42db-85c9-2ec7b42a658d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3663408c-d852-6700-8e2c-5739089ce416" executionId="28ea2596-d347-4085-a5c2-f92b5c807579" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b725de6c-16be-d944-83fb-ebc4d1373a91" executionId="52a9ac98-bc5a-4a02-ad05-50bb0f891ad2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e239e246-104b-4a74-2a50-a4d68f00f93a" executionId="781bafa3-d066-4531-a9c1-adb57bfbd614" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c2f718de-3d48-5ad4-d6c6-ce11f1abc624" executionId="97c48430-524e-45e4-94bb-6ddec8e97c7c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="aa8a219a-9f6c-066a-2650-c0566a755455" executionId="1b0f98e8-d86b-40ec-9655-8559ec9bcbca" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2f085dd3-5e45-a8ae-3c3b-e4354fea8cef" executionId="74d361ec-3f40-49e4-8423-2dc1203de11f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6fc12184-bb41-30c1-4bf0-90cec19db0aa" executionId="b6b4fa9f-f343-4cbd-8123-7db4c8a5cc84" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7175fabb-8e17-0137-8eea-48a1e0858398" executionId="4dc6ff37-fe04-472a-8207-2b0de4c20d47" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6a4ee120-bcc5-1d4e-8236-e525a94ee387" executionId="5525f496-c105-453f-8c67-05219871e51a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eb2eb853-306e-f51a-04f4-30b4a7ca575f" executionId="609b1394-65b3-4d5f-b196-718bb5588e4a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b09aace0-b70f-0ade-dbbd-b4d0d3af847a" executionId="e7c1da08-bf62-48ef-8df7-a2f3ed69162d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3c0b3443-28e0-512c-7623-f9929c5ae8bc" executionId="99182117-88c4-4b9a-a140-d9f1828881fd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="215d2400-7228-a74f-1b52-a0c56ed3b1d0" executionId="d90f32c0-1255-4bd4-a0de-d93d2e6098e0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f2d8225b-d16f-4e46-d7d4-ad4363828672" executionId="26a999db-1bf2-4b3e-9186-5e57917c6c38" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="27605f37-9a3b-8140-a636-1120ae292080" executionId="e75619b3-8967-405d-a7d9-0d621445de26" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="46a394c3-2d87-d4dd-1b9c-906b627f8671" executionId="36e142d5-d330-493f-b66b-efc304bd3231" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7b49760d-6b84-5318-909d-301a3f341947" executionId="719fde3f-4e68-462e-acd4-df382cc704a7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="31ec896e-2252-5e4e-fdb2-859defb68188" executionId="7ca52174-3ed9-4eac-9ba6-d0fa128033e3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="501b7294-05f3-7c3d-9f47-d817e64a41c0" executionId="71f01031-7fe5-4573-8250-e821ac2a17d5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6c989077-d652-35d8-d1e5-f6bf207a061c" executionId="bd312588-a9f1-4705-b305-5942c047be67" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="31" executed="31" passed="28" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.13)&#xD;
+[xUnit.net 00:00:01.04]   Discovering: Norn.Business.Tests&#xD;
+[xUnit.net 00:00:01.44]   Discovered:  Norn.Business.Tests&#xD;
+[xUnit.net 00:00:01.48]   Starting:    Norn.Business.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:08.52]       Norn.Business.Infrastructure.OnlineFailure : RunMemberExitOwnershipConflict&#xD;
+[xUnit.net 00:00:08.52]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.52]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs(396,0): at Norn.Business.Features.Runs.RunMemberExitService.PersistCarried(MySqlConnection db, MySqlTransaction tx, OnlineRunMemberExitRequest value, Dictionary`2 originals, Dictionary`2 custody, CancellationToken ct)&#xD;
+[xUnit.net 00:00:08.52]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs(149,0): at Norn.Business.Features.Runs.RunMemberExitService.&lt;&gt;c__DisplayClass7_0.&lt;&lt;CommitAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:08.52]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:08.52]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(19,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:08.52]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(20,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:08.52]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(20,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:08.52]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(165,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause, Boolean checkpointFirst)&#xD;
+[xUnit.net 00:00:08.52]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(174,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause, Boolean checkpointFirst)&#xD;
+[xUnit.net 00:00:08.52]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:08.93]       Norn.Business.Infrastructure.OnlineFailure : RunMemberExitOwnershipConflict&#xD;
+[xUnit.net 00:00:08.93]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.93]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs(396,0): at Norn.Business.Features.Runs.RunMemberExitService.PersistCarried(MySqlConnection db, MySqlTransaction tx, OnlineRunMemberExitRequest value, Dictionary`2 originals, Dictionary`2 custody, CancellationToken ct)&#xD;
+[xUnit.net 00:00:08.93]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs(149,0): at Norn.Business.Features.Runs.RunMemberExitService.&lt;&gt;c__DisplayClass7_0.&lt;&lt;CommitAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:08.93]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:08.93]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(19,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:08.93]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(20,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:08.93]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(20,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:08.93]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(165,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause, Boolean checkpointFirst)&#xD;
+[xUnit.net 00:00:08.93]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(174,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause, Boolean checkpointFirst)&#xD;
+[xUnit.net 00:00:08.93]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:09.35]       Norn.Business.Infrastructure.OnlineFailure : RunMemberExitOwnershipConflict&#xD;
+[xUnit.net 00:00:09.35]       Stack Trace:&#xD;
+[xUnit.net 00:00:09.35]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs(396,0): at Norn.Business.Features.Runs.RunMemberExitService.PersistCarried(MySqlConnection db, MySqlTransaction tx, OnlineRunMemberExitRequest value, Dictionary`2 originals, Dictionary`2 custody, CancellationToken ct)&#xD;
+[xUnit.net 00:00:09.35]         F:\Develop Project\RPG\Server\Norn.Business\Features\Runs\RunMemberExitService.cs(149,0): at Norn.Business.Features.Runs.RunMemberExitService.&lt;&gt;c__DisplayClass7_0.&lt;&lt;CommitAsync&gt;b__0&gt;d.MoveNext()&#xD;
+[xUnit.net 00:00:09.35]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:09.35]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(19,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:09.35]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(20,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:09.35]         F:\Develop Project\RPG\Server\Norn.Business\Features\Rooms\RoomTransactions.cs(20,0): at Norn.Business.Features.Rooms.RoomTransactions.MutateAsync[T](Func`3 operation, CancellationToken ct)&#xD;
+[xUnit.net 00:00:09.35]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(165,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause, Boolean checkpointFirst)&#xD;
+[xUnit.net 00:00:09.35]         F:\Develop Project\RPG\Server\Norn.Business.Tests\HomePracticeTransactionTests.cs(174,0): at Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(String cause, Boolean checkpointFirst)&#xD;
+[xUnit.net 00:00:09.35]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:15.63]   Finished:    Norn.Business.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-04T18:03:34.9500494+08:00">
+        <Text>[xUnit.net 00:00:08.52]     Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: "merge", checkpointFirst: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-04T18:03:35.3619128+08:00">
+        <Text>[xUnit.net 00:00:08.93]     Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: "destroy", checkpointFirst: True) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-04T18:03:35.7837298+08:00">
+        <Text>[xUnit.net 00:00:09.35]     Norn.Business.Tests.HomePracticeTransactionTests.HomeRetiresOnlyExplicitRealJournalFactsAndPreservesTheRemainingIdentityAndAmounts(cause: "consume", checkpointFirst: True) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

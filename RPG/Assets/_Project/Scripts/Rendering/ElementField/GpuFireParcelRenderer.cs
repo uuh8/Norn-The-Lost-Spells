@@ -73,6 +73,14 @@ namespace Game.Rendering
         private int _seedScanChunkCursor;
         private readonly MaterialPresentationView _view=new MaterialPresentationView();
         private Camera _viewCamera;
+        // 诊断Owner和有界event ring由Core显式装配。这里仅保留当前目标版本的值快照与去重位，
+        // Active为空时不创建对象、不查Store Header、不做IO，也不另建视觉时钟或采样缓冲。
+        private WorldReplicationTimingTrace _timingTrace;
+        private WorldChunkPayloadHeader _timingHeader;
+        private uint _timingPresentationVersion;
+        private byte _timingStages, _timingRejectedReasons;
+        private bool _timingHasHeader, _timingSeedInBatch, _timingDrawPending;
+        private WorldReplicationTimingEvent _timingSeedEvent, _timingDrawEvent;
         // Unity被销毁/未绑定的Transform可能CLR引用非null；使用Unity判空并复用世界兴趣点，不能用??=。
         private Vector3 InterestPosition=>_interestCenter!=null?_interestCenter.position:_worldRuntime.InterestPosition;
         public bool IsReady => _initialized;
@@ -224,16 +232,31 @@ namespace Game.Rendering
             if (!_initialized || _worldRuntime == null || Time.timeScale <= 0f)
                 return;
             long allocated = GC.GetAllocatedBytesForCurrentThread();
-            float dt = Mathf.Min(Time.deltaTime, _profile.MaximumVisualDeltaTime);
-            _visualTime += dt;
-            _spawnAccumulator += dt;
-            if (_spawnAccumulator >= _profile.SpawnInterval)
-            {
-                _spawnAccumulator = 0f;
-                UploadAndSpawnSeeds();
-            }
-            Simulate(dt);
+            StepVisualFrame(Time.deltaTime);
             LastGcBytes = GC.GetAllocatedBytesForCurrentThread() - allocated;
+        }
+
+        // 显式帧时间接缝让隔离测试可以重放低FPS/卡顿；正式入口仍只读取Unity的scaled deltaTime。
+        private void StepVisualFrame(float elapsed)
+        {
+            // 发种节拍、Parcel秒龄与外观时间共用Unity的scaled elapsed：暂停/慢动作仍由原timeScale管理。
+            // 只有力/速度/位移的数值积分需要限步。若节拍也限步，15FPS时80ms会拖成约200ms；
+            // 若只加快发种却不修正秒龄，又会让旧粒子滞留并提前覆盖固定Pool中的Surface/Gas。
+            float dt = Mathf.Min(elapsed, _profile.MaximumVisualDeltaTime);
+            _visualTime += elapsed;
+            if (AdvanceSpawnSchedule(elapsed)) UploadAndSpawnSeeds();
+            Simulate(dt, elapsed);
+        }
+
+        private bool AdvanceSpawnSchedule(float elapsed)
+        {
+            _spawnAccumulator += elapsed;
+            if (_spawnAccumulator < _profile.SpawnInterval) return false;
+            // 延续原“每Render帧最多一次”的预算语义：长卡顿只采当前材料一次，丢弃额外债务。
+            // 不循环追赶、不增加每批Seed上限或概率；相邻批次至少间隔作者的SpawnInterval，
+            // 因而与同一elapsed秒龄配合后，既有8192容量证明仍成立。
+            _spawnAccumulator = 0f;
+            return true;
         }
 
         private void LateUpdate()
@@ -279,6 +302,7 @@ namespace Game.Rendering
                 if (_useLocalSurface)
                     Graphics.RenderPrimitivesIndirect(_surfaceRenderParams, MeshTopology.Triangles, _surfaceResources.DrawArgs, 1, 0);
                 Graphics.RenderPrimitivesIndirect(_gasRenderParams, MeshTopology.Triangles, _drawArgs, 1, 0);
+                RecordTimingDrawSubmitted();
 #if UNITY_EDITOR
                 }
 #endif
@@ -360,11 +384,17 @@ namespace Game.Rendering
                     FireParcelPoolMath.ResolveRingSlot(_spawnSequence, _profile.Capacity));
                 _lifecycleCompute.Dispatch(_spawnKernel, DivideRoundUp(seedCount, 64), 1, 1);
                 _spawnSequence += (uint)seedCount;
+                // SetData与Spawn Dispatch都已成功返回才记CPU提交；不把它称为GPU完成或像素可见。
+                RecordTimingSeedUploaded(seedCount);
             }
         }
 
         private int CollectSeeds()
         {
+            var timing = PrepareTimingTarget();
+            bool targetVisited = false;
+            int lastTargetCellIndex = -1;
+            Vector3Int lastTargetCell = default;
             if(_viewCamera==null || !_viewCamera.isActiveAndEnabled)_viewCamera=Camera.main;
             _view.Update(_viewCamera,InterestPosition,_profile.VisibilityFadeStart,_profile.VisibilityFadeEnd,8);
             int keyCount = _world.CopyVisibleChunkKeys(_visibleKeys);
@@ -379,26 +409,45 @@ namespace Game.Rendering
             for (; scannedKeys < keyCount && seedCount < _seedCpu.Length; scannedKeys++)
             {
                 ElementChunkKey key = _visibleKeys[(startKey + scannedKeys) % keyCount];
+                bool target = timing != null && key.X == _timingHeader.Key.X
+                    && key.Y == _timingHeader.Key.Y && key.Z == _timingHeader.Key.Z;
+                if (target) targetVisited = true;
                 float span=chunkSize*cellSize;
                 Bounds bounds=new Bounds(origin+new Vector3(key.X+.5f,key.Y+.5f,key.Z+.5f)*span,Vector3.one*span);
                 // 在复制Cell／概率发射前排除镜头外来源。火焰Gameplay仍存在，
                 // 原固定Pool继续完成已出生Parcel的两阶段；转头后下一Spawn Tick可恢复。
-                if(!_view.Intersects(bounds,3))continue;
+                if(!_view.Intersects(bounds,3))
+                {
+                    if (target) RecordTimingRejected(timing, 1, default, 0, seedCount, _seedCpu.Length);
+                    continue;
+                }
                 bool snapshot = _chunkReader != null;
-                if (snapshot && _chunkReader.CopyChunkCells(key, _chunkCpu) == 0) continue;
+                int copiedCells = snapshot ? _chunkReader.CopyChunkCells(key, _chunkCpu) : 0;
+                if (snapshot && copiedCells == 0) continue;
                 Vector3Int firstCell = ElementWorldCoordinates.ComposeGlobalCell(key, Vector3Int.zero, chunkSize);
+                if (target) RecordTimingRead(timing, firstCell, copiedCells);
                 for (int z = 0; z < chunkSize && seedCount < _seedCpu.Length; z++)
                 for (int y = 0; y < chunkSize && seedCount < _seedCpu.Length; y++)
                 for (int x = 0; x < chunkSize && seedCount < _seedCpu.Length; x++)
                 {
                     // Buffer、索引顺序、Cell身份与旧查询一致；Snapshot 属于消费者，绝不把它写回 World。
                     Vector3Int cellPosition = new Vector3Int(checked(firstCell.x+x), checked(firstCell.y+y), checked(firstCell.z+z));
+                    if (target)
+                    {
+                        lastTargetCellIndex = (z * chunkSize + y) * chunkSize + x;
+                        lastTargetCell = cellPosition;
+                    }
                     ElementCell cell;
                     if (snapshot) cell = _chunkCpu[(z*chunkSize+y)*chunkSize+x];
                     else if (!_world.TryGetCell(cellPosition, out cell)) continue;
-                    if (cell.IsEmpty || cell.MaterialKind != MaterialId.Fire
-                        || !FireCellEmissionSampler.ShouldEmitVisual(cellPosition, _visualSequence, SeedJitter,
-                            cell.Amount, probability, minimumHeat)) continue;
+                    if (cell.IsEmpty || cell.MaterialKind != MaterialId.Fire) continue;
+                    // 保留原短路顺序和唯一一次概率判断；诊断只旁观结果，不能另算随机或推进visualSequence。
+                    if (!FireCellEmissionSampler.ShouldEmitVisual(cellPosition, _visualSequence, SeedJitter,
+                            cell.Amount, probability, minimumHeat))
+                    {
+                        if (target) RecordTimingRejected(timing, 2, cellPosition, cell.Amount, seedCount, _seedCpu.Length);
+                        continue;
+                    }
                     Vector3 center = origin + new Vector3(
                         (cellPosition.x + 0.5f) * cellSize,
                         (cellPosition.y + 0.5f) * cellSize,
@@ -421,8 +470,14 @@ namespace Game.Rendering
                         InitialVelocity = Vector3.up * 0.25f,
                         Heat = FireCellEmissionSampler.VisualHeat(cell.Amount,minimumHeat)
                     };
+                    if (target) RecordTimingSeedChosen(timing, cellPosition, cell.Amount, seedCount - 1);
                 }
             }
+            // 原循环因seed预算停止时，不为诊断继续扫描或补做概率判断。Reason=3只表示目标Key
+            // 未进入/尚未扫描完，不声称那些未读取的Cell本来一定会发射；已复制Chunk与已扫描Cell也分开。
+            if (timing != null && seedCount >= _seedCpu.Length
+                && (!targetVisited || lastTargetCellIndex >= 0 && lastTargetCellIndex < _chunkCpu.Length - 1))
+                RecordTimingRejected(timing, 3, lastTargetCell, 0, seedCount, _seedCpu.Length);
             // 饱和时轮转起点，避免 Chunk 枚举靠后的火源永久只有 Gas/没有新 Surface。
             _seedScanChunkCursor = keyCount > 0 ? (startKey + Mathf.Max(1, scannedKeys)) % keyCount : 0;
             _visualSequence++;
@@ -430,12 +485,108 @@ namespace Game.Rendering
             return seedCount;
         }
 
-        private void Simulate(float deltaTime)
+        private WorldReplicationTimingTrace PrepareTimingTarget()
+        {
+            _timingSeedInBatch = false;
+            var trace = WorldReplicationTimingTrace.Active;
+            if (trace == null)
+            {
+                _timingTrace = null; _timingHasHeader = false; _timingDrawPending = false;
+                return null;
+            }
+            if (!ReferenceEquals(trace, _timingTrace))
+            {
+                _timingTrace = trace; _timingHasHeader = false; _timingDrawPending = false;
+            }
+            var store = _worldRuntime != null ? _worldRuntime.ReplicaStore : null;
+            if (store == null || trace.TargetKey.Domain != WorldMaterialDomain.LegacyCell
+                || !store.TryGetInstalledChunkHeader(trace.TargetKey, out var header, out uint presentationVersion)
+                || trace.WorldEpochFilter != 0 && trace.WorldEpochFilter != header.WorldEpoch) return null;
+            // Header是实际安装网络身份，PresentationVersion是本地发布身份，不能互相替代。
+            // 相同网络版本Interest重入后若重新安装，也保留本地版本区别；同一安装内每stage只记首次。
+            if (!_timingHasHeader || !_timingHeader.Equals(header) || _timingPresentationVersion != presentationVersion)
+            {
+                _timingHeader = header; _timingPresentationVersion = presentationVersion;
+                _timingStages = _timingRejectedReasons = 0; _timingHasHeader = true;
+            }
+            return trace;
+        }
+
+        private WorldReplicationTimingEvent TimingValue(WorldReplicationTimingStage stage, Vector3Int cell,
+            uint quantity = 0, int reason = 0, int count0 = 0, int count1 = 0)
+            => new WorldReplicationTimingEvent
+            {
+                Stage = stage, Header = _timingHeader, PresentationVersion = _timingPresentationVersion,
+                Frame = Time.frameCount, UnscaledDeltaTime = Time.unscaledDeltaTime,
+                CellX = cell.x, CellY = cell.y, CellZ = cell.z, Quantity = quantity,
+                Reason = reason, Count0 = count0, Count1 = count1
+            };
+
+        private void RecordTimingRead(WorldReplicationTimingTrace trace, Vector3Int firstCell, int copiedCells)
+        {
+            if ((_timingStages & 1) != 0) return;
+            _timingStages |= 1;
+            var value = TimingValue(WorldReplicationTimingStage.RendererRead, firstCell, count0: copiedCells);
+            trace.Record(in value);
+        }
+
+        private void RecordTimingRejected(WorldReplicationTimingTrace trace, int reason, Vector3Int cell,
+            uint quantity, int seeds, int capacity)
+        {
+            // 三种原因各记一次：1视锥/距离；2原概率门；3原seed预算截断。不是逐格/逐帧日志。
+            byte bit = (byte)(1 << reason);
+            if ((_timingRejectedReasons & bit) != 0) return;
+            _timingRejectedReasons |= bit;
+            var value = TimingValue(WorldReplicationTimingStage.RendererRejected, cell, quantity, reason, seeds, capacity);
+            trace.Record(in value);
+        }
+
+        private void RecordTimingSeedChosen(WorldReplicationTimingTrace trace, Vector3Int cell, uint quantity, int index)
+        {
+            if (!_timingSeedInBatch)
+            {
+                // 保存当前batch中的真实首Seed；后续Header更新不能把旧batch改记成新网络版本。
+                _timingSeedEvent = TimingValue(WorldReplicationTimingStage.SeedChosen, cell, quantity, count0: index);
+                _timingSeedInBatch = true;
+            }
+            if ((_timingStages & 2) != 0) return;
+            _timingStages |= 2;
+            trace.Record(in _timingSeedEvent);
+        }
+
+        private void RecordTimingSeedUploaded(int seedCount)
+        {
+            var trace = WorldReplicationTimingTrace.Active;
+            if (trace == null || !ReferenceEquals(trace, _timingTrace) || !_timingSeedInBatch || (_timingStages & 4) != 0) return;
+            _timingStages |= 4;
+            var value = _timingSeedEvent;
+            value.Stage = WorldReplicationTimingStage.SeedUploaded;
+            value.Frame = Time.frameCount; value.UnscaledDeltaTime = Time.unscaledDeltaTime;
+            // Count0是该目标首Seed在本次上传数组中的索引，Count1是整个实际batch大小。
+            value.Count1 = seedCount;
+            trace.Record(in value);
+            _timingDrawEvent = value; _timingDrawPending = true;
+        }
+
+        private void RecordTimingDrawSubmitted()
+        {
+            if (!_timingDrawPending) return;
+            _timingDrawPending = false;
+            var trace = WorldReplicationTimingTrace.Active;
+            if (trace == null || !ReferenceEquals(trace, _timingTrace)) return;
+            var value = _timingDrawEvent;
+            value.Stage = WorldReplicationTimingStage.DrawSubmitted;
+            value.Frame = Time.frameCount; value.UnscaledDeltaTime = Time.unscaledDeltaTime;
+            trace.Record(in value);
+        }
+
+        private void Simulate(float deltaTime, float elapsed)
         {
             using (SimulateMarker.Auto())
             {
                 BindCommon(_simulateKernel);
                 _lifecycleCompute.SetFloat("_DeltaTime", deltaTime);
+                _lifecycleCompute.SetFloat("_AgeDeltaTime", elapsed);
                 _lifecycleCompute.SetFloat("_Buoyancy", _profile.Buoyancy);
                 _lifecycleCompute.SetFloat("_Drag", _profile.Drag);
                 _lifecycleCompute.SetFloat("_SourceTether", _profile.SourceTether);

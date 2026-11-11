@@ -1,0 +1,60 @@
+{
+  "RecordedUtc": "2026-11-02T10:42:55.321442+00:00",
+  "Scope": "Authorized one-time delivery preparation; no gameplay acceptance",
+  "BusinessPublishedVersion": 10,
+  "DedicatedServerBuiltVersion": 10,
+  "DedicatedServerBuildReport": "delivery-v10-ds-build-report-20261102.json",
+  "BinaryMetadata": "delivery-v10-binary-versions-20261102.json",
+  "EditorClientSourceVersion": 10,
+  "OldNativeClientVersion": 6,
+  "MainDatabase": "norn_online_dev",
+  "MainAppliedVersions": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "MainMigrationRequested": false,
+  "BusinessStarted": false,
+  "HealthReadyChecked": false,
+  "Backup": {
+    "BackupScope": "application tables, data and available trigger definitions; events/routines not changed or exported",
+    "BackupFile": "F:\\Develop Project\\RPG\\RPG\\.tools\\local-online\\backups\\v10-delivery-20261102T101220Z\\norn_online_dev-tables-before-v10.sql",
+    "BackupBytes": 465018,
+    "BackupSha256": "d004067424542246ea5a9237e365b5c79d9b7cca3dafd293dab45a69f88998ff",
+    "ExistingMigrationsHashVerified": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "PendingMigrations": [
+      6,
+      7,
+      8
+    ]
+  },
+  "AssetSnapshotTables": [
+    "accounts",
+    "charactercombatloadouts",
+    "characters",
+    "inventorycommands",
+    "itemlocations",
+    "items",
+    "ownedcombatstarteraudits",
+    "wallets"
+  ],
+  "ActiveInstancePorts": 0,
+  "UnlaunchedStartingInstances": 0,
+  "Migration006": "Adds grid/UniqueSlot and container tables; replaces old position checks/unique index; no asset DML; awaiting parent scope judgment",
+  "ProductionPrerequisite": "No formal real Bag acquisition/equipment entry; new accounts only wand/card, no bag; material pickup NoCapacity; no automatic grant or legacy conversion performed",
+  "KnownBackupLimitation": "First dump including events denied at1044; failed dump preserved; verified application-table dump excludes events/routines, no privilege changes",
+  "MySqlProcessId": 56492,
+  "MySqlLeftRunningForContinuation": false,
+  "ProtectedFilesUnchanged": true,
+  "NoClientGameplayOrEditorClose": true,
+  "MySqlStoppedNormally": true,
+  "MySqlStoppedUtc": "2026-11-02T10:52:38.669076+00:00"
+}

@@ -4,6 +4,7 @@ using Game.Materials;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.TestTools;
 using Object = UnityEngine.Object;
 
 namespace Game.ElementField.Tests
@@ -112,6 +113,16 @@ namespace Game.ElementField.Tests
             Assert.That(_host.GetComponentsInChildren<GpuPbfFluidRuntime>(true), Is.Empty);
             Assert.That(_host.GetComponentsInChildren<FluidChunkStreamingRuntime>(true), Is.Empty);
             Assert.That(_host.GetComponentsInChildren<FluidGameplayOccupancyBridge>(true), Is.Empty);
+        }
+
+        [Test]
+        public void SinglePlayerStillRequiresItsAuthoredInterestPoint()
+        {
+            _world.ConfigureExecutionMode(WorldExecutionMode.SinglePlayer);
+            Set(_world, "_interestPoint", null);
+            LogAssert.Expect(LogType.Error, "[ElementField] ElementWorldRuntime requires an Interest Point Transform.");
+            Assert.That((bool)typeof(ElementWorldRuntime).GetMethod("TryInitialize", Private).Invoke(_world, null), Is.False);
+            Assert.That(_world.IsInitialized, Is.False);
         }
 
         private static void Set(object target, string field, object value)

@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="22" result="Failed(Child)" total="22" passed="1" failed="21" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 06:56:31Z" end-time="2026-11-02 06:56:34Z" duration="2.4858916">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3777" result="Failed" site="Child" start-time="2026-11-02 06:56:31Z" end-time="2026-11-02 06:56:34Z" duration="2.485892" total="22" passed="1" failed="21" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1420" name="Game.Character.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.Tests.dll" runstate="Runnable" testcasecount="348" result="Failed" site="Child" start-time="2026-11-02 06:56:31Z" end-time="2026-11-02 06:56:33Z" duration="1.565630" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1421" name="Game" fullname="Game" runstate="Runnable" testcasecount="348" result="Failed" site="Child" start-time="2026-11-02 06:56:31Z" end-time="2026-11-02 06:56:33Z" duration="1.479409" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1422" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="348" result="Failed" site="Child" start-time="2026-11-02 06:56:32Z" end-time="2026-11-02 06:56:33Z" duration="1.379512" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1423" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="348" result="Failed" site="Child" start-time="2026-11-02 06:56:32Z" end-time="2026-11-02 06:56:33Z" duration="1.280218" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1222" name="OnlineCastDriverTests" fullname="Game.Character.Tests.OnlineCastDriverTests" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" testcasecount="97" result="Failed" site="Child" start-time="2026-11-02 06:56:32Z" end-time="2026-11-02 06:56:32Z" duration="0.650864" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1283" name="AuthoritySolidReleaseComputesOriginalForwardTargetWithoutAnyClientAim" fullname="Game.Character.Tests.OnlineCastDriverTests.AuthoritySolidReleaseComputesOriginalForwardTargetWithoutAnyClientAim" methodname="AuthoritySolidReleaseComputesOriginalForwardTargetWithoutAnyClientAim" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="1264706637" result="Failed" start-time="2026-11-02 06:56:32Z" end-time="2026-11-02 06:56:32Z" duration="0.341108" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  当前入局合同缺少固体材料实例数量，拒绝导入且不默认生成 GMU。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.Create (Game.Core.OnlineOwnedAssetSnapshot& assets, System.Boolean insufficient, System.Boolean includeContainer, Game.Character.OnlineCombatDefinition definitionOverride, Game.Core.OnlineOwnedAssetSnapshot assetsOverride) [0x0031f] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:95
+at Game.Character.Tests.OnlineCastDriverTests.CreateSolidReleaseAuthority () [0x0003e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:1186
+at Game.Character.Tests.OnlineCastDriverTests.AuthoritySolidReleaseComputesOriginalForwardTargetWithoutAnyClientAim () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:1236
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1284" name="FrozenSolidReleaseRetainsQuantityAndItsRejectedReceiptAfterTheGateReopens" fullname="Game.Character.Tests.OnlineCastDriverTests.FrozenSolidReleaseRetainsQuantityAndItsRejectedReceiptAfterTheGateReopens" methodname="FrozenSolidReleaseRetainsQuantityAndItsRejectedReceiptAfterTheGateReopens" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="54575569" result="Failed" start-time="2026-11-02 06:56:32Z" end-time="2026-11-02 06:56:32Z" duration="0.005149" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  当前入局合同缺少固体材料实例数量，拒绝导入且不默认生成 GMU。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.Create (Game.Core.OnlineOwnedAssetSnapshot& assets, System.Boolean insufficient, System.Boolean includeContainer, Game.Character.OnlineCombatDefinition definitionOverride, Game.Core.OnlineOwnedAssetSnapshot assetsOverride) [0x0031f] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:95
+at Game.Character.Tests.OnlineCastDriverTests.CreateSolidReleaseAuthority () [0x0003e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:1186
+at Game.Character.Tests.OnlineCastDriverTests.FrozenSolidReleaseRetainsQuantityAndItsRejectedReceiptAfterTheGateReopens () [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:1252
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1282" name="SolidReleaseFocusLossAndReconnectDoNotResumeAnOldHeldPress" fullname="Game.Character.Tests.OnlineCastDriverTests.SolidReleaseFocusLossAndReconnectDoNotResumeAnOldHeldPress" methodname="SolidReleaseFocusLossAndReconnectDoNotResumeAnOldHeldPress" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="321204746" result="Failed" start-time="2026-11-02 06:56:32Z" end-time="2026-11-02 06:56:32Z" duration="0.173670" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  当前合同缺少固体材料实例数量，不能显示或默认生成 GMU。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.CreateSolidReleaseInput (Game.Core.OnlineInventoryPresentationSnapshot& snapshot) [0x0004a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:1165
+at Game.Character.Tests.OnlineCastDriverTests.SolidReleaseFocusLossAndReconnectDoNotResumeAnOldHeldPress () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:1211
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1281" name="SolidReleasePressSendsOneZeroBudgetIntentForTheFirstConfirmedBackpackMaterial" fullname="Game.Character.Tests.OnlineCastDriverTests.SolidReleasePressSendsOneZeroBudgetIntentForTheFirstConfirmedBackpackMaterial" methodname="SolidReleasePressSendsOneZeroBudgetIntentForTheFirstConfirmedBackpackMaterial" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="777899061" result="Failed" start-time="2026-11-02 06:56:32Z" end-time="2026-11-02 06:56:32Z" duration="0.021038" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  当前合同缺少固体材料实例数量，不能显示或默认生成 GMU。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.CreateSolidReleaseInput (Game.Core.OnlineInventoryPresentationSnapshot& snapshot) [0x0004a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:1165
+at Game.Character.Tests.OnlineCastDriverTests.SolidReleasePressSendsOneZeroBudgetIntentForTheFirstConfirmedBackpackMaterial () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:1193
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1345" name="OnlineDungeonRuntimeTests" fullname="Game.Character.Tests.OnlineDungeonRuntimeTests" classname="Game.Character.Tests.OnlineDungeonRuntimeTests" runstate="Runnable" testcasecount="27" result="Failed" site="Child" start-time="2026-11-02 06:56:32Z" end-time="2026-11-02 06:56:33Z" duration="0.528058" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1356" name="FixedSolidExportKeepsTheOriginalP7IceWorldPoseAndP8HasNoNewSource" fullname="Game.Character.Tests.OnlineDungeonRuntimeTests.FixedSolidExportKeepsTheOriginalP7IceWorldPoseAndP8HasNoNewSource" methodname="FixedSolidExportKeepsTheOriginalP7IceWorldPoseAndP8HasNoNewSource" classname="Game.Character.Tests.OnlineDungeonRuntimeTests" runstate="Runnable" seed="195734970" result="Failed" start-time="2026-11-02 06:56:32Z" end-time="2026-11-02 06:56:32Z" duration="0.002839" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  窄刷新需先读取原固体来源，再剥离单机WorldItemSpawnPoint。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineDungeonRuntimeTests.FixedSolidExportKeepsTheOriginalP7IceWorldPoseAndP8HasNoNewSource () [0x00024] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineDungeonRuntimeTests.cs:153
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1357" name="FixedSolidSourceHashIncludesOriginalLayoutIceAndMetadataWithoutAddingP8Inputs" fullname="Game.Character.Tests.OnlineDungeonRuntimeTests.FixedSolidSourceHashIncludesOriginalLayoutIceAndMetadataWithoutAddingP8Inputs" methodname="FixedSolidSourceHashIncludesOriginalLayoutIceAndMetadataWithoutAddingP8Inputs" classname="Game.Character.Tests.OnlineDungeonRuntimeTests" runstate="Runnable" seed="1028328324" result="Failed" start-time="2026-11-02 06:56:32Z" end-time="2026-11-02 06:56:33Z" duration="0.513659" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: collection containing "Assets/_Project/Prefabs/SinglePlayer/P7Dungeon/FixedFourStageLayout.prefab"
+  But was:  < "Assets/_Project/Art/Prefabs/Item/Container/Container_01.prefab", "Assets/_Project/Art/Prefabs/Item/Container/Container_01.prefab.meta", "Assets/_Project/Art/Prefabs/Item/Container/Container_02.prefab", "Assets/_Project/Art/Prefabs/Item/Container/Container_02.prefab.meta", "Assets/_Project/Art/Prefabs/Item/Container/Container_03.prefab", "Assets/_Project/Art/Prefabs/Item/Container/Container_03.prefab.meta", "Assets/_Project/Art/Prefabs/Item/Food/Apple.prefab", "Assets/_Project/Art/Prefabs/Item/Food/Apple.prefab.meta", "Assets/_Project/Art/Prefabs/Item/Food/Beetroot.prefab", "Assets/_Project/Art/Prefabs/Item/Food/Beetroot.prefab.meta"... >
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineDungeonRuntimeTests.FixedSolidSourceHashIncludesOriginalLayoutIceAndMetadataWithoutAddingP8Inputs () [0x00055] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineDungeonRuntimeTests.cs:191
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="3696" name="Game.Networking.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Networking.Tests.dll" runstate="Runnable" testcasecount="410" result="Failed" site="Child" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.415835" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3697" name="Game" fullname="Game" runstate="Runnable" testcasecount="410" result="Failed" site="Child" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.357466" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3698" name="Networking" fullname="Game.Networking" runstate="Runnable" testcasecount="410" result="Failed" site="Child" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.317633" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3699" name="Tests" fullname="Game.Networking.Tests" runstate="Runnable" testcasecount="410" result="Failed" site="Child" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.287062" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3267" name="InventoryCommandCodecTests" fullname="Game.Networking.Tests.InventoryCommandCodecTests" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" testcasecount="109" result="Failed" site="Child" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.009496" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3268" name="ReleaseSolidRoundTripsOnlyCanonicalIdentityWithoutClientQuantityOrGeometry" fullname="Game.Networking.Tests.InventoryCommandCodecTests.ReleaseSolidRoundTripsOnlyCanonicalIdentityWithoutClientQuantityOrGeometry" methodname="ReleaseSolidRoundTripsOnlyCanonicalIdentityWithoutClientQuantityOrGeometry" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="546127929" result="Failed" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.005077" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  K只请求真实包内Material实例；DS选第一份材料并按原落点每次最多100GMU。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.ReleaseSolidRoundTripsOnlyCanonicalIdentityWithoutClientQuantityOrGeometry () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="3399" name="InventorySnapshotCodecTests" fullname="Game.Networking.Tests.InventorySnapshotCodecTests" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" testcasecount="93" result="Failed" site="Child" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.251155" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3400" name="SolidMaterialOwnedAndGroundRoundTripFullUlongAsIndependentState" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.SolidMaterialOwnedAndGroundRoundTripFullUlongAsIndependentState" methodname="SolidMaterialOwnedAndGroundRoundTripFullUlongAsIndependentState" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="1646444516" result="Failed" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.020046" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventorySnapshotCodecTests.EncodeExact (System.Object source) [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventorySnapshotCodecTests.cs:601
+at Game.Networking.Tests.InventorySnapshotCodecTests.SolidMaterialOwnedAndGroundRoundTripFullUlongAsIndependentState () [0x00009] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventorySnapshotCodecTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3403" name="SolidMaterialPooledResetClearsRetainedChildrenAndUnknownFields" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.SolidMaterialPooledResetClearsRetainedChildrenAndUnknownFields" methodname="SolidMaterialPooledResetClearsRetainedChildrenAndUnknownFields" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="1850483619" result="Failed" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.205670" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: null
+  But was:  <{ "schemaVersion": 1, "materialKey": 3, "quantity": "18446744073709551615" }>
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventorySnapshotCodecTests.SolidMaterialPooledResetClearsRetainedChildrenAndUnknownFields () [0x000e5] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventorySnapshotCodecTests.cs:85
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3401" name="SolidMaterialRejectsInvalidOrAmbiguousStateOnBothWireAndDto" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.SolidMaterialRejectsInvalidOrAmbiguousStateOnBothWireAndDto" methodname="SolidMaterialRejectsInvalidOrAmbiguousStateOnBothWireAndDto" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="975989048" result="Failed" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.011984" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventorySnapshotCodecTests.EncodeExact (System.Object source) [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventorySnapshotCodecTests.cs:601
+at Game.Networking.Tests.InventorySnapshotCodecTests.SolidMaterialRejectsInvalidOrAmbiguousStateOnBothWireAndDto () [0x001a1] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventorySnapshotCodecTests.cs:50
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3402" name="SolidMaterialWireRejectsUnknownDuplicateNarrowingAndNonCanonicalNumbers" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.SolidMaterialWireRejectsUnknownDuplicateNarrowingAndNonCanonicalNumbers" methodname="SolidMaterialWireRejectsUnknownDuplicateNarrowingAndNonCanonicalNumbers" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="2005676998" result="Failed" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.002503" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventorySnapshotCodecTests.EncodeExact (System.Object source) [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventorySnapshotCodecTests.cs:601
+at Game.Networking.Tests.InventorySnapshotCodecTests.SolidMaterialWireRejectsUnknownDuplicateNarrowingAndNonCanonicalNumbers () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventorySnapshotCodecTests.cs:64
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="5229" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="938" result="Failed" site="Child" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.181364" total="6" passed="1" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="5230" name="Game" fullname="Game" runstate="Runnable" testcasecount="938" result="Failed" site="Child" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.138706" total="6" passed="1" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="5231" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="938" result="Failed" site="Child" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.107424" total="6" passed="1" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="5232" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="938" result="Failed" site="Child" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.080594" total="6" passed="1" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="4445" name="OnlineGroundItemStoreTests" fullname="Game.Run.Tests.OnlineGroundItemStoreTests" classname="Game.Run.Tests.OnlineGroundItemStoreTests" runstate="Runnable" testcasecount="27" result="Failed" site="Child" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.034268" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="4474" name="SharedMaterialAutoPickupPreservesOriginalPartialMergeRemainderIdentityAndExactBalance" fullname="Game.Run.Tests.OnlineGroundItemStoreTests.SharedMaterialAutoPickupPreservesOriginalPartialMergeRemainderIdentityAndExactBalance" methodname="SharedMaterialAutoPickupPreservesOriginalPartialMergeRemainderIdentityAndExactBalance" classname="Game.Run.Tests.OnlineGroundItemStoreTests" runstate="Runnable" seed="1901367029" result="Failed" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.006289" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  当前入局合同缺少固体材料实例数量，拒绝导入且不默认生成 GMU。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineGroundItemStoreTests.Owner (System.Int32 number, System.Boolean withBottle, System.String bagContent, System.Boolean fullBag, System.String bottleContent, System.Boolean holeFiller, System.UInt64 materialQuantity) [0x001d8] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineGroundItemStoreTests.cs:376
+at Game.Run.Tests.OnlineGroundItemStoreTests.SharedMaterialAutoPickupPreservesOriginalPartialMergeRemainderIdentityAndExactBalance () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineGroundItemStoreTests.cs:329
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4473" name="SharedMaterialWholePickupHasOneWinnerAndStableRegistrationCannotGrantItAgain" fullname="Game.Run.Tests.OnlineGroundItemStoreTests.SharedMaterialWholePickupHasOneWinnerAndStableRegistrationCannotGrantItAgain" methodname="SharedMaterialWholePickupHasOneWinnerAndStableRegistrationCannotGrantItAgain" classname="Game.Run.Tests.OnlineGroundItemStoreTests" runstate="Runnable" seed="2002576321" result="Failed" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.017363" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineGroundItemStoreTests.RegisterMaterial (System.String key, System.UInt64 quantity, System.String& id) [0x00016] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineGroundItemStoreTests.cs:349
+at Game.Run.Tests.OnlineGroundItemStoreTests.SharedMaterialWholePickupHasOneWinnerAndStableRegistrationCannotGrantItAgain () [0x0007a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineGroundItemStoreTests.cs:309
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="4566" name="OnlineOwnedWorkspaceTests" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" testcasecount="137" result="Failed" site="Child" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.035730" total="4" passed="1" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="4722" name="FirstBackpackMaterialIsTheSameAfterOwnerInstallWithoutA256ItemCutoff" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.FirstBackpackMaterialIsTheSameAfterOwnerInstallWithoutA256ItemCutoff" methodname="FirstBackpackMaterialIsTheSameAfterOwnerInstallWithoutA256ItemCutoff" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1013655484" result="Failed" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.007176" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  当前入局合同缺少固体材料实例数量，拒绝导入且不默认生成 GMU。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineOwnedWorkspaceTests.Create (System.Object seed) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:1668
+at Game.Run.Tests.OnlineOwnedWorkspaceTests.FirstBackpackMaterialIsTheSameAfterOwnerInstallWithoutA256ItemCutoff () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:1415
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4721" name="ReleaseSolidUsesFirstBackpackMaterialAndCommitsOnlyOneFixedHundredPerIntent" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.ReleaseSolidUsesFirstBackpackMaterialAndCommitsOnlyOneFixedHundredPerIntent" methodname="ReleaseSolidUsesFirstBackpackMaterialAndCommitsOnlyOneFixedHundredPerIntent" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="960093310" result="Failed" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.004023" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  当前入局合同缺少固体材料实例数量，拒绝导入且不默认生成 GMU。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineOwnedWorkspaceTests.Create (System.Object seed) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:1668
+at Game.Run.Tests.OnlineOwnedWorkspaceTests.ReleaseSolidUsesFirstBackpackMaterialAndCommitsOnlyOneFixedHundredPerIntent () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:1392
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4720" name="SolidMaterialRejectsMissingInvalidOrConflictingExplicitState" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.SolidMaterialRejectsMissingInvalidOrConflictingExplicitState" methodname="SolidMaterialRejectsMissingInvalidOrConflictingExplicitState" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="348761681" result="Passed" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.009007" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="4719" name="SolidMaterialStateImportsCapturesAndInstallsTheExactQuantity" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.SolidMaterialStateImportsCapturesAndInstallsTheExactQuantity" methodname="SolidMaterialStateImportsCapturesAndInstallsTheExactQuantity" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="649798470" result="Failed" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:33Z" duration="0.003629" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  当前入局合同缺少固体材料实例数量，拒绝导入且不默认生成 GMU。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineOwnedWorkspaceTests.Create (System.Object seed) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:1668
+at Game.Run.Tests.OnlineOwnedWorkspaceTests.SolidMaterialStateImportsCapturesAndInstallsTheExactQuantity () [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:1346
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="5602" name="Game.UI.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.UI.Tests.dll" runstate="Runnable" testcasecount="118" result="Failed" site="Child" start-time="2026-11-02 06:56:33Z" end-time="2026-11-02 06:56:34Z" duration="0.216297" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="5603" name="Game" fullname="Game" runstate="Runnable" testcasecount="118" result="Failed" site="Child" start-time="2026-11-02 06:56:34Z" end-time="2026-11-02 06:56:34Z" duration="0.203149" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="5604" name="UI" fullname="Game.UI" runstate="Runnable" testcasecount="118" result="Failed" site="Child" start-time="2026-11-02 06:56:34Z" end-time="2026-11-02 06:56:34Z" duration="0.190256" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="5605" name="Tests" fullname="Game.UI.Tests" runstate="Runnable" testcasecount="118" result="Failed" site="Child" start-time="2026-11-02 06:56:34Z" end-time="2026-11-02 06:56:34Z" duration="0.183185" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="5492" name="OnlineInventoryUiGatewayTests" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="57" result="Failed" site="Child" start-time="2026-11-02 06:56:34Z" end-time="2026-11-02 06:56:34Z" duration="0.173456" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="5546" name="LaterOwnerSnapshotAfterSolidPickupAndKConsumptionDoesNotWaitForTheOldNetGain" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.LaterOwnerSnapshotAfterSolidPickupAndKConsumptionDoesNotWaitForTheOldNetGain" methodname="LaterOwnerSnapshotAfterSolidPickupAndKConsumptionDoesNotWaitForTheOldNetGain" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="276386894" result="Failed" start-time="2026-11-02 06:56:34Z" end-time="2026-11-02 06:56:34Z" duration="0.059145" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  当前合同缺少固体材料实例数量，不能显示或默认生成 GMU。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.OnlineInventoryUiGatewayTests.InstallContainerBindingSnapshot (System.Object snapshot) [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:887
+at Game.UI.Tests.OnlineInventoryUiGatewayTests.ConfigureSolidNearby (System.UInt64 carried) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:539
+at Game.UI.Tests.OnlineInventoryUiGatewayTests.LaterOwnerSnapshotAfterSolidPickupAndKConsumptionDoesNotWaitForTheOldNetGain () [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:522
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="5543" name="OriginalSolidGroundDragOnlyRequestsItsRealEquippedBackpackGrid" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.OriginalSolidGroundDragOnlyRequestsItsRealEquippedBackpackGrid" methodname="OriginalSolidGroundDragOnlyRequestsItsRealEquippedBackpackGrid" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1238712488" result="Failed" start-time="2026-11-02 06:56:34Z" end-time="2026-11-02 06:56:34Z" duration="0.023896" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  当前合同缺少固体材料实例数量，不能显示或默认生成 GMU。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.OnlineInventoryUiGatewayTests.InstallContainerBindingSnapshot (System.Object snapshot) [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:887
+at Game.UI.Tests.OnlineInventoryUiGatewayTests.ConfigureSolidNearby (System.UInt64 carried) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:539
+at Game.UI.Tests.OnlineInventoryUiGatewayTests.OriginalSolidGroundDragOnlyRequestsItsRealEquippedBackpackGrid () [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:470
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="5542" name="OriginalTabSolidPickupPreservesExactQuantityUntilConfirmedSnapshot" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.OriginalTabSolidPickupPreservesExactQuantityUntilConfirmedSnapshot" methodname="OriginalTabSolidPickupPreservesExactQuantityUntilConfirmedSnapshot" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="791190674" result="Failed" start-time="2026-11-02 06:56:34Z" end-time="2026-11-02 06:56:34Z" duration="0.027048" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  当前合同缺少固体材料实例数量，不能显示或默认生成 GMU。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.OnlineInventoryUiGatewayTests.InstallContainerBindingSnapshot (System.Object snapshot) [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:887
+at Game.UI.Tests.OnlineInventoryUiGatewayTests.ConfigureSolidNearby (System.UInt64 carried) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:539
+at Game.UI.Tests.OnlineInventoryUiGatewayTests.OriginalTabSolidPickupPreservesExactQuantityUntilConfirmedSnapshot () [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:447
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="5545" name="SolidCompleteMergeConfirmsWhenOriginalGroundIdentityWasConsumed" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.SolidCompleteMergeConfirmsWhenOriginalGroundIdentityWasConsumed" methodname="SolidCompleteMergeConfirmsWhenOriginalGroundIdentityWasConsumed" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="399144751" result="Failed" start-time="2026-11-02 06:56:34Z" end-time="2026-11-02 06:56:34Z" duration="0.025297" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  当前合同缺少固体材料实例数量，不能显示或默认生成 GMU。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.OnlineInventoryUiGatewayTests.InstallContainerBindingSnapshot (System.Object snapshot) [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:887
+at Game.UI.Tests.OnlineInventoryUiGatewayTests.ConfigureSolidNearby (System.UInt64 carried) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:539
+at Game.UI.Tests.OnlineInventoryUiGatewayTests.SolidCompleteMergeConfirmsWhenOriginalGroundIdentityWasConsumed () [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:506
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="5544" name="SolidPartialMergeWaitsForBothOwnerGainAndMatchingGroundRemainder" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.SolidPartialMergeWaitsForBothOwnerGainAndMatchingGroundRemainder" methodname="SolidPartialMergeWaitsForBothOwnerGainAndMatchingGroundRemainder" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="2101978314" result="Failed" start-time="2026-11-02 06:56:34Z" end-time="2026-11-02 06:56:34Z" duration="0.031822" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  当前合同缺少固体材料实例数量，不能显示或默认生成 GMU。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.OnlineInventoryUiGatewayTests.InstallContainerBindingSnapshot (System.Object snapshot) [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:887
+at Game.UI.Tests.OnlineInventoryUiGatewayTests.ConfigureSolidNearby (System.UInt64 carried) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:539
+at Game.UI.Tests.OnlineInventoryUiGatewayTests.SolidPartialMergeWaitsForBothOwnerGainAndMatchingGroundRemainder () [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:487
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

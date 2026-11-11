@@ -1,0 +1,45 @@
+{
+  "RecordedAtUtc": "2026-11-03T01:33:30.130148Z",
+  "Scope": "Mint and Consume share current Run/epoch/lease/member qualification; prerequisite only, no final ESC settlement",
+  "Windows": [
+    {
+      "Label": "esc-ticket-eligibility-red-20261103",
+      "Total": 5,
+      "Passed": 2,
+      "Failed": 3
+    },
+    {
+      "Label": "esc-ticket-eligibility-green-20261103",
+      "Total": 19,
+      "Passed": 18,
+      "Failed": 1
+    },
+    {
+      "Label": "esc-ticket-eligibility-final-20261103",
+      "Total": 19,
+      "Passed": 19,
+      "Failed": 0
+    },
+    {
+      "Label": "esc-ticket-eligibility-final2-20261103",
+      "Total": 19,
+      "Passed": 19,
+      "Failed": 0
+    }
+  ],
+  "ProductionFile": "Server/Norn.Business/Features/Rooms/RoomInstanceService.cs",
+  "ProductionSha256": "f5b470af3d7ba71563f8de603274c229809ec642793aace800cce62f444ef3b8",
+  "SessionKeptOnQualificationFailure": "Mint409 RunMemberNotActive; Consume original401 for invalid ticket",
+  "TeammateProof": "After the denied Mint, other member Admitted+lease and instance Ready remain",
+  "NewMigrationsAdded": false,
+  "MainDatabaseAccessPerformed": false,
+  "DeploymentChanged": false,
+  "NativeOrGameplayRun": false,
+  "FinalExitImplemented": false,
+  "OriginalProtectionAndDeploymentHashCheck": {
+    "RecordedAtUtc": "2026-11-03T01:36:00.9599479Z",
+    "ProtectedFiles": 7,
+    "DeployedFiles": 4,
+    "Changed": []
+  }
+}

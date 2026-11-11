@@ -82,7 +82,7 @@ namespace Game.Combat
 
         private void Tick(float deltaTime)
         {
-            if (_execution.Mode == CombatExecutionMode.Replica || deltaTime <= 0f || _applyAmount <= 0f)
+            if (!_execution.AllowsGameplayWrites || deltaTime <= 0f || _applyAmount <= 0f)
                 return;
 
             _elapsedTime += deltaTime;
@@ -99,6 +99,7 @@ namespace Game.Combat
 
         private void QueryAndApply(float amount)
         {
+            if (!_execution.AllowsGameplayWrites) return;
             if (_box == null)
                 CacheIdentityAndShape();
             if (_box == null)
@@ -127,6 +128,8 @@ namespace Game.Combat
             _appliedTargetIds.Clear();
             for (int i = 0; i < hitCount; i++)
             {
+                // 状态施加可能同步发出反应信号，逐目标重新读取世界权限。
+                if (!_execution.AllowsGameplayWrites) break;
                 Collider hit = _colliderBuffer[i];
                 if (hit == null)
                     continue;

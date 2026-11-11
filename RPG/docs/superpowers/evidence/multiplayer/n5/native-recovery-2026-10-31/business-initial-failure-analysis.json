@@ -1,0 +1,14 @@
+{
+  "InitialFailed": 1,
+  "Test": "OldServerEpoch_CannotRenewOrAdmit_AndLeaseExpiryReleasesAssets",
+  "HistoricalEvidence": "../interest-subscription-2026-10-31/p7-start.json",
+  "MutationOutsideExistingTests": false,
+  "ObservedFailureCode": "LeaseExpired",
+  "InitialPassed": 99,
+  "ActiveInstancesAfterTest": 0,
+  "HistoricalOwnedInstance": "94a4ccb6c04740569ebcf5c3447b44dd",
+  "Actual": 2,
+  "Conclusion": "Existing global ExpireDueAsync counted the prior owned Native instance as well as the new test instance; preserve failure and rerun only after read-only confirmation of zero active instances.",
+  "RecordedUtc": "2026-10-31T14:52:14.4754538Z",
+  "Expected": 1
+}

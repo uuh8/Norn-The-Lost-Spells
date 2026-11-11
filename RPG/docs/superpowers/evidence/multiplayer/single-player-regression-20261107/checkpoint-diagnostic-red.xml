@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="13" result="Failed(Child)" total="13" passed="0" failed="13" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-06 16:43:49Z" end-time="2026-11-06 16:43:50Z" duration="0.8105267">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="4407" result="Failed" site="Child" start-time="2026-11-06 16:43:49Z" end-time="2026-11-06 16:43:50Z" duration="0.810527" total="13" passed="0" failed="13" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3457" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="482" result="Failed" site="Child" start-time="2026-11-06 16:43:49Z" end-time="2026-11-06 16:43:50Z" duration="0.710081" total="13" passed="0" failed="13" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="30736" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3458" name="Game" fullname="Game" runstate="Runnable" testcasecount="482" result="Failed" site="Child" start-time="2026-11-06 16:43:49Z" end-time="2026-11-06 16:43:50Z" duration="0.616262" total="13" passed="0" failed="13" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3459" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="482" result="Failed" site="Child" start-time="2026-11-06 16:43:49Z" end-time="2026-11-06 16:43:50Z" duration="0.514520" total="13" passed="0" failed="13" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3460" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="482" result="Failed" site="Child" start-time="2026-11-06 16:43:49Z" end-time="2026-11-06 16:43:50Z" duration="0.415795" total="13" passed="0" failed="13" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3248" name="RunCheckpointPendingTests" fullname="Game.Multiplayer.Tests.RunCheckpointPendingTests" classname="Game.Multiplayer.Tests.RunCheckpointPendingTests" runstate="Runnable" testcasecount="25" result="Failed" site="Child" start-time="2026-11-06 16:43:50Z" end-time="2026-11-06 16:43:50Z" duration="0.315288" total="13" passed="0" failed="13" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="3263" name="CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse" fullname="Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse" classname="Game.Multiplayer.Tests.RunCheckpointPendingTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-11-06 16:43:50Z" end-time="2026-11-06 16:43:50Z" duration="0.133407" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="3255" name="CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse(&quot;unknown&quot;)" fullname="Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse(&quot;unknown&quot;)" methodname="CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse" classname="Game.Multiplayer.Tests.RunCheckpointPendingTests" runstate="Runnable" seed="1972256470" result="Failed" start-time="2026-11-06 16:43:50Z" end-time="2026-11-06 16:43:50Z" duration="0.015924" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  明确拒绝必须能保留受控错误码，不能只剩不可诊断的CandidateRejected。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCheckpointPendingTests.RejectionDiagnostic (System.Int64 status, System.String body) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:47
+at Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse (System.String defect) [0x000a8] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:41
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3256" name="CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse(&quot;prefix&quot;)" fullname="Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse(&quot;prefix&quot;)" methodname="CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse" classname="Game.Multiplayer.Tests.RunCheckpointPendingTests" runstate="Runnable" seed="1721807559" result="Failed" start-time="2026-11-06 16:43:50Z" end-time="2026-11-06 16:43:50Z" duration="0.001059" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  明确拒绝必须能保留受控错误码，不能只剩不可诊断的CandidateRejected。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCheckpointPendingTests.RejectionDiagnostic (System.Int64 status, System.String body) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:47
+at Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse (System.String defect) [0x000a8] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:41
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3257" name="CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse(&quot;newline&quot;)" fullname="Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse(&quot;newline&quot;)" methodname="CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse" classname="Game.Multiplayer.Tests.RunCheckpointPendingTests" runstate="Runnable" seed="1788375803" result="Failed" start-time="2026-11-06 16:43:50Z" end-time="2026-11-06 16:43:50Z" duration="0.001175" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  明确拒绝必须能保留受控错误码，不能只剩不可诊断的CandidateRejected。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCheckpointPendingTests.RejectionDiagnostic (System.Int64 status, System.String body) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:47
+at Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse (System.String defect) [0x000a8] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:41
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3258" name="CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse(&quot;wrong-case&quot;)" fullname="Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse(&quot;wrong-case&quot;)" methodname="CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse" classname="Game.Multiplayer.Tests.RunCheckpointPendingTests" runstate="Runnable" seed="2019104415" result="Failed" start-time="2026-11-06 16:43:50Z" end-time="2026-11-06 16:43:50Z" duration="0.001079" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  明确拒绝必须能保留受控错误码，不能只剩不可诊断的CandidateRejected。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCheckpointPendingTests.RejectionDiagnostic (System.Int64 status, System.String body) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:47
+at Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse (System.String defect) [0x000a8] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:41
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3259" name="CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse(&quot;malformed&quot;)" fullname="Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse(&quot;malformed&quot;)" methodname="CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse" classname="Game.Multiplayer.Tests.RunCheckpointPendingTests" runstate="Runnable" seed="1749679588" result="Failed" start-time="2026-11-06 16:43:50Z" end-time="2026-11-06 16:43:50Z" duration="0.000715" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  明确拒绝必须能保留受控错误码，不能只剩不可诊断的CandidateRejected。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCheckpointPendingTests.RejectionDiagnostic (System.Int64 status, System.String body) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:47
+at Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse (System.String defect) [0x000a8] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:41
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3260" name="CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse(&quot;missing&quot;)" fullname="Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse(&quot;missing&quot;)" methodname="CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse" classname="Game.Multiplayer.Tests.RunCheckpointPendingTests" runstate="Runnable" seed="796312329" result="Failed" start-time="2026-11-06 16:43:50Z" end-time="2026-11-06 16:43:50Z" duration="0.000745" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  明确拒绝必须能保留受控错误码，不能只剩不可诊断的CandidateRejected。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCheckpointPendingTests.RejectionDiagnostic (System.Int64 status, System.String body) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:47
+at Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse (System.String defect) [0x000a8] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:41
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3261" name="CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse(&quot;oversized&quot;)" fullname="Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse(&quot;oversized&quot;)" methodname="CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse" classname="Game.Multiplayer.Tests.RunCheckpointPendingTests" runstate="Runnable" seed="763284801" result="Failed" start-time="2026-11-06 16:43:50Z" end-time="2026-11-06 16:43:50Z" duration="0.001040" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  明确拒绝必须能保留受控错误码，不能只剩不可诊断的CandidateRejected。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCheckpointPendingTests.RejectionDiagnostic (System.Int64 status, System.String body) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:47
+at Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse (System.String defect) [0x000a8] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:41
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3262" name="CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse(&quot;null&quot;)" fullname="Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse(&quot;null&quot;)" methodname="CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse" classname="Game.Multiplayer.Tests.RunCheckpointPendingTests" runstate="Runnable" seed="276948661" result="Failed" start-time="2026-11-06 16:43:50Z" end-time="2026-11-06 16:43:50Z" duration="0.001172" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  明确拒绝必须能保留受控错误码，不能只剩不可诊断的CandidateRejected。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCheckpointPendingTests.RejectionDiagnostic (System.Int64 status, System.String body) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:47
+at Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticDoesNotEchoUntrustedOrUnboundedResponse (System.String defect) [0x000a8] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:41
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="3254" name="CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode" fullname="Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode" classname="Game.Multiplayer.Tests.RunCheckpointPendingTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-11-06 16:43:50Z" end-time="2026-11-06 16:43:50Z" duration="0.075984" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="3249" name="CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode(400,&quot;InvalidRunCheckpointJson&quot;)" fullname="Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode(400,&quot;InvalidRunCheckpointJson&quot;)" methodname="CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode" classname="Game.Multiplayer.Tests.RunCheckpointPendingTests" runstate="Runnable" seed="1536424579" result="Failed" start-time="2026-11-06 16:43:50Z" end-time="2026-11-06 16:43:50Z" duration="0.001629" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  明确拒绝必须能保留受控错误码，不能只剩不可诊断的CandidateRejected。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCheckpointPendingTests.RejectionDiagnostic (System.Int64 status, System.String body) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:47
+at Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode (System.Int64 status, System.String code) [0x00012] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:20
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3250" name="CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode(409,&quot;RunCheckpointCompleteInvalid&quot;)" fullname="Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode(409,&quot;RunCheckpointCompleteInvalid&quot;)" methodname="CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode" classname="Game.Multiplayer.Tests.RunCheckpointPendingTests" runstate="Runnable" seed="94892710" result="Failed" start-time="2026-11-06 16:43:50Z" end-time="2026-11-06 16:43:50Z" duration="0.001662" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  明确拒绝必须能保留受控错误码，不能只剩不可诊断的CandidateRejected。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCheckpointPendingTests.RejectionDiagnostic (System.Int64 status, System.String body) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:47
+at Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode (System.Int64 status, System.String code) [0x00012] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:20
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3251" name="CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode(409,&quot;RunCheckpointProfileVersionConflict&quot;)" fullname="Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode(409,&quot;RunCheckpointProfileVersionConflict&quot;)" methodname="CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode" classname="Game.Multiplayer.Tests.RunCheckpointPendingTests" runstate="Runnable" seed="1415737687" result="Failed" start-time="2026-11-06 16:43:50Z" end-time="2026-11-06 16:43:50Z" duration="0.001063" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  明确拒绝必须能保留受控错误码，不能只剩不可诊断的CandidateRejected。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCheckpointPendingTests.RejectionDiagnostic (System.Int64 status, System.String body) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:47
+at Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode (System.Int64 status, System.String code) [0x00012] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:20
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3252" name="CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode(409,&quot;InvalidCombatContainer&quot;)" fullname="Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode(409,&quot;InvalidCombatContainer&quot;)" methodname="CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode" classname="Game.Multiplayer.Tests.RunCheckpointPendingTests" runstate="Runnable" seed="242516766" result="Failed" start-time="2026-11-06 16:43:50Z" end-time="2026-11-06 16:43:50Z" duration="0.001384" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  明确拒绝必须能保留受控错误码，不能只剩不可诊断的CandidateRejected。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCheckpointPendingTests.RejectionDiagnostic (System.Int64 status, System.String body) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:47
+at Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode (System.Int64 status, System.String code) [0x00012] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:20
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3253" name="CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode(413,&quot;RunCheckpointPayloadTooLarge&quot;)" fullname="Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode(413,&quot;RunCheckpointPayloadTooLarge&quot;)" methodname="CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode" classname="Game.Multiplayer.Tests.RunCheckpointPendingTests" runstate="Runnable" seed="1253946612" result="Failed" start-time="2026-11-06 16:43:50Z" end-time="2026-11-06 16:43:50Z" duration="0.003261" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  明确拒绝必须能保留受控错误码，不能只剩不可诊断的CandidateRejected。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunCheckpointPendingTests.RejectionDiagnostic (System.Int64 status, System.String body) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:47
+at Game.Multiplayer.Tests.RunCheckpointPendingTests.CheckpointRejectionDiagnosticKeepsOnlyHttpStatusAndAllowlistedCode (System.Int64 status, System.String code) [0x00012] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunCheckpointPendingTests.cs:20
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -15,7 +15,7 @@ namespace Game.Run
         public Transform PortalTransform => transform;
         public string InteractionLabel => "F 进入远征";
         public bool CanInteract(Collider actor) => _player != null && actor != null && actor.transform.IsChildOf(_player)
-            && _session?.RunCoordinator?.State.Phase == RaidPhase.HubReady && _session.RunCoordinator.ActionsAllowed
+            && _session?.RunCoordinator?.CanChooseDungeonEntry == true
             && PortalInteractionRegistry.Contains(_trigger, actor);
         public bool Interact(Collider actor) { if (!CanInteract(actor)) return false; _entered = false; return _choice.Request(actor); }
         public int PortalId => gameObject.GetInstanceID();
@@ -24,7 +24,7 @@ namespace Game.Run
             _trigger = GetComponent<Collider>(); PortalTransitionCoordinator.EnsureVisual(transform);
             var run = _session != null ? _session.GetComponent<SinglePlayerRunCoordinator>() : null;
             string destination = run != null && run.Definition != null ? run.Definition.WorldScenePath : string.Empty;
-            _choice = new DungeonEntryChoiceGate(PortalId, destination, InteractionLabel, CanInteract, TryEnter, BeginChoice, EndChoice);
+            _choice = new DungeonEntryChoiceGate(PortalId, destination, InteractionLabel, CanInteract, BeginChoice, EndChoice);
         }
         private bool BeginChoice() => _session?.RunCoordinator?.TryBeginDungeonEntryChoice() == true;
         private void EndChoice() => _session?.RunCoordinator?.EndDungeonEntryChoice();

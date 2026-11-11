@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="22" result="Failed(Child)" total="22" passed="1" failed="21" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-03 10:40:47Z" end-time="2026-11-03 10:40:49Z" duration="2.052364">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="4262" result="Failed" site="Child" start-time="2026-11-03 10:40:47Z" end-time="2026-11-03 10:40:49Z" duration="2.052364" total="22" passed="1" failed="21" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1441" name="Game.Character.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.Tests.dll" runstate="Runnable" testcasecount="366" result="Failed" site="Child" start-time="2026-11-03 10:40:47Z" end-time="2026-11-03 10:40:48Z" duration="0.545788" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34452" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1442" name="Game" fullname="Game" runstate="Runnable" testcasecount="366" result="Failed" site="Child" start-time="2026-11-03 10:40:47Z" end-time="2026-11-03 10:40:48Z" duration="0.444607" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1443" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="366" result="Failed" site="Child" start-time="2026-11-03 10:40:47Z" end-time="2026-11-03 10:40:48Z" duration="0.355678" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1444" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="366" result="Failed" site="Child" start-time="2026-11-03 10:40:47Z" end-time="2026-11-03 10:40:48Z" duration="0.256696" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1363" name="OnlineDungeonRuntimeTests" fullname="Game.Character.Tests.OnlineDungeonRuntimeTests" classname="Game.Character.Tests.OnlineDungeonRuntimeTests" runstate="Runnable" testcasecount="29" result="Failed" site="Child" start-time="2026-11-03 10:40:47Z" end-time="2026-11-03 10:40:48Z" duration="0.153979" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1364" name="PeacefulHomeAcceptsTheOriginalEmptyWorldWithoutInventingEnemiesOrEncounters" fullname="Game.Character.Tests.OnlineDungeonRuntimeTests.PeacefulHomeAcceptsTheOriginalEmptyWorldWithoutInventingEnemiesOrEncounters" methodname="PeacefulHomeAcceptsTheOriginalEmptyWorldWithoutInventingEnemiesOrEncounters" classname="Game.Character.Tests.OnlineDungeonRuntimeTests" runstate="Runnable" seed="83332048" result="Failed" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.031299" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  副本NPC或遭遇数量超出共同预算。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineDungeonRuntimeTests.PeacefulHomeAcceptsTheOriginalEmptyWorldWithoutInventingEnemiesOrEncounters () [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineDungeonRuntimeTests.cs:57
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1365" name="PeacefulHomeRuntimeNeverCreatesFakeStageCompletionOrBattleRewards" fullname="Game.Character.Tests.OnlineDungeonRuntimeTests.PeacefulHomeRuntimeNeverCreatesFakeStageCompletionOrBattleRewards" methodname="PeacefulHomeRuntimeNeverCreatesFakeStageCompletionOrBattleRewards" classname="Game.Character.Tests.OnlineDungeonRuntimeTests" runstate="Runnable" seed="1064699155" result="Failed" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.008535" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.ArgumentException: 副本Definition非法：副本NPC或遭遇数量超出共同预算。
+Parameter name: definition
+  at Game.Character.OnlineDungeonRuntime..ctor (Game.Character.OnlineDungeonDefinition definition, Game.Character.OnlineDungeonWorldBindings bindings, Game.Core.ICombatActorRosterReadOnly players, System.Boolean authority, System.Action`2[T1,T2] setNpcActive, System.Action`1[T] activateBoss) [0x0004c] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Character\World\OnlineDungeonRuntime.cs:37 
+  at Game.Character.Tests.OnlineDungeonRuntimeTests+<>c__DisplayClass14_0.<PeacefulHomeRuntimeNeverCreatesFakeStageCompletionOrBattleRewards>b__0 () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineDungeonRuntimeTests.cs:72 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00000] in <f577cd9686154d6ab10efd7e65e64366>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00041] in <f577cd9686154d6ab10efd7e65e64366>:0 >
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineDungeonRuntimeTests.PeacefulHomeRuntimeNeverCreatesFakeStageCompletionOrBattleRewards () [0x0005f] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineDungeonRuntimeTests.cs:72
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="3411" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="451" result="Failed" site="Child" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.644936" total="18" passed="0" failed="18" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34452" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3412" name="Game" fullname="Game" runstate="Runnable" testcasecount="451" result="Failed" site="Child" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.601516" total="18" passed="0" failed="18" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3413" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="451" result="Failed" site="Child" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.501062" total="18" passed="0" failed="18" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3414" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="451" result="Failed" site="Child" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.402495" total="18" passed="0" failed="18" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2850" name="AccountInventoryCommandClientTests" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" testcasecount="38" result="Failed" site="Child" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.304192" total="18" passed="0" failed="18" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2886" name="AnotherLoginCannotAdoptOrReplaceAnUnknownShopTrade" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.AnotherLoginCannotAdoptOrReplaceAnUnknownShopTrade" methodname="AnotherLoginCannotAdoptOrReplaceAnUnknownShopTrade" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="1984873067" result="Failed" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.015686" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  账号商店桥缺少真实接缝：TryInstallAccountShopReply
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMethod (System.String name) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:431
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.InstallShop (Game.NetworkProtocol.AccountShopReply reply) [0x0001a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:435
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.AnotherLoginCannotAdoptOrReplaceAnUnknownShopTrade () [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:355
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2885" name="ShopAndInventoryCandidatesAreMutuallyExclusiveAndBlockNewServerEntry" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopAndInventoryCandidatesAreMutuallyExclusiveAndBlockNewServerEntry" methodname="ShopAndInventoryCandidatesAreMutuallyExclusiveAndBlockNewServerEntry" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="985335395" result="Failed" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.002549" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  账号商店桥缺少真实接缝：TryInstallAccountShopReply
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMethod (System.String name) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:431
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.InstallShop (Game.NetworkProtocol.AccountShopReply reply) [0x0001a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:435
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopAndInventoryCandidatesAreMutuallyExclusiveAndBlockNewServerEntry () [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:341
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2874" name="ShopMappingCombinesControlledQuotesWithCompleteAuthoritativeStockAndGold" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMappingCombinesControlledQuotesWithCompleteAuthoritativeStockAndGold" methodname="ShopMappingCombinesControlledQuotesWithCompleteAuthoritativeStockAndGold" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="546761193" result="Failed" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.001668" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  账号商店桥缺少真实接缝：TryMapAccountShopReply
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMethod (System.String name) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:431
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.MapShop (Game.NetworkProtocol.AccountShopReply reply) [0x00027] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:433
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMappingCombinesControlledQuotesWithCompleteAuthoritativeStockAndGold () [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:281
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="2882" name="ShopMappingRejectsUntrustedOrIncompleteBusinessValues" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMappingRejectsUntrustedOrIncompleteBusinessValues" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.084809" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2875" name="ShopMappingRejectsUntrustedOrIncompleteBusinessValues(&quot;hash&quot;)" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMappingRejectsUntrustedOrIncompleteBusinessValues(&quot;hash&quot;)" methodname="ShopMappingRejectsUntrustedOrIncompleteBusinessValues" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="36967353" result="Failed" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.002627" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  账号商店桥缺少真实接缝：TryMapAccountShopReply
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMethod (System.String name) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:431
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMappingRejectsUntrustedOrIncompleteBusinessValues (System.String bad) [0x0014a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:302
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2876" name="ShopMappingRejectsUntrustedOrIncompleteBusinessValues(&quot;duplicate&quot;)" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMappingRejectsUntrustedOrIncompleteBusinessValues(&quot;duplicate&quot;)" methodname="ShopMappingRejectsUntrustedOrIncompleteBusinessValues" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="1808686589" result="Failed" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.001493" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  账号商店桥缺少真实接缝：TryMapAccountShopReply
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMethod (System.String name) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:431
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMappingRejectsUntrustedOrIncompleteBusinessValues (System.String bad) [0x0014a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:302
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2877" name="ShopMappingRejectsUntrustedOrIncompleteBusinessValues(&quot;missing&quot;)" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMappingRejectsUntrustedOrIncompleteBusinessValues(&quot;missing&quot;)" methodname="ShopMappingRejectsUntrustedOrIncompleteBusinessValues" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="992465184" result="Failed" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.000796" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  账号商店桥缺少真实接缝：TryMapAccountShopReply
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMethod (System.String name) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:431
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMappingRejectsUntrustedOrIncompleteBusinessValues (System.String bad) [0x0014a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:302
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2878" name="ShopMappingRejectsUntrustedOrIncompleteBusinessValues(&quot;foreign&quot;)" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMappingRejectsUntrustedOrIncompleteBusinessValues(&quot;foreign&quot;)" methodname="ShopMappingRejectsUntrustedOrIncompleteBusinessValues" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="1577010193" result="Failed" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.000708" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  账号商店桥缺少真实接缝：TryMapAccountShopReply
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMethod (System.String name) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:431
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMappingRejectsUntrustedOrIncompleteBusinessValues (System.String bad) [0x0014a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:302
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2879" name="ShopMappingRejectsUntrustedOrIncompleteBusinessValues(&quot;gold&quot;)" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMappingRejectsUntrustedOrIncompleteBusinessValues(&quot;gold&quot;)" methodname="ShopMappingRejectsUntrustedOrIncompleteBusinessValues" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="987857304" result="Failed" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.000778" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  账号商店桥缺少真实接缝：TryMapAccountShopReply
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMethod (System.String name) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:431
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMappingRejectsUntrustedOrIncompleteBusinessValues (System.String bad) [0x0014a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:302
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2880" name="ShopMappingRejectsUntrustedOrIncompleteBusinessValues(&quot;excess-stock&quot;)" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMappingRejectsUntrustedOrIncompleteBusinessValues(&quot;excess-stock&quot;)" methodname="ShopMappingRejectsUntrustedOrIncompleteBusinessValues" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="19515461" result="Failed" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.000914" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  账号商店桥缺少真实接缝：TryMapAccountShopReply
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMethod (System.String name) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:431
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMappingRejectsUntrustedOrIncompleteBusinessValues (System.String bad) [0x0014a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:302
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2881" name="ShopMappingRejectsUntrustedOrIncompleteBusinessValues(&quot;scene&quot;)" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMappingRejectsUntrustedOrIncompleteBusinessValues(&quot;scene&quot;)" methodname="ShopMappingRejectsUntrustedOrIncompleteBusinessValues" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="244964414" result="Failed" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.000744" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  账号商店桥缺少真实接缝：TryMapAccountShopReply
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMethod (System.String name) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:431
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMappingRejectsUntrustedOrIncompleteBusinessValues (System.String bad) [0x0014a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:302
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="2893" name="ShopReceiptWithoutAConfirmedHubConsumerRemainsRecoverable" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopReceiptWithoutAConfirmedHubConsumerRemainsRecoverable" methodname="ShopReceiptWithoutAConfirmedHubConsumerRemainsRecoverable" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="184317655" result="Failed" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.001041" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  账号商店桥缺少真实接缝：TryInstallAccountShopReply
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMethod (System.String name) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:431
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.InstallShop (Game.NetworkProtocol.AccountShopReply reply) [0x0001a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:435
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopReceiptWithoutAConfirmedHubConsumerRemainsRecoverable () [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:394
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2883" name="ShopReplyPublishesOnlyAfterTheOriginalHubConsumersHaveInstalledItsProfile" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopReplyPublishesOnlyAfterTheOriginalHubConsumersHaveInstalledItsProfile" methodname="ShopReplyPublishesOnlyAfterTheOriginalHubConsumersHaveInstalledItsProfile" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="1076221660" result="Failed" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.001541" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  账号商店桥缺少真实接缝：TryInstallAccountShopReply
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMethod (System.String name) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:431
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.InstallShop (Game.NetworkProtocol.AccountShopReply reply) [0x0001a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:435
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopReplyPublishesOnlyAfterTheOriginalHubConsumersHaveInstalledItsProfile () [0x00031] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:318
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2892" name="ShopTradeConfirmsConsumersBeforePublishingTheOriginalResultAndClearingItsCandidate" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopTradeConfirmsConsumersBeforePublishingTheOriginalResultAndClearingItsCandidate" methodname="ShopTradeConfirmsConsumersBeforePublishingTheOriginalResultAndClearingItsCandidate" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="80287544" result="Failed" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.001175" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  账号商店桥缺少真实接缝：TryInstallAccountShopReply
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMethod (System.String name) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:431
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.InstallShop (Game.NetworkProtocol.AccountShopReply reply) [0x0001a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:435
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopTradeConfirmsConsumersBeforePublishingTheOriginalResultAndClearingItsCandidate () [0x00015] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:377
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2884" name="ShopTradeFreezesItsOriginalCommandVersionsHashAndTargetWithoutUploadingPrices" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopTradeFreezesItsOriginalCommandVersionsHashAndTargetWithoutUploadingPrices" methodname="ShopTradeFreezesItsOriginalCommandVersionsHashAndTargetWithoutUploadingPrices" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="1019207101" result="Failed" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.001306" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  账号商店桥缺少真实接缝：TryInstallAccountShopReply
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMethod (System.String name) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:431
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.InstallShop (Game.NetworkProtocol.AccountShopReply reply) [0x0001a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:435
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopTradeFreezesItsOriginalCommandVersionsHashAndTargetWithoutUploadingPrices () [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:325
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="2891" name="ShopTradeReceiptCannotFinishUntilFreshMatchingShopAndProfileAreConfirmed" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopTradeReceiptCannotFinishUntilFreshMatchingShopAndProfileAreConfirmed" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.088846" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2887" name="ShopTradeReceiptCannotFinishUntilFreshMatchingShopAndProfileAreConfirmed(&quot;receipt-player&quot;)" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopTradeReceiptCannotFinishUntilFreshMatchingShopAndProfileAreConfirmed(&quot;receipt-player&quot;)" methodname="ShopTradeReceiptCannotFinishUntilFreshMatchingShopAndProfileAreConfirmed" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="1285052371" result="Failed" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.001922" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  账号商店桥缺少真实接缝：TryInstallAccountShopReply
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMethod (System.String name) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:431
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.InstallShop (Game.NetworkProtocol.AccountShopReply reply) [0x0001a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:435
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopTradeReceiptCannotFinishUntilFreshMatchingShopAndProfileAreConfirmed (System.String bad) [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:365
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2888" name="ShopTradeReceiptCannotFinishUntilFreshMatchingShopAndProfileAreConfirmed(&quot;command&quot;)" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopTradeReceiptCannotFinishUntilFreshMatchingShopAndProfileAreConfirmed(&quot;command&quot;)" methodname="ShopTradeReceiptCannotFinishUntilFreshMatchingShopAndProfileAreConfirmed" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="402673591" result="Failed" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.000910" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  账号商店桥缺少真实接缝：TryInstallAccountShopReply
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMethod (System.String name) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:431
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.InstallShop (Game.NetworkProtocol.AccountShopReply reply) [0x0001a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:435
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopTradeReceiptCannotFinishUntilFreshMatchingShopAndProfileAreConfirmed (System.String bad) [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:365
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2889" name="ShopTradeReceiptCannotFinishUntilFreshMatchingShopAndProfileAreConfirmed(&quot;old-profile&quot;)" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopTradeReceiptCannotFinishUntilFreshMatchingShopAndProfileAreConfirmed(&quot;old-profile&quot;)" methodname="ShopTradeReceiptCannotFinishUntilFreshMatchingShopAndProfileAreConfirmed" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="558669714" result="Failed" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.001237" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  账号商店桥缺少真实接缝：TryInstallAccountShopReply
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMethod (System.String name) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:431
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.InstallShop (Game.NetworkProtocol.AccountShopReply reply) [0x0001a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:435
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopTradeReceiptCannotFinishUntilFreshMatchingShopAndProfileAreConfirmed (System.String bad) [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:365
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2890" name="ShopTradeReceiptCannotFinishUntilFreshMatchingShopAndProfileAreConfirmed(&quot;old-shop&quot;)" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopTradeReceiptCannotFinishUntilFreshMatchingShopAndProfileAreConfirmed(&quot;old-shop&quot;)" methodname="ShopTradeReceiptCannotFinishUntilFreshMatchingShopAndProfileAreConfirmed" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="1984541488" result="Failed" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:48Z" duration="0.000826" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  账号商店桥缺少真实接缝：TryInstallAccountShopReply
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopMethod (System.String name) [0x00014] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:431
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.InstallShop (Game.NetworkProtocol.AccountShopReply reply) [0x0001a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:435
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ShopTradeReceiptCannotFinishUntilFreshMatchingShopAndProfileAreConfirmed (System.String bad) [0x00008] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:365
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="6186" name="Game.UI.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.UI.Tests.dll" runstate="Runnable" testcasecount="161" result="Failed" site="Child" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:49Z" duration="0.761785" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34452" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="6187" name="Game" fullname="Game" runstate="Runnable" testcasecount="161" result="Failed" site="Child" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:49Z" duration="0.667381" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="6188" name="UI" fullname="Game.UI" runstate="Runnable" testcasecount="161" result="Failed" site="Child" start-time="2026-11-03 10:40:48Z" end-time="2026-11-03 10:40:49Z" duration="0.568456" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="6189" name="Tests" fullname="Game.UI.Tests" runstate="Runnable" testcasecount="161" result="Failed" site="Child" start-time="2026-11-03 10:40:49Z" end-time="2026-11-03 10:40:49Z" duration="0.469188" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="6027" name="OnlineInventoryUiGatewayTests" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="100" result="Failed" site="Child" start-time="2026-11-03 10:40:49Z" end-time="2026-11-03 10:40:49Z" duration="0.366576" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="6039" name="AccountShopInvalidQuoteRevokesOnlyItsMatchingPreparedSource" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.AccountShopInvalidQuoteRevokesOnlyItsMatchingPreparedSource" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-03 10:40:49Z" end-time="2026-11-03 10:40:49Z" duration="0.267890" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="6037" name="AccountShopInvalidQuoteRevokesOnlyItsMatchingPreparedSource(True)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.AccountShopInvalidQuoteRevokesOnlyItsMatchingPreparedSource(True)" methodname="AccountShopInvalidQuoteRevokesOnlyItsMatchingPreparedSource" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="159338946" result="Failed" start-time="2026-11-03 10:40:49Z" end-time="2026-11-03 10:40:49Z" duration="0.132559" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  当前商店的错误报价必须撤销旧ready；别的Caller回包不能破坏当前合法商店。
+  Expected: False
+  But was:  True
+]]></message>
+                    <stack-trace><![CDATA[at Game.UI.Tests.OnlineInventoryUiGatewayTests.AccountShopInvalidQuoteRevokesOnlyItsMatchingPreparedSource (System.Boolean matchingCaller) [0x000e3] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:283
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="6038" name="AccountShopInvalidQuoteRevokesOnlyItsMatchingPreparedSource(False)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.AccountShopInvalidQuoteRevokesOnlyItsMatchingPreparedSource(False)" methodname="AccountShopInvalidQuoteRevokesOnlyItsMatchingPreparedSource" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1174910802" result="Passed" start-time="2026-11-03 10:40:49Z" end-time="2026-11-03 10:40:49Z" duration="0.035023" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

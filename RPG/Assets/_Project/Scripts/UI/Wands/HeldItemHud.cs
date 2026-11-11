@@ -18,6 +18,7 @@ namespace Game.UI
             [NonSerialized] internal Sprite DefaultFrame;
             [NonSerialized] internal Image ContainerFill;
             [NonSerialized] internal bool Container;
+            [NonSerialized] internal bool WandResourcesKnown;
             public Text Title,Value;
             [NonSerialized] public string ItemId;
             [NonSerialized] internal HeldItemHudValues Display;
@@ -28,12 +29,17 @@ namespace Game.UI
         }
         [SerializeField] private SinglePlayerInventorySession _session;
         private IInventoryPresentationSource _presentationSource;
+        private IInventoryPresentationSource _renderedSource;
         private bool _hasPresentationOverride, _readAvailable;
         public IInventoryPresentationSource PresentationSource
         {
             get
             {
-                var source = _hasPresentationOverride ? _presentationSource : _session;
+                // Hub 的原 HUD 与 Tab 已有同一个背包引用。账号模式关闭旧 Session 的资产读写，
+                // 所以默认必须跟随背包已安装的只读源；Scope 的显式 override（包括 null）仍优先。
+                // 账号入口尚未就绪时保持空，绝不能借旧本地存档补出“看似有物品”的快捷栏。
+                var source = _hasPresentationOverride ? _presentationSource : _backpack != null
+                    ? _backpack.PresentationSource : _session != null && !_session.AccountInventoryReadOnly ? _session : null;
                 return source is UnityEngine.Object value && value == null ? null : source;
             }
         }
@@ -89,6 +95,7 @@ namespace Game.UI
         {
             if (!_ready) return;
             var source = PresentationSource;
+            if (!ReferenceEquals(_renderedSource, source)) { ClearBindings(); _renderedSource = source; }
             if (source?.ReadOnly == null) { if(_readAvailable)ClearBindings(); return; }
             _readAvailable = true;
             var read = source.ReadOnly; var tools = source.ToolbeltReadOnly; var wands = source.WandsReadOnly;
@@ -96,9 +103,19 @@ namespace Game.UI
             for (int i = 0; i < _cells.Length; i++)
             {
                 var cell = _cells[i]; if (cell == null) continue;
-                string id = null; ulong maximum = 0; int quantity = 1; bool container = false;
+                string id = null; ulong maximum = 0; int quantity = 1; bool container = false, wandResourcesKnown = false;
                 if (i < HeldItemSlots.WandCount && wands != null && wands.TryGetSlot(i, out var wand))
-                { id = wand.InstanceId; maximum = (ulong)Math.Ceiling(wand.MaxMana); }
+                { id = wand.InstanceId; maximum = (ulong)Math.Ceiling(wand.MaxMana); wandResourcesKnown = true; }
+                else if (i < HeldItemSlots.WandCount && source is IAccountInventoryCommandContext account)
+                {
+                    // 账号Profile有真实装备身份，但没有副本Mana/CD。仅在离散重绑扫描装备位显示图标，
+                    // 不把WandLoadoutService初始化的模板满蓝或缺省0当成服务器资源事实。
+                    if (count < 0) { if (_items.Length < read.Count) _items = new InventoryItemSnapshot[Math.Max(16, read.Count)]; count = read.CopyItemsTo(_items); }
+                    for (int j = 0; j < count; j++)
+                        if (_items[j].Kind == ItemKind.Wand && _items[j].Location.Kind == ItemLocationKind.EquippedWand
+                            && _items[j].Location.OwnerId == account.PlayerId && _items[j].Location.SlotIndex == i)
+                        { id = _items[j].InstanceId; break; }
+                }
                 else if (i >= HeldItemSlots.WandCount && tools != null && tools.TryGetBinding(i - HeldItemSlots.WandCount, out var tool) && read.TryGetView(tool, out var item))
                 {
                     id = tool; container = item.Kind == ItemKind.Container; maximum = item.ContainerCapacity;
@@ -109,17 +126,18 @@ namespace Game.UI
                         quantity = 0; for (int j = 0; j < count; j++) if (_items[j].Location == item.Location) quantity++;
                     }
                 }
-                if (cell.Initialized && cell.ItemId == id && cell.Maximum == maximum && cell.Quantity == quantity) continue;
+                if (cell.Initialized && cell.ItemId == id && cell.Maximum == maximum && cell.Quantity == quantity
+                    && cell.WandResourcesKnown == wandResourcesKnown) continue;
                 cell.Initialized = true; cell.ItemId = id; cell.Maximum = maximum; cell.Quantity = quantity;
-                cell.Container = container;
+                cell.Container = container; cell.WandResourcesKnown = wandResourcesKnown;
                 bool exists = read.TryGetView(id, out var view);
                 if (cell.Title != null) cell.Title.text = HeldItemSlots.KeyLabel(i);
                 if (cell.Icon != null) { cell.Icon.sprite = exists ? view.Icon : null; cell.Icon.enabled = cell.Icon.sprite != null; }
-                if (id == null) cell.Display?.Clear();
+                if (id == null || i < HeldItemSlots.WandCount && !wandResourcesKnown) cell.Display?.Clear();
                 else if(container)cell.Display?.Clear();
                 else cell.Display?.Bind(maximum, quantity, false, i < HeldItemSlots.WandCount);
                 ContainerIconFill.Set(cell.ContainerFill,cell.Icon,container,exists?view.ContainerTotal:0,maximum);
-                if (id == null || i >= HeldItemSlots.WandCount) { SetFill(cell.Mana, 0); SetFill(cell.Cooldown, 0); }
+                if (id == null || i >= HeldItemSlots.WandCount || !wandResourcesKnown) { SetFill(cell.Mana, 0); SetFill(cell.Cooldown, 0); }
             }
         }
         private void Update()
@@ -131,6 +149,9 @@ namespace Game.UI
             if(_canvas!=null && _canvas.enabled==overlay)_canvas.enabled=!overlay;
             // Canvas 还包含原准心与空槽框；库存 Ready 只决定物品内容，不能阻止独立的界面显隐。
             var source=PresentationSource;
+            // Profile 确认会整体替换并释放旧 Source；事件订阅先后不能保证 HUD 晚于背包换源。
+            // 稳定帧仅比较引用，只有离散换源才重建槽位，不复制库存、不分配每帧临时数组。
+            if (!ReferenceEquals(_renderedSource, source)) RefreshBindings();
             if(source?.ReadOnly==null){if(_readAvailable)ClearBindings();return;}
             var tools=source.ToolbeltReadOnly; var wands=source.WandsReadOnly;
             for (int i=0;i<_cells.Length;i++)
@@ -164,7 +185,7 @@ namespace Game.UI
             for(int i=0;i<_cells.Length;i++)
             {
                 var cell=_cells[i];if(cell==null)continue;
-                cell.ItemId=null;cell.Initialized=false;cell.Maximum=0;cell.Quantity=0;cell.Container=false;
+                cell.ItemId=null;cell.Initialized=false;cell.Maximum=0;cell.Quantity=0;cell.Container=false;cell.WandResourcesKnown=false;
                 if(cell.Icon!=null){cell.Icon.sprite=null;cell.Icon.enabled=false;}
                 if(cell.Frame!=null && cell.Frame.sprite!=cell.DefaultFrame)cell.Frame.sprite=cell.DefaultFrame;
                 cell.Display?.Clear();SetFill(cell.Mana,0);SetFill(cell.Cooldown,0);

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-03 00:56:38Z" end-time="2026-11-03 00:56:39Z" duration="0.7224357">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="4024" result="Failed" site="Child" start-time="2026-11-03 00:56:38Z" end-time="2026-11-03 00:56:39Z" duration="0.722436" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="5506" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="1012" result="Failed" site="Child" start-time="2026-11-03 00:56:38Z" end-time="2026-11-03 00:56:39Z" duration="0.578334" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="5507" name="Game" fullname="Game" runstate="Runnable" testcasecount="1012" result="Failed" site="Child" start-time="2026-11-03 00:56:38Z" end-time="2026-11-03 00:56:39Z" duration="0.510352" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="5508" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="1012" result="Failed" site="Child" start-time="2026-11-03 00:56:38Z" end-time="2026-11-03 00:56:39Z" duration="0.407543" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="5509" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="1012" result="Failed" site="Child" start-time="2026-11-03 00:56:38Z" end-time="2026-11-03 00:56:39Z" duration="0.304319" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="4976" name="OnlineUnifiedGoldOwnerTests" fullname="Game.Run.Tests.OnlineUnifiedGoldOwnerTests" classname="Game.Run.Tests.OnlineUnifiedGoldOwnerTests" runstate="Runnable" testcasecount="18" result="Failed" site="Child" start-time="2026-11-03 00:56:38Z" end-time="2026-11-03 00:56:39Z" duration="0.205151" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="4998" name="DisposedSourceDoesNotExposeUnknownWalletAsZeroBalance" fullname="Game.Run.Tests.OnlineUnifiedGoldOwnerTests.DisposedSourceDoesNotExposeUnknownWalletAsZeroBalance" methodname="DisposedSourceDoesNotExposeUnknownWalletAsZeroBalance" classname="Game.Run.Tests.OnlineUnifiedGoldOwnerTests" runstate="Runnable" seed="949348895" result="Failed" start-time="2026-11-03 00:56:39Z" end-time="2026-11-03 00:56:39Z" duration="0.078146" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  失效Source应撤销钱包读能力，不能显示伪造的0余额。
+  Expected: null
+  But was:  <Game.Run.OnlineInventoryPresentationSource>
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineUnifiedGoldOwnerTests.DisposedSourceDoesNotExposeUnknownWalletAsZeroBalance () [0x0003e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineUnifiedGoldOwnerTests.cs:174
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

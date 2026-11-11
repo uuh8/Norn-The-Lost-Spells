@@ -15,9 +15,9 @@ namespace Game.Combat
         private readonly Collider[] _colliders = new Collider[MaxColliders];
         private readonly HashSet<int> _damagedTargetIds = new HashSet<int>(MaxColliders);
 
-        public void Resolve(in ReactionDamageCommand command, Vector3 center)
+        public void Resolve(in ReactionDamageCommand command, Vector3 center, CombatSimulationWorld authorityWorld = null)
         {
-            if (command.Amount <= 0f || command.Radius <= 0f)
+            if (authorityWorld != null && !authorityWorld.AllowsAuthorityWrites || command.Amount <= 0f || command.Radius <= 0f)
                 return;
 
             _damagedTargetIds.Clear();
@@ -32,6 +32,8 @@ namespace Game.Combat
 
             for (int i = 0; i < count; i++)
             {
+                // 原两参入口保留单机语义；权威源显式传 World，避免用目标模式代替来源权限。
+                if (authorityWorld != null && !authorityWorld.AllowsAuthorityWrites) break;
                 Collider hit = _colliders[i];
                 if (hit == null)
                     continue;

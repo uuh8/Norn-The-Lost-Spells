@@ -1,0 +1,1625 @@
+{
+  "auditDate": "2026-11-01",
+  "mode": "首轮只读审计；随后获授权仅适配5个旧合同测试；当前只读核对主Agent复跑XML并更新Owner evidence内两份审计文档",
+  "repository": "F:/Develop Project/RPG",
+  "scope": "广域2989 passed / 66 failed中，排除主Agent已修并在615/0回归的32个Owned正常种子，核对剩余34个",
+  "savedEvidence": [
+    "RPG/docs/superpowers/evidence/multiplayer/n5/container-entry-data-2026-11-01/all-editmode-regression-v2-final-results.xml",
+    "RPG/docs/superpowers/evidence/multiplayer/n5/container-entry-data-2026-11-01/all-editmode-failures-by-fixture.json"
+  ],
+  "counts": {
+    "audited": 34,
+    "missingTempDirectory": 16,
+    "other": 18,
+    "newTestsRun": 0,
+    "original34LatestPassed": 20,
+    "original34LatestFailed": 2,
+    "original34NotRun": 12,
+    "latestXmlActualCases": 86,
+    "latestXmlPassed": 84,
+    "latestXmlFailed": 2,
+    "newTestsRunByThisAgent": 0
+  },
+  "scopeProvenance": "生产变更边界由主Agent提供；已核对数据切片交付文档、Exporter/Factory源码和关键文件路径；未运行Git。",
+  "reportedChangedProductionFiles": [
+    "Shared/Protocol/Runtime/Business/OnlineOwnedAssetContracts.cs",
+    "Shared/Protocol/Runtime/Business/OnlineContracts.cs",
+    "Shared/Protocol/Runtime/Business/ContentManifest.cs",
+    "Shared/Protocol/Runtime/ProtocolCompatibility.cs",
+    "RPG/Assets/_Project/Scripts/Core/Online/OnlineOwnedAssetContracts.cs",
+    "RPG/Assets/_Project/Scripts/Multiplayer/Combat/OnlineOwnedAssetMapping.cs",
+    "RPG/Assets/_Project/Scripts/Multiplayer/Runtime/OnlineInventorySession.cs",
+    "RPG/Assets/_Project/Scripts/Run/Spells/OnlineOwnedWorkspaceFactory.cs",
+    "RPG/Assets/_Project/Editor/Networking/ContentManifestExporter.cs",
+    "Server/Norn.Business/Features/Inventory/InventoryService.cs",
+    "Server/Norn.Business/Features/Inventory/OwnedCombatAssetRules.cs",
+    "Server/Norn.Business/Infrastructure/SchemaMigrator.cs",
+    "Server/Norn.Business/Migrations/006_container_inventory.sql"
+  ],
+  "relationConclusion": "34项已定位的直接失败均有容器入局序列化链路之外的解释；没有证据可归因本轮Shared/Core/Manifest/Factory直接行为变化。这个结论不证明它们历史已失败、也不排除全局Editor/运行顺序污染。分类和正式库存使用同一Catalog，清单导出仅读规则并写JSON，不改SO。",
+  "approvedDecisions": [
+    {
+      "path": "RPG/docs/superpowers/plans/2026-10-11 物品分类与测试金币及三地图携带返回计划.md",
+      "line": 44,
+      "note": "Kind保持，UseKind决定道具；不能硬编码Container-only。"
+    },
+    {
+      "path": "RPG/docs/superpowers/plans/2026-10-11 物品分类与测试金币及三地图携带返回计划.md",
+      "line": 41,
+      "note": "新增非负可配置初始金币，仅读取新Profile，已有余额不被覆盖。"
+    },
+    {
+      "path": "RPG/docs/superpowers/plans/2026-10-11 物品分类与测试金币及三地图携带返回计划.md",
+      "line": 47,
+      "note": "5000/0/负数与既有Profile覆盖边界的已落实测试约定；不证明9999999具体数额来源。"
+    },
+    {
+      "path": "RPG/docs/superpowers/plans/2026-10-12 手持栏与独立道具装备及传送容器统一计划.md",
+      "line": 20,
+      "note": "F交互/材料采集、G独立职责。"
+    },
+    {
+      "path": "RPG/docs/superpowers/plans/2026-10-12 手持栏与独立道具装备及传送容器统一计划.md",
+      "line": 65,
+      "note": "键帽与正文F一致，不能保留E误导。"
+    },
+    {
+      "path": "RPG/docs/superpowers/plans/2026-10-15 连续广域采集与固体合并及背包整理全拾取计划.md",
+      "line": 11,
+      "note": "F持续采集，站点/门户/附近物品优先消费F。"
+    },
+    {
+      "path": "RPG/docs/superpowers/plans/2026-10-13 容器图标填充与元素Icon及F交互作者布局修正计划.md",
+      "line": 7,
+      "note": "容器容量用原Sprite填充，不恢复旧槽内容量数字。"
+    },
+    {
+      "path": "RPG/docs/superpowers/plans/2026-10-13 容器图标填充与元素Icon及F交互作者布局修正计划.md",
+      "line": 21,
+      "note": "Warehouse删除容量Caption，26行明确更新旧断言。"
+    }
+  ],
+  "protection": {
+    "currentUpdateWritesOnly": [
+      "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-audit.md",
+      "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-audit.json"
+    ],
+    "currentProductionWrites": 0,
+    "currentTestWrites": 0,
+    "currentResourceOrSceneWrites": 0,
+    "currentSettingsWrites": 0,
+    "currentGitOperations": 0,
+    "currentUnityRuns": 0,
+    "currentServiceOperations": 0,
+    "physicsRestoreRetried": false,
+    "noitaOptimizationPerformed": false
+  },
+  "limitations": [
+    "仅22个原失败case出现在本次86 XML；其余12逐名保留，不能称修复。",
+    "15个原目录case已完整Passed；SustainedSlopeMesh原Directory阻断解除后，另暴露60°法线断言失败。",
+    "原Goo舍入期望77/实际76保持；本次没有降低断言。",
+    "HubSpatial实际SessionState ReviewPath和Prefab/运行时对象未做当前Editor复核。",
+    "未做失败前后版本对照，不能确定失败首次引入时间；与Owner无直接因果证据不等于证明历史问题。",
+    "已通过旧性能用例不证明正校准Zero-GC或Native全帧性能。",
+    "保留正式Scene/Prefab/Physics/Quality/TimeManager既有dirty；Physics恢复不重试，Noita不实施。"
+  ],
+  "cases": [
+    {
+      "case": "Game.Combat.Tests.MaterialReactionSemanticTests.DefaultBindingAsset_ContainsWaterAndPoisonFireRules",
+      "fixture": "Game.Combat.Tests.MaterialReactionSemanticTests",
+      "messageFirstLine": "System.InvalidOperationException : Reaction Binding[2] 的 Sticky 不在 Material Catalog 中。",
+      "testStackFrame": "at Game.Combat.Tests.MaterialReactionSemanticTests.DefaultBindingAsset_ContainsWaterAndPoisonFireRules () [0x0001d] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Combat\\MaterialReactionSemanticTests.cs:159",
+      "message": "System.InvalidOperationException : Reaction Binding[2] 的 Sticky 不在 Material Catalog 中。",
+      "id": 1,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "应修测试fixture；严格目录门禁和正式反应资产保持",
+      "classification": "fixture材料目录不完整",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Combat/MaterialReactionSemanticTests.cs",
+          "line": 22,
+          "note": "SetUp只建Water/Fire/Poison，159行用该目录验证整个正式Binding资产。"
+        },
+        {
+          "path": "RPG/Assets/_Project/ScriptableObjects/Combat/Reactions/MaterialReactionBindings_Default.asset",
+          "line": 22,
+          "note": "第三条Binding含Sticky(4)+Fire(2)，第四条Sticky+Water。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scripts/Combat/Status/Reactions/MaterialReactionCatalogSnapshot.cs",
+          "line": 70,
+          "note": "逐条严格检查材料是否在Catalog内，未知Sticky触发异常。"
+        }
+      ],
+      "minimumReview": "仅此测试使用完整正式材料目录或独立补Sticky定义，回归同fixture的Catalog_RejectsInvalidOrUnknownPair(Sticky,Fire)，保持其未知材料拒绝断言。",
+      "details": "正式反应资产包含Sticky，测试却用三材料子集验证全资产；不能删正式Sticky反应或放松未知材料门禁。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Passed",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": false,
+        "approvedOldContractAdaptationCase": true,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "已授权旧合同测试适配后通过",
+      "currentRecommendation": "本次完整case通过；核心断言仍保留，适配说明见testAdaptation。"
+    },
+    {
+      "case": "Game.Combat.Tests.MaterialReactionSemanticTests.Evaluator_IgniteGooConsumesStickyAndProducesFireOnFireSide",
+      "fixture": "Game.Combat.Tests.MaterialReactionSemanticTests",
+      "messageFirstLine": "Expected: 77",
+      "testStackFrame": "at Game.Combat.Tests.MaterialReactionSemanticTests.Evaluator_IgniteGooConsumesStickyAndProducesFireOnFireSide () [0x000e2] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Combat\\MaterialReactionSemanticTests.cs:220",
+      "message": "Expected: 77\n  But was:  76",
+      "id": 2,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "需用户确认或找到既定舍入契约；本轮仅记录",
+      "classification": "数量舍入语义冲突",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Combat/MaterialReactionSemanticTests.cs",
+          "line": 202,
+          "note": "GooConsumePerSecond=20，FirePerGoo=1.5；219行已确认消耗51，220行要求生成77。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scripts/Combat/Status/Reactions/ElementReactionEvaluator.cs",
+          "line": 99,
+          "note": "CeilToInt求消耗，105行Mathf.RoundToInt(51*1.5)得到76；未经过Core数量DTO。"
+        }
+      ],
+      "minimumReview": "先确认单位转换及半整数舍入政策，添加/保留成对顺序与容量限制的边界核对，再由主Agent复跑本case；未经政策确认不改产量实现或数字断言。",
+      "details": "76.5 ties-to-even对应76，保存结果与当前表达式一致；当前没有找到明确指定77/向上舍入的项目决定。真实产量变化涉及材料守恒和既有玩法，不能只把断言77改76消红。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Failed",
+        "message": "Expected: 77\n  But was:  76",
+        "stack": "at Game.Combat.Tests.MaterialReactionSemanticTests.Evaluator_IgniteGooConsumesStickyAndProducesFireOnFireSide () [0x000e2] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Combat\\MaterialReactionSemanticTests.cs:225",
+        "originalMissingDirectoryCase": false,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。",
+        "sameFailureAsOriginal": true
+      },
+      "latestClassification": "原Goo舍入断言仍失败",
+      "currentRecommendation": "保留期望77/实际76及原断言；先查清既定舍入合同，再单独决定修复，不以减断言为通过。"
+    },
+    {
+      "case": "Game.ElementField.Tests.ElementWorldFluidRoutingTests.SparseFireCollectionPreservesSampleSequenceAcrossChunkAndCursorWrap",
+      "fixture": "Game.ElementField.Tests.ElementWorldFluidRoutingTests",
+      "messageFirstLine": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\sparse-fire-sample-sequence.json\".",
+      "testStackFrame": "at Game.ElementField.Tests.ElementWorldFluidRoutingTests.SparseFireCollectionPreservesSampleSequenceAcrossChunkAndCursorWrap () [0x0030b] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\ElementField\\ElementWorldFluidRoutingTests.cs:45",
+      "message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\sparse-fire-sample-sequence.json\".",
+      "id": 3,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "仅记录；环境已补目录，待主Agent复跑；后续可为测试输出统一建立目录，不改生产逻辑",
+      "classification": "测试环境/证据目录缺失",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/ElementField/ElementWorldFluidRoutingTests.cs",
+          "line": 45,
+          "note": "File.WriteAllText 直接写 Temp/ElementPerformance；本 fixture 未建立该父目录。"
+        }
+      ],
+      "minimumReview": "主Agent在相同工作目录/原图形后端、确认 Temp/ElementPerformance 存在后，仅复跑此完整case；保留全部形状/数量/可见性断言及新XML。GPU用例须有受支持图形设备。",
+      "details": "保存失败发生于证据JSON写出；失败点之前执行到的断言和之后尚未执行的断言必须区分。目录存在不能证明原测试其余断言通过。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Passed",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": true,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "原目录阻断case已通过",
+      "currentRecommendation": "本次完整case通过；保留旧Directory失败和新Passed证据，不重复要求复跑已通过项。"
+    },
+    {
+      "case": "Game.ElementField.Tests.MaterialReactionProcessTableTests.ReservedCapacityKeepsOutputOrderCooldownAndVacantSlotReuse(4)",
+      "fixture": "Game.ElementField.Tests.MaterialReactionProcessTableTests",
+      "messageFirstLine": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\toxic-reserved-scan-4.json\".",
+      "testStackFrame": "at Game.ElementField.Tests.MaterialReactionProcessTableTests.ReservedCapacityKeepsOutputOrderCooldownAndVacantSlotReuse (System.Int32 capacity) [0x00374] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\ElementField\\MaterialReactionProcessTableTests.cs:47",
+      "message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\toxic-reserved-scan-4.json\".",
+      "id": 4,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "仅记录；环境已补目录，待主Agent复跑；后续可为测试输出统一建立目录，不改生产逻辑",
+      "classification": "测试环境/证据目录缺失",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/ElementField/MaterialReactionProcessTableTests.cs",
+          "line": 47,
+          "note": "File.WriteAllText 直接写 Temp/ElementPerformance；本 fixture 未建立该父目录。"
+        }
+      ],
+      "minimumReview": "主Agent在相同工作目录/原图形后端、确认 Temp/ElementPerformance 存在后，仅复跑此完整case；保留全部形状/数量/可见性断言及新XML。GPU用例须有受支持图形设备。",
+      "details": "保存失败发生于证据JSON写出；失败点之前执行到的断言和之后尚未执行的断言必须区分。目录存在不能证明原测试其余断言通过。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Passed",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": true,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "原目录阻断case已通过",
+      "currentRecommendation": "本次完整case通过；保留旧Directory失败和新Passed证据，不重复要求复跑已通过项。"
+    },
+    {
+      "case": "Game.ElementField.Tests.MaterialReactionProcessTableTests.ReservedCapacityKeepsOutputOrderCooldownAndVacantSlotReuse(65536)",
+      "fixture": "Game.ElementField.Tests.MaterialReactionProcessTableTests",
+      "messageFirstLine": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\toxic-reserved-scan-65536.json\".",
+      "testStackFrame": "at Game.ElementField.Tests.MaterialReactionProcessTableTests.ReservedCapacityKeepsOutputOrderCooldownAndVacantSlotReuse (System.Int32 capacity) [0x00374] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\ElementField\\MaterialReactionProcessTableTests.cs:47",
+      "message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\toxic-reserved-scan-65536.json\".",
+      "id": 5,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "仅记录；环境已补目录，待主Agent复跑；后续可为测试输出统一建立目录，不改生产逻辑",
+      "classification": "测试环境/证据目录缺失",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/ElementField/MaterialReactionProcessTableTests.cs",
+          "line": 47,
+          "note": "File.WriteAllText 直接写 Temp/ElementPerformance；本 fixture 未建立该父目录。"
+        }
+      ],
+      "minimumReview": "主Agent在相同工作目录/原图形后端、确认 Temp/ElementPerformance 存在后，仅复跑此完整case；保留全部形状/数量/可见性断言及新XML。GPU用例须有受支持图形设备。",
+      "details": "保存失败发生于证据JSON写出；失败点之前执行到的断言和之后尚未执行的断言必须区分。目录存在不能证明原测试其余断言通过。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Passed",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": true,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "原目录阻断case已通过",
+      "currentRecommendation": "本次完整case通过；保留旧Directory失败和新Passed证据，不重复要求复跑已通过项。"
+    },
+    {
+      "case": "Game.Rendering.Tests.ElementWaterShaderContractTests.ProceduralLiquidOpaqueFragmentDiagnosticIsBoundPerDraw",
+      "fixture": "Game.Rendering.Tests.ElementWaterShaderContractTests",
+      "messageFirstLine": "Expected: String containing \"if (_DebugForceOpaqueFragment > 0.5f)\"",
+      "testStackFrame": "at Game.Rendering.Tests.ElementWaterShaderContractTests.ProceduralLiquidOpaqueFragmentDiagnosticIsBoundPerDraw () [0x00023] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\ElementWaterShaderContractTests.cs:89",
+      "message": null,
+      "id": 6,
+      "savedResult": "Failed",
+      "currentRerun": "不在本次86个case XML内，未重跑/未解决",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "需确认诊断Alpha契约后修测试或最小实现；本轮仅记录",
+      "classification": "Shader结构与诊断模式契约漂移",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Rendering/ElementWaterShaderContractTests.cs",
+          "line": 89,
+          "note": "要求主shader含精确单分支和half4(_ShallowColor.rgb,1)。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Art/Elemental/Shaders/ElementLiquidSurfaceLighting.hlsl",
+          "line": 134,
+          "note": "visibility clip后，138行模式1旁路返回palette.shallow.rgb/visibility；251行其他模式再乘visibility。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scripts/Rendering/ElementField/GpuLiquidSurfaceRenderer.cs",
+          "line": 887,
+          "note": "MPB逐Draw绑定bool为1/0，默认false仍在253行。"
+        }
+      ],
+      "minimumReview": "确认当前诊断应保留visibility还是全不透明；用真实include和MPB链核对默认0/开启1行为；主Agent复跑import及最小受控Draw，保留模式/Alpha断言。",
+      "details": "功能已迁入共享include且扩展多模式；不仅是文件位置变化，当前旁路Alpha保留visibility，旧测试要求恒1。不能仅跨文件搜到类似字符串就宣布契约满足，也不能盲目把可见半径抹掉。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "NotRun",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": false,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "未重跑/未解决的旧内容case",
+      "currentRecommendation": "仅保留原失败与初审分析；未运行就不能称修复、通过或确定历史问题。"
+    },
+    {
+      "case": "Game.Rendering.Tests.ElementWaterShaderContractTests.ProceduralLiquidUsesUnityIndirectContractAndSharedWaterCore",
+      "fixture": "Game.Rendering.Tests.ElementWaterShaderContractTests",
+      "messageFirstLine": "Expected: String containing \"ElementWaterCore.hlsl\"",
+      "testStackFrame": "at Game.Rendering.Tests.ElementWaterShaderContractTests.ProceduralLiquidUsesUnityIndirectContractAndSharedWaterCore () [0x0009c] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\ElementWaterShaderContractTests.cs:70",
+      "message": null,
+      "id": 7,
+      "savedResult": "Failed",
+      "currentRerun": "不在本次86个case XML内，未重跑/未解决",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "应修测试的include解析/契约位置；保留实际能力断言",
+      "classification": "Shader源码结构契约过时",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Rendering/ElementWaterShaderContractTests.cs",
+          "line": 70,
+          "note": "只在.shader文本要求WaterCore和BuildOrthonormalBasis。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Art/Elemental/Shaders/ElementLiquidProcedural.shader",
+          "line": 75,
+          "note": "通过ElementLiquidSurfaceLighting.hlsl共享Fragment实现。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Art/Elemental/Shaders/ElementLiquidSurfaceLighting.hlsl",
+          "line": 11,
+          "note": "实际include ElementWaterCore.hlsl；161行调用ElementWaterBuildOrthonormalBasis。"
+        }
+      ],
+      "minimumReview": "按实际include图核对同一WaterCore与basis到达当前Pass，保留全部Indirect约束；主Agent复跑Shader import错误检查及此fixture。",
+      "details": "间接include保留被测试的共享WaterCore能力；不能为满足字符串断言重复复制回shader。UnityIndirect define/include/Init/GetIndirectVertexID仍在主shader。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "NotRun",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": false,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "未重跑/未解决的旧内容case",
+      "currentRecommendation": "仅保留原失败与初审分析；未运行就不能称修复、通过或确定历史问题。"
+    },
+    {
+      "case": "Game.Rendering.Tests.GpuFireParcelSplatTests.BothFlamePhasesKeepCoverageInSteepAndTopViews",
+      "fixture": "Game.Rendering.Tests.GpuFireParcelSplatTests",
+      "messageFirstLine": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\fire-view-0-0-0.json\".",
+      "testStackFrame": "at Game.Rendering.Tests.GpuFireParcelSplatTests+SplatDraw+<Read>d__12.MoveNext () [0x004a7] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\GpuFireParcelSplatTests.cs:191",
+      "message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\fire-view-0-0-0.json\".",
+      "id": 8,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "仅记录；环境已补目录，待主Agent复跑；后续可为测试输出统一建立目录，不改生产逻辑",
+      "classification": "测试环境/证据目录缺失",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Rendering/GpuFireParcelSplatTests.cs",
+          "line": 191,
+          "note": "File.WriteAllText 直接写 Temp/ElementPerformance；本 fixture 未建立该父目录。"
+        }
+      ],
+      "minimumReview": "主Agent在相同工作目录/原图形后端、确认 Temp/ElementPerformance 存在后，仅复跑此完整case；保留全部形状/数量/可见性断言及新XML。GPU用例须有受支持图形设备。",
+      "details": "保存失败发生于证据JSON写出；失败点之前执行到的断言和之后尚未执行的断言必须区分。目录存在不能证明原测试其余断言通过。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Passed",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": true,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "原目录阻断case已通过",
+      "currentRecommendation": "本次完整case通过；保留旧Directory失败和新Passed证据，不重复要求复跑已通过项。"
+    },
+    {
+      "case": "Game.Rendering.Tests.GpuFireParcelSplatTests.DistantFadeIsWideAndContinuous",
+      "fixture": "Game.Rendering.Tests.GpuFireParcelSplatTests",
+      "messageFirstLine": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\fire-view-0-0-0.json\".",
+      "testStackFrame": "at Game.Rendering.Tests.GpuFireParcelSplatTests+SplatDraw+<Read>d__12.MoveNext () [0x004a7] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\GpuFireParcelSplatTests.cs:191",
+      "message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\fire-view-0-0-0.json\".",
+      "id": 9,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "仅记录；环境已补目录，待主Agent复跑；后续可为测试输出统一建立目录，不改生产逻辑",
+      "classification": "测试环境/证据目录缺失",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Rendering/GpuFireParcelSplatTests.cs",
+          "line": 191,
+          "note": "File.WriteAllText 直接写 Temp/ElementPerformance；本 fixture 未建立该父目录。"
+        }
+      ],
+      "minimumReview": "主Agent在相同工作目录/原图形后端、确认 Temp/ElementPerformance 存在后，仅复跑此完整case；保留全部形状/数量/可见性断言及新XML。GPU用例须有受支持图形设备。",
+      "details": "保存失败发生于证据JSON写出；失败点之前执行到的断言和之后尚未执行的断言必须区分。目录存在不能证明原测试其余断言通过。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Passed",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": true,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "原目录阻断case已通过",
+      "currentRecommendation": "本次完整case通过；保留旧Directory失败和新Passed证据，不重复要求复跑已通过项。"
+    },
+    {
+      "case": "Game.Rendering.Tests.GpuFireParcelSplatTests.StraightDownProjectionRemainsStableWithCameraRoll",
+      "fixture": "Game.Rendering.Tests.GpuFireParcelSplatTests",
+      "messageFirstLine": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\fire-view-0-90-0.json\".",
+      "testStackFrame": "at Game.Rendering.Tests.GpuFireParcelSplatTests+SplatDraw+<Read>d__12.MoveNext () [0x004a7] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\GpuFireParcelSplatTests.cs:191",
+      "message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\fire-view-0-90-0.json\".",
+      "id": 10,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "仅记录；环境已补目录，待主Agent复跑；后续可为测试输出统一建立目录，不改生产逻辑",
+      "classification": "测试环境/证据目录缺失",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Rendering/GpuFireParcelSplatTests.cs",
+          "line": 191,
+          "note": "File.WriteAllText 直接写 Temp/ElementPerformance；本 fixture 未建立该父目录。"
+        }
+      ],
+      "minimumReview": "主Agent在相同工作目录/原图形后端、确认 Temp/ElementPerformance 存在后，仅复跑此完整case；保留全部形状/数量/可见性断言及新XML。GPU用例须有受支持图形设备。",
+      "details": "保存失败发生于证据JSON写出；失败点之前执行到的断言和之后尚未执行的断言必须区分。目录存在不能证明原测试其余断言通过。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Passed",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": true,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "原目录阻断case已通过",
+      "currentRecommendation": "本次完整case通过；保留旧Directory失败和新Passed证据，不重复要求复跑已通过项。"
+    },
+    {
+      "case": "Game.Rendering.Tests.GpuFireParcelSplatTests.UniformFlamesRemainVisibleAcrossFormerNearBoundary",
+      "fixture": "Game.Rendering.Tests.GpuFireParcelSplatTests",
+      "messageFirstLine": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\fire-view-0-0-0.json\".",
+      "testStackFrame": "at Game.Rendering.Tests.GpuFireParcelSplatTests+SplatDraw+<Read>d__12.MoveNext () [0x004a7] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\GpuFireParcelSplatTests.cs:191",
+      "message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\fire-view-0-0-0.json\".",
+      "id": 11,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "仅记录；环境已补目录，待主Agent复跑；后续可为测试输出统一建立目录，不改生产逻辑",
+      "classification": "测试环境/证据目录缺失",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Rendering/GpuFireParcelSplatTests.cs",
+          "line": 191,
+          "note": "File.WriteAllText 直接写 Temp/ElementPerformance；本 fixture 未建立该父目录。"
+        }
+      ],
+      "minimumReview": "主Agent在相同工作目录/原图形后端、确认 Temp/ElementPerformance 存在后，仅复跑此完整case；保留全部形状/数量/可见性断言及新XML。GPU用例须有受支持图形设备。",
+      "details": "保存失败发生于证据JSON写出；失败点之前执行到的断言和之后尚未执行的断言必须区分。目录存在不能证明原测试其余断言通过。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Passed",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": true,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "原目录阻断case已通过",
+      "currentRecommendation": "本次完整case通过；保留旧Directory失败和新Passed证据，不重复要求复跑已通过项。"
+    },
+    {
+      "case": "Game.Rendering.Tests.GridLiquidFieldFrameTests.ColdSlopeSupportCannotChangeCommittedGeometryWhenBakeBudgetRenews",
+      "fixture": "Game.Rendering.Tests.GridLiquidFieldFrameTests",
+      "messageFirstLine": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\slope-cold-support.json\".",
+      "testStackFrame": "at Game.Rendering.Tests.GridLiquidFieldFrameTests.ColdSlopeSupportCannotChangeCommittedGeometryWhenBakeBudgetRenews () [0x00370] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\GridLiquidFieldFrameTests.cs:276",
+      "message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\slope-cold-support.json\".",
+      "id": 12,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "仅记录；环境已补目录，待主Agent复跑；后续可为测试输出统一建立目录，不改生产逻辑",
+      "classification": "测试环境/证据目录缺失",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Rendering/GridLiquidFieldFrameTests.cs",
+          "line": 276,
+          "note": "File.WriteAllText 直接写 Temp/ElementPerformance；本 fixture 未建立该父目录。"
+        }
+      ],
+      "minimumReview": "主Agent在相同工作目录/原图形后端、确认 Temp/ElementPerformance 存在后，仅复跑此完整case；保留全部形状/数量/可见性断言及新XML。GPU用例须有受支持图形设备。",
+      "details": "保存失败发生于证据JSON写出；失败点之前执行到的断言和之后尚未执行的断言必须区分。目录存在不能证明原测试其余断言通过。 若用例仍用 GC.GetAllocatedBytesForCurrentThread 返回0，不可据此宣称Zero-GC；须按AGENTS正校准GC.Alloc事件另验。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Passed",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": true,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "原目录阻断case已通过",
+      "currentRecommendation": "本次完整case通过；保留旧Directory失败和新Passed证据，不重复要求复跑已通过项。"
+    },
+    {
+      "case": "Game.Rendering.Tests.GridLiquidFieldFrameTests.CommittedSlopeShapeDoesNotChangeWhenItBecomesPreviousAtNextTick",
+      "fixture": "Game.Rendering.Tests.GridLiquidFieldFrameTests",
+      "messageFirstLine": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\slope-committed-snapshot.json\".",
+      "testStackFrame": "at Game.Rendering.Tests.GridLiquidFieldFrameTests.CommittedSlopeShapeDoesNotChangeWhenItBecomesPreviousAtNextTick () [0x00632] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\GridLiquidFieldFrameTests.cs:331",
+      "message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\slope-committed-snapshot.json\".",
+      "id": 13,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "仅记录；环境已补目录，待主Agent复跑；后续可为测试输出统一建立目录，不改生产逻辑",
+      "classification": "测试环境/证据目录缺失",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Rendering/GridLiquidFieldFrameTests.cs",
+          "line": 331,
+          "note": "File.WriteAllText 直接写 Temp/ElementPerformance；本 fixture 未建立该父目录。"
+        }
+      ],
+      "minimumReview": "主Agent在相同工作目录/原图形后端、确认 Temp/ElementPerformance 存在后，仅复跑此完整case；保留全部形状/数量/可见性断言及新XML。GPU用例须有受支持图形设备。",
+      "details": "保存失败发生于证据JSON写出；失败点之前执行到的断言和之后尚未执行的断言必须区分。目录存在不能证明原测试其余断言通过。 若用例仍用 GC.GetAllocatedBytesForCurrentThread 返回0，不可据此宣称Zero-GC；须按AGENTS正校准GC.Alloc事件另验。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Passed",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": true,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "原目录阻断case已通过",
+      "currentRecommendation": "本次完整case通过；保留旧Directory失败和新Passed证据，不重复要求复跑已通过项。"
+    },
+    {
+      "case": "Game.Rendering.Tests.GridLiquidFieldFrameTests.FrozenMixedAndAirFieldKeepsPackedPresentationSignature",
+      "fixture": "Game.Rendering.Tests.GridLiquidFieldFrameTests",
+      "messageFirstLine": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\frozen-presentation-signature.json\".",
+      "testStackFrame": "at Game.Rendering.Tests.GridLiquidFieldFrameTests.FrozenMixedAndAirFieldKeepsPackedPresentationSignature () [0x0050d] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\GridLiquidFieldFrameTests.cs:234",
+      "message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\frozen-presentation-signature.json\".",
+      "id": 14,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "仅记录；环境已补目录，待主Agent复跑；后续可为测试输出统一建立目录，不改生产逻辑",
+      "classification": "测试环境/证据目录缺失",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Rendering/GridLiquidFieldFrameTests.cs",
+          "line": 234,
+          "note": "File.WriteAllText 直接写 Temp/ElementPerformance；本 fixture 未建立该父目录。"
+        }
+      ],
+      "minimumReview": "主Agent在相同工作目录/原图形后端、确认 Temp/ElementPerformance 存在后，仅复跑此完整case；保留全部形状/数量/可见性断言及新XML。GPU用例须有受支持图形设备。",
+      "details": "保存失败发生于证据JSON写出；失败点之前执行到的断言和之后尚未执行的断言必须区分。目录存在不能证明原测试其余断言通过。 若用例仍用 GC.GetAllocatedBytesForCurrentThread 返回0，不可据此宣称Zero-GC；须按AGENTS正校准GC.Alloc事件另验。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Passed",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": true,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "原目录阻断case已通过",
+      "currentRecommendation": "本次完整case通过；保留旧Directory失败和新Passed证据，不重复要求复跑已通过项。"
+    },
+    {
+      "case": "Game.Rendering.Tests.GridLiquidFieldFrameTests.SparseFrozenPoolsKeepPackedShapeAndQuantityWithZeroCaptureAllocation(4096)",
+      "fixture": "Game.Rendering.Tests.GridLiquidFieldFrameTests",
+      "messageFirstLine": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\sparse-presentation-capture.json\".",
+      "testStackFrame": "at Game.Rendering.Tests.GridLiquidFieldFrameTests.SparseFrozenPoolsKeepPackedShapeAndQuantityWithZeroCaptureAllocation (System.Int32 maximumActiveCells) [0x003ae] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\GridLiquidFieldFrameTests.cs:63",
+      "message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\sparse-presentation-capture.json\".",
+      "id": 15,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "仅记录；环境已补目录，待主Agent复跑；后续可为测试输出统一建立目录，不改生产逻辑",
+      "classification": "测试环境/证据目录缺失",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Rendering/GridLiquidFieldFrameTests.cs",
+          "line": 63,
+          "note": "File.WriteAllText 直接写 Temp/ElementPerformance；本 fixture 未建立该父目录。"
+        }
+      ],
+      "minimumReview": "主Agent在相同工作目录/原图形后端、确认 Temp/ElementPerformance 存在后，仅复跑此完整case；保留全部形状/数量/可见性断言及新XML。GPU用例须有受支持图形设备。",
+      "details": "保存失败发生于证据JSON写出；失败点之前执行到的断言和之后尚未执行的断言必须区分。目录存在不能证明原测试其余断言通过。 若用例仍用 GC.GetAllocatedBytesForCurrentThread 返回0，不可据此宣称Zero-GC；须按AGENTS正校准GC.Alloc事件另验。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Passed",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": true,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "原目录阻断case已通过",
+      "currentRecommendation": "本次完整case通过；保留旧Directory失败和新Passed证据，不重复要求复跑已通过项。"
+    },
+    {
+      "case": "Game.Rendering.Tests.GridLiquidFieldFrameTests.SparseFrozenPoolsKeepPackedShapeAndQuantityWithZeroCaptureAllocation(16)",
+      "fixture": "Game.Rendering.Tests.GridLiquidFieldFrameTests",
+      "messageFirstLine": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\sparse-presentation-dense-fallback.json\".",
+      "testStackFrame": "at Game.Rendering.Tests.GridLiquidFieldFrameTests.SparseFrozenPoolsKeepPackedShapeAndQuantityWithZeroCaptureAllocation (System.Int32 maximumActiveCells) [0x003ae] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\GridLiquidFieldFrameTests.cs:63",
+      "message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\sparse-presentation-dense-fallback.json\".",
+      "id": 16,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "仅记录；环境已补目录，待主Agent复跑；后续可为测试输出统一建立目录，不改生产逻辑",
+      "classification": "测试环境/证据目录缺失",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Rendering/GridLiquidFieldFrameTests.cs",
+          "line": 63,
+          "note": "File.WriteAllText 直接写 Temp/ElementPerformance；本 fixture 未建立该父目录。"
+        }
+      ],
+      "minimumReview": "主Agent在相同工作目录/原图形后端、确认 Temp/ElementPerformance 存在后，仅复跑此完整case；保留全部形状/数量/可见性断言及新XML。GPU用例须有受支持图形设备。",
+      "details": "保存失败发生于证据JSON写出；失败点之前执行到的断言和之后尚未执行的断言必须区分。目录存在不能证明原测试其余断言通过。 若用例仍用 GC.GetAllocatedBytesForCurrentThread 返回0，不可据此宣称Zero-GC；须按AGENTS正校准GC.Alloc事件另验。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Passed",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": true,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "原目录阻断case已通过",
+      "currentRecommendation": "本次完整case通过；保留旧Directory失败和新Passed证据，不重复要求复跑已通过项。"
+    },
+    {
+      "case": "Game.Rendering.Tests.GridLiquidFieldGpuTests.EqualQuantityHasComparableVisibleVolumeOnFlatAndSteepSupport",
+      "fixture": "Game.Rendering.Tests.GridLiquidFieldGpuTests",
+      "messageFirstLine": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\continuous-support-volume.json\".",
+      "testStackFrame": "at Game.Rendering.Tests.GridLiquidFieldGpuTests+<EqualQuantityHasComparableVisibleVolumeOnFlatAndSteepSupport>d__0.MoveNext () [0x0082d] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\GridLiquidFieldGpuTests.cs:67",
+      "message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\continuous-support-volume.json\".",
+      "id": 17,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "仅记录；环境已补目录，待主Agent复跑；后续可为测试输出统一建立目录，不改生产逻辑",
+      "classification": "测试环境/证据目录缺失",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Rendering/GridLiquidFieldGpuTests.cs",
+          "line": 67,
+          "note": "File.WriteAllText 直接写 Temp/ElementPerformance；本 fixture 未建立该父目录。"
+        }
+      ],
+      "minimumReview": "主Agent在相同工作目录/原图形后端、确认 Temp/ElementPerformance 存在后，仅复跑此完整case；保留全部形状/数量/可见性断言及新XML。GPU用例须有受支持图形设备。",
+      "details": "保存失败发生于证据JSON写出；失败点之前执行到的断言和之后尚未执行的断言必须区分。目录存在不能证明原测试其余断言通过。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Passed",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": true,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "原目录阻断case已通过",
+      "currentRecommendation": "本次完整case通过；保留旧Directory失败和新Passed证据，不重复要求复跑已通过项。"
+    },
+    {
+      "case": "Game.Rendering.Tests.GridLiquidFieldGpuTests.ProductionFrameMeshHasClosedSurfaceAndQuantityCalibratedVolume",
+      "fixture": "Game.Rendering.Tests.GridLiquidFieldGpuTests",
+      "messageFirstLine": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\continuous-volume-calibration.json\".",
+      "testStackFrame": "at Game.Rendering.Tests.GridLiquidFieldGpuTests+<ProductionFrameMeshHasClosedSurfaceAndQuantityCalibratedVolume>d__8.MoveNext () [0x00d5f] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\GridLiquidFieldGpuTests.cs:273",
+      "message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\continuous-volume-calibration.json\".",
+      "id": 18,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "仅记录；环境已补目录，待主Agent复跑；后续可为测试输出统一建立目录，不改生产逻辑",
+      "classification": "测试环境/证据目录缺失",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Rendering/GridLiquidFieldGpuTests.cs",
+          "line": 273,
+          "note": "File.WriteAllText 直接写 Temp/ElementPerformance；本 fixture 未建立该父目录。"
+        }
+      ],
+      "minimumReview": "主Agent在相同工作目录/原图形后端、确认 Temp/ElementPerformance 存在后，仅复跑此完整case；保留全部形状/数量/可见性断言及新XML。GPU用例须有受支持图形设备。",
+      "details": "保存失败发生于证据JSON写出；失败点之前执行到的断言和之后尚未执行的断言必须区分。目录存在不能证明原测试其余断言通过。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Passed",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": true,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "原目录阻断case已通过",
+      "currentRecommendation": "本次完整case通过；保留旧Directory失败和新Passed证据，不重复要求复跑已通过项。"
+    },
+    {
+      "case": "Game.Rendering.Tests.GridLiquidFieldGpuTests.RealSlopeGpuMeshMovesBetweenTicksAndRetainsBoundaryPose",
+      "fixture": "Game.Rendering.Tests.GridLiquidFieldGpuTests",
+      "messageFirstLine": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\continuous-slope-temporal.json\".",
+      "testStackFrame": "at Game.Rendering.Tests.GridLiquidFieldGpuTests+<RealSlopeGpuMeshMovesBetweenTicksAndRetainsBoundaryPose>d__6.MoveNext () [0x00862] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\GridLiquidFieldGpuTests.cs:193",
+      "message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\continuous-slope-temporal.json\".",
+      "id": 19,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "仅记录；环境已补目录，待主Agent复跑；后续可为测试输出统一建立目录，不改生产逻辑",
+      "classification": "测试环境/证据目录缺失",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Rendering/GridLiquidFieldGpuTests.cs",
+          "line": 193,
+          "note": "File.WriteAllText 直接写 Temp/ElementPerformance；本 fixture 未建立该父目录。"
+        }
+      ],
+      "minimumReview": "主Agent在相同工作目录/原图形后端、确认 Temp/ElementPerformance 存在后，仅复跑此完整case；保留全部形状/数量/可见性断言及新XML。GPU用例须有受支持图形设备。",
+      "details": "保存失败发生于证据JSON写出；失败点之前执行到的断言和之后尚未执行的断言必须区分。目录存在不能证明原测试其余断言通过。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Passed",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": true,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "原目录阻断case已通过",
+      "currentRecommendation": "本次完整case通过；保留旧Directory失败和新Passed证据，不重复要求复跑已通过项。"
+    },
+    {
+      "case": "Game.Rendering.Tests.GridLiquidFieldGpuTests.SustainedSlopeMeshDoesNotSinkIntoActualCollider",
+      "fixture": "Game.Rendering.Tests.GridLiquidFieldGpuTests",
+      "messageFirstLine": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\continuous-slope-contact.json\".",
+      "testStackFrame": "at Game.Rendering.Tests.GridLiquidFieldGpuTests+<SustainedSlopeMeshDoesNotSinkIntoActualCollider>d__3.MoveNext () [0x00eab] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\GridLiquidFieldGpuTests.cs:150",
+      "message": "System.IO.DirectoryNotFoundException : Could not find a part of the path \"F:\\Develop Project\\RPG\\RPG\\Temp\\ElementPerformance\\continuous-slope-contact.json\".",
+      "id": 20,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "仅记录；环境已补目录，待主Agent复跑；后续可为测试输出统一建立目录，不改生产逻辑",
+      "classification": "测试环境/证据目录缺失",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Rendering/GridLiquidFieldGpuTests.cs",
+          "line": 150,
+          "note": "File.WriteAllText 直接写 Temp/ElementPerformance；本 fixture 未建立该父目录。"
+        }
+      ],
+      "minimumReview": "主Agent在相同工作目录/原图形后端、确认 Temp/ElementPerformance 存在后，仅复跑此完整case；保留全部形状/数量/可见性断言及新XML。GPU用例须有受支持图形设备。",
+      "details": "保存失败发生于证据JSON写出；失败点之前执行到的断言和之后尚未执行的断言必须区分。目录存在不能证明原测试其余断言通过。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Failed",
+        "message": "60°可见主体Normal不能朝Triangle的反半球，最小一致性=-0.1342937\n  Expected: 0\n  But was:  1",
+        "stack": "at Game.Rendering.Tests.GridLiquidFieldGpuTests+<SustainedSlopeMeshDoesNotSinkIntoActualCollider>d__3.MoveNext () [0x00fda] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\GridLiquidFieldGpuTests.cs:152\nat UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in .\\Library\\PackageCache\\com.unity.test-framework@aebcb98460c6\\UnityEngine.TestRunner\\NUnitExtensions\\Attributes\\TestEnumerator.cs:44",
+        "originalMissingDirectoryCase": true,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。",
+        "sameFailureAsOriginal": false,
+        "originalFailureResolved": true,
+        "newFailureClass": "Visible surface normal faces the opposite triangle hemisphere"
+      },
+      "latestClassification": "目录阻断解除后新暴露法线断言失败",
+      "currentRecommendation": "保持60°可见主体Normal与Triangle同半球断言；现反向Normal=1，最小一致性=-0.1342937。原Directory错误已解除，新的几何/法线失败另立诊断，不宽化阈值、不恢复/覆盖作者资源。"
+    },
+    {
+      "case": "Game.Run.Tests.BackpackAuthoringTests.ThrowAndSolidCollectionDoNotShareG",
+      "fixture": "Game.Run.Tests.BackpackAuthoringTests",
+      "messageFirstLine": "System.NullReferenceException : Object reference not set to an instance of an object",
+      "testStackFrame": "at Game.Run.Tests.BackpackAuthoringTests.ThrowAndSolidCollectionDoNotShareG () [0x0005f] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Run\\BackpackAuthoringTests.cs:52",
+      "message": "System.NullReferenceException : Object reference not set to an instance of an object",
+      "id": 21,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "应修测试适配当前输入责任；不恢复旧字段/键位",
+      "classification": "旧私有字段反射/输入契约",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Run/BackpackAuthoringTests.cs",
+          "line": 52,
+          "note": "对MaterialCollectionController.GetField(_solid)返回值直接GetValue，发生NRE；旧断言期望j。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scripts/Character/Interaction/MaterialCollectionController.cs",
+          "line": 19,
+          "note": "当前只有_collect；46行绑定F。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scripts/Character/Interaction/ContainerUseController.cs",
+          "line": 54,
+          "note": "Pour=H、Throw=G、ReleaseSolid=K，均为现有本地能力。"
+        },
+        {
+          "path": "RPG/docs/superpowers/plans/2026-10-12 手持栏与独立道具装备及传送容器统一计划.md",
+          "line": 20,
+          "note": "已确认F交互与材料采集，G继续原职责。"
+        },
+        {
+          "path": "RPG/docs/superpowers/plans/2026-10-15 连续广域采集与固体合并及背包整理全拾取计划.md",
+          "line": 11,
+          "note": "固体/气体F长按采集；站点/门户/拾取优先消费F。"
+        }
+      ],
+      "minimumReview": "沿当前InputAction/公开行为确认采集与投掷不共享绑定，并保留不冲突断言；主Agent只跑此case和既有材料输入用例，不改用户按键。",
+      "details": "当前采集F与抛掷G不冲突，但旧测试硬编码已退役的_solid/J。此结论不授权在线新增G/K或恢复旧键位；采集F优先级仍需独立行为验证。 已有上述计划明确F采集/G投掷，不必恢复J。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Passed",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": false,
+        "approvedOldContractAdaptationCase": true,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "已授权旧合同测试适配后通过",
+      "currentRecommendation": "本次完整case通过；核心断言仍保留，适配说明见testAdaptation。"
+    },
+    {
+      "case": "Game.Run.Tests.HubSpatialLayoutTests.AllStationTextHasCameraFacingBehaviour",
+      "fixture": "Game.Run.Tests.HubSpatialLayoutTests",
+      "messageFirstLine": "Expected: greater than or equal to 3",
+      "testStackFrame": "at Game.Run.Tests.HubSpatialLayoutTests.AllStationTextHasCameraFacingBehaviour () [0x000d2] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Run\\HubSpatialLayoutTests.cs:23",
+      "message": "Expected: greater than or equal to 3\n  But was:  0",
+      "id": 22,
+      "savedResult": "Failed",
+      "currentRerun": "不在本次86个case XML内，未重跑/未解决",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "应修旧E命名筛选；当前文字类型/数量与朝向目标需确认，本轮仅记录",
+      "classification": "正式/Review场景命名与布局契约",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Run/HubSpatialLayoutTests.cs",
+          "line": 13,
+          "note": "Scene由SessionState Norn.HubAlignment.ReviewPath覆盖；19-23行仅计名末尾 · E 或实验区提示下TextMesh。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub.unity",
+          "line": 1,
+          "note": "静态解码m_Name未找到旧 · E /实验区提示命名；运行时保存结果计数0。"
+        },
+        {
+          "path": "RPG/docs/superpowers/plans/2026-10-12 手持栏与独立道具装备及传送容器统一计划.md",
+          "line": 65,
+          "note": "正文提示/键帽应统一F，禁止实际F显示E。"
+        }
+      ],
+      "minimumReview": "主Agent记录实际ReviewPath，再以预览Scene列出现有站点标签类型/目标及Billboard；仅选择正式定义对应站点检查朝向，不新增3个对象凑数或覆盖正式Hub。",
+      "details": "保存运行计数0，不能说明所有站点文字没有Billboard；测试先按旧名字排除了其他作者对象。当前SessionState ReviewPath未读取，Prefab继承/文字类型与当前场景不能仅靠YAML搜索完全判定。 旧 · E筛选确实与已确认F交互约定冲突，但不能从此推导当前应有几个TextMesh或恢复已删除布局。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "NotRun",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": false,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "未重跑/未解决的旧内容case",
+      "currentRecommendation": "仅保留原失败与初审分析；未运行就不能称修复、通过或确定历史问题。"
+    },
+    {
+      "case": "Game.Run.Tests.HubSpatialLayoutTests.PersistentHintsAreAtScreenEdge",
+      "fixture": "Game.Run.Tests.HubSpatialLayoutTests",
+      "messageFirstLine": "Expected: greater than or equal to 2",
+      "testStackFrame": "at Game.Run.Tests.HubSpatialLayoutTests.PersistentHintsAreAtScreenEdge () [0x000dd] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Run\\HubSpatialLayoutTests.cs:32",
+      "message": "Expected: greater than or equal to 2\n  But was:  1",
+      "id": 23,
+      "savedResult": "Failed",
+      "currentRerun": "不在本次86个case XML内，未重跑/未解决",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "需用户确认当前提示契约；本轮仅记录",
+      "classification": "场景提示组成契约",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Run/HubSpatialLayoutTests.cs",
+          "line": 13,
+          "note": "同样可能受ReviewPath覆盖。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Tests/Run/HubSpatialLayoutTests.cs",
+          "line": 30,
+          "note": "只计Prompt/ExtractionCondition/ExtractionTimer，32行要求至少2。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub.unity",
+          "line": 788779,
+          "note": "正式Scene可见Prompt序列化名；未见后两名，保存运行计数1。"
+        }
+      ],
+      "minimumReview": "记录实际ReviewPath及现有提示用途、是否运行时创建；确认Hub和撤离地图各自应保留的提示，再按真实职责核对边缘位置。",
+      "details": "保存输出未在边缘坐标断言失败，失败为数量1<2；Hub是否应有撤离Condition/Timer不应由旧数量阈值决定。不能把阈值降1或往Hub插入无用途提示。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "NotRun",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": false,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "未重跑/未解决的旧内容case",
+      "currentRecommendation": "仅保留原失败与初审分析；未运行就不能称修复、通过或确定历史问题。"
+    },
+    {
+      "case": "Game.Run.Tests.ItemInventoryClassificationTests.EveryCurrentHubDefinitionHasTheExpectedCategoryWithoutChangingKind",
+      "fixture": "Game.Run.Tests.ItemInventoryClassificationTests",
+      "messageFirstLine": "containertest.ice不能放入4–0",
+      "testStackFrame": "at Game.Run.Tests.ItemInventoryClassificationTests.EveryCurrentHubDefinitionHasTheExpectedCategoryWithoutChangingKind () [0x000a1] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Run\\ItemInventoryClassificationTests.cs:22",
+      "message": "containertest.ice不能放入4–0\n  Expected: False\n  But was:  True",
+      "id": 24,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "应修测试前提并补能力组合覆盖；不改用户资产",
+      "classification": "旧Container-only分类前提",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Run/ItemInventoryClassificationTests.cs",
+          "line": 21,
+          "note": "非Container全部要求IsTool=false，冰违反此前提。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scripts/Run/Inventory/ItemInventoryClassification.cs",
+          "line": 6,
+          "note": "有UseKind且非Spell/Wand/Backpack即道具。"
+        },
+        {
+          "path": "RPG/Assets/_Project/ScriptableObjects/Items/Containers/Definitions/Item_Container_Ice.asset",
+          "line": 15,
+          "note": "containertest.ice保留Kind=4(Material)、UseKind=2(Throw)。"
+        },
+        {
+          "path": "RPG/docs/superpowers/plans/2026-10-11 物品分类与测试金币及三地图携带返回计划.md",
+          "line": 44,
+          "note": "Task1明确以使用能力分类，未来不能硬编码只有Container。"
+        }
+      ],
+      "minimumReview": "使用Kind+UseKind预期分类，保留Food/Herb、Spell/Wand/Backpack不变Kind和不重复目录断言，覆盖可投掷Material；主Agent复跑此case和分类纯规则/快捷栏相关用例。",
+      "details": "与已确认能力分类决定冲突的测试前提应更新；不能删Throw、改冰Kind或把Material一概排除道具来消红。Manifest读取同一Catalog并导出UseKind，但不改SO/分类逻辑。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Passed",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": false,
+        "approvedOldContractAdaptationCase": true,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "已授权旧合同测试适配后通过",
+      "currentRecommendation": "本次完整case通过；核心断言仍保留，适配说明见testAdaptation。"
+    },
+    {
+      "case": "Game.Run.Tests.ItemPresentationTests.MissingOnlyBakeKeepsExistingIconsAndSceneClean",
+      "fixture": "Game.Run.Tests.ItemPresentationTests",
+      "messageFirstLine": "System.Reflection.TargetParameterCountException : Number of parameters specified does not match the expected number.",
+      "testStackFrame": "at Game.Run.Tests.ItemPresentationTests.MissingOnlyBakeKeepsExistingIconsAndSceneClean () [0x0001a] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Run\\ItemPresentationTests.cs:41",
+      "message": "System.Reflection.TargetParameterCountException : Number of parameters specified does not match the expected number.",
+      "id": 25,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "应修测试反射参数；不触发额外重烘焙",
+      "classification": "反射调用未适配可选参数",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Run/ItemPresentationTests.cs",
+          "line": 41,
+          "note": "MethodInfo.Invoke仅传false/null/1.22共3参。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Editor/Items/ItemIconBaker.cs",
+          "line": 18,
+          "note": "BakeAll当前有4参数，新增wandsOnly=false；反射不会自动填C#可选参数。"
+        }
+      ],
+      "minimumReview": "使用完整显式参数false/null/1.22/false（或类型安全入口）保留返回0与scene.isDirty不变两断言；仅在所有目标已有图标、可控资源范围下由主Agent复跑，避免生成/覆盖用户图标。",
+      "details": "在BakeAll进入前已抛TargetParameterCountException，尚未证明图标烘焙或场景脏状态契约失败。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Passed",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": false,
+        "approvedOldContractAdaptationCase": true,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "已授权旧合同测试适配后通过",
+      "currentRecommendation": "本次完整case通过；核心断言仍保留，适配说明见testAdaptation。"
+    },
+    {
+      "case": "Game.Run.Tests.SinglePlayerSceneAuthoringTests.FormalHubHasOneGameCameraOneWorldAndNoLegacyReflection",
+      "fixture": "Game.Run.Tests.SinglePlayerSceneAuthoringTests",
+      "messageFirstLine": "Expected: not equal to \"Reflection_pass\"",
+      "testStackFrame": "at Game.Run.Tests.SinglePlayerSceneAuthoringTests.FormalHubHasOneGameCameraOneWorldAndNoLegacyReflection () [0x000a3] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Run\\SinglePlayerSceneAuthoringTests.cs:78",
+      "message": "Expected: not equal to \"Reflection_pass\"\n  But was:  \"Reflection_pass\"",
+      "id": 26,
+      "savedResult": "Failed",
+      "currentRerun": "不在本次86个case XML内，未重跑/未解决",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "需用户确认反射资源用途；本轮仅记录",
+      "classification": "正式Scene反射组件契约冲突",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Run/SinglePlayerSceneAuthoringTests.cs",
+          "line": 78,
+          "note": "遇到任意Reflection_pass即失败；后续摄像机/world/listener数量断言尚未到达。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub.unity",
+          "line": 18881,
+          "note": "Reflection_pass脚本GUID b5452583d99f6f348b54405cf3caca2f；824411行另有一处。"
+        }
+      ],
+      "minimumReview": "主Agent以预览场景确认两处组件Owner、启用状态和实际渲染依赖；当前正式水面验收后确定保留/移除方针，不保存场景、不删除组件测试过关。",
+      "details": "存在的是旧名字的真实反射组件，不能仅按名字断言它应删除；保存失败不能推导World/Camera数量错误。是否仍用于当前水面/地图视觉需确认。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "NotRun",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": false,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "未重跑/未解决的旧内容case",
+      "currentRecommendation": "仅保留原失败与初审分析；未运行就不能称修复、通过或确定历史问题。"
+    },
+    {
+      "case": "Game.Run.Tests.SinglePlayerSceneAuthoringTests.FormalHubHasProductionInventoryAndIndependentConfiguration",
+      "fixture": "Game.Run.Tests.SinglePlayerSceneAuthoringTests",
+      "messageFirstLine": "Expected: 0",
+      "testStackFrame": "at Game.Run.Tests.SinglePlayerSceneAuthoringTests.FormalHubHasProductionInventoryAndIndependentConfiguration () [0x0014e] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Run\\SinglePlayerSceneAuthoringTests.cs:49",
+      "message": "Expected: 0\n  But was:  9999999",
+      "id": 27,
+      "savedResult": "Failed",
+      "currentRerun": "不在本次86个case XML内，未重跑/未解决",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "应修测试的零常量前提；当前金币值保留，若要改资产须用户确认",
+      "classification": "旧零金币断言与可配置新档资产冲突",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Run/SinglePlayerSceneAuthoringTests.cs",
+          "line": 49,
+          "note": "硬断言Profile.Currency=0，实际9999999。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub.unity",
+          "line": 767620,
+          "note": "_startingInventory GUID be6d63ef98bbb444c8c5da80a2eea6be指向正式Hub配置。"
+        },
+        {
+          "path": "RPG/Assets/_Project/ScriptableObjects/World/Hub/Inventory/StartingInventory.asset",
+          "line": 16,
+          "note": "_initialCurrency:9999999；不触碰既有玩家档。"
+        },
+        {
+          "path": "RPG/docs/superpowers/plans/2026-10-11 物品分类与测试金币及三地图携带返回计划.md",
+          "line": 41,
+          "note": "明确增加可配置_initialCurrency，0默认，合法正值传递给新Profile。"
+        }
+      ],
+      "minimumReview": "确认正式SO当前测试金币为用户配置，以配置值传递验证替代零常量，保留负数拒绝、已有Profile不被覆盖、无免费材料等资产断言；主Agent运行独立新档fixture，不写真实存档。",
+      "details": "目录/独立配置/sandbox门禁在49行前已通过；免费组分检查在其后未执行。不能把正式金币归0。只看到测试旧前提与当前配置冲突，无法据此追溯9999999设定来源。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "NotRun",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": false,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "未重跑/未解决的旧内容case",
+      "currentRecommendation": "仅保留原失败与初审分析；未运行就不能称修复、通过或确定历史问题。"
+    },
+    {
+      "case": "Game.Run.Tests.SpellProgramContentContractTests.TerminationHasADifferentTriggerConditionFromExistingFireballs",
+      "fixture": "Game.Run.Tests.SpellProgramContentContractTests",
+      "messageFirstLine": "System.NullReferenceException : Object reference not set to an instance of an object",
+      "testStackFrame": "at Game.Run.Tests.SpellProgramContentContractTests.TerminationHasADifferentTriggerConditionFromExistingFireballs () [0x00022] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Run\\SpellProgramContentContractTests.cs:52",
+      "message": "System.NullReferenceException : Object reference not set to an instance of an object",
+      "id": 28,
+      "savedResult": "Failed",
+      "currentRerun": "主Agent已复跑；本Agent只读核对保存XML",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "应修测试定位；保留ContentId/GUID/作者文件名",
+      "classification": "测试过期资源路径",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Run/SpellProgramContentContractTests.cs",
+          "line": 49,
+          "note": "加载不存在的Spell_Emit_Termination.asset，52行直接取PayloadTrigger。"
+        },
+        {
+          "path": "RPG/Assets/_Project/ScriptableObjects/Spell/Definitions/Spell_Emit_TerminationFireball.asset",
+          "line": 33,
+          "note": "当前PayloadTrigger:3(OnTermination)。"
+        },
+        {
+          "path": "RPG/Assets/_Project/ScriptableObjects/Spell/Items/Item_Spell_Emit_Termination.asset",
+          "line": 23,
+          "note": "norn.v2.termination引用GUID 7ad25d995da7ed847ace796714d16c34，与当前定义.meta一致。"
+        }
+      ],
+      "minimumReview": "按现有ItemDefinition.SpellDefinition或正确当前路径定位，加Not.Null并保留Termination/Impact/Delay三个不同Trigger的精确断言；由主Agent复跑该fixture。",
+      "details": "物品ContentId/GUID仍指向有效终止触发定义。可通过稳定物品定义引用定位，不能重建同名旧asset或改GUID。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "Passed",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": false,
+        "approvedOldContractAdaptationCase": true,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "已授权旧合同测试适配后通过",
+      "currentRecommendation": "本次完整case通过；核心断言仍保留，适配说明见testAdaptation。"
+    },
+    {
+      "case": "Game.Run.Tests.WarehouseCatalogViewTests.EmptyWarehouseStillDisplaysBackgroundSquares",
+      "fixture": "Game.Run.Tests.WarehouseCatalogViewTests",
+      "messageFirstLine": "System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.",
+      "testStackFrame": "at Game.Run.Tests.WarehouseCatalogViewTests.Call (UnityEngine.Component view, System.String method, System.Object[] arguments) [0x00000] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Run\\WarehouseCatalogViewTests.cs:27",
+      "message": "System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.\n  ----> System.NullReferenceException : Object reference not set to an instance of an object",
+      "id": 29,
+      "savedResult": "Failed",
+      "currentRerun": "不在本次86个case XML内，未重跑/未解决",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "应修fixture/组件依赖契约；本轮仅记录，不能据异常断言线上仓库已坏",
+      "classification": "fixture空controller与UI样式依赖冲突",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Run/WarehouseCatalogViewTests.cs",
+          "line": 27,
+          "note": "每个case经反射Refresh传null controller；目标参数数正常。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scripts/UI/Inventory/WarehouseCatalogGridView.cs",
+          "line": 56,
+          "note": "立即读取controller.SlotPrefabs抛NRE；128行建格还再次读取。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scripts/UI/Inventory/SinglePlayerInventoryController.cs",
+          "line": 781,
+          "note": "实际生产调用Refresh(this,...)，提供真实controller。"
+        }
+      ],
+      "minimumReview": "先明确Refresh的controller契约，用独立真实controller+明确样式fixture或恢复既定nullable fallback，再复跑此case；保留原InstanceId/次数/Store.Version/分组/池大小断言。",
+      "details": "六个case共享同一前置失败，尚未到达各自分组/资产保留/虚拟化/空格断言。Rebuild的selected/caption还允许_controller为null，说明当前组件的空controller约束不一致，须明确是测试fixture改为完整controller还是保留无controller视图能力。不能只删测试调用或跳过断言。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "NotRun",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": false,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "未重跑/未解决的旧内容case",
+      "currentRecommendation": "仅保留原失败与初审分析；未运行就不能称修复、通过或确定历史问题。"
+    },
+    {
+      "case": "Game.Run.Tests.WarehouseCatalogViewTests.FilterAndOrganizeOnlyChangePresentation",
+      "fixture": "Game.Run.Tests.WarehouseCatalogViewTests",
+      "messageFirstLine": "System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.",
+      "testStackFrame": "at Game.Run.Tests.WarehouseCatalogViewTests.Call (UnityEngine.Component view, System.String method, System.Object[] arguments) [0x00000] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Run\\WarehouseCatalogViewTests.cs:27",
+      "message": "System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.\n  ----> System.NullReferenceException : Object reference not set to an instance of an object",
+      "id": 30,
+      "savedResult": "Failed",
+      "currentRerun": "不在本次86个case XML内，未重跑/未解决",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "应修fixture/组件依赖契约；本轮仅记录，不能据异常断言线上仓库已坏",
+      "classification": "fixture空controller与UI样式依赖冲突",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Run/WarehouseCatalogViewTests.cs",
+          "line": 27,
+          "note": "每个case经反射Refresh传null controller；目标参数数正常。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scripts/UI/Inventory/WarehouseCatalogGridView.cs",
+          "line": 56,
+          "note": "立即读取controller.SlotPrefabs抛NRE；128行建格还再次读取。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scripts/UI/Inventory/SinglePlayerInventoryController.cs",
+          "line": 781,
+          "note": "实际生产调用Refresh(this,...)，提供真实controller。"
+        }
+      ],
+      "minimumReview": "先明确Refresh的controller契约，用独立真实controller+明确样式fixture或恢复既定nullable fallback，再复跑此case；保留原InstanceId/次数/Store.Version/分组/池大小断言。",
+      "details": "六个case共享同一前置失败，尚未到达各自分组/资产保留/虚拟化/空格断言。Rebuild的selected/caption还允许_controller为null，说明当前组件的空controller约束不一致，须明确是测试fixture改为完整controller还是保留无controller视图能力。不能只删测试调用或跳过断言。 Organize/Filter必须只改变投影，Store.Count/Version不变仍是关键边界。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "NotRun",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": false,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "未重跑/未解决的旧内容case",
+      "currentRecommendation": "仅保留原失败与初审分析；未运行就不能称修复、通过或确定历史问题。"
+    },
+    {
+      "case": "Game.Run.Tests.WarehouseCatalogViewTests.FoodAndHerbsAreMaterialsAndOnlyUsableContainersAreTools",
+      "fixture": "Game.Run.Tests.WarehouseCatalogViewTests",
+      "messageFirstLine": "System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.",
+      "testStackFrame": "at Game.Run.Tests.WarehouseCatalogViewTests.Call (UnityEngine.Component view, System.String method, System.Object[] arguments) [0x00000] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Run\\WarehouseCatalogViewTests.cs:27",
+      "message": "System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.\n  ----> System.NullReferenceException : Object reference not set to an instance of an object",
+      "id": 31,
+      "savedResult": "Failed",
+      "currentRerun": "不在本次86个case XML内，未重跑/未解决",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "应修fixture/组件依赖契约；本轮仅记录，不能据异常断言线上仓库已坏",
+      "classification": "fixture空controller与UI样式依赖冲突",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Run/WarehouseCatalogViewTests.cs",
+          "line": 27,
+          "note": "每个case经反射Refresh传null controller；目标参数数正常。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scripts/UI/Inventory/WarehouseCatalogGridView.cs",
+          "line": 56,
+          "note": "立即读取controller.SlotPrefabs抛NRE；128行建格还再次读取。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scripts/UI/Inventory/SinglePlayerInventoryController.cs",
+          "line": 781,
+          "note": "实际生产调用Refresh(this,...)，提供真实controller。"
+        }
+      ],
+      "minimumReview": "先明确Refresh的controller契约，用独立真实controller+明确样式fixture或恢复既定nullable fallback，再复跑此case；保留原InstanceId/次数/Store.Version/分组/池大小断言。",
+      "details": "六个case共享同一前置失败，尚未到达各自分组/资产保留/虚拟化/空格断言。Rebuild的selected/caption还允许_controller为null，说明当前组件的空controller约束不一致，须明确是测试fixture改为完整controller还是保留无controller视图能力。不能只删测试调用或跳过断言。 当前case的无UseKind食物/草药应仍在材料，容器在道具，不能因新Throw能力降低这些断言。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "NotRun",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": false,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "未重跑/未解决的旧内容case",
+      "currentRecommendation": "仅保留原失败与初审分析；未运行就不能称修复、通过或确定历史问题。"
+    },
+    {
+      "case": "Game.Run.Tests.WarehouseCatalogViewTests.ManyKindsExtendContentWithoutCreatingEveryRowOfViews",
+      "fixture": "Game.Run.Tests.WarehouseCatalogViewTests",
+      "messageFirstLine": "System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.",
+      "testStackFrame": "at Game.Run.Tests.WarehouseCatalogViewTests.Call (UnityEngine.Component view, System.String method, System.Object[] arguments) [0x00000] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Run\\WarehouseCatalogViewTests.cs:27",
+      "message": "System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.\n  ----> System.NullReferenceException : Object reference not set to an instance of an object",
+      "id": 32,
+      "savedResult": "Failed",
+      "currentRerun": "不在本次86个case XML内，未重跑/未解决",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "应修fixture/组件依赖契约；本轮仅记录，不能据异常断言线上仓库已坏",
+      "classification": "fixture空controller与UI样式依赖冲突",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Run/WarehouseCatalogViewTests.cs",
+          "line": 27,
+          "note": "每个case经反射Refresh传null controller；目标参数数正常。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scripts/UI/Inventory/WarehouseCatalogGridView.cs",
+          "line": 56,
+          "note": "立即读取controller.SlotPrefabs抛NRE；128行建格还再次读取。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scripts/UI/Inventory/SinglePlayerInventoryController.cs",
+          "line": 781,
+          "note": "实际生产调用Refresh(this,...)，提供真实controller。"
+        }
+      ],
+      "minimumReview": "先明确Refresh的controller契约，用独立真实controller+明确样式fixture或恢复既定nullable fallback，再复跑此case；保留原InstanceId/次数/Store.Version/分组/池大小断言。",
+      "details": "六个case共享同一前置失败，尚未到达各自分组/资产保留/虚拟化/空格断言。Rebuild的selected/caption还允许_controller为null，说明当前组件的空controller约束不一致，须明确是测试fixture改为完整controller还是保留无controller视图能力。不能只删测试调用或跳过断言。 120个种类的有界view池与内容高度要求仍须保留。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "NotRun",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": false,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "未重跑/未解决的旧内容case",
+      "currentRecommendation": "仅保留原失败与初审分析；未运行就不能称修复、通过或确定历史问题。"
+    },
+    {
+      "case": "Game.Run.Tests.WarehouseCatalogViewTests.SameContentHasOneSquareWhileDifferentStatesKeepTheirIdentity",
+      "fixture": "Game.Run.Tests.WarehouseCatalogViewTests",
+      "messageFirstLine": "System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.",
+      "testStackFrame": "at Game.Run.Tests.WarehouseCatalogViewTests.Call (UnityEngine.Component view, System.String method, System.Object[] arguments) [0x00000] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Run\\WarehouseCatalogViewTests.cs:27",
+      "message": "System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.\n  ----> System.NullReferenceException : Object reference not set to an instance of an object",
+      "id": 33,
+      "savedResult": "Failed",
+      "currentRerun": "不在本次86个case XML内，未重跑/未解决",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "应修fixture/组件依赖契约；本轮仅记录，不能据异常断言线上仓库已坏",
+      "classification": "fixture空controller与UI样式依赖冲突",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Run/WarehouseCatalogViewTests.cs",
+          "line": 27,
+          "note": "每个case经反射Refresh传null controller；目标参数数正常。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scripts/UI/Inventory/WarehouseCatalogGridView.cs",
+          "line": 56,
+          "note": "立即读取controller.SlotPrefabs抛NRE；128行建格还再次读取。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scripts/UI/Inventory/SinglePlayerInventoryController.cs",
+          "line": 781,
+          "note": "实际生产调用Refresh(this,...)，提供真实controller。"
+        }
+      ],
+      "minimumReview": "先明确Refresh的controller契约，用独立真实controller+明确样式fixture或恢复既定nullable fallback，再复跑此case；保留原InstanceId/次数/Store.Version/分组/池大小断言。",
+      "details": "六个case共享同一前置失败，尚未到达各自分组/资产保留/虚拟化/空格断言。Rebuild的selected/caption还允许_controller为null，说明当前组件的空controller约束不一致，须明确是测试fixture改为完整controller还是保留无controller视图能力。不能只删测试调用或跳过断言。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "NotRun",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": false,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "未重跑/未解决的旧内容case",
+      "currentRecommendation": "仅保留原失败与初审分析；未运行就不能称修复、通过或确定历史问题。"
+    },
+    {
+      "case": "Game.Run.Tests.WarehouseCatalogViewTests.SameKindContainersUseSeparateWarehouseSquares",
+      "fixture": "Game.Run.Tests.WarehouseCatalogViewTests",
+      "messageFirstLine": "System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.",
+      "testStackFrame": "at Game.Run.Tests.WarehouseCatalogViewTests.Call (UnityEngine.Component view, System.String method, System.Object[] arguments) [0x00000] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Run\\WarehouseCatalogViewTests.cs:27",
+      "message": "System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.\n  ----> System.NullReferenceException : Object reference not set to an instance of an object",
+      "id": 34,
+      "savedResult": "Failed",
+      "currentRerun": "不在本次86个case XML内，未重跑/未解决",
+      "relationToDataSlice": "保存的异常/断言及所读直接调用链不经过 Shared Owned 合同、Core/Online DTO、ContentManifest 导出或 OnlineOwnedWorkspaceFactory；未发现本轮数据切片的直接因果链。未做Git/前后版本对照，首次引入时间与跨测试污染仍未证明，不能称为历史失败。",
+      "historicalOrigin": "未证明",
+      "recommendation": "应修fixture/组件依赖契约；本轮仅记录，不能据异常断言线上仓库已坏",
+      "classification": "fixture空controller与UI样式依赖冲突",
+      "evidence": [
+        {
+          "path": "RPG/Assets/_Project/Tests/Run/WarehouseCatalogViewTests.cs",
+          "line": 27,
+          "note": "每个case经反射Refresh传null controller；目标参数数正常。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scripts/UI/Inventory/WarehouseCatalogGridView.cs",
+          "line": 56,
+          "note": "立即读取controller.SlotPrefabs抛NRE；128行建格还再次读取。"
+        },
+        {
+          "path": "RPG/Assets/_Project/Scripts/UI/Inventory/SinglePlayerInventoryController.cs",
+          "line": 781,
+          "note": "实际生产调用Refresh(this,...)，提供真实controller。"
+        },
+        {
+          "path": "RPG/docs/superpowers/plans/2026-10-13 容器图标填充与元素Icon及F交互作者布局修正计划.md",
+          "line": 3,
+          "note": "明确用户授权直接执行。"
+        },
+        {
+          "path": "RPG/docs/superpowers/plans/2026-10-13 容器图标填充与元素Icon及F交互作者布局修正计划.md",
+          "line": 7,
+          "note": "空瓶/满瓶用原Sprite自下而上填充，删除槽内容量数字。"
+        },
+        {
+          "path": "RPG/docs/superpowers/plans/2026-10-13 容器图标填充与元素Icon及F交互作者布局修正计划.md",
+          "line": 21,
+          "note": "明确WarehouseCatalogGridView删除容量Caption，26行要求更新旧容量文本断言。"
+        }
+      ],
+      "minimumReview": "先明确Refresh的controller契约，用独立真实controller+明确样式fixture或恢复既定nullable fallback，再复跑此case；保留原InstanceId/次数/Store.Version/分组/池大小断言。 按已批准填充契约核对两份实例0/1024与10/1024对应填充值和独立身份，保留可读性验收。",
+      "details": "六个case共享同一前置失败，尚未到达各自分组/资产保留/虚拟化/空格断言。Rebuild的selected/caption还允许_controller为null，说明当前组件的空controller约束不一致，须明确是测试fixture改为完整controller还是保留无controller视图能力。不能只删测试调用或跳过断言。 此case还要求文本0/1024与10/1024，但当前113行明确改为Sprite填充显示；解阻后很可能出现下一层展示契约冲突，需确认容量可见性目标，不能移除表示储量的验收。 已找到明确批准的填充替代容量文字计划，旧文本预期可改为两份真实储量/填充值和独立身份核对，不需要恢复容量Caption。",
+      "latestRecheck": {
+        "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+        "status": "NotRun",
+        "message": null,
+        "stack": null,
+        "originalMissingDirectoryCase": false,
+        "approvedOldContractAdaptationCase": false,
+        "historicalOrigin": "未证明；保存的旧失败不证明早于本轮Owner/数据切片就存在",
+        "relationToOwner": "当前失败定位/原始审计未见Owner投影变更的直接因果证据；不以文件未改代替因果分析，也不将Owner711/0覆盖到本case。"
+      },
+      "latestClassification": "未重跑/未解决的旧内容case",
+      "currentRecommendation": "仅保留原失败与初审分析；未运行就不能称修复、通过或确定历史问题。"
+    }
+  ],
+  "latestRecheck": {
+    "evidence": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-results.xml",
+    "report": "RPG/docs/superpowers/evidence/multiplayer/n5/container-owner-projection-2026-11-01/remaining34-targeted-recheck-report.json",
+    "executor": "主Agent协调Unity；本Agent未运行Unity，仅解析保存XML",
+    "startedUtc": "2026-11-01 09:12:03Z",
+    "endedUtc": "2026-11-01 09:12:14Z",
+    "actualXmlCases": 86,
+    "passed": 84,
+    "failed": 2,
+    "original34Matched": 22,
+    "original34Passed": 20,
+    "original34Failed": 2,
+    "original34NotRun": 12,
+    "original16DirectoryCasesPassed": 15,
+    "original16DirectoryCasesWithNewFailure": 1,
+    "authorizedOldContractTestsPassed": 5,
+    "oldGooFailurePreserved": 1,
+    "unresolvedNotRunCases": [
+      "Game.Rendering.Tests.ElementWaterShaderContractTests.ProceduralLiquidOpaqueFragmentDiagnosticIsBoundPerDraw",
+      "Game.Rendering.Tests.ElementWaterShaderContractTests.ProceduralLiquidUsesUnityIndirectContractAndSharedWaterCore",
+      "Game.Run.Tests.HubSpatialLayoutTests.AllStationTextHasCameraFacingBehaviour",
+      "Game.Run.Tests.HubSpatialLayoutTests.PersistentHintsAreAtScreenEdge",
+      "Game.Run.Tests.SinglePlayerSceneAuthoringTests.FormalHubHasOneGameCameraOneWorldAndNoLegacyReflection",
+      "Game.Run.Tests.SinglePlayerSceneAuthoringTests.FormalHubHasProductionInventoryAndIndependentConfiguration",
+      "Game.Run.Tests.WarehouseCatalogViewTests.EmptyWarehouseStillDisplaysBackgroundSquares",
+      "Game.Run.Tests.WarehouseCatalogViewTests.FilterAndOrganizeOnlyChangePresentation",
+      "Game.Run.Tests.WarehouseCatalogViewTests.FoodAndHerbsAreMaterialsAndOnlyUsableContainersAreTools",
+      "Game.Run.Tests.WarehouseCatalogViewTests.ManyKindsExtendContentWithoutCreatingEveryRowOfViews",
+      "Game.Run.Tests.WarehouseCatalogViewTests.SameContentHasOneSquareWhileDifferentStatesKeepTheirIdentity",
+      "Game.Run.Tests.WarehouseCatalogViewTests.SameKindContainersUseSeparateWarehouseSquares"
+    ],
+    "failedCases": [
+      {
+        "case": "Game.Combat.Tests.MaterialReactionSemanticTests.Evaluator_IgniteGooConsumesStickyAndProducesFireOnFireSide",
+        "result": "Failed",
+        "message": "  Expected: 77\n  But was:  76\n",
+        "stack": "at Game.Combat.Tests.MaterialReactionSemanticTests.Evaluator_IgniteGooConsumesStickyAndProducesFireOnFireSide () [0x000e2] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Combat\\MaterialReactionSemanticTests.cs:225\n",
+        "duration": "0.006880"
+      },
+      {
+        "case": "Game.Rendering.Tests.GridLiquidFieldGpuTests.SustainedSlopeMeshDoesNotSinkIntoActualCollider",
+        "result": "Failed",
+        "message": "  60°可见主体Normal不能朝Triangle的反半球，最小一致性=-0.1342937\n  Expected: 0\n  But was:  1\n",
+        "stack": "at Game.Rendering.Tests.GridLiquidFieldGpuTests+<SustainedSlopeMeshDoesNotSinkIntoActualCollider>d__3.MoveNext () [0x00fda] in F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\Rendering\\GridLiquidFieldGpuTests.cs:152\nat UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0004e] in .\\Library\\PackageCache\\com.unity.test-framework@aebcb98460c6\\UnityEngine.TestRunner\\NUnitExtensions\\Attributes\\TestEnumerator.cs:44\n",
+        "duration": "0.292073"
+      }
+    ],
+    "conclusion": "84/2是本次86实际case的结果；不等于34全量。原34=15目录过+5旧合同过+原Goo仍红+1目录后新法线红+12未重跑。",
+    "zeroGcLimit": "部分旧性能测试使用GC.GetAllocatedBytesForCurrentThread；Passed不替代正校准GC.Alloc事件或Native全帧性能验收。"
+  },
+  "testAdaptation": {
+    "scope": "只修改已授权5个既有测试文件；未改生产/资源/Scene/设置。",
+    "cases": [
+      "Game.Combat.Tests.MaterialReactionSemanticTests.DefaultBindingAsset_ContainsWaterAndPoisonFireRules",
+      "Game.Run.Tests.BackpackAuthoringTests.ThrowAndSolidCollectionDoNotShareG",
+      "Game.Run.Tests.ItemInventoryClassificationTests.EveryCurrentHubDefinitionHasTheExpectedCategoryWithoutChangingKind",
+      "Game.Run.Tests.ItemPresentationTests.MissingOnlyBakeKeepsExistingIconsAndSceneClean",
+      "Game.Run.Tests.SpellProgramContentContractTests.TerminationHasADifferentTriggerConditionFromExistingFireballs"
+    ],
+    "details": [
+      "DefaultBinding单case读正式完整材料目录；共享SetUp三材料子集、未知Sticky拒绝及Goo77保持。",
+      "Backpack检查实际_collect=F、_throw=G及采集绑定不含G，保留不冲突意图。",
+      "分类按UseKind且法术/杖/包独立；当前10Food和5Herb均Throw，保留Consumable/Alchemy底层Kind与10/5数量，禁止材料/道具主类重复。",
+      "BakeAll反射显式4参false/null/1.22/false，仍断言返回0及Scene脏状态不变。",
+      "Termination从正式Catalog稳定norn.v2.termination取得定义，保留OnTermination/OnImpact/AfterDelay精确区分。"
+    ],
+    "supportingApprovedDecisions": [
+      {
+        "path": "RPG/docs/superpowers/plans/2026-10-11 物品分类与测试金币及三地图携带返回计划.md",
+        "line": 44,
+        "note": "Kind保持，UseKind决定道具；不能硬编码Container-only。"
+      },
+      {
+        "path": "RPG/docs/superpowers/plans/2026-10-11 物品分类与测试金币及三地图携带返回计划.md",
+        "line": 41,
+        "note": "新增非负可配置初始金币，仅读取新Profile，已有余额不被覆盖。"
+      },
+      {
+        "path": "RPG/docs/superpowers/plans/2026-10-11 物品分类与测试金币及三地图携带返回计划.md",
+        "line": 47,
+        "note": "5000/0/负数与既有Profile覆盖边界的已落实测试约定；不证明9999999具体数额来源。"
+      },
+      {
+        "path": "RPG/docs/superpowers/plans/2026-10-12 手持栏与独立道具装备及传送容器统一计划.md",
+        "line": 20,
+        "note": "F交互/材料采集、G独立职责。"
+      },
+      {
+        "path": "RPG/docs/superpowers/plans/2026-10-12 手持栏与独立道具装备及传送容器统一计划.md",
+        "line": 65,
+        "note": "键帽与正文F一致，不能保留E误导。"
+      },
+      {
+        "path": "RPG/docs/superpowers/plans/2026-10-15 连续广域采集与固体合并及背包整理全拾取计划.md",
+        "line": 11,
+        "note": "F持续采集，站点/门户/附近物品优先消费F。"
+      },
+      {
+        "path": "RPG/docs/superpowers/plans/2026-10-13 容器图标填充与元素Icon及F交互作者布局修正计划.md",
+        "line": 7,
+        "note": "容器容量用原Sprite填充，不恢复旧槽内容量数字。"
+      },
+      {
+        "path": "RPG/docs/superpowers/plans/2026-10-13 容器图标填充与元素Icon及F交互作者布局修正计划.md",
+        "line": 21,
+        "note": "Warehouse删除容量Caption，26行明确更新旧断言。"
+      }
+    ]
+  },
+  "initialAuditProtection": {
+    "productionWrites": 0,
+    "testWrites": 0,
+    "sceneWrites": 0,
+    "settingsWrites": 0,
+    "gitOperations": 0,
+    "editorOperations": 0,
+    "physicsRestoreRetried": false,
+    "noitaOptimizationPerformed": false,
+    "onlyDeliverablesWritten": [
+      "C:/Users/zhy/Documents/Codex/2026-10-31/task/remaining34-audit.md",
+      "C:/Users/zhy/Documents/Codex/2026-10-31/task/remaining34-audit.json"
+    ]
+  }
+}

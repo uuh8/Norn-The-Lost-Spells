@@ -30,6 +30,9 @@ int _Capacity;
 int _SpawnCount;
 int _SpawnStartSlot;
 float _DeltaTime;
+// 真实scaled秒龄与数值积分分开：低FPS只限运动步长，不把作者配置的寿命延长数倍。
+// 发种调度使用相同的秒龄时钟，防止新粒子加速出生、旧粒子却迟迟不退休而覆盖固定Pool。
+float _AgeDeltaTime;
 float _Buoyancy;
 float _Drag;
 float _SourceTether;
@@ -80,7 +83,7 @@ void SimulateParcels(uint3 id : SV_DispatchThreadID)
     FireParcelStateGpu state = _FireParcelStates[id.x];
     if (state.active < 0.5) return;
 
-    state.age += _DeltaTime;
+    state.age += _AgeDeltaTime;
     if (state.age >= state.lifetime)
     {
         state.active = 0.0;

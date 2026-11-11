@@ -75,6 +75,29 @@ namespace Game.Character.Tests
             Assert.That(wand.CurrentMana, Is.EqualTo(37f), "完整快照基线已比缓存Tick15更新，不能再重放旧值。");
         }
 
+        [Test] public void LastWandLeavingOwnerKeepsReplicaBoundAndRemovesOldResources()
+        {
+            _left = new GameObject("EmptyHandsReplica"); _left.SetActive(false);
+            var type = typeof(PlayerControllerBase).Assembly.GetType("Game.Character.OnlineInventoryReplica");
+            var replica = _left.AddComponent(type); var catalog = MemoryCatalog();
+            Assert.That(Install(type, replica, Identity(7), Snapshot(7, 1, 10), catalog), Is.True);
+            var before = (IInventoryPresentationSource)type.GetProperty("Source").GetValue(replica);
+            Assert.That((bool)type.GetMethod("ApplyResources").Invoke(replica, new object[] { 7u, 15u, "wand", 17u, 21f, .5f }), Is.True);
+            var empty = Snapshot(7, 2, 20); empty.Assets.InventoryVersion = 10;
+            empty.ResourceVersion = 13; empty.SelectionVersion = empty.SpellUseVersion = 2;
+            empty.Assets.SelectedWandInstanceId = ""; empty.Assets.Items = Array.Empty<OnlineOwnedItemSnapshot>();
+            empty.Wands = Array.Empty<OnlineInventoryWandPresentationSnapshot>(); empty.SpellUses = Array.Empty<OnlineInventorySpellUsePresentationSnapshot>();
+            Assert.That(Install(type, replica, Identity(7), empty, catalog), Is.True,
+                "最后一杖离手后Owner仍是已安装的真实空库存，不能因至少一装备杖假设丢掉整个Source。");
+            var source = (IInventoryPresentationSource)type.GetProperty("Source").GetValue(replica);
+            Assert.That(source, Is.SameAs(before)); Assert.That(source.ReadOnly.Count, Is.Zero);
+            Assert.That(source.WandsReadOnly.SelectedWandId, Is.Null.Or.Empty);
+            Assert.That(source.WandsReadOnly.TryGetSlot(0, out _), Is.False);
+            Assert.That(source.WandsReadOnly.TryGetState("wand", out _), Is.False);
+            Assert.That(Cache().GetProperty("Source", Static).GetValue(null), Is.SameAs(source));
+            Assert.That((bool)type.GetProperty("HasSnapshot").GetValue(replica), Is.True);
+        }
+
         [Test] public void InvalidReplacementKeepsOldSourceAndNewEpochDisposesOnlyAfterValidInstall()
         {
             _left = new GameObject("ReconnectReplica"); _left.SetActive(false);
@@ -154,7 +177,7 @@ namespace Game.Character.Tests
             ResourceVersion = 12, SelectionVersion = 1, SpellUseVersion = 1,
             Assets = new OnlineOwnedAssetSnapshot
             {
-                SchemaVersion = 1, RunId = "run", PlayerId = "player", ActorId = 1, InventoryId = "inventory", InventoryVersion = 9,
+                SchemaVersion = OnlineOwnedAssetSnapshot.CurrentSchemaVersion, RunId = "run", PlayerId = "player", ActorId = 1, InventoryId = "inventory", InventoryVersion = 9,
                 GameplayConfigHash = Hash, SelectedWandInstanceId = "wand", Items = new[]
                 {
                     new OnlineOwnedItemSnapshot { InstanceId = "wand", ContentId = "replica.wand", Revision = 1,

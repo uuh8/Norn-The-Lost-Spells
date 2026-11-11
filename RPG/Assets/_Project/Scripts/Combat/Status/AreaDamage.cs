@@ -137,7 +137,7 @@ namespace Game.Combat
 
         private void Activate()
         {
-            if (_activated || _execution.Mode == CombatExecutionMode.Replica) return;
+            if (_activated || !_execution.AllowsGameplayWrites) return;
             _activated = true;
             // 一次性与持续都在此打出第一跳（爆炸的瞬间炸开 / 火场的第一跳）
             ApplyOnce();
@@ -154,7 +154,7 @@ namespace Game.Combat
 
         private void Tick(float deltaTime)
         {
-            if (_tickInterval <= 0f || _remainingTicks == 0)
+            if (!_execution.AllowsGameplayWrites || _tickInterval <= 0f || _remainingTicks == 0)
                 return; // 一次性或已用完有限 Tick Budget：不再处理
 
             _tickTimer -= deltaTime;
@@ -170,13 +170,15 @@ namespace Game.Combat
         /// <summary>对当前半径内所有敌方存活目标各结算一次伤害（单次内去重）。</summary>
         private void ApplyOnce()
         {
-            if (_execution.Mode == CombatExecutionMode.Replica) return;
+            if (!_execution.AllowsGameplayWrites) return;
             _tickHitSet.Clear();
             int count = Physics.OverlapSphereNonAlloc(
                 transform.position, _radius, _buf, _hitMask, QueryTriggerInteraction.Ignore);
 
             for (int i = 0; i < count; i++)
             {
+                // 单次范围结算也有同步回调边界；暂停剩余目标，保留 Area 实例及后续 Tick。
+                if (!_execution.AllowsGameplayWrites) break;
                 IDamageable target = _buf[i].GetComponentInParent<IDamageable>();
                 if (target == null || !target.IsAlive) continue;
                 if (target.TeamId == _attackerTeam) continue; // 跳过同阵营（友军/自己）

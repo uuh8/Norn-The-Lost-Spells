@@ -1,0 +1,171 @@
+{
+  "RecordedUtc": "2026-10-31T13:18:45.436130+00:00",
+  "Scope": "Existing authenticated full-channel P7 Native Delta; two stable checkpoints",
+  "Red": {
+    "Passed": 14,
+    "Failed": 1
+  },
+  "Green": {
+    "Passed": 15,
+    "Failed": 0
+  },
+  "EditMode": {
+    "Fixtures": 26,
+    "Passed": 308,
+    "Failed": 0
+  },
+  "PlayMode": "Not rerun this stage",
+  "NativeBuilds": {
+    "client": {
+      "Result": "Succeeded",
+      "UnityVersion": "6000.3.16f1",
+      "Output": "Builds/OnlineRooms/Client/NornRoomClient.exe",
+      "RecordedAtUtc": "2026-10-31T13:08:50.5008811Z",
+      "DedicatedServer": false,
+      "RenderingInputsIsolated": false,
+      "ClientResourcesExcluded": false,
+      "Errors": 0
+    },
+    "server": {
+      "Result": "Succeeded",
+      "UnityVersion": "6000.3.16f1",
+      "Output": "Builds/OnlineRooms/Server/NornRoomServer.exe",
+      "RecordedAtUtc": "2026-10-31T13:13:11.9823777Z",
+      "DedicatedServer": true,
+      "RenderingInputsIsolated": false,
+      "ClientResourcesExcluded": false,
+      "Errors": 0
+    }
+  },
+  "Native": {
+    "RecordedUtc": "2026-10-31T13:14:35.587390+00:00",
+    "Dungeon": "p7",
+    "WorldEpoch": 6869361087090086539,
+    "FirstTick": 5,
+    "SecondStartTick": 5,
+    "SecondTick": 10,
+    "FirstChunks": 4,
+    "FinalChunks": 5,
+    "ChangedExistingChunks": 1,
+    "PagesBefore": 8,
+    "PagesAfter": 22,
+    "AcksBefore": 8,
+    "AcksAfter": 22,
+    "Clients": [
+      {
+        "ActorId": 1,
+        "ConnectionEpoch": 1,
+        "InstalledBefore": 4,
+        "InstalledAfter": 11,
+        "ExactChunks": 5,
+        "ActualDeltaChunks": [
+          {
+            "Domain": 1,
+            "X": 0,
+            "Y": 0,
+            "Z": 0,
+            "Words": 39,
+            "WorldEpoch": 6869361087090086539,
+            "Generation": 1,
+            "Revision": 8,
+            "BaseRevision": 7,
+            "SnapshotId": 8,
+            "ServerTick": 10,
+            "Checksum": 1627955361,
+            "Resident": true
+          }
+        ]
+      },
+      {
+        "ActorId": 2,
+        "ConnectionEpoch": 1,
+        "InstalledBefore": 4,
+        "InstalledAfter": 11,
+        "ExactChunks": 5,
+        "ActualDeltaChunks": [
+          {
+            "Domain": 1,
+            "X": 0,
+            "Y": 0,
+            "Z": 0,
+            "Words": 39,
+            "WorldEpoch": 6869361087090086539,
+            "Generation": 1,
+            "Revision": 8,
+            "BaseRevision": 7,
+            "SnapshotId": 8,
+            "ServerTick": 10,
+            "Checksum": 1627955361,
+            "Resident": true
+          }
+        ]
+      }
+    ],
+    "Logs": [
+      {
+        "Label": "p7",
+        "BuiltInResourceErrors": 2,
+        "OtherErrors": []
+      },
+      {
+        "Label": "p7-client0",
+        "BuiltInResourceErrors": 0,
+        "OtherErrors": []
+      },
+      {
+        "Label": "p7-client1",
+        "BuiltInResourceErrors": 0,
+        "OtherErrors": []
+      }
+    ],
+    "Mode": "Two paused checkpoints with at least five real material ticks running between them",
+    "AckEvidence": "DS aggregate accepted-install ACK count increased; final ACK receipt not attributed separately to each connection",
+    "NotVerified": [
+      "Unbounded continuous reactions",
+      "Native missing revision/history overwrite/corrupt page recovery",
+      "Interest subscription",
+      "Stress/performance",
+      "Same-process auto reconnect",
+      "Consumption persistence",
+      "Full player path"
+    ]
+  },
+  "SchemaChanged": false,
+  "RuntimeModified": [
+    "Multiplayer/World/WorldReplicationCoordinator.cs: diagnostic stamp only",
+    "ElementField/Diagnostics/OnlineMaterialReplicationProbe.cs: explicit two-stage QA only"
+  ],
+  "TestsModified": [
+    "Tests/Multiplayer/WorldReplicationChannelTests.cs"
+  ],
+  "NewSourceDirectories": 0,
+  "ProtectedFilesUnchanged": 12,
+  "FormalAssetsUnchanged": 13,
+  "InterestDecision": "Both confirmed by user; recorded total plan section16, not implemented by this Delta stage",
+  "N5Complete": false,
+  "NoCommitOrPush": true,
+  "Remaining": [
+    "Native missing revision/history overwrite/corrupt page recovery",
+    "Approved spatial Interest/subscription integration",
+    "Unbounded continuous reactions/stress/performance",
+    "Per-connection final Delta ACK receipt attribution",
+    "Same-process auto reconnect/consumption persistence/full player path",
+    "P8 Native material path",
+    "Existing DS Built-in Resource startup errors",
+    "N4/N6 and remote platforms"
+  ],
+  "PermissionOrDecisionBlocker": false,
+  "FinalChecks": {
+    "RecordedUtc": "2026-10-31T13:20:45.770933+00:00",
+    "Links": 39,
+    "MissingLinks": 0,
+    "ExposedCredentials": 0,
+    "CommitHead": "0d87d0da931ec2b39f7cd569661e750bafa0df84",
+    "Editor": {
+      "Playing": false,
+      "Compiling": false,
+      "Dirty": false,
+      "Scene": "Assets/_Project/Scenes/P7_MainMenu.unity"
+    }
+  }
+}

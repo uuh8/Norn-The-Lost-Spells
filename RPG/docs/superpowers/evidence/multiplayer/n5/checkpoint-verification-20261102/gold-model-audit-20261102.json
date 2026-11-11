@@ -1,0 +1,94 @@
+{
+  "RecordedAtUtc": "2026-11-02T22:50:28.773009+00:00",
+  "Status": "ModelAndContractProposalPendingConfirmation; no currency production implementation",
+  "ConfirmedGameplay": [
+    "One shared unique drop",
+    "Successful collector receives it alone",
+    "Enemy death position",
+    "Use original CoinDropped/CoinAmount once",
+    "Preserve original trigger/range and visuals"
+  ],
+  "SinglePlayer": {
+    "CurrencyModel": "Inherited total balance, then pickup increments the same value",
+    "FreshRunZeroed": false,
+    "SeparateRunEarnings": false,
+    "Entry": "Run/Hub/HubPracticeSession.cs:190-198,286-325",
+    "Credit": "Run/Runtime/SinglePlayerInventorySession.cs:77-82",
+    "Return": "Run/Raids/RaidProfileOps.cs:15-26; Run/Persistence/ProfileSaveMapper.cs:19,147"
+  },
+  "ExistingTrustedGoldSource": {
+    "Available": true,
+    "WalletRead": "Server/Norn.Business/Features/Inventory/InventoryService.cs:33,160",
+    "FrozenWholeProfile": "Server/Norn.Business/Features/Runs/RunEntryService.cs:52-64",
+    "ReadyMember": "Shared/Protocol/Runtime/Business/InstanceContracts.cs:47-50",
+    "IsAlreadyARuntimeGoldOwner": false
+  },
+  "MissingProductionContracts": [
+    "DS currency owner",
+    "Coin world identity/state replication",
+    "Currency owner snapshot/version",
+    "Currency checkpoint partition",
+    "Permanent Wallet writeback"
+  ],
+  "CoinPlanAlreadySampled": true,
+  "CoinPlanConsumedByOnlineProduction": false,
+  "OnlineGap": "Run/Loot/OnlineDungeonContainerLoot.cs:59-62,79-83 handles Plan.Items only",
+  "P7": {
+    "Chance": 0.75,
+    "InclusiveAmounts": [
+      [
+        10,
+        25
+      ],
+      [
+        18,
+        40
+      ],
+      [
+        26,
+        55
+      ],
+      [
+        34,
+        70
+      ]
+    ]
+  },
+  "P8OriginalCoinSource": false,
+  "OriginalPickup": "WorldCurrencyPickup OnTriggerEnter/Stay, correct actor and scene, successful credit before disable",
+  "Visual": {
+    "MultiplierFromOriginal": 1.75,
+    "VisualLocalY": 0.5,
+    "TriggerRadius": 0.75,
+    "TriggerCenterY": 0.2,
+    "ModifiedThisPhase": false
+  },
+  "ProposalNotApproved": {
+    "ARecommended": "Track trusted entry Gold and earned Gold separately; show their sum as the in-run total; do not write Wallet",
+    "B": "Show only earned Gold in-run; persistent Gold stays the account Profile value; this differs from current single-player display",
+    "PendingAction": "Add explicit runtime owner/replication/checkpoint currency contract after its meaning is confirmed",
+    "ForbiddenFallbacks": [
+      "Workspace default Currency=0 as wallet",
+      "GMU as Gold",
+      "Item quantity as Gold",
+      "Re-roll CoinAmount",
+      "Permanent Wallet settlement by inference"
+    ]
+  },
+  "ChangedRuntimeSharedSources": [],
+  "ChangedDeployedFiles": [],
+  "ChangedProtectedFiles": [],
+  "TestsRun": false,
+  "BuildsRun": false,
+  "DatabaseOperationsRun": false,
+  "ServicesChanged": false,
+  "NativeLaunched": false,
+  "EditorClosed": false,
+  "RuntimeHelperAdded": false,
+  "AccessBlocked": false,
+  "UncertainMutation": false,
+  "ReadyBlockingGateRetried": false,
+  "Published": false,
+  "CommittedOrPushed": false,
+  "NextIndependentAuthorisedDirection": "Existing checkpoint HTTP lost-response / Receipt / Head recovery verification, with isolated state and no final settlement"
+}

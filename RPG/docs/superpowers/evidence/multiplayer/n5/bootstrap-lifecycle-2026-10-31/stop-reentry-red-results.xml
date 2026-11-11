@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-31 10:20:07Z" end-time="2026-10-31 10:20:08Z" duration="0.3729332">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="2959" result="Failed" site="Child" start-time="2026-10-31 10:20:07Z" end-time="2026-10-31 10:20:08Z" duration="0.372933" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2832" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="201" result="Failed" site="Child" start-time="2026-10-31 10:20:07Z" end-time="2026-10-31 10:20:08Z" duration="0.332509" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25660" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2833" name="Game" fullname="Game" runstate="Runnable" testcasecount="201" result="Failed" site="Child" start-time="2026-10-31 10:20:07Z" end-time="2026-10-31 10:20:08Z" duration="0.314936" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2834" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="201" result="Failed" site="Child" start-time="2026-10-31 10:20:07Z" end-time="2026-10-31 10:20:08Z" duration="0.299427" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2835" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="201" result="Failed" site="Child" start-time="2026-10-31 10:20:07Z" end-time="2026-10-31 10:20:08Z" duration="0.284147" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2574" name="AuthorityTickFailureTests" fullname="Game.Multiplayer.Tests.AuthorityTickFailureTests" classname="Game.Multiplayer.Tests.AuthorityTickFailureTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-10-31 10:20:07Z" end-time="2026-10-31 10:20:08Z" duration="0.281624" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="2578" name="MaterialStepCanStopWorldSynchronouslyWithoutDereferencingReleasedOwners" fullname="Game.Multiplayer.Tests.AuthorityTickFailureTests.MaterialStepCanStopWorldSynchronouslyWithoutDereferencingReleasedOwners" classname="Game.Multiplayer.Tests.AuthorityTickFailureTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-10-31 10:20:07Z" end-time="2026-10-31 10:20:08Z" duration="0.245255" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2576" name="MaterialStepCanStopWorldSynchronouslyWithoutDereferencingReleasedOwners(False)" fullname="Game.Multiplayer.Tests.AuthorityTickFailureTests.MaterialStepCanStopWorldSynchronouslyWithoutDereferencingReleasedOwners(False)" methodname="MaterialStepCanStopWorldSynchronouslyWithoutDereferencingReleasedOwners" classname="Game.Multiplayer.Tests.AuthorityTickFailureTests" runstate="Runnable" seed="743131687" result="Failed" start-time="2026-10-31 10:20:07Z" end-time="2026-10-31 10:20:08Z" duration="0.222172" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.NullReferenceException: Object reference not set to an instance of an object
+  at Game.Multiplayer.OnlineWorldBootstrap.AfterPhysics (System.Single dt, System.UInt32 tick) [0x0011d] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Multiplayer\Movement\OnlineWorldBootstrap.cs:496 
+  at Game.Multiplayer.Tests.AuthorityTickFailureTests+<>c__DisplayClass2_0.<MaterialStepCanStopWorldSynchronouslyWithoutDereferencingReleasedOwners>b__0 () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AuthorityTickFailureTests.cs:156 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00000] in <f577cd9686154d6ab10efd7e65e64366>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00041] in <f577cd9686154d6ab10efd7e65e64366>:0 >
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.AuthorityTickFailureTests.MaterialStepCanStopWorldSynchronouslyWithoutDereferencingReleasedOwners (System.Boolean diagnosticDriver) [0x0026c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AuthorityTickFailureTests.cs:156
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2577" name="MaterialStepCanStopWorldSynchronouslyWithoutDereferencingReleasedOwners(True)" fullname="Game.Multiplayer.Tests.AuthorityTickFailureTests.MaterialStepCanStopWorldSynchronouslyWithoutDereferencingReleasedOwners(True)" methodname="MaterialStepCanStopWorldSynchronouslyWithoutDereferencingReleasedOwners" classname="Game.Multiplayer.Tests.AuthorityTickFailureTests" runstate="Runnable" seed="1906702796" result="Failed" start-time="2026-10-31 10:20:08Z" end-time="2026-10-31 10:20:08Z" duration="0.010777" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: No Exception to be thrown
+  But was:  <System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.NullReferenceException: Object reference not set to an instance of an object
+  at Game.Multiplayer.OnlineWorldBootstrap.AfterPhysics (System.Single dt, System.UInt32 tick) [0x0011d] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Multiplayer\Movement\OnlineWorldBootstrap.cs:496 
+  at Game.Multiplayer.AuthorityTickDriver.Update () [0x00139] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Multiplayer\Movement\AuthorityTickDriver.cs:56 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+   --- End of inner exception stack trace ---
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at Game.Multiplayer.Tests.AuthorityTickFailureTests+<>c__DisplayClass2_0.<MaterialStepCanStopWorldSynchronouslyWithoutDereferencingReleasedOwners>b__1 () [0x00000] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AuthorityTickFailureTests.cs:150 
+  at NUnit.Framework.Constraints.ThrowsConstraint+VoidInvocationDescriptor.Invoke () [0x00000] in <f577cd9686154d6ab10efd7e65e64366>:0 
+  at NUnit.Framework.Constraints.ThrowsConstraint+ExceptionInterceptor.Intercept (System.Object invocation) [0x00041] in <f577cd9686154d6ab10efd7e65e64366>:0 >
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.AuthorityTickFailureTests.MaterialStepCanStopWorldSynchronouslyWithoutDereferencingReleasedOwners (System.Boolean diagnosticDriver) [0x00231] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AuthorityTickFailureTests.cs:150
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="2575" name="OutputFaultDuringFirstCatchupTick_StopsPhysicsAndRemainingCatchupTicks" fullname="Game.Multiplayer.Tests.AuthorityTickFailureTests.OutputFaultDuringFirstCatchupTick_StopsPhysicsAndRemainingCatchupTicks" methodname="OutputFaultDuringFirstCatchupTick_StopsPhysicsAndRemainingCatchupTicks" classname="Game.Multiplayer.Tests.AuthorityTickFailureTests" runstate="Runnable" seed="1707798334" result="Passed" start-time="2026-10-31 10:20:08Z" end-time="2026-10-31 10:20:08Z" duration="0.025110" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+[OnlineCombat] 输出超出受控 Prefab 表或复制容量，权威世界已停止。
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

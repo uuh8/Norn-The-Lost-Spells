@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="724fed44-d3ba-43b2-b589-24e792c9817e" name="zhy@ZHY 2026-11-03 18:30:43" runUser="ZHY\zhy" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T18:30:43.2589075+08:00" queuing="2026-11-03T18:30:43.2589082+08:00" start="2026-11-03T18:30:39.6662354+08:00" finish="2026-11-03T18:30:45.4027559+08:00" />
+  <TestSettings name="default" id="2d0bc1e6-b9d0-4c22-8254-7b1d894e6092">
+    <Deployment runDeploymentRoot="zhy_ZHY_2026-11-03_18_30_43" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="edfe42ec-37a9-4697-9171-65dd72e123e5" testId="6e22f924-e927-bdb4-1c18-bbec2870585a" testName="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ConcurrentFirstProfilesRepairLegacyMissingBagExactlyOnce" computerName="ZHY" duration="00:00:00.4225170" startTime="2026-11-03T18:30:44.8882076+08:00" endTime="2026-11-03T18:30:45.3109470+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="edfe42ec-37a9-4697-9171-65dd72e123e5" />
+    <UnitTestResult executionId="15e5f967-475b-4ce7-8da4-53370e6c315f" testId="99df891a-cb61-42a6-fa17-a501b2d33a5e" testName="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_LeasedProfileKeepsTheFrozenBagAndNeverRepairsPersistentRows" computerName="ZHY" duration="00:00:01.0449947" startTime="2026-11-03T18:30:42.1522827+08:00" endTime="2026-11-03T18:30:43.1799163+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="15e5f967-475b-4ce7-8da4-53370e6c315f" />
+    <UnitTestResult executionId="b53fd1c3-b90b-4264-824c-eb486ee2864d" testId="ebbe5e84-6db0-fb7a-0002-3d2338fd4212" testName="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_StructuredMoveCannotUnequipTheLastBagOrCommitAReceipt" computerName="ZHY" duration="00:00:00.4409151" startTime="2026-11-03T18:30:43.7551460+08:00" endTime="2026-11-03T18:30:44.1960049+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b53fd1c3-b90b-4264-824c-eb486ee2864d" />
+    <UnitTestResult executionId="4e6d1e25-7fc4-4f50-871e-8578fa0d452c" testId="5ceee9ab-017a-8e58-562b-fa00a2aec713" testName="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_FirstProfileRestoresTheOriginalWarehouseGrantWithoutReissuing" computerName="ZHY" duration="00:00:00.6913797" startTime="2026-11-03T18:30:44.1963052+08:00" endTime="2026-11-03T18:30:44.8879040+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4e6d1e25-7fc4-4f50-871e-8578fa0d452c" />
+    <UnitTestResult executionId="286fc2aa-c6a9-4a56-b29e-c68fc923b425" testId="d141b714-e6da-a25f-8779-112d4ad07f93" testName="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ExistingLargerEquippedBagIsKeptWithoutGrantOrVersionChange" computerName="ZHY" duration="00:00:00.5748069" startTime="2026-11-03T18:30:43.1826393+08:00" endTime="2026-11-03T18:30:43.7546040+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="286fc2aa-c6a9-4a56-b29e-c68fc923b425" />
+    <UnitTestResult executionId="762c0061-d348-4f30-a543-8c363473efc3" testId="34235ec6-ebec-1be0-9bcf-bea4c79a877e" testName="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead" computerName="ZHY" duration="00:00:01.1675031" startTime="2026-11-03T18:30:40.9386739+08:00" endTime="2026-11-03T18:30:42.1307580+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="762c0061-d348-4f30-a543-8c363473efc3">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Created&#xD;
+Actual:   BadRequest</Message>
+          <StackTrace>   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 27&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 43&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="34235ec6-ebec-1be0-9bcf-bea4c79a877e">
+      <Execution id="762c0061-d348-4f30-a543-8c363473efc3" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.EntryBackpackTests" name="AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_FirstProfileRestoresTheOriginalWarehouseGrantWithoutReissuing" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="5ceee9ab-017a-8e58-562b-fa00a2aec713">
+      <Execution id="4e6d1e25-7fc4-4f50-871e-8578fa0d452c" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.EntryBackpackTests" name="AccountBaselineBackpack_FirstProfileRestoresTheOriginalWarehouseGrantWithoutReissuing" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_LeasedProfileKeepsTheFrozenBagAndNeverRepairsPersistentRows" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="99df891a-cb61-42a6-fa17-a501b2d33a5e">
+      <Execution id="15e5f967-475b-4ce7-8da4-53370e6c315f" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.EntryBackpackTests" name="AccountBaselineBackpack_LeasedProfileKeepsTheFrozenBagAndNeverRepairsPersistentRows" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_StructuredMoveCannotUnequipTheLastBagOrCommitAReceipt" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="ebbe5e84-6db0-fb7a-0002-3d2338fd4212">
+      <Execution id="b53fd1c3-b90b-4264-824c-eb486ee2864d" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.EntryBackpackTests" name="AccountBaselineBackpack_StructuredMoveCannotUnequipTheLastBagOrCommitAReceipt" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ConcurrentFirstProfilesRepairLegacyMissingBagExactlyOnce" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="6e22f924-e927-bdb4-1c18-bbec2870585a">
+      <Execution id="edfe42ec-37a9-4697-9171-65dd72e123e5" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.EntryBackpackTests" name="AccountBaselineBackpack_ConcurrentFirstProfilesRepairLegacyMissingBagExactlyOnce" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ExistingLargerEquippedBagIsKeptWithoutGrantOrVersionChange" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="d141b714-e6da-a25f-8779-112d4ad07f93">
+      <Execution id="286fc2aa-c6a9-4a56-b29e-c68fc923b425" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.EntryBackpackTests" name="AccountBaselineBackpack_ExistingLargerEquippedBagIsKeptWithoutGrantOrVersionChange" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="6e22f924-e927-bdb4-1c18-bbec2870585a" executionId="edfe42ec-37a9-4697-9171-65dd72e123e5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="99df891a-cb61-42a6-fa17-a501b2d33a5e" executionId="15e5f967-475b-4ce7-8da4-53370e6c315f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ebbe5e84-6db0-fb7a-0002-3d2338fd4212" executionId="b53fd1c3-b90b-4264-824c-eb486ee2864d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5ceee9ab-017a-8e58-562b-fa00a2aec713" executionId="4e6d1e25-7fc4-4f50-871e-8578fa0d452c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d141b714-e6da-a25f-8779-112d4ad07f93" executionId="286fc2aa-c6a9-4a56-b29e-c68fc923b425" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="34235ec6-ebec-1be0-9bcf-bea4c79a877e" executionId="762c0061-d348-4f30-a543-8c363473efc3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="6" executed="6" passed="5" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.13)&#xD;
+[xUnit.net 00:00:00.37]   Discovering: Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.59]   Discovered:  Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.64]   Starting:    Norn.Business.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:01.86]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:01.86]       Expected: Created&#xD;
+[xUnit.net 00:00:01.86]       Actual:   BadRequest&#xD;
+[xUnit.net 00:00:01.86]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.87]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(27,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead()&#xD;
+[xUnit.net 00:00:01.87]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(43,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead()&#xD;
+[xUnit.net 00:00:01.87]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:05.05]   Finished:    Norn.Business.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-03T18:30:42.1354058+08:00">
+        <Text>[xUnit.net 00:00:01.86]     Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

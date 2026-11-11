@@ -156,7 +156,12 @@ namespace Game.Combat.Tests
                 AssetDatabase.LoadAssetAtPath<MaterialReactionBindingProfile>(DefaultBindingsPath);
             Assert.That(profile, Is.Not.Null);
 
-            MaterialReactionCatalogSnapshot snapshot = profile.CreateSnapshot(_materials.CreateSnapshot());
+            // 正式 Binding 已覆盖 Sticky；此用例必须用完整正式材料目录验证资产接线。
+            // 不扩充共享 SetUp：其他用例仍依赖三材料子集验证未知 Sticky 会被严格拒绝。
+            MaterialCatalog materials = AssetDatabase.LoadAssetAtPath<MaterialCatalog>(
+                "Assets/_Project/ScriptableObjects/Materials/MaterialCatalog_Default.asset");
+            Assert.That(materials, Is.Not.Null);
+            MaterialReactionCatalogSnapshot snapshot = profile.CreateSnapshot(materials.CreateSnapshot());
             Assert.That(snapshot.TryResolve(MaterialId.Water, MaterialId.Fire, out ElementReactionId reaction), Is.True);
             Assert.That(reaction, Is.EqualTo(ElementReactionId.Extinguish));
             Assert.That(snapshot.TryResolve(MaterialId.Poison, MaterialId.Fire, out ElementReactionId toxic), Is.True);

@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="b36e277d-fffa-4aeb-bc48-a24443006f98" name="zhy@ZHY 2026-11-01 15:44:26" runUser="ZHY\zhy" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-01T15:44:26.8620858+08:00" queuing="2026-11-01T15:44:26.8620871+08:00" start="2026-11-01T15:44:25.1436444+08:00" finish="2026-11-01T15:44:26.8710635+08:00" />
+  <TestSettings name="default" id="02e7de4a-03a8-46c0-afb1-b21cadad656a">
+    <Deployment runDeploymentRoot="zhy_ZHY_2026-11-01_15_44_26" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="a93470d1-0c7c-4475-996c-61370481c06a" testId="02c41314-f638-6c7e-8a4e-dc4b6591132e" testName="Norn.Business.Tests.ContainerInventoryMigrationTests.AddedSchemaPreservesLegacyAssets_AllowsSeveralGridItems_AndEnforcesContainerAndParentConstraints" computerName="ZHY" duration="00:00:00.1901553" startTime="2026-11-01T15:44:26.3992846+08:00" endTime="2026-11-01T15:44:26.6186395+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a93470d1-0c7c-4475-996c-61370481c06a">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Contains() Failure: Filter not matched in collection&#xD;
+Collection: ["Norn.Business.Migrations.001_online.sql", "Norn.Business.Migrations.002_rooms.sql", "Norn.Business.Migrations.003_instances.sql", "Norn.Business.Migrations.004_room_lobby.sql", "Norn.Business.Migrations.005_owned_combat.sql"]</Message>
+          <StackTrace>   at Norn.Business.Tests.ContainerInventoryTestSeed.RequireMigrationResource() in F:\Develop Project\RPG\Server\Norn.Business.Tests\ContainerInventoryMigrationTests.cs:line 92&#xD;
+   at Norn.Business.Tests.ContainerInventoryMigrationTests.AddedSchemaPreservesLegacyAssets_AllowsSeveralGridItems_AndEnforcesContainerAndParentConstraints() in F:\Develop Project\RPG\Server\Norn.Business.Tests\ContainerInventoryMigrationTests.cs:line 17&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Norn.Business.Tests.ContainerInventoryMigrationTests.AddedSchemaPreservesLegacyAssets_AllowsSeveralGridItems_AndEnforcesContainerAndParentConstraints" storage="f:\develop project\rpg\server\norn.business.tests\bin\debug\net10.0\norn.business.tests.dll" id="02c41314-f638-6c7e-8a4e-dc4b6591132e">
+      <Execution id="a93470d1-0c7c-4475-996c-61370481c06a" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Debug\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.ContainerInventoryMigrationTests" name="AddedSchemaPreservesLegacyAssets_AllowsSeveralGridItems_AndEnforcesContainerAndParentConstraints" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="02c41314-f638-6c7e-8a4e-dc4b6591132e" executionId="a93470d1-0c7c-4475-996c-61370481c06a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" passed="0" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.13)&#xD;
+[xUnit.net 00:00:00.20]   Discovering: Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.34]   Discovered:  Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.39]   Starting:    Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.65]       Assert.Contains() Failure: Filter not matched in collection&#xD;
+[xUnit.net 00:00:00.65]       Collection: ["Norn.Business.Migrations.001_online.sql", "Norn.Business.Migrations.002_rooms.sql", "Norn.Business.Migrations.003_instances.sql", "Norn.Business.Migrations.004_room_lobby.sql", "Norn.Business.Migrations.005_owned_combat.sql"]&#xD;
+[xUnit.net 00:00:00.65]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.66]         F:\Develop Project\RPG\Server\Norn.Business.Tests\ContainerInventoryMigrationTests.cs(92,0): at Norn.Business.Tests.ContainerInventoryTestSeed.RequireMigrationResource()&#xD;
+[xUnit.net 00:00:00.66]         F:\Develop Project\RPG\Server\Norn.Business.Tests\ContainerInventoryMigrationTests.cs(17,0): at Norn.Business.Tests.ContainerInventoryMigrationTests.AddedSchemaPreservesLegacyAssets_AllowsSeveralGridItems_AndEnforcesContainerAndParentConstraints()&#xD;
+[xUnit.net 00:00:00.66]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.68]   Finished:    Norn.Business.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-01T15:44:26.6241014+08:00">
+        <Text>[xUnit.net 00:00:00.65]     Norn.Business.Tests.ContainerInventoryMigrationTests.AddedSchemaPreservesLegacyAssets_AllowsSeveralGridItems_AndEnforcesContainerAndParentConstraints [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

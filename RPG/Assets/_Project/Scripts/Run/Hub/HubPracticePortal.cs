@@ -19,13 +19,13 @@ namespace Game.Run
         public string InteractionLabel => _returnToHub ? "F 返回据点" : _scenePath != null && _scenePath.Contains("P7") ? "F 进入P7练习" : "F 进入P8练习";
         public bool CanInteract(Collider actor) => !_entered && _player != null && actor != null && actor.transform.IsChildOf(_player)
             && PortalInteractionRegistry.Contains(_trigger, actor) && (_returnToHub ? HubPracticeSession.Current != null && !HubPracticeSession.Current.Loading
-                : _session?.RunCoordinator?.State.Phase == RaidPhase.HubReady && _session.RunCoordinator.ActionsAllowed);
+                : _session?.RunCoordinator?.CanChooseDungeonEntry == true);
         public bool Interact(Collider actor) => CanInteract(actor) && (_returnToHub ? TryEnter(actor) : _choice.Request(actor));
         public int PortalId => gameObject.GetInstanceID();
         private void Awake()
         {
             _trigger = GetComponent<Collider>(); PortalTransitionCoordinator.EnsureVisual(transform);
-            _choice = new DungeonEntryChoiceGate(PortalId, _scenePath, InteractionLabel, CanInteract, TryEnter, BeginChoice, EndChoice);
+            _choice = new DungeonEntryChoiceGate(PortalId, _scenePath, InteractionLabel, CanInteract, BeginChoice, EndChoice);
         }
         private bool BeginChoice() => _session?.RunCoordinator?.TryBeginDungeonEntryChoice() == true;
         private void EndChoice() => _session?.RunCoordinator?.EndDungeonEntryChoice();

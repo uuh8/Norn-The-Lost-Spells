@@ -107,21 +107,8 @@ namespace Game.Run
         private void SpawnReturnGate()
         {
             if(_returnGate!=null || _workspace==null || _workspace.Player==null)return;
-            var actor=_workspace.Player;Vector3 position=actor.position;
-            // 优先玩家附近可站立地面，避免Boss死亡点在悬崖/树冠/障碍里。只在一次胜利时查询，不进热路径。
-            for(int i=0;i<8;i++)
-            {
-                Vector3 offset=Quaternion.Euler(0,i*45,0)*actor.right*4;
-                Vector3 point=actor.position+offset;
-                if(!Physics.Raycast(point+Vector3.up*5,Vector3.down,out var ground,12,~0,QueryTriggerInteraction.Ignore)
-                    || ground.normal.y<.6f)continue;
-                point.y=ground.point.y;
-                if(Physics.CheckCapsule(point+Vector3.up,point+Vector3.up*3,.8f,~0,QueryTriggerInteraction.Ignore))continue;
-                position=point;break;
-            }
-            Vector3 direction=actor.position-position;direction.y=0;
-            var rotation=direction.sqrMagnitude>.01f?Quaternion.LookRotation(direction):actor.rotation;
-            var portal=Instantiate(_returnPrefab,position,rotation);SceneManager.MoveGameObjectToScene(portal,_workspace.gameObject.scene);
+            var actor=_workspace.Player;var pose=ReturnPortalPlacement.Resolve(actor);
+            var portal=Instantiate(_returnPrefab,pose.position,pose.rotation);SceneManager.MoveGameObjectToScene(portal,_workspace.gameObject.scene);
             portal.name="返回据点传送门";_returnGate=portal.GetComponent<HubPracticePortal>();_returnGate.ConfigureReturn(actor);
         }
         public bool HasBossCheckpoint => _bossCheckpoint != null;

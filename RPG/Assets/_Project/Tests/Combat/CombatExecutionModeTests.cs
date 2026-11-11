@@ -288,6 +288,96 @@ namespace Game.Combat.Tests
             Assert.That(health.CurrentHp, Is.EqualTo(90), "首跳应由当前归属的 World 唯一执行。");
         }
 
+        [Test]
+        public void AuthorityWriteGateBlocksRawDamageManaAndStatusButDoesNotPreventInitialAssembly()
+        {
+            var world = World(); bool allowed = false; ConfigureWriteGate(world, () => allowed);
+            var health = Health(); var mana = health.gameObject.AddComponent<ManaComponent>(); var status = health.gameObject.AddComponent<StatusController>();
+            Set(mana, "_currentMana", 50f); Configure(health, "Authority", world); Configure(mana, "Authority", world); Configure(status, "Authority", world);
+            Assert.That(health.CurrentHp, Is.EqualTo(100f)); Assert.That(mana.CurrentMana, Is.EqualTo(50f));
+            var hit = Hit(); health.ReceiveHit(hit); status.ApplyStatus(StatusKind.Burning, 45, 1, 2); status.ApplySustainedStatus(StatusKind.Wet, 20, 1, 2, 1);
+            Assert.That(health.CurrentHp, Is.EqualTo(100f)); Assert.That(_damageEvents, Is.Zero); Assert.That(mana.Spend(10), Is.False);
+            Assert.That(mana.CurrentMana, Is.EqualTo(50f)); Assert.That(status.HasStatus(StatusKind.Burning), Is.False); Assert.That(status.GetIntensity(StatusKind.Wet), Is.Zero);
+            allowed = true; health.ReceiveHit(hit); status.ApplyStatus(StatusKind.Burning, 45, 1, 2);
+            Assert.That(health.CurrentHp, Is.EqualTo(75f)); Assert.That(mana.Spend(10), Is.True); Assert.That(mana.CurrentMana, Is.EqualTo(40f)); Assert.That(status.HasStatus(StatusKind.Burning), Is.True);
+        }
+
+        [Test]
+        public void AWriteGateClosedByTheFirstDamageCallbackRejectsTheNextRawTargetInTheSameFrame()
+        {
+            var world = World(); bool allowed = true; ConfigureWriteGate(world, () => allowed);
+            var first = Health(); var second = Health(); Configure(first, "Authority", world); Configure(second, "Authority", world);
+            Action<DamageReceivedEvent> stopAndHitNext = damage =>
+            { if (damage.TargetId == first.Id) { allowed = false; var next = Hit(); second.ReceiveHit(next); } };
+            EventBus<DamageReceivedEvent>.Subscribe(stopAndHitNext);
+            try
+            {
+                var hit = Hit(); first.ReceiveHit(hit);
+                Assert.That(first.CurrentHp, Is.EqualTo(75f)); Assert.That(second.CurrentHp, Is.EqualTo(100f)); Assert.That(_damageEvents, Is.EqualTo(1));
+            }
+            finally { EventBus<DamageReceivedEvent>.Unsubscribe(stopAndHitNext); }
+        }
+
+        [Test]
+        public void ClosedWriteGatePreservesExistingProjectileTriggerStatusAndManaWithoutAdvancingOrCancellingThem()
+        {
+            var world = World(); bool allowed = true; ConfigureWriteGate(world, () => allowed);
+            var projectile = Projectile(); Configure(projectile, "Authority", world); projectile.ArmTimedTrigger(.5f);
+            int terminations = 0; projectile.Terminated += (_, __, ___) => terminations++;
+            var mana = Root("WriteGate Mana").AddComponent<ManaComponent>(); Set(mana, "_currentMana", 20f); Set(mana, "_manaRegenPerSecond", 10f); Configure(mana, "Authority", world);
+            var status = Root("WriteGate Status").AddComponent<StatusController>(); Configure(status, "Authority", world); status.ApplyStatus(StatusKind.Wet, 60, 1, 2);
+            Step(world, "StepBeforePhysics", .1f, 1); Step(world, "StepAfterPhysics", .1f, 1);
+            float lifetime = Get<float>(projectile, "_lifetimeRemaining"), trigger = Get<float>(projectile, "_timedTriggerRemaining"), intensity = status.GetIntensity(StatusKind.Wet), currentMana = mana.CurrentMana;
+            allowed = false; Begin(world, 2); Step(world, "StepBeforePhysics", 30, 2); Step(world, "StepAfterPhysics", 30, 2);
+            // 直接Step也必须读同一动态门，不能绕过World的外层暂停；失败Tick不积累补跑债务。
+            Step(projectile, "StepAuthority", 30, 2); Step(mana, "StepAuthority", 30, 2); Step(status, "StepAuthority", 30, 2);
+            Assert.That((uint)world.GetType().GetProperty("CurrentTick").GetValue(world), Is.EqualTo(1u));
+            Assert.That(Get<float>(projectile, "_lifetimeRemaining"), Is.EqualTo(lifetime)); Assert.That(Get<float>(projectile, "_timedTriggerRemaining"), Is.EqualTo(trigger));
+            Assert.That(Get<bool>(projectile, "_timedTriggerArmed"), Is.True); Assert.That(Get<bool>(projectile, "_consumed"), Is.False); Assert.That(Get<bool>(projectile, "_terminated"), Is.False);
+            Assert.That(projectile.isActiveAndEnabled, Is.True); Assert.That(terminations, Is.Zero); Assert.That(status.GetIntensity(StatusKind.Wet), Is.EqualTo(intensity)); Assert.That(mana.CurrentMana, Is.EqualTo(currentMana));
+            allowed = true; Step(world, "StepBeforePhysics", .1f, 3); Step(world, "StepAfterPhysics", .1f, 3);
+            Assert.That(Get<float>(projectile, "_lifetimeRemaining"), Is.EqualTo(lifetime - .1f).Within(.0001f)); Assert.That(Get<float>(projectile, "_timedTriggerRemaining"), Is.EqualTo(trigger - .1f).Within(.0001f));
+            Assert.That(mana.CurrentMana, Is.EqualTo(currentMana + 1).Within(.0001f)); Assert.That(terminations, Is.Zero);
+        }
+
+        [Test]
+        public void AnAuthorityAreaRechecksItsWriteGateBetweenTargetsAfterOneHitClosesIt()
+        {
+            var world = World(); bool allowed = true; ConfigureWriteGate(world, () => allowed); Begin(world, 10);
+            var first = Health(); var second = Health(); first.gameObject.AddComponent<BoxCollider>(); second.gameObject.AddComponent<BoxCollider>();
+            // 目标保留原DamageFunnel默认模式，证明施加方自身重查门，不能偶然依靠目标的Authority门兜底。
+            var area = Root("WriteGate Area").AddComponent<AreaDamage>(); area.Init(99, 2); area.ConfigureDamage(10, DamageType.True); Configure(area, "Authority", world); Physics.SyncTransforms();
+            Action<DamageReceivedEvent> stop = damage => { if (damage.TargetId == first.Id || damage.TargetId == second.Id) allowed = false; };
+            EventBus<DamageReceivedEvent>.Subscribe(stop);
+            try
+            {
+                Step(world, "StepAfterPhysics", .1f, 10);
+                Assert.That(first.CurrentHp + second.CurrentHp, Is.EqualTo(190f)); Assert.That(_damageEvents, Is.EqualTo(1)); Assert.That(area.isActiveAndEnabled, Is.True);
+            }
+            finally { EventBus<DamageReceivedEvent>.Unsubscribe(stop); }
+        }
+
+        [Test]
+        public void ClosedAuthorityWriteGateRejectsReflectionWithoutChangingSinglePlayerOrReplicaRules()
+        {
+            var world = World(); bool allowed = false; ConfigureWriteGate(world, () => allowed);
+            var root = Root("WriteGate Reflection"); var body = root.AddComponent<Rigidbody>(); root.AddComponent<SphereCollider>(); var projectile = root.AddComponent<CombatExecutionTestProjectile>();
+            projectile.Init(1, 1, 10, DamageType.True, Vector3.forward * 10, null, false); Configure(projectile, "Authority", world);
+            Vector3 position = body.position, velocity = body.linearVelocity;
+            Assert.That(projectile.ReflectByShield(Vector3.back, 2, 99), Is.False); Assert.That(body.position, Is.EqualTo(position)); Assert.That(body.linearVelocity, Is.EqualTo(velocity));
+            Assert.That(Get<int>(projectile, "_attackerId"), Is.EqualTo(1)); Assert.That(Get<byte>(projectile, "_attackerTeam"), Is.EqualTo(1)); Assert.That(Get<bool>(projectile, "_consumed"), Is.False);
+            var local = Health(); Configure(local, "SinglePlayer", world); var replica = Health(); Configure(replica, "Replica", world); var hit = Hit(); local.ReceiveHit(hit); replica.ReceiveHit(hit);
+            Assert.That(local.CurrentHp, Is.EqualTo(75f)); Assert.That(replica.CurrentHp, Is.EqualTo(100f));
+            allowed = true; Assert.That(projectile.ReflectByShield(Vector3.back, 2, 99), Is.True); Assert.That(Get<int>(projectile, "_attackerId"), Is.EqualTo(99));
+        }
+
+        private static void ConfigureWriteGate(object world, Func<bool> gate)
+        {
+            var method = world.GetType().GetMethod("ConfigureAuthorityWriteGate", new[] { typeof(Func<bool>) });
+            Assert.That(method, Is.Not.Null, "Combat必须复用当前世界的动态最终写门；只挡Tick不能保护raw伤害/状态/Physics回调。");
+            method.Invoke(world, new object[] { gate });
+        }
+
         private GameObject Root(string name)
         {
             var root = new GameObject("Combat Execution " + name);

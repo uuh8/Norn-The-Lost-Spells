@@ -3,6 +3,7 @@ using Dapper;
 using Game.NetworkProtocol;
 using Norn.Business.Content;
 using Norn.Business.Features.Inventory;
+using Norn.Business.Features.Runs;
 using Norn.Business.Infrastructure;
 
 namespace Norn.Business.Features.Accounts;
@@ -27,12 +28,19 @@ public static class AccountEndpoints
         group.MapGet("/profile", async (HttpContext context, InventoryService inventory, ContentManifestValidator content) =>
         {
             RequireContent(context, content);
-            return Results.Json(await inventory.GetProfileAsync(Player(context), context.RequestAborted));
+            return Results.Json(await inventory.GetProfileAsync(Player(context), context.RequestAborted,
+                AccountService.PracticeSessionScope(SessionAuthenticationHandler.ReadToken(context.Request)!)));
         }).RequireAuthorization();
         group.MapPost("/inventory/move", async (InventoryMoveRequest request, HttpContext context, InventoryService inventory, ContentManifestValidator content) =>
         {
             RequireContent(context, content);
             return Results.Json(await inventory.TryApplyInventoryAsync(Player(context), request, context.RequestAborted));
+        }).RequireAuthorization();
+        // 成功退出后Party席位已移除，查询不能再RequireMember；真实Session仍只能查询本人收据。
+        group.MapGet("/runs/{run}/member-exit",async(string run,HttpContext context,RunMemberExitService exits,ContentManifestValidator content)=>
+        {
+            RequireContent(context,content);
+            return Results.Json(await exits.FindForPlayerAsync(Player(context),run,context.RequestAborted));
         }).RequireAuthorization();
         app.MapGet("/health/ready", async (OnlineDatabase database, CancellationToken ct) =>
         {

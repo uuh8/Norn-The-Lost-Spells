@@ -67,6 +67,8 @@ namespace Game.Character
         private Vector3 _activeCastAimPoint;      // 本次攻击已消费的瞄准点；动画出手前保持不变
         private readonly RaycastHit[] _aimHits = new RaycastHit[16]; // 点按锁存瞄准用射线缓冲（预分配，零每帧 GC）
         private bool _onlineActionPresentation;
+        // 出手结束不等于 Animator 已退出：只保护自然收尾，绝不阻塞移动 FSM 或增加施法冷却。
+        private bool _onlineActionNaturalExitPending;
 
         private int _airAttackStateHash;
 
@@ -85,13 +87,29 @@ namespace Game.Character
         /// <summary>线上移动 FSM 继续模拟走跳，但活跃施法 Overlay 暂时拥有 Animator，避免空中逻辑覆盖攻击动画。</summary>
         public void SetOnlineActionPresentation(bool active)
         {
-            if (ExecutionMode == PlayerExecutionMode.SinglePlayer || _onlineActionPresentation == active) return;
+            if (ExecutionMode == PlayerExecutionMode.SinglePlayer
+                || _onlineActionPresentation == active && (active || !_onlineActionNaturalExitPending)) return;
             _onlineActionPresentation = active;
+            // 新动作取代上一尾段；显式取消也必须能结束已释放的尾段，不能因 live bool 已为 false 而早退。
+            _onlineActionNaturalExitPending = false;
             if (active || Animator == null || Animator.runtimeAnimatorController == null || Health != null && !Health.IsAlive) return;
-            // 攻击被拒绝、释放或菜单取消后，显式交还实际 locomotion；不能等待不存在的 FSM 攻击态 Exit。
+            // 攻击被拒绝或菜单取消后显式交还 locomotion；自然释放只由 Finish 路径等原 Animator EXIT。
             int target = GroundChecker != null && GroundChecker.IsGrounded
                 ? MoveInput.sqrMagnitude >= .01f ? RunHash : IdleHash : JumpAirHash;
             Animator.CrossFadeInFixedTime(target, Mathf.Max(0, _jumpOtherBlendDuration), 0, 0);
+        }
+
+        /// <summary>
+        /// 正常出手只交还动画所有权，保留作者配置的 Attack EXIT 继续收尾。
+        /// 出手阈值早于动画退出阈值，若复用取消路径立即 CrossFade Idle，每一发都会截断剩余姿态。
+        /// 受击、死亡、失焦与明确取消仍走 SetOnlineActionPresentation(false)，及时退出已失效的动作。
+        /// </summary>
+        public void FinishOnlineActionPresentation()
+        {
+            // Prediction 与 Released 收据可能先后各调用一次。已取消/已释放时不可重新授予尾段保护。
+            if (ExecutionMode == PlayerExecutionMode.SinglePlayer || !_onlineActionPresentation) return;
+            _onlineActionPresentation = false;
+            _onlineActionNaturalExitPending = true;
         }
 
         /// <summary>Scene-local工作区在角色Awake后就绪，显式更新缓存，避免新背包仍走旧Library施法。</summary>
@@ -144,6 +162,8 @@ namespace Game.Character
 
         protected override void OnDisable()
         {
+            // 场景停用/重入不继承上一动作的表现资格。Driver 的取消可先于或晚于本回调，均无残留。
+            _onlineActionPresentation = _onlineActionNaturalExitPending = false;
             if (ExecutionMode != PlayerExecutionMode.SinglePlayer)
             {
                 base.OnDisable();
@@ -224,6 +244,16 @@ namespace Game.Character
             bool isAirborneLocomotion = ReferenceEquals(StateMachine.CurrentState, AirborneState);
             bool isGroundedLocomotion = ReferenceEquals(StateMachine.CurrentState, GroundedState) ||
                                         ReferenceEquals(StateMachine.CurrentState, SlidingState);
+
+            if (_onlineActionNaturalExitPending)
+            {
+                // 移动与重力已在本次 Simulate 前半段完成，这里只避免自动 JumpAir 抢占尚未自然退出的姿态。
+                // 不用秒数/normalizedTime 猜 Clip 结束：作者 EXIT 真正离开 Current/Next 攻击态后自动归还。
+                // 落地、Dash、死亡或其它动画已经接管时立即释放；下一次施法和显式取消由 Set 路径清理。
+                if (ExecutionMode != PlayerExecutionMode.SinglePlayer && isAirborneLocomotion && !animIsGrounded
+                    && (Health == null || Health.IsAlive) && IsOnlineCastAnimatorPlaying()) return;
+                _onlineActionNaturalExitPending = false;
+            }
 
             if (!isAirborneLocomotion && !isGroundedLocomotion)
                 return; // Dash/Attack 自己拥有动画，直到 Gameplay FSM 回到 locomotion 才重新接管。
@@ -316,6 +346,22 @@ namespace Game.Character
             if (stateHash == JumpAirHash) return JumpAnimationPhase.JumpAir;
             if (stateHash == JumpEndHash) return JumpAnimationPhase.JumpEnd;
             return JumpAnimationPhase.Locomotion;
+        }
+
+        private bool IsOnlineCastAnimatorPlaying()
+        {
+            // 原 EXIT 的混合期也保留完整：Current 仍是 Attack 时不能因 Next 已是 Idle 就重启另一条 CrossFade。
+            return IsOnlineCastAnimatorState(Animator.GetCurrentAnimatorStateInfo(0).shortNameHash)
+                || Animator.IsInTransition(0) && IsOnlineCastAnimatorState(Animator.GetNextAnimatorStateInfo(0).shortNameHash);
+        }
+
+        private bool IsOnlineCastAnimatorState(int hash)
+        {
+            if (_airAttackStateHash != 0 && hash == _airAttackStateHash) return true;
+            if (_comboStateHashes != null)
+                for (int i = 0; i < _comboStateHashes.Length; i++)
+                    if (_comboStateHashes[i] != 0 && hash == _comboStateHashes[i]) return true;
+            return false;
         }
 
         private void CrossFadeJumpState(int targetHash, float duration)

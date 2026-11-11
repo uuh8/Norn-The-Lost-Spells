@@ -30,6 +30,10 @@ namespace Game.UI
 
         private void Awake()
         {
+#if UNITY_SERVER && !UNITY_EDITOR
+            // Dedicated只使用返回门的原Collider和权威许可，不创建Open/Idle/Close视觉实例或Coroutine。
+            enabled = false; return;
+#endif
             _genericPortal = GetComponentInParent<IPortalVisualSource>();
             if (_portal == null) _portal = GetComponentInParent<StageExitPortal>();
             Transform parent = _visualRoot != null ? _visualRoot : transform;

@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="11" result="Failed(Child)" total="11" passed="0" failed="11" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-03 10:01:41Z" end-time="2026-11-03 10:01:47Z" duration="6.4974582">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="4215" result="Failed" site="Child" start-time="2026-11-03 10:01:41Z" end-time="2026-11-03 10:01:47Z" duration="6.497458" total="11" passed="0" failed="11" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1436" name="Game.Character.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.Tests.dll" runstate="Runnable" testcasecount="362" result="Failed" site="Child" start-time="2026-11-03 10:01:41Z" end-time="2026-11-03 10:01:42Z" duration="0.902507" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34452" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1437" name="Game" fullname="Game" runstate="Runnable" testcasecount="362" result="Failed" site="Child" start-time="2026-11-03 10:01:41Z" end-time="2026-11-03 10:01:42Z" duration="0.809784" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1438" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="362" result="Failed" site="Child" start-time="2026-11-03 10:01:41Z" end-time="2026-11-03 10:01:42Z" duration="0.712088" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1439" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="362" result="Failed" site="Child" start-time="2026-11-03 10:01:41Z" end-time="2026-11-03 10:01:41Z" duration="0.611288" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1213" name="N4OnlinePresentationTests" fullname="Game.Character.Tests.N4OnlinePresentationTests" classname="Game.Character.Tests.N4OnlinePresentationTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-11-03 10:01:41Z" end-time="2026-11-03 10:01:41Z" duration="0.508566" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1218" name="NaturalCastReleaseDoesNotSnapTheAimVisualBackToItsMovementRoot" fullname="Game.Character.Tests.N4OnlinePresentationTests.NaturalCastReleaseDoesNotSnapTheAimVisualBackToItsMovementRoot" methodname="NaturalCastReleaseDoesNotSnapTheAimVisualBackToItsMovementRoot" classname="Game.Character.Tests.N4OnlinePresentationTests" runstate="Runnable" seed="1876010637" result="Failed" start-time="2026-11-03 10:01:41Z" end-time="2026-11-03 10:01:41Z" duration="0.375419" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  自然交还 locomotion 必须平滑归还模型朝向，不能每发将 localRotation 瞬间硬归零。
+  Expected: less than 89.0f
+  But was:  90.0f
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.N4OnlinePresentationTests.NaturalCastReleaseDoesNotSnapTheAimVisualBackToItsMovementRoot () [0x0009d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\N4OnlinePresentationTests.cs:108
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1217" name="NaturalCastReleaseKeepsTheOriginalAttackAnimatorExit" fullname="Game.Character.Tests.N4OnlinePresentationTests.NaturalCastReleaseKeepsTheOriginalAttackAnimatorExit" methodname="NaturalCastReleaseKeepsTheOriginalAttackAnimatorExit" classname="Game.Character.Tests.N4OnlinePresentationTests" runstate="Runnable" seed="1519953458" result="Failed" start-time="2026-11-03 10:01:41Z" end-time="2026-11-03 10:01:41Z" duration="0.023053" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Gameplay 已释放后让原 Attack01 EXIT 收尾，出手收据不应把剩余姿态强切为 Idle/Run。
+  Expected: 1530143106
+  But was:  1323211136
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.N4OnlinePresentationTests.NaturalCastReleaseKeepsTheOriginalAttackAnimatorExit () [0x00117] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\N4OnlinePresentationTests.cs:92
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="3386" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="433" result="Failed" site="Child" start-time="2026-11-03 10:01:42Z" end-time="2026-11-03 10:01:45Z" duration="3.872074" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34452" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3387" name="Game" fullname="Game" runstate="Runnable" testcasecount="433" result="Failed" site="Child" start-time="2026-11-03 10:01:42Z" end-time="2026-11-03 10:01:45Z" duration="3.828166" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3388" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="433" result="Failed" site="Child" start-time="2026-11-03 10:01:42Z" end-time="2026-11-03 10:01:45Z" duration="3.729526" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3389" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="433" result="Failed" site="Child" start-time="2026-11-03 10:01:42Z" end-time="2026-11-03 10:01:45Z" duration="3.630552" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3284" name="SharedGameplayHudTests" fullname="Game.Multiplayer.Tests.SharedGameplayHudTests" classname="Game.Multiplayer.Tests.SharedGameplayHudTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-11-03 10:01:42Z" end-time="2026-11-03 10:01:45Z" duration="3.531037" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="3287" name="WandResourceBarsGenerateMeshThatMatchesTheirFillAmount" fullname="Game.Multiplayer.Tests.SharedGameplayHudTests.WandResourceBarsGenerateMeshThatMatchesTheirFillAmount" classname="Game.Multiplayer.Tests.SharedGameplayHudTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-03 10:01:42Z" end-time="2026-11-03 10:01:45Z" duration="3.431223" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="3285" name="WandResourceBarsGenerateMeshThatMatchesTheirFillAmount(&quot;resource&quot;)" fullname="Game.Multiplayer.Tests.SharedGameplayHudTests.WandResourceBarsGenerateMeshThatMatchesTheirFillAmount(&quot;resource&quot;)" methodname="WandResourceBarsGenerateMeshThatMatchesTheirFillAmount" classname="Game.Multiplayer.Tests.SharedGameplayHudTests" runstate="Runnable" seed="2140925585" result="Failed" start-time="2026-11-03 10:01:42Z" end-time="2026-11-03 10:01:42Z" duration="0.037582" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Mana 0 必须真正裁成四分之一，不能只验证 fillAmount 字段。
+  Expected: 25.0f +/- 0.100000001f
+  But was:  100.0f
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.SharedGameplayHudTests.AssertWandResourceMeshes (UnityEngine.GameObject root) [0x0019b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudTests.cs:63
+at Game.Multiplayer.Tests.SharedGameplayHudTests.WandResourceBarsGenerateMeshThatMatchesTheirFillAmount (System.String source) [0x00049] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudTests.cs:33
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3286" name="WandResourceBarsGenerateMeshThatMatchesTheirFillAmount(&quot;preview&quot;)" fullname="Game.Multiplayer.Tests.SharedGameplayHudTests.WandResourceBarsGenerateMeshThatMatchesTheirFillAmount(&quot;preview&quot;)" methodname="WandResourceBarsGenerateMeshThatMatchesTheirFillAmount" classname="Game.Multiplayer.Tests.SharedGameplayHudTests" runstate="Runnable" seed="452900936" result="Failed" start-time="2026-11-03 10:01:42Z" end-time="2026-11-03 10:01:45Z" duration="3.294190" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Mana 0 必须真正裁成四分之一，不能只验证 fillAmount 字段。
+  Expected: 25.0f +/- 0.100000001f
+  But was:  100.0f
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.SharedGameplayHudTests.AssertWandResourceMeshes (UnityEngine.GameObject root) [0x0019b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudTests.cs:63
+at Game.Multiplayer.Tests.SharedGameplayHudTests.WithPreview (System.Action`1[T] assert) [0x0007d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudTests.cs:190
+at Game.Multiplayer.Tests.SharedGameplayHudTests.WandResourceBarsGenerateMeshThatMatchesTheirFillAmount (System.String source) [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\SharedGameplayHudTests.cs:27
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="6133" name="Game.UI.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.UI.Tests.dll" runstate="Runnable" testcasecount="161" result="Failed" site="Child" start-time="2026-11-03 10:01:45Z" end-time="2026-11-03 10:01:47Z" duration="1.625540" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34452" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="6134" name="Game" fullname="Game" runstate="Runnable" testcasecount="161" result="Failed" site="Child" start-time="2026-11-03 10:01:45Z" end-time="2026-11-03 10:01:47Z" duration="1.599685" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="6135" name="UI" fullname="Game.UI" runstate="Runnable" testcasecount="161" result="Failed" site="Child" start-time="2026-11-03 10:01:46Z" end-time="2026-11-03 10:01:47Z" duration="1.419686" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="6136" name="Tests" fullname="Game.UI.Tests" runstate="Runnable" testcasecount="161" result="Failed" site="Child" start-time="2026-11-03 10:01:46Z" end-time="2026-11-03 10:01:47Z" duration="1.407452" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="5974" name="OnlineInventoryUiGatewayTests" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="100" result="Failed" site="Child" start-time="2026-11-03 10:01:46Z" end-time="2026-11-03 10:01:47Z" duration="1.307262" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="6011" name="FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-11-03 10:01:46Z" end-time="2026-11-03 10:01:47Z" duration="1.206952" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="6004" name="FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent(&quot;wand&quot;,&quot;bag&quot;,&quot;MoveOwned&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent(&quot;wand&quot;,&quot;bag&quot;,&quot;MoveOwned&quot;)" methodname="FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1980433646" result="Failed" start-time="2026-11-03 10:01:46Z" end-time="2026-11-03 10:01:46Z" duration="0.519360" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  抓起入口的正式GraphicRaycaster必须命中可见UI。
+  Expected: not <empty>
+  But was:  <empty>
+]]></message>
+                    <stack-trace><![CDATA[at Game.UI.Tests.OnlineInventoryUiGatewayTests.AssertRaycastHandler[T] (UnityEngine.EventSystems.EventSystem events, UnityEngine.EventSystems.PointerEventData pointer, UnityEngine.GameObject expected, System.String phase) [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:593
+at Game.UI.Tests.OnlineInventoryUiGatewayTests.FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent (System.String itemId, System.String destination, System.String expectedKind) [0x003a0] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:544
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Failed setting EventSystem.current to unknown EventSystem <b>Selected:</b>
+
+
+No module
+
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Failed setting EventSystem.current to unknown EventSystem 
+]]></output>
+                </test-case>
+                <test-case id="6005" name="FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent(&quot;card&quot;,&quot;bag&quot;,&quot;MoveOwned&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent(&quot;card&quot;,&quot;bag&quot;,&quot;MoveOwned&quot;)" methodname="FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="966240562" result="Failed" start-time="2026-11-03 10:01:46Z" end-time="2026-11-03 10:01:47Z" duration="0.098597" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  抓起入口的正式GraphicRaycaster必须命中可见UI。
+  Expected: not <empty>
+  But was:  <empty>
+]]></message>
+                    <stack-trace><![CDATA[at Game.UI.Tests.OnlineInventoryUiGatewayTests.AssertRaycastHandler[T] (UnityEngine.EventSystems.EventSystem events, UnityEngine.EventSystems.PointerEventData pointer, UnityEngine.GameObject expected, System.String phase) [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:593
+at Game.UI.Tests.OnlineInventoryUiGatewayTests.FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent (System.String itemId, System.String destination, System.String expectedKind) [0x003a0] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:544
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Failed setting EventSystem.current to unknown EventSystem <b>Selected:</b>
+
+
+No module
+
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Failed setting EventSystem.current to unknown EventSystem 
+]]></output>
+                </test-case>
+                <test-case id="6006" name="FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent(&quot;tool-bottle&quot;,&quot;bag&quot;,&quot;MoveOwned&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent(&quot;tool-bottle&quot;,&quot;bag&quot;,&quot;MoveOwned&quot;)" methodname="FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1073064203" result="Failed" start-time="2026-11-03 10:01:47Z" end-time="2026-11-03 10:01:47Z" duration="0.088597" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  抓起入口的正式GraphicRaycaster必须命中可见UI。
+  Expected: not <empty>
+  But was:  <empty>
+]]></message>
+                    <stack-trace><![CDATA[at Game.UI.Tests.OnlineInventoryUiGatewayTests.AssertRaycastHandler[T] (UnityEngine.EventSystems.EventSystem events, UnityEngine.EventSystems.PointerEventData pointer, UnityEngine.GameObject expected, System.String phase) [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:593
+at Game.UI.Tests.OnlineInventoryUiGatewayTests.FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent (System.String itemId, System.String destination, System.String expectedKind) [0x003a0] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:544
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Failed setting EventSystem.current to unknown EventSystem <b>Selected:</b>
+
+
+No module
+
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Failed setting EventSystem.current to unknown EventSystem 
+]]></output>
+                </test-case>
+                <test-case id="6007" name="FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent(&quot;wand&quot;,&quot;ground&quot;,&quot;DropItem&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent(&quot;wand&quot;,&quot;ground&quot;,&quot;DropItem&quot;)" methodname="FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1704526445" result="Failed" start-time="2026-11-03 10:01:47Z" end-time="2026-11-03 10:01:47Z" duration="0.097867" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  抓起入口的正式GraphicRaycaster必须命中可见UI。
+  Expected: not <empty>
+  But was:  <empty>
+]]></message>
+                    <stack-trace><![CDATA[at Game.UI.Tests.OnlineInventoryUiGatewayTests.AssertRaycastHandler[T] (UnityEngine.EventSystems.EventSystem events, UnityEngine.EventSystems.PointerEventData pointer, UnityEngine.GameObject expected, System.String phase) [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:593
+at Game.UI.Tests.OnlineInventoryUiGatewayTests.FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent (System.String itemId, System.String destination, System.String expectedKind) [0x003a0] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:544
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Failed setting EventSystem.current to unknown EventSystem <b>Selected:</b>
+
+
+No module
+
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Failed setting EventSystem.current to unknown EventSystem 
+]]></output>
+                </test-case>
+                <test-case id="6008" name="FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent(&quot;card&quot;,&quot;ground&quot;,&quot;DropItem&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent(&quot;card&quot;,&quot;ground&quot;,&quot;DropItem&quot;)" methodname="FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1105087743" result="Failed" start-time="2026-11-03 10:01:47Z" end-time="2026-11-03 10:01:47Z" duration="0.098349" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  抓起入口的正式GraphicRaycaster必须命中可见UI。
+  Expected: not <empty>
+  But was:  <empty>
+]]></message>
+                    <stack-trace><![CDATA[at Game.UI.Tests.OnlineInventoryUiGatewayTests.AssertRaycastHandler[T] (UnityEngine.EventSystems.EventSystem events, UnityEngine.EventSystems.PointerEventData pointer, UnityEngine.GameObject expected, System.String phase) [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:593
+at Game.UI.Tests.OnlineInventoryUiGatewayTests.FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent (System.String itemId, System.String destination, System.String expectedKind) [0x003a0] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:544
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Failed setting EventSystem.current to unknown EventSystem <b>Selected:</b>
+
+
+No module
+
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Failed setting EventSystem.current to unknown EventSystem 
+]]></output>
+                </test-case>
+                <test-case id="6009" name="FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent(&quot;bag-bottle&quot;,&quot;ground&quot;,&quot;DropContainer&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent(&quot;bag-bottle&quot;,&quot;ground&quot;,&quot;DropContainer&quot;)" methodname="FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1948205039" result="Failed" start-time="2026-11-03 10:01:47Z" end-time="2026-11-03 10:01:47Z" duration="0.105664" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  抓起入口的正式GraphicRaycaster必须命中可见UI。
+  Expected: not <empty>
+  But was:  <empty>
+]]></message>
+                    <stack-trace><![CDATA[at Game.UI.Tests.OnlineInventoryUiGatewayTests.AssertRaycastHandler[T] (UnityEngine.EventSystems.EventSystem events, UnityEngine.EventSystems.PointerEventData pointer, UnityEngine.GameObject expected, System.String phase) [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:593
+at Game.UI.Tests.OnlineInventoryUiGatewayTests.FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent (System.String itemId, System.String destination, System.String expectedKind) [0x003a0] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:544
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Failed setting EventSystem.current to unknown EventSystem <b>Selected:</b>
+
+
+No module
+
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Failed setting EventSystem.current to unknown EventSystem 
+]]></output>
+                </test-case>
+                <test-case id="6010" name="FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent(&quot;bag-bottle&quot;,&quot;shortcut&quot;,&quot;BindTool&quot;)" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent(&quot;bag-bottle&quot;,&quot;shortcut&quot;,&quot;BindTool&quot;)" methodname="FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1546267414" result="Failed" start-time="2026-11-03 10:01:47Z" end-time="2026-11-03 10:01:47Z" duration="0.097007" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  抓起入口的正式GraphicRaycaster必须命中可见UI。
+  Expected: not <empty>
+  But was:  <empty>
+]]></message>
+                    <stack-trace><![CDATA[at Game.UI.Tests.OnlineInventoryUiGatewayTests.AssertRaycastHandler[T] (UnityEngine.EventSystems.EventSystem events, UnityEngine.EventSystems.PointerEventData pointer, UnityEngine.GameObject expected, System.String phase) [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:593
+at Game.UI.Tests.OnlineInventoryUiGatewayTests.FormalCombatInventoryOriginalDragHandlersSubmitOwnedIntent (System.String itemId, System.String destination, System.String expectedKind) [0x003a0] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:544
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Failed setting EventSystem.current to unknown EventSystem <b>Selected:</b>
+
+
+No module
+
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+Failed setting EventSystem.current to unknown EventSystem 
+Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -16,14 +16,20 @@ namespace Game.UI
         [SerializeField] private GameObject _accountMenuPrefab;
         private GameObject _accountMenu;
         private bool _entering;
+        private bool _hubRequestPending;
+        private string _requestedHubTarget;
 
         private void OnEnable()
         {
+            ConfigureViewportLayout();
             EventBus<AccountMenuCommandEvent>.Subscribe(OnCommand);
             EventBus<AccountHubEntryReadyEvent>.Subscribe(OnEntryReady);
         }
+
+        private void ConfigureViewportLayout() => UiViewportLayout.CoverCanvas(_mainPanel);
         private void OnDisable()
         {
+            _hubRequestPending = false; _requestedHubTarget = null;
             EventBus<AccountMenuCommandEvent>.Unsubscribe(OnCommand);
             EventBus<AccountHubEntryReadyEvent>.Unsubscribe(OnEntryReady);
         }
@@ -56,24 +62,36 @@ namespace Game.UI
         public void StartGame()
         {
             if (_entering) return;
+            _requestedHubTarget = _hubSceneName; _hubRequestPending = true;
             // 保留旧按钮回调名，但它现在只提交意图；单机也必须拿到本次业务验证成功。
-            EventBus<OnlineLobbyRequestEvent>.Publish(new OnlineLobbyRequestEvent { Action = OnlineLobbyAction.EnterHub });
+            EventBus<OnlineLobbyRequestEvent>.Publish(new OnlineLobbyRequestEvent
+            { Action = OnlineLobbyAction.EnterHub, Destination = _requestedHubTarget, RequestOwnerId = GetInstanceID() });
         }
-        private void OnEntryReady(AccountHubEntryReadyEvent unused)
+        private bool TryGetReadyHubTarget(AccountHubEntryReadyEvent ready, out string target)
         {
-            if (_entering) return;
+            target = null;
+            if (_entering || !_hubRequestPending || ready.RequestOwnerId != GetInstanceID()
+                || string.IsNullOrWhiteSpace(ready.TargetScene) || ready.TargetScene != _requestedHubTarget) return false;
+            target = ready.TargetScene; return true;
+        }
+        private void OnEntryReady(AccountHubEntryReadyEvent ready)
+        {
+            if (!TryGetReadyHubTarget(ready, out var target)) return;
             if (_sceneTransition == null)
             {
                 GameLog.Error("Main Menu has no Scene Transition Controller.", "UI");
                 return;
             }
 
-            _entering = _sceneTransition.LoadScene(_hubSceneName);
+            // HTTP等待期间Inspector/别的菜单可能改变字段；只装载业务已确认并预arm的那次原目标。
+            _entering = _sceneTransition.LoadScene(target);
+            if (_entering) _hubRequestPending = false;
         }
 
         public void OpenSettings()
         {
-            SetPanelActive(_mainPanel, false);
+            // MainPanel现在只承担原美术背景，旧按钮已在Start停用；设置打开时同样要覆盖整个视口。
+            SetPanelActive(_mainPanel, true);
             SetPanelActive(_accountMenu, false);
             SetPanelActive(_settingsPanel, true);
         }

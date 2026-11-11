@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="11" result="Failed(Child)" total="11" passed="0" failed="11" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 23:53:37Z" end-time="2026-11-02 23:53:39Z" duration="1.3656832">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3982" result="Failed" site="Child" start-time="2026-11-02 23:53:37Z" end-time="2026-11-02 23:53:39Z" duration="1.365683" total="11" passed="0" failed="11" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3295" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="364" result="Failed" site="Child" start-time="2026-11-02 23:53:38Z" end-time="2026-11-02 23:53:38Z" duration="0.623094" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3296" name="Game" fullname="Game" runstate="Runnable" testcasecount="364" result="Failed" site="Child" start-time="2026-11-02 23:53:38Z" end-time="2026-11-02 23:53:38Z" duration="0.548307" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3297" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="364" result="Failed" site="Child" start-time="2026-11-02 23:53:38Z" end-time="2026-11-02 23:53:38Z" duration="0.448986" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3298" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="364" result="Failed" site="Child" start-time="2026-11-02 23:53:38Z" end-time="2026-11-02 23:53:38Z" duration="0.348978" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3119" name="PlayerMovementReadOnlyObservationTests" fullname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests" classname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-11-02 23:53:38Z" end-time="2026-11-02 23:53:38Z" duration="0.248671" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3125" name="CurrentInputActorReadsActualCurrentAcrossBindingAndOldActorUnbinding" fullname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.CurrentInputActorReadsActualCurrentAcrossBindingAndOldActorUnbinding" methodname="CurrentInputActorReadsActualCurrentAcrossBindingAndOldActorUnbinding" classname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests" runstate="Runnable" seed="289979668" result="Failed" start-time="2026-11-02 23:53:38Z" end-time="2026-11-02 23:53:38Z" duration="0.119359" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少实际 Current 的只读入口。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.CurrentActor (Game.Character.PlayerControllerBase player) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\PlayerMovementReadOnlyObservationTests.cs:206
+at Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.CurrentInputActorReadsActualCurrentAcrossBindingAndOldActorUnbinding () [0x0000a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\PlayerMovementReadOnlyObservationTests.cs:167
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3124" name="DisabledActorAndControllerRemainSafeToObserveWithoutRebindingInput" fullname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.DisabledActorAndControllerRemainSafeToObserveWithoutRebindingInput" methodname="DisabledActorAndControllerRemainSafeToObserveWithoutRebindingInput" classname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests" runstate="Runnable" seed="1844222196" result="Failed" start-time="2026-11-02 23:53:38Z" end-time="2026-11-02 23:53:38Z" duration="0.004581" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少只读观察入口；不能改用会消费边沿的 SampleInput。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.Capture (Game.Character.PlayerControllerBase player) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\PlayerMovementReadOnlyObservationTests.cs:199
+at Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.DisabledActorAndControllerRemainSafeToObserveWithoutRebindingInput () [0x0002b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\PlayerMovementReadOnlyObservationTests.cs:153
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3120" name="RepeatedObservationPreservesInputGatesAndPendingUntilRealSampleConsumesOnce" fullname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.RepeatedObservationPreservesInputGatesAndPendingUntilRealSampleConsumesOnce" methodname="RepeatedObservationPreservesInputGatesAndPendingUntilRealSampleConsumesOnce" classname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests" runstate="Runnable" seed="1121011298" result="Failed" start-time="2026-11-02 23:53:38Z" end-time="2026-11-02 23:53:38Z" duration="0.003691" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少只读观察入口；不能改用会消费边沿的 SampleInput。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.Capture (Game.Character.PlayerControllerBase player) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\PlayerMovementReadOnlyObservationTests.cs:199
+at Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.RepeatedObservationPreservesInputGatesAndPendingUntilRealSampleConsumesOnce () [0x00141] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\PlayerMovementReadOnlyObservationTests.cs:85
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="3123" name="ReplicaWithoutLocalInputCanBeObservedBeforeOrAfterInitialization" fullname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.ReplicaWithoutLocalInputCanBeObservedBeforeOrAfterInitialization" classname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-02 23:53:38Z" end-time="2026-11-02 23:53:38Z" duration="0.009834" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="3121" name="ReplicaWithoutLocalInputCanBeObservedBeforeOrAfterInitialization(False)" fullname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.ReplicaWithoutLocalInputCanBeObservedBeforeOrAfterInitialization(False)" methodname="ReplicaWithoutLocalInputCanBeObservedBeforeOrAfterInitialization" classname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests" runstate="Runnable" seed="1091338963" result="Failed" start-time="2026-11-02 23:53:38Z" end-time="2026-11-02 23:53:38Z" duration="0.002158" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少只读观察入口；不能改用会消费边沿的 SampleInput。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.Capture (Game.Character.PlayerControllerBase player) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\PlayerMovementReadOnlyObservationTests.cs:199
+at Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.ReplicaWithoutLocalInputCanBeObservedBeforeOrAfterInitialization (System.Boolean initialize) [0x0000a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\PlayerMovementReadOnlyObservationTests.cs:133
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3122" name="ReplicaWithoutLocalInputCanBeObservedBeforeOrAfterInitialization(True)" fullname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.ReplicaWithoutLocalInputCanBeObservedBeforeOrAfterInitialization(True)" methodname="ReplicaWithoutLocalInputCanBeObservedBeforeOrAfterInitialization" classname="Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests" runstate="Runnable" seed="591872098" result="Failed" start-time="2026-11-02 23:53:38Z" end-time="2026-11-02 23:53:38Z" duration="0.001266" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少只读观察入口；不能改用会消费边沿的 SampleInput。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.Capture (Game.Character.PlayerControllerBase player) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\PlayerMovementReadOnlyObservationTests.cs:199
+at Game.Multiplayer.Tests.PlayerMovementReadOnlyObservationTests.ReplicaWithoutLocalInputCanBeObservedBeforeOrAfterInitialization (System.Boolean initialize) [0x0000a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\PlayerMovementReadOnlyObservationTests.cs:133
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="5452" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="984" result="Failed" site="Child" start-time="2026-11-02 23:53:38Z" end-time="2026-11-02 23:53:39Z" duration="0.625614" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="5453" name="Game" fullname="Game" runstate="Runnable" testcasecount="984" result="Failed" site="Child" start-time="2026-11-02 23:53:38Z" end-time="2026-11-02 23:53:39Z" duration="0.533314" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="5454" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="984" result="Failed" site="Child" start-time="2026-11-02 23:53:38Z" end-time="2026-11-02 23:53:39Z" duration="0.433909" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="5455" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="984" result="Failed" site="Child" start-time="2026-11-02 23:53:38Z" end-time="2026-11-02 23:53:39Z" duration="0.334591" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="4448" name="HubMovementReadOnlyProbeTests" fullname="Game.Run.Tests.HubMovementReadOnlyProbeTests" classname="Game.Run.Tests.HubMovementReadOnlyProbeTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-11-02 23:53:39Z" end-time="2026-11-02 23:53:39Z" duration="0.234943" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="4455" name="DisableFlushesPartialWindowExactlyOnce" fullname="Game.Run.Tests.HubMovementReadOnlyProbeTests.DisableFlushesPartialWindowExactlyOnce" methodname="DisableFlushesPartialWindowExactlyOnce" classname="Game.Run.Tests.HubMovementReadOnlyProbeTests" runstate="Runnable" seed="451885014" result="Failed" start-time="2026-11-02 23:53:39Z" end-time="2026-11-02 23:53:39Z" duration="0.006995" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  原Probe缺少有界只读采样入口
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.HubMovementReadOnlyProbeTests.Capture (System.Int32 frame, System.Double now) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\HubMovementReadOnlyProbeTests.cs:47
+at Game.Run.Tests.HubMovementReadOnlyProbeTests.DisableFlushesPartialWindowExactlyOnce () [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\HubMovementReadOnlyProbeTests.cs:95
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4454" name="DurationHardLimitStopsWithoutAddingExpiredFrame" fullname="Game.Run.Tests.HubMovementReadOnlyProbeTests.DurationHardLimitStopsWithoutAddingExpiredFrame" methodname="DurationHardLimitStopsWithoutAddingExpiredFrame" classname="Game.Run.Tests.HubMovementReadOnlyProbeTests" runstate="Runnable" seed="1943478270" result="Failed" start-time="2026-11-02 23:53:39Z" end-time="2026-11-02 23:53:39Z" duration="0.002278" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  原Probe缺少有界只读采样入口
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.HubMovementReadOnlyProbeTests.Capture (System.Int32 frame, System.Double now) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\HubMovementReadOnlyProbeTests.cs:47
+at Game.Run.Tests.HubMovementReadOnlyProbeTests.DurationHardLimitStopsWithoutAddingExpiredFrame () [0x00012] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\HubMovementReadOnlyProbeTests.cs:86
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4452" name="NoPositiveOptInNeverSamplesOrWrites" fullname="Game.Run.Tests.HubMovementReadOnlyProbeTests.NoPositiveOptInNeverSamplesOrWrites" classname="Game.Run.Tests.HubMovementReadOnlyProbeTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-02 23:53:39Z" end-time="2026-11-02 23:53:39Z" duration="0.099430" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="4450" name="NoPositiveOptInNeverSamplesOrWrites(0)" fullname="Game.Run.Tests.HubMovementReadOnlyProbeTests.NoPositiveOptInNeverSamplesOrWrites(0)" methodname="NoPositiveOptInNeverSamplesOrWrites" classname="Game.Run.Tests.HubMovementReadOnlyProbeTests" runstate="Runnable" seed="2036344221" result="Failed" start-time="2026-11-02 23:53:39Z" end-time="2026-11-02 23:53:39Z" duration="0.007571" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  原Probe缺少有界只读采样入口
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.HubMovementReadOnlyProbeTests.Capture (System.Int32 frame, System.Double now) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\HubMovementReadOnlyProbeTests.cs:47
+at Game.Run.Tests.HubMovementReadOnlyProbeTests.NoPositiveOptInNeverSamplesOrWrites (System.Int32 samples) [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\HubMovementReadOnlyProbeTests.cs:69
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="4451" name="NoPositiveOptInNeverSamplesOrWrites(-1)" fullname="Game.Run.Tests.HubMovementReadOnlyProbeTests.NoPositiveOptInNeverSamplesOrWrites(-1)" methodname="NoPositiveOptInNeverSamplesOrWrites" classname="Game.Run.Tests.HubMovementReadOnlyProbeTests" runstate="Runnable" seed="1540650622" result="Failed" start-time="2026-11-02 23:53:39Z" end-time="2026-11-02 23:53:39Z" duration="0.001840" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  原Probe缺少有界只读采样入口
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.HubMovementReadOnlyProbeTests.Capture (System.Int32 frame, System.Double now) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\HubMovementReadOnlyProbeTests.cs:47
+at Game.Run.Tests.HubMovementReadOnlyProbeTests.NoPositiveOptInNeverSamplesOrWrites (System.Int32 samples) [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\HubMovementReadOnlyProbeTests.cs:69
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="4449" name="ReadOnlyModeNeverConsumesCommandsOrRequestsRoomObservation" fullname="Game.Run.Tests.HubMovementReadOnlyProbeTests.ReadOnlyModeNeverConsumesCommandsOrRequestsRoomObservation" methodname="ReadOnlyModeNeverConsumesCommandsOrRequestsRoomObservation" classname="Game.Run.Tests.HubMovementReadOnlyProbeTests" runstate="Runnable" seed="1615293371" result="Failed" start-time="2026-11-02 23:53:39Z" end-time="2026-11-02 23:53:39Z" duration="0.021320" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  只读模式不得取走旧验收动作命令
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.HubMovementReadOnlyProbeTests.ReadOnlyModeNeverConsumesCommandsOrRequestsRoomObservation () [0x000aa] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\HubMovementReadOnlyProbeTests.cs:62
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4453" name="SampleCapacityStopsOnceAndDuplicateFrameDoesNotSpendCapacity" fullname="Game.Run.Tests.HubMovementReadOnlyProbeTests.SampleCapacityStopsOnceAndDuplicateFrameDoesNotSpendCapacity" methodname="SampleCapacityStopsOnceAndDuplicateFrameDoesNotSpendCapacity" classname="Game.Run.Tests.HubMovementReadOnlyProbeTests" runstate="Runnable" seed="1338266951" result="Failed" start-time="2026-11-02 23:53:39Z" end-time="2026-11-02 23:53:39Z" duration="0.002561" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  原Probe缺少有界只读采样入口
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.HubMovementReadOnlyProbeTests.Capture (System.Int32 frame, System.Double now) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\HubMovementReadOnlyProbeTests.cs:47
+at Game.Run.Tests.HubMovementReadOnlyProbeTests.SampleCapacityStopsOnceAndDuplicateFrameDoesNotSpendCapacity () [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\HubMovementReadOnlyProbeTests.cs:75
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -10,9 +10,16 @@ using Unity.Profiling;
 namespace Game.Run
 {
     /// <summary>仅显式Development参数启用：隔离单机文件、定位F门并记录Core事件。绝不代替认证或房间按钮。</summary>
-    public sealed class PortalRoomAcceptanceProbe : MonoBehaviour
+    public sealed partial class PortalRoomAcceptanceProbe : MonoBehaviour
     {
-        [Serializable] private sealed class Config { public string Output, Command, PortalScenePath; }
+        [Serializable] private sealed class Config
+        {
+            public string Output, Command, PortalScenePath;
+            // 独立只读模式：零样本是关闭；不得复用下面会传送/替换档/发Observe的旧验收流程。
+            public bool ObserveMovementOnly;
+            public int MovementSamples;
+            public float MovementSeconds = 5;
+        }
         [Serializable] private sealed class Report
         {
             public string Scene, Phase, RoomId, Status, RecordedAtUtc;
@@ -28,6 +35,17 @@ namespace Game.Run
             public string CursorLock;
             public bool CursorVisible, Focused;
             public float TimeScale;
+            public bool HubLoaded, HubActorAvailable, CameraAvailable;
+            public Vector3 HubActorPosition, HubActorForward, CameraPosition, CameraForward;
+            public string CameraScene;
+            public PortalReport[] HubPortals;
+        }
+        [Serializable] private sealed class PortalReport
+        {
+            public string ScenePath;
+            public Vector3 Position;
+            public float DistanceToActor;
+            public bool ActiveInHierarchy;
         }
         private Config _config;
         private bool _authenticated, _choice;
@@ -58,6 +76,7 @@ namespace Game.Run
             EventBus<DungeonEntryChoiceRequestedEvent>.Subscribe(OnChoice);
             EventBus<DungeonEntryChoiceClosedEvent>.Subscribe(OnClosed);
             EventBus<OnlineDiagnosticSamplingEvent>.Subscribe(OnSampling);
+            SubscribeMovementObservation();
         }
         private void OnDisable()
         {
@@ -67,6 +86,7 @@ namespace Game.Run
             EventBus<DungeonEntryChoiceRequestedEvent>.Unsubscribe(OnChoice);
             EventBus<DungeonEntryChoiceClosedEvent>.Unsubscribe(OnClosed);
             EventBus<OnlineDiagnosticSamplingEvent>.Unsubscribe(OnSampling);
+            UnsubscribeMovementObservation();
         }
         private void OnSampling(OnlineDiagnosticSamplingEvent e) => _externalSampling = e.Active;
         private void OnIdentity(OnlineLobbyChangedEvent e) => _authenticated = e.Authenticated;
@@ -75,7 +95,7 @@ namespace Game.Run
         private void OnClosed(DungeonEntryChoiceClosedEvent e) => _choice = false;
         private void OnScene(Scene scene, LoadSceneMode mode)
         {
-            if (_config == null || !scene.path.EndsWith("SinglePlayer_Hub.unity", StringComparison.Ordinal)) return;
+            if (_config == null || _config.ObserveMovementOnly || !scene.path.EndsWith("SinglePlayer_Hub.unity", StringComparison.Ordinal)) return;
             foreach (var root in scene.GetRootGameObjects())
             {
                 var session = root.GetComponentInChildren<SinglePlayerInventorySession>(true); if (session == null) continue;
@@ -85,7 +105,7 @@ namespace Game.Run
         }
         private void Update()
         {
-            if (_config == null || _measuring || _externalSampling || Time.realtimeSinceStartupAsDouble < _next) return;
+            if (_config == null || _config.ObserveMovementOnly || _measuring || _externalSampling || Time.realtimeSinceStartupAsDouble < _next) return;
             _next = Time.realtimeSinceStartupAsDouble + 1;
             if (File.Exists(_config.Command))
             {
@@ -94,15 +114,54 @@ namespace Game.Run
                 else if (command == "measure-idle") { StartCoroutine(MeasureIdle()); return; }
             }
             if (_view.PortalId != 0) EventBus<OnlineRoomRequestEvent>.Publish(new OnlineRoomRequestEvent { PortalId = _view.PortalId, Action = OnlineRoomAction.Observe });
-            var hub = SceneManager.GetSceneByPath("Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub.unity"); bool active = false;
-            if (hub.IsValid()) foreach (var root in hub.GetRootGameObjects()) active |= root.activeSelf;
             var report = new Report { Scene = SceneManager.GetActiveScene().path, Authenticated = _authenticated, ChoiceOpen = _choice,
                 Phase = _view.Phase.ToString(), RoomId = _view.RoomId, Status = _view.Status, CanStart = _view.CanStart, SelfReady = _view.SelfReady, Busy = _view.Busy,
-                PortalId = _view.PortalId, MemberCount = _view.Members?.Length ?? 0, ActorId = _view.ActorId, HubActive = active, RecordedAtUtc = DateTime.UtcNow.ToString("O"),
+                PortalId = _view.PortalId, MemberCount = _view.Members?.Length ?? 0, ActorId = _view.ActorId, RecordedAtUtc = DateTime.UtcNow.ToString("O"),
                 FrameCounterCalibrated = _calibrated, IdleRecorderValid = _recorderValid, IdleFrames = _idleFrames, IdleGcPeakBytes = _idlePeak, ConnectionEpoch = _view.ConnectionEpoch, Replies = _view.Replies, NativeSocket = _view.NativeSocket,
                 // 仅显式验收的只读状态，区分门状态已打开与鼠标仍被其他生命周期锁住；不代替真实按钮。
                 CursorLock = Cursor.lockState.ToString(), CursorVisible = Cursor.visible, Focused = Application.isFocused, TimeScale = Time.timeScale };
+            CaptureNavigation(report);
             File.WriteAllText(_config.Output, JsonUtility.ToJson(report, true)); // 诊断IO有分配，不是零GC测量。
+        }
+        /// <summary>
+        /// 仅在已有1Hz显式诊断采样中读取位姿，不移动角色、不触发Portal，也不创建Camera。
+        /// Hub可因换图保留为inactive，故读取其原Session/门；Camera.main则代表当前实际启用的主镜头。
+        /// 查找/数组分配仍受Update的测量禁区保护，不能将这些诊断分配混入Idle或外部Profiler采样。
+        /// </summary>
+        private static void CaptureNavigation(Report report)
+        {
+            var camera = Camera.main;
+            report.CameraAvailable = camera != null;
+            if (camera != null)
+            {
+                report.CameraPosition = camera.transform.position; report.CameraForward = camera.transform.forward;
+                report.CameraScene = camera.gameObject.scene.path;
+            }
+            report.HubPortals = Array.Empty<PortalReport>();
+            var hub = SceneManager.GetSceneByPath("Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub.unity");
+            report.HubLoaded = hub.IsValid() && hub.isLoaded;
+            if (!report.HubLoaded) return;
+            var roots = hub.GetRootGameObjects(); SinglePlayerInventorySession session = null;
+            foreach (var root in roots)
+            {
+                report.HubActive |= root.activeSelf;
+                if (session == null) session = root.GetComponentInChildren<SinglePlayerInventorySession>(true);
+            }
+            var actor = session != null ? session.ActorTransform : null;
+            report.HubActorAvailable = actor != null;
+            if (actor != null) { report.HubActorPosition = actor.position; report.HubActorForward = actor.forward; }
+            var portals = new List<PortalReport>();
+            foreach (var root in roots)
+                foreach (var portal in root.GetComponentsInChildren<HubPracticePortal>(true))
+                {
+                    if (portal == null) continue;
+                    var position = portal.transform.position;
+                    // -1明确表示没有Hub角色可测距，避免默认0被误读成已经走到门前。
+                    portals.Add(new PortalReport { ScenePath = portal.ScenePath, Position = position,
+                        DistanceToActor = actor != null ? Vector3.Distance(report.HubActorPosition, position) : -1,
+                        ActiveInHierarchy = portal.gameObject.activeInHierarchy });
+                }
+            report.HubPortals = portals.ToArray();
         }
         private IEnumerator MeasureIdle()
         {

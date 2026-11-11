@@ -1,0 +1,470 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="30dd77df-6acd-420c-888b-25dcdd73aec4" name="zhy@ZHY 2026-11-03 18:23:58" runUser="ZHY\zhy" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T18:23:58.1449302+08:00" queuing="2026-11-03T18:23:58.1449307+08:00" start="2026-11-03T18:23:55.9828549+08:00" finish="2026-11-03T18:23:58.3842932+08:00" />
+  <TestSettings name="default" id="85e61d2a-18a1-4903-9863-5c5ba83988e2">
+    <Deployment runDeploymentRoot="zhy_ZHY_2026-11-03_18_23_58" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="aa468215-2187-47a1-8f66-7ba0844d743b" testId="d141b714-e6da-a25f-8779-112d4ad07f93" testName="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ExistingLargerEquippedBagIsKeptWithoutGrantOrVersionChange" computerName="ZHY" duration="00:00:00.0449218" startTime="2026-11-03T18:23:58.0837350+08:00" endTime="2026-11-03T18:23:58.1260669+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aa468215-2187-47a1-8f66-7ba0844d743b">
+      <Output>
+        <ErrorInfo>
+          <Message>MySqlConnector.MySqlException : Duplicate foreign key constraint name 'FK_EntryBackpackGrants_Run'</Message>
+          <StackTrace>   at MySqlConnector.Core.ServerSession.ReceiveReplyAsync(IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 1185&#xD;
+   at MySqlConnector.Core.ResultSet.ReadResultSetHeaderAsync(IOBehavior ioBehavior) in /_/src/MySqlConnector/Core/ResultSet.cs:line 37&#xD;
+   at MySqlConnector.MySqlDataReader.ActivateResultSet(CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlDataReader.cs:line 133&#xD;
+   at MySqlConnector.MySqlDataReader.InitAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, IDictionary`2 cachedProcedures, IMySqlCommand command, CommandBehavior behavior, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlDataReader.cs:line 489&#xD;
+   at MySqlConnector.Core.CommandExecutor.ExecuteReaderAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, CommandBehavior behavior, Activity activity, MySqlConnectorSemanticConventionsKinds conventionsKinds, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/CommandExecutor.cs:line 58&#xD;
+   at MySqlConnector.MySqlCommand.ExecuteNonQueryAsync(IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlCommand.cs:line 304&#xD;
+   at Dapper.SqlMapper.ExecuteImplAsync(IDbConnection cnn, CommandDefinition command, Object param) in /_/Dapper/SqlMapper.Async.cs:line 663&#xD;
+   at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs:line 54&#xD;
+   at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs:line 63&#xD;
+   at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs:line 63&#xD;
+   at Norn.Business.Program.Main(String[] args) in F:\Develop Project\RPG\Server\Norn.Business\Program.cs:line 68&#xD;
+   at Norn.Business.Program.&lt;Main&gt;(String[] args)&#xD;
+   at InvokeStub_Program.&lt;Main&gt;(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.DeferredHostBuilder.DeferredHost.StartAsync(CancellationToken cancellationToken)&#xD;
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Start(IHost host)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateHost(IHostBuilder builder)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.ConfigureHostBuilder(IHostBuilder hostBuilder)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.StartServer()&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(DelegatingHandler[] handlers)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(Uri baseAddress, DelegatingHandler[] handlers)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient(WebApplicationFactoryClientOptions options)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient()&#xD;
+   at Norn.Business.Tests.OnlineFactory.NewPlayerAsync(String username) in F:\Develop Project\RPG\Server\Norn.Business.Tests\OnlineFactory.cs:line 76&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ExistingLargerEquippedBagIsKeptWithoutGrantOrVersionChange() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 145&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ExistingLargerEquippedBagIsKeptWithoutGrantOrVersionChange() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 158&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="c6cbc939-8664-404c-a884-da3b3d6ca5f9" testId="5ceee9ab-017a-8e58-562b-fa00a2aec713" testName="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_FirstProfileRestoresTheOriginalWarehouseGrantWithoutReissuing" computerName="ZHY" duration="00:00:00.0264992" startTime="2026-11-03T18:23:58.1667895+08:00" endTime="2026-11-03T18:23:58.1912505+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c6cbc939-8664-404c-a884-da3b3d6ca5f9">
+      <Output>
+        <ErrorInfo>
+          <Message>MySqlConnector.MySqlException : Duplicate foreign key constraint name 'FK_EntryBackpackGrants_Run'</Message>
+          <StackTrace>   at MySqlConnector.Core.ServerSession.ReceiveReplyAsync(IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 1185&#xD;
+   at MySqlConnector.Core.ResultSet.ReadResultSetHeaderAsync(IOBehavior ioBehavior) in /_/src/MySqlConnector/Core/ResultSet.cs:line 37&#xD;
+   at MySqlConnector.MySqlDataReader.ActivateResultSet(CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlDataReader.cs:line 133&#xD;
+   at MySqlConnector.MySqlDataReader.InitAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, IDictionary`2 cachedProcedures, IMySqlCommand command, CommandBehavior behavior, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlDataReader.cs:line 489&#xD;
+   at MySqlConnector.Core.CommandExecutor.ExecuteReaderAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, CommandBehavior behavior, Activity activity, MySqlConnectorSemanticConventionsKinds conventionsKinds, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/CommandExecutor.cs:line 58&#xD;
+   at MySqlConnector.MySqlCommand.ExecuteNonQueryAsync(IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlCommand.cs:line 304&#xD;
+   at Dapper.SqlMapper.ExecuteImplAsync(IDbConnection cnn, CommandDefinition command, Object param) in /_/Dapper/SqlMapper.Async.cs:line 663&#xD;
+   at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs:line 54&#xD;
+   at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs:line 63&#xD;
+   at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs:line 63&#xD;
+   at Norn.Business.Program.Main(String[] args) in F:\Develop Project\RPG\Server\Norn.Business\Program.cs:line 68&#xD;
+   at Norn.Business.Program.&lt;Main&gt;(String[] args)&#xD;
+   at InvokeStub_Program.&lt;Main&gt;(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.DeferredHostBuilder.DeferredHost.StartAsync(CancellationToken cancellationToken)&#xD;
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Start(IHost host)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateHost(IHostBuilder builder)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.ConfigureHostBuilder(IHostBuilder hostBuilder)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.StartServer()&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(DelegatingHandler[] handlers)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(Uri baseAddress, DelegatingHandler[] handlers)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient(WebApplicationFactoryClientOptions options)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient()&#xD;
+   at Norn.Business.Tests.OnlineFactory.NewPlayerAsync(String username) in F:\Develop Project\RPG\Server\Norn.Business.Tests\OnlineFactory.cs:line 76&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.Pair(OnlineFactory f) in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 330&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_FirstProfileRestoresTheOriginalWarehouseGrantWithoutReissuing() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 71&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_FirstProfileRestoresTheOriginalWarehouseGrantWithoutReissuing() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 87&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="ccd6c4c1-34e8-4b77-bae7-6d5eef994e45" testId="6e22f924-e927-bdb4-1c18-bbec2870585a" testName="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ConcurrentFirstProfilesRepairLegacyMissingBagExactlyOnce" computerName="ZHY" duration="00:00:00.0553704" startTime="2026-11-03T18:23:58.1960721+08:00" endTime="2026-11-03T18:23:58.2479607+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ccd6c4c1-34e8-4b77-bae7-6d5eef994e45">
+      <Output>
+        <ErrorInfo>
+          <Message>MySqlConnector.MySqlException : Duplicate foreign key constraint name 'FK_EntryBackpackGrants_Run'</Message>
+          <StackTrace>   at MySqlConnector.Core.ServerSession.ReceiveReplyAsync(IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 1185&#xD;
+   at MySqlConnector.Core.ResultSet.ReadResultSetHeaderAsync(IOBehavior ioBehavior) in /_/src/MySqlConnector/Core/ResultSet.cs:line 37&#xD;
+   at MySqlConnector.MySqlDataReader.ActivateResultSet(CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlDataReader.cs:line 133&#xD;
+   at MySqlConnector.MySqlDataReader.InitAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, IDictionary`2 cachedProcedures, IMySqlCommand command, CommandBehavior behavior, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlDataReader.cs:line 489&#xD;
+   at MySqlConnector.Core.CommandExecutor.ExecuteReaderAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, CommandBehavior behavior, Activity activity, MySqlConnectorSemanticConventionsKinds conventionsKinds, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/CommandExecutor.cs:line 58&#xD;
+   at MySqlConnector.MySqlCommand.ExecuteNonQueryAsync(IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlCommand.cs:line 304&#xD;
+   at Dapper.SqlMapper.ExecuteImplAsync(IDbConnection cnn, CommandDefinition command, Object param) in /_/Dapper/SqlMapper.Async.cs:line 663&#xD;
+   at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs:line 54&#xD;
+   at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs:line 63&#xD;
+   at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs:line 63&#xD;
+   at Norn.Business.Program.Main(String[] args) in F:\Develop Project\RPG\Server\Norn.Business\Program.cs:line 68&#xD;
+   at Norn.Business.Program.&lt;Main&gt;(String[] args)&#xD;
+   at InvokeStub_Program.&lt;Main&gt;(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.DeferredHostBuilder.DeferredHost.StartAsync(CancellationToken cancellationToken)&#xD;
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Start(IHost host)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateHost(IHostBuilder builder)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.ConfigureHostBuilder(IHostBuilder hostBuilder)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.StartServer()&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(DelegatingHandler[] handlers)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(Uri baseAddress, DelegatingHandler[] handlers)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient(WebApplicationFactoryClientOptions options)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient()&#xD;
+   at Norn.Business.Tests.OnlineFactory.NewPlayerAsync(String username) in F:\Develop Project\RPG\Server\Norn.Business.Tests\OnlineFactory.cs:line 76&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ConcurrentFirstProfilesRepairLegacyMissingBagExactlyOnce() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 49&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ConcurrentFirstProfilesRepairLegacyMissingBagExactlyOnce() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 65&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="381b6345-ea7e-40e0-81a2-924d0a27f0b1" testId="ebbe5e84-6db0-fb7a-0002-3d2338fd4212" testName="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_StructuredMoveCannotUnequipTheLastBagOrCommitAReceipt" computerName="ZHY" duration="00:00:00.0364137" startTime="2026-11-03T18:23:58.1282882+08:00" endTime="2026-11-03T18:23:58.1633804+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="381b6345-ea7e-40e0-81a2-924d0a27f0b1">
+      <Output>
+        <ErrorInfo>
+          <Message>MySqlConnector.MySqlException : Duplicate foreign key constraint name 'FK_EntryBackpackGrants_Run'</Message>
+          <StackTrace>   at MySqlConnector.Core.ServerSession.ReceiveReplyAsync(IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 1185&#xD;
+   at MySqlConnector.Core.ResultSet.ReadResultSetHeaderAsync(IOBehavior ioBehavior) in /_/src/MySqlConnector/Core/ResultSet.cs:line 37&#xD;
+   at MySqlConnector.MySqlDataReader.ActivateResultSet(CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlDataReader.cs:line 133&#xD;
+   at MySqlConnector.MySqlDataReader.InitAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, IDictionary`2 cachedProcedures, IMySqlCommand command, CommandBehavior behavior, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlDataReader.cs:line 489&#xD;
+   at MySqlConnector.Core.CommandExecutor.ExecuteReaderAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, CommandBehavior behavior, Activity activity, MySqlConnectorSemanticConventionsKinds conventionsKinds, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/CommandExecutor.cs:line 58&#xD;
+   at MySqlConnector.MySqlCommand.ExecuteNonQueryAsync(IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlCommand.cs:line 304&#xD;
+   at Dapper.SqlMapper.ExecuteImplAsync(IDbConnection cnn, CommandDefinition command, Object param) in /_/Dapper/SqlMapper.Async.cs:line 663&#xD;
+   at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs:line 54&#xD;
+   at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs:line 63&#xD;
+   at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs:line 63&#xD;
+   at Norn.Business.Program.Main(String[] args) in F:\Develop Project\RPG\Server\Norn.Business\Program.cs:line 68&#xD;
+   at Norn.Business.Program.&lt;Main&gt;(String[] args)&#xD;
+   at InvokeStub_Program.&lt;Main&gt;(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.DeferredHostBuilder.DeferredHost.StartAsync(CancellationToken cancellationToken)&#xD;
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Start(IHost host)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateHost(IHostBuilder builder)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.ConfigureHostBuilder(IHostBuilder hostBuilder)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.StartServer()&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(DelegatingHandler[] handlers)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(Uri baseAddress, DelegatingHandler[] handlers)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient(WebApplicationFactoryClientOptions options)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient()&#xD;
+   at Norn.Business.Tests.OnlineFactory.NewPlayerAsync(String username) in F:\Develop Project\RPG\Server\Norn.Business.Tests\OnlineFactory.cs:line 76&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_StructuredMoveCannotUnequipTheLastBagOrCommitAReceipt() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 120&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_StructuredMoveCannotUnequipTheLastBagOrCommitAReceipt() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 139&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0f538ebd-9913-4c89-b254-3dbddf487890" testId="99df891a-cb61-42a6-fa17-a501b2d33a5e" testName="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_LeasedProfileKeepsTheFrozenBagAndNeverRepairsPersistentRows" computerName="ZHY" duration="00:00:00.0663503" startTime="2026-11-03T18:23:58.0375645+08:00" endTime="2026-11-03T18:23:58.0801752+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0f538ebd-9913-4c89-b254-3dbddf487890">
+      <Output>
+        <ErrorInfo>
+          <Message>MySqlConnector.MySqlException : Duplicate foreign key constraint name 'FK_EntryBackpackGrants_Run'</Message>
+          <StackTrace>   at MySqlConnector.Core.ServerSession.ReceiveReplyAsync(IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 1185&#xD;
+   at MySqlConnector.Core.ResultSet.ReadResultSetHeaderAsync(IOBehavior ioBehavior) in /_/src/MySqlConnector/Core/ResultSet.cs:line 37&#xD;
+   at MySqlConnector.MySqlDataReader.ActivateResultSet(CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlDataReader.cs:line 133&#xD;
+   at MySqlConnector.MySqlDataReader.InitAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, IDictionary`2 cachedProcedures, IMySqlCommand command, CommandBehavior behavior, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlDataReader.cs:line 489&#xD;
+   at MySqlConnector.Core.CommandExecutor.ExecuteReaderAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, CommandBehavior behavior, Activity activity, MySqlConnectorSemanticConventionsKinds conventionsKinds, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/CommandExecutor.cs:line 58&#xD;
+   at MySqlConnector.MySqlCommand.ExecuteNonQueryAsync(IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlCommand.cs:line 304&#xD;
+   at Dapper.SqlMapper.ExecuteImplAsync(IDbConnection cnn, CommandDefinition command, Object param) in /_/Dapper/SqlMapper.Async.cs:line 663&#xD;
+   at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs:line 54&#xD;
+   at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs:line 63&#xD;
+   at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs:line 63&#xD;
+   at Norn.Business.Program.Main(String[] args) in F:\Develop Project\RPG\Server\Norn.Business\Program.cs:line 68&#xD;
+   at Norn.Business.Program.&lt;Main&gt;(String[] args)&#xD;
+   at InvokeStub_Program.&lt;Main&gt;(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.DeferredHostBuilder.DeferredHost.StartAsync(CancellationToken cancellationToken)&#xD;
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Start(IHost host)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateHost(IHostBuilder builder)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.ConfigureHostBuilder(IHostBuilder hostBuilder)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.StartServer()&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(DelegatingHandler[] handlers)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(Uri baseAddress, DelegatingHandler[] handlers)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient(WebApplicationFactoryClientOptions options)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient()&#xD;
+   at Norn.Business.Tests.OnlineFactory.NewPlayerAsync(String username) in F:\Develop Project\RPG\Server\Norn.Business.Tests\OnlineFactory.cs:line 76&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.Pair(OnlineFactory f) in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 330&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_LeasedProfileKeepsTheFrozenBagAndNeverRepairsPersistentRows() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 93&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_LeasedProfileKeepsTheFrozenBagAndNeverRepairsPersistentRows() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 113&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="48fd86be-6786-4e1c-aa0e-a1497fae0570" testId="34235ec6-ebec-1be0-9bcf-bea4c79a877e" testName="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead" computerName="ZHY" duration="00:00:00.4745960" startTime="2026-11-03T18:23:57.4987488+08:00" endTime="2026-11-03T18:23:58.0126844+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="48fd86be-6786-4e1c-aa0e-a1497fae0570">
+      <Output>
+        <ErrorInfo>
+          <Message>MySqlConnector.MySqlException : Duplicate foreign key constraint name 'FK_EntryBackpackGrants_Run'</Message>
+          <StackTrace>   at MySqlConnector.Core.ServerSession.ReceiveReplyAsync(IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/ServerSession.cs:line 1185&#xD;
+   at MySqlConnector.Core.ResultSet.ReadResultSetHeaderAsync(IOBehavior ioBehavior) in /_/src/MySqlConnector/Core/ResultSet.cs:line 37&#xD;
+   at MySqlConnector.MySqlDataReader.ActivateResultSet(CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlDataReader.cs:line 133&#xD;
+   at MySqlConnector.MySqlDataReader.InitAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, IDictionary`2 cachedProcedures, IMySqlCommand command, CommandBehavior behavior, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlDataReader.cs:line 489&#xD;
+   at MySqlConnector.Core.CommandExecutor.ExecuteReaderAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, CommandBehavior behavior, Activity activity, MySqlConnectorSemanticConventionsKinds conventionsKinds, IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/Core/CommandExecutor.cs:line 58&#xD;
+   at MySqlConnector.MySqlCommand.ExecuteNonQueryAsync(IOBehavior ioBehavior, CancellationToken cancellationToken) in /_/src/MySqlConnector/MySqlCommand.cs:line 304&#xD;
+   at Dapper.SqlMapper.ExecuteImplAsync(IDbConnection cnn, CommandDefinition command, Object param) in /_/Dapper/SqlMapper.Async.cs:line 663&#xD;
+   at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs:line 54&#xD;
+   at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs:line 63&#xD;
+   at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct) in F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs:line 63&#xD;
+   at Norn.Business.Program.Main(String[] args) in F:\Develop Project\RPG\Server\Norn.Business\Program.cs:line 68&#xD;
+   at Norn.Business.Program.&lt;Main&gt;(String[] args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+--- End of stack trace from previous location ---&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.DeferredHostBuilder.DeferredHost.StartAsync(CancellationToken cancellationToken)&#xD;
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Start(IHost host)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateHost(IHostBuilder builder)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.ConfigureHostBuilder(IHostBuilder hostBuilder)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.StartServer()&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(DelegatingHandler[] handlers)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(Uri baseAddress, DelegatingHandler[] handlers)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient(WebApplicationFactoryClientOptions options)&#xD;
+   at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient()&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 23&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 43&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="34235ec6-ebec-1be0-9bcf-bea4c79a877e">
+      <Execution id="48fd86be-6786-4e1c-aa0e-a1497fae0570" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.EntryBackpackTests" name="AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_FirstProfileRestoresTheOriginalWarehouseGrantWithoutReissuing" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="5ceee9ab-017a-8e58-562b-fa00a2aec713">
+      <Execution id="c6cbc939-8664-404c-a884-da3b3d6ca5f9" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.EntryBackpackTests" name="AccountBaselineBackpack_FirstProfileRestoresTheOriginalWarehouseGrantWithoutReissuing" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_LeasedProfileKeepsTheFrozenBagAndNeverRepairsPersistentRows" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="99df891a-cb61-42a6-fa17-a501b2d33a5e">
+      <Execution id="0f538ebd-9913-4c89-b254-3dbddf487890" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.EntryBackpackTests" name="AccountBaselineBackpack_LeasedProfileKeepsTheFrozenBagAndNeverRepairsPersistentRows" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_StructuredMoveCannotUnequipTheLastBagOrCommitAReceipt" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="ebbe5e84-6db0-fb7a-0002-3d2338fd4212">
+      <Execution id="381b6345-ea7e-40e0-81a2-924d0a27f0b1" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.EntryBackpackTests" name="AccountBaselineBackpack_StructuredMoveCannotUnequipTheLastBagOrCommitAReceipt" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ConcurrentFirstProfilesRepairLegacyMissingBagExactlyOnce" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="6e22f924-e927-bdb4-1c18-bbec2870585a">
+      <Execution id="ccd6c4c1-34e8-4b77-bae7-6d5eef994e45" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.EntryBackpackTests" name="AccountBaselineBackpack_ConcurrentFirstProfilesRepairLegacyMissingBagExactlyOnce" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ExistingLargerEquippedBagIsKeptWithoutGrantOrVersionChange" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="d141b714-e6da-a25f-8779-112d4ad07f93">
+      <Execution id="aa468215-2187-47a1-8f66-7ba0844d743b" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.EntryBackpackTests" name="AccountBaselineBackpack_ExistingLargerEquippedBagIsKeptWithoutGrantOrVersionChange" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="d141b714-e6da-a25f-8779-112d4ad07f93" executionId="aa468215-2187-47a1-8f66-7ba0844d743b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5ceee9ab-017a-8e58-562b-fa00a2aec713" executionId="c6cbc939-8664-404c-a884-da3b3d6ca5f9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6e22f924-e927-bdb4-1c18-bbec2870585a" executionId="ccd6c4c1-34e8-4b77-bae7-6d5eef994e45" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ebbe5e84-6db0-fb7a-0002-3d2338fd4212" executionId="381b6345-ea7e-40e0-81a2-924d0a27f0b1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="99df891a-cb61-42a6-fa17-a501b2d33a5e" executionId="0f538ebd-9913-4c89-b254-3dbddf487890" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="34235ec6-ebec-1be0-9bcf-bea4c79a877e" executionId="48fd86be-6786-4e1c-aa0e-a1497fae0570" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="6" executed="6" passed="0" failed="6" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.13)&#xD;
+[xUnit.net 00:00:00.57]   Discovering: Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.77]   Discovered:  Norn.Business.Tests&#xD;
+[xUnit.net 00:00:00.82]   Starting:    Norn.Business.Tests&#xD;
+[xUnit.net 00:00:01.37]       MySqlConnector.MySqlException : Duplicate foreign key constraint name 'FK_EntryBackpackGrants_Run'&#xD;
+[xUnit.net 00:00:01.37]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.37]         /_/src/MySqlConnector/Core/ServerSession.cs(1185,0): at MySqlConnector.Core.ServerSession.ReceiveReplyAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.37]         /_/src/MySqlConnector/Core/ResultSet.cs(37,0): at MySqlConnector.Core.ResultSet.ReadResultSetHeaderAsync(IOBehavior ioBehavior)&#xD;
+[xUnit.net 00:00:01.37]         /_/src/MySqlConnector/MySqlDataReader.cs(133,0): at MySqlConnector.MySqlDataReader.ActivateResultSet(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.38]         /_/src/MySqlConnector/MySqlDataReader.cs(489,0): at MySqlConnector.MySqlDataReader.InitAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, IDictionary`2 cachedProcedures, IMySqlCommand command, CommandBehavior behavior, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.38]         /_/src/MySqlConnector/Core/CommandExecutor.cs(58,0): at MySqlConnector.Core.CommandExecutor.ExecuteReaderAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, CommandBehavior behavior, Activity activity, MySqlConnectorSemanticConventionsKinds conventionsKinds, IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.38]         /_/src/MySqlConnector/MySqlCommand.cs(304,0): at MySqlConnector.MySqlCommand.ExecuteNonQueryAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.38]         /_/Dapper/SqlMapper.Async.cs(663,0): at Dapper.SqlMapper.ExecuteImplAsync(IDbConnection cnn, CommandDefinition command, Object param)&#xD;
+[xUnit.net 00:00:01.38]         F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs(54,0): at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.38]         F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs(63,0): at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.38]         F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs(63,0): at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.38]         F:\Develop Project\RPG\Server\Norn.Business\Program.cs(68,0): at Norn.Business.Program.Main(String[] args)&#xD;
+[xUnit.net 00:00:01.38]            at Norn.Business.Program.&lt;Main&gt;(String[] args)&#xD;
+[xUnit.net 00:00:01.38]            at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)&#xD;
+[xUnit.net 00:00:01.38]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:01.38]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.38]            at Microsoft.AspNetCore.Mvc.Testing.DeferredHostBuilder.DeferredHost.StartAsync(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.38]            at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Start(IHost host)&#xD;
+[xUnit.net 00:00:01.38]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateHost(IHostBuilder builder)&#xD;
+[xUnit.net 00:00:01.38]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.ConfigureHostBuilder(IHostBuilder hostBuilder)&#xD;
+[xUnit.net 00:00:01.38]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.StartServer()&#xD;
+[xUnit.net 00:00:01.38]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(DelegatingHandler[] handlers)&#xD;
+[xUnit.net 00:00:01.38]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(Uri baseAddress, DelegatingHandler[] handlers)&#xD;
+[xUnit.net 00:00:01.38]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient(WebApplicationFactoryClientOptions options)&#xD;
+[xUnit.net 00:00:01.38]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient()&#xD;
+[xUnit.net 00:00:01.38]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(23,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead()&#xD;
+[xUnit.net 00:00:01.38]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(43,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead()&#xD;
+[xUnit.net 00:00:01.38]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.44]       MySqlConnector.MySqlException : Duplicate foreign key constraint name 'FK_EntryBackpackGrants_Run'&#xD;
+[xUnit.net 00:00:01.44]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.44]         /_/src/MySqlConnector/Core/ServerSession.cs(1185,0): at MySqlConnector.Core.ServerSession.ReceiveReplyAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.44]         /_/src/MySqlConnector/Core/ResultSet.cs(37,0): at MySqlConnector.Core.ResultSet.ReadResultSetHeaderAsync(IOBehavior ioBehavior)&#xD;
+[xUnit.net 00:00:01.44]         /_/src/MySqlConnector/MySqlDataReader.cs(133,0): at MySqlConnector.MySqlDataReader.ActivateResultSet(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.44]         /_/src/MySqlConnector/MySqlDataReader.cs(489,0): at MySqlConnector.MySqlDataReader.InitAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, IDictionary`2 cachedProcedures, IMySqlCommand command, CommandBehavior behavior, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.44]         /_/src/MySqlConnector/Core/CommandExecutor.cs(58,0): at MySqlConnector.Core.CommandExecutor.ExecuteReaderAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, CommandBehavior behavior, Activity activity, MySqlConnectorSemanticConventionsKinds conventionsKinds, IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.44]         /_/src/MySqlConnector/MySqlCommand.cs(304,0): at MySqlConnector.MySqlCommand.ExecuteNonQueryAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.44]         /_/Dapper/SqlMapper.Async.cs(663,0): at Dapper.SqlMapper.ExecuteImplAsync(IDbConnection cnn, CommandDefinition command, Object param)&#xD;
+[xUnit.net 00:00:01.44]         F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs(54,0): at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.44]         F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs(63,0): at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.44]         F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs(63,0): at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.44]         F:\Develop Project\RPG\Server\Norn.Business\Program.cs(68,0): at Norn.Business.Program.Main(String[] args)&#xD;
+[xUnit.net 00:00:01.44]            at Norn.Business.Program.&lt;Main&gt;(String[] args)&#xD;
+[xUnit.net 00:00:01.44]            at InvokeStub_Program.&lt;Main&gt;(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.44]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.44]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.44]            at Microsoft.AspNetCore.Mvc.Testing.DeferredHostBuilder.DeferredHost.StartAsync(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.44]            at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Start(IHost host)&#xD;
+[xUnit.net 00:00:01.44]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateHost(IHostBuilder builder)&#xD;
+[xUnit.net 00:00:01.44]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.ConfigureHostBuilder(IHostBuilder hostBuilder)&#xD;
+[xUnit.net 00:00:01.44]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.StartServer()&#xD;
+[xUnit.net 00:00:01.44]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(DelegatingHandler[] handlers)&#xD;
+[xUnit.net 00:00:01.44]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(Uri baseAddress, DelegatingHandler[] handlers)&#xD;
+[xUnit.net 00:00:01.44]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient(WebApplicationFactoryClientOptions options)&#xD;
+[xUnit.net 00:00:01.44]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient()&#xD;
+[xUnit.net 00:00:01.44]         F:\Develop Project\RPG\Server\Norn.Business.Tests\OnlineFactory.cs(76,0): at Norn.Business.Tests.OnlineFactory.NewPlayerAsync(String username)&#xD;
+[xUnit.net 00:00:01.44]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(330,0): at Norn.Business.Tests.EntryBackpackTests.Pair(OnlineFactory f)&#xD;
+[xUnit.net 00:00:01.44]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(93,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_LeasedProfileKeepsTheFrozenBagAndNeverRepairsPersistentRows()&#xD;
+[xUnit.net 00:00:01.44]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(113,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_LeasedProfileKeepsTheFrozenBagAndNeverRepairsPersistentRows()&#xD;
+[xUnit.net 00:00:01.44]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.48]       MySqlConnector.MySqlException : Duplicate foreign key constraint name 'FK_EntryBackpackGrants_Run'&#xD;
+[xUnit.net 00:00:01.48]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.48]         /_/src/MySqlConnector/Core/ServerSession.cs(1185,0): at MySqlConnector.Core.ServerSession.ReceiveReplyAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.48]         /_/src/MySqlConnector/Core/ResultSet.cs(37,0): at MySqlConnector.Core.ResultSet.ReadResultSetHeaderAsync(IOBehavior ioBehavior)&#xD;
+[xUnit.net 00:00:01.48]         /_/src/MySqlConnector/MySqlDataReader.cs(133,0): at MySqlConnector.MySqlDataReader.ActivateResultSet(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.48]         /_/src/MySqlConnector/MySqlDataReader.cs(489,0): at MySqlConnector.MySqlDataReader.InitAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, IDictionary`2 cachedProcedures, IMySqlCommand command, CommandBehavior behavior, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.48]         /_/src/MySqlConnector/Core/CommandExecutor.cs(58,0): at MySqlConnector.Core.CommandExecutor.ExecuteReaderAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, CommandBehavior behavior, Activity activity, MySqlConnectorSemanticConventionsKinds conventionsKinds, IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.48]         /_/src/MySqlConnector/MySqlCommand.cs(304,0): at MySqlConnector.MySqlCommand.ExecuteNonQueryAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.48]         /_/Dapper/SqlMapper.Async.cs(663,0): at Dapper.SqlMapper.ExecuteImplAsync(IDbConnection cnn, CommandDefinition command, Object param)&#xD;
+[xUnit.net 00:00:01.48]         F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs(54,0): at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.48]         F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs(63,0): at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.48]         F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs(63,0): at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.48]         F:\Develop Project\RPG\Server\Norn.Business\Program.cs(68,0): at Norn.Business.Program.Main(String[] args)&#xD;
+[xUnit.net 00:00:01.48]            at Norn.Business.Program.&lt;Main&gt;(String[] args)&#xD;
+[xUnit.net 00:00:01.48]            at InvokeStub_Program.&lt;Main&gt;(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.48]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.48]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.48]            at Microsoft.AspNetCore.Mvc.Testing.DeferredHostBuilder.DeferredHost.StartAsync(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.48]            at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Start(IHost host)&#xD;
+[xUnit.net 00:00:01.48]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateHost(IHostBuilder builder)&#xD;
+[xUnit.net 00:00:01.48]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.ConfigureHostBuilder(IHostBuilder hostBuilder)&#xD;
+[xUnit.net 00:00:01.48]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.StartServer()&#xD;
+[xUnit.net 00:00:01.48]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(DelegatingHandler[] handlers)&#xD;
+[xUnit.net 00:00:01.48]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(Uri baseAddress, DelegatingHandler[] handlers)&#xD;
+[xUnit.net 00:00:01.48]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient(WebApplicationFactoryClientOptions options)&#xD;
+[xUnit.net 00:00:01.48]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient()&#xD;
+[xUnit.net 00:00:01.48]         F:\Develop Project\RPG\Server\Norn.Business.Tests\OnlineFactory.cs(76,0): at Norn.Business.Tests.OnlineFactory.NewPlayerAsync(String username)&#xD;
+[xUnit.net 00:00:01.48]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(145,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ExistingLargerEquippedBagIsKeptWithoutGrantOrVersionChange()&#xD;
+[xUnit.net 00:00:01.48]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(158,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ExistingLargerEquippedBagIsKeptWithoutGrantOrVersionChange()&#xD;
+[xUnit.net 00:00:01.48]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.52]       MySqlConnector.MySqlException : Duplicate foreign key constraint name 'FK_EntryBackpackGrants_Run'&#xD;
+[xUnit.net 00:00:01.52]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.52]         /_/src/MySqlConnector/Core/ServerSession.cs(1185,0): at MySqlConnector.Core.ServerSession.ReceiveReplyAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.52]         /_/src/MySqlConnector/Core/ResultSet.cs(37,0): at MySqlConnector.Core.ResultSet.ReadResultSetHeaderAsync(IOBehavior ioBehavior)&#xD;
+[xUnit.net 00:00:01.52]         /_/src/MySqlConnector/MySqlDataReader.cs(133,0): at MySqlConnector.MySqlDataReader.ActivateResultSet(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.52]         /_/src/MySqlConnector/MySqlDataReader.cs(489,0): at MySqlConnector.MySqlDataReader.InitAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, IDictionary`2 cachedProcedures, IMySqlCommand command, CommandBehavior behavior, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.52]         /_/src/MySqlConnector/Core/CommandExecutor.cs(58,0): at MySqlConnector.Core.CommandExecutor.ExecuteReaderAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, CommandBehavior behavior, Activity activity, MySqlConnectorSemanticConventionsKinds conventionsKinds, IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.52]         /_/src/MySqlConnector/MySqlCommand.cs(304,0): at MySqlConnector.MySqlCommand.ExecuteNonQueryAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.52]         /_/Dapper/SqlMapper.Async.cs(663,0): at Dapper.SqlMapper.ExecuteImplAsync(IDbConnection cnn, CommandDefinition command, Object param)&#xD;
+[xUnit.net 00:00:01.52]         F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs(54,0): at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.52]         F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs(63,0): at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.52]         F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs(63,0): at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.52]         F:\Develop Project\RPG\Server\Norn.Business\Program.cs(68,0): at Norn.Business.Program.Main(String[] args)&#xD;
+[xUnit.net 00:00:01.52]            at Norn.Business.Program.&lt;Main&gt;(String[] args)&#xD;
+[xUnit.net 00:00:01.52]            at InvokeStub_Program.&lt;Main&gt;(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.52]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.52]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.52]            at Microsoft.AspNetCore.Mvc.Testing.DeferredHostBuilder.DeferredHost.StartAsync(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.52]            at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Start(IHost host)&#xD;
+[xUnit.net 00:00:01.52]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateHost(IHostBuilder builder)&#xD;
+[xUnit.net 00:00:01.52]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.ConfigureHostBuilder(IHostBuilder hostBuilder)&#xD;
+[xUnit.net 00:00:01.52]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.StartServer()&#xD;
+[xUnit.net 00:00:01.52]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(DelegatingHandler[] handlers)&#xD;
+[xUnit.net 00:00:01.52]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(Uri baseAddress, DelegatingHandler[] handlers)&#xD;
+[xUnit.net 00:00:01.52]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient(WebApplicationFactoryClientOptions options)&#xD;
+[xUnit.net 00:00:01.52]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient()&#xD;
+[xUnit.net 00:00:01.52]         F:\Develop Project\RPG\Server\Norn.Business.Tests\OnlineFactory.cs(76,0): at Norn.Business.Tests.OnlineFactory.NewPlayerAsync(String username)&#xD;
+[xUnit.net 00:00:01.52]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(120,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_StructuredMoveCannotUnequipTheLastBagOrCommitAReceipt()&#xD;
+[xUnit.net 00:00:01.52]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(139,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_StructuredMoveCannotUnequipTheLastBagOrCommitAReceipt()&#xD;
+[xUnit.net 00:00:01.52]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.55]       MySqlConnector.MySqlException : Duplicate foreign key constraint name 'FK_EntryBackpackGrants_Run'&#xD;
+[xUnit.net 00:00:01.55]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.55]         /_/src/MySqlConnector/Core/ServerSession.cs(1185,0): at MySqlConnector.Core.ServerSession.ReceiveReplyAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.55]         /_/src/MySqlConnector/Core/ResultSet.cs(37,0): at MySqlConnector.Core.ResultSet.ReadResultSetHeaderAsync(IOBehavior ioBehavior)&#xD;
+[xUnit.net 00:00:01.55]         /_/src/MySqlConnector/MySqlDataReader.cs(133,0): at MySqlConnector.MySqlDataReader.ActivateResultSet(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.55]         /_/src/MySqlConnector/MySqlDataReader.cs(489,0): at MySqlConnector.MySqlDataReader.InitAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, IDictionary`2 cachedProcedures, IMySqlCommand command, CommandBehavior behavior, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.55]         /_/src/MySqlConnector/Core/CommandExecutor.cs(58,0): at MySqlConnector.Core.CommandExecutor.ExecuteReaderAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, CommandBehavior behavior, Activity activity, MySqlConnectorSemanticConventionsKinds conventionsKinds, IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.55]         /_/src/MySqlConnector/MySqlCommand.cs(304,0): at MySqlConnector.MySqlCommand.ExecuteNonQueryAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.55]         /_/Dapper/SqlMapper.Async.cs(663,0): at Dapper.SqlMapper.ExecuteImplAsync(IDbConnection cnn, CommandDefinition command, Object param)&#xD;
+[xUnit.net 00:00:01.55]         F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs(54,0): at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.55]         F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs(63,0): at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.55]         F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs(63,0): at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.55]         F:\Develop Project\RPG\Server\Norn.Business\Program.cs(68,0): at Norn.Business.Program.Main(String[] args)&#xD;
+[xUnit.net 00:00:01.55]            at Norn.Business.Program.&lt;Main&gt;(String[] args)&#xD;
+[xUnit.net 00:00:01.55]            at InvokeStub_Program.&lt;Main&gt;(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.55]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.55]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.55]            at Microsoft.AspNetCore.Mvc.Testing.DeferredHostBuilder.DeferredHost.StartAsync(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.55]            at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Start(IHost host)&#xD;
+[xUnit.net 00:00:01.55]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateHost(IHostBuilder builder)&#xD;
+[xUnit.net 00:00:01.55]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.ConfigureHostBuilder(IHostBuilder hostBuilder)&#xD;
+[xUnit.net 00:00:01.55]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.StartServer()&#xD;
+[xUnit.net 00:00:01.55]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(DelegatingHandler[] handlers)&#xD;
+[xUnit.net 00:00:01.55]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(Uri baseAddress, DelegatingHandler[] handlers)&#xD;
+[xUnit.net 00:00:01.55]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient(WebApplicationFactoryClientOptions options)&#xD;
+[xUnit.net 00:00:01.55]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient()&#xD;
+[xUnit.net 00:00:01.55]         F:\Develop Project\RPG\Server\Norn.Business.Tests\OnlineFactory.cs(76,0): at Norn.Business.Tests.OnlineFactory.NewPlayerAsync(String username)&#xD;
+[xUnit.net 00:00:01.55]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(330,0): at Norn.Business.Tests.EntryBackpackTests.Pair(OnlineFactory f)&#xD;
+[xUnit.net 00:00:01.55]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(71,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_FirstProfileRestoresTheOriginalWarehouseGrantWithoutReissuing()&#xD;
+[xUnit.net 00:00:01.55]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(87,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_FirstProfileRestoresTheOriginalWarehouseGrantWithoutReissuing()&#xD;
+[xUnit.net 00:00:01.55]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.60]       MySqlConnector.MySqlException : Duplicate foreign key constraint name 'FK_EntryBackpackGrants_Run'&#xD;
+[xUnit.net 00:00:01.62]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.62]         /_/src/MySqlConnector/Core/ServerSession.cs(1185,0): at MySqlConnector.Core.ServerSession.ReceiveReplyAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.62]         /_/src/MySqlConnector/Core/ResultSet.cs(37,0): at MySqlConnector.Core.ResultSet.ReadResultSetHeaderAsync(IOBehavior ioBehavior)&#xD;
+[xUnit.net 00:00:01.62]         /_/src/MySqlConnector/MySqlDataReader.cs(133,0): at MySqlConnector.MySqlDataReader.ActivateResultSet(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.62]         /_/src/MySqlConnector/MySqlDataReader.cs(489,0): at MySqlConnector.MySqlDataReader.InitAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, IDictionary`2 cachedProcedures, IMySqlCommand command, CommandBehavior behavior, Activity activity, IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.62]         /_/src/MySqlConnector/Core/CommandExecutor.cs(58,0): at MySqlConnector.Core.CommandExecutor.ExecuteReaderAsync(CommandListPosition commandListPosition, ICommandPayloadCreator payloadCreator, CommandBehavior behavior, Activity activity, MySqlConnectorSemanticConventionsKinds conventionsKinds, IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.62]         /_/src/MySqlConnector/MySqlCommand.cs(304,0): at MySqlConnector.MySqlCommand.ExecuteNonQueryAsync(IOBehavior ioBehavior, CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.62]         /_/Dapper/SqlMapper.Async.cs(663,0): at Dapper.SqlMapper.ExecuteImplAsync(IDbConnection cnn, CommandDefinition command, Object param)&#xD;
+[xUnit.net 00:00:01.62]         F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs(54,0): at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.62]         F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs(63,0): at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.62]         F:\Develop Project\RPG\Server\Norn.Business\Infrastructure\SchemaMigrator.cs(63,0): at Norn.Business.Infrastructure.SchemaMigrator.ApplyAsync(String connectionString, CancellationToken ct)&#xD;
+[xUnit.net 00:00:01.62]         F:\Develop Project\RPG\Server\Norn.Business\Program.cs(68,0): at Norn.Business.Program.Main(String[] args)&#xD;
+[xUnit.net 00:00:01.62]            at Norn.Business.Program.&lt;Main&gt;(String[] args)&#xD;
+[xUnit.net 00:00:01.62]            at InvokeStub_Program.&lt;Main&gt;(Object, Span`1)&#xD;
+[xUnit.net 00:00:01.62]            at System.Reflection.MethodBaseInvoker.InvokeWithOneArg(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:01.62]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.62]            at Microsoft.AspNetCore.Mvc.Testing.DeferredHostBuilder.DeferredHost.StartAsync(CancellationToken cancellationToken)&#xD;
+[xUnit.net 00:00:01.62]            at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Start(IHost host)&#xD;
+[xUnit.net 00:00:01.62]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateHost(IHostBuilder builder)&#xD;
+[xUnit.net 00:00:01.62]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.ConfigureHostBuilder(IHostBuilder hostBuilder)&#xD;
+[xUnit.net 00:00:01.62]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.StartServer()&#xD;
+[xUnit.net 00:00:01.62]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(DelegatingHandler[] handlers)&#xD;
+[xUnit.net 00:00:01.62]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateDefaultClient(Uri baseAddress, DelegatingHandler[] handlers)&#xD;
+[xUnit.net 00:00:01.62]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient(WebApplicationFactoryClientOptions options)&#xD;
+[xUnit.net 00:00:01.62]            at Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory`1.CreateClient()&#xD;
+[xUnit.net 00:00:01.62]         F:\Develop Project\RPG\Server\Norn.Business.Tests\OnlineFactory.cs(76,0): at Norn.Business.Tests.OnlineFactory.NewPlayerAsync(String username)&#xD;
+[xUnit.net 00:00:01.62]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(49,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ConcurrentFirstProfilesRepairLegacyMissingBagExactlyOnce()&#xD;
+[xUnit.net 00:00:01.62]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(65,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ConcurrentFirstProfilesRepairLegacyMissingBagExactlyOnce()&#xD;
+[xUnit.net 00:00:01.62]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.63]   Finished:    Norn.Business.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-03T18:23:58.0171831+08:00">
+        <Text>[xUnit.net 00:00:01.37]     Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-03T18:23:58.1565112+08:00">
+        <Text>[xUnit.net 00:00:01.44]     Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_LeasedProfileKeepsTheFrozenBagAndNeverRepairsPersistentRows [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-03T18:23:58.1566897+08:00">
+        <Text>[xUnit.net 00:00:01.48]     Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ExistingLargerEquippedBagIsKeptWithoutGrantOrVersionChange [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-03T18:23:58.1639361+08:00">
+        <Text>[xUnit.net 00:00:01.52]     Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_StructuredMoveCannotUnequipTheLastBagOrCommitAReceipt [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-03T18:23:58.1918325+08:00">
+        <Text>[xUnit.net 00:00:01.55]     Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_FirstProfileRestoresTheOriginalWarehouseGrantWithoutReissuing [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-03T18:23:58.2485529+08:00">
+        <Text>[xUnit.net 00:00:01.60]     Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ConcurrentFirstProfilesRepairLegacyMissingBagExactlyOnce [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

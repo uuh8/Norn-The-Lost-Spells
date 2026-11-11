@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-04 10:30:54Z" end-time="2026-11-04 10:32:57Z" duration="122.9243912">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="4356" result="Failed" site="Child" start-time="2026-11-04 10:30:54Z" end-time="2026-11-04 10:32:57Z" duration="122.924391" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3425" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="461" result="Failed" site="Child" start-time="2026-11-04 10:30:55Z" end-time="2026-11-04 10:32:57Z" duration="122.830138" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="26976" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3426" name="Game" fullname="Game" runstate="Runnable" testcasecount="461" result="Failed" site="Child" start-time="2026-11-04 10:30:55Z" end-time="2026-11-04 10:32:57Z" duration="122.735771" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3427" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="461" result="Failed" site="Child" start-time="2026-11-04 10:30:55Z" end-time="2026-11-04 10:32:57Z" duration="122.637957" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3428" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="461" result="Failed" site="Child" start-time="2026-11-04 10:30:55Z" end-time="2026-11-04 10:32:57Z" duration="122.537852" total="6" passed="2" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2912" name="CombatNetworkingRebindTests" fullname="Game.Multiplayer.Tests.CombatNetworkingRebindTests" classname="Game.Multiplayer.Tests.CombatNetworkingRebindTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-11-04 10:30:55Z" end-time="2026-11-04 10:30:55Z" duration="0.437605" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2913" name="ClientRebindPreservesLiveGameplayAndMovesEachNetworkCallbackExactlyOnce" fullname="Game.Multiplayer.Tests.CombatNetworkingRebindTests.ClientRebindPreservesLiveGameplayAndMovesEachNetworkCallbackExactlyOnce" methodname="ClientRebindPreservesLiveGameplayAndMovesEachNetworkCallbackExactlyOnce" classname="Game.Multiplayer.Tests.CombatNetworkingRebindTests" runstate="Runnable" seed="1000685408" result="Failed" start-time="2026-11-04 10:30:55Z" end-time="2026-11-04 10:30:55Z" duration="0.306600" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  网络组合根更新必须有独立Rebind，不能通过Dispose重建已经运行的Gameplay Owner。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.CombatNetworkingRebindTests.Rebind (Game.Multiplayer.RoomInstanceBootstrap instance, System.String& error) [0x00016] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\CombatNetworkingRebindTests.cs:121
+at Game.Multiplayer.Tests.CombatNetworkingRebindTests.ClientRebindPreservesLiveGameplayAndMovesEachNetworkCallbackExactlyOnce () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\CombatNetworkingRebindTests.cs:61
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2915" name="DifferentDedicatedInstanceCannotReplaceTheOriginalEntryOrDisposeItsGameplayState" fullname="Game.Multiplayer.Tests.CombatNetworkingRebindTests.DifferentDedicatedInstanceCannotReplaceTheOriginalEntryOrDisposeItsGameplayState" methodname="DifferentDedicatedInstanceCannotReplaceTheOriginalEntryOrDisposeItsGameplayState" classname="Game.Multiplayer.Tests.CombatNetworkingRebindTests" runstate="Runnable" seed="1488857768" result="Failed" start-time="2026-11-04 10:30:55Z" end-time="2026-11-04 10:30:55Z" duration="0.003709" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  网络组合根更新必须有独立Rebind，不能通过Dispose重建已经运行的Gameplay Owner。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.CombatNetworkingRebindTests.Rebind (Game.Multiplayer.RoomInstanceBootstrap instance, System.String& error) [0x00016] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\CombatNetworkingRebindTests.cs:121
+at Game.Multiplayer.Tests.CombatNetworkingRebindTests.DifferentDedicatedInstanceCannotReplaceTheOriginalEntryOrDisposeItsGameplayState () [0x000d4] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\CombatNetworkingRebindTests.cs:99
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2916" name="SameDedicatedInstanceCanRebindWithoutLosingHomeRestorationOrGround" fullname="Game.Multiplayer.Tests.CombatNetworkingRebindTests.SameDedicatedInstanceCanRebindWithoutLosingHomeRestorationOrGround" methodname="SameDedicatedInstanceCanRebindWithoutLosingHomeRestorationOrGround" classname="Game.Multiplayer.Tests.CombatNetworkingRebindTests" runstate="Runnable" seed="114350875" result="Failed" start-time="2026-11-04 10:30:55Z" end-time="2026-11-04 10:30:55Z" duration="0.002378" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  网络组合根更新必须有独立Rebind，不能通过Dispose重建已经运行的Gameplay Owner。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.CombatNetworkingRebindTests.Rebind (Game.Multiplayer.RoomInstanceBootstrap instance, System.String& error) [0x00016] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\CombatNetworkingRebindTests.cs:121
+at Game.Multiplayer.Tests.CombatNetworkingRebindTests.SameDedicatedInstanceCanRebindWithoutLosingHomeRestorationOrGround () [0x000e0] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\CombatNetworkingRebindTests.cs:114
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2914" name="WorldBindNetworkKeepsTheSameCombatAndGroundOwnerInsteadOfConstructingAnotherGameplayWorld" fullname="Game.Multiplayer.Tests.CombatNetworkingRebindTests.WorldBindNetworkKeepsTheSameCombatAndGroundOwnerInsteadOfConstructingAnotherGameplayWorld" methodname="WorldBindNetworkKeepsTheSameCombatAndGroundOwnerInsteadOfConstructingAnotherGameplayWorld" classname="Game.Multiplayer.Tests.CombatNetworkingRebindTests" runstate="Runnable" seed="4635791" result="Failed" start-time="2026-11-04 10:30:55Z" end-time="2026-11-04 10:30:55Z" duration="0.008840" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: same as <Game.Multiplayer.OnlineCombatWorld>
+  But was:  <Game.Multiplayer.OnlineCombatWorld>
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.CombatNetworkingRebindTests.WorldBindNetworkKeepsTheSameCombatAndGroundOwnerInsteadOfConstructingAnotherGameplayWorld () [0x00033] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\CombatNetworkingRebindTests.cs:83
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="3091" name="OnlineDungeonExportTests" fullname="Game.Multiplayer.Tests.OnlineDungeonExportTests" classname="Game.Multiplayer.Tests.OnlineDungeonExportTests" runstate="Runnable" testcasecount="17" result="Passed" start-time="2026-11-04 10:30:55Z" end-time="2026-11-04 10:32:57Z" duration="121.998388" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-suite type="ParameterizedMethod" id="3101" name="NarrowReturnRefreshBuildsOnlyAMemoryCandidateAndPreservesExistingNavigationAndMaterialAssets" fullname="Game.Multiplayer.Tests.OnlineDungeonExportTests.NarrowReturnRefreshBuildsOnlyAMemoryCandidateAndPreservesExistingNavigationAndMaterialAssets" classname="Game.Multiplayer.Tests.OnlineDungeonExportTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-04 10:30:55Z" end-time="2026-11-04 10:32:57Z" duration="121.992553" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="3099" name="NarrowReturnRefreshBuildsOnlyAMemoryCandidateAndPreservesExistingNavigationAndMaterialAssets(&quot;p7&quot;)" fullname="Game.Multiplayer.Tests.OnlineDungeonExportTests.NarrowReturnRefreshBuildsOnlyAMemoryCandidateAndPreservesExistingNavigationAndMaterialAssets(&quot;p7&quot;)" methodname="NarrowReturnRefreshBuildsOnlyAMemoryCandidateAndPreservesExistingNavigationAndMaterialAssets" classname="Game.Multiplayer.Tests.OnlineDungeonExportTests" runstate="Runnable" seed="1602872638" result="Passed" start-time="2026-11-04 10:30:55Z" end-time="2026-11-04 10:31:18Z" duration="22.209033" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="3100" name="NarrowReturnRefreshBuildsOnlyAMemoryCandidateAndPreservesExistingNavigationAndMaterialAssets(&quot;p8&quot;)" fullname="Game.Multiplayer.Tests.OnlineDungeonExportTests.NarrowReturnRefreshBuildsOnlyAMemoryCandidateAndPreservesExistingNavigationAndMaterialAssets(&quot;p8&quot;)" methodname="NarrowReturnRefreshBuildsOnlyAMemoryCandidateAndPreservesExistingNavigationAndMaterialAssets" classname="Game.Multiplayer.Tests.OnlineDungeonExportTests" runstate="Runnable" seed="602290258" result="Passed" start-time="2026-11-04 10:31:18Z" end-time="2026-11-04 10:32:57Z" duration="99.682104" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

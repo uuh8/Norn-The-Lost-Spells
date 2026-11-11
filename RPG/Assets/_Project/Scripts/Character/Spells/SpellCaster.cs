@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Profiling;
@@ -46,6 +46,8 @@ namespace Game.Character
         private CombatExecutionMode _combatMode;
         private CombatSimulationWorld _combatWorld;
         private readonly AuthorityCastScheduler _authorityScheduler = new AuthorityCastScheduler();
+        // 个人退出只读等待原调度器自然排空；不通过CancelAll伪造“没有在途工作”。
+        public int PendingAuthorityActions => _authorityScheduler.PendingCount;
         private ulong _authorityActor;
         private uint _authorityGeneration;
         private AuthorityCastContext _authorityContext;
@@ -74,7 +76,7 @@ namespace Game.Character
                 Generation = _authorityGeneration, OutputScope = new CombatOutputIdentity.CommandScope(_authorityActor, commandId) };
         }
         public void StepAuthority(float deltaTime, uint serverTick)
-        { if (_combatMode == CombatExecutionMode.Authority) _authorityScheduler.StepAuthority(deltaTime, serverTick); }
+        { if (_combatMode == CombatExecutionMode.Authority && _combatWorld != null && _combatWorld.AllowsAuthorityWrites) _authorityScheduler.StepAuthority(deltaTime, serverTick); }
         public void CancelAuthorityPending()
         { _authorityScheduler.CancelAll(); _authorityGeneration++; _authorityContext = null; }
         private void OnDisable()
@@ -82,6 +84,7 @@ namespace Game.Character
 
         private bool CanRunAuthorityContext(AuthorityCastContext context) =>
             _combatMode == CombatExecutionMode.SinglePlayer || _combatMode == CombatExecutionMode.Authority
+                && _combatWorld != null && _combatWorld.AllowsAuthorityWrites
                 && context != null && context.Generation == _authorityGeneration;
 
         private void ConfigureOutput(GameObject output)

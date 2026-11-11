@@ -119,6 +119,49 @@ namespace Game.ElementField.Tests
         }
 
         [Test]
+        public void AuthoritySuspensionRejectsNewWritesAndRetainsPreviouslyQueuedMaterial()
+        {
+            // 固定关闭本例无关的流动/衰减，7与13只用于观察接受/拒绝的数量边界。
+            JsonUtility.FromJsonOverwrite("{\"_fireDecayPerTick\":0,\"_maxDownFlowPerTick\":0,\"_maxLateralFlowPerTick\":0}", _profile);
+            InitializeClock("Authority");
+            // 时钟夹具只手工装配Store/Queue；本例调用公开写入口，还必须提供真正的Fire分流表。
+            // 不给整个旧夹具补隐式默认Route，避免把缺路由的拒绝误当成本次暂停门的行为。
+            var routing = ScriptableObject.CreateInstance<MaterialSimulationRoutingProfile>();
+            try
+            {
+                var serialized = new SerializedObject(routing);
+                var routes = serialized.FindProperty("_routes");
+                routes.arraySize = 1;
+                routes.GetArrayElementAtIndex(0).FindPropertyRelative("_material").intValue = (byte)MaterialId.Fire;
+                routes.GetArrayElementAtIndex(0).FindPropertyRelative("_backend").intValue = (int)MaterialSimulationBackendKind.ElementCell;
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+                var catalog = AssetDatabase.LoadAssetAtPath<MaterialCatalog>("Assets/_Project/ScriptableObjects/Materials/MaterialCatalog_Default.asset");
+                var decision = WaterSimulationCompatibilityPolicy.Resolve(WaterSimulationMode.LegacyCell, true);
+                Set("_materialRoutes", MaterialSimulationRouteSnapshot.Create(catalog.CreateSnapshot(), routing, in decision));
+            }
+            finally { Object.DestroyImmediate(routing); }
+            var accepted = new ElementWriteRequest(Vector3.zero, MaterialId.Fire, 7, 0, false);
+            var rejected = new ElementWriteRequest(Vector3.zero, MaterialId.Fire, 13, 0, false);
+            Assert.That(_world.TryEnqueueWrite(in accepted), Is.True);
+            _world.SetSimulationSuspended(true);
+
+            Assert.That(_world.TryEnqueueWrite(in rejected), Is.False,
+                "Authority暂停后必须在入队前拒绝新输出，不能让保留现场的队列继续增长。");
+            Assert.That(_world.PendingWriteCount, Is.EqualTo(1), "暂停不取消之前已经接受的真实材料请求。");
+            Step(30f, 1);
+            Assert.That(_world.PendingWriteCount, Is.EqualTo(1));
+            Assert.That(_world.WorldTick, Is.Zero);
+
+            // 显式解除底层暂停仅验证不积时间债；复制故障能否恢复由上层永久栅栏决定。
+            _world.SetSimulationSuspended(false);
+            Step(.1f, 2);
+            Assert.That(_world.PendingWriteCount, Is.Zero);
+            Assert.That(_world.WorldTick, Is.EqualTo(1));
+            Assert.That(_world.TryGetCell(Vector3Int.zero, out var cell), Is.True);
+            Assert.That(cell.Amount, Is.EqualTo(7), "只执行原已接受的7，不得把被拒绝的13补进世界。");
+        }
+
+        [Test]
         public void SynchronousReactionFreezeStopsRemainingCatchUpTicks()
         {
             InitializeClock("Authority");

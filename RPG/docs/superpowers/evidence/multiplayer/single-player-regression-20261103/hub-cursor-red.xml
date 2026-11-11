@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-03 09:54:31Z" end-time="2026-11-03 09:54:31Z" duration="0.8270898">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="4204" result="Failed" site="Child" start-time="2026-11-03 09:54:31Z" end-time="2026-11-03 09:54:31Z" duration="0.827090" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="6120" name="Game.UI.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.UI.Tests.dll" runstate="Runnable" testcasecount="154" result="Failed" site="Child" start-time="2026-11-03 09:54:31Z" end-time="2026-11-03 09:54:31Z" duration="0.731402" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34452" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="6121" name="Game" fullname="Game" runstate="Runnable" testcasecount="154" result="Failed" site="Child" start-time="2026-11-03 09:54:31Z" end-time="2026-11-03 09:54:31Z" duration="0.638925" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="6122" name="UI" fullname="Game.UI" runstate="Runnable" testcasecount="154" result="Failed" site="Child" start-time="2026-11-03 09:54:31Z" end-time="2026-11-03 09:54:31Z" duration="0.537473" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="6123" name="Tests" fullname="Game.UI.Tests" runstate="Runnable" testcasecount="154" result="Failed" site="Child" start-time="2026-11-03 09:54:31Z" end-time="2026-11-03 09:54:31Z" duration="0.440025" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="5969" name="OnlineInventoryUiGatewayTests" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" testcasecount="93" result="Failed" site="Child" start-time="2026-11-03 09:54:31Z" end-time="2026-11-03 09:54:31Z" duration="0.336713" total="3" passed="1" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="5972" name="AccountHubInventoryCloseRetainsAnotherLocalPauseOwner" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.AccountHubInventoryCloseRetainsAnotherLocalPauseOwner" methodname="AccountHubInventoryCloseRetainsAnotherLocalPauseOwner" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="568891448" result="Failed" start-time="2026-11-03 09:54:31Z" end-time="2026-11-03 09:54:31Z" duration="0.155063" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Tab应申请自己的Inventory reason，不能仅依赖恰好已经打开的Pause Menu。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.OnlineInventoryUiGatewayTests.AccountHubInventoryCloseRetainsAnotherLocalPauseOwner () [0x000d9] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:155
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="5971" name="AccountHubTabUnlocksCursorAndPausesLocalInputWithoutDungeonMovementWorld" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.AccountHubTabUnlocksCursorAndPausesLocalInputWithoutDungeonMovementWorld" methodname="AccountHubTabUnlocksCursorAndPausesLocalInputWithoutDungeonMovementWorld" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="69996132" result="Failed" start-time="2026-11-03 09:54:31Z" end-time="2026-11-03 09:54:31Z" duration="0.039916" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  账号Hub的原Tab必须独立取得可操作鼠标。
+  Expected: None
+  But was:  Locked
+]]></message>
+                  <stack-trace><![CDATA[at Game.UI.Tests.OnlineInventoryUiGatewayTests.AccountHubTabUnlocksCursorAndPausesLocalInputWithoutDungeonMovementWorld () [0x000cc] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\UI\OnlineInventoryUiGatewayTests.cs:126
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="5973" name="DungeonInventoryCapturesOnlyLocalInputAndKeepsSharedWorldRunning" fullname="Game.UI.Tests.OnlineInventoryUiGatewayTests.DungeonInventoryCapturesOnlyLocalInputAndKeepsSharedWorldRunning" methodname="DungeonInventoryCapturesOnlyLocalInputAndKeepsSharedWorldRunning" classname="Game.UI.Tests.OnlineInventoryUiGatewayTests" runstate="Runnable" seed="1880799559" result="Passed" start-time="2026-11-03 09:54:31Z" end-time="2026-11-03 09:54:31Z" duration="0.030299" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -13,7 +13,7 @@ using Xunit;
 namespace Norn.Business.Tests;
 
 /// <summary>实际 ASP.NET Host + 独立 MySQL test Schema；缺少环境就明确失败，不退回内存假库。</summary>
-public sealed class OnlineFactory : WebApplicationFactory<Program>
+public class OnlineFactory : WebApplicationFactory<Program>
 {
     public static readonly JsonSerializerOptions Json = new() { IncludeFields = true };
     public readonly MutableOnlineClock Clock = new();
@@ -33,11 +33,25 @@ public sealed class OnlineFactory : WebApplicationFactory<Program>
         using var config = JsonDocument.Parse(File.ReadAllText(file));
         Connection = config.RootElement.GetProperty("Test").GetString()!;
         _migration = config.RootElement.GetProperty("TestMigration").GetString()!;
+        // 两条连接都必须先过门再加载Host；Runtime正确不能替Migration连接授权DDL。
+        RequireIsolatedConnections(Connection, _migration);
         _manifestPath = Environment.GetEnvironmentVariable("NORN_CONTENT_MANIFEST") ?? throw new InvalidOperationException("缺少正式导出的 Manifest 路径。");
         Manifest = JsonSerializer.Deserialize<ContentManifest>(File.ReadAllText(_manifestPath), Json)!;
-        // 防误用：集成测试只能使用专用实例/专用 Schema，绝不修改已有个人数据库。
-        var connection = new MySqlConnector.MySqlConnectionStringBuilder(Connection);
-        if (connection.Server != "127.0.0.1" || connection.Port != 13384 || connection.Database != "norn_online_test") throw new InvalidOperationException("拒绝在非 Norn test Schema 运行集成测试。");
+    }
+    /// <summary>纯配置校验，不开连接、不输出原串；可在没有MySQL的单元测试中验证两种权限的隔离。</summary>
+    internal static void RequireIsolatedConnections(string runtime, string migration)
+    {
+        Require(runtime, "Runtime"); Require(migration, "Migration");
+        static void Require(string value, string role)
+        {
+            try
+            {
+                var connection = new MySqlConnector.MySqlConnectionStringBuilder(value);
+                if (connection.Server == "127.0.0.1" && connection.Port == 13384 && connection.Database == "norn_online_test") return;
+            }
+            catch (ArgumentException) { /* 格式错误同样拒绝；不能把含密码的原异常拼进测试输出。 */ }
+            throw new InvalidOperationException($"拒绝在非 Norn test Schema 使用{role}连接运行集成测试。");
+        }
     }
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {

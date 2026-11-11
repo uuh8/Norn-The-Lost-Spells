@@ -22,10 +22,12 @@ namespace Game.UI
         }
         private void OnEnable()
         {
+            ConfigureViewportLayout();
             EventBus<OnlineLobbyChangedEvent>.Subscribe(OnChanged);
             // Session跨场景存在，重新显示菜单要主动重放；事件不会自动保留最后一次值。
             EventBus<OnlineLobbyRequestEvent>.Publish(new OnlineLobbyRequestEvent { Action = OnlineLobbyAction.Observe });
         }
+        private void ConfigureViewportLayout() => UiViewportLayout.FitCanvas(transform);
         private void Start() => EventBus<OnlineLobbyRequestEvent>.Publish(new OnlineLobbyRequestEvent { Action = OnlineLobbyAction.Observe });
         private void OnDisable() { EventBus<OnlineLobbyChangedEvent>.Unsubscribe(OnChanged); _password.text = string.Empty; }
         private void OnDestroy() { if (_font != null) Destroy(_font); }

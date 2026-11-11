@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-03 08:20:59Z" end-time="2026-11-03 08:21:00Z" duration="0.643027">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="4199" result="Failed" site="Child" start-time="2026-11-03 08:20:59Z" end-time="2026-11-03 08:21:00Z" duration="0.643027" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="4403" name="Game.Rendering.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Rendering.Tests.dll" runstate="Runnable" testcasecount="324" result="Failed" site="Child" start-time="2026-11-03 08:20:59Z" end-time="2026-11-03 08:21:00Z" duration="0.545749" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34452" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="4404" name="Game" fullname="Game" runstate="Runnable" testcasecount="324" result="Failed" site="Child" start-time="2026-11-03 08:20:59Z" end-time="2026-11-03 08:21:00Z" duration="0.450741" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="4405" name="Rendering" fullname="Game.Rendering" runstate="Runnable" testcasecount="324" result="Failed" site="Child" start-time="2026-11-03 08:20:59Z" end-time="2026-11-03 08:21:00Z" duration="0.353335" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="4406" name="Tests" fullname="Game.Rendering.Tests" runstate="Runnable" testcasecount="324" result="Failed" site="Child" start-time="2026-11-03 08:21:00Z" end-time="2026-11-03 08:21:00Z" duration="0.251332" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="4318" name="ProjectileImpactVfxTests" fullname="Game.Rendering.Tests.ProjectileImpactVfxTests" classname="Game.Rendering.Tests.ProjectileImpactVfxTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-11-03 08:21:00Z" end-time="2026-11-03 08:21:00Z" duration="0.149786" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="4321" name="ReplicaTermination_PresentsOnlyTheFirstRealImpactWithoutGameplayEvents" fullname="Game.Rendering.Tests.ProjectileImpactVfxTests.ReplicaTermination_PresentsOnlyTheFirstRealImpactWithoutGameplayEvents" methodname="ReplicaTermination_PresentsOnlyTheFirstRealImpactWithoutGameplayEvents" classname="Game.Rendering.Tests.ProjectileImpactVfxTests" runstate="Runnable" seed="1375998790" result="Failed" start-time="2026-11-03 08:21:00Z" end-time="2026-11-03 08:21:00Z" duration="0.036262" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Replica必须有独立纯表现入口，不能调用会展开Payload/伤害/沉积的Impact。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Rendering.Tests.ProjectileImpactVfxTests.ReplicaTermination_PresentsOnlyTheFirstRealImpactWithoutGameplayEvents () [0x00100] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Rendering\ProjectileImpactVfxTests.cs:75
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="17" result="Passed" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 05:43:22Z" end-time="2026-11-02 05:43:24Z" duration="1.3082205">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3754" result="Passed" start-time="2026-11-02 05:43:22Z" end-time="2026-11-02 05:43:24Z" duration="1.308221" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1594" name="Game.Combat.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Combat.Tests.dll" runstate="Runnable" testcasecount="143" result="Passed" start-time="2026-11-02 05:43:22Z" end-time="2026-11-02 05:43:23Z" duration="0.585700" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1595" name="Game" fullname="Game" runstate="Runnable" testcasecount="143" result="Passed" start-time="2026-11-02 05:43:22Z" end-time="2026-11-02 05:43:23Z" duration="0.499622" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1596" name="Combat" fullname="Game.Combat" runstate="Runnable" testcasecount="143" result="Passed" start-time="2026-11-02 05:43:22Z" end-time="2026-11-02 05:43:23Z" duration="0.400232" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1597" name="Tests" fullname="Game.Combat.Tests" runstate="Runnable" testcasecount="143" result="Passed" start-time="2026-11-02 05:43:23Z" end-time="2026-11-02 05:43:23Z" duration="0.299776" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1462" name="CombatVisualLifetimeTests" fullname="Game.Combat.Tests.CombatVisualLifetimeTests" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-11-02 05:43:23Z" end-time="2026-11-02 05:43:23Z" duration="0.199604" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1463" name="BirthTick_DoesNotConsumeTimeBeforeMarkerExisted" fullname="Game.Combat.Tests.CombatVisualLifetimeTests.BirthTick_DoesNotConsumeTimeBeforeMarkerExisted" methodname="BirthTick_DoesNotConsumeTimeBeforeMarkerExisted" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" seed="1928585821" result="Passed" start-time="2026-11-02 05:43:23Z" end-time="2026-11-02 05:43:23Z" duration="0.045313" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1464" name="DuplicateTick_DoesNotConsumeMarkerLifetimeAgain" fullname="Game.Combat.Tests.CombatVisualLifetimeTests.DuplicateTick_DoesNotConsumeMarkerLifetimeAgain" methodname="DuplicateTick_DoesNotConsumeMarkerLifetimeAgain" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" seed="827951632" result="Passed" start-time="2026-11-02 05:43:23Z" end-time="2026-11-02 05:43:23Z" duration="0.001011" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1466" name="Expiry_DeactivatesBeforeDestroyAndHappensExactlyOnce" fullname="Game.Combat.Tests.CombatVisualLifetimeTests.Expiry_DeactivatesBeforeDestroyAndHappensExactlyOnce" methodname="Expiry_DeactivatesBeforeDestroyAndHappensExactlyOnce" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" seed="1725448054" result="Passed" start-time="2026-11-02 05:43:23Z" end-time="2026-11-02 05:43:23Z" duration="0.009783" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+]]></output>
+              </test-case>
+              <test-case id="1465" name="NoSimulationDuringFreeze_LeavesRemainingTimeAndMarkerIntact" fullname="Game.Combat.Tests.CombatVisualLifetimeTests.NoSimulationDuringFreeze_LeavesRemainingTimeAndMarkerIntact" methodname="NoSimulationDuringFreeze_LeavesRemainingTimeAndMarkerIntact" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" seed="1882876171" result="Passed" start-time="2026-11-02 05:43:23Z" end-time="2026-11-02 05:43:23Z" duration="0.000737" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1469" name="ReplicaWaitingIsOrangeOneWayAndNeverPublishesMaterialImpact" fullname="Game.Combat.Tests.CombatVisualLifetimeTests.ReplicaWaitingIsOrangeOneWayAndNeverPublishesMaterialImpact" methodname="ReplicaWaitingIsOrangeOneWayAndNeverPublishesMaterialImpact" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" seed="92546101" result="Passed" start-time="2026-11-02 05:43:23Z" end-time="2026-11-02 05:43:23Z" duration="0.020844" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Waiting color precision; space=Linear; source=(r=1/0x3F800000, g=0.55/0x3F0CCCCD, b=0.08/0x3DA3D70A, a=1/0x3F800000); actual=(r=1/0x3F800000, g=0.549999952/0x3F0CCCCC, b=0.0799999759/0x3DA3D707, a=1/0x3F800000); nativeReference=(r=1/0x3F800000, g=0.549999952/0x3F0CCCCC, b=0.0799999759/0x3DA3D707, a=1/0x3F800000); matchesReference=True
+Waiting color precision; space=Linear; source=(r=1/0x3F800000, g=0.55/0x3F0CCCCD, b=0.08/0x3DA3D70A, a=1/0x3F800000); actual=(r=1/0x3F800000, g=0.549999952/0x3F0CCCCC, b=0.0799999759/0x3DA3D707, a=1/0x3F800000); nativeReference=(r=1/0x3F800000, g=0.549999952/0x3F0CCCCC, b=0.0799999759/0x3DA3D707, a=1/0x3F800000); matchesReference=True
+]]></output>
+              </test-case>
+              <test-case id="1468" name="ThrownWorldModelInstallationRejectsBadRepeatedAndAlreadyLaunchedChanges" fullname="Game.Combat.Tests.CombatVisualLifetimeTests.ThrownWorldModelInstallationRejectsBadRepeatedAndAlreadyLaunchedChanges" methodname="ThrownWorldModelInstallationRejectsBadRepeatedAndAlreadyLaunchedChanges" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" seed="1986983822" result="Passed" start-time="2026-11-02 05:43:23Z" end-time="2026-11-02 05:43:23Z" duration="0.003180" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1467" name="ThrownWorldModelUsesOriginalNormalizationAndCannotOwnGameplayPhysics" fullname="Game.Combat.Tests.CombatVisualLifetimeTests.ThrownWorldModelUsesOriginalNormalizationAndCannotOwnGameplayPhysics" methodname="ThrownWorldModelUsesOriginalNormalizationAndCannotOwnGameplayPhysics" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" seed="378126990" result="Passed" start-time="2026-11-02 05:43:23Z" end-time="2026-11-02 05:43:23Z" duration="0.005832" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="3201" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="305" result="Passed" start-time="2026-11-02 05:43:23Z" end-time="2026-11-02 05:43:24Z" duration="0.617616" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="3202" name="Game" fullname="Game" runstate="Runnable" testcasecount="305" result="Passed" start-time="2026-11-02 05:43:23Z" end-time="2026-11-02 05:43:24Z" duration="0.590265" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="3203" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="305" result="Passed" start-time="2026-11-02 05:43:23Z" end-time="2026-11-02 05:43:24Z" duration="0.571446" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="3204" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="305" result="Passed" start-time="2026-11-02 05:43:23Z" end-time="2026-11-02 05:43:24Z" duration="0.470993" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="2967" name="OnlineCombatReplicationTests" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-11-02 05:43:23Z" end-time="2026-11-02 05:43:24Z" duration="0.371715" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="2977" name="ActorEpochs_AreIndependentAndRejectOnlyTheirOwnStaleGeneration" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests.ActorEpochs_AreIndependentAndRejectOnlyTheirOwnStaleGeneration" methodname="ActorEpochs_AreIndependentAndRejectOnlyTheirOwnStaleGeneration" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" seed="1500795193" result="Passed" start-time="2026-11-02 05:43:23Z" end-time="2026-11-02 05:43:23Z" duration="0.224987" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2969" name="ContainerBirthRejectsUnknownModelsAndAnUnrelatedControlledProjectilePrefab" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests.ContainerBirthRejectsUnknownModelsAndAnUnrelatedControlledProjectilePrefab" methodname="ContainerBirthRejectsUnknownModelsAndAnUnrelatedControlledProjectilePrefab" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" seed="1289435187" result="Passed" start-time="2026-11-02 05:43:23Z" end-time="2026-11-02 05:43:23Z" duration="0.013496" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2968" name="ContainerBirthRestoresTheRealModelAndWaitingAndCannotReturnToFlying" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests.ContainerBirthRestoresTheRealModelAndWaitingAndCannotReturnToFlying" methodname="ContainerBirthRestoresTheRealModelAndWaitingAndCannotReturnToFlying" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" seed="871078347" result="Passed" start-time="2026-11-02 05:43:23Z" end-time="2026-11-02 05:43:23Z" duration="0.005001" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2972" name="DeathFact_OlderLivingSnapshotCannotReviveActorOrRepeatDeath" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests.DeathFact_OlderLivingSnapshotCannotReviveActorOrRepeatDeath" methodname="DeathFact_OlderLivingSnapshotCannotReviveActorOrRepeatDeath" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" seed="839371475" result="Passed" start-time="2026-11-02 05:43:23Z" end-time="2026-11-02 05:43:23Z" duration="0.003823" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2973" name="NewerDeadSnapshot_OlderNonlethalDamageCannotShortenCorpseDeadline" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests.NewerDeadSnapshot_OlderNonlethalDamageCannotShortenCorpseDeadline" methodname="NewerDeadSnapshot_OlderNonlethalDamageCannotShortenCorpseDeadline" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" seed="1134520090" result="Passed" start-time="2026-11-02 05:43:23Z" end-time="2026-11-02 05:43:23Z" duration="0.003018" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2974" name="NewerDeadSnapshot_OlderReliableActionCannotReclaimAnimatorFromDeath" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests.NewerDeadSnapshot_OlderReliableActionCannotReclaimAnimatorFromDeath" methodname="NewerDeadSnapshot_OlderReliableActionCannotReclaimAnimatorFromDeath" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" seed="825819314" result="Passed" start-time="2026-11-02 05:43:23Z" end-time="2026-11-02 05:43:23Z" duration="0.004879" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2971" name="NewerHpSnapshot_OlderReliableDamageKeepsInstalledHpAndFeedbackReadModel" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests.NewerHpSnapshot_OlderReliableDamageKeepsInstalledHpAndFeedbackReadModel" methodname="NewerHpSnapshot_OlderReliableDamageKeepsInstalledHpAndFeedbackReadModel" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" seed="865678707" result="Passed" start-time="2026-11-02 05:43:23Z" end-time="2026-11-02 05:43:24Z" duration="0.002621" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="2975" name="NewerLivingSnapshot_OlderUnpresentedActionStillUsesOriginalCastPresentation" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests.NewerLivingSnapshot_OlderUnpresentedActionStillUsesOriginalCastPresentation" methodname="NewerLivingSnapshot_OlderUnpresentedActionStillUsesOriginalCastPresentation" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" seed="1936861680" result="Passed" start-time="2026-11-02 05:43:24Z" end-time="2026-11-02 05:43:24Z" duration="0.004013" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Game object with animator is inactive
+]]></output>
+              </test-case>
+              <test-case id="2976" name="OutputStateAfterTermination_CannotRecreateTerminatedOutput" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests.OutputStateAfterTermination_CannotRecreateTerminatedOutput" methodname="OutputStateAfterTermination_CannotRecreateTerminatedOutput" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" seed="1608506791" result="Passed" start-time="2026-11-02 05:43:24Z" end-time="2026-11-02 05:43:24Z" duration="0.004804" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+]]></output>
+              </test-case>
+              <test-case id="2970" name="UnreplicableCommittedOutputIsRetainedWhenTheWorldFaults" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests.UnreplicableCommittedOutputIsRetainedWhenTheWorldFaults" methodname="UnreplicableCommittedOutputIsRetainedWhenTheWorldFaults" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" seed="700014133" result="Passed" start-time="2026-11-02 05:43:24Z" end-time="2026-11-02 05:43:24Z" duration="0.003375" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[[OnlineCombat] 输出超出受控 Prefab 表或复制容量，权威世界已停止。
+Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

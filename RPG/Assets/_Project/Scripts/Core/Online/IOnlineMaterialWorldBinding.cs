@@ -2,6 +2,12 @@ using UnityEngine;
 
 namespace Game.Core
 {
+    /// <summary>可选的真实材料事务端口标识；不要求无材料的测试World实现写端口，也不赋予Replica写权限。</summary>
+    public interface IOnlineMaterialTransferWorld
+    {
+        string TransferWorldId { get; }
+    }
+
     /// <summary>
     /// 正式副本的材料场景装配边界。Multiplayer只看Core合同，不向上依赖ElementField或Rendering。
     /// 调用方必须先保持整棵世界Root inactive，完成TryConfigure，再激活Root；Awake发生后不能改所有权。

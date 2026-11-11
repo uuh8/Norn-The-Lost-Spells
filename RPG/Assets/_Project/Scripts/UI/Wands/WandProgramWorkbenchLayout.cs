@@ -12,6 +12,7 @@ namespace Game.UI
             var canvas=canvasRect.gameObject.AddComponent<Canvas>();canvas.renderMode=RenderMode.ScreenSpaceOverlay;canvas.sortingOrder=100;
             var scaler=canvasRect.gameObject.AddComponent<CanvasScaler>();scaler.uiScaleMode=CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution=new Vector2(1920,1080);scaler.matchWidthOrHeight=.5f;
+            UiViewportLayout.FitCanvas(canvasRect);
             canvasRect.gameObject.AddComponent<GraphicRaycaster>();
             var root=WandWorkbenchWidgets.Panel("Workbench",canvasRect,WandWorkbenchWidgets.Paper);
             Stretch(root,Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);

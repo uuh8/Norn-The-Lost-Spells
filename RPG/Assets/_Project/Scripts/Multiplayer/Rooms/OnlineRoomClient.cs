@@ -14,7 +14,7 @@ using UnityEditor.SceneManagement;
 namespace Game.Multiplayer
 {
     /// <summary>Portal房间组合：身份来自Application Session；HTTP控制与KCP准入有各自生命周期。</summary>
-    public sealed class OnlineRoomClient : MonoBehaviour
+    public sealed partial class OnlineRoomClient : MonoBehaviour
     {
         private OnlineRoomProfile _profile;
         private OnlineAccountClient _account;
@@ -47,30 +47,40 @@ namespace Game.Multiplayer
         private void OnEnable()
         {
             EventBus<DungeonMatchRequestedEvent>.Subscribe(OnMatch);
+            EventBus<DungeonSinglePlayerRequestedEvent>.Subscribe(OnSinglePlayer);
             EventBus<OnlineRoomRequestEvent>.Subscribe(OnCommand);
+            EventBus<OnlineRunExitStatusChangedEvent>.Subscribe(OnMemberExitStatus);
+            EventBus<OnlineReturnPortalRequestedEvent>.Subscribe(OnReturnPortal);
+            if (_routine == null && _exitRequested && !_exitHubReady && _room != null)
+            {
+                _originalBackground = Application.runInBackground; Application.runInBackground = true;
+                _routine = StartCoroutine(ResumePendingMemberExit());
+            }
         }
         private void OnDisable()
         {
             EventBus<DungeonMatchRequestedEvent>.Unsubscribe(OnMatch);
+            EventBus<DungeonSinglePlayerRequestedEvent>.Unsubscribe(OnSinglePlayer);
             EventBus<OnlineRoomRequestEvent>.Unsubscribe(OnCommand);
+            EventBus<OnlineRunExitStatusChangedEvent>.Unsubscribe(OnMemberExitStatus);
+            EventBus<OnlineReturnPortalRequestedEvent>.Unsubscribe(OnReturnPortal);
             _http?.Abort(); _http?.Dispose(); _http = null; StopAllCoroutines(); StopConnection();
             // 应用退出不跨网络等待DELETE；Open大厅由90秒Presence过期回收，运行中由DS Lease裁决。
-            OnlineWorldBootstrap.ShutdownActive(); RestoreHub(); if (_routine != null) Application.runInBackground = _originalBackground; _routine = null; _room = null;
+            // 临时停用时保留尚未确认退出的Replica World；连接已停止，CanAdvance=false。
+            // 这样Enable后可查询/原重连，不会留下_inConnectionScene=true却World永久stopped的死路。
+            if (!_exitRequested || _exitHubReady) { OnlineWorldBootstrap.ShutdownActive(); RestoreHub(); }
+            if (_routine != null) Application.runInBackground = _originalBackground; _routine = null;
+            if (!_exitRequested || _exitHubReady) _room = null;
         }
         private void OnMatch(DungeonMatchRequestedEvent request)
-        {
-            if (_routine != null) { Publish(); return; }
-            _portal = request.PortalId;
-            if (_account == null || !_account.Authenticated || _profile == null || !_profile.TryDungeon(request.DestinationKey, out string dungeon))
-            { ReleaseChoice(false, "联机配置或登录无效，请重新登录后重试。"); return; }
-            _cancelRequested = false; _command = OnlineRoomAction.Observe;
-            _originalBackground = Application.runInBackground; Application.runInBackground = true;
-            _routine = StartCoroutine(Lobby(dungeon));
-        }
+            => BeginPortalRoom(request.PortalId, request.DestinationKey, false);
         private void OnCommand(OnlineRoomRequestEvent request)
         {
             if (request.PortalId != _portal || _routine == null) return;
             if (request.Action == OnlineRoomAction.Observe) { Publish(); return; }
+            if (request.Action == OnlineRoomAction.ExitRun || (request.Action == OnlineRoomAction.Cancel || request.Action == OnlineRoomAction.Disconnect)
+                && (_inConnectionScene || _phase == OnlineRoomPhase.Connected || _phase == OnlineRoomPhase.Disconnected))
+            { BeginMemberExit(); return; }
             if (request.Action == OnlineRoomAction.Cancel || request.Action == OnlineRoomAction.Disconnect)
             {
                 _cancelRequested = true; Publish(); return; // 在途POST不能直接Abort并假定没有创建房间。
@@ -79,10 +89,17 @@ namespace Game.Multiplayer
         }
         private IEnumerator Lobby(string dungeon)
         {
-            _phase = OnlineRoomPhase.Matching; _room = null; Status("正在查找同一副本的房间…");
-            yield return Send("POST", "/api/online/rooms/match", JsonUtility.ToJson(new CreateRoomRequest { DungeonId = dungeon }));
+            _phase = OnlineRoomPhase.Matching; _room = null; Status(_singlePlayerEntry ? "正在预留本人资产并启动单人服务器…" : "正在查找同一副本的房间…");
+            yield return SendPortalEntry(dungeon);
             while (!_success || !ReadRoom())
             {
+                if (_singlePlayerEntry && _singleEntryPosted && !SinglePlayerContextMatches())
+                {
+                    _phase = OnlineRoomPhase.Error; _command = OnlineRoomAction.Observe;
+                    Status("原单人入场结果未确认，请登录原账号后重试；不会用另一账号重放。");
+                    while (!SinglePlayerContextMatches() || _command != OnlineRoomAction.Reconnect) yield return _connectionPoll;
+                    _command = OnlineRoomAction.Observe; yield return SendPortalEntry(dungeon); continue;
+                }
                 if (!_account.Authenticated)
                 {
                     _account.InvalidateSession(); ReleaseChoice(true, "登录已失效，请重新登录；未确认的大厅席位由服务器超时回收。");
@@ -91,7 +108,8 @@ namespace Game.Multiplayer
                 if (_httpStatus == 404 || _httpStatus == 405 || _httpStatus == 400 || _httpStatus == 401 || _httpStatus == 409)
                 {
                     // 明确拒绝可回选择页；超时/500却可能已提交，必须先恢复当前房间，不能直接放行单机。
-                    string message = _httpStatus == 404 || _httpStatus == 405 ? "匹配暂不可用，请选择单机或稍后再试。" : Failure();
+                    string message = _httpStatus == 404 || _httpStatus == 405 ? "服务器入场暂不可用，请稍后重试；不会回落本地资产。" : Failure();
+                    if (_singlePlayerEntry) ClearSinglePlayerCandidate();
                     ReleaseChoice(false, message); Application.runInBackground = _originalBackground; _routine = null; yield break;
                 }
                 _phase = OnlineRoomPhase.Error; _command = OnlineRoomAction.Observe;
@@ -99,13 +117,20 @@ namespace Game.Multiplayer
                 while (!_cancelRequested && _command != OnlineRoomAction.Reconnect) yield return _connectionPoll;
                 if (_cancelRequested)
                 {
+                    if (_singlePlayerEntry)
+                    {
+                        if (!_singleEntryPosted)
+                        { ClearSinglePlayerCandidate(); ReleaseChoice(true, "单人入场尚未发出，已取消。"); Application.runInBackground = _originalBackground; _routine = null; yield break; }
+                        // 404/current不能证明在途预留未提交；以相同命令正文收敛，再走本人保存退出。
+                        yield return SendPortalEntry(dungeon); continue;
+                    }
                     _cancelRequested = false; // 先消费本次意图；请求在途收到的新取消不能在失败后被清掉。
                     yield return Send("GET", "/api/online/rooms/current", null);
                     if (_httpStatus == 404) { ReleaseChoice(true, "已确认没有房间。"); Application.runInBackground = _originalBackground; _routine = null; yield break; }
                     if (!_success) continue;
                     _cancelRequested = true; // 找到房间后进入下方正常DELETE流程，不能仅关闭本地框。
                 }
-                else yield return Send("POST", "/api/online/rooms/match", JsonUtility.ToJson(new CreateRoomRequest { DungeonId = dungeon }));
+                else yield return SendPortalEntry(dungeon);
             }
             while (_room != null && isActiveAndEnabled)
             {
@@ -118,7 +143,13 @@ namespace Game.Multiplayer
                 {
                     _cancelRequested = false;
                     yield return Send("DELETE", RoomPath("/members/me"), null);
-                    if (_success || _httpStatus == 404) { _room = null; ReleaseChoice(true, "已退出房间。"); break; }
+                    if (_success || _httpStatus == 404)
+                    {
+                        // 失败开局仍可能已可靠授予包/瓶；只为原账号读取完整Profile，不能靠取消本地解锁旧快照。
+                        if (_singlePlayerEntry && SinglePlayerContextMatches())
+                            EventBus<OnlineLobbyRequestEvent>.Publish(new OnlineLobbyRequestEvent { Action = OnlineLobbyAction.Refresh });
+                        _room = null; ReleaseChoice(true, "已退出房间。"); break;
+                    }
                     Status(Failure());
                 }
                 if (_room.State == "Running")
@@ -129,19 +160,18 @@ namespace Game.Multiplayer
                         // 只有真实认证成功才释放门暂停；UI没有LoadScene权，也不把本地资产带进去。
                         EventBus<DungeonOnlineEntryConfirmedEvent>.Publish(new DungeonOnlineEntryConfirmedEvent { PortalId = _portal });
                         yield return EnterConnectionScene(); _inConnectionScene = true;
-            _phase = OnlineRoomPhase.Connected; Status("已进入合作副本。");
+            _phase = OnlineRoomPhase.Connected; Status(_singlePlayerEntry ? "已进入单人服务器副本。" : "已进入合作副本。");
                         yield return Connected();
                         break;
                     }
                     _phase = OnlineRoomPhase.Disconnected; Status(Failure("入场失败，可重连或断开返回据点；不会切入单机副本。"));
-                    while (!_cancelRequested && _command != OnlineRoomAction.Reconnect) yield return _connectionPoll;
-                    if (_cancelRequested) { ReleaseChoice(true, "已断开；原副本席位暂时保留，可从同一门重连。"); break; }
-                    _command = OnlineRoomAction.Observe; continue;
+                    // 即使尚未加载副本，也交给同一恢复循环泵退出查询，不能停在只识别旧Cancel的死循环。
+                    yield return Connected(); break;
                 }
                 _phase = _room.State == "Starting" ? OnlineRoomPhase.Starting : OnlineRoomPhase.Lobby;
                 if (_cancelRequested && _room.State != "Open")
-                { _cancelRequested = false; Status("副本正在启动，请等待入场结果；不会因一个成员取消而结束其他人的副本。"); }
-                if (_command == OnlineRoomAction.Ready && _room.State == "Open")
+                { if (!_singlePlayerEntry) _cancelRequested = false; Status(_singlePlayerEntry ? "正在确认单人入场，确认后保存退出。" : "副本正在启动，请等待入场结果；不会因一个成员取消而结束其他人的副本。"); }
+                if (_command == OnlineRoomAction.Ready && _room.State == "Open" && !_singlePlayerEntry)
                 {
                     _command = OnlineRoomAction.Observe;
                     // 准备前现读线上Version；不能拿登录时的缓存或单机Inventory Version提交Ready。
@@ -154,7 +184,7 @@ namespace Game.Multiplayer
                         if (_success) ReadRoom(); else Status(Failure());
                     }
                 }
-                else if (_command == OnlineRoomAction.Start && _room.State == "Open")
+                else if (_command == OnlineRoomAction.Start && _room.State == "Open" && !_singlePlayerEntry)
                 {
                     _command = OnlineRoomAction.Observe;
                     yield return Send("POST", RoomPath("/start"), JsonUtility.ToJson(new StartRoomRequest { ExpectedRevision = _room.ReadyRevision }));
@@ -163,11 +193,12 @@ namespace Game.Multiplayer
                 else _command = OnlineRoomAction.Observe;
                 Publish(); yield return _poll;
                 yield return Send("POST", RoomPath("/presence"), "{}");
-                if (_success) { ReadRoom(); if (_room.State == "Open") Status("房间已建立；所有成员准备后，由队长开始。"); }
+                if (_success) { ReadRoom(); if (_room.State == "Open") Status(_singlePlayerEntry ? "单人服务器未启动，请取消本次后重试；资产未重置。" : "房间已建立；所有成员准备后，由队长开始。"); }
                 else if (_httpStatus == 404) { _room = null; ReleaseChoice(false, "房间已结束或大厅席位已过期，请重新匹配。"); break; }
                 else Status(Failure()); // 网络失联保留当前RoomId，可取消/恢复；不伪造本地Ready。
             }
             StopConnection(); _phase = OnlineRoomPhase.None; _busy = false; Application.runInBackground = _originalBackground; _routine = null;
+            if (_room == null && !_exitRequested) ClearSinglePlayerCandidate();
         }
         private IEnumerator Connect()
         {
@@ -195,26 +226,56 @@ namespace Game.Multiplayer
         private IEnumerator Connected()
         {
             // 认证后不再持续HTTP轮询大厅；KCP/副本Heartbeat负责连接，UI离散命令才创建业务请求。
-            while (!_cancelRequested)
+            if (_exitRequested) { _exitServerObserved = false; _exitIntentAttempts = 0; _exitNextIntent = 0; }
+            while (!_exitHubReady)
             {
+                // Enable恢复或HTTP等待中换号都只保留原退出现场，不用B的Session查询/重连A的副本。
+                if (_exitRequested && !MatchesMemberExitPlayer())
+                { _command = OnlineRoomAction.Observe; ShowMemberExitAccountMismatch(); yield return _connectionPoll; continue; }
+                if (_cancelRequested) BeginMemberExit();
                 if (_phase == OnlineRoomPhase.Connected && !NetworkClient.isConnected)
                 { _phase = OnlineRoomPhase.Disconnected; Status("连接已断开。重连会领取新票，旧连接不能继续控制此角色。"); }
+                if (_exitRequested)
+                {
+                    double now = Time.realtimeSinceStartupAsDouble;
+                    if (!_exitCommitted && !_exitServerObserved && _exitIntentAttempts < 3 && now >= _exitNextIntent)
+                        SendStableMemberExitIntent();
+                    if (!_exitCommitted && (_exitResolveRequested || _exitQueries < 3 && now >= _exitNextQuery))
+                        yield return ResolveMemberExitReceipt();
+                    if (_exitCommitted && _exitProfileAttempts < 3 && now >= _exitNextProfile)
+                        yield return PrepareMemberExitHub();
+                    if (_exitHubReady) break;
+                }
                 if (_command == OnlineRoomAction.Reconnect && _phase == OnlineRoomPhase.Disconnected)
                 {
+                    // 先查已提交结果，避免业务已结束本人资格后反复申请必然失败的新票。
+                    yield return ProbeTerminalMemberExit();
+                    if (_exitCommitted) { _command = OnlineRoomAction.Observe; continue; }
+                    if (!_terminalExitProbeAllowsReconnect)
+                    { _command = OnlineRoomAction.Observe; Status("离局结果尚未查清，暂不领取新票；请重试确认。"); continue; }
                     _command = OnlineRoomAction.Observe; yield return Send("POST", RoomPath("/presence"), "{}");
                     if (_success && ReadRoom() && _room.State == "Running")
                     {
                         yield return Connect();
-                        if (_auth != null && _auth.ClientAuthenticated && NetworkClient.isConnected) { _phase = OnlineRoomPhase.Connected; Status("已重新连接同一副本。"); }
+                        if (_auth != null && _auth.ClientAuthenticated && NetworkClient.isConnected)
+                        {
+                            if (!_inConnectionScene)
+                            {
+                                EventBus<DungeonOnlineEntryConfirmedEvent>.Publish(new DungeonOnlineEntryConfirmedEvent { PortalId = _portal });
+                                yield return EnterConnectionScene(); _inConnectionScene = true;
+                            }
+                            _phase = OnlineRoomPhase.Connected;
+                            if (_exitRequested) { _exitServerObserved = false; _exitIntentAttempts = 0; _exitNextIntent = 0; SendStableMemberExitIntent(); }
+                            Status(_exitRequested ? "已重连，继续确认原退出请求。" : "已重新连接同一副本。");
+                        }
                         else { _phase = OnlineRoomPhase.Disconnected; Status(Failure()); }
                     }
                     else { _phase = OnlineRoomPhase.Disconnected; Status("原副本已结束或业务服不可达，请返回据点。"); }
                 }
                 yield return _connectionPoll;
             }
-            StopConnection();
-            if (_inConnectionScene) { yield return ReturnToHub(); _inConnectionScene = false; }
-            ReleaseChoice(true, "已返回据点，原副本席位暂时保留；同一门可重新连接。");
+            _room = null;
+            ReleaseChoice(true, "已保存物资并退出本局；队友继续。之后可重新匹配。");
         }
         private void StopConnection()
         {
@@ -241,8 +302,18 @@ namespace Game.Multiplayer
             RoomReply view;
             try { view = JsonUtility.FromJson<RoomReply>(_body); } catch (ArgumentException) { return false; }
             if (view == null || view.Members == null || view.Members.Length < 1 || view.Members.Length > 4 || string.IsNullOrEmpty(view.RoomId)) return false;
+            if (!_singlePlayerEntry && view.SinglePlayer) return false;
+            if (_singlePlayerEntry && (!view.SinglePlayer || view.Members.Length != 1 || _singleEntryCommand == null
+                || view.DungeonId != _singleEntryCommand.DungeonId || view.LeaderPlayerId != _singleEntryPlayerId)) return false;
             bool self = false; for (int i = 0; i < view.Members.Length; i++) if (view.Members[i].PlayerId == _account.PlayerId) self = true;
-            if (!self) return false; _room = view; return true;
+            if (!self) return false;
+            if (view.State == "Starting" || view.State == "Running")
+            {
+                if (string.IsNullOrEmpty(view.RunId) || view.RoomEpoch == 0) return false;
+                // 可信房间已经接管资产时立即撤Hub能力；解除只能由完整、同账号的Profile读回确认。
+                OnlineAccountInventoryHubScope.TryMarkAssetsLocked(_account.GetInstanceID(), _account.PlayerId, view.RunId);
+            }
+            _room = view; return true;
         }
         private string RoomPath(string suffix) => "/api/online/rooms/" + _room.RoomId + suffix;
         private bool SelfReady()
@@ -272,6 +343,7 @@ namespace Game.Multiplayer
                 var m = _room.Members[i]; members[i] = new OnlineRoomMemberView(m.Username, m.PlayerId == _account.PlayerId, m.PlayerId == _room.LeaderPlayerId, m.Ready); allReady &= m.Ready;
             }
             EventBus<OnlineRoomChangedEvent>.Publish(new OnlineRoomChangedEvent { PortalId = _portal, Phase = _phase, Busy = _busy, Status = _status, RoomId = _room?.RoomId,
+                SinglePlayer = _singlePlayerEntry,
                 Members = members, SelfReady = SelfReady(), CanStart = _room != null && _room.State == "Open" && _room.LeaderPlayerId == _account.PlayerId && allReady,
                 ActorId = ActorId, ConnectionEpoch = ConnectionEpoch, Replies = Replies,
                 NativeSocket = _manager != null && _manager.GetComponent<NornKcpTransport>().UsesNativeSocket });
@@ -280,8 +352,7 @@ namespace Game.Multiplayer
         {
             // 暂存据点原Scene与激活位，防止在线往返丢失Scene Preview/尚未保存的单机整备。
             // 内存代价是N2连接期间保留Hub；不读取/上传这些单机对象，不让它们继续模拟。
-            _suspendedHub = SceneManager.GetActiveScene(); _hubRoots = _suspendedHub.GetRootGameObjects(); _hubRootActive = new bool[_hubRoots.Length];
-            for (int i = 0; i < _hubRoots.Length; i++) { _hubRootActive[i] = _hubRoots[i].activeSelf; _hubRoots[i].SetActive(false); }
+            SuspendHub(SceneManager.GetActiveScene());
             Time.timeScale = 1; Cursor.lockState = CursorLockMode.None; Cursor.visible = true;
 #if UNITY_EDITOR
             var operation = EditorSceneManager.LoadSceneAsyncInPlayMode(_profile.ConnectionScene, new LoadSceneParameters(LoadSceneMode.Additive));
@@ -290,6 +361,16 @@ namespace Game.Multiplayer
 #endif
             if (operation != null) yield return operation;
             _connectionScene = SceneManager.GetSceneByPath(_profile.ConnectionScene); if (_connectionScene.IsValid()) SceneManager.SetActiveScene(_connectionScene);
+        }
+        // Scene挂起只管理进程内对象的激活位；从异步场景加载中拆出，避免验证生命周期时连接网络或读取资产。
+        private void SuspendHub(Scene hub)
+        {
+            _suspendedHub = hub; _hubRoots = _suspendedHub.GetRootGameObjects(); _hubRootActive = new bool[_hubRoots.Length];
+            // SetActive(false)会同步派发OnDisable；库存Session会在其中关闭并列WorldItems_Runtime根。
+            // 必须先完整冻结所有原激活位，再统一停用，否则后续根会把回调修改后的false误记成原状态，
+            // 返回Hub便会再次关闭拾取父根，使已提交地面资产和后续Drop代理无法显示。
+            for (int i = 0; i < _hubRoots.Length; i++) _hubRootActive[i] = _hubRoots[i].activeSelf;
+            for (int i = 0; i < _hubRoots.Length; i++) _hubRoots[i].SetActive(false);
         }
         private void RestoreHub()
         {
@@ -305,6 +386,8 @@ namespace Game.Multiplayer
             // 在线Tick/Physics先结束，再卸载世界并恢复Hub，避免全局物理模式污染单机一帧。
             OnlineWorldBootstrap.ShutdownActive();
             if (_connectionScene.IsValid() && _connectionScene.isLoaded) yield return SceneManager.UnloadSceneAsync(_connectionScene);
+            // Unload会跨帧；确认期间换号也不能在回调尾部重新激活原账号据点。
+            if (_exitRequested && !MatchesMemberExitPlayer()) { ShowMemberExitAccountMismatch(); yield break; }
             RestoreHub();
             Time.timeScale = 1; Cursor.lockState = CursorLockMode.Locked; Cursor.visible = false;
         }

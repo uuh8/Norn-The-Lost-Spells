@@ -6,6 +6,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Game.Multiplayer.Tests
 {
@@ -16,6 +17,54 @@ namespace Game.Multiplayer.Tests
     public sealed class SharedGameplayHudTests
     {
         private const string StageSource = "Assets/_Project/Scenes/P8_BossField.unity";
+
+        [TestCase("resource")]
+        [TestCase("preview")]
+        public void WandResourceBarsGenerateMeshThatMatchesTheirFillAmount(string source)
+        {
+            // fillAmount 数值变了不代表可见几何变了：Image 没有 Sprite 时，UGUI 会退回完整矩形。
+            // 同时检查当前正式资源和再次导出的预览，防止只修旧 Prefab、下次导出又复发。
+            if (source == "preview") WithPreview(AssertWandResourceMeshes);
+            else
+            {
+                var asset = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Resources/Presentation/CombatHud.prefab");
+                Assert.That(asset, Is.Not.Null);
+                var copy = UnityEngine.Object.Instantiate(asset);
+                try { AssertWandResourceMeshes(copy); }
+                finally { UnityEngine.Object.DestroyImmediate(copy); }
+            }
+        }
+
+        private static void AssertWandResourceMeshes(GameObject root)
+        {
+            var cells = new SerializedObject(FindUnique(root, "Game.UI.HeldItemHud")).FindProperty("_cells");
+            var populate = typeof(Image).GetMethod("OnPopulateMesh", BindingFlags.Instance | BindingFlags.NonPublic,
+                null, new[] { typeof(VertexHelper) }, null);
+            Assert.That(populate, Is.Not.Null);
+            for (int slot = 0; slot < 3; slot++)
+                foreach (string field in new[] { "Mana", "Cooldown" })
+                {
+                    var image = cells.GetArrayElementAtIndex(slot).FindPropertyRelative(field).objectReferenceValue as Image;
+                    Assert.That(image, Is.Not.Null, field + " " + slot);
+                    image.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 100f);
+                    image.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 8f);
+                    image.fillAmount = .25f;
+                    using (var vertices = new VertexHelper())
+                    {
+                        populate.Invoke(image, new object[] { vertices });
+                        Assert.That(vertices.currentVertCount, Is.GreaterThan(0));
+                        float min = float.PositiveInfinity, max = float.NegativeInfinity;
+                        var vertex = UIVertex.simpleVert;
+                        for (int i = 0; i < vertices.currentVertCount; i++)
+                        {
+                            vertices.PopulateUIVertex(ref vertex, i);
+                            min = Mathf.Min(min, vertex.position.x); max = Mathf.Max(max, vertex.position.x);
+                        }
+                        Assert.That(max - min, Is.EqualTo(image.GetPixelAdjustedRect().width * .25f).Within(.1f),
+                            field + " " + slot + " 必须真正裁成四分之一，不能只验证 fillAmount 字段。");
+                    }
+                }
+        }
 
         [Test]
         public void ExportedBossRetainsOriginalTeleportPresenterAndItsLocalHealthBinding()

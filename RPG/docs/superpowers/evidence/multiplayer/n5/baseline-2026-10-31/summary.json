@@ -1,0 +1,90 @@
+{
+  "Stage": "N5-current-fixture-baseline",
+  "RecordedUtc": "2026-10-31T09:21:47.5590761Z",
+  "GitHead": "0d87d0da931ec2b39f7cd569661e750bafa0df84",
+  "State": "BaselineEstablishedWithTwoReproducibleFailures",
+  "N5Complete": false,
+  "N4FormalExperienceGatePreserved": true,
+  "Authorization": {
+    "PlanLine": 3,
+    "AcceptanceLine": 5,
+    "PlanPath": "RPG/docs/superpowers/plans/2026-10-29 N5共享材料世界与分块恢复实施计划.md",
+    "AcceptancePath": "RPG/docs/superpowers/evidence/multiplayer/n4/final-audit/acceptance.json",
+    "AcceptanceField": "N5ExplicitlyAuthorizedByUser=true"
+  },
+  "Editor": {
+    "ExistingProcessReused": true,
+    "SecondEditorStarted": false,
+    "FullCleanRecompileOrPlayerBuildPerformed": false,
+    "FinalScene": "Assets/_Project/Scenes/P7_MainMenu.unity",
+    "FinalCompiling": false,
+    "RefreshSourceSucceeded": true,
+    "FinalSceneDirty": false,
+    "FinalPlaying": false,
+    "Version": "6000.3.16f1",
+    "ProjectTestRunnerAcceptedAfterCompileAndDirtyGuards": true,
+    "Pid": 25660
+  },
+  "MainRun": {
+    "Fixtures": 20,
+    "Inconclusive": 0,
+    "Passed": 186,
+    "Xml": "editmode-results.xml",
+    "Failed": 2,
+    "Skipped": 0,
+    "FinishedUtc": "2026-10-31T09:18:24.5867284Z",
+    "Cases": 188,
+    "Report": "editmode-report.json",
+    "StartedUtc": "2026-10-31T09:17:55.5814712Z"
+  },
+  "Reproduction": {
+    "RepeatedCasesNotAdditionalCoverage": true,
+    "Passed": 0,
+    "Cases": 2,
+    "Xml": "reproduce-results.xml",
+    "Failed": 2,
+    "SourceChangesBetweenRuns": false
+  },
+  "HistoricalNine": {
+    "Evidence": "historical-nine-comparison.json",
+    "Passed": 9,
+    "Missing": 0,
+    "Failed": 0
+  },
+  "FailureAnalysis": {
+    "SourceOrAssertionModified": false,
+    "Fixture": "Game.Core.Tests.WorldChunkReplicaAssemblerTests",
+    "TestLines": [
+      118,
+      126
+    ],
+    "FailureOccursBeforeBehavioralAssertions": true,
+    "SourcePath": "RPG/Assets/_Project/Scripts/Core/Online/WorldChunkReplicaAssembler.cs",
+    "TestPath": "RPG/Assets/_Project/Tests/Core/WorldChunkReplicaAssemblerTests.cs",
+    "BehaviorFixValidated": false,
+    "MissingPublicMethods": [
+      "TryBindUnusedKey",
+      "ResetConnectionEpoch"
+    ]
+  },
+  "Preservation": {
+    "UnchangedProtectedFiles": 12,
+    "UnchangedSourceFiles": 1485,
+    "SourceFiles": 1485,
+    "ProtectedFiles": 12
+  },
+  "NotTested": [
+    "Full-project Run All",
+    "Full material regression fixture set",
+    "PlayMode",
+    "Real business/MySQL suite",
+    "Paired Client/DS build",
+    "Formal runtime N5 material channel wiring",
+    "Two/four native clients",
+    "Native frame-time/GC/HOL/loss pressure",
+    "Linux/public/IL2CPP/D3D12",
+    "N6 reliable settlement"
+  ],
+  "NewGameplayProtocolOrAlchemyImplementation": false,
+  "CommitOrPush": false
+}

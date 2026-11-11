@@ -23,7 +23,23 @@ namespace Game.Run
         internal IInventoryCommitPolicy CommitPolicy;
         private PreparedInventory _prepared;
         private bool _materialLocked;
+        private IOnlineItemRetirementJournal _checkpointJournal;
+        private string _checkpointInventoryId;
+        private Func<string, uint> _checkpointRevision;
         internal bool IsResourceBusy => _prepared != null || _materialLocked;
+        /// <summary>
+        /// 同Run装配的可选退役Journal；Revision由原Owner/地面元数据提供，不从模板或缺失ID推测。
+        /// 单机未绑定时保持原事务行为。绑定在Run装配时完成；活跃Store不能换Journal逃过历史容量。
+        /// </summary>
+        internal bool ConfigureCheckpointJournal(IOnlineItemRetirementJournal journal, string inventoryId, Func<string, uint> revision)
+        {
+            if (journal == null || string.IsNullOrWhiteSpace(inventoryId) || revision == null || IsResourceBusy) return false;
+            if (_checkpointJournal != null)
+                return ReferenceEquals(_checkpointJournal, journal) && _checkpointInventoryId == inventoryId && _checkpointRevision == revision;
+            _checkpointJournal = journal; _checkpointInventoryId = inventoryId; _checkpointRevision = revision;
+            return true;
+        }
+        internal uint CheckpointRevision(string id) => _checkpointRevision != null ? _checkpointRevision(id) : 0;
         public int Count => _items.Count;
         public uint Version { get; private set; }
         public ItemCatalogIndex Catalog => _catalog;
@@ -117,6 +133,7 @@ namespace Game.Run
                 if (reason != InventoryFailureReason.None) return Result(false, reason);
                 if (!candidate.TryGetValue(next.Item.InstanceId, out InventoryEntry previous)) return Result(false, InventoryFailureReason.NotFound);
                 if (previous.Item.IsStarterEquipment != next.Item.IsStarterEquipment) return Result(false, InventoryFailureReason.InvalidState);
+                if (previous.Item.EntryBoundBackpack != next.Item.EntryBoundBackpack) return Result(false, InventoryFailureReason.InvalidState);
                 if(!ItemStackOps.MatchingWandStats(previous.Item,next.Item))return Result(false,InventoryFailureReason.InvalidState);
                 // 在途归属只允许投掷服务写入，普通拖拽不能从飞行体取回同一满瓶。
                 if (previous.Location.Kind == ItemLocationKind.ThrownContainer || next.Location.Kind == ItemLocationKind.ThrownContainer)
@@ -130,7 +147,7 @@ namespace Game.Run
                 {
                     if (next.Item.Composition == null && previous.Item.Composition.Total == 0)
                         next = new InventoryEntry(new RuntimeItemState(next.Item.InstanceId, next.Item.ContentId, next.Item.RemainingCharges,
-                            next.Item.HasUnlimitedCharges, next.Item.StackStateKey, previous.Item.Composition, next.Item.Material,next.Item.Attachment,next.Item.RolledWandStats), next.Location);
+                            next.Item.HasUnlimitedCharges, next.Item.StackStateKey, previous.Item.Composition, next.Item.Material,next.Item.Attachment,next.Item.RolledWandStats, next.Item.EntryBoundBackpack), next.Location);
                     if (!ReferenceEquals(next.Item.Composition, previous.Item.Composition)) return Result(false, InventoryFailureReason.InvalidState);
                 }
                 if (previous.Item.Material == null ? next.Item.Material != null : next.Item.Material == null
@@ -145,7 +162,8 @@ namespace Game.Run
         }
 
         // 策略先准备，完整空间/父链验证通过后才同时提交资格；失败没有半次扣费。
-        private InventoryOperationResult FinishCandidate(Dictionary<string, InventoryEntry> candidate, bool changed)
+        private InventoryOperationResult FinishCandidate(Dictionary<string, InventoryEntry> candidate, bool changed,
+            IOnlineItemRetirementReservation retirement = null)
         {
             object preparation = null;
             if (CommitPolicy != null)
@@ -157,6 +175,8 @@ namespace Game.Run
                 if (reason != InventoryFailureReason.None) return Result(false, reason);
             }
             if (changed) Commit(candidate);
+            // 和Store发布在同一无回调区间提交身份事实。其容量早已预留，不把后续通知异常当作未消耗。
+            retirement?.Commit();
             CommitPolicy?.Commit(preparation);
             return Result(true, InventoryFailureReason.None);
         }
@@ -169,6 +189,7 @@ namespace Game.Run
         {
             prepared = null; if (IsResourceBusy) return false;
             var candidate = new Dictionary<string, InventoryEntry>(_items, StringComparer.Ordinal); bool changed = false;
+            List<RuntimeItemState> retired = null;
             foreach (var pair in uses)
             {
                 if (!candidate.TryGetValue(pair.Key, out InventoryEntry entry) || pair.Value <= 0) return false;
@@ -176,17 +197,23 @@ namespace Game.Run
                 if (item.RemainingCharges < pair.Value) return false;
                 // 候选表只在成功支付后提交；最后一次 Emit 的 Trigger 已保存在 Ticket 中，
                 // 移除卡片释放格子不会取消预付的后续层，失败则整张卡保持原样。
-                if (item.RemainingCharges == pair.Value) candidate.Remove(pair.Key);
+                if (item.RemainingCharges == pair.Value)
+                {
+                    candidate.Remove(pair.Key);
+                    if (_checkpointJournal != null) { retired ??= new List<RuntimeItemState>(); retired.Add(item); }
+                }
                 else candidate[pair.Key] = new InventoryEntry(new RuntimeItemState(item.InstanceId, item.ContentId,
-                    item.RemainingCharges - pair.Value, false, item.StackStateKey, item.Composition, item.Material, item.Attachment,item.RolledWandStats), entry.Location); changed = true;
+                    item.RemainingCharges - pair.Value, false, item.StackStateKey, item.Composition, item.Material, item.Attachment,item.RolledWandStats, item.EntryBoundBackpack), entry.Location); changed = true;
             }
             if (ValidateAll(candidate) != InventoryFailureReason.None) return false;
-            prepared = _prepared = new PreparedInventory(candidate, changed); return true;
+            if (!TryReserveRetirements(retired, OnlineItemRetirementReason.Consumed, out var retirement)) return false;
+            prepared = _prepared = new PreparedInventory(candidate, changed, retirement); return true;
         }
         internal bool CompletePrepared(PreparedInventory prepared, bool commit, bool materialChanged = false)
         {
             if (prepared == null || !ReferenceEquals(prepared, _prepared)) return false;
             if (commit && (prepared.Changed || materialChanged)) Commit(prepared.Candidate);
+            if (commit) prepared.Retirement?.Commit(); else prepared.Retirement?.Cancel();
             _prepared = null; return true;
         }
         internal bool OwnsPreparation(PreparedInventory prepared) => prepared != null && ReferenceEquals(prepared, _prepared);
@@ -194,7 +221,9 @@ namespace Game.Run
         {
             internal readonly Dictionary<string, InventoryEntry> Candidate;
             internal readonly bool Changed;
-            internal PreparedInventory(Dictionary<string, InventoryEntry> candidate, bool changed) { Candidate = candidate; Changed = changed; }
+            internal readonly IOnlineItemRetirementReservation Retirement;
+            internal PreparedInventory(Dictionary<string, InventoryEntry> candidate, bool changed, IOnlineItemRetirementReservation retirement = null)
+            { Candidate = candidate; Changed = changed; Retirement = retirement; }
         }
 
         // 连续数量变化不改身份/归属，不重复复制 Dictionary 或重新发放入局资格。
@@ -212,14 +241,225 @@ namespace Game.Run
             if (ValidateAll(candidate) != InventoryFailureReason.None) return false;
             prepared = _prepared = new PreparedInventory(candidate, true); return true;
         }
+        /// <summary>
+        /// 同一DS主线程上的容器归属交接原语。调用层先确认认证、租约/生命、距离与世界落地；
+        /// 此处只负责两份真实Store的版本、准备锁、目录/形状和唯一实例，不能作为客户端写权限。
+        /// 仅承接随身容器↔共享地面，不迁移法术/资格/仓库；因此不重建Raid资格或执行次数策略。
+        /// </summary>
+        public InventoryOperationResult TryTransferContainerTo(ItemOwnershipStore destination, string itemId,
+            ItemLocation expectedSource, ItemLocation target, uint expectedSourceVersion, uint expectedDestinationVersion)
+        {
+            if (destination == null || ReferenceEquals(destination, this)) return Result(false, InventoryFailureReason.InvalidState);
+            if (Version != expectedSourceVersion || destination.Version != expectedDestinationVersion)
+                return Result(false, InventoryFailureReason.StaleVersion);
+            if (IsResourceBusy || destination.IsResourceBusy) return Result(false, InventoryFailureReason.ResourceBusy);
+            if (!TryGet(itemId, out var item) || !TryGetLocation(itemId, out var source))
+                return Result(false, InventoryFailureReason.NotFound);
+            if (source != expectedSource) return Result(false, InventoryFailureReason.InvalidOwnership);
+            bool drop = (source.Kind == ItemLocationKind.Backpack || source.Kind == ItemLocationKind.EquippedTool)
+                && target.Kind == ItemLocationKind.WorldItem;
+            bool pickup = source.Kind == ItemLocationKind.WorldItem && target.Kind == ItemLocationKind.Backpack;
+            if (!drop && !pickup) return Result(false, InventoryFailureReason.InvalidOwnership);
+            if (!_catalog.TryGetRules(item.ContentId, out var sourceRules) || sourceRules.Kind != ItemKind.Container
+                || item.Composition == null) return Result(false, InventoryFailureReason.WrongKind);
+            // 目标目录也验证真实容量/mask，不能把同一个ContentId在不同目录中的相异规则当成兼容。
+            var validItem = destination.ValidateItem(item);
+            if (validItem != InventoryFailureReason.None) return Result(false, validItem);
+            if (destination._items.ContainsKey(itemId)) return Result(false, InventoryFailureReason.DuplicateIdentity);
+            var targetCandidate = new Dictionary<string, InventoryEntry>(destination._items, StringComparer.Ordinal);
+            targetCandidate.Add(itemId, new InventoryEntry(item, target));
+            var validTarget = destination.ValidateAll(targetCandidate);
+            if (validTarget != InventoryFailureReason.None) return Result(false, validTarget);
+
+            PreparedInventory sourcePrepared = null, targetPrepared = null;
+            try
+            {
+                // 复用数量事务已有的准备/取消机制。双方准备完成前不提交、不发布事件、不调用外部代码。
+                if (!TryPrepareMaterialChange(itemId, null, default, out sourcePrepared))
+                    return Result(false, InventoryFailureReason.ResourceBusy);
+                if (!destination.TryPrepareMaterialItem(item, target, true, out targetPrepared))
+                    return Result(false, InventoryFailureReason.ResourceBusy);
+                if (!OwnsPreparation(sourcePrepared) || !destination.OwnsPreparation(targetPrepared))
+                    return Result(false, InventoryFailureReason.ResourceBusy);
+                // Commit仅替换候选Dictionary并增加本Store版本，不回调策略/事件；同一主线程中两次提交
+                // 之间不存在用户代码或可失败验证点。成功后上层再统一发布Owner/地面完整读快照。
+                CompletePrepared(sourcePrepared, true);
+                destination.CompletePrepared(targetPrepared, true);
+                return Result(true, InventoryFailureReason.None);
+            }
+            finally
+            {
+                if (OwnsPreparation(sourcePrepared)) CompletePrepared(sourcePrepared, false);
+                if (destination.OwnsPreparation(targetPrepared)) destination.CompletePrepared(targetPrepared, false);
+            }
+        }
+
+        /// <summary>
+        /// 通用物品树的双Store原子交接。根改变世界/携带归属，安装卡继续指向原杖ID；不通过逐项
+        /// TryRemove/TryAdd制造悬空父链。资格策略先在完整候选上Prepare，双方全部通过后才提交。
+        /// 调用层负责认证、距离、Actor根和免费绑定包限制；此原语不接受网络字段作为权限。
+        /// </summary>
+        internal InventoryOperationResult TryTransferItemTreeTo(ItemOwnershipStore destination, string itemId,
+            ItemLocation expectedSource, ItemLocation target, uint expectedSourceVersion, uint expectedDestinationVersion)
+            => TryTransferItemTreesTo(destination, new[] { new ItemTransferRoot(itemId, expectedSource, target) },
+                expectedSourceVersion, expectedDestinationVersion);
+
+        internal readonly struct ItemTransferRoot
+        {
+            internal readonly string ItemId;
+            internal readonly ItemLocation Source, Target;
+            internal ItemTransferRoot(string id, ItemLocation source, ItemLocation target)
+            { ItemId = id; Source = source; Target = target; }
+        }
+
+        internal InventoryOperationResult TryTransferItemTreesTo(ItemOwnershipStore destination, IReadOnlyList<ItemTransferRoot> roots,
+            uint expectedSourceVersion, uint expectedDestinationVersion)
+        {
+            if (destination == null || ReferenceEquals(destination, this) || roots == null || roots.Count == 0)
+                return Result(false, InventoryFailureReason.InvalidState);
+            if (Version != expectedSourceVersion || destination.Version != expectedDestinationVersion)
+                return Result(false, InventoryFailureReason.StaleVersion);
+            if (IsResourceBusy || destination.IsResourceBusy) return Result(false, InventoryFailureReason.ResourceBusy);
+            var sourceCandidate = CopyCandidate(); var targetCandidate = destination.CopyCandidate();
+            var moved = new HashSet<string>(StringComparer.Ordinal);
+            for (int i = 0; i < roots.Count; i++)
+            {
+                var root = roots[i];
+                if (!_items.TryGetValue(root.ItemId, out var original)) return Result(false, InventoryFailureReason.NotFound);
+                if (original.Location != root.Source || original.Location.Kind == ItemLocationKind.ThrownContainer)
+                    return Result(false, InventoryFailureReason.InvalidOwnership);
+                bool drop = root.Source.Kind != ItemLocationKind.WorldItem && root.Target.Kind == ItemLocationKind.WorldItem;
+                bool pickup = root.Source.Kind == ItemLocationKind.WorldItem && root.Target.Kind != ItemLocationKind.WorldItem
+                    && root.Target.Kind != ItemLocationKind.Warehouse && root.Target.Kind != ItemLocationKind.ThrownContainer;
+                if (!drop && !pickup) return Result(false, InventoryFailureReason.InvalidOwnership);
+                foreach (var entry in _items.Values)
+                {
+                    bool member = entry.Item.InstanceId == root.ItemId;
+                    for (var parent = entry.Location; !member && parent.HasParentInstance;)
+                    {
+                        if (parent.OwnerId == root.ItemId) { member = true; break; }
+                        if (!_items.TryGetValue(parent.OwnerId, out var ancestor)) break;
+                        parent = ancestor.Location;
+                    }
+                    if (!member) continue;
+                    if (entry.Item.EntryBoundBackpack) return Result(false, InventoryFailureReason.InvalidOwnership);
+                    if (!moved.Add(entry.Item.InstanceId) || targetCandidate.ContainsKey(entry.Item.InstanceId))
+                        return Result(false, InventoryFailureReason.DuplicateIdentity);
+                    // 当前共享地面只承接原杖与直接安装卡；背包内容不借此开放嵌套包/免费包交易。
+                    if (entry.Item.InstanceId != root.ItemId && (entry.Location.Kind != ItemLocationKind.WandSlot || entry.Location.OwnerId != root.ItemId))
+                        return Result(false, InventoryFailureReason.InvalidOwnership);
+                    var valid = destination.ValidateItem(entry.Item);
+                    if (valid != InventoryFailureReason.None) return Result(false, valid);
+                    sourceCandidate.Remove(entry.Item.InstanceId);
+                    targetCandidate.Add(entry.Item.InstanceId, entry.Item.InstanceId == root.ItemId
+                        ? new InventoryEntry(entry.Item, root.Target) : entry);
+                }
+            }
+            var reason = ValidateAll(sourceCandidate);
+            if (reason != InventoryFailureReason.None) return Result(false, reason);
+            reason = destination.ValidateAll(targetCandidate);
+            if (reason != InventoryFailureReason.None) return Result(false, reason);
+            object sourcePolicy = null, targetPolicy = null;
+            var sourcePrepared = _prepared = new PreparedInventory(sourceCandidate, true);
+            var targetPrepared = destination._prepared = new PreparedInventory(targetCandidate, true);
+            try
+            {
+                // Prepare期间双方持有原数量事务锁，策略或诊断不能重入另一写口改变刚验证的版本。
+                if (CommitPolicy != null)
+                {
+                    reason = CommitPolicy.Prepare(sourceCandidate, out sourcePolicy, out _);
+                    if (reason != InventoryFailureReason.None) return Result(false, reason);
+                }
+                if (destination.CommitPolicy != null)
+                {
+                    reason = destination.CommitPolicy.Prepare(targetCandidate, out targetPolicy, out _);
+                    if (reason != InventoryFailureReason.None) return Result(false, reason);
+                }
+                reason = ValidateAll(sourceCandidate);
+                if (reason != InventoryFailureReason.None) return Result(false, reason);
+                reason = destination.ValidateAll(targetCandidate);
+                if (reason != InventoryFailureReason.None) return Result(false, reason);
+                // 单一DS主线程、无外部事件/可失败验证点：两份候选和资格均已准备，提交不重新创建物品。
+                CompletePrepared(sourcePrepared, true); destination.CompletePrepared(targetPrepared, true);
+                CommitPolicy?.Commit(sourcePolicy); destination.CommitPolicy?.Commit(targetPolicy);
+                return Result(true, InventoryFailureReason.None);
+            }
+            finally
+            {
+                if (OwnsPreparation(sourcePrepared)) CompletePrepared(sourcePrepared, false);
+                if (destination.OwnsPreparation(targetPrepared)) destination.CompletePrepared(targetPrepared, false);
+            }
+        }
+
+        /// <summary>
+        /// 只为共享地面固体拾取增加双 Store 原子事务，不开放固体 Drop 或普通物品跨 Store。
+        /// 同格 Compatible 时保持原目标ID并最多合并其剩余容量；源有余量仍由原世界实例持有。
+        /// 双方先验证/准备，之后只切换内部候选表；任何失败都不会先删源或重复增加目标数量。
+        /// </summary>
+        internal InventoryOperationResult TryPickupMaterialTo(ItemOwnershipStore destination, string itemId,
+            ItemLocation expectedSource, ItemLocation target, uint expectedSourceVersion, uint expectedDestinationVersion,
+            out ulong transferred)
+        {
+            transferred = 0;
+            if (destination == null || ReferenceEquals(destination, this)) return Result(false, InventoryFailureReason.InvalidState);
+            if (Version != expectedSourceVersion || destination.Version != expectedDestinationVersion) return Result(false, InventoryFailureReason.StaleVersion);
+            if (IsResourceBusy || destination.IsResourceBusy) return Result(false, InventoryFailureReason.ResourceBusy);
+            if (!TryGet(itemId, out var item) || !TryGetLocation(itemId, out var source)) return Result(false, InventoryFailureReason.NotFound);
+            if (source != expectedSource || source.Kind != ItemLocationKind.WorldItem || target.Kind != ItemLocationKind.Backpack)
+                return Result(false, InventoryFailureReason.InvalidOwnership);
+            if (item.Material == null || !_catalog.TryGetRules(item.ContentId, out var rules) || rules.Kind != ItemKind.Material)
+                return Result(false, InventoryFailureReason.WrongKind);
+            var validation = destination.ValidateItem(item);
+            if (validation != InventoryFailureReason.None) return Result(false, validation);
+            if (destination._items.ContainsKey(itemId)) return Result(false, InventoryFailureReason.DuplicateIdentity);
+            InventoryEntry merge = default; bool merging = false;
+            foreach (var entry in destination._items.Values)
+                if (entry.Location == target && MaterialStackOps.Compatible(item, entry.Item)) { merge = entry; merging = true; break; }
+            ulong amount = item.Material.Quantity;
+            RuntimeItemState destinationItem = item;
+            var candidate = new Dictionary<string, InventoryEntry>(destination._items, StringComparer.Ordinal);
+            if (merging)
+            {
+                destination._catalog.TryGetRules(merge.Item.ContentId, out var targetRules);
+                if (merge.Item.Material.Quantity >= targetRules.MaterialItemCapacity) return Result(false, InventoryFailureReason.Capacity);
+                amount = Math.Min(amount, targetRules.MaterialItemCapacity - merge.Item.Material.Quantity);
+                destinationItem = MaterialStackOps.WithQuantity(merge.Item, checked(merge.Item.Material.Quantity + amount));
+                candidate[merge.Item.InstanceId] = new InventoryEntry(destinationItem, target);
+            }
+            else candidate.Add(itemId, new InventoryEntry(item, target));
+            validation = destination.ValidateAll(candidate);
+            if (validation != InventoryFailureReason.None) return Result(false, validation);
+            PreparedInventory sourcePrepared = null, destinationPrepared = null;
+            try
+            {
+                RuntimeItemState remainder = amount == item.Material.Quantity ? null : MaterialStackOps.WithQuantity(item, item.Material.Quantity - amount);
+                if (!TryPrepareMaterialChange(itemId, remainder, source, out sourcePrepared,
+                    merging && remainder == null ? OnlineItemRetirementReason.Merged : OnlineItemRetirementReason.None))
+                    return Result(false, InventoryFailureReason.ResourceBusy);
+                bool prepared = merging
+                    ? destination.TryPrepareMaterialChange(merge.Item.InstanceId, destinationItem, target, out destinationPrepared)
+                    : destination.TryPrepareMaterialItem(item, target, true, out destinationPrepared);
+                if (!prepared || !OwnsPreparation(sourcePrepared) || !destination.OwnsPreparation(destinationPrepared))
+                    return Result(false, InventoryFailureReason.ResourceBusy);
+                CompletePrepared(sourcePrepared, true); destination.CompletePrepared(destinationPrepared, true);
+                transferred = amount; return Result(true, InventoryFailureReason.None);
+            }
+            finally
+            {
+                if (OwnsPreparation(sourcePrepared)) CompletePrepared(sourcePrepared, false);
+                if (destination.OwnsPreparation(destinationPrepared)) destination.CompletePrepared(destinationPrepared, false);
+            }
+        }
+
         private RuntimeItemState NormalizeContainer(RuntimeItemState item)
         {
             if (item == null || item.Composition != null || !_catalog.TryGetRules(item.ContentId, out var rules) || rules.Kind != ItemKind.Container) return item;
             return new RuntimeItemState(item.InstanceId, item.ContentId, item.RemainingCharges, item.HasUnlimitedCharges,
-                item.StackStateKey, new ContainerComposition(rules.ContainerCapacity, rules.ContainerMaterials), item.Material,item.Attachment,item.RolledWandStats);
+                item.StackStateKey, new ContainerComposition(rules.ContainerCapacity, rules.ContainerMaterials), item.Material,item.Attachment,item.RolledWandStats, item.EntryBoundBackpack);
         }
 
-        internal bool TryPrepareMaterialChange(string id, RuntimeItemState replacement, ItemLocation location, out PreparedInventory prepared)
+        internal bool TryPrepareMaterialChange(string id, RuntimeItemState replacement, ItemLocation location, out PreparedInventory prepared,
+            OnlineItemRetirementReason retirementReason = OnlineItemRetirementReason.None)
         {
             prepared = null;
             if (IsResourceBusy || !_items.TryGetValue(id, out var previous)
@@ -234,12 +474,17 @@ namespace Game.Run
                 candidate[id] = new InventoryEntry(replacement, location);
             }
             if (ValidateAll(candidate) != InventoryFailureReason.None) return false;
-            prepared = _prepared = new PreparedInventory(candidate, true); return true;
+            IOnlineItemRetirementReservation retirement = null;
+            // None还用于双Store原ID迁移。只有调用方明确的消耗/归并/销毁才预留终止证据。
+            if (replacement == null && retirementReason != OnlineItemRetirementReason.None
+                && !TryReserveRetirements(new[] { previous.Item }, retirementReason, out retirement)) return false;
+            prepared = _prepared = new PreparedInventory(candidate, true, retirement); return true;
         }
 
         internal InventoryOperationResult Result(bool success, InventoryFailureReason reason) => new InventoryOperationResult(success, reason, Version);
         internal Dictionary<string,InventoryEntry> CopyCandidate()=>new Dictionary<string,InventoryEntry>(_items,StringComparer.Ordinal);
-        internal InventoryOperationResult CommitMaterialLayout(Dictionary<string,InventoryEntry> candidate,uint version)
+        internal InventoryOperationResult CommitMaterialLayout(Dictionary<string,InventoryEntry> candidate,uint version,
+            IReadOnlyList<string> mergedIds = null)
         {
             if(IsResourceBusy)return Result(false,InventoryFailureReason.ResourceBusy);
             if(version!=Version)return Result(false,InventoryFailureReason.StaleVersion);
@@ -248,7 +493,42 @@ namespace Game.Run
             foreach(var entry in _items.Values)if(entry.Item.Material!=null)before[entry.Item.Material.MaterialKey]+=entry.Item.Material.Quantity;
             foreach(var entry in candidate.Values)if(entry.Item.Material!=null)after[entry.Item.Material.MaterialKey]+=entry.Item.Material.Quantity;
             for(int i=0;i<256;i++)if(before[i]!=after[i])return Result(false,InventoryFailureReason.InvalidState);
-            var reason=ValidateAll(candidate);return reason==InventoryFailureReason.None?FinishCandidate(candidate,true):Result(false,reason);
+            var reason=ValidateAll(candidate); if(reason!=InventoryFailureReason.None)return Result(false,reason);
+            List<RuntimeItemState> retired = null;
+            if (_checkpointJournal != null)
+            {
+                var declared = new HashSet<string>(StringComparer.Ordinal);
+                if (mergedIds != null) for (int i = 0; i < mergedIds.Count; i++)
+                {
+                    string id = mergedIds[i];
+                    if (id == null || !declared.Add(id) || candidate.ContainsKey(id) || !_items.TryGetValue(id, out var original)
+                        || original.Item.Material == null) return Result(false, InventoryFailureReason.InvalidState);
+                    retired ??= new List<RuntimeItemState>(); retired.Add(original.Item);
+                }
+                // 只核对显式Merge决策完整，不从差集推断原因。未知删除宁可拒绝整次整理，也不丢身份证据。
+                foreach (var original in _items.Values)
+                    if (!candidate.ContainsKey(original.Item.InstanceId) && !declared.Contains(original.Item.InstanceId))
+                        return Result(false, InventoryFailureReason.InvalidState);
+            }
+            if (!TryReserveRetirements(retired, OnlineItemRetirementReason.Merged, out var retirement))
+                return Result(false, InventoryFailureReason.ResourceBusy);
+            try { return FinishCandidate(candidate, true, retirement); }
+            finally { retirement?.Cancel(); }
+        }
+        private bool TryReserveRetirements(IReadOnlyList<RuntimeItemState> items, OnlineItemRetirementReason reason,
+            out IOnlineItemRetirementReservation reservation)
+        {
+            reservation = null;
+            if (_checkpointJournal == null || items == null || items.Count == 0) return true;
+            var facts = new OnlineItemRetirementSnapshot[items.Count];
+            for (int i = 0; i < items.Count; i++)
+            {
+                var item = items[i]; uint revision = CheckpointRevision(item.InstanceId);
+                if (revision == 0) return false;
+                facts[i] = new OnlineItemRetirementSnapshot { InventoryId = _checkpointInventoryId, InstanceId = item.InstanceId,
+                    ContentId = item.ContentId, Revision = revision, Reason = reason };
+            }
+            return _checkpointJournal.TryReserve(facts, out reservation);
         }
         private void Commit(Dictionary<string, InventoryEntry> candidate) { _items = candidate; Version++; }
 
@@ -259,6 +539,7 @@ namespace Game.Run
             if (item.RemainingCharges < 0 || item.StackStateKey == null) return InventoryFailureReason.InvalidState;
             if (!_catalog.TryGetRules(item.ContentId, out InventoryItemRules rules)) return InventoryFailureReason.UnknownContent;
             if(item.RolledWandStats.HasValue&&(rules.Kind!=ItemKind.Wand||!item.RolledWandStats.Value.IsValid||!_catalog.ValidateWandTraits(item.RolledWandStats.Value)))return InventoryFailureReason.InvalidState;
+            if (item.EntryBoundBackpack && rules.Kind != ItemKind.Backpack) return InventoryFailureReason.InvalidState;
             if (rules.Kind != ItemKind.Spell && (item.RemainingCharges != 0 || item.HasUnlimitedCharges)) return InventoryFailureReason.InvalidState;
             if (item.Attachment != null && rules.Kind != ItemKind.Spell) return InventoryFailureReason.InvalidState;
             if (item.Composition != null && (rules.Kind != ItemKind.Container || item.Composition.Capacity != rules.ContainerCapacity

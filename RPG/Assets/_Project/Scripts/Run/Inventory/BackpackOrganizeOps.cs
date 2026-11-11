@@ -12,7 +12,7 @@ namespace Game.Run
             if(store.IsResourceBusy)return store.Result(false,InventoryFailureReason.ResourceBusy);
             if(version!=store.Version)return store.Result(false,InventoryFailureReason.StaleVersion);
             if(!store.TryGet(bagId,out var bag)||!store.Catalog.TryGetRules(bag.ContentId,out var bagRules)||bagRules.Kind!=ItemKind.Backpack)return store.Result(false,InventoryFailureReason.NotFound);
-            var candidate=store.CopyCandidate();var entries=new List<InventoryEntry>();
+            var candidate=store.CopyCandidate();var entries=new List<InventoryEntry>();var mergedIds=new List<string>();
             foreach(var entry in store)if(entry.Location.Kind==ItemLocationKind.Backpack&&entry.Location.OwnerId==bagId)entries.Add(entry);
             entries.Sort((a,b)=>string.CompareOrdinal(a.Item.InstanceId,b.Item.InstanceId));
             // 旧存档的小GMU碎片先合并。只改候选，不触碰原MaterialItemState的数量。
@@ -22,7 +22,7 @@ namespace Game.Run
                 store.Catalog.TryGetRules(target.Item.ContentId,out var rules);
                 for(int j=i+1;j<entries.Count;j++)
                     if(candidate.TryGetValue(entries[j].Item.InstanceId,out var source)&&MaterialStackOps.Compatible(source.Item,candidate[targetId].Item))
-                    {ulong amount=Math.Min(source.Item.Material.Quantity,rules.MaterialItemCapacity-candidate[targetId].Item.Material.Quantity);if(amount>0)MaterialStackOps.MergeCandidate(candidate,source.Item.InstanceId,targetId,amount);}
+                    {ulong amount=Math.Min(source.Item.Material.Quantity,rules.MaterialItemCapacity-candidate[targetId].Item.Material.Quantity);if(amount>0)MaterialStackOps.MergeCandidate(candidate,source.Item.InstanceId,targetId,amount,mergedIds);}
             }
             var groups=new List<Group>();
             foreach(var entry in entries)
@@ -49,7 +49,7 @@ namespace Game.Run
                 }
                 if(!placed)return store.Result(false,InventoryFailureReason.Capacity);
             }
-            return store.CommitMaterialLayout(candidate,version);
+            return store.CommitMaterialLayout(candidate,version,mergedIds);
         }
         private static int Priority(ItemKind kind)=>kind==ItemKind.Material?0:kind==ItemKind.Consumable?1:kind==ItemKind.Alchemy?2:kind==ItemKind.Container?3:kind==ItemKind.Wand?4:5;
     }

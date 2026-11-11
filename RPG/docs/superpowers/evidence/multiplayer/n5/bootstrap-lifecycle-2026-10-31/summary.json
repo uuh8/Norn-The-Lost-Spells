@@ -1,0 +1,78 @@
+{
+  "RecordedAtUtc": "2026-10-31T10:36:51.188171+00:00",
+  "Scope": "N5 first formal bootstrap lifecycle segment and approved authenticated WorldEpoch handshake",
+  "UserDecisionReceived": true,
+  "ApplicationProtocolVersion": 3,
+  "AuthorityInitialization": {
+    "InitialPassed": 6,
+    "InitialFailed": 2,
+    "GreenPassed": 11,
+    "GreenFailed": 0
+  },
+  "Handshake": {
+    "RedPassed": 17,
+    "RedFailed": 48,
+    "ResetRedPassed": 0,
+    "ResetRedFailed": 1,
+    "GreenPassed": 66,
+    "GreenFailed": 0
+  },
+  "StopReentry": {
+    "RedPassed": 1,
+    "RedFailed": 2,
+    "GreenPassed": 3,
+    "GreenFailed": 0
+  },
+  "FullEditMode": {
+    "Fixtures": 25,
+    "Passed": 280,
+    "Failed": 0,
+    "Original20FixturePassed": 206
+  },
+  "FormalPlayMode": {
+    "InitialPassed": 0,
+    "InitialFailed": 2,
+    "GreenPassed": 2,
+    "GreenFailed": 0,
+    "RepeatPassed": 2,
+    "RepeatFailed": 0,
+    "InitialFailure": "GasFieldVolumeRenderer.Start reported missing initialized world/material. Recompiled with stronger no-Renderer assertion; two following runs passed. No production rendering fix made; initial origin unresolved."
+  },
+  "Business": {
+    "RedPassed": 99,
+    "RedFailed": 1,
+    "GreenPassed": 100,
+    "GreenFailed": 0,
+    "RealHttpProtobufSmoke": true
+  },
+  "SharedBusinessReleaseBuild": {
+    "Passed": true,
+    "Warnings": 0,
+    "Errors": 0
+  },
+  "GeneratedProtocolCheck": true,
+  "FormalResourceExport": true,
+  "GameplayHashRefresh": true,
+  "ProtectedFilesUnchanged": 12,
+  "N5Complete": false,
+  "FullMaterialChannelConnected": false,
+  "Unverified": [
+    "Native Client/DS builds and real KCP identity handshake/reconnect",
+    "four-player material stress and Native performance/GC",
+    "DS restart recovery and business restart/adoption combination",
+    "N4 remaining player experience and N6 durable settlement"
+  ],
+  "Blockers": [
+    "No permission or decision blocker for this segment; first PlayMode gas-renderer log origin remains unresolved despite two green reruns"
+  ],
+  "NoCommitOrPush": true,
+  "FinalChecks": {
+    "TextDiffCheckExitCode": 0,
+    "AllDiffCheckExitCode": 1,
+    "AllDiffCheckReason": "Unity-exported prefab YAML empty values contain trailing spaces; handwritten files passed; generated prefabs were not hand-edited after hash validation",
+    "DocumentationLinksMissing": 0,
+    "FinalEditor": "P7_MainMenu, not playing/compiling/dirty",
+    "SourcesChangedAfterSnapshot": 0
+  },
+  "FinalizedAtUtc": "2026-10-31T10:39:06.921954+00:00"
+}

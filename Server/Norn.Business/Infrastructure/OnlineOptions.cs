@@ -14,5 +14,7 @@ public sealed class OnlineOptions
     public int AuthRequestsPerMinute { get; set; } = 30;
     public string[] StarterContentIds { get; set; } = ["wandtest.wand.a", "wandtest.fire"];
     public int StarterSpellCharges { get; set; } = 30; // 显式注册授权：有限火球次数，不授予永久无限资格。
+    public string EntryBackpackContentId { get; set; } = "raidtest.starterbag"; // 入场缺包时的8×8保底，不属于注册一杖一卡。
+    public string EntryContainerContentId { get; set; } = "item.container.container_01"; // 每个新Run向首个空道具位发一只真实空容器，满栏跳过。
     public string GameplayConfigHash { get; set; } = ""; // 受控导出配置；未部署规则摘要时不能冻结可执行入局资产。
 }

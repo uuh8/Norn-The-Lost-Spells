@@ -10,6 +10,9 @@ namespace Game.Run
     {
         private readonly SinglePlayerProfile _profile;
         private readonly HashSet<string> _eligible = new HashSet<string>(StringComparer.Ordinal);
+        // 共享地面交接的临时已支付资格。它只影响这一次完整候选的Prepare，失败清除、不改变实际资格。
+        // 资格绑定同一物品实例而非拾取玩家；否则1→0的已合格卡转交后会被误判为没有次数。
+        private IReadOnlyCollection<string> _incoming;
         public string RaidId { get; private set; }
         public uint Version { get; private set; }
         public ISpellUseReadOnly ReadOnly { get; }
@@ -34,6 +37,20 @@ namespace Game.Run
             RaidId = null; _eligible.Clear(); Version++; reason = InventoryFailureReason.None; return true;
         }
         public bool IsEligible(string id) => RaidId != null && id != null && _eligible.Contains(id);
+        internal void BeginIncoming(IReadOnlyCollection<string> ids)
+        {
+            if (_incoming != null) throw new InvalidOperationException("资格转交准备不能重入。");
+            _incoming = ids ?? Array.Empty<string>();
+        }
+        internal void EndIncoming() => _incoming = null;
+        internal void ForgetTransferred(IReadOnlyCollection<string> ids)
+        {
+            bool changed = false;
+            foreach (var id in ids) changed |= _eligible.Remove(id);
+            if (changed) Version++;
+        }
+        private bool IncomingContains(string id)
+        { if (_incoming != null) foreach (var incoming in _incoming) if (incoming == id) return true; return false; }
         public bool TryResumePractice(string raidId,IReadOnlyList<string> qualified)
         {
             if(RaidId!=null || string.IsNullOrWhiteSpace(raidId) || _profile.Items.IsResourceBusy)return false;
@@ -80,9 +97,12 @@ namespace Game.Run
                         && _profile.PendingRaid.IsHubAsset(next.Location.OwnerId))) return InventoryFailureReason.InvalidOwnership;
             }
             var acquired = new List<string>();
+            // 已支付资格随树转入，即使本次先放在包/专区，也要在成功提交时登记；失败候选不会污染集合。
+            if (_incoming != null) foreach (var id in _incoming)
+                if (!_eligible.Contains(id) && candidate.ContainsKey(id)) acquired.Add(id);
             foreach (InventoryEntry entry in candidate.Values)
             {
-                if (entry.Location.Kind != ItemLocationKind.WandSlot || _eligible.Contains(entry.Item.InstanceId)) continue;
+                if (entry.Location.Kind != ItemLocationKind.WandSlot || _eligible.Contains(entry.Item.InstanceId) || IncomingContains(entry.Item.InstanceId)) continue;
                 _profile.Items.Catalog.TryGet(entry.Item.ContentId, out ItemDefinition definition);
                 if (!IsQualification(definition.SpellDefinition) || !IsCarried(entry.Location.OwnerId, candidate)) continue;
                 if (!entry.Item.HasUnlimitedCharges && entry.Item.RemainingCharges <= 0) return InventoryFailureReason.InsufficientUses;
@@ -91,10 +111,13 @@ namespace Game.Run
             // 先扫描全部成员再改候选表，Dictionary 枚举中不能替换元素。
             for (int i = 0; i < acquired.Count; i++)
             {
-                string id = acquired[i]; InventoryEntry entry = candidate[id]; RuntimeItemState item = entry.Item;
+                string id = acquired[i]; if (IncomingContains(id)) continue;
+                InventoryEntry entry = candidate[id]; RuntimeItemState item = entry.Item;
                 if (!item.HasUnlimitedCharges) candidate[id] = new InventoryEntry(new RuntimeItemState(id, item.ContentId,
-                    item.RemainingCharges - 1, false, item.StackStateKey, item.Composition, item.Material, item.Attachment), entry.Location);
+                    item.RemainingCharges - 1, false, item.StackStateKey, item.Composition, item.Material, item.Attachment, item.RolledWandStats, item.EntryBoundBackpack), entry.Location);
             }
+            // Commit位于双方Store同时提交的不可失败区；预留HashSet容量，避免资格登记在此处扩容。
+            _eligible.EnsureCapacity(_eligible.Count + acquired.Count);
             preparation = acquired; changed = acquired.Count > 0; return InventoryFailureReason.None;
         }
         void IInventoryCommitPolicy.Commit(object preparation)

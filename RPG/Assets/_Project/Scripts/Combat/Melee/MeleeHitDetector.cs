@@ -58,7 +58,7 @@ namespace Game.Combat
         /// <summary>
         public void OpenHitWindow()
         {
-            if (_execution.Mode == CombatExecutionMode.Replica) return;
+            if (!_execution.AllowsGameplayWrites) return;
             if (_windowActive) return;
             _windowActive = true;
             _hitSet.Clear();
@@ -83,7 +83,7 @@ namespace Game.Combat
         /// </summary>
         private void DoOverlap()
         {
-            if (_execution.Mode == CombatExecutionMode.Replica) return;
+            if (!_execution.AllowsGameplayWrites) return;
             // 获取武器枢轴点，如果未设置则使用自身Transform
             Transform pivot = _weaponPivot != null ? _weaponPivot : transform;
             // Physics.OverlapBoxNonAlloc：Unity 物理系统的"重叠查询"——问引擎 "这个盒子区域里现在有哪些碰撞体"
@@ -94,6 +94,8 @@ namespace Game.Combat
             // 遍历所有检测到的碰撞体
             for (int i = 0; i < count; i++)
             {
+                // ReceiveHit 会同步回调；上一目标触发故障保护后，下一目标不能沿用帧初权限。
+                if (!_execution.AllowsGameplayWrites) break;
                 // 从碰撞体解析出可伤害接口
                 IDamageable target = ResolveDamageable(_buf[i]);
                 if (target == null) continue; // 跳过无法解析为可伤害对象的碰撞体

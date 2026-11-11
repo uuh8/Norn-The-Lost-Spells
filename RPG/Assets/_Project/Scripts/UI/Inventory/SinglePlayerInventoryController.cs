@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections;
 using Game.Core;
@@ -13,11 +13,12 @@ namespace Game.UI
     /// 整备 UI 只读快照＋命令入口。Ghost 是暂时展示，拖拽开始/旋转/取消不移动资产；
     /// 快照、视图池只在打开或版本变化时重建，持续拖拽仅换坐标。
     /// </summary>
-    public sealed class SinglePlayerInventoryController : MonoBehaviour
+    public sealed partial class SinglePlayerInventoryController : MonoBehaviour, IAccountInventoryHubConsumer
     {
         [SerializeField] private SinglePlayerInventorySession _session;
         private IInventoryPresentationSource _presentationSource;
         private bool _hasPresentationOverride;
+        private AccountInventoryPresentationSource _accountSource;
         private CombatPresentationScope _combatPresentation;
         public IInventoryPresentationSource PresentationSource
         {
@@ -29,21 +30,87 @@ namespace Game.UI
             }
         }
         public bool PresentationIsReadOnly => _hasPresentationOverride;
+        /// <summary>先在inactive Hub安装账号快照；旧Scene重新激活时不能短暂显示/写入旧档。</summary>
+        public bool TryPrepareAccountInventory(OnlineAccountInventorySnapshot snapshot, out string error)
+        {
+            error = null;
+            if (!OnlineAccountInventoryHubScope.IsRequiredForScene(gameObject.scene.handle) || _session == null
+                || !_session.RequireAccountInventoryReadOnly(gameObject.scene.handle))
+            { error = "账号资产未绑定当前Hub，未启用本地替代来源。"; return false; }
+            if (!_session.TryCreateAccountPresentation(snapshot, out var source, out error))
+            { ClearAccountPresentation(); return false; }
+            var previous = _accountSource;
+            _accountSource = source;
+            BindPresentationSource(source);
+            _accountNearbyBindingPending = true;
+            BindAccountNearby(); // 使用Session单一账号地面读桥，不借旧本地Profile的代理或另造第二份世界。
+            previous?.Dispose();
+            return true;
+        }
+        public bool HasPreparedAccountInventory(string playerId, uint minimumVersion)
+            => minimumVersion > 0 && OnlineAccountInventoryHubScope.IsRequiredForScene(gameObject.scene.handle)
+                && _accountSource != null && ReferenceEquals(PresentationSource, _accountSource)
+                && _accountSource.ReadOnly != null && _accountSource.PlayerId == playerId
+                && _accountSource.Version >= minimumVersion;
+        private void ClearAccountPresentation()
+        {
+            var previous = _accountSource;
+            _accountSource = null;
+            _nearby = null; _accountNearbyBindingPending = false;
+            BindPresentationSource(null);
+            previous?.Dispose();
+        }
+        private void ApplyRequiredAccountPresentation()
+        {
+            if (!OnlineAccountInventoryHubScope.IsRequiredForScene(gameObject.scene.handle)) return;
+            if (OnlineAccountInventoryHubScope.TryCopyForScene(gameObject.scene.handle, out var snapshot))
+            {
+                // Scope已保证同版正文不变；Awake/OnEnable重复装配复用已安装值，避免HUD握着刚被Dispose的旧Source。
+                if (_accountSource != null && _accountSource.ReadOnly != null && _accountSource.PlayerId == snapshot.PlayerId
+                    && _accountSource.Version == snapshot.Version && !snapshot.AssetsLocked && string.IsNullOrEmpty(snapshot.ActiveRunId))
+                {
+                    if (!ReferenceEquals(PresentationSource, _accountSource)) BindPresentationSource(_accountSource);
+                    if (_nearby == null) { _accountNearbyBindingPending = true; BindAccountNearby(); }
+                }
+                else TryPrepareAccountInventory(snapshot, out _);
+            }
+            else ClearAccountPresentation();
+        }
+        private void OnAccountInventoryChanged(OnlineAccountInventoryHubChangedEvent change)
+        { if (change.SceneHandle == gameObject.scene.handle) ApplyRequiredAccountPresentation(); }
+        /// <summary>Scope注入同一Actor的附近读桥；UI不创建本地Session，也不取得世界资产写权限。</summary>
+        public void ConfigureOnlineNearby(NearbyPickupController nearby)
+        {
+            if (!_hasPresentationOverride) return;
+            _nearby = nearby;
+            if (_open) Refresh();
+        }
         /// <summary>只替换读模型，不交接单机存档或写权限；显式空源也不能回落到本地资产。</summary>
         public void BindPresentationSource(IInventoryPresentationSource source)
         {
+            bool preserveAccountOpen = _open && PresentationSource is IAccountInventoryCommandContext previousAccount
+                && source is IAccountInventoryCommandContext nextAccount && previousAccount.PlayerId == nextAccount.PlayerId;
+            bool warehouse = _warehouseMode; string selected = _selectedId;
             Close();
             // Close 同时结束旧命令提示的关联；换角色/连接后，迟到收据不能污染新来源。
             _hasPresentationOverride = true; _presentationSource = source;
+            LastOnlineCommandReceipt = null; // 换Actor/连接/来源后不沿用上一段UI寿命的收据诊断。
             _read = PresentationSource?.ReadOnly;
             _selectedId = _viewBackpackId = null; _count = 0;
             _pendingBackpackRefresh = false;
+            if (preserveAccountOpen)
+            {
+                _warehouseMode = warehouse;
+                if (_read != null && _read.TryGetView(selected, out _)) _selectedId = selected;
+                Open();
+            }
+            CompleteAccountCommandStatusIfInstalled();
         }
         private bool AllowLocalCommand()
         {
-            if (!_hasPresentationOverride && _session != null) return true;
+            if (!_hasPresentationOverride && _session != null && !_session.AccountInventoryReadOnly) return true;
             // 线上有限编辑走独立 gateway。此方法仍只允许本地 Session，不能因为支持移动卡片就解锁保存/仓库等旧入口。
-            SetStatus("此操作尚未开放；线上仅支持法术卡在法杖槽和法术储存槽之间移动。"); return false;
+            SetStatus("此操作尚未开放；请使用法术卡移动、容器工具绑定、附近拾取或丢弃入口。"); return false;
         }
         [SerializeField] private HubInteractionController _hubAccess;
         [SerializeField] private RunPauseCoordinator _pauseCoordinator;
@@ -71,7 +138,8 @@ namespace Game.UI
             if(!_open || _read==null || !_read.TryGetView(id,out var item))return;
             if(_infoPopup==null && SlotPrefabs!=null && SlotPrefabs.InfoPopup!=null)
                 _infoPopup=Instantiate(SlotPrefabs.InfoPopup,_panelRoot.transform);
-            if(_infoPopup!=null){CancelDrag();_infoPopup.Show(item.DisplayName,pointer,camera,UiFont);}
+            // 详情只使用本次当前Source解析出的实例，不绕回本地Session或另一份Profile补属性。
+            if(_infoPopup!=null){CancelDrag();_infoPopup.Show(item,pointer,camera,UiFont);}
         }
         [SerializeField] private InputActionReference _toggleAction, _rotateAction, _cancelAction, _splitAction;
         [SerializeField] private bool _openOnStart = true;
@@ -89,14 +157,33 @@ namespace Game.UI
         private bool _embedded;
         public event Action<string> SelectionChanged;
         private bool _warehouseMode;
-        public bool WarehouseMode=>_warehouseMode && PresentationSource != null && PresentationSource.CanAccessWarehouse;
+        public bool WarehouseMode=>_warehouseMode && PresentationSource != null && PresentationSource.CanAccessWarehouse
+            && (!(PresentationSource is IAccountInventoryCommandContext) || CanAccessAccountWarehouse(PresentationSource));
         public SinglePlayerInventorySession Session=>_session;
         public void ConfigurePracticeWorkspace(SinglePlayerInventorySession session,NearbyPickupController nearby,RunPauseCoordinator pause)
-        {Close();_hasPresentationOverride=false;_presentationSource=null;_session=session;_nearby=nearby;_pauseCoordinator=pause;_hubAccess=null;_otherWorkspace=null;_openOnStart=false;}
+        {
+            Close();_hasPresentationOverride=false;_presentationSource=null;_session=session;_nearby=nearby;
+            _pauseCoordinator=pause;_hubAccess=null;_otherWorkspace=null;_openOnStart=false;
+            // Awake可能晚于退出桥对inactive根的预安装；重配工作区也必须保持同一个账号来源。
+            ApplyRequiredAccountPresentation();
+        }
         public void OpenWarehouse()
         {
-            // 当前线上只开放随身只读展示；不能沿旧 otherWorkspace 引用打开单机仓库。
-            if (_hasPresentationOverride) { SetStatus("当前资产仅可查看。"); return; }
+            // 账号仍走作者原仓库布局与站点门，只允许转交同账号、同版本的另一Canvas，不能跳回旧本地源。
+            if (_hasPresentationOverride)
+            {
+                if (!CanAccessAccountWarehouse(PresentationSource)) { SetStatus("请在据点仓库区域内操作。"); return; }
+                if (_backpackWorkspace != null && _otherWorkspace != null)
+                {
+                    if (!SharesAccountWorkspace(_otherWorkspace) || _otherWorkspace._backpackWorkspace != null
+                        || !_otherWorkspace.CanAccessAccountWarehouse(_otherWorkspace.PresentationSource))
+                    { SetStatus("仓库账号界面尚未准备完成。"); return; }
+                    _otherWorkspace.OpenWarehouse(); return;
+                }
+                if (_hubAccess != null && (!_hubAccess.TryGetStation(out var accountStation)
+                    || accountStation.Kind != HubStationKind.Warehouse)) return;
+                _warehouseMode = true; Open(); return;
+            }
             // 用户拆成两套Canvas后，随身控制器把站点请求交给原仓库控制器，避免再次混用布局。
             if (_backpackWorkspace!=null && _otherWorkspace!=null) { _otherWorkspace.OpenWarehouse();return; }
             // 视图访问也检查空间/阶段；真实资产命令仍由Run独立复核，不能把Tab随身界面变成远程仓库。
@@ -122,10 +209,12 @@ namespace Game.UI
         private uint _dragVersion;
         private uint _dragProgramRevision, _dragOnlineEpoch;
         private ulong _dragOnlineActor;
+        private IInventoryPresentationSource _dragOnlineSource;
         private ulong _onlineCommandId, _onlineCommandActor;
         private uint _onlineCommandEpoch;
         // 成功收据与完整库存走不同到达顺序；这里只记“等待展示的版本”，不根据收据修改任何资产。
         private uint _onlineSnapshotVersion;
+        private uint _groundPresentationVersion;
         private int _turns;
         private Vector2 _grabPoint;
         private float _dragCellSize;
@@ -161,6 +250,13 @@ namespace Game.UI
         private static readonly Unity.Profiling.ProfilerMarker InteractionMarker=new Unity.Profiling.ProfilerMarker("Norn.Inventory.InteractionTick");
         private static readonly Unity.Profiling.ProfilerMarker DragFollowMarker=new Unity.Profiling.ProfilerMarker("Norn.Backpack.DragFollow");
         public bool IsOpen => _open;
+        /// <summary>最近一次用户可理解的交互反馈；作者未接Text时仍可诊断，不因读取而分配或推进命令。</summary>
+        public string LastInteractionStatus { get; private set; } = string.Empty;
+        /// <summary>只读区分“意图已发但无收据”和“收据成功但Owner完整快照尚未安装”。0表示该阶段无等待。</summary>
+        public ulong PendingOnlineCommandId => _onlineCommandId;
+        public uint PendingOnlineInventoryVersion => _onlineSnapshotVersion;
+        /// <summary>仅保留通过原Actor/Caller/Epoch/Command门的最近收据；精确ID不展示给玩家，也不授予资产写权。</summary>
+        public OnlineInventoryCommandReceipt? LastOnlineCommandReceipt { get; private set; }
         public string SelectedItemId => _selectedId;
         public bool IsDragging => _dragging;
         public Font UiFont { get; private set; }
@@ -191,10 +287,14 @@ namespace Game.UI
 
         private void OnEnable()
         {
+            ConfigureViewportLayout();
+            EventBus<OnlineAccountInventoryHubChangedEvent>.Subscribe(OnAccountInventoryChanged);
+            ApplyRequiredAccountPresentation();
             EventBus<InventoryChangedEvent>.Subscribe(OnChanged);
             EventBus<RaidStateChangedEvent>.Subscribe(OnRaidPresentationChanged);
             EventBus<InventoryCommandResultEvent>.Subscribe(OnResult);
             EventBus<OnlineInventoryCommandResultEvent>.Subscribe(OnOnlineInventoryResult);
+            EventBus<OnlineAccountInventoryCommandResultEvent>.Subscribe(OnAccountInventoryResult);
             EventBus<InventorySaveResultEvent>.Subscribe(OnSaveResult);
             EventBus<NearbyPickupResultEvent>.Subscribe(OnPickup);
             EventBus<NearbyPickupListChangedEvent>.Subscribe(OnNearbyChanged);
@@ -206,12 +306,16 @@ namespace Game.UI
             if (_splitAction != null) _splitAction.action.Enable();
             RefreshCombatPresentation();
         }
+        // Tab、仓库与商店内嵌库存复用同一入口；只调整整块展示根，不动格子坐标、物品或拖拽归属。
+        private void ConfigureViewportLayout() => UiViewportLayout.FitFixedPanel(_panelRoot);
         private void OnDisable()
         {
+            EventBus<OnlineAccountInventoryHubChangedEvent>.Unsubscribe(OnAccountInventoryChanged);
             EventBus<InventoryChangedEvent>.Unsubscribe(OnChanged);
             EventBus<RaidStateChangedEvent>.Unsubscribe(OnRaidPresentationChanged);
             EventBus<InventoryCommandResultEvent>.Unsubscribe(OnResult);
             EventBus<OnlineInventoryCommandResultEvent>.Unsubscribe(OnOnlineInventoryResult);
+            EventBus<OnlineAccountInventoryCommandResultEvent>.Unsubscribe(OnAccountInventoryResult);
             EventBus<InventorySaveResultEvent>.Unsubscribe(OnSaveResult);
             EventBus<NearbyPickupResultEvent>.Unsubscribe(OnPickup);
             EventBus<NearbyPickupListChangedEvent>.Unsubscribe(OnNearbyChanged);
@@ -246,6 +350,7 @@ namespace Game.UI
         private void OnApplicationFocus(bool focus) { if (!focus){CancelDrag();CancelArrangement();Refresh();} }
         private void OnDestroy()
         {
+            _accountSource?.Dispose(); _accountSource = null;
             // OS 动态 Font 是本界面创建的 Unity native 对象，结束 Scene 时主动释放。
             if (UiFont != null) Destroy(UiFont);
         }
@@ -259,7 +364,8 @@ namespace Game.UI
         public void Open()
         {
             if (_embedded) return;
-            if (!_hasPresentationOverride && _otherWorkspace != null && _otherWorkspace.IsOpen) _otherWorkspace.Close();
+            if (_otherWorkspace != null && _otherWorkspace.IsOpen
+                && (!_hasPresentationOverride || SharesAccountWorkspace(_otherWorkspace))) _otherWorkspace.Close();
             var source = PresentationSource;
             _read = source?.ReadOnly;
             if (_read == null)
@@ -286,8 +392,10 @@ namespace Game.UI
         }
         private void CaptureInventoryInput()
         {
-            // 单机仍暂停本局；联机只申请本机输入占用，其他玩家和服务器 Tick 继续推进。
-            if (_hasPresentationOverride)
+            // 资产读源与世界运行方式是两个不同维度：账号Hub虽使用服务器确认的只读快照，
+            // 场景角色仍由原本地Pause Owner管理，Tab必须通过Inventory reason解锁Cursor并阻止操作穿透。
+            // DS副本才只占用本机输入；不能因为账号Hub也有override，就等待一个根本不存在的网络World来解锁鼠标。
+            if (_hasPresentationOverride && !(PresentationSource is IAccountInventoryCommandContext))
                 EventBus<InventoryPresentationVisibilityEvent>.Publish(new InventoryPresentationVisibilityEvent { OwnerId = GetInstanceID(), Open = true });
             else _pauseCoordinator?.RequestPause(RunPauseReason.Inventory);
         }
@@ -300,7 +408,9 @@ namespace Game.UI
             CancelDrag(); CancelArrangement(); _waitingOpen = false;
             if (_open && !_embedded)
             {
-                if (_hasPresentationOverride)
+                // BindPresentationSource先Close再换源，因而这里仍能按原来源释放同一Owner；
+                // 仓库/Tab转交也只释放Inventory reason，其他菜单持有的暂停与鼠标状态继续保留。
+                if (_hasPresentationOverride && !(PresentationSource is IAccountInventoryCommandContext))
                     EventBus<InventoryPresentationVisibilityEvent>.Publish(new InventoryPresentationVisibilityEvent { OwnerId = GetInstanceID(), Open = false });
                 else _pauseCoordinator?.ReleasePause(RunPauseReason.Inventory);
             }
@@ -311,8 +421,8 @@ namespace Game.UI
             // 只交接交互生命周期。Panel和Shop pause reason仍只有ShopController一个所有者。
             if (!_embedded) return;
             if (!open) { Close(); return; }
-            // 商店拥有独立的本地资产事务；线上只读源不能借内嵌入口继承它的写权限。
-            if (_hasPresentationOverride) { SetStatus("当前资产仅可查看。"); return; }
+            // DS副本不能借商店嵌入入口取得据点权限；账号Hub则复用原嵌入表现，写入仍走账号HTTP网关。
+            if (_hasPresentationOverride && !(PresentationSource is IAccountInventoryCommandContext)) { SetStatus("当前资产仅可查看。"); return; }
             _read = PresentationSource?.ReadOnly; if (_read == null) return;
             _warehouseMode = true; _waitingOpen = false; _open = true;
             _gridView?.Initialize(this, _itemPrefab);
@@ -325,13 +435,14 @@ namespace Game.UI
         {
             if (!_open || _read == null) return;
             // 共享 View 的拖拽表现不等于资产写权限。线上必须先用当前只读快照复核实例与位置，
-            // 只放行本角色已有的 Spell，不能沿原通用拖拽路径顺带解锁换包、装备、拾取或地面丢弃。
+            // 真实物品共用单机拖拽表现，命令仍交给DS；抓起只捕获身份/版本，绝不乐观移动资产。
             InventoryItemSnapshot chosen = source;
             uint programRevision = 0;
             if (_hasPresentationOverride)
             {
-                if (!TryGetOnlineDrag(source.InstanceId, out chosen, out programRevision))
-                { CancelDrag(); SetStatus("当前只支持拖动自有法术卡；请等待完整库存快照。"); return; }
+                bool account = PresentationSource is IAccountInventoryCommandContext;
+                if (account ? !TryGetAccountDrag(source.InstanceId, out chosen) : !TryGetOnlineDrag(source.InstanceId, out chosen, out programRevision))
+                { CancelDrag(); SetStatus("请从当前随身库存或真实附近物品重新拖动；免费基础包不可转交。"); return; }
             }
             else if (!AllowLocalCommand()) return;
             // 来源可能来自不同CellSize/Canvas缩放的附近区。先转换到Ghost Local Space，
@@ -351,6 +462,10 @@ namespace Game.UI
             var context = PresentationSource as IOnlineInventoryCommandContext;
             _dragOnlineActor = context != null ? context.ActorId : 0;
             _dragOnlineEpoch = context != null ? context.ConnectionEpoch : 0;
+            _dragOnlineSource = _hasPresentationOverride ? PresentationSource : null;
+            var accountContext = PresentationSource as IAccountInventoryCommandContext;
+            _dragAccountPlayer = accountContext != null ? accountContext.PlayerId : null;
+            _dragAccountScene = accountContext != null ? gameObject.scene.handle : 0;
             _wholeStack = !split && chosen.Location.Kind == ItemLocationKind.Backpack;
             _grabPoint=preciseGrab??new Vector2(grab.x+.5f,grab.y+.5f);_dragCellSize=visualCell;_dragging = true;
             _nearbyGrid?.PrepareDrag(chosen.Rules.Shape,_turns);
@@ -361,6 +476,7 @@ namespace Game.UI
                 _ghost.transform.SetAsLastSibling();
             }
             MoveGhost(pointer, camera);
+            SetDragPlacementHint(_outsideDropHint);
         }
         /// <summary>
         /// Source 仅提供连接身份和只读事实，不提供 TryMove。把 View 传来的 ID 再解析成当前实例，
@@ -370,17 +486,115 @@ namespace Game.UI
         {
             item = default; programRevision = 0;
             if (!(PresentationSource is IOnlineInventoryCommandContext context) || context.ActorId == 0
-                || context.ConnectionEpoch == 0 || _read == null || !_read.TryGetView(id, out item)
-                || item.Kind != ItemKind.Spell) return false;
-            if (item.Location.Kind == ItemLocationKind.SpellStorage)
-                return item.Location.OwnerId == _read.ActorId;
-            if (item.Location.Kind != ItemLocationKind.WandSlot || PresentationSource.WandsReadOnly == null
+                || context.ConnectionEpoch == 0 || _read == null || !_read.TryGetView(id, out item)) return false;
+            if (IsOnlineGroundPickup(item)) return true;
+            if (!IsOwnedOnlineItem(_read, item) || item.EntryBoundBackpack) return false;
+            if (item.Location.Kind != ItemLocationKind.WandSlot) return true;
+            if (item.Kind != ItemKind.Spell || PresentationSource.WandsReadOnly == null
                 || !PresentationSource.WandsReadOnly.TryGetProgram(item.Location.OwnerId, out var program)
                 || !_read.TryGetView(item.Location.OwnerId, out var wand)
-                || wand.Location.Kind != ItemLocationKind.EquippedWand || wand.Location.OwnerId != _read.ActorId) return false;
+                || wand.Kind != ItemKind.Wand || !IsOwnedOnlineItem(_read, wand)) return false;
             programRevision = program.ProgramRevision;
             return programRevision != 0;
         }
+        /// <summary>沿真实父链追到当前角色随身根；池化View、旧父ID、仓库与公开地面都不能冒充自有资产。</summary>
+        private static bool IsOwnedOnlineItem(IInventoryReadOnly read, in InventoryItemSnapshot item)
+        {
+            if (read == null) return false;
+            var root = item.Location;
+            for (int depth = 0; root.HasParentInstance; depth++)
+            {
+                if (depth >= read.Count || !read.TryGetView(root.OwnerId, out var parent)) return false;
+                root = parent.Location;
+            }
+            return root.OwnerId == read.ActorId && (root.Kind == ItemLocationKind.EquippedBackpack
+                || root.Kind == ItemLocationKind.EquippedWand || root.Kind == ItemLocationKind.EquippedTool
+                || root.Kind == ItemLocationKind.SpellStorage);
+        }
+        /// <summary>
+        /// 容器的绑定资格来自当前完整Source：包内项必须追到本角色正在装备的真实包，工具项必须仍占据
+        /// 该角色的真实绑定槽。这里只读取事实，不通过View中的种类或旧位置授予绑定/选择权限。
+        /// Begin和Submit共用此门禁，防止抓起后发生快照变化时沿旧View把仓库/他人资产写入快捷位。
+        /// </summary>
+        private static bool IsOwnedOnlineContainer(IInventoryPresentationSource source, IInventoryReadOnly read, in InventoryItemSnapshot item)
+        {
+            if (source == null || read == null || item.Kind != ItemKind.Container || item.Rules.UseKind != ItemUseKind.Container)
+                return false;
+            if (item.Location.Kind == ItemLocationKind.EquippedTool)
+                return item.Location.OwnerId == read.ActorId && item.Location.SlotIndex >= 0 && item.Location.SlotIndex < HeldItemSlots.ToolCount
+                    && source.ToolbeltReadOnly != null && source.ToolbeltReadOnly.TryGetBinding(item.Location.SlotIndex, out var bound)
+                    && bound == item.InstanceId;
+            return item.Location.Kind == ItemLocationKind.Backpack && !string.IsNullOrEmpty(source.EquippedBackpackId)
+                && item.Location.OwnerId == source.EquippedBackpackId && read.TryGetView(item.Location.OwnerId, out var bag)
+                && bag.Kind == ItemKind.Backpack && bag.Location.Kind == ItemLocationKind.EquippedBackpack
+                && bag.Location.OwnerId == read.ActorId;
+        }
+        private bool IsOnlineGroundPickup(in InventoryItemSnapshot item)
+            => !item.EntryBoundBackpack && item.Location.Kind == ItemLocationKind.WorldItem && !string.IsNullOrEmpty(item.Location.OwnerId)
+                && _nearby != null && _nearby.IsNearby(item.InstanceId);
+
+        private bool IsCapturedOnlineDragCurrent(out IInventoryPresentationSource source, out IOnlineInventoryCommandContext context)
+        {
+            source = PresentationSource; context = source as IOnlineInventoryCommandContext;
+            return _open && _dragging && ReferenceEquals(source, _dragOnlineSource) && context != null
+                && context.ActorId != 0 && context.ActorId == _dragOnlineActor
+                && context.ConnectionEpoch != 0 && context.ConnectionEpoch == _dragOnlineEpoch && _dragVersion != 0
+                && source.ReadOnly != null && ReferenceEquals(source.ReadOnly, _read);
+        }
+        /// <summary>
+        /// 地面和随身只是两种服务器确认事实。Pickup携这一次WorldOwner，防同一物
+        /// 被拾起再丢下后，旧拖拽误作用于新的地面归属。格位只表达放置意图，失败不创建本地红框资产草稿。
+        /// </summary>
+        private void SubmitOnlineItemDrop()
+        {
+            if (!IsCapturedOnlineDragCurrent(out _, out _)
+                || !_read.TryGetView(_dragSource.InstanceId, out var item) || !IsOwnedOnlineItem(_read, item) || item.EntryBoundBackpack)
+            { RejectOnlineGroundDrag(); return; }
+            var intent = new OnlineInventoryCommandIntent
+            { CommandId = OnlineInventoryCommandIds.Next(), ConnectionEpoch = _dragOnlineEpoch,
+                ExpectedInventoryVersion = _dragVersion, Kind = item.Kind == ItemKind.Container
+                    ? OnlineInventoryCommandKind.DropContainer : OnlineInventoryCommandKind.DropItem, ItemId = item.InstanceId,
+                SourceWandId = _dragSource.Location.Kind == ItemLocationKind.WandSlot ? _dragSource.Location.OwnerId : null,
+                SourceProgramRevision = _dragProgramRevision,
+                WholeStack = item.Kind != ItemKind.Container && _wholeStack };
+            PublishOnlineGroundIntent(intent);
+        }
+        private void SubmitOnlineGroundPickup(int x, int y, string backpackId)
+        {
+            if (!IsCapturedOnlineDragCurrent(out var source, out _)
+                || !_read.TryGetView(_dragSource.InstanceId, out var item) || !IsOnlineGroundPickup(item)
+                || item.Location.OwnerId != _dragSource.Location.OwnerId || backpackId != source.EquippedBackpackId
+                || string.IsNullOrEmpty(backpackId) || !_read.TryGetView(backpackId, out var bag)
+                || bag.Kind != ItemKind.Backpack || bag.Location.Kind != ItemLocationKind.EquippedBackpack
+                || bag.Location.OwnerId != _read.ActorId || x < 0 || y < 0 || _turns < 0 || _turns > 3)
+            { RejectOnlineGroundDrag(); return; }
+            var intent = new OnlineInventoryCommandIntent
+            { CommandId = OnlineInventoryCommandIds.Next(), ConnectionEpoch = _dragOnlineEpoch,
+                ExpectedInventoryVersion = _dragVersion, Kind = item.Kind == ItemKind.Container || item.Kind == ItemKind.Material
+                    ? OnlineInventoryCommandKind.PickupContainer : OnlineInventoryCommandKind.PickupItem, ItemId = item.InstanceId,
+                WorldOwnerId = item.Location.OwnerId, TargetBackpackId = backpackId, GridX = x, GridY = y, QuarterTurns = _turns,
+                TargetLocationKind = item.Kind == ItemKind.Container || item.Kind == ItemKind.Material ? 0 : (int)ItemLocationKind.Backpack };
+            PublishOnlineGroundIntent(intent);
+        }
+        private void RejectOnlineGroundDrag()
+        { CancelDrag(); CancelArrangement(); SetStatus("当前物品或目标已变化；请从真实附近或随身库存重新拖动。"); }
+        private void PublishOnlineGroundIntent(in OnlineInventoryCommandIntent intent)
+        {
+            _onlineSnapshotVersion = 0; _onlineCommandId = intent.CommandId;
+            LastOnlineCommandReceipt = null;
+            _onlineCommandActor = _dragOnlineActor; _onlineCommandEpoch = _dragOnlineEpoch;
+            CancelDrag(); CancelArrangement(); SetStatus("已提交服务器，等待处理结果与库存快照。");
+            EventBus<OnlineInventoryCommandRequestedEvent>.Publish(new OnlineInventoryCommandRequestedEvent
+            { ActorId = _onlineCommandActor, CallerId = GetInstanceID(), Intent = intent });
+        }
+        private void SetDragPlacementHint(bool outside)
+        {
+            // 文案跟随同一权威移动入口；附近布局仍只是显示，失败不会创建本地资产草稿。
+            SetStatus(_hasPresentationOverride && _dragSource.Location.Kind == ItemLocationKind.WorldItem
+                ? "拖到随身背包或相容装备、法术槽拾取。"
+                : outside ? "松开丢弃" : "拖到背包、相容槽位或附近区域；等待服务器确认。");
+        }
+
         public void MoveGhost(Vector2 pointer, Camera camera)
         {
             if (!_dragging || _ghost == null) return;
@@ -390,8 +604,7 @@ namespace Game.UI
             if(outside!=_outsideDropHint)
             {
                 _outsideDropHint=outside;
-                SetStatus(_hasPresentationOverride ? outside ? "此处不能放置；松开取消。" : "拖到法杖槽或法术储存槽。"
-                    : outside ? "松开丢弃" : "拖到附近物品或界面外松开可丢弃");
+                SetDragPlacementHint(outside);
             }
             RectTransform parent = (RectTransform)_ghost.transform.parent;
             if (RectTransformUtility.ScreenPointToWorldPointInRectangle(parent, pointer, camera, out Vector3 world))
@@ -458,10 +671,13 @@ namespace Game.UI
         public void SubmitToBackpack(int x, int y, string backpackId)
         {
             if (!_dragging) return;
+            if (_hasPresentationOverride && !(PresentationSource is IAccountInventoryCommandContext)
+                && _dragSource.Location.Kind == ItemLocationKind.WorldItem)
+            { SubmitOnlineGroundPickup(x, y, backpackId); return; }
             var command = BaseCommand(); command.Kind = InventoryCommandKind.Place;
             command.OwnerId = backpackId; command.X = x; command.Y = y; command.QuarterTurns = _turns;
             if (_dragSource.Location.Kind == ItemLocationKind.WorldItem) command.Kind = InventoryCommandKind.Pickup;
-            Arrange(command);
+            if (_hasPresentationOverride) Submit(command); else Arrange(command);
         }
         private void Arrange(InventoryCommandEvent command)
         {
@@ -501,6 +717,13 @@ namespace Game.UI
         public void SubmitToTarget(InventoryDropKind kind, string ownerId = null, int slot = 0)
         {
             if (!_dragging) return;
+            if (_hasPresentationOverride && kind == InventoryDropKind.Ground)
+            {
+                if (PresentationSource is IAccountInventoryCommandContext)
+                    SubmitAccountDrop();
+                else SubmitOnlineItemDrop();
+                return;
+            }
             // 拖法杖落到程序中的空槽/法术卡，应替换这行装备；拖Spell仍沿用精确程序槽语义。
             if(kind==InventoryDropKind.ProgramSlot && _dragSource.Kind==ItemKind.Wand
                 && _read.TryGetView(ownerId,out var owner) && owner.Location.Kind==ItemLocationKind.EquippedWand)
@@ -535,6 +758,7 @@ namespace Game.UI
             if(_dragSource.Kind==ItemKind.Material&&target.Kind==ItemKind.Material&&_dragSource.ContentId==target.ContentId
                 &&target.Location.Kind==ItemLocationKind.Backpack)
             {
+                if (_hasPresentationOverride) { SubmitToBackpack(target.Location.X, target.Location.Y, target.Location.OwnerId); return; }
                 var merge=BaseCommand();merge.Kind=_dragSource.Location.Kind==ItemLocationKind.WorldItem?InventoryCommandKind.Pickup:InventoryCommandKind.Place;
                 merge.Destination=InventoryDestination.Backpack;merge.OwnerId=target.Location.OwnerId;merge.X=target.Location.X;merge.Y=target.Location.Y;
                 merge.QuarterTurns=target.Location.QuarterTurns;merge.WholeStack=false;Submit(merge);return;
@@ -560,6 +784,7 @@ namespace Game.UI
         };
         private void Submit(InventoryCommandEvent command)
         {
+            if (PresentationSource is IAccountInventoryCommandContext) { SubmitAccountPlace(command); return; }
             if (_hasPresentationOverride) { SubmitOnlinePlace(command); return; }
             if (!AllowLocalCommand()) { CancelDrag(); CancelArrangement(); return; }
             // 同步 EventBus 可能当场刷新/复用源 View，所以先结束视觉拖拽，再提交。
@@ -572,45 +797,70 @@ namespace Game.UI
         /// </summary>
         private void SubmitOnlinePlace(in InventoryCommandEvent command)
         {
-            var source = PresentationSource;
-            var context = source as IOnlineInventoryCommandContext;
-            bool storage = command.Destination == InventoryDestination.SpellStorage;
-            bool valid = _dragging && context != null && context.ActorId == _dragOnlineActor
-                && context.ConnectionEpoch == _dragOnlineEpoch && command.Kind == InventoryCommandKind.Place
-                && command.ItemId == _dragSource.InstanceId && _dragSource.Kind == ItemKind.Spell
-                && (storage || command.Destination == InventoryDestination.WandSlot) && command.SlotIndex >= 0;
+            bool captured = IsCapturedOnlineDragCurrent(out var source, out _);
+            bool pickup = _dragSource.Location.Kind == ItemLocationKind.WorldItem;
+            var target = command.Kind == InventoryCommandKind.EquipWand ? ItemLocationKind.EquippedWand
+                : command.Kind == InventoryCommandKind.Pickup
+                    ? command.PickupDestination == InventoryPickupDestination.EquippedWand ? ItemLocationKind.EquippedWand
+                    : command.PickupDestination == InventoryPickupDestination.EquippedBackpack ? ItemLocationKind.EquippedBackpack
+                    : command.PickupDestination == InventoryPickupDestination.SpellStorage ? ItemLocationKind.SpellStorage
+                    : command.PickupDestination == InventoryPickupDestination.WandSlot ? ItemLocationKind.WandSlot : ItemLocationKind.Backpack
+                : command.Destination == InventoryDestination.SpellStorage ? ItemLocationKind.SpellStorage
+                : command.Destination == InventoryDestination.WandSlot ? ItemLocationKind.WandSlot : ItemLocationKind.Backpack;
+            bool valid = captured && command.ItemId == _dragSource.InstanceId
+                && (command.Kind == InventoryCommandKind.Place || command.Kind == InventoryCommandKind.EquipWand || command.Kind == InventoryCommandKind.Pickup)
+                && _read.TryGetView(command.ItemId, out var current) && !current.EntryBoundBackpack
+                && (pickup ? IsOnlineGroundPickup(current) && current.Location.OwnerId == _dragSource.Location.OwnerId : IsOwnedOnlineItem(_read, current));
             uint targetRevision = 0;
-            if (valid && storage)
-                valid = command.OwnerId == _read.ActorId && command.SlotIndex < source.SpellStorageCapacity;
-            else if (valid)
+            if (valid && target == ItemLocationKind.Backpack)
+                valid = _dragSource.Kind != ItemKind.Backpack && command.OwnerId == source.EquippedBackpackId
+                    && !string.IsNullOrEmpty(command.OwnerId) && _read.TryGetView(command.OwnerId, out var bag)
+                    && bag.Kind == ItemKind.Backpack && bag.Location.Kind == ItemLocationKind.EquippedBackpack
+                    && bag.Location.OwnerId == _read.ActorId && command.X >= 0 && command.Y >= 0 && command.QuarterTurns >= 0 && command.QuarterTurns < 4;
+            else if (valid && target == ItemLocationKind.SpellStorage)
+                valid = _dragSource.Kind == ItemKind.Spell && command.OwnerId == _read.ActorId
+                    && command.SlotIndex >= 0 && command.SlotIndex < source.SpellStorageCapacity;
+            else if (valid && target == ItemLocationKind.WandSlot)
             {
-                if (source.WandsReadOnly == null || !source.WandsReadOnly.TryGetProgram(command.OwnerId, out var targetProgram)) valid = false;
+                if (_dragSource.Kind != ItemKind.Spell || source.WandsReadOnly == null
+                    || !source.WandsReadOnly.TryGetProgram(command.OwnerId, out var targetProgram)) valid = false;
                 else
                 {
                     targetRevision = targetProgram.ProgramRevision;
-                    valid = targetRevision != 0 && command.SlotIndex < targetProgram.Program.Count
-                        && _read.TryGetView(command.OwnerId, out var wand) && wand.Location.Kind == ItemLocationKind.EquippedWand
-                        && wand.Location.OwnerId == _read.ActorId;
+                    valid = targetRevision != 0 && command.SlotIndex >= 0 && command.SlotIndex < targetProgram.Program.Count
+                        && _read.TryGetView(command.OwnerId, out var wand) && wand.Kind == ItemKind.Wand
+                        && IsOwnedOnlineItem(_read, wand);
                 }
             }
+            else if (valid && target == ItemLocationKind.EquippedWand)
+                valid = _dragSource.Kind == ItemKind.Wand && command.OwnerId == _read.ActorId
+                    && command.SlotIndex >= 0 && command.SlotIndex < HeldItemSlots.WandCount;
+            else if (valid && target == ItemLocationKind.EquippedBackpack)
+                valid = pickup && _dragSource.Kind == ItemKind.Backpack && command.OwnerId == _read.ActorId;
+            else valid = false;
             if (!valid)
-            { CancelDrag(); CancelArrangement(); SetStatus("无法放到此处；线上仅支持自有法术卡的槽位移动。"); return; }
+            { CancelDrag(); CancelArrangement(); SetStatus("无法放到此处；请检查当前物品与真实目标槽位。"); return; }
 
+            // 新通用目标显式携带既有位置编号；Parent只传真实包/法杖ID，玩家根由DS认证身份补齐。
+            // 原库存版本与源程序版本取自抓起时；目标程序版本来自当前完整读模型，失败由DS原子裁决。
             var intent = new OnlineInventoryCommandIntent
             {
                 CommandId = OnlineInventoryCommandIds.Next(), ConnectionEpoch = _dragOnlineEpoch,
                 ExpectedInventoryVersion = _dragVersion, SourceProgramRevision = _dragProgramRevision,
-                TargetProgramRevision = targetRevision, Kind = OnlineInventoryCommandKind.PlaceCard,
+                TargetProgramRevision = targetRevision, Kind = pickup ? OnlineInventoryCommandKind.PickupItem
+                    : target == ItemLocationKind.EquippedWand ? OnlineInventoryCommandKind.EquipWand : OnlineInventoryCommandKind.MoveOwned,
                 ItemId = _dragSource.InstanceId,
                 SourceWandId = _dragSource.Location.Kind == ItemLocationKind.WandSlot ? _dragSource.Location.OwnerId : null,
-                TargetWandId = storage ? null : command.OwnerId, TargetSlot = command.SlotIndex, ToSpellStorage = storage
+                TargetWandId = target == ItemLocationKind.WandSlot ? command.OwnerId : null,
+                TargetBackpackId = target == ItemLocationKind.Backpack ? command.OwnerId : null,
+                TargetSlot = target == ItemLocationKind.Backpack ? 0 : command.SlotIndex,
+                GridX = target == ItemLocationKind.Backpack ? command.X : 0,
+                GridY = target == ItemLocationKind.Backpack ? command.Y : 0,
+                QuarterTurns = target == ItemLocationKind.Backpack ? command.QuarterTurns : 0,
+                TargetLocationKind = (int)target, WholeStack = !pickup && target == ItemLocationKind.Backpack && _wholeStack,
+                WorldOwnerId = pickup ? _dragSource.Location.OwnerId : null
             };
-            // GetInstanceID 仅用于当前进程的回执分发；真正玩家身份由认证连接复核，绝不能把它发送给服务器当 ActorId。
-            _onlineSnapshotVersion = 0;
-            _onlineCommandId = intent.CommandId; _onlineCommandActor = context.ActorId; _onlineCommandEpoch = context.ConnectionEpoch;
-            CancelDrag(); CancelArrangement(); SetStatus("已提交服务器，等待处理结果与库存快照。");
-            EventBus<OnlineInventoryCommandRequestedEvent>.Publish(new OnlineInventoryCommandRequestedEvent
-            { ActorId = context.ActorId, CallerId = GetInstanceID(), Intent = intent });
+            PublishOnlineGroundIntent(intent);
         }
         private void OnOnlineInventoryResult(OnlineInventoryCommandResultEvent result)
         {
@@ -619,6 +869,7 @@ namespace Game.UI
                 || result.CallerId != GetInstanceID() || result.ActorId != context.ActorId || result.ActorId != _onlineCommandActor
                 || result.Receipt.ConnectionEpoch != context.ConnectionEpoch || result.Receipt.ConnectionEpoch != _onlineCommandEpoch
                 || _onlineCommandId == 0 || result.Receipt.CommandId != _onlineCommandId) return;
+            LastOnlineCommandReceipt = result.Receipt;
             _onlineCommandId = 0;
             // 收据不是资产快照；这里不修改 ReadOnly、不广播单机 Changed，也不乐观移动卡片。完整快照会走原 Refresh 流程。
             _onlineSnapshotVersion = result.Receipt.Success ? result.Receipt.InventoryVersion : 0;
@@ -648,15 +899,20 @@ namespace Game.UI
             {
                 case OnlineInventoryCommandFailure.StaleVersion:
                 case OnlineInventoryCommandFailure.StaleProgram: return "库存或法杖程序已变化；等待最新快照后重试。";
-                case OnlineInventoryCommandFailure.Busy: return "施法执行中暂不能调整法术卡，请稍后重试。";
-                case OnlineInventoryCommandFailure.NoCapacity: return "目标槽位不可用，法术卡保留原位。";
+                case OnlineInventoryCommandFailure.Busy: return "物品资源正在使用，暂不能移动，请稍后重试。";
+                case OnlineInventoryCommandFailure.NoCapacity: return "目标位置空间不足或不可用，物品保留原位。";
                 case OnlineInventoryCommandFailure.NotReady: return "服务器库存尚未就绪，请稍后重试。";
+                case OnlineInventoryCommandFailure.NotOwned: return "物品归属已变化，请读取最新库存后重试。";
+                case OnlineInventoryCommandFailure.InvalidInput: return "物品与目标状态不相容，请重新拖放。";
+                case OnlineInventoryCommandFailure.StaleCommand: return "本次操作已过期，请重新拖放。";
+                case OnlineInventoryCommandFailure.CommandConflict: return "操作状态发生冲突，请关闭背包后重试。";
                 case OnlineInventoryCommandFailure.RateLimited: return "操作过快，请稍后重试。";
-                default: return "服务器拒绝本次移动，法术卡保留原位。";
+                default: return "服务器拒绝本次移动，物品保留原位。";
             }
         }
         public void Save()
         {
+            if (PresentationSource is IAccountInventoryCommandContext) { RetryAccountCommand(); return; }
             if (_read == null || !AllowLocalCommand()) return;
             CancelDrag();CancelArrangement();Refresh(); EventBus<InventorySaveRequestedEvent>.Publish(new InventorySaveRequestedEvent { InventoryId = _read.InventoryId, RequestId = ++_requestId });
         }
@@ -682,6 +938,11 @@ namespace Game.UI
         public void ClickItem(string instanceId)
         {
             if(_selectedId!=instanceId){SelectItem(instanceId);return;}
+            // 原附近区的再次点击只是排列旋转。线上仍保留此纯显示动作，不改成未经确认的自动拾取。
+            if (_hasPresentationOverride && !_dragging && _read != null && _read.TryGetView(instanceId, out var ground)
+                && ground.Location.Kind == ItemLocationKind.WorldItem && _nearbyGrid != null
+                && _nearbyGrid.TryPlacement(instanceId, out var shown))
+            { _nearbyGrid.MoveItem(instanceId, ground.Rules.Shape, new GridPlacement(shown.X, shown.Y, (shown.QuarterTurns + 1) % 4)); Refresh(); return; }
             // 已选法杖/法术卡的再次点击仍是查看，不属于旋转/快捷转移。不要先弹写入拒绝，
             // 也不把只读检查的修复变成双击自动转移权限；线上编辑明确只由拖放 gateway 发起。
             if (_hasPresentationOverride && _read != null && _read.TryGetView(instanceId, out var inspected)
@@ -692,8 +953,8 @@ namespace Game.UI
             if(item.Location.Kind==ItemLocationKind.Warehouse && !_draft.Contains(instanceId))
             { SelectNextMember(); SetStatus("已切换同类物品中的具体一份；拖动只取这一份。"); return; }
             if(item.Location.Kind==ItemLocationKind.WorldItem && !IsPendingPickup(instanceId))
-            {if(_nearbyGrid!=null && _nearbyGrid.TryPlacement(instanceId,out var ground))
-                {_nearbyGrid.MoveItem(instanceId,item.Rules.Shape,new GridPlacement(ground.X,ground.Y,(ground.QuarterTurns+1)%4));Refresh();}return;}
+            {if(_nearbyGrid!=null && _nearbyGrid.TryPlacement(instanceId,out var groundPlacement))
+                {_nearbyGrid.MoveItem(instanceId,item.Rules.Shape,new GridPlacement(groundPlacement.X,groundPlacement.Y,(groundPlacement.QuarterTurns+1)%4));Refresh();}return;}
             if(item.Location.Kind!=ItemLocationKind.Backpack && !_draft.Contains(instanceId) && !IsPendingPickup(instanceId))return;
             var location=_draft.Contains(instanceId)?_draft.Candidate.InBackpack(_draft.BagId):item.Location;
             Arrange(new InventoryCommandEvent{
@@ -701,10 +962,16 @@ namespace Game.UI
                 Kind=item.Location.Kind==ItemLocationKind.WorldItem?InventoryCommandKind.Pickup:InventoryCommandKind.Place,Destination=InventoryDestination.Backpack,WholeStack=_draft.Active?_draft.WholeStack:true,
                 WorldOwner=item.Location.OwnerId,OwnerId=location.OwnerId,X=location.X,Y=location.Y,QuarterTurns=(location.QuarterTurns+1)%4});
         }
-        public void PickupSelected(){if(AllowLocalCommand())_nearby?.TryCollect(_selectedId);}
+        public void PickupSelected()
+        {
+            if (_hasPresentationOverride)
+            { if (_open && _nearby != null && _nearby.TryCollect(_selectedId)) SetStatus("已请求拾取，等待服务器库存确认。"); return; }
+            if(AllowLocalCommand())_nearby?.TryCollect(_selectedId);
+        }
         private ulong _organizeRequest;
         public void OrganizeBackpack()
         {
+            if (PresentationSource is IAccountInventoryCommandContext) { SubmitAccountOrganizeBackpack(); return; }
             if(_read==null||_dragging||_draft.Active||!AllowLocalCommand())return;CancelArrangement();
             _organizeRequest=++_requestId;
             EventBus<InventoryCommandEvent>.Publish(new InventoryCommandEvent{InventoryId=_read.InventoryId,RequestId=_organizeRequest,
@@ -713,14 +980,21 @@ namespace Game.UI
         }
         public void PickupAllNearby()
         {
-            if(_read==null||_nearby==null||_dragging||_draft.Active||!AllowLocalCommand())return;
+            if(_read==null||_nearby==null||_dragging||_draft.Active)return;
+            if (_hasPresentationOverride)
+            {
+                _nearby.CollectAll(out _); Refresh();
+                SetStatus(_nearby.HasPendingOnlinePickup ? "已安排附近物品逐件拾取，等待服务器库存确认。" : "当前没有可请求拾取的附近物品。");
+                return;
+            }
+            if(!AllowLocalCommand())return;
             int collected=_nearby.CollectAll(out int remaining);Refresh();
             _backpackWorkspace?.ShowPickupResult(collected,remaining);
             SetStatus("已拾取 "+collected+" 件 · 附近剩余 "+remaining+" 件");
         }
         private void OnHubInteraction(HubInteractionResultEvent result)
         {
-            if (_embedded || _hasPresentationOverride) return;
+            if (_embedded || _hasPresentationOverride && !(PresentationSource is IAccountInventoryCommandContext)) return;
             if(!result.Success || result.InventoryId!=PresentationSource?.ReadOnly?.InventoryId)return;
             if(result.Kind==HubInteractionKind.Shop){Close();return;}
             // 只有有真实仓库区域的控制器消费此结果；独立Tab背包不再重复打开/重排仓库。
@@ -728,7 +1002,7 @@ namespace Game.UI
         }
         private void OnPickup(NearbyPickupResultEvent result)
         {
-            if (_embedded || _hasPresentationOverride) return;
+            if (_embedded) return;
             if (_otherWorkspace!=null && _backpackWorkspace==null)return;
             if(result.InventoryId!=PresentationSource?.ReadOnly?.InventoryId)return;
             if(result.RequiresArrangement){OpenBackpack();SelectItem(result.ItemId);SetStatus("背包没有合适位置，请移动或旋转物品，再拖入附近物品。");}
@@ -887,21 +1161,30 @@ namespace Game.UI
             _pendingBackpackRefresh=true;
         }
         private void OnNearbyChanged(NearbyPickupListChangedEvent e)
-        {if(_open && !_dragging && _read!=null && e.InventoryId==_read.InventoryId)_pendingBackpackRefresh=true;}
+        {
+            if (PresentationSource is IAccountInventoryCommandContext && _nearby == null) _accountNearbyBindingPending = true;
+            if(_open && !_dragging && _read!=null && e.InventoryId==_read.InventoryId)_pendingBackpackRefresh=true;
+        }
         private void LateUpdate()
         {
+            if (_accountNearbyBindingPending) BindAccountNearby();
             if (_hasPresentationOverride && _read != null && PresentationSource?.ReadOnly == null)
             {
                 // Unity native 对象销毁后接口引用仍可能存在；清旧快照并成对释放输入，继续保持空的外部来源。
                 // 不能因线上来源失效而自动回退到 Inspector 中保留的单机存档。
                 BindPresentationSource(null);
             }
+            // 其他玩家拾放只推进GroundVersion，不能借个人InventoryVersion侦测，也不制造个人资产变化。
+            uint groundVersion = (PresentationSource as IOnlineGroundInventoryContext)?.GroundVersion ?? 0;
+            if (_hasPresentationOverride && groundVersion != _groundPresentationVersion)
+            { _groundPresentationVersion = groundVersion; _pendingBackpackRefresh = true; }
             // 覆盖暂停期间的预览/手动滚动热路径；离散dirty刷新另有分配，不计入稳定拖拽验证。
             using var interaction=InteractionMarker.Auto();
             if(_pendingBackpackRefresh)
             {
                 _pendingBackpackRefresh=false;if(_waitingOpen)Open();else if(_open)Refresh();
                 CompleteOnlineCommandStatusIfInstalled();
+                CompleteAccountCommandStatusIfInstalled();
             }
             _backpackPan?.Tick(_open && !_dragging);_nearbyPan?.Tick(_open && !_dragging);
             _warehouseGrid?.TickInteraction(_open, _dragging, _lastPointer, _pointerCamera, Time.unscaledDeltaTime);
@@ -940,7 +1223,13 @@ namespace Game.UI
             if (_read == null || result.InventoryId != _read.InventoryId || result.RequestId != _requestId) return;
             SetStatus(result.Success ? "已保存" : "保存失败：" + result.Message);
         }
-        private void SetStatus(string text) { if (_status != null) _status.text = text; }
+        private void SetStatus(string text)
+        {
+            // 字符串本来由离散交互/收据产生；这里只保存相同引用，不新增每帧轮询/格式化。
+            // 无Text接线也不能让拒绝原因消失，导出资源再把同一反馈交给原Canvas中的非Raycast文本。
+            LastInteractionStatus = text ?? string.Empty;
+            if (_status != null) _status.text = LastInteractionStatus;
+        }
         public void BeginShortcutDrag(string id, Vector2 pointer, Camera camera)
         {
             if (_read==null || !_read.TryGetView(id,out var item)) return;
@@ -949,8 +1238,57 @@ namespace Game.UI
         }
         public void SubmitToShortcut(int toolSlot)
         {
-            if (!_dragging || PresentationSource?.ToolbeltReadOnly==null || !AllowLocalCommand()) return;
+            if (!_dragging) return;
+            if (PresentationSource is IAccountInventoryCommandContext) { SubmitAccountToolBinding(toolSlot); return; }
+            if (_hasPresentationOverride) { SubmitOnlineToolBinding(toolSlot); return; }
+            if (PresentationSource?.ToolbeltReadOnly==null || !AllowLocalCommand()) return;
             string id=_dragSource.InstanceId; uint version=_dragToolVersion; CancelDrag(); RequestShortcut(toolSlot,id,version);
+        }
+        /// <summary>
+        /// 原拖放工具槽的在线网关。绑定与数字键选中是两个命令：这里只发BindTool，不发布本地绑定或选择事件。
+        /// 抓起时的Actor/Epoch/版本描述原操作，提交时只重新确认当前Source和真实归属；版本变化交由DS拒绝，
+        /// 不能为了让旧拖拽成功而改用新版本。先保存完整意图与收据关联，再清Ghost，避免CancelDrag丢掉待发值。
+        /// </summary>
+        private void SubmitOnlineToolBinding(int toolSlot)
+        {
+            var source = PresentationSource;
+            var context = source as IOnlineInventoryCommandContext;
+            var read = source?.ReadOnly;
+            if (_dragSource.Kind != ItemKind.Container)
+            {
+                // 原道具栏的资格是UseKind，不是容器名称白名单；普通可用Item走通用移动，卡/杖仍不可绑定。
+                bool carried = IsCapturedOnlineDragCurrent(out _, out _) && toolSlot >= 0 && toolSlot < HeldItemSlots.ToolCount
+                    && read != null && read.TryGetView(_dragSource.InstanceId, out var usable)
+                    && usable.Rules.UseKind != ItemUseKind.None && !usable.EntryBoundBackpack && IsOwnedOnlineItem(read, usable);
+                if (!carried) { RejectOnlineGroundDrag(); return; }
+                PublishOnlineGroundIntent(new OnlineInventoryCommandIntent
+                {
+                    CommandId = OnlineInventoryCommandIds.Next(), ConnectionEpoch = _dragOnlineEpoch,
+                    ExpectedInventoryVersion = _dragVersion, Kind = OnlineInventoryCommandKind.MoveOwned,
+                    ItemId = _dragSource.InstanceId, TargetLocationKind = (int)ItemLocationKind.EquippedTool, TargetSlot = toolSlot
+                });
+                return;
+            }
+            bool valid = _open && _dragging && ReferenceEquals(source, _dragOnlineSource) && context != null
+                && context.ActorId != 0 && context.ActorId == _dragOnlineActor
+                && context.ConnectionEpoch != 0 && context.ConnectionEpoch == _dragOnlineEpoch
+                && _dragVersion != 0 && toolSlot >= 0 && toolSlot < HeldItemSlots.ToolCount
+                && _dragSource.Kind == ItemKind.Container && read != null && ReferenceEquals(read, _read)
+                && read.TryGetView(_dragSource.InstanceId, out var current) && IsOwnedOnlineContainer(source, read, current);
+            if (!valid)
+            { CancelDrag(); CancelArrangement(); SetStatus("无法绑定到此工具槽；请从当前随身库存重新拖动容器。"); return; }
+            var intent = new OnlineInventoryCommandIntent
+            {
+                CommandId = OnlineInventoryCommandIds.Next(), ConnectionEpoch = _dragOnlineEpoch,
+                ExpectedInventoryVersion = _dragVersion, Kind = OnlineInventoryCommandKind.BindTool,
+                ItemId = _dragSource.InstanceId, TargetSlot = toolSlot
+            };
+            _onlineSnapshotVersion = 0;
+            _onlineCommandId = intent.CommandId; _onlineCommandActor = _dragOnlineActor; _onlineCommandEpoch = _dragOnlineEpoch;
+            LastOnlineCommandReceipt = null;
+            CancelDrag(); CancelArrangement(); SetStatus("已提交服务器，等待处理结果与库存快照。");
+            EventBus<OnlineInventoryCommandRequestedEvent>.Publish(new OnlineInventoryCommandRequestedEvent
+            { ActorId = _onlineCommandActor, CallerId = GetInstanceID(), Intent = intent });
         }
         public void ClearShortcut(int slot)
         { if (_open && PresentationSource?.ToolbeltReadOnly!=null && AllowLocalCommand()) RequestShortcut(slot,null,PresentationSource.ToolbeltReadOnly.ConfigurationVersion); }

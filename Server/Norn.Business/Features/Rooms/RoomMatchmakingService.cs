@@ -11,6 +11,7 @@ public sealed class RoomMatchmakingService(RoomTransactions transactions, Online
     private DateTime Now => clock.GetUtcNow().UtcDateTime;
     public Task<RoomReply> MatchAsync(string player, CreateRoomRequest request, CancellationToken ct)
     {
+        if (request.DungeonId == "home") throw new OnlineFailure(400, "HomeSinglePlayerOnly");
         if (!options.DungeonIds.Contains(request.DungeonId, StringComparer.Ordinal)) throw new OnlineFailure(400, "UnknownDungeon");
         return transactions.MutateAsync(async (db, tx) =>
         {
@@ -20,6 +21,7 @@ public sealed class RoomMatchmakingService(RoomTransactions transactions, Online
             {
                 var view = await RoomTransactions.Read(db, tx, current, ct);
                 if (view.DungeonId != request.DungeonId) throw new OnlineFailure(409, "DifferentDungeonRoom");
+                if (view.SinglePlayer) throw new OnlineFailure(409, "SinglePlayerRoom");
                 await Touch(db, tx, player, ct); return view; // 回包丢失或Client重启恢复同房，不再分配第二席。
             }
             string? room = await db.QueryFirstOrDefaultAsync<string>(new CommandDefinition("""

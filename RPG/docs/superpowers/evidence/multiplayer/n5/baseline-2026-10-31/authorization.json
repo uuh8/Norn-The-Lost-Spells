@@ -1,0 +1,37 @@
+{
+  "N4Acceptance": [
+    {
+      "Path": "RPG\\docs\\superpowers\\evidence\\multiplayer\\n4\\final-audit\\acceptance.json",
+      "Line": 5,
+      "Text": "  \"N5ExplicitlyAuthorizedByUser\": true,"
+    },
+    {
+      "Path": "RPG\\docs\\superpowers\\evidence\\multiplayer\\n4\\final-audit\\acceptance.json",
+      "Line": 18,
+      "Text": "  \"N4Complete\": false,"
+    },
+    {
+      "Path": "RPG\\docs\\superpowers\\evidence\\multiplayer\\n4\\final-audit\\acceptance.json",
+      "Line": 19,
+      "Text": "  \"FormalOnlineExperienceAccepted\": false,"
+    },
+    {
+      "Path": "RPG\\docs\\superpowers\\evidence\\multiplayer\\n4\\final-audit\\acceptance.json",
+      "Line": 20,
+      "Text": "  \"ReleaseReady\": false,"
+    }
+  ],
+  "Plan": [
+    {
+      "Path": "RPG\\docs\\superpowers\\plans\\2026-10-29 N5共享材料世界与分块恢复实施计划.md",
+      "Line": 3,
+      "Text": "**授权与目标：** 用户于2026-10-29明确要求推进N5，覆盖原“等待N4完整体验确认后再进入”的顺序要求；不把该授权写成N4清场、Boss后期或Native手感通过。N4代码交付记录保留在`n4/final-audit/acceptance.json`。本阶段实现DS唯一CPU材料权威、客户端只读显示、四人活动域与Interest、冻结Baseline/Delta恢复，以及材料生成/收取的数量事务。"
+    },
+    {
+      "Path": "RPG\\docs\\superpowers\\plans\\2026-10-29 N5共享材料世界与分块恢复实施计划.md",
+      "Line": 5,
+      "Text": "**执行：** 沿已批准总计划section7/N5，采用systematic-debugging/TDD/verification-before-completion。独立调查可以委派；Editor、服务、测试、生成、构建和Git由主控串行。继续现有工作区，不建worktree、不清理旧N4改动、不自动提交。现有模型/材料/场景/UI足够，无用户外部资源依赖。保留Unity6000.3.16f1、Mirror96.11.3、Protobuf3.34.2与现有版本。"
+    }
+  ],
+  "TaskScope": "Latest import/compiler state and existing N5 fixture baseline only; no implementation or test assertion changes."
+}

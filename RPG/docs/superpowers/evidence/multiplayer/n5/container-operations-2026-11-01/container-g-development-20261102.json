@@ -1,0 +1,379 @@
+{
+  "RecordedUtc": "2026-11-02T06:14:29.572143+00:00",
+  "Stage": "N5 approved fault protection + container G development slice",
+  "Implementation": {
+    "FaultPause": true,
+    "ContainerGFormalPath": true,
+    "SolidCarryP7K": false,
+    "SpellMaterialSupply": false
+  },
+  "Validation": {
+    "schemaGeneration": "GenerateProtocol.ps1 -Check completed: 8 C# files consistent",
+    "BusinessBuild": {
+      "Target": "Norn.Business Release (also builds Shared netstandard2.1)",
+      "ExitCode": 0,
+      "Warnings": 0,
+      "Errors": 0,
+      "Log": "container-g-v8-business-build-20261102.log"
+    },
+    "BusinessContracts": {
+      "Passed": 19,
+      "Failed": 0,
+      "DatabaseOrServerStarted": false,
+      "Log": "container-g-v8-business-contract-final-20261102.log"
+    },
+    "EditorCommands": [
+      {
+        "Evidence": "container-g-v8-refresh-20261102-command.json",
+        "Command": "refresh-source",
+        "Error": "",
+        "RecordedAtUtc": "2026-11-02T06:01:48.1029374Z",
+        "Passed": true
+      },
+      {
+        "Evidence": "container-g-v8-content-20261102-command.json",
+        "Command": "export-content",
+        "Error": "",
+        "RecordedAtUtc": "2026-11-02T06:02:06.5522703Z",
+        "Passed": true
+      },
+      {
+        "Evidence": "container-g-v8-hashes-20261102-command.json",
+        "Command": "refresh-online-hashes",
+        "Error": "",
+        "RecordedAtUtc": "2026-11-02T06:05:07.4390566Z",
+        "Passed": true
+      },
+      {
+        "Evidence": "container-g-v8-verify-20261102-command.json",
+        "Command": "verify-online-combat",
+        "Error": "",
+        "RecordedAtUtc": "2026-11-02T06:07:34.7018265Z",
+        "Passed": true
+      },
+      {
+        "Evidence": "container-g-v8-safety-20261102-command.json",
+        "Command": "inspect-safety",
+        "Error": "",
+        "RecordedAtUtc": "2026-11-02T06:07:35.4033580Z",
+        "Passed": true
+      }
+    ],
+    "EditModeRuns": [
+      {
+        "Label": "replication-fault-gate-regression-20261102",
+        "State": "Finished",
+        "Passed": 223,
+        "Failed": 0,
+        "StartedUtc": "2026-11-02T04:39:36.4222253Z",
+        "UpdatedUtc": "2026-11-02T04:40:56.5575080Z",
+        "Report": "replication-fault-gate-regression-20261102-report.json",
+        "Xml": "replication-fault-gate-regression-20261102-results.xml"
+      },
+      {
+        "Label": "replication-fault-retention-confirmed-20261102",
+        "State": "Finished",
+        "Passed": 14,
+        "Failed": 0,
+        "StartedUtc": "2026-11-02T04:52:02.2023110Z",
+        "UpdatedUtc": "2026-11-02T04:52:07.4760254Z",
+        "Report": "replication-fault-retention-confirmed-20261102-report.json",
+        "Xml": "replication-fault-retention-confirmed-20261102-results.xml"
+      },
+      {
+        "Label": "online-container-throw-red-20261102",
+        "State": "Finished",
+        "Passed": 0,
+        "Failed": 10,
+        "StartedUtc": "2026-11-02T04:53:12.9065015Z",
+        "UpdatedUtc": "2026-11-02T04:53:18.7161820Z",
+        "Report": "online-container-throw-red-20261102-report.json",
+        "Xml": "online-container-throw-red-20261102-results.xml"
+      },
+      {
+        "Label": "online-throw-candidate-and-exception-red-20261102",
+        "State": "Finished",
+        "Passed": 10,
+        "Failed": 6,
+        "StartedUtc": "2026-11-02T05:03:50.5157467Z",
+        "UpdatedUtc": "2026-11-02T05:04:01.6221425Z",
+        "Report": "online-throw-candidate-and-exception-red-20261102-report.json",
+        "Xml": "online-throw-candidate-and-exception-red-20261102-results.xml"
+      },
+      {
+        "Label": "online-container-throw-targeted-20261102",
+        "State": "Finished",
+        "Passed": 393,
+        "Failed": 1,
+        "StartedUtc": "2026-11-02T05:29:13.3024278Z",
+        "UpdatedUtc": "2026-11-02T05:30:36.3087795Z",
+        "Report": "online-container-throw-targeted-20261102-report.json",
+        "Xml": "online-container-throw-targeted-20261102-results.xml"
+      },
+      {
+        "Label": "container-g-visual-calibrated-final-20261102",
+        "State": "Finished",
+        "Passed": 7,
+        "Failed": 0,
+        "StartedUtc": "2026-11-02T05:36:44.2596227Z",
+        "UpdatedUtc": "2026-11-02T05:36:53.1497515Z",
+        "Report": "container-g-visual-calibrated-final-20261102-report.json",
+        "Xml": "container-g-visual-calibrated-final-20261102-results.xml"
+      },
+      {
+        "Label": "container-g-replica-activation-red-20261102",
+        "State": "Finished",
+        "Passed": 0,
+        "Failed": 1,
+        "StartedUtc": "2026-11-02T05:41:20.1550813Z",
+        "UpdatedUtc": "2026-11-02T05:41:29.4270400Z",
+        "Report": "container-g-replica-activation-red-20261102-report.json",
+        "Xml": "container-g-replica-activation-red-20261102-results.xml"
+      },
+      {
+        "Label": "container-g-replica-final-20261102",
+        "State": "Finished",
+        "Passed": 17,
+        "Failed": 0,
+        "StartedUtc": "2026-11-02T05:43:14.4547576Z",
+        "UpdatedUtc": "2026-11-02T05:43:24.0720974Z",
+        "Report": "container-g-replica-final-20261102-report.json",
+        "Xml": "container-g-replica-final-20261102-results.xml"
+      },
+      {
+        "Label": "container-g-client-reconnect-red-20261102",
+        "State": "Finished",
+        "Passed": 0,
+        "Failed": 1,
+        "StartedUtc": "2026-11-02T05:48:50.0067968Z",
+        "UpdatedUtc": "2026-11-02T05:48:59.3446899Z",
+        "Report": "container-g-client-reconnect-red-20261102-report.json",
+        "Xml": "container-g-client-reconnect-red-20261102-results.xml"
+      },
+      {
+        "Label": "container-g-reconnect-final-20261102",
+        "State": "Finished",
+        "Passed": 11,
+        "Failed": 0,
+        "StartedUtc": "2026-11-02T05:54:31.1823795Z",
+        "UpdatedUtc": "2026-11-02T05:54:43.1038994Z",
+        "Report": "container-g-reconnect-final-20261102-report.json",
+        "Xml": "container-g-reconnect-final-20261102-results.xml"
+      }
+    ],
+    "CountsAreNotAddedAcrossRuns": true
+  },
+  "Compatibility": {
+    "ProtocolVersion": 8,
+    "ContentHash": "122fdbe47d347089bdc9f47654af4e8aa8ae4ab000d85708917c14c8ff2c0199",
+    "GameplayHash": "c045420062075e419c3f882e838d1309c942adb605b10513296ba2afa1d0cbd2",
+    "ContainerThrowPrefabGuid": "49be77524d52b9d43af562813767820c",
+    "ContainerThrowPrefabKey": 21,
+    "ControlledOutputCount": 21,
+    "MatchingNativeBuilt": false,
+    "OldNativeVersion": 6
+  },
+  "ProtectedFiles": [
+    {
+      "Path": "RPG\\ProjectSettings\\DynamicsManager.asset",
+      "Baseline": "53cf96c365b85eefe78b3cda76af21f68246744277ae6ca21ffd6a67bdb72a1c",
+      "Actual": "53cf96c365b85eefe78b3cda76af21f68246744277ae6ca21ffd6a67bdb72a1c",
+      "Unchanged": true
+    },
+    {
+      "Path": "RPG\\ProjectSettings\\QualitySettings.asset",
+      "Baseline": "90a6246b84df30886fb817936db3934edd391241d003785606137c0e27014856",
+      "Actual": "90a6246b84df30886fb817936db3934edd391241d003785606137c0e27014856",
+      "Unchanged": true
+    },
+    {
+      "Path": "RPG\\ProjectSettings\\TimeManager.asset",
+      "Baseline": "96137d2fb1b3cba1643098de4a9c87eb34657cce7bf848f315c5f9d10dffec65",
+      "Actual": "96137d2fb1b3cba1643098de4a9c87eb34657cce7bf848f315c5f9d10dffec65",
+      "Unchanged": true
+    },
+    {
+      "Path": "RPG\\ProjectSettings\\EditorBuildSettings.asset",
+      "Baseline": "311ce57513e692147e786e4d52295262a7acebd3a2b4d735c9560f8e2b25ab37",
+      "Actual": "311ce57513e692147e786e4d52295262a7acebd3a2b4d735c9560f8e2b25ab37",
+      "Unchanged": true
+    },
+    {
+      "Path": "RPG\\Assets\\_Project\\Scenes\\P7_MainMenu.unity",
+      "Baseline": "a236fa37b4c643c0199a119a4b7f0857e81746882b1aa364391b3d6fa948e8fc",
+      "Actual": "a236fa37b4c643c0199a119a4b7f0857e81746882b1aa364391b3d6fa948e8fc",
+      "Unchanged": true
+    },
+    {
+      "Path": "RPG\\Assets\\_Project\\Scenes\\P7_DemoRun.unity",
+      "Baseline": "f06f1dabf378ffc749be0e4d55315a90a5fc17462b39e13a4435f716526a3493",
+      "Actual": "f06f1dabf378ffc749be0e4d55315a90a5fc17462b39e13a4435f716526a3493",
+      "Unchanged": true
+    },
+    {
+      "Path": "RPG\\Assets\\_Project\\Scenes\\P8_BossField.unity",
+      "Baseline": "6fbc20b0a2a34eb6b0d7bf890929a570a40fe2ef06613d6537467e87a9f9cdea",
+      "Actual": "6fbc20b0a2a34eb6b0d7bf890929a570a40fe2ef06613d6537467e87a9f9cdea",
+      "Unchanged": true
+    }
+  ],
+  "AllProtectedFilesUnchanged": true,
+  "WorkingTreeEntryCount": 238,
+  "SafetyEvidenceSource": "RPG/Temp/OnlineLab/editor-safety.json",
+  "EditorSafety": {
+    "Playing": false,
+    "Compiling": false,
+    "Updating": false,
+    "CompilationFailed": false,
+    "Building": false,
+    "TestsRunning": false,
+    "DirtyScene": false,
+    "Scenes": [
+      "Assets/_Project/Scenes/P7_MainMenu.unity"
+    ],
+    "DirtyAssets": [
+      "Assets/ANGRY MESH/Stylized Pack - Common/Shaders/ASE_Template_URPLit.shader",
+      "Assets/ANGRY MESH/Stylized Pack - Common/Shaders/S_Decals.shader",
+      "Assets/ANGRY MESH/Stylized Pack - Common/Shaders/S_Grass.shader",
+      "Assets/ANGRY MESH/Stylized Pack - Common/Shaders/S_Props.shader",
+      "Assets/ANGRY MESH/Stylized Pack - Common/Shaders/S_Tree_Bark.shader",
+      "Assets/ANGRY MESH/Stylized Pack - Common/Shaders/S_Tree_Leaf.shader",
+      "Assets/ANGRY MESH/Stylized Pack - Common/Shaders/S_VFX_SimpleCutoff.shader",
+      "Assets/ANGRY MESH/Stylized Pack - Common/Shaders/S_VFX_TransparentAlpha.shader",
+      "Assets/ANGRY MESH/Stylized Pack - Common/Shaders/S_VFX_VPOMesh.shader",
+      "Assets/ANGRY MESH/Stylized Pack - Common/Shaders/S_VFX_WindMesh.shader",
+      "Assets/ThirdParty/Epic Toon FX/Shaders/ETFX_PowerboxLit.shader",
+      "Assets/ThirdParty/Epic Toon FX/Shaders/ETFX_PowerboxUnlit.shader",
+      "Assets/ThirdParty/ModularRPGHeroesPBR/Shader/PBRMaskTint.shader",
+      "Assets/ThirdParty/beffio/Medieval Kingdom/Content/Shaders/MobileShader/beffio_Mobile.shader",
+      "Assets/ThirdParty/beffio/Medieval Kingdom/Content/Shaders/beffio_BaseShader.shader",
+      "Assets/ThirdParty/beffio/Medieval Kingdom/Content/Shaders/beffio_Fabric.shader",
+      "Assets/ThirdParty/beffio/Medieval Kingdom/Content/Shaders/beffio_Fire.shader",
+      "Assets/ThirdParty/beffio/Medieval Kingdom/Content/Shaders/beffio_Ground_Blending.shader",
+      "Assets/ThirdParty/beffio/Medieval Kingdom/Content/Shaders/beffio_Parallax.shader",
+      "Assets/ThirdParty/beffio/Medieval Kingdom/Content/Shaders/beffio_Shafts.shader",
+      "Assets/ThirdParty/beffio/Medieval Kingdom/Content/Shaders/beffio_Stones.shader",
+      "Assets/ThirdParty/beffio/Medieval Kingdom/Content/Shaders/beffio_Trees.shader",
+      "Assets/ThirdParty/beffio/Medieval Kingdom/Content/Shaders/beffio_Vegetation.shader",
+      "Assets/_Project/Art/Elemental/Shaders/ElementFireAdditive.shader",
+      "Assets/_Project/Art/Elemental/Shaders/ElementFireBody.shader",
+      "Assets/_Project/Art/Elemental/Shaders/ElementLiquidProcedural.shader",
+      "Assets/_Project/Art/Elemental/Shaders/ElementWater.shader",
+      "Assets/_Project/Art/Shaders/FixedSolidMaterial.shader",
+      "Assets/_Project/Shader/SG_CharacterStatusLit.shadergraph",
+      "Library/unity default resources",
+      "Library/unity editor resources",
+      "Packages/com.unity.ai.assistant/Modules/Unity.AI.Generators.UI/Shaders/ProgressDisk.shader",
+      "Packages/com.unity.cloud.gltfast/Runtime/Shader/Built-In/glTFPbrMetallicRoughness.shader",
+      "Packages/com.unity.cloud.gltfast/Runtime/Shader/Built-In/glTFPbrSpecularGlossiness.shader",
+      "Packages/com.unity.render-pipelines.universal/Shaders/2D/RenderAs2D-Flattening.shader",
+      "Packages/com.unity.render-pipelines.universal/Shaders/AutodeskInteractive/AutodeskInteractive.shadergraph",
+      "Packages/com.unity.render-pipelines.universal/Shaders/AutodeskInteractive/AutodeskInteractiveMasked.shadergraph",
+      "Packages/com.unity.render-pipelines.universal/Shaders/AutodeskInteractive/AutodeskInteractiveTransparent.shadergraph",
+      "Packages/com.unity.render-pipelines.universal/Shaders/BakedLit.shader",
+      "Packages/com.unity.render-pipelines.universal/Shaders/ComplexLit.shader",
+      "Packages/com.unity.render-pipelines.universal/Shaders/Decal.shadergraph",
+      "Packages/com.unity.render-pipelines.universal/Shaders/Lit.shader",
+      "Packages/com.unity.render-pipelines.universal/Shaders/Nature/SpeedTree7.shader",
+      "Packages/com.unity.render-pipelines.universal/Shaders/Nature/SpeedTree7Billboard.shader",
+      "Packages/com.unity.render-pipelines.universal/Shaders/Nature/SpeedTree8.shader",
+      "Packages/com.unity.render-pipelines.universal/Shaders/Nature/SpeedTree8_PBRLit.shadergraph",
+      "Packages/com.unity.render-pipelines.universal/Shaders/Nature/SpeedTree9_URP.shadergraph",
+      "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesLit.shader",
+      "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesSimpleLit.shader",
+      "Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesUnlit.shader",
+      "Packages/com.unity.render-pipelines.universal/Shaders/SimpleLit.shader",
+      "Packages/com.unity.render-pipelines.universal/Shaders/SpatialMappingOcclusion.shader",
+      "Packages/com.unity.render-pipelines.universal/Shaders/SpatialMappingWireframe.shader",
+      "Packages/com.unity.render-pipelines.universal/Shaders/Terrain/TerrainLit.shader",
+      "Packages/com.unity.render-pipelines.universal/Shaders/Terrain/TerrainLitAdd.shader",
+      "Packages/com.unity.render-pipelines.universal/Shaders/Terrain/TerrainLitBase.shader",
+      "Packages/com.unity.render-pipelines.universal/Shaders/Unlit.shader",
+      "Packages/com.unity.render-pipelines.universal/Shaders/Utils/ClusterDeferred.shader",
+      "Packages/com.unity.render-pipelines.universal/Shaders/Utils/FallbackError.shader",
+      "Packages/com.unity.render-pipelines.universal/Shaders/Utils/StencilDeferred.shader",
+      "Packages/com.unity.render-pipelines.universal/Tests/Editor/PostProcessDataTests/1.shader",
+      "Packages/com.unity.render-pipelines.universal/Tests/Editor/PostProcessDataTests/2.shader",
+      "ProjectSettings/DynamicsManager.asset",
+      "ProjectSettings/EditorBuildSettings.asset",
+      "ProjectSettings/GraphicsSettings.asset",
+      "ProjectSettings/ProjectSettings.asset",
+      "ProjectSettings/QualitySettings.asset",
+      "ProjectSettings/TimeManager.asset",
+      "Resources/unity_builtin_extra"
+    ],
+    "RecordedUtc": "2026-11-02T06:07:35.4021278Z"
+  },
+  "UserGameplayAcceptance": {
+    "ExecutedByAgent": false,
+    "Accepted": false,
+    "NoNativeNoKeyboardNoPlaymodeNoAcceptanceBuild": true,
+    "Pending": "User verifies original F/H and new G in matching builds; this is not N5 acceptance"
+  },
+  "LimitsRetained": {
+    "PermanentWorldChunkKeys": 128,
+    "GroundItems": 16384,
+    "FlightsPerWorkspace": 8,
+    "InventoryItems": 4096,
+    "CommandReceiptWindow": 128,
+    "BreakBatchGmu": 1024
+  },
+  "Remaining": {
+    "KAndSpellSupply": "Approved, not started; original P7 ice source256 and exact Material state to connect next",
+    "Performance": "Four-client high load explicitly deferred by user, unverified",
+    "HistoricalIssues": [
+      "DS two Built-in Resource startup errors",
+      "P7 four-client fire timing not fully explained",
+      "N6 reliable settlement and DS-restart asset recovery not implemented"
+    ]
+  },
+  "N5Complete": false,
+  "CurrentExecutionBlocker": null,
+  "Notes": [
+    "Initial new test fixture mistakes and native color exact-literal failure preserved in raw XML. No game color/tolerance changed; independent native reference exact and wrong-color negative calibration passed.",
+    "Formal inactive prefab and retained-client-world ghost container defects have RED/GREEN evidence.",
+    "First business build logging used a relative path while wrapper Push-Location moved to Server: result uncertain then no live build confirmed; absolute-path incremental build completed0/0.",
+    "Transport disconnects were recovered via actual reads before completing known-unexecuted patches; no uncertain writes remain.",
+    "No commit or push; no Editor closure or denied asset restoration."
+  ],
+  "DocumentationCheck": {
+    "Passed": true,
+    "Files": [
+      {
+        "Path": "RPG/docs/superpowers/plans/2026-10-31 Norn项目总计划（更新中）.md",
+        "Exists": true,
+        "Lines": 898,
+        "Sha256": "b105d022365896dcfb9915114aa3a92f7baf91ce24dff348567253df53bc4467"
+      },
+      {
+        "Path": "RPG/docs/superpowers/plans/2026-10-29 N5共享材料世界与分块恢复实施计划.md",
+        "Exists": true,
+        "Lines": 522,
+        "Sha256": "6c32530a85d8c5ff337021417152a92ec45ef294ed8bb691fe840d6708716837"
+      },
+      {
+        "Path": "RPG/Assets/_Project/Docs/2026-10-29 共享材料世界N5开发解析（更新中）.md",
+        "Exists": true,
+        "Lines": 993,
+        "Sha256": "e0e75c04d8ae1aeacadaa4e5a6b2899d98cabeea2f051ec2da85c76f445187cc"
+      },
+      {
+        "Path": "RPG/docs/superpowers/evidence/multiplayer/n5/container-operations-2026-11-01/manual-test-checklist.md",
+        "Exists": true,
+        "Lines": 33,
+        "Sha256": "7c63c594b9c14d87f500872bbfd1c632325f3e8bce2f2ff7dbb348746adad999"
+      }
+    ],
+    "GitDiffCheckExitCode": 0
+  },
+  "GeneratedSourceHashes": {
+    "Combat.cs": "be21eefd354960b10b07c1462e709cd8a372d232f461c19fd859bdfdb1d6c27b",
+    "Common.cs": "82e1727a46619250a5744ebb3a1fe888f6493aa9c0059523993398bb1331b99f",
+    "Dungeon.cs": "48fdc64abca1c69b5b46450e39656d4759e03efd3440845c2f8ab3ae72791709",
+    "Inventory.cs": "8b627db878827294e7b00cd8883ec58498b4bda01ccefdc48c03b54ebf3dc629",
+    "Join.cs": "00ad3f0aebec284aa983d845168df3e7997fe15f99fbe190c31dd344afbc38fc",
+    "Lab.cs": "13a9e2de4214ce3b8f0d38c0d81c45c7d6f53070938a00a90ac113e565a6b643",
+    "Movement.cs": "7539b82ef30fa4b2869a06d072f8a8c5389621e81a3cba57474e5c01a8f1300b",
+    "World.cs": "6555e1a8d491431f1b41542e8506fb6c1e0bfbe0e3d6faf1518f5e6d3907a53d"
+  }
+}

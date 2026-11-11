@@ -1,0 +1,292 @@
+using Game.Core;
+using NUnit.Framework;
+using UnityEngine;
+using Game.Networking;
+using Mirror;
+using System;
+using System.Reflection;
+using Game.NetworkProtocol;
+
+namespace Game.Multiplayer.Tests
+{
+    public sealed class WorldReplicationChannelTests
+    {
+        private static readonly WorldChunkKey Key=new WorldChunkKey(WorldMaterialDomain.Liquid,0,0,0);
+        private static WorldReplicationCommitOwner Owner(int cells=1)
+        {
+            var owner=new WorldReplicationCommitOwner(7,8,200,4,8,2048,1000000);
+            var source=new WorldReplicaBuffer(200,4,1000000);source.Geometries[0]=new WorldGridGeometry(WorldMaterialDomain.Liquid,Vector3.zero,1,16);
+            for(int i=0;i<cells;i++)source.Cells[i]=new WorldMaterialCellSample(WorldMaterialDomain.Liquid,WorldMaterialStorage.Dynamic,new Vector3Int(i%16,i/16,0),2,10);
+            source.Header=new WorldReplicaHeader(1,cells,0,1);Assert.That(owner.TryCaptureCommit(source),Is.True);return owner;
+        }
+        [Test] public void BaselineLongerThanFourPagesContinuesBeforeInstallAck()
+        {
+            var p=new WorldReplicationPeerState(8,2048,160,18000,3600);p.Reset(10,3);var o=Owner(120);
+            Assert.That(p.TryFreeze(o,Key,0),Is.True);var page=new uint[160];int pages=0;
+            for(int round=0;round<6;round++)
+            {
+                p.BeginRound(round*0.1);
+                while(p.TryPeekPage(page,out _,out _)){Assert.That(p.TryMarkPageSent(round*0.1,900),Is.True);pages++;if(p.PagesSentThisRound==2)break;}
+            }
+            Assert.That(pages,Is.GreaterThan(4));Assert.That(p.AwaitingInstallAck,Is.True);
+            var h=p.PendingHeader;Assert.That(p.TryAcknowledge(10,3,h.Key,h.Generation,h.Revision,h.SnapshotId,h.Checksum),Is.True);
+            Assert.That(p.HasPending,Is.False);Assert.That(p.TryFreeze(o,Key,1),Is.False);
+        }
+        [Test] public void ReconnectionRejectsOldAckAndRequiresNewBaseline()
+        {
+            var p=new WorldReplicationPeerState(8,2048,160,18000,3600);var o=Owner();p.Reset(10,3);p.BeginRound(0);
+            Assert.That(p.TryFreeze(o,Key,0),Is.True);Assert.That(p.TryMarkPageSent(0,200),Is.True);var old=p.PendingHeader;
+            p.Reset(11,4);Assert.That(p.TryFreeze(o,Key,1),Is.True);Assert.That(p.PendingHeader.BaseRevision,Is.Zero);
+            Assert.That(p.TryAcknowledge(10,3,old.Key,old.Generation,old.Revision,old.SnapshotId,old.Checksum),Is.False);
+            Assert.That(p.HasPending,Is.True);Assert.That(p.TryMarkPageSent(1,200),Is.True);
+            Assert.That(p.TryAcknowledge(11,4,old.Key,old.Generation,old.Revision,old.SnapshotId,old.Checksum),Is.True);
+        }
+        [Test] public void BurstAndTwoPageRoundLimitNeverAdvanceUnsentPage()
+        {
+            var p=new WorldReplicationPeerState(8,2048,160,900,900);p.Reset(10,3);var o=Owner(120);p.BeginRound(0);
+            Assert.That(p.TryFreeze(o,Key,0),Is.True);Assert.That(p.TryMarkPageSent(0,900),Is.True);
+            int cursor=p.PageCursor;Assert.That(p.TryMarkPageSent(0,900),Is.False);Assert.That(p.PageCursor,Is.EqualTo(cursor));
+            p.BeginRound(1);Assert.That(p.TryMarkPageSent(1,900),Is.True);
+        }
+        [Test] public void AckBeforeCompleteAndUnrelatedHighIdCannotClearFrozenPayload()
+        {
+            var p=new WorldReplicationPeerState(8,2048,160,18000,3600);p.Reset(10,3);var o=Owner(120);p.BeginRound(0);
+            Assert.That(p.TryFreeze(o,Key,0),Is.True);var h=p.PendingHeader;
+            Assert.That(p.TryAcknowledge(10,3,h.Key,h.Generation,h.Revision,ulong.MaxValue,h.Checksum),Is.False);
+            Assert.That(p.TryAcknowledge(10,3,h.Key,h.Generation,h.Revision,h.SnapshotId,h.Checksum),Is.False);
+            Assert.That(p.HasPending,Is.True);Assert.That(p.PendingHeader.Equals(h),Is.True);
+        }
+        [Test] public void RetransmitUsesSameFrozenWordsAndSnapshot()
+        {
+            var p=new WorldReplicationPeerState(8,2048,160,18000,3600);p.Reset(10,3);var o=Owner();p.BeginRound(0);Assert.That(p.TryFreeze(o,Key,0),Is.True);
+            var h=p.PendingHeader;Assert.That(p.TryMarkPageSent(0,300),Is.True);Assert.That(p.RestartTimedOutTransfer(20,10),Is.True);
+            Assert.That(p.PageCursor,Is.Zero);Assert.That(p.PendingHeader.Equals(h),Is.True);
+        }
+
+        [Test] public void WorldHandshakeRequiresCurrentAuthenticatedIdentityAndCannotReplaceInstalledEpoch()
+        {
+            Assert.That(NetworkClient.active, Is.False, "不得接管正在运行的Client。");
+            var property = typeof(JoinTicketAuthenticator).GetProperty("ClientWorldEpoch");
+            var receive = typeof(JoinTicketAuthenticator).GetMethod("OnWorldIdentity", BindingFlags.Instance | BindingFlags.NonPublic);
+            var codecType = typeof(JoinTicketAuthenticator).Assembly.GetType("Game.Networking.WorldIdentityCodec");
+            var envelopeType = typeof(JoinTicketAuthenticator).Assembly.GetType("Game.Networking.WorldIdentityEnvelope");
+            Assert.That(property, Is.Not.Null); Assert.That(receive, Is.Not.Null);
+            Assert.That(codecType, Is.Not.Null); Assert.That(envelopeType, Is.Not.Null);
+            var previous = NetworkClient.connection;
+            var host = new GameObject("Inactive authenticated world handshake fixture"); host.SetActive(false);
+            try
+            {
+                var auth = host.AddComponent<JoinTicketAuthenticator>();
+                var identity = new JoinConnectionIdentity(new string('a', 32), new string('b', 32), new string('c', 32), 2, 3, 1, "p7");
+                var connection = new NetworkConnectionToServer { isAuthenticated = true, authenticationData = identity };
+                typeof(NetworkClient).GetProperty("connection").SetValue(null, connection);
+                typeof(JoinTicketAuthenticator).GetField("<ClientIdentity>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(auth, identity);
+                var codec = Activator.CreateInstance(codecType); var bytes = new byte[256];
+                Action<ulong> send = epoch =>
+                {
+                    object[] args = { identity, epoch, new ArraySegment<byte>(bytes), 0 };
+                    Assert.That(codecType.GetMethod("TryEncode").Invoke(codec, args), Is.True);
+                    var envelope = Activator.CreateInstance(envelopeType);
+                    envelopeType.GetField("Payload").SetValue(envelope, new ArraySegment<byte>(bytes, 0, (int)args[3]));
+                    receive.Invoke(auth, new[] { envelope });
+                };
+                send(17); Assert.That(property.GetValue(auth), Is.EqualTo(0UL), "未完成业务准入不能安装世界身份。");
+                typeof(JoinTicketAuthenticator).GetField("<ClientAuthenticated>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(auth, true);
+                connection.authenticationData = new object();
+                send(17); Assert.That(property.GetValue(auth), Is.EqualTo(0UL), "旧连接身份对象不能给新认证上下文安装编号。");
+                connection.authenticationData = identity;
+                send(17); Assert.That(property.GetValue(auth), Is.EqualTo(17UL));
+                send(17); send(18); Assert.That(property.GetValue(auth), Is.EqualTo(17UL), "重复幂等；不能用更大编号替换存活世界。");
+                auth.OnStopClient(); Assert.That(property.GetValue(auth), Is.EqualTo(0UL));
+            }
+            finally { typeof(NetworkClient).GetProperty("connection").SetValue(null, previous); UnityEngine.Object.DestroyImmediate(host); }
+        }
+    }
+
+    /// <summary>真实 CommitOwner/Codec/Assembler/ReplicaStore 闭环；Reflection 只让缺失的接线先产生行为 RED。</summary>
+    public sealed class WorldReplicationCoordinatorTests
+    {
+        private sealed class SnapshotSource : IWorldReplicationSource
+        {
+            internal readonly WorldReplicaBuffer Value = new WorldReplicaBuffer(200, 4, 1000000);
+            internal SnapshotSource(int cells=120)
+            {
+                Value.Geometries[0]=new WorldGridGeometry(WorldMaterialDomain.Liquid,Vector3.zero,1,16);
+                for(int i=0;i<cells;i++)Value.Cells[i]=new WorldMaterialCellSample(WorldMaterialDomain.Liquid,WorldMaterialStorage.Dynamic,new Vector3Int(i%16,i/16,0),2,10);
+                Value.Header=new WorldReplicaHeader(1,cells,0,1);
+            }
+            public bool TryCapture(WorldReplicaBuffer destination,out WorldCaptureFailure failure)
+            {
+                Array.Copy(Value.Geometries,destination.Geometries,1);Array.Copy(Value.Cells,destination.Cells,Value.Header.CellCount);
+                destination.Header=Value.Header;failure=default;return true;
+            }
+        }
+        private Type _type;
+        private object Server(out SnapshotSource source)
+        {
+            _type=typeof(WorldReplicationPeerState).Assembly.GetType("Game.Multiplayer.WorldReplicationCoordinator");
+            Assert.That(_type,Is.Not.Null,"正式材料Coordinator尚未接入，不能用PeerState单测代替闭环。");
+            var server=Activator.CreateInstance(_type,new object[]{7UL,99UL,8,2048,200,4,1000000,null});
+            source=new SnapshotSource();Assert.That(Call(server,"Capture",source,new WorldReplicaBuffer(200,4,1000000)),Is.True);
+            Assert.That(Call(server,"BindPeer",0,10,3u),Is.True);return server;
+        }
+        private object Client(out object store)
+        {
+            var storeType=Type.GetType("Game.ElementField.WorldReplicaStore, Game.ElementField");
+            Assert.That(storeType,Is.Not.Null);
+            store=Activator.CreateInstance(storeType,new object[]{7UL,8,200,4,2048});
+            Assert.That(storeType.GetMethod("ConfigureGeometry").Invoke(store,new object[]{new WorldGridGeometry(WorldMaterialDomain.Liquid,Vector3.zero,1,16)}),Is.True);
+            Assert.That(storeType.GetMethod("ConfigureMaterials").Invoke(store,new object[]{WorldMaterialDomain.Liquid,65535u,new byte[]{2},false,8}),Is.True);
+            var client=Activator.CreateInstance(_type,new object[]{7UL,99UL,8,2048,200,4,1000000,store});
+            Assert.That(Call(client,"SetClientConnectionEpoch",3u),Is.True);return client;
+        }
+        private object Call(object owner,string method,params object[] args)=>_type.GetMethod(method).Invoke(owner,args);
+        private ulong Quantity(object store)=>(ulong)store.GetType().GetMethod("TotalQuantity").Invoke(store,new object[]{WorldMaterialDomain.Liquid});
+        private WorldPageMessage[] Pages(object server,double start=0)
+        {
+            var result=new System.Collections.Generic.List<WorldPageMessage>();
+            for(int round=0;round<20;round++)
+            {
+                double now=start+round*.1;Call(server,"BeginRound",now);
+                for(int page=0;page<2;page++)
+                {
+                    object[] args={0,now,null};if(!(bool)Call(server,"TryPreparePage",args))break;
+                    var message=((WorldPageMessage)args[2]).Clone();
+                    var codec=new WorldPageCodec();var bytes=new byte[900];
+                    Assert.That(codec.TryEncode(message,new ArraySegment<byte>(bytes),out int size),Is.True);
+                    Assert.That(codec.TryDecode(new ArraySegment<byte>(bytes,0,size),out var decoded),Is.True);
+                    result.Add(decoded.Clone());Assert.That(Call(server,"MarkPageSent",0,now,size+16),Is.True);
+                }
+                if(result.Count>0 && result.Count==result[0].PageCount)break;
+            }
+            Assert.That(result.Count,Is.EqualTo(result[0].PageCount));return result.ToArray();
+        }
+        private bool Receive(object client,WorldPageMessage page,long now,out WorldPageMessage reply)
+        {object[] args={page,now,null};bool accepted=(bool)Call(client,"ReceivePage",args);reply=(WorldPageMessage)args[2];return accepted;}
+        [Test] public void RealReplicaRemainsEmptyUntilCompleteValidatedPayloadAndThenAcknowledges()
+        {
+            var server=Server(out _);var client=Client(out var store);var pages=Pages(server);
+            Assert.That(pages.Length,Is.GreaterThan(4));WorldPageMessage ack=null;
+            for(int i=pages.Length-1;i>0;i--){Assert.That(Receive(client,pages[i],100,out ack),Is.True);Assert.That(ack,Is.Null);Assert.That(Quantity(store),Is.Zero);}
+            Assert.That(Receive(client,pages[0],101,out ack),Is.True);Assert.That(Quantity(store),Is.EqualTo(1200UL));
+            Assert.That(ack.Kind,Is.EqualTo(3));Assert.That(Call(server,"ReceiveControl",0,10,3u,ack,.4),Is.True);
+        }
+        [Test] public void FrozenTransferSurvivesNewSourceCommitAndNextTransferUsesExactBaseRevision()
+        {
+            var server=Server(out var source);var client=Client(out var store);var pages=Pages(server);
+            for(int i=0;i<source.Value.Header.CellCount;i++){var old=source.Value.Cells[i];source.Value.Cells[i]=new WorldMaterialCellSample(old.Domain,old.Storage,old.Cell,old.MaterialId,20);}
+            source.Value.Header=new WorldReplicaHeader(2,120,0,1);
+            Assert.That(Call(server,"Capture",source,new WorldReplicaBuffer(200,4,1000000)),Is.True);
+            WorldPageMessage ack=null;foreach(var page in pages)Assert.That(Receive(client,page,100,out ack),Is.True);
+            Assert.That(Quantity(store),Is.EqualTo(1200UL));Assert.That(Call(server,"ReceiveControl",0,10,3u,ack,.5),Is.True);
+            var delta=Pages(server,1);Assert.That(delta[0].Kind,Is.EqualTo(2));Assert.That(delta[0].BaseRevision,Is.EqualTo(1UL));
+            foreach(var page in delta)Assert.That(Receive(client,page,200,out ack),Is.True);Assert.That(Quantity(store),Is.EqualTo(2400UL));
+        }
+        [TestCase("epoch")][TestCase("world")][TestCase("hash")]
+        public void WrongIdentityPageCannotPublishOrAcknowledge(string field)
+        {
+            var server=Server(out _);var client=Client(out var store);var pages=Pages(server);
+            var bad=pages[0].Clone();if(field=="epoch")bad.ConnectionEpoch=4;else if(field=="world")bad.WorldEpoch=8;else bad.GameplayHash=100;
+            Assert.That(Receive(client,bad,100,out var ack),Is.False);Assert.That(ack,Is.Null);Assert.That(Quantity(store),Is.Zero);
+            foreach(var page in pages)Assert.That(Receive(client,page,101,out ack),Is.True);Assert.That(Quantity(store),Is.EqualTo(1200UL));
+        }
+        [Test] public void UnrelatedHighSnapshotCannotReplaceLegitimatePendingAssembly()
+        {
+            var server=Server(out _);var client=Client(out var store);var pages=Pages(server);
+            Assert.That(Receive(client,pages[0],100,out _),Is.True);var bad=pages[1].Clone();bad.SnapshotId=ulong.MaxValue;
+            Assert.That(Receive(client,bad,101,out var ack),Is.False);Assert.That(ack,Is.Null);
+            for(int i=1;i<pages.Length;i++)Assert.That(Receive(client,pages[i],102,out ack),Is.True);Assert.That(Quantity(store),Is.EqualTo(1200UL));
+        }
+        [Test] public void CorruptCompletePayloadKeepsOldStoreAndRequestsBoundedResync()
+        {
+            var server=Server(out _);var client=Client(out var store);var pages=Pages(server);pages[0].Words[20]^=1;
+            WorldPageMessage reply=null;bool last=true;foreach(var page in pages)last=Receive(client,page,100,out reply);
+            Assert.That(last,Is.False);Assert.That(Quantity(store),Is.Zero);Assert.That(reply.Kind,Is.EqualTo(4));
+            Assert.That(Call(server,"ReceiveControl",0,10,3u,reply,1d),Is.True);
+            var baseline=Pages(server,2);Assert.That(baseline[0].BaseRevision,Is.Zero);
+            foreach(var page in baseline)Assert.That(Receive(client,page,200,out reply),Is.True);Assert.That(Quantity(store),Is.EqualTo(1200UL));
+        }
+        [Test] public void ReconnectRejectsOldAckAndPreservesInstalledReplicaUntilFreshBaseline()
+        {
+            var server=Server(out _);var client=Client(out var store);var pages=Pages(server);WorldPageMessage ack=null;
+            foreach(var page in pages)Assert.That(Receive(client,page,100,out ack),Is.True);
+            Assert.That(Call(server,"BindPeer",0,11,4u),Is.True);Assert.That(Call(client,"SetClientConnectionEpoch",4u),Is.True);
+            Assert.That(Quantity(store),Is.EqualTo(1200UL));Assert.That(Call(server,"ReceiveControl",0,10,3u,ack,1d),Is.False);
+            var fresh=Pages(server,2);Assert.That(fresh[0].ConnectionEpoch,Is.EqualTo(4));Assert.That(fresh[0].BaseRevision,Is.Zero);
+            foreach(var page in fresh)Assert.That(Receive(client,page,200,out ack),Is.True);
+            Assert.That(Call(server,"ReceiveControl",0,11,4u,ack,3d),Is.True);Assert.That(Quantity(store),Is.EqualTo(1200UL));
+        }
+        [TestCase("unauthenticated")][TestCase("stale-reference")][TestCase("world-handshake-missing")][TestCase("queue-capacity")][TestCase("destroyed-channel")]
+        public void NativeClientIngressChecksRealAuthenticationBeforeBoundedPageQueue(string boundary)
+        {
+            Assert.That(NetworkClient.active,Is.False,"不得接管用户运行中的Client。");
+            var server=Server(out _);var client=Client(out var store);var pages=Pages(server);
+            var type=typeof(WorldReplicationPeerState).Assembly.GetType("Game.Multiplayer.WorldReplicationNetworkChannel");
+            Assert.That(type,Is.Not.Null,"正式Mirror适配器缺失，纯Coordinator通过不能代替认证接线。");
+            var root=new GameObject("Inactive material channel ingress");root.SetActive(false);
+            var worldRoot=new GameObject("Inactive trusted material world");worldRoot.SetActive(false);
+            var connectionProperty=typeof(NetworkClient).GetProperty("connection");var oldConnection=NetworkClient.connection;
+            var connectState=typeof(NetworkClient).GetField("connectState",BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Static);
+            var oldState=connectState.GetValue(null);
+            try
+            {
+                root.AddComponent<RoomNetworkManager>();var auth=root.GetComponent<JoinTicketAuthenticator>();
+                if(auth==null)auth=root.AddComponent<JoinTicketAuthenticator>();
+                var identity=new JoinConnectionIdentity(new string('a',32),new string('b',32),new string('c',32),1,3,1,"p7");
+                var connection=new NetworkConnectionToServer{isAuthenticated=true,authenticationData=identity};
+                connectionProperty.SetValue(null,connection);connectState.SetValue(null,Enum.Parse(connectState.FieldType,"Connected"));
+                Set(auth,"<ClientAuthenticated>k__BackingField",true);Set(auth,"<ClientIdentity>k__BackingField",identity);Set(auth,"<ClientWorldEpoch>k__BackingField",7UL);
+                var world=worldRoot.AddComponent<OnlineWorldBootstrap>();Set(world,"<WorldReady>k__BackingField",true);Set(world,"<WorldEpoch>k__BackingField",7UL);Set(world,"_runId",identity.RunId);
+                var catalog=Resources.Load<Game.Character.OnlineDungeonCatalog>("Online/DungeonCatalog");Assert.That(catalog.TryGet("p7",out var dungeon),Is.True);Set(world,"_dungeonDefinition",dungeon);
+                var channel=root.AddComponent(type);type.GetMethod("Configure").Invoke(channel,new object[]{world,client});
+                if(boundary=="destroyed-channel")
+                {
+                    Set(world,"_materialChannel",channel);
+                    type.GetMethod("OnDestroy",BindingFlags.Instance|BindingFlags.NonPublic).Invoke(channel,null);
+                    UnityEngine.Object.DestroyImmediate(channel);
+                    var handlers=(System.Collections.IDictionary)typeof(NetworkClient).GetField("handlers",BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic).GetValue(null);
+                    ushort id=NetworkMessageId<WorldEnvelope>.Id;
+                    Assert.That(handlers.Contains(id),Is.False);
+                    world.PumpMaterialReplication(1);
+                    Assert.That(handlers.Contains(id),Is.False,"Unity已经销毁的旧Channel不能因CLR引用仍存在而重新注册handler。");
+                    return;
+                }
+                var receive=type.GetMethod("OnClientPage",BindingFlags.Instance|BindingFlags.NonPublic);var codec=new WorldPageCodec();var bytes=new byte[900];
+                Action<WorldPageMessage> send=page=>{Assert.That(codec.TryEncode(page,new ArraySegment<byte>(bytes),out int size),Is.True);receive.Invoke(channel,new object[]{new WorldEnvelope{Payload=new ArraySegment<byte>(bytes,0,size)}});};
+                if(boundary=="unauthenticated")connection.isAuthenticated=false;
+                if(boundary=="stale-reference")connection.authenticationData=new object();
+                if(boundary=="world-handshake-missing")Set(auth,"<ClientWorldEpoch>k__BackingField",0UL);
+                if(boundary=="queue-capacity")
+                {
+                    foreach(var page in pages)send(page);
+                    Assert.That(type.GetProperty("QueuedPages").GetValue(channel),Is.EqualTo(4));
+                    Assert.That(type.GetProperty("Rejected").GetValue(channel),Is.GreaterThanOrEqualTo(2));
+                }
+                else {send(pages[0]);Assert.That(type.GetProperty("QueuedPages").GetValue(channel),Is.EqualTo(0));}
+                Assert.That(Quantity(store),Is.Zero,"接收回调只复制固定收件箱，不能提前发布材料或ACK。");
+                connection.isAuthenticated=true;connection.authenticationData=identity;Set(auth,"<ClientWorldEpoch>k__BackingField",7UL);
+                if(boundary!="queue-capacity"){send(pages[0]);Assert.That(type.GetProperty("QueuedPages").GetValue(channel),Is.EqualTo(1));}
+            }
+            finally
+            {
+                NetworkClient.UnregisterHandler<WorldEnvelope>();
+                UnityEngine.Object.DestroyImmediate(root);UnityEngine.Object.DestroyImmediate(worldRoot);
+                connectionProperty.SetValue(null,oldConnection);connectState.SetValue(null,oldState);
+            }
+        }
+        private static void Set(object owner,string name,object value)=>owner.GetType().GetField(name,BindingFlags.Instance|BindingFlags.NonPublic).SetValue(owner,value);
+        [Test] public void BootstrapStopCancelsCoordinatorBeforeADeferredPageCanInstall()
+        {
+            var server=Server(out _);var client=Client(out var store);var pages=Pages(server);
+            Assert.That(Receive(client,pages[0],100,out _),Is.True);
+            var root=new GameObject("Inactive material coordinator lifetime");root.SetActive(false);
+            try
+            {
+                var world=root.AddComponent<OnlineWorldBootstrap>();Set(world,"_materialReplication",client);world.StopWorld();
+                for(int i=1;i<pages.Length;i++)Assert.That(Receive(client,pages[i],101,out var reply),Is.False,"World停止后不得继续安装旧Manager递交的延迟页。");
+                Assert.That(Quantity(store),Is.Zero);
+            }
+            finally{UnityEngine.Object.DestroyImmediate(root);}
+        }
+    }
+}

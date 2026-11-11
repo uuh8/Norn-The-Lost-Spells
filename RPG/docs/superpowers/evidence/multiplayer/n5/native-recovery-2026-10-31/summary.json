@@ -1,0 +1,226 @@
+{
+  "RecordedUtc": "2026-10-31T15:13:30.115000+00:00",
+  "Scope": "N5 v4 same-Generation checksum and missing-base Native recovery",
+  "ProtocolVersion": 4,
+  "SchemaChanged": false,
+  "NewSourceDirectories": 0,
+  "Red": {
+    "Passed": 0,
+    "Failed": 2
+  },
+  "Green": {
+    "Passed": 2,
+    "Failed": 0
+  },
+  "Coordinator": {
+    "Passed": 31,
+    "Failed": 0
+  },
+  "EditMode": {
+    "Fixtures": 27,
+    "Passed": 423,
+    "Failed": 0
+  },
+  "PlayMode": {
+    "Passed": 2,
+    "Failed": 0
+  },
+  "Business": {
+    "InitialPassed": 99,
+    "InitialFailed": 1,
+    "FinalPassed": 100,
+    "FinalFailed": 0,
+    "OriginalAssertionsPreserved": true,
+    "InitialCause": "Global ExpireDueAsync also expired prior owned Interest Native instance 94a4ccb6c04740569ebcf5c3447b44dd; read-only SQL confirmed two and then zero active; no manual database cleanup"
+  },
+  "HttpFoundation": {
+    "Status": "passed",
+    "RecordedAtUtc": "2026-10-31T14:52:53.2551447Z",
+    "Sdk": "10.0.402",
+    "Runtime": "10.0.13",
+    "Protobuf": "3.34.2",
+    "ProtocolVersion": 4,
+    "RealProcessHttpProtobuf": true,
+    "RealProcessVersionMismatchRejected": true,
+    "RealProcessOversizedPayloadRejected": true,
+    "KcpMultiplayerValidated": false,
+    "UnityDedicatedServerValidated": false
+  },
+  "NativeBuilds": {
+    "client": {
+      "Result": "Succeeded",
+      "UnityVersion": "6000.3.16f1",
+      "Output": "Builds/OnlineRooms/Client/NornRoomClient.exe",
+      "RecordedAtUtc": "2026-10-31T14:59:54.1286896Z",
+      "DedicatedServer": false,
+      "RenderingInputsIsolated": false,
+      "ClientResourcesExcluded": false,
+      "Errors": 0
+    },
+    "server": {
+      "Result": "Succeeded",
+      "UnityVersion": "6000.3.16f1",
+      "Output": "Builds/OnlineRooms/Server/NornRoomServer.exe",
+      "RecordedAtUtc": "2026-10-31T15:03:52.1940201Z",
+      "DedicatedServer": true,
+      "RenderingInputsIsolated": false,
+      "ClientResourcesExcluded": false,
+      "Errors": 0
+    }
+  },
+  "Native": {
+    "RecordedUtc": "2026-10-31T15:04:57.384113+00:00",
+    "ProtocolVersion": 4,
+    "Cases": [
+      {
+        "Mode": "checksum",
+        "Target": [
+          1,
+          0,
+          0,
+          0
+        ],
+        "WorldEpoch": 1761297737089978282,
+        "ConnectionId": 35680032,
+        "ConnectionEpoch": 1,
+        "SubscriptionEpoch": 1,
+        "Generation": 1,
+        "RejectedBase": 3,
+        "RejectedRevision": 4,
+        "RecoveredRevision": 9,
+        "FirstFailure": "Checksum",
+        "ReplayFailure": "StaleVersion",
+        "SentPages": 1,
+        "MutatedPages": 1,
+        "SourcePages": 1,
+        "AcksBefore": [
+          4,
+          4,
+          0,
+          0
+        ],
+        "AcksAfter": [
+          6,
+          12,
+          0,
+          0
+        ],
+        "LiquidQuantityBefore": 512,
+        "LiquidQuantityAfter": 1024,
+        "FreshActualStorePreservation": true,
+        "ExactPerConnectionPerKeyAcks": true
+      },
+      {
+        "Mode": "missing-base",
+        "Target": [
+          1,
+          0,
+          0,
+          0
+        ],
+        "WorldEpoch": 16580532804649921435,
+        "ConnectionId": 35671188,
+        "ConnectionEpoch": 1,
+        "SubscriptionEpoch": 1,
+        "Generation": 1,
+        "RejectedBase": 2,
+        "RejectedRevision": 4,
+        "RecoveredRevision": 9,
+        "FirstFailure": "MissingRevision",
+        "ReplayFailure": "StaleVersion",
+        "SentPages": 1,
+        "MutatedPages": 1,
+        "SourcePages": 1,
+        "AcksBefore": [
+          4,
+          4,
+          0,
+          0
+        ],
+        "AcksAfter": [
+          6,
+          12,
+          0,
+          0
+        ],
+        "LiquidQuantityBefore": 512,
+        "LiquidQuantityAfter": 1024,
+        "FreshActualStorePreservation": true,
+        "ExactPerConnectionPerKeyAcks": true
+      }
+    ],
+    "Passed": true,
+    "SameGenerationOnly": true,
+    "PausedCheckpoints": true,
+    "KeyboardPlayerPath": false
+  },
+  "DeferredIssues": [
+    {
+      "Severity": "P2",
+      "Issue": "Explicit recovery probe requires Generation>=old and Revision>=old when identifying recovery ACK; higher Generation with reset Revision can be missed",
+      "Scope": "Diagnostic only; current same-Generation cases pass; formal Coordinator/Assembler unaffected",
+      "Next": "Existing generation-order contract audit plus independent behavioral RED/GREEN before rebuilt-chunk diagnostic use"
+    },
+    {
+      "Severity": "P3",
+      "Issue": "Existing explicit home/away diagnostic error is latched after invalid/no-auth request",
+      "Scope": "No pose commands issued here; normal default gameplay unaffected"
+    }
+  ],
+  "Remaining": [
+    "Native history-ring overwrite (128 changed records, not simply 128 ticks)",
+    "Multi-page Native fault transfer; current Native target is one 43-word page, pure behavior test covers assembled multi-page corruption",
+    "Cross-Generation rebuilt-chunk diagnostic P2 and existing pose diagnostic P3",
+    "Sustained reactions/four players/stress/HOL/calibrated Native performance/GC",
+    "Full keyboard Hub/player path, same-process reconnect and consumed-resource preservation",
+    "P8 Native material recovery, N4/N6 and remote platform gates",
+    "Known two Built-in Resource startup errors per DS"
+  ],
+  "Metadata": {
+    "OwnerKeyLimit": 128,
+    "ConnectionLimit": 4,
+    "AckObservationRows": 512,
+    "EvictionOrUnlimitedExploration": false
+  },
+  "ProtectedFilesUnchanged": 12,
+  "OldFormalAssetsUnchanged": 13,
+  "ExistingProfileAndMetaUnchanged": 2,
+  "Editor": {
+    "Playing": false,
+    "Compiling": false,
+    "Dirty": false,
+    "Scene": "Assets/_Project/Scenes/P7_MainMenu.unity"
+  },
+  "N5Complete": false,
+  "NoCommitOrPush": true,
+  "PermissionOrDecisionBlocker": false,
+  "ResolvedExecutionIssues": [
+    "Auto-review rejected reverting incomplete Channel integration while repository writes were paused; explicit narrow authorization permitted one retry, restoring exact initial hash before GREEN; complete staged Channel then copied by main",
+    "Initial root option-file read-only SQL authentication failed; no query executed; successful read-only inspection used current Test credentials in an ephemeral option file, removed afterwards"
+  ],
+  "FinalChecks": {
+    "Links": 43,
+    "MissingLinks": 0,
+    "TextDiffCheckExitCode": 0,
+    "OwnCredentialExposure": 0,
+    "CommitHead": "0d87d0da931ec2b39f7cd569661e750bafa0df84",
+    "ModifiedSourceFiles": 6
+  },
+  "ProtectedSettingsRestoration": {
+    "OnlySingleBackgroundFlagRestored": true,
+    "OriginalBackground": 0,
+    "ObservedBackground": 1,
+    "InitialHash": "4491D6D50AB523F1C8B681046E9F4BBB84F87013AEF76B9F9E2F0262451F9B33",
+    "ObservedHash": "83106A5F1E856A5C87B7A9AD73BCF6C30ACFF034EBADC1E5814FCD3C85F3CA45",
+    "RestoredHash": "4491D6D50AB523F1C8B681046E9F4BBB84F87013AEF76B9F9E2F0262451F9B33",
+    "ObservedWriteUtc": "2026-10-31T15:03:52.194020+00:00",
+    "OwnServerBuildCompletedUtc": "2026-10-31T15:03:52.1940201Z",
+    "Guard": "Current bytes with this single flag changed exactly equal both stage initial hash and HEAD; write within two seconds of owned DS build completion",
+    "WriterNote": "Observed Unity build serialization; Mirror also sets Application.runInBackground in StartServer/StartClient; no broader settings recovery applied",
+    "RecordedUtc": "2026-10-31T15:12:04.315858+00:00"
+  },
+  "PhysicsRestoration": {
+    "OnlyKnownOwnSerializationSideEffectRestored": true,
+    "RestoredHash": "B7C9A9DC08B98990109D4346F68745E15E238DE400F96C583E53E1C83C743A78"
+  }
+}

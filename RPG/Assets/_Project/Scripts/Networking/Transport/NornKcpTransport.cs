@@ -5,8 +5,13 @@ using UnityEngine;
 
 namespace Game.Networking
 {
+    /// <summary>上层只读回压指标，不反向依赖具体Mirror.Transports/KCP实现程序集。</summary>
+    public interface IReliableQueueMetrics
+    {
+        bool TryGetServerReliableQueue(int connectionId, out int queuedSegments, out int fragmentPayloadBytes);
+    }
     /// <summary>保留 kcp2k 协议，只替换 Windows IPv4 loopback Raw IO；其他平台仍走原 KCP。</summary>
-    public sealed class NornKcpTransport : KcpTransport
+    public sealed class NornKcpTransport : KcpTransport, IReliableQueueMetrics
     {
         private CodecAllocationMeter _meter;
         private bool _measuring;
@@ -20,6 +25,19 @@ namespace Game.Networking
         public long FrameAllocationEvents { get; private set; }
         public long FrameMeasuredCalls { get; private set; }
         public bool AllocationCounterValid => _meter != null && _meter.IsValid;
+
+        /// <summary>只读当前连接可靠排队/未确认片数；库存页回压不修改KCP窗口或拥塞断开阈值。</summary>
+        public bool TryGetServerReliableQueue(int connectionId, out int queuedSegments, out int fragmentPayloadBytes)
+        {
+            queuedSegments = fragmentPayloadBytes = 0;
+            if (server == null || !server.connections.TryGetValue(connectionId, out var connection)) return false;
+            long queued = (long)connection.SendQueueCount + connection.SendBufferCount;
+            if (queued < 0 || queued > int.MaxValue) return false;
+            queuedSegments = (int)queued;
+            // 比实际KCP/元数据头更保守的64B预留，估算片数只会偏多，不扩大底层消息尺寸。
+            fragmentPayloadBytes = Math.Max(1, config.Mtu - 64);
+            return true;
+        }
 
         protected override void Awake()
         {

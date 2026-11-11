@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="3" result="Failed(Child)" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 02:32:32Z" end-time="2026-11-02 02:32:32Z" duration="0.1897289">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3705" result="Failed" site="Child" start-time="2026-11-02 02:32:32Z" end-time="2026-11-02 02:32:32Z" duration="0.189729" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1408" name="Game.Character.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.Tests.dll" runstate="Runnable" testcasecount="336" result="Failed" site="Child" start-time="2026-11-02 02:32:32Z" end-time="2026-11-02 02:32:32Z" duration="0.145701" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1409" name="Game" fullname="Game" runstate="Runnable" testcasecount="336" result="Failed" site="Child" start-time="2026-11-02 02:32:32Z" end-time="2026-11-02 02:32:32Z" duration="0.137907" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1410" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="336" result="Failed" site="Child" start-time="2026-11-02 02:32:32Z" end-time="2026-11-02 02:32:32Z" duration="0.128563" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1411" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="336" result="Failed" site="Child" start-time="2026-11-02 02:32:32Z" end-time="2026-11-02 02:32:32Z" duration="0.115457" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1336" name="OnlineDungeonRuntimeTests" fullname="Game.Character.Tests.OnlineDungeonRuntimeTests" classname="Game.Character.Tests.OnlineDungeonRuntimeTests" runstate="Runnable" testcasecount="24" result="Failed" site="Child" start-time="2026-11-02 02:32:32Z" end-time="2026-11-02 02:32:32Z" duration="0.108325" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1361" name="NpcLootGateAllowsAlreadyClearedAreasAndStageClearedButStopsAfterDispose" fullname="Game.Character.Tests.OnlineDungeonRuntimeTests.NpcLootGateAllowsAlreadyClearedAreasAndStageClearedButStopsAfterDispose" methodname="NpcLootGateAllowsAlreadyClearedAreasAndStageClearedButStopsAfterDispose" classname="Game.Character.Tests.OnlineDungeonRuntimeTests" runstate="Runnable" seed="1686845287" result="Failed" label="Error" start-time="2026-11-02 02:32:32Z" end-time="2026-11-02 02:32:32Z" duration="0.068824" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.
+  ----> System.ArgumentException : 副本Definition非法：无原掉落表时不能保留敌人掉落索引。
+Parameter name: definition]]></message>
+                  <stack-trace><![CDATA[  at System.Reflection.RuntimeConstructorInfo.InternalInvoke (System.Object obj, System.Object[] parameters, System.Boolean wrapExceptions) [0x0001a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.RuntimeConstructorInfo.DoInvoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00086] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.RuntimeConstructorInfo.Invoke (System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.RuntimeType.CreateInstanceImpl (System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, System.Object[] args, System.Globalization.CultureInfo culture, System.Object[] activationAttributes, System.Threading.StackCrawlMark& stackMark) [0x0022b] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Activator.CreateInstance (System.Type type, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, System.Object[] args, System.Globalization.CultureInfo culture, System.Object[] activationAttributes) [0x000a8] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Activator.CreateInstance (System.Type type, System.Object[] args) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at Game.Character.Tests.OnlineDungeonRuntimeTests.Create (System.Boolean boss, System.Boolean authority, System.Int32 firstAreaNpcCount, System.Boolean showEncounterHud) [0x0046d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineDungeonRuntimeTests.cs:327 
+  at Game.Character.Tests.OnlineDungeonRuntimeTests.NpcLootGateAllowsAlreadyClearedAreasAndStageClearedButStopsAfterDispose () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineDungeonRuntimeTests.cs:234 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+--ArgumentException
+  at Game.Character.OnlineDungeonRuntime..ctor (Game.Character.OnlineDungeonDefinition definition, Game.Character.OnlineDungeonWorldBindings bindings, Game.Core.ICombatActorRosterReadOnly players, System.Boolean authority, System.Action`2[T1,T2] setNpcActive, System.Action`1[T] activateBoss) [0x0004c] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Character\World\OnlineDungeonRuntime.cs:37 
+  at (wrapper managed-to-native) System.Reflection.RuntimeConstructorInfo.InternalInvoke(System.Reflection.RuntimeConstructorInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeConstructorInfo.InternalInvoke (System.Object obj, System.Object[] parameters, System.Boolean wrapExceptions) [0x00005] in <41d29b352f6a475ab1bf7c6628b82790>:0 ]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1362" name="NpcLootGateRejectsReplicaPlayersAndNpcIdsOutsideTheTrustedDefinition" fullname="Game.Character.Tests.OnlineDungeonRuntimeTests.NpcLootGateRejectsReplicaPlayersAndNpcIdsOutsideTheTrustedDefinition" methodname="NpcLootGateRejectsReplicaPlayersAndNpcIdsOutsideTheTrustedDefinition" classname="Game.Character.Tests.OnlineDungeonRuntimeTests" runstate="Runnable" seed="1295317359" result="Failed" label="Error" start-time="2026-11-02 02:32:32Z" end-time="2026-11-02 02:32:32Z" duration="0.003360" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.
+  ----> System.ArgumentException : 副本Definition非法：无原掉落表时不能保留敌人掉落索引。
+Parameter name: definition]]></message>
+                  <stack-trace><![CDATA[  at System.Reflection.RuntimeConstructorInfo.InternalInvoke (System.Object obj, System.Object[] parameters, System.Boolean wrapExceptions) [0x0001a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.RuntimeConstructorInfo.DoInvoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00086] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.RuntimeConstructorInfo.Invoke (System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.RuntimeType.CreateInstanceImpl (System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, System.Object[] args, System.Globalization.CultureInfo culture, System.Object[] activationAttributes, System.Threading.StackCrawlMark& stackMark) [0x0022b] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Activator.CreateInstance (System.Type type, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, System.Object[] args, System.Globalization.CultureInfo culture, System.Object[] activationAttributes) [0x000a8] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Activator.CreateInstance (System.Type type, System.Object[] args) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at Game.Character.Tests.OnlineDungeonRuntimeTests.Create (System.Boolean boss, System.Boolean authority, System.Int32 firstAreaNpcCount, System.Boolean showEncounterHud) [0x0046d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineDungeonRuntimeTests.cs:327 
+  at Game.Character.Tests.OnlineDungeonRuntimeTests.NpcLootGateRejectsReplicaPlayersAndNpcIdsOutsideTheTrustedDefinition () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineDungeonRuntimeTests.cs:245 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+--ArgumentException
+  at Game.Character.OnlineDungeonRuntime..ctor (Game.Character.OnlineDungeonDefinition definition, Game.Character.OnlineDungeonWorldBindings bindings, Game.Core.ICombatActorRosterReadOnly players, System.Boolean authority, System.Action`2[T1,T2] setNpcActive, System.Action`1[T] activateBoss) [0x0004c] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Character\World\OnlineDungeonRuntime.cs:37 
+  at (wrapper managed-to-native) System.Reflection.RuntimeConstructorInfo.InternalInvoke(System.Reflection.RuntimeConstructorInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeConstructorInfo.InternalInvoke (System.Object obj, System.Object[] parameters, System.Boolean wrapExceptions) [0x00005] in <41d29b352f6a475ab1bf7c6628b82790>:0 ]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1360" name="NpcLootGateRequiresCurrentActiveDeadNpcAndDoesNotAdvanceEncounterState" fullname="Game.Character.Tests.OnlineDungeonRuntimeTests.NpcLootGateRequiresCurrentActiveDeadNpcAndDoesNotAdvanceEncounterState" methodname="NpcLootGateRequiresCurrentActiveDeadNpcAndDoesNotAdvanceEncounterState" classname="Game.Character.Tests.OnlineDungeonRuntimeTests" runstate="Runnable" seed="1119772502" result="Failed" label="Error" start-time="2026-11-02 02:32:32Z" end-time="2026-11-02 02:32:32Z" duration="0.002806" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[System.Reflection.TargetInvocationException : Exception has been thrown by the target of an invocation.
+  ----> System.ArgumentException : 副本Definition非法：无原掉落表时不能保留敌人掉落索引。
+Parameter name: definition]]></message>
+                  <stack-trace><![CDATA[  at System.Reflection.RuntimeConstructorInfo.InternalInvoke (System.Object obj, System.Object[] parameters, System.Boolean wrapExceptions) [0x0001a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.RuntimeConstructorInfo.DoInvoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00086] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Reflection.RuntimeConstructorInfo.Invoke (System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.RuntimeType.CreateInstanceImpl (System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, System.Object[] args, System.Globalization.CultureInfo culture, System.Object[] activationAttributes, System.Threading.StackCrawlMark& stackMark) [0x0022b] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Activator.CreateInstance (System.Type type, System.Reflection.BindingFlags bindingAttr, System.Reflection.Binder binder, System.Object[] args, System.Globalization.CultureInfo culture, System.Object[] activationAttributes) [0x000a8] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at System.Activator.CreateInstance (System.Type type, System.Object[] args) [0x00000] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+  at Game.Character.Tests.OnlineDungeonRuntimeTests.Create (System.Boolean boss, System.Boolean authority, System.Int32 firstAreaNpcCount, System.Boolean showEncounterHud) [0x0046d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineDungeonRuntimeTests.cs:327 
+  at Game.Character.Tests.OnlineDungeonRuntimeTests.NpcLootGateRequiresCurrentActiveDeadNpcAndDoesNotAdvanceEncounterState () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineDungeonRuntimeTests.cs:222 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <41d29b352f6a475ab1bf7c6628b82790>:0 
+--ArgumentException
+  at Game.Character.OnlineDungeonRuntime..ctor (Game.Character.OnlineDungeonDefinition definition, Game.Character.OnlineDungeonWorldBindings bindings, Game.Core.ICombatActorRosterReadOnly players, System.Boolean authority, System.Action`2[T1,T2] setNpcActive, System.Action`1[T] activateBoss) [0x0004c] in F:\Develop Project\RPG\RPG\Assets\_Project\Scripts\Character\World\OnlineDungeonRuntime.cs:37 
+  at (wrapper managed-to-native) System.Reflection.RuntimeConstructorInfo.InternalInvoke(System.Reflection.RuntimeConstructorInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeConstructorInfo.InternalInvoke (System.Object obj, System.Object[] parameters, System.Boolean wrapExceptions) [0x00005] in <41d29b352f6a475ab1bf7c6628b82790>:0 ]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 01:57:15Z" end-time="2026-11-02 01:57:16Z" duration="0.6677851">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3684" result="Failed" site="Child" start-time="2026-11-02 01:57:15Z" end-time="2026-11-02 01:57:16Z" duration="0.667785" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="5137" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="915" result="Failed" site="Child" start-time="2026-11-02 01:57:15Z" end-time="2026-11-02 01:57:16Z" duration="0.566455" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="5138" name="Game" fullname="Game" runstate="Runnable" testcasecount="915" result="Failed" site="Child" start-time="2026-11-02 01:57:15Z" end-time="2026-11-02 01:57:16Z" duration="0.473571" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="5139" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="915" result="Failed" site="Child" start-time="2026-11-02 01:57:15Z" end-time="2026-11-02 01:57:16Z" duration="0.373578" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="5140" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="915" result="Failed" site="Child" start-time="2026-11-02 01:57:15Z" end-time="2026-11-02 01:57:16Z" duration="0.275605" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="4410" name="OnlineInventoryPresentationSourceTests" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" testcasecount="66" result="Failed" site="Child" start-time="2026-11-02 01:57:15Z" end-time="2026-11-02 01:57:16Z" duration="0.173284" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="4485" name="GroundContainerPlacementPreview_UsesCurrentBagWithoutMutatingSnapshot" fullname="Game.Run.Tests.OnlineInventoryPresentationSourceTests.GroundContainerPlacementPreview_UsesCurrentBagWithoutMutatingSnapshot" methodname="GroundContainerPlacementPreview_UsesCurrentBagWithoutMutatingSnapshot" classname="Game.Run.Tests.OnlineInventoryPresentationSourceTests" runstate="Runnable" seed="716561615" result="Failed" start-time="2026-11-02 01:57:16Z" end-time="2026-11-02 01:57:16Z" duration="0.062338" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  线上地面容器也必须复用原背包占据预览。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineInventoryPresentationSourceTests.GroundContainerPlacementPreview_UsesCurrentBagWithoutMutatingSnapshot () [0x00035] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineInventoryPresentationSourceTests.cs:569
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

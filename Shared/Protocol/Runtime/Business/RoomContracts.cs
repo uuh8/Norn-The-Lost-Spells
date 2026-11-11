@@ -7,6 +7,12 @@ namespace Game.NetworkProtocol
     {
         public string DungeonId = ""; // 服务端白名单的配置键；不是Client任意指定的Scene路径。
     }
+    /// <summary>服务器单人也是正式Run；命令正文固定重试，不伪造合作Ready或第二个成员。</summary>
+    [Serializable] public sealed class SinglePlayerEntryRequest
+    {
+        public string CommandId = "", DungeonId = "";
+        public uint ExpectedInventoryVersion;
+    }
     [Serializable] public sealed class RoomReadyRequest
     {
         public uint ExpectedRevision; // 针对当前房间快照操作，成员变化后的旧按钮请求必须失败。
@@ -22,6 +28,7 @@ namespace Game.NetworkProtocol
         public uint ReadyRevision;
         public uint RoomEpoch; // fencing token；失败后的旧实例不能释放下一次Run的资产。
         public string RunId = "";
+        public bool SinglePlayer; // 由业务持久Run标记派生，不接受成员自行宣告单人资格。
         public RoomMemberReply[] Members = Array.Empty<RoomMemberReply>();
     }
     [Serializable] public sealed class RoomMemberReply

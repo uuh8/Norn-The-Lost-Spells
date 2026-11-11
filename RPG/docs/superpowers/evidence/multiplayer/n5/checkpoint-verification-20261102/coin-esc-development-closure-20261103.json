@@ -1,0 +1,173 @@
+{
+  "RecordedAtUtc": "2026-11-03T13:08:16.2115966+08:00",
+  "Scope": "Coin world unique pickup, reliable personal ESC, Schema4 complete checkpoint; development closure only",
+  "N5Complete": false,
+  "N6Complete": false,
+  "GameExperienceAccepted": false,
+  "ReleaseReady": false,
+  "Source": {
+    "Protocol": 13,
+    "OwnedSchema": 3,
+    "CompleteCheckpointSchema": 4,
+    "ContentHash": "1fc27ad6eb258a7ef3aec0ea0a55431680b949fee208339fd7808bb0ddee98de",
+    "GameplayConfigHash": "05e7fd77b773854e77d4c7ed7ff9564e7c3e50e74cc7a880a6a690463f936e34",
+    "NativeBuiltThisSlice": false,
+    "PublishedThisSlice": false
+  },
+  "Verification": {
+    "UnityAffected": {
+      "Passed": 408,
+      "Failed": 0,
+      "StartedUtc": "2026-11-03T04:50:33.9139233Z",
+      "EndedUtc": "2026-11-03T04:51:12.7548418Z",
+      "Report": "coin-exit-final-review-green-20261103-report.json",
+      "Xml": "coin-exit-final-review-green-20261103-results.xml"
+    },
+    "BusinessAffected": {
+      "Passed": 190,
+      "Failed": 0,
+      "RecordedAtUtc": "2026-11-03T04:43:51.1676228Z",
+      "Report": "coin-exit-final-business-20261103-summary.json",
+      "Trx": "Server/TestResults/coin-member-exit-20261103/coin-exit-final-business-20261103.trx",
+      "Database": "norn_online_test",
+      "Warnings": "Existing build/test nullable and analyzer warnings retained"
+    },
+    "RealHttp": {
+      "UnityPassed": 1,
+      "UnityFailed": 0,
+      "BusinessPassed": 1,
+      "BusinessFailed": 0,
+      "BackendProof": "coin-schema4-final-http-backend-proof-20261103.json",
+      "UnityProof": "coin-schema4-final-http-unity-proof-20261103.json",
+      "Assertions": [
+        "Same fixed body for three POST attempts",
+        "Two response losses and receipt 503 recover without duplicate application",
+        "Changed Coin Head cannot advance confirmation",
+        "401, 503 and stale previous-instance Head stop at bounded three attempts",
+        "Complete Coin identity/amount/position/collected-winner persists and reads back",
+        "Original isolated assets and membership/lease remain unchanged"
+      ],
+      "IsGameOrKcpAcceptance": false,
+      "CountsAreNotAdded": true
+    },
+    "Official": [
+      {
+        "Command": "export-content",
+        "Passed": true,
+        "RecordedAtUtc": "2026-11-03T04:57:03.6608202Z",
+        "Report": "unified-gold-export-content-20261103-result.json"
+      },
+      {
+        "Command": "refresh-online-hashes",
+        "Passed": true,
+        "RecordedAtUtc": "2026-11-03T04:59:28.9005081Z",
+        "Report": "unified-gold-refresh-online-hashes-20261103-result.json"
+      },
+      {
+        "Command": "verify-online-combat",
+        "Passed": true,
+        "RecordedAtUtc": "2026-11-03T05:01:53.8277163Z",
+        "Report": "unified-gold-verify-online-combat-20261103-result.json"
+      }
+    ],
+    "ProtocolGeneratedCSharpCount": 9,
+    "ProtocolGenerationConsistencyChecked": true
+  },
+  "Production": {
+    "Coin": [
+      "Original single loot sample, 75 percent/stage amount/death location",
+      "Original automatic Trigger and prefab settings",
+      "Authenticated single Owner atomic credit plus CurrencyVersion",
+      "Bounded 12 Coin records including collected tombstones",
+      "Ground replication and client-only presentation"
+    ],
+    "Exit": [
+      "Per-player new intent fence while accepted reservations, flights and outputs drain",
+      "Fixed command/body with bounded retries and authenticated receipt recovery",
+      "Actual assets, rolled wand state, composition, Gold and explicit empty loadout committed atomically",
+      "Custody prevents old owner reclaim after shared transfer",
+      "Final receipt ends only member eligibility",
+      "Same authenticated account Profile readback before restoring original Hub",
+      "Controlled superseded-epoch plus confirmed not-found candidate replacement"
+    ],
+    "CompleteCheckpoint": [
+      "Explicit Schema4 Coin full table, old Schema1/2/3 canonical byte preservation",
+      "Coin tombstones monotonic and immutable",
+      "Exited-member historical loss copied at stable self boundary and only released after committed receipt",
+      "At most four exited actors and 64 loss rows; missing facts fail closed",
+      "Business trusts historical actor only from committed matching personal receipt"
+    ]
+  },
+  "HistoricalFailureEvidence": {
+    "Retained": true,
+    "Initial401Group": {
+      "Passed": 325,
+      "Failed": 76,
+      "Cause": "74 UI shared fixtures missing Owned3 Gold/version; 2 checkpoint fixtures missing explicit Schema4 Coins",
+      "Correction": "Complete valid fixture data only; production gates/assertions not weakened",
+      "FollowupPassed": 401
+    },
+    "FinalReview": "Historical loss omitted on Exited member; genuine RED before bounded facts retention; final full 408/190 includes fix",
+    "NoSummedCounts": true
+  },
+  "Isolation": {
+    "MainDatabaseLastKnownMigration": "010",
+    "MainDatabaseMigrationVerifiedLiveThisSlice": false,
+    "MainDatabaseMigrated": false,
+    "Migrations011012": "Isolated test database only",
+    "OldLocalSavesImportedOrMerged": false,
+    "OldPublishedProtocol": 11,
+    "OldPublishedFilesUnchanged": 4,
+    "ProtectedFilesUnchanged": 7,
+    "ProtectionSampleUtc": "2026-11-03T05:04:27.914Z/2026-11-03T05:04:31.501Z",
+    "ProtectedBaseline": "../container-operations-2026-11-01/six-issues-player-chain-20261102/protected-after-v11-builds.json",
+    "PublishedBaseline": "frozen-source-and-package-baseline.json"
+  },
+  "Environment": {
+    "EditorPid": 34452,
+    "EditorVersion": "6000.3.16f1",
+    "Project": "F:/Develop Project/RPG/RPG",
+    "EditorKeptOpen": true,
+    "SafetySnapshotUtc": "2026-11-03T04:57:02.5000315Z",
+    "EditorPlaying": false,
+    "EditorCompiling": false,
+    "SceneDirty": false,
+    "InternalDirtyAssetsNotSavedOrDiscarded": true,
+    "Scenes": [
+      "Assets/_Project/Scenes/P7_MainMenu.unity"
+    ],
+    "PrivateMysqlPid": 35908,
+    "PrivateMysqlEndpoint": "127.0.0.1:13384",
+    "Business5080Listening": false,
+    "BusinessReady": "Connection error, no HTTP response at 05:04:31.499Z",
+    "BusinessNotRestoredReason": "Old v11 published DLL mismatches current source v13 manifest; no verified matching backup config, no unauthorized publish or main AutoMigrate",
+    "HttpOptInPresent": false,
+    "UncertainWrites": [],
+    "PrivateBridgeReadyGrantPresent": false
+  },
+  "RemainingProduction": [
+    "Initial login Hub binding to the account asset source",
+    "Complete authoritative Hub preparation, warehouse, trading/research and nearby writes",
+    "Server-backed solo entry/current assets/exit path preserving existing solo gameplay",
+    "Final no-revival death transaction with Gold preserved",
+    "Normal final-member Run completed terminal instead of relying only on idle timeout/failure cleanup"
+  ],
+  "RemainingDeliveryAndValidation": [
+    "Approval for matching source13 deployment and main011/012 application",
+    "Dedicated conditional build for current source not executed this slice",
+    "Native/KCP/real automatic pickup/UI/complete player chain not validated this slice",
+    "Four-player high-load stability/performance explicitly deferred",
+    "128 permanent ChunkKey capacity and fault protection retained",
+    "Known DS built-in resource errors and D3D12/Hub observations not claimed repaired",
+    "Actual GPU/screen presentation delay not measured"
+  ],
+  "Next": "Finish initial login account Hub source and existing authoritative Hub writes before solo and final-death chains; do not ask again whether unified assets need a server",
+  "DocumentationChecks": {
+    "CheckedAtUtc": "2026-11-03T05:09:13.8416727+00:00",
+    "ScopedGitDiffCheckExitCode": 0,
+    "LineEndingWarningsRetained": true,
+    "LatestFiveDocumentSectionsPresent": true,
+    "EvidenceJsonParsed": true,
+    "LinkedFinalEvidenceFilesPresent": true
+  }
+}

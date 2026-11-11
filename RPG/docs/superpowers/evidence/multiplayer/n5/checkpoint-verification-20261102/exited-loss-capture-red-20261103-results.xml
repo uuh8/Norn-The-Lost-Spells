@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Failed(Child)" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-03 04:40:22Z" end-time="2026-11-03 04:40:23Z" duration="1.1252076">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="4151" result="Failed" site="Child" start-time="2026-11-03 04:40:22Z" end-time="2026-11-03 04:40:23Z" duration="1.125208" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3355" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="409" result="Failed" site="Child" start-time="2026-11-03 04:40:22Z" end-time="2026-11-03 04:40:22Z" duration="0.545610" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34452" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3356" name="Game" fullname="Game" runstate="Runnable" testcasecount="409" result="Failed" site="Child" start-time="2026-11-03 04:40:22Z" end-time="2026-11-03 04:40:22Z" duration="0.451681" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3357" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="409" result="Failed" site="Child" start-time="2026-11-03 04:40:22Z" end-time="2026-11-03 04:40:22Z" duration="0.351939" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3358" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="409" result="Failed" site="Child" start-time="2026-11-03 04:40:22Z" end-time="2026-11-03 04:40:22Z" duration="0.251615" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3198" name="RunExitedLossCheckpointCaptureTests" fullname="Game.Multiplayer.Tests.RunExitedLossCheckpointCaptureTests" classname="Game.Multiplayer.Tests.RunExitedLossCheckpointCaptureTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-03 04:40:22Z" end-time="2026-11-03 04:40:22Z" duration="0.151517" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3199" name="ExitedActorsActualFinalLossesRemainWhileOnlyTheOtherActiveMemberIsCaptured" fullname="Game.Multiplayer.Tests.RunExitedLossCheckpointCaptureTests.ExitedActorsActualFinalLossesRemainWhileOnlyTheOtherActiveMemberIsCaptured" methodname="ExitedActorsActualFinalLossesRemainWhileOnlyTheOtherActiveMemberIsCaptured" classname="Game.Multiplayer.Tests.RunExitedLossCheckpointCaptureTests" runstate="Runnable" seed="516849260" result="Failed" start-time="2026-11-03 04:40:22Z" end-time="2026-11-03 04:40:22Z" duration="0.034566" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少真实Receipt后保留的Exited最终损耗输入。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunExitedLossCheckpointCaptureTests.Input (System.String& a, System.String& b) [0x000b9] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunExitedLossCheckpointCaptureTests.cs:52
+at Game.Multiplayer.Tests.RunExitedLossCheckpointCaptureTests.ExitedActorsActualFinalLossesRemainWhileOnlyTheOtherActiveMemberIsCaptured () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunExitedLossCheckpointCaptureTests.cs:14
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3200" name="MissingForeignOrNonExitedLossCacheRejectsTheWholeCandidate" fullname="Game.Multiplayer.Tests.RunExitedLossCheckpointCaptureTests.MissingForeignOrNonExitedLossCacheRejectsTheWholeCandidate" methodname="MissingForeignOrNonExitedLossCacheRejectsTheWholeCandidate" classname="Game.Multiplayer.Tests.RunExitedLossCheckpointCaptureTests" runstate="Runnable" seed="1851687766" result="Failed" start-time="2026-11-03 04:40:22Z" end-time="2026-11-03 04:40:22Z" duration="0.001350" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少真实Receipt后保留的Exited最终损耗输入。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.RunExitedLossCheckpointCaptureTests.Input (System.String& a, System.String& b) [0x000b9] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunExitedLossCheckpointCaptureTests.cs:52
+at Game.Multiplayer.Tests.RunExitedLossCheckpointCaptureTests.MissingForeignOrNonExitedLossCacheRejectsTheWholeCandidate () [0x0003d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\RunExitedLossCheckpointCaptureTests.cs:34
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="5666" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="1063" result="Failed" site="Child" start-time="2026-11-03 04:40:22Z" end-time="2026-11-03 04:40:23Z" duration="0.481278" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34452" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="5667" name="Game" fullname="Game" runstate="Runnable" testcasecount="1063" result="Failed" site="Child" start-time="2026-11-03 04:40:22Z" end-time="2026-11-03 04:40:23Z" duration="0.435838" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="5668" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="1063" result="Failed" site="Child" start-time="2026-11-03 04:40:22Z" end-time="2026-11-03 04:40:23Z" duration="0.337430" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="5669" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="1063" result="Failed" site="Child" start-time="2026-11-03 04:40:23Z" end-time="2026-11-03 04:40:23Z" duration="0.237250" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="5105" name="OnlineRunCheckpointFactsTests" fullname="Game.Run.Tests.OnlineRunCheckpointFactsTests" classname="Game.Run.Tests.OnlineRunCheckpointFactsTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-11-03 04:40:23Z" end-time="2026-11-03 04:40:23Z" duration="0.135621" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="5106" name="CurrentOwnerFactsPreserveRealRollAndCannotBeMutatedThroughACapturedArray" fullname="Game.Run.Tests.OnlineRunCheckpointFactsTests.CurrentOwnerFactsPreserveRealRollAndCannotBeMutatedThroughACapturedArray" methodname="CurrentOwnerFactsPreserveRealRollAndCannotBeMutatedThroughACapturedArray" classname="Game.Run.Tests.OnlineRunCheckpointFactsTests" runstate="Runnable" seed="2063975889" result="Failed" start-time="2026-11-03 04:40:23Z" end-time="2026-11-03 04:40:23Z" duration="0.023661" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  入局统一金币余额或DS货币修订非法。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineRunCheckpointFactsTests.Workspace (System.Boolean rolled, System.Int32 uses) [0x00201] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineRunCheckpointFactsTests.cs:53
+at Game.Run.Tests.OnlineRunCheckpointFactsTests.CurrentOwnerFactsPreserveRealRollAndCannotBeMutatedThroughACapturedArray () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineRunCheckpointFactsTests.cs:70
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="5108" name="InFlightBottleIsIncludedInCheckpointWhileUiProjectionStillExcludesIt" fullname="Game.Run.Tests.OnlineRunCheckpointFactsTests.InFlightBottleIsIncludedInCheckpointWhileUiProjectionStillExcludesIt" methodname="InFlightBottleIsIncludedInCheckpointWhileUiProjectionStillExcludesIt" classname="Game.Run.Tests.OnlineRunCheckpointFactsTests" runstate="Runnable" seed="1436355743" result="Failed" start-time="2026-11-03 04:40:23Z" end-time="2026-11-03 04:40:23Z" duration="0.003581" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  入局统一金币余额或DS货币修订非法。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineRunCheckpointFactsTests.Workspace (System.Boolean rolled, System.Int32 uses) [0x00201] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineRunCheckpointFactsTests.cs:53
+at Game.Run.Tests.OnlineRunCheckpointFactsTests.InFlightBottleIsIncludedInCheckpointWhileUiProjectionStillExcludesIt () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineRunCheckpointFactsTests.cs:101
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="5109" name="MovingTheSameWandTreeToGroundDoesNotProduceRetirement" fullname="Game.Run.Tests.OnlineRunCheckpointFactsTests.MovingTheSameWandTreeToGroundDoesNotProduceRetirement" methodname="MovingTheSameWandTreeToGroundDoesNotProduceRetirement" classname="Game.Run.Tests.OnlineRunCheckpointFactsTests" runstate="Runnable" seed="770972155" result="Failed" start-time="2026-11-03 04:40:23Z" end-time="2026-11-03 04:40:23Z" duration="0.002291" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  入局统一金币余额或DS货币修订非法。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineRunCheckpointFactsTests.Workspace (System.Boolean rolled, System.Int32 uses) [0x00201] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineRunCheckpointFactsTests.cs:53
+at Game.Run.Tests.OnlineRunCheckpointFactsTests.MovingTheSameWandTreeToGroundDoesNotProduceRetirement () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineRunCheckpointFactsTests.cs:136
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="5110" name="PersonalExitKeepsActualNonzeroLossWithoutWaitingForAnotherOwnersJournalReservation" fullname="Game.Run.Tests.OnlineRunCheckpointFactsTests.PersonalExitKeepsActualNonzeroLossWithoutWaitingForAnotherOwnersJournalReservation" methodname="PersonalExitKeepsActualNonzeroLossWithoutWaitingForAnotherOwnersJournalReservation" classname="Game.Run.Tests.OnlineRunCheckpointFactsTests" runstate="Runnable" seed="1261869510" result="Failed" start-time="2026-11-03 04:40:23Z" end-time="2026-11-03 04:40:23Z" duration="0.003038" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  入局统一金币余额或DS货币修订非法。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineRunCheckpointFactsTests.Workspace (System.Boolean rolled, System.Int32 uses) [0x00201] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineRunCheckpointFactsTests.cs:53
+at Game.Run.Tests.OnlineRunCheckpointFactsTests.PersonalExitKeepsActualNonzeroLossWithoutWaitingForAnotherOwnersJournalReservation () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineRunCheckpointFactsTests.cs:148
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="5107" name="PreparedInventoryCannotBeCapturedButCommittedChangesUseCurrentAmounts" fullname="Game.Run.Tests.OnlineRunCheckpointFactsTests.PreparedInventoryCannotBeCapturedButCommittedChangesUseCurrentAmounts" methodname="PreparedInventoryCannotBeCapturedButCommittedChangesUseCurrentAmounts" classname="Game.Run.Tests.OnlineRunCheckpointFactsTests" runstate="Runnable" seed="132956353" result="Failed" start-time="2026-11-03 04:40:23Z" end-time="2026-11-03 04:40:23Z" duration="0.001955" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  入局统一金币余额或DS货币修订非法。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineRunCheckpointFactsTests.Workspace (System.Boolean rolled, System.Int32 uses) [0x00201] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineRunCheckpointFactsTests.cs:53
+at Game.Run.Tests.OnlineRunCheckpointFactsTests.PreparedInventoryCannotBeCapturedButCommittedChangesUseCurrentAmounts () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineRunCheckpointFactsTests.cs:87
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

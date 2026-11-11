@@ -1,4 +1,5 @@
 using Game.Materials;
+using Game.Core;
 using System.Collections.Generic;
 using System.Reflection;
 using Game.Combat;
@@ -374,6 +375,78 @@ namespace Game.ElementField.Tests
             float expected = MaxApplyPerTick * 64f / byte.MaxValue;
             Assert.That(target.GetIntensity(StatusKind.Burning), Is.EqualTo(expected).Within(0.0001f));
             Assert.That(target.GetIntensity(StatusKind.Wet), Is.Zero);
+        }
+
+        [Test]
+        public void SuspendedAuthorityDirectExposurePreservesStatusAndDoesNotAccumulatePausedTime()
+        {
+            Deposit(0, MaterialId.Fire, 128);
+            StatusController target = CreateTarget(CellCenter(0), Vector3.one * .4f);
+            _exposure.TickExposure(ExposureInterval);
+            float dose = MaxApplyPerTick * 128f / byte.MaxValue;
+            Assert.That(target.GetIntensity(StatusKind.Burning), Is.EqualTo(dose).Within(.0001f));
+
+            // 沿用真实Store/Physics/Status夹具，只注入接收方Authority身份来隔离Exposure写门。
+            // CPU Authority初始化由独立夹具覆盖；这里不是生产热切换Owner的调用示例。
+            SetPrivateField(_runtime, "_executionMode", WorldExecutionMode.Authority);
+            _runtime.SetSimulationSuspended(true);
+            _exposure.TickExposure(10f);
+            Assert.That(target.GetIntensity(StatusKind.Burning), Is.EqualTo(dose).Within(.0001f),
+                "直接TickExposure也必须拒绝挂起世界，保留原Status且不继续增加剂量。");
+
+            _runtime.SetSimulationSuspended(false);
+            _exposure.TickExposure(ExposureInterval / 2f);
+            Assert.That(target.GetIntensity(StatusKind.Burning), Is.EqualTo(dose).Within(.0001f));
+            _exposure.TickExposure(ExposureInterval / 2f);
+            Assert.That(target.GetIntensity(StatusKind.Burning), Is.EqualTo(2f * dose).Within(.0001f),
+                "显式恢复只积新的有效采样时间，不补十秒暂停剂量。");
+        }
+
+        [Test]
+        public void SynchronousAuthoritySuspensionStopsLaterExposureTargetsAndCatchUpRounds()
+        {
+            Deposit(0, MaterialId.Fire, 128);
+            StatusController first = CreateTarget(CellCenter(0), Vector3.one * .4f);
+            StatusController second = CreateTarget(CellCenter(0), Vector3.one * .4f);
+            // EditMode不保证AddComponent自动执行Awake；真实身份缓存在这里建立，不能让事件仍带默认TargetId=0。
+            InvokePrivateVoid(first, "Awake");
+            InvokePrivateVoid(second, "Awake");
+            SetPrivateField(_runtime, "_executionMode", WorldExecutionMode.Authority);
+            int changes = 0;
+            System.Action<StatusChangedEvent> suspend = change =>
+            {
+                if (change.Kind != StatusKind.Burning || change.TargetId != first.gameObject.GetInstanceID()
+                    && change.TargetId != second.gameObject.GetInstanceID()) return;
+                changes++;
+                _runtime.SetSimulationSuspended(true);
+            };
+            EventBus<StatusChangedEvent>.Subscribe(suspend);
+            try
+            {
+                _exposure.TickExposure(3f * ExposureInterval);
+                float dose = MaxApplyPerTick * 128f / byte.MaxValue;
+                Assert.That(changes, Is.EqualTo(1), "首个Status通知中暂停后，同轮后续目标和补采样不得继续写。");
+                Assert.That(first.GetIntensity(StatusKind.Burning) + second.GetIntensity(StatusKind.Burning),
+                    Is.EqualTo(dose).Within(.0001f), "Physics目标顺序不影响只提交首个合法剂量的事实。");
+                _runtime.SetSimulationSuspended(false);
+                _exposure.TickExposure(ExposureInterval / 2f);
+                Assert.That(changes, Is.EqualTo(1), "被中断的补采样预算不能成为恢复后的时间债。");
+            }
+            finally { EventBus<StatusChangedEvent>.Unsubscribe(suspend); }
+        }
+
+        [Test]
+        public void FaultedWorldDirectExposureDoesNotWriteExistingStatus()
+        {
+            Deposit(0, MaterialId.Fire, 128);
+            StatusController target = CreateTarget(CellCenter(0), Vector3.one * .4f);
+            _exposure.TickExposure(ExposureInterval);
+            float before = target.GetIntensity(StatusKind.Burning);
+            Assert.That(before, Is.GreaterThan(0), "先证明真实材料/Collider能够到达Status写入，避免空查询假通过。");
+            SetPrivateField(_runtime, "_simulationFaulted", true);
+            _exposure.TickExposure(ExposureInterval);
+            Assert.That(target.GetIntensity(StatusKind.Burning), Is.EqualTo(before),
+                "材料故障后残留可查询Store不能继续成为Exposure伤害/反应来源。");
         }
 
         [Test]

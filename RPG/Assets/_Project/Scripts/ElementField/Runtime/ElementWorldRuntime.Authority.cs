@@ -18,10 +18,12 @@ namespace Game.ElementField
         public WorldExecutionMode ExecutionMode => _executionMode;
         public bool IsSimulationFaulted => _simulationFaulted;
         // Formal 写入口共用同一个生命周期判定：故障世界可能保留半份状态，不能继续接收材料或扣库存。
-        // DebugPause/Frozen 只停止 Solver，仍允许已有实验收取/投放；它们不等于必须重建的 Faulted。
+        // Authority挂起表示本世界已撤销新玩法写入资格；直接Port和投射物入队也必须在准备前拒绝。
+        // 单机空间暂停、SimulationPausedForDebug仍保留原实验收取/投放语义，不把暂停伪装成故障或回滚。
         // Phase 内部的 Stage/Undo 仍由原事务 Owner 调用，这个门不参与半途回滚的合法性判断。
         internal bool CanAcceptWorldWrites => IsInitialized && !_simulationFaulted
-            && _executionMode != WorldExecutionMode.Replica;
+            && _executionMode != WorldExecutionMode.Replica
+            && (_executionMode != WorldExecutionMode.Authority || !SimulationSuspended);
         // Source 与时钟观察统一提交边界：Authority 外层、单机/测试材料 Tick、库存事务都不能中途导出或交错推进。
         internal bool IsWorldStepInProgress => _worldStepInProgress || _authorityStepInProgress || _materialTransactionInProgress;
 

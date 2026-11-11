@@ -11,7 +11,7 @@ using UnityEngine;
 namespace Game.Multiplayer
 {
     /// <summary>权威事实与本地 Replica 的组合。消息只安装结果；所有 Gameplay 仍在 Character / Combat / Run。</summary>
-    public sealed class OnlineCombatWorld : IDisposable
+    public sealed partial class OnlineCombatWorld : IDisposable
     {
         private sealed class Output
         {
@@ -20,29 +20,66 @@ namespace Game.Multiplayer
             internal GameObject Root;
             internal Rigidbody Body;
             internal ProjectileBase Projectile;
-            internal bool Terminated;
+            internal ThrownContainerProjectile Container;
+            internal MaterialPayloadRuntimeAdapter Material;
+            internal string ContainerContentId, InventoryId, FlightId;
+            internal bool Terminated, Published;
             internal Vector3 LastPosition, Velocity;
             internal Quaternion LastRotation;
             internal double ReceivedAt;
             internal ParticleSystem[] Particles;
             internal bool[] ResumeParticles;
         }
+        /// <summary>复制槽和代理先预留；Run完成同实例迁移后才Launch，Prepare失败可无损取消。</summary>
+        private sealed class PreparedContainerProxy : IContainerThrowProxy
+        {
+            private readonly OnlineCombatWorld _owner;
+            private readonly Output _output;
+            private bool _finished;
+            internal PreparedContainerProxy(OnlineCombatWorld owner, Output output) { _owner = owner; _output = output; }
+            public void Launch()
+            {
+                if (_finished) throw new InvalidOperationException("准备好的投瓶代理只能提交一次。");
+                _finished = true;
+                // 此处已是提交后的事实。启动抛错也保留代理/输出槽，不取消材料或伪造退货。
+                try { _output.Container.Launch(); }
+                finally { _owner.PublishPreparedContainer(_output); }
+            }
+            public void Cancel()
+            {
+                if (_finished) return; _finished = true;
+                var root = _output.Root;
+                if (_output.Container != null) _output.Container.Cancel();
+                _output.Id = 0; _output.Root = null; _output.Body = null; _output.Container = null;
+                _output.ContainerContentId = _output.InventoryId = _output.FlightId = null;
+                if (root != null && root.GetComponent<ThrownContainerProjectile>() == null) UnityEngine.Object.Destroy(root);
+            }
+        }
         private readonly OnlineWorldBootstrap _world;
         private readonly OnlineCombatDefinition _definition;
         private readonly CombatSimulationWorld _simulation;
-        private readonly CombatNetworkChannel _channel;
-        private readonly RoomNetworkManager _manager;
+        private CombatNetworkChannel _channel;
+        private RoomNetworkManager _manager;
         private readonly RoomInstanceBootstrap _instance;
-        private readonly MovementNetworkChannel _movementChannel;
-        private readonly InventoryNetworkChannel _inventoryChannel;
-        private readonly uint[] _inventoryEpochs = new uint[4], _inventoryVersions = new uint[4];
+        private readonly IOnlineRevivalDecisionProvider _revivalDecisions;
+        private MovementNetworkChannel _movementChannel;
+        private InventoryNetworkChannel _inventoryChannel;
+        private readonly uint[] _inventoryEpochs = new uint[4], _inventoryVersions = new uint[4], _inventorySelectionVersions = new uint[4];
         private readonly ulong[] _inventorySequences = new ulong[4];
-        private readonly string[] _inventorySelections = new string[4], _setupWands = new string[4];
+        // 公开地面是同一DS世界的共享事实；它变化时每名Owner都要收到新完整快照，即使个人背包未变。
+        private readonly uint[] _inventoryGroundVersions = new uint[4];
+        private readonly uint[] _inventoryCurrencyVersions = new uint[4];
+        private readonly uint[] _inventoryResearchVersions = new uint[4];
+        private OnlineGroundItemAuthority _groundItems;
+        private readonly string[] _setupWands = new string[4];
         private readonly uint[] _setupRevisions = new uint[4];
         // Cast属于同Run的角色，可比一次Manager/CombatWorld活得更久。按真正订阅过的Driver记录所有权，
         // Dispose只移除本实例的委托，不从已换代的可变Registry猜测应当解绑谁。
         private readonly OnlineCastDriver[] _intentDrivers = new OnlineCastDriver[OnlineActorLimits.PlayerCount];
         private readonly OnlineCastDriver[] _receiptDrivers = new OnlineCastDriver[OnlineActorLimits.PlayerCount];
+        // 每个Actor离散绑定一次，重连复用同一委托；不能每次认证生成新工厂替换原Flight的Owner。
+        private readonly Func<ContainerThrowExchange, string, GameObject, IContainerThrowProxy>[] _containerFactories
+            = new Func<ContainerThrowExchange, string, GameObject, IContainerThrowProxy>[OnlineActorLimits.PlayerCount];
         private readonly CombatFactMessage _out = new CombatFactMessage();
         private readonly Output[] _outputs = new Output[1024];
         private readonly uint[] _bootstrappedEpoch = new uint[4], _actorSequence = new uint[OnlineActorLimits.MaximumActors];
@@ -51,8 +88,12 @@ namespace Game.Multiplayer
         private readonly Dictionary<int, ulong> _instanceActors = new Dictionary<int, ulong>(2048);
         private ulong _nextOutput;
         private uint _sequence, _lastReliable;
+        private uint _containerReplicaEpoch;
         private readonly SnapshotSendClock _snapshotClock = new SnapshotSendClock();
         private bool _disposed, _presentationFrozen;
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        private double _nextInventoryRejectionLog;
+#endif
         private readonly Animator[] _actorAnimators = new Animator[OnlineActorLimits.MaximumActors];
         private readonly float[] _actorAnimationSpeeds = new float[OnlineActorLimits.MaximumActors];
         public bool Faulted { get; private set; }
@@ -68,13 +109,18 @@ namespace Game.Multiplayer
         }
         public OnlineCombatWorld(OnlineWorldBootstrap world, OnlineCombatDefinition definition,
             CombatSimulationWorld simulation, CombatNetworkChannel channel, RoomNetworkManager manager, RoomInstanceBootstrap instance)
+            : this(world, definition, simulation, channel, manager, instance, NoRevivalProvider.Instance) { }
+
+        public OnlineCombatWorld(OnlineWorldBootstrap world, OnlineCombatDefinition definition,
+            CombatSimulationWorld simulation, CombatNetworkChannel channel, RoomNetworkManager manager, RoomInstanceBootstrap instance,
+            IOnlineRevivalDecisionProvider revivalDecisions)
         {
             _world = world; _definition = definition; _simulation = simulation; _channel = channel; _manager = manager; _instance = instance;
+            _revivalDecisions = revivalDecisions ?? NoRevivalProvider.Instance;
             _movementChannel = manager.GetComponent<MovementNetworkChannel>();
             _inventoryChannel = manager.GetComponent<InventoryNetworkChannel>();
             if (_inventoryChannel == null) _inventoryChannel = manager.gameObject.AddComponent<InventoryNetworkChannel>();
-            _inventoryChannel.GameplayConfigHash = definition.GameplayConfigHash;
-            _inventoryChannel.GameplayHash = definition.WireHash;
+            _inventoryChannel.ConfigureWorld(this, definition.GameplayConfigHash, definition.WireHash, ValidateClientInventoryCandidate);
             _inventoryChannel.CommandReceived += OnInventoryCommand;
             for (int i = 0; i < _outputs.Length; i++) _outputs[i] = new Output();
             _channel.GameplayHash = definition.WireHash; _channel.IntentReceived += OnIntent; _channel.FactReceived += OnFact;
@@ -83,6 +129,8 @@ namespace Game.Multiplayer
             EventBus<OnlineCharacterActionEvent>.Subscribe(OnAction);
             EventBus<OnlineBossTeleportPresentationEvent>.Subscribe(OnTeleport);
             EventBus<CombatCastSoundEvent>.Subscribe(OnCastSound);
+            EventBus<ContainerTransitResolvedEvent>.Subscribe(OnContainerResolved);
+            EventBus<ElementReactionEvent>.Subscribe(OnElementReaction);
         }
         public bool BindAuthority(NetworkActorRegistry.Slot slot, JoinConnectionIdentity identity)
         {
@@ -91,20 +139,91 @@ namespace Game.Multiplayer
             var assets = OnlineOwnedAssetMapping.ToCore(source);
             var cast = slot.Cast;
             if (cast == null) { cast = slot.Player.gameObject.AddComponent<OnlineCastDriver>(); slot.Cast = cast; }
+            if (_world.DungeonDefinition != null && _world.DungeonDefinition.IsPeacefulHome
+                && !cast.ConfigureHomeWorld(_world.HomeBindings)) return false;
             if (!cast.InitializeAuthority(assets, _definition, _simulation, out string error))
             { GameLog.Error("入局战斗资产被拒绝：" + error, "OnlineCombat"); return false; }
+            if (!RestoreHomeEntry(slot, identity, out error))
+            { Faulted = true; _world.SynchronizeMaterialLifecycle(); GameLog.Error("和平入场连续性被拒绝：" + error, "OnlineCombat"); return false; }
+            if (!cast.ConfigureCheckpointJournal(_world.RunCheckpointJournal))
+            { GameLog.Error("同Run退役Journal绑定被拒绝，保留原工作区。", "OnlineInventory"); return false; }
+            // 正式地图读取原材料端口的WorldId；认证重连复用Workspace，重复绑定不能重建内容/幂等账本。
+            if (_definition.HasContainerUse && !cast.ConfigureContainerWorld(_world.MaterialTransferWorldId))
+            { GameLog.Error("正式在线容器缺少一致的材料World绑定。", "OnlineCombat"); return false; }
+            if (_definition.HasContainerUse)
+            {
+                if (_definition.FindOutputKey(_definition.ContainerThrowPrefab) == 0)
+                { GameLog.Error("容器物理代理尚未进入共同受控输出表，请刷新本版配置。", "OnlineCombat"); return false; }
+                int index = (int)identity.ActorId - 1;
+                if (_containerFactories[index] == null)
+                {
+                    ulong actor = identity.ActorId;
+                    _containerFactories[index] = (exchange, content, model) => PrepareContainerOutput(actor, exchange, content, model);
+                }
+                if (!cast.ConfigureContainerThrowFactory(_containerFactories[index])) return false;
+            }
+            if (!EnsureGroundItems()) return false;
+            if (!cast.ConfigureGroundWorld(_groundItems))
+            { GameLog.Error("正式在线容器缺少同一共享地面归属表。", "OnlineCombat"); return false; }
             cast.SetConnection(identity.ConnectionEpoch, true);
             BindReceiptDriver((int)identity.ActorId - 1, cast);
             RegisterActorHierarchy(slot, identity.ActorId);
             return true;
         }
+        private bool EnsureGroundItems()
+        {
+            if (_groundItems != null) return true;
+            var candidate = new OnlineGroundItemAuthority(_definition, _world.gameObject.scene);
+            if (!candidate.ConfigureCheckpointJournal(_world.RunCheckpointJournal))
+            { candidate.Dispose(); return false; }
+            if (!candidate.ConfigureDungeonLoot(_world.DungeonDefinition, _instance != null ? _instance.RunId : null, out var error))
+            {
+                candidate.Dispose(); Faulted = true; _world.SynchronizeMaterialLifecycle();
+                GameLog.Error("原副本容器来源配置无法满足可信表/有界目录约束：" + error, "OnlineInventory");
+                return false;
+            }
+            if (!ConfigureGroundCoins(candidate, out error))
+            {
+                candidate.Dispose(); Faulted = true; _world.SynchronizeMaterialLifecycle();
+                GameLog.Error("原金币来源或认证收集入口无法装配：" + error, "OnlineInventory"); return false;
+            }
+            _groundItems = candidate; return true;
+        }
+
         public void BindClient(NetworkActorRegistry.Slot slot, ulong actor, uint epoch, bool local)
         {
+            if (local && !_world.IsAuthority)
+            {
+                if (_containerReplicaEpoch != 0 && epoch < _containerReplicaEpoch) return;
+                if (_containerReplicaEpoch != 0 && epoch > _containerReplicaEpoch)
+                {
+                    // 本地离线期间可能漏过最终Resolve。只清旧连接的容器视觉，DS原Flight/材料继续保留；
+                    // Setup之后原可靠Birth会补回仍存活的同OutputId，已释放瓶则不会再出现。
+                    for (int i = 0; i < _outputs.Length; i++)
+                    {
+                        var output = _outputs[i];
+                        if (output.Id == 0 || string.IsNullOrEmpty(output.ContainerContentId) && output.Material == null) continue;
+                        var root = output.Root;
+                        if (root != null)
+                        {
+                            root.SetActive(false);
+                            if (Application.isPlaying) UnityEngine.Object.Destroy(root); else UnityEngine.Object.DestroyImmediate(root);
+                        }
+                        output.Id = 0; output.Root = null; output.Body = null; output.Container = null; output.Material = null; output.Projectile = null;
+                        output.ContainerContentId = output.InventoryId = output.FlightId = null; output.Terminated = true;
+                        if (output.Published) ActiveOutputs--; output.Published = false;
+                    }
+                }
+                _containerReplicaEpoch = epoch;
+            }
             if (slot.Cast == null)
             {
                 slot.Cast = slot.Player.gameObject.AddComponent<OnlineCastDriver>();
             }
             slot.Cast.InitializeClient(actor, epoch, _definition, local);
+            if (local && _world.DungeonDefinition != null && _world.DungeonDefinition.IsPeacefulHome)
+                slot.Cast.ConfigureHomeWorld(_world.HomeBindings);
+            slot.Cast.ConfigureGroundCoinPrefab(_world.DungeonDefinition != null ? _world.DungeonDefinition.CoinPrefab : null);
             BindIntentDriver((int)actor - 1, local ? slot.Cast : null);
         }
         private void BindIntentDriver(int index, OnlineCastDriver driver)
@@ -123,6 +242,35 @@ namespace Game.Multiplayer
             _receiptDrivers[index] = driver;
             if (driver != null) driver.ReceiptProduced += OnReceipt;
         }
+
+        private bool ValidateClientInventoryCandidate(OnlineInventoryPresentationSnapshot snapshot)
+        {
+            if (_disposed || _world.IsAuthority) return false;
+            var auth = _manager.GetComponent<JoinTicketAuthenticator>();
+            var identity = auth != null && auth.ClientAuthenticated ? auth.ClientIdentity : null;
+            if (!InventorySnapshotInbox.Matches(identity, snapshot, _definition.GameplayConfigHash)) return false;
+            var expected = new OnlineInventoryPresentationIdentity(identity.RunId, identity.PlayerId, identity.ActorId,
+                identity.RunId + "/" + identity.PlayerId, _definition.GameplayConfigHash, identity.ConnectionEpoch,
+                _world.gameObject.scene.path);
+            var slot = _world.Registry[(int)identity.ActorId - 1];
+            // Actor尚未绑定时也做纯目录/空间验证；已有同Epoch Source时还需验证当前时序。
+            // 坏高序号不能先占Inbox候选，再把同NetworkUpdate内的正常低序号永久丢掉。
+            string error;
+            bool accepted = slot.Player == _world.LocalPlayer && slot.Cast != null && slot.Epoch == identity.ConnectionEpoch
+                ? slot.Cast.CanInstallClientInventory(expected, snapshot, out error)
+                : OnlineCastDriver.ValidateClientInventory(_definition, expected, snapshot, out error);
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            // Inbox 在安装前就会拒绝非法候选；只在 PumpClientInventory 打日志会漏掉这一类失败，
+            // 玩家只能看到旧图标和后续 StaleVersion。诊断保留本地纯校验原因，不写账户、Ticket
+            // 或完整资产正文；限频避免持续坏包造成每帧日志/分配。权限与候选提交水位不受诊断影响。
+            if (!accepted && Time.realtimeSinceStartupAsDouble >= _nextInventoryRejectionLog)
+            {
+                _nextInventoryRejectionLog = Time.realtimeSinceStartupAsDouble + 5;
+                GameLog.Warn("线上库存候选在安装前被拒绝，保留上一份一致读数：" + error, "OnlineInventory");
+            }
+#endif
+            return accepted;
+        }
         public void ActorLeft(ulong actor, uint epoch)
         { _world.Registry[(int)actor - 1].Cast?.SetConnection(epoch, false); }
 
@@ -136,14 +284,23 @@ namespace Game.Multiplayer
                 !_inventoryChannel.TryTakeClientSnapshot(out var snapshot)) return;
             var auth = _manager.GetComponent<JoinTicketAuthenticator>();
             var identity = auth != null ? auth.ClientIdentity : null;
+            bool installed = false;
+            try
+            {
             if (!InventorySnapshotInbox.Matches(identity, snapshot, _definition.GameplayConfigHash)) return;
             var slot = _world.Registry[(int)identity.ActorId - 1];
             if (slot.Player != _world.LocalPlayer || slot.Cast == null || slot.Epoch != identity.ConnectionEpoch) return;
             var expected = new OnlineInventoryPresentationIdentity(identity.RunId, identity.PlayerId, identity.ActorId,
                 identity.RunId + "/" + identity.PlayerId, _definition.GameplayConfigHash, identity.ConnectionEpoch,
                 _world.gameObject.scene.path);
-            if (!slot.Cast.InstallClientInventory(expected, snapshot, out var error))
+            if (!(installed = slot.Cast.InstallClientInventory(expected, snapshot, out var error)))
                 GameLog.Warn("当前线上库存快照被拒绝，保留上一份一致读数：" + error, "OnlineInventory");
+            }
+            finally
+            {
+                // 只有Run原子安装成功才提交网络水位；未绑定Actor/坏批次都释放候选。
+                _inventoryChannel.ConfirmClientSnapshot(snapshot.SnapshotSequence, installed);
+            }
         }
 
         private void PumpOwnerInventories()
@@ -155,19 +312,28 @@ namespace Game.Multiplayer
                 if (identity == null || slot.Cast == null || !slot.SimulationReady ||
                     !_movementChannel.IsActorReady(identity.ActorId, identity.ConnectionEpoch)) continue;
                 uint version = slot.Cast.OwnedInventoryVersion;
-                string selection = slot.Cast.SelectedOwnedWandId;
-                if (version == 0 || _inventoryEpochs[i] == identity.ConnectionEpoch &&
-                    _inventoryVersions[i] == version && _inventorySelections[i] == selection) continue;
+                uint selection = slot.Cast.OwnedInventorySelectionVersion;
+                uint currencyVersion = slot.Cast.OwnedCurrencyVersion;
+                uint researchVersion = slot.Cast.OwnedResearchSessionVersion;
+                uint groundVersion = _groundItems != null ? _groundItems.Version : 0;
+                if (version == 0 || !InventoryCommandDeliveryPolicy.ShouldSendOwnerSnapshot(identity.ConnectionEpoch,
+                    version, selection, _inventoryEpochs[i], _inventoryVersions[i], _inventorySelectionVersions[i])
+                    && groundVersion == _inventoryGroundVersions[i] && currencyVersion == _inventoryCurrencyVersions[i]
+                    && researchVersion == _inventoryResearchVersions[i]) continue;
                 // 每帧仅比较基础值。只有入场/重连/资产或选择离散变化才构造完整值；Mana恢复不走此路径。
                 ulong next = _inventorySequences[i] + 1;
                 if (next == 0 || !slot.Cast.TryCaptureInventory(identity.ConnectionEpoch, next, _world.ServerTick, out var snapshot) ||
                     !_inventoryChannel.SendToOwner(identity, snapshot))
                 {
                     // 已就绪的权威数据仍无法导出/编码是确定的组合错误；停止而非每帧分配失败候选并刷日志。
-                    Faulted = true; GameLog.Error("权威库存无法发布，已停止该副本模拟以保留当前资产。", "OnlineInventory"); return;
+                    Faulted = true; _world.SynchronizeMaterialLifecycle();
+                    GameLog.Error("权威库存无法发布，已停止该副本模拟以保留当前资产。", "OnlineInventory"); return;
                 }
                 _inventorySequences[i] = next; _inventoryEpochs[i] = identity.ConnectionEpoch;
-                _inventoryVersions[i] = version; _inventorySelections[i] = selection;
+                _inventoryVersions[i] = version; _inventorySelectionVersions[i] = selection;
+                _inventoryGroundVersions[i] = groundVersion;
+                _inventoryCurrencyVersions[i] = currencyVersion;
+                _inventoryResearchVersions[i] = researchVersion;
             }
         }
         private void OnLocalIntent(OnlineCastIntent intent)
@@ -197,6 +363,13 @@ namespace Game.Multiplayer
         }
         public void StepAuthority(float dt, uint tick)
         {
+            // 沿原唯一玩法步处理已抽plan；不在网络Pump或每帧用Realtime重试，Frozen不积债。
+            _groundItems?.StepDungeonLoot(dt, !_disposed && _world.IsAuthority && _world.CanAdvance);
+            if (_groundItems != null && _groundItems.Faulted)
+            {
+                Faulted = true; _world.SynchronizeMaterialLifecycle();
+                GameLog.Error("地面Coin事实/版本无法继续安全发布，世界已暂停并保留现场。", "OnlineInventory"); return;
+            }
             AdvanceActorBodies(tick);
             for (int i = 0; i < 4; i++)
             {
@@ -212,7 +385,7 @@ namespace Game.Multiplayer
         {
             _out.ResetForReuse(); _out.ProtocolVersion = ProtocolCompatibility.CurrentVersion; _out.GameplayHash = _definition.WireHash;
             _out.Sequence = ++_sequence; _out.ServerTick = Math.Max(1u, _world.ServerTick); _out.Kind = kind; _out.ActorId = actor;
-            _out.ConnectionEpoch = Math.Max(1u, _world.Registry[(int)actor - 1].Epoch);
+            _out.ConnectionEpoch = actor == 0 ? 1u : Math.Max(1u, _world.Registry[(int)actor - 1].Epoch);
             return _out;
         }
         private void OnReceipt(OnlineCastReceipt receipt)
@@ -256,23 +429,96 @@ namespace Game.Multiplayer
         private void OnBorn(CombatOutputSpawnedEvent born)
         {
             if (_disposed || !_world.IsAuthority || born.Output == null) return;
-            uint key = _definition.FindOutputKey(born.DefinitionPrefab);
+            var material = born.Output.GetComponent<MaterialPayloadRuntimeAdapter>();
+            bool materialOutput = material != null && material.ExecutionMode == CombatExecutionMode.Authority;
+            uint key = materialOutput ? 0 : _definition.FindOutputKey(born.DefinitionPrefab);
             int free = FreeSlot();
-            if (key == 0 || free < 0 || _nextOutput == uint.MaxValue)
+            if (!materialOutput && key == 0 || free < 0 || _nextOutput == uint.MaxValue
+                || materialOutput && (born.ActorId == 0 || born.CommandId == 0))
             {
                 // 无法复制的 Gameplay 不能继续偷偷结算；冻结该世界并保留显式故障，不能丢消息后继续跑。
-                Faulted = true; born.Output.SetActive(false); UnityEngine.Object.Destroy(born.Output);
+                // 出生通知来自已提交的输出；销毁会触发取消/在途结束，造成扣量事实与现场不一致。
+                // 锁存故障让统一写门停止推进，保留对象供现场诊断；明确退出World才执行原清理。
+                Faulted = true;
+                _world.SynchronizeMaterialLifecycle();
                 GameLog.Error("输出超出受控 Prefab 表或复制容量，权威世界已停止。", "OnlineCombat"); return;
             }
             var output = _outputs[free]; output.Id = ++_nextOutput; output.Actor = born.ActorId; output.Command = born.CommandId;
-            output.Ordinal = (uint)output.Id; output.Key = key; output.Root = born.Output; output.Terminated = false;
+            output.Ordinal = (uint)output.Id; output.Key = key; output.Root = born.Output; output.Terminated = false; output.Published = true;
+            output.Container = null; output.ContainerContentId = output.InventoryId = output.FlightId = null;
+            output.Material = materialOutput ? material : null;
             output.Body = born.Output.GetComponent<Rigidbody>(); output.Projectile = born.Output.GetComponent<ProjectileBase>();
             if (output.Projectile != null)
             {
                 // 离散出生时绑定一次；每 Tick 不创建闭包。终止回调先于 Unity 帧尾销毁，保留真实点/原因。
                 output.Projectile.Terminated += (reason, point, direction) => Terminate(output, reason, point);
             }
+            if (output.Material != null)
+            {
+                // 生命周期用原OutputId/1024槽，私有Run预算和来源不进入网络事实。
+                output.Material.Terminated += (reason, point) => Terminate(output, reason, point);
+                output.Material.UnexpectedlyDestroyed += () =>
+                {
+                    if (_disposed) return;
+                    Faulted = true; _world.SynchronizeMaterialLifecycle();
+                    GameLog.Error("已提交材料标记意外销毁，保留原预算并暂停世界。", "OnlineCombat");
+                };
+            }
             ActiveOutputs++; SpawnedOutputs++; SendBirth(output);
+        }
+        private IContainerThrowProxy PrepareContainerOutput(ulong actor, ContainerThrowExchange exchange, string contentId, GameObject model)
+        {
+            if (_disposed || !_world.IsAuthority || !_world.CanAdvance || _world.ServerTick == 0 || exchange == null || model == null
+                || actor < 1 || actor > OnlineActorLimits.PlayerCount || !_world.IsConfiguredActor(actor)
+                || !_definition.TryGetContainerWorldModel(contentId, out var expected) || expected != model) return null;
+            var prefab = _definition.ContainerThrowPrefab; uint key = _definition.FindOutputKey(prefab); int free = FreeSlot();
+            if (prefab == null || key == 0 || free < 0 || _nextOutput == uint.MaxValue) return null;
+            GameObject go = null;
+            try
+            {
+                go = UnityEngine.Object.Instantiate(prefab, exchange.Request.TargetPosition, Quaternion.identity, _world.transform);
+                go.SetActive(false); go.transform.localScale = Vector3.one;
+                var projectile = go.GetComponent<ThrownContainerProjectile>();
+                if (projectile == null || !projectile.InstallWorldModel(model)) { UnityEngine.Object.Destroy(go); return null; }
+                projectile.ConfigureExecutionMode(CombatExecutionMode.Authority, _simulation);
+                var slot = _world.Registry[(int)actor - 1];
+                projectile.Prepare(exchange.Request.InventoryId, exchange.Request.WorldId, exchange.FlightId,
+                    exchange.Request.ThrowVelocity, _definition.ContainerFlightSeconds, _definition.ContainerMaximumFlightDistance,
+                    slot.Body != null ? slot.Body.GetComponent<Collider>() : null);
+                var output = _outputs[free];
+                output.Id = ++_nextOutput; output.Actor = actor; output.Command = exchange.Request.RequestId;
+                output.Ordinal = (uint)output.Id; output.Key = key; output.Root = go; output.Body = go.GetComponent<Rigidbody>();
+                output.Projectile = null; output.Container = projectile; output.Material = null; output.Terminated = output.Published = false;
+                output.ContainerContentId = contentId; output.InventoryId = exchange.Request.InventoryId; output.FlightId = exchange.FlightId;
+                return new PreparedContainerProxy(this, output);
+            }
+            catch
+            {
+                // 还没有把物品迁出携带位置；准备失败只释放候选代理，不接触真实Composition。
+                if (go != null)
+                {
+                    var projectile = go.GetComponent<ThrownContainerProjectile>();
+                    if (projectile != null) projectile.Cancel(); else UnityEngine.Object.Destroy(go);
+                }
+                throw;
+            }
+        }
+        private void PublishPreparedContainer(Output output)
+        {
+            if (output.Published || output.Id == 0) return;
+            output.Published = true; ActiveOutputs++; SpawnedOutputs++; SendBirth(output);
+        }
+        private void OnContainerResolved(ContainerTransitResolvedEvent resolved)
+        {
+            if (_disposed || !_world.IsAuthority) return;
+            for (int i = 0; i < _outputs.Length; i++)
+            {
+                var output = _outputs[i];
+                if (output.Id == 0 || output.Container == null || output.InventoryId != resolved.InventoryId || output.FlightId != resolved.FlightId) continue;
+                Terminate(output, resolved.Reason == ContainerTransitEndReason.Deposited ? ProjectileTerminationReason.Impact : ProjectileTerminationReason.Cancelled,
+                    output.Root != null ? output.Root.transform.position : output.LastPosition);
+                return; // 最终Resolve才终止视觉；部分Impact仍保留原OutputId和余量。
+            }
         }
         private int FreeSlot()
         { for (int i = 0; i < _outputs.Length; i++) if (_outputs[i].Id == 0) return i; return -1; }
@@ -280,13 +526,19 @@ namespace Game.Multiplayer
         { for (int i = 0; i < _outputs.Length; i++) if (_outputs[i].Id == id) return _outputs[i]; return null; }
         private void SendBirth(Output output, NetworkConnectionToClient target = null)
         {
-            if (output.Root == null || output.Terminated) return;
+            if (output.Root == null || output.Terminated || !output.Published) return;
             var fact = NewFact(4, output.Actor); FillOutput(output, fact); fact.PrefabKey = output.Key; fact.OutputOrdinal = output.Ordinal;
+            // 模型只在可靠出生/重连补发，稳态15Hz沿OutputId更新，避免反复解析相同字符串。
+            if (output.Container != null) fact.ContainerContentId = output.ContainerContentId;
             _channel.SendFact(fact, target);
         }
         private static void FillOutput(Output output, CombatFactMessage fact)
         {
             fact.OutputId = output.Id; fact.CommandId = output.Command;
+            if (output.Container != null)
+            { fact.ContainerWaiting = output.Container.IsWaiting; }
+            if (output.Material != null)
+            { fact.MaterialOutput = true; fact.MaterialWaiting = output.Material.IsWaiting; }
             var pose = output.Root.transform; var p = pose.position; var q = pose.rotation;
             var v = output.Body != null && !output.Body.isKinematic ? output.Body.linearVelocity : Vector3.zero;
             output.LastPosition = p;
@@ -311,7 +563,13 @@ namespace Game.Multiplayer
             {
                 var slot = _world.Registry[i]; var connection = _manager.ActorConnection(i);
                 if (connection == null || slot.Cast == null || !slot.SimulationReady || !_movementChannel.IsActorReady((ulong)i + 1, slot.Epoch)) continue;
-                if (!slot.Cast.TryGetAuthorityResources(out var resources)) continue;
+                if (!slot.Cast.TryGetAuthorityResources(out var resources))
+                {
+                    // 空手Owner已清除客户端施法缓存；同一杖以同ProgramRevision重新装备时也需要恢复音效元数据。
+                    // 这里只失效杖Setup缓存，保留连接bootstrap Epoch，避免把换装备误当重连并重播所有现存输出Birth。
+                    _setupWands[i] = null; _setupRevisions[i] = 0;
+                    continue;
+                }
                 if (_bootstrappedEpoch[i] == slot.Epoch && _setupWands[i] == resources.WandInstanceId &&
                     _setupRevisions[i] == resources.ProgramRevision) continue;
                 var setup = NewFact(1, (ulong)i + 1); setup.WandInstanceId = resources.WandInstanceId;
@@ -328,7 +586,9 @@ namespace Game.Multiplayer
             {
                 var output = _outputs[i]; if (output.Id == 0 || output.Root != null) continue;
                 if (!output.Terminated) Terminate(output, ProjectileTerminationReason.Cancelled, output.LastPosition);
-                output.Id = 0; output.Body = null; output.Projectile = null; ActiveOutputs--;
+                output.Id = 0; output.Body = null; output.Projectile = null; output.Container = null; output.Material = null;
+                output.ContainerContentId = output.InventoryId = output.FlightId = null;
+                if (output.Published) ActiveOutputs--; output.Published = false;
             }
             // 与移动共用同一发送时钟：沿已有 deadline 保留晚帧余数，避免 50FPS 时把 15Hz 降成 12.5Hz。
             // hitch 后只取得一次当前状态的发送资格；不补发没有保存过的历史状态，也不扩大每帧带宽预算。
@@ -361,7 +621,7 @@ namespace Game.Multiplayer
             }
             for (int i = 0; i < _outputs.Length; i++)
             {
-                var output = _outputs[i]; if (output.Id == 0 || output.Root == null || output.Terminated) continue;
+                var output = _outputs[i]; if (output.Id == 0 || output.Root == null || output.Terminated || !output.Published) continue;
                 var fact = NewFact(5, output.Actor); FillOutput(output, fact); _channel.SendFact(fact, null, false);
             }
         }
@@ -399,7 +659,22 @@ namespace Game.Multiplayer
             var fact = NewFact(9, actor); fact.MaxHp = slot.Health.MaxHp;
             fact.Amount = slot.BodyLifetime != null ? slot.BodyLifetime.RemainingSeconds(_world.ServerTick) : 0f;
             _channel.SendFact(fact);
+            // HP0先是战斗事实。只有正式副本的权威复活判定确认不可复活，才进入可靠个人终态保存；
+            // 尸体显示时长与此裁决无关，断线/ESC也不会经过这个死亡入口。
+            if (IsFinalPlayerDeath(actor) && _instance != null) _instance.RequestFinalDeath(_world, actor);
+            // 死亡位置是用户确认的落点锚；原一次概率/随机池在Run内消费，不按队员重复发奖。
+            // 只读遭遇门同时排除活NPC、未激活区、玩家与Replica，P8无原表不进入该来源。
+            if (_world.CanAwardDungeonNpcLoot(actor) && EnsureGroundItems()
+                && !_groundItems.TryRecordDungeonNpcDeath(actor, death.Position))
+                GameLog.Error("原P7死亡容器plan未获接收，当前事实已保留，请检查稳定NPC映射。", "OnlineInventory");
         }
+        internal bool IsFinalPlayerDeath(ulong actor)
+        {
+            if (_disposed || !_world.IsAuthority || _world.DungeonId == null || actor < 1 || actor > 4 || _world.Registry == null) return false;
+            var slot = _world.Registry[(int)actor - 1];
+            return slot.Health != null && !slot.Health.IsAlive && slot.Cast != null && _revivalDecisions.IsFinalDeath(actor);
+        }
+
         private NetworkActorRegistry.Slot EnsureActor(ulong actor)
         {
             if (!_world.IsConfiguredActor(actor)) return null;
@@ -410,6 +685,7 @@ namespace Game.Multiplayer
         }
         private void OnFact(CombatFactMessage fact)
         {
+            if (fact.Kind == 12) { ApplyReactionBurst(fact); return; }
             if (_disposed || _world.IsAuthority || !_world.IsConfiguredActor(fact.ActorId) ||
                 fact.AttackerActorId != 0 && !_world.IsConfiguredActor(fact.AttackerActorId)) return;
             bool snapshot = fact.Kind == 5 || fact.Kind == 7;
@@ -472,13 +748,29 @@ namespace Game.Multiplayer
             {
                 var output = FindOutput(fact.OutputId);
                 if (output == null || output.Terminated || output.LastSequence != 0 && unchecked((int)(fact.Sequence - output.LastSequence)) <= 0) return;
+                if (fact.MaterialOutput != (output.Material != null) || !fact.MaterialOutput && fact.MaterialWaiting
+                    || output.Material != null && output.Material.IsWaiting && !fact.MaterialWaiting) return;
+                if (fact.ContainerContentId.Length != 0 || output.Container == null && fact.ContainerWaiting
+                    || output.Container != null && output.Container.IsWaiting && !fact.ContainerWaiting) return;
                 output.LastSequence = fact.Sequence; InstallPose(output, fact); return;
             }
             if (fact.Kind == 6)
             {
                 var output = FindOutput(fact.OutputId); if (output == null) return;
-                if (output.Root != null) UnityEngine.Object.Destroy(output.Root);
-                output.Id = 0; output.Root = null; output.Terminated = true; ActiveOutputs--; return;
+                if (output.Root != null)
+                {
+                    // 原Kind6已携带真实终止点与reason+1。只把Impact交给独立视觉口；
+                    // 不能触发Impacted/SurfaceImpacted，否则Replica会重复Payload、伤害或材料沉积。
+                    if (output.Projectile != null && fact.Result >= 1
+                        && fact.Result <= (uint)ProjectileTerminationReason.TimedTrigger + 1)
+                        output.Projectile.TryPresentReplicaTermination((ProjectileTerminationReason)(fact.Result - 1),
+                            new Vector3(fact.PositionX, fact.PositionY, fact.PositionZ));
+                    // 新材料标记支持隔离EditMode生命周期检查；既有普通输出仍走原运行时Destroy路径。
+                    // 正式Play两种均延迟销毁，不能为新标记顺便改变原弹体清理与事件时序。
+                    if (output.Material != null && !Application.isPlaying) UnityEngine.Object.DestroyImmediate(output.Root);
+                    else UnityEngine.Object.Destroy(output.Root);
+                }
+                output.Id = 0; output.Root = null; output.Material = null; output.Terminated = true; ActiveOutputs--; return;
             }
             int index = (int)fact.ActorId - 1;
             if (fact.Kind == 7)
@@ -548,15 +840,44 @@ namespace Game.Multiplayer
         private void CreateReplica(CombatFactMessage fact)
         {
             if (FindOutput(fact.OutputId) != null) return;
-            var prefab = _definition.OutputPrefab(fact.PrefabKey); int free = FreeSlot(); if (prefab == null || free < 0) return;
+            int free = FreeSlot(); if (free < 0) return;
+            if (fact.MaterialOutput)
+            {
+                if (fact.PrefabKey != 0 || fact.ContainerContentId.Length != 0 || fact.ContainerWaiting) return;
+                var marker = MaterialPayloadRuntimeAdapter.CreateReplica(_world.transform,
+                    new Vector3(fact.PositionX, fact.PositionY, fact.PositionZ), fact.MaterialWaiting);
+                var material = _outputs[free]; material.Id = fact.OutputId; material.Actor = fact.ActorId; material.Command = fact.CommandId;
+                material.Key = 0; material.Ordinal = fact.OutputOrdinal; material.LastSequence = fact.Sequence;
+                material.Root = marker.gameObject; material.Material = marker; material.Body = null; material.Projectile = null; material.Container = null;
+                material.ContainerContentId = material.InventoryId = material.FlightId = null; material.Terminated = false; material.Published = true;
+                material.Particles = Array.Empty<ParticleSystem>(); material.ResumeParticles = Array.Empty<bool>();
+                InstallPose(material, fact); ActiveOutputs++; SpawnedOutputs++; return;
+            }
+            if (fact.MaterialWaiting) return;
+            var prefab = _definition.OutputPrefab(fact.PrefabKey); if (prefab == null) return;
+            GameObject containerModel = null;
+            if (fact.ContainerContentId.Length != 0)
+            {
+                if (prefab != _definition.ContainerThrowPrefab || !_definition.TryGetContainerWorldModel(fact.ContainerContentId, out containerModel)) return;
+            }
+            else if (prefab == _definition.ContainerThrowPrefab) return;
             var output = _outputs[free]; output.Id = fact.OutputId; output.Actor = fact.ActorId; output.Command = fact.CommandId;
+            output.Material = null;
             output.Key = fact.PrefabKey; output.Terminated = false; output.LastSequence = fact.Sequence;
             var go = UnityEngine.Object.Instantiate(prefab, new Vector3(fact.PositionX, fact.PositionY, fact.PositionZ),
                 new Quaternion(fact.RotationX, fact.RotationY, fact.RotationZ, fact.RotationW), _world.transform);
+            if (containerModel != null) go.SetActive(false);
             _simulation.ConfigureHierarchy(go, CombatExecutionMode.Replica);
+            var container = go.GetComponent<ThrownContainerProjectile>();
+            if (containerModel != null && (container == null || !container.InstallWorldModel(containerModel)))
+            { output.Id = 0; UnityEngine.Object.Destroy(go); return; }
             foreach (var collider in go.GetComponentsInChildren<Collider>(true)) collider.enabled = false;
             foreach (var body in go.GetComponentsInChildren<Rigidbody>(true)) body.isKinematic = true;
+            // 原物理壳默认inactive供Prepare使用；Replica净化完成也须显式出生，不能沿用模板隐藏状态。
+            if (containerModel != null) go.SetActive(true);
             output.Root = go; output.Body = go.GetComponent<Rigidbody>(); output.Projectile = go.GetComponent<ProjectileBase>();
+            output.Container = container; output.ContainerContentId = fact.ContainerContentId; output.Published = true;
+            output.InventoryId = output.FlightId = null;
             output.Particles = go.GetComponentsInChildren<ParticleSystem>(true);
             output.ResumeParticles = new bool[output.Particles.Length];
             if (_presentationFrozen) FreezeParticles(output, true);
@@ -568,14 +889,17 @@ namespace Game.Multiplayer
             output.LastRotation = new Quaternion(fact.RotationX, fact.RotationY, fact.RotationZ, fact.RotationW);
             output.Velocity = new Vector3(fact.VelocityX, fact.VelocityY, fact.VelocityZ); output.ReceivedAt = Time.realtimeSinceStartupAsDouble;
             if (output.Root != null) output.Root.transform.SetPositionAndRotation(output.LastPosition, output.LastRotation);
+            if (output.Container != null) output.Container.ApplyReplicaWaiting(fact.ContainerWaiting);
+            if (output.Material != null) output.Material.ApplyReplicaWaiting(fact.MaterialWaiting);
         }
         public void Present(double now)
         {
             if (_disposed || _world.IsAuthority) return;
             AdvanceActorBodies(_world.ServerTick);
-            if (_presentationFrozen != _world.Frozen)
+            bool presentationPaused = _world.Frozen || _world.ResearchPaused;
+            if (_presentationFrozen != presentationPaused)
             {
-                _presentationFrozen = _world.Frozen;
+                _presentationFrozen = presentationPaused;
                 // 冻结是离散边沿。保留每个粒子的播放资格，恢复时不重启本来已结束的爆炸。
                 for (int i = 0; i < _outputs.Length; i++) if (_outputs[i].Id != 0) FreezeParticles(_outputs[i], _presentationFrozen);
                 for (int i = 0; i < _world.Registry.Capacity; i++)
@@ -617,7 +941,7 @@ namespace Game.Multiplayer
         {
             if (_disposed) return; _disposed = true;
             // Animator属于保留的Scene角色，冻结速度只是本CombatOwner暂时接管的表现状态。
-            // 换Manager会创建默认未冻结的新Owner；若旧Owner不交还速度，新实例没有true→false边沿可恢复。
+            // 换Manager只重绑网络；这里是整个World终止时交还场景Animator的原速度。
             // 仅在当前仍持有冻结权限时恢复自己缓存的原值，不能在已恢复后覆盖角色后来设置的新速度。
             if (_presentationFrozen)
                 for (int i = 0; i < _actorAnimators.Length; i++)
@@ -629,11 +953,23 @@ namespace Game.Multiplayer
             { BindIntentDriver(i, null); BindReceiptDriver(i, null); }
             _channel.IntentReceived -= OnIntent; _channel.FactReceived -= OnFact;
             _inventoryChannel.CommandReceived -= OnInventoryCommand;
+            _inventoryChannel.DetachWorld(this);
+            // 世界终止先释放本实例的地面模型/登记；重连不会走Dispose，不能借连接重建补发物品。
+            _groundItems?.Dispose(); _groundItems = null;
             EventBus<CombatOutputSpawnedEvent>.Unsubscribe(OnBorn); EventBus<DamageReceivedEvent>.Unsubscribe(OnDamage); EventBus<DeathEvent>.Unsubscribe(OnDeath);
             EventBus<OnlineCharacterActionEvent>.Unsubscribe(OnAction);
+            EventBus<ElementReactionEvent>.Unsubscribe(OnElementReaction);
             EventBus<OnlineBossTeleportPresentationEvent>.Unsubscribe(OnTeleport);
             EventBus<CombatCastSoundEvent>.Unsubscribe(OnCastSound);
-            for (int i = 0; i < _outputs.Length; i++) if (_outputs[i].Root != null) UnityEngine.Object.Destroy(_outputs[i].Root);
+            EventBus<ContainerTransitResolvedEvent>.Unsubscribe(OnContainerResolved);
+            for (int i = 0; i < _outputs.Length; i++)
+            {
+                var output = _outputs[i]; if (output.Root == null) continue;
+                // 只有真正World Dispose结束已提交材料；连接换代只清Replica，不调用此Authority出口。
+                if (output.Material != null) output.Material.CloseWorld();
+                else if (Application.isPlaying) UnityEngine.Object.Destroy(output.Root);
+                else UnityEngine.Object.DestroyImmediate(output.Root);
+            }
         }
     }
 }

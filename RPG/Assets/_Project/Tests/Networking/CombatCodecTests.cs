@@ -8,12 +8,115 @@ namespace Game.Networking.Tests
 {
     public sealed class CombatCodecTests
     {
+        [Test]
+        public void ToxicReactionFactSupportsEnvironmentAndRejectsInvalidPresentationValues()
+        {
+            var message = Fact();
+            message.ResetForReuse();
+            message.ProtocolVersion = ProtocolCompatibility.CurrentVersion;
+            message.GameplayHash = 1; message.Sequence = 1; message.ServerTick = 1; message.ConnectionEpoch = 1;
+            message.Kind = 12; message.ActorId = 0; message.Result = 1; message.Phase = 3;
+            message.Amount = .7f; message.Cooldown = .4f;
+            Assert.That(Decode(Create(), message.ToByteArray(), "Fact", out _), Is.True);
+            message.CurrentMana = 1; message.MaxMana = 1;
+            Assert.That(Decode(Create(), message.ToByteArray(), "Fact", out _), Is.False);
+            message.CurrentMana = 0; message.MaxMana = 0; message.ConnectionEpoch = 2;
+            Assert.That(Decode(Create(), message.ToByteArray(), "Fact", out _), Is.False);
+            message.ConnectionEpoch = 1;
+            message.Amount = 2f;
+            Assert.That(Decode(Create(), message.ToByteArray(), "Fact", out _), Is.False);
+            message.Amount = .7f; message.Result = 99;
+            Assert.That(Decode(Create(), message.ToByteArray(), "Fact", out _), Is.False);
+            message.Result = 1; message.Kind = 8;
+            Assert.That(Decode(Create(), message.ToByteArray(), "Fact", out _), Is.False,
+                "环境反应使用全局表现事实，不能放宽普通Actor事实的身份范围。");
+        }
+
         private static object Create()
         {
             var type = typeof(MovementCodec).Assembly.GetType("Game.Networking.CombatCodec");
             Assert.That(type, Is.Not.Null, "缺少有界战斗协议解码器。");
             return Activator.CreateInstance(type);
         }
+
+        [Test]
+        public void ContainerOutputCarriesControlledModelAndWaitingStateAndResetClearsBoth()
+        {
+            var content = typeof(CombatFactMessage).GetProperty("ContainerContentId");
+            var waiting = typeof(CombatFactMessage).GetProperty("ContainerWaiting");
+            Assert.That(content, Is.Not.Null, "飞瓶只传受控目录键，不发送任意Prefab路径。");
+            Assert.That(waiting, Is.Not.Null);
+            var message = Fact(); message.Kind = 4; message.OutputId = 7; message.PrefabKey = 1; message.RotationW = 1;
+            content.SetValue(message, "item.container.container_01"); waiting.SetValue(message, true);
+            Assert.That(Decode(Create(), message.ToByteArray(), "Fact", out var decoded), Is.True);
+            Assert.That(content.GetValue(decoded), Is.EqualTo("item.container.container_01"));
+            Assert.That(waiting.GetValue(decoded), Is.True);
+            ((CombatFactMessage)decoded).ResetForReuse();
+            Assert.That(content.GetValue(decoded), Is.Empty); Assert.That(waiting.GetValue(decoded), Is.False);
+        }
+
+        [Test]
+        public void ContainerOutputMetadataCannotLeakIntoActorStateOrUseAnUnboundedModelKey()
+        {
+            var content = typeof(CombatFactMessage).GetProperty("ContainerContentId");
+            Assert.That(content, Is.Not.Null);
+            var message = Fact(); content.SetValue(message, "item.container.container_01");
+            Assert.That(Decode(Create(), message.ToByteArray(), "Fact", out _), Is.False);
+            message.Kind = 4; message.OutputId = 1; message.PrefabKey = 1; message.RotationW = 1;
+            content.SetValue(message, new string('a', 129));
+            Assert.That(Decode(Create(), message.ToByteArray(), "Fact", out _), Is.False);
+        }
+
+        [Test]
+        public void ContainerStateUsesItsExistingOutputIdentityWithoutRepeatingModelStrings()
+        {
+            var waiting = typeof(CombatFactMessage).GetProperty("ContainerWaiting");
+            Assert.That(waiting, Is.Not.Null);
+            var state = Fact(); state.Kind = 5; state.OutputId = 9; state.RotationW = 1;
+            waiting.SetValue(state, true);
+            Assert.That(Decode(Create(), state.ToByteArray(), "Fact", out var decoded), Is.True,
+                "15Hz只更新已出生OutputId的等待状态，模型字符串只在可靠出生/重连补发一次。");
+            Assert.That(typeof(CombatFactMessage).GetProperty("ContainerContentId").GetValue(decoded), Is.Empty);
+            Assert.That(waiting.GetValue(decoded), Is.True);
+        }
+        [Test]
+        public void MaterialMarkerUsesExplicitTypeWithoutPrefabOrPrivateBudgetAndResetClearsItsState()
+        {
+            var marker = Fact(); marker.Kind = 4; marker.OutputId = 12; marker.RotationW = 1;
+            marker.MaterialOutput = true; marker.MaterialWaiting = true;
+            Assert.That(Decode(Create(), marker.ToByteArray(), "Fact", out var decoded), Is.True);
+            Assert.That(EncodeFact(Create(), marker), Is.True);
+            var state = (CombatFactMessage)decoded;
+            Assert.That(state.PrefabKey, Is.Zero);
+            Assert.That(state.MaterialOutput && state.MaterialWaiting, Is.True);
+            state.ResetForReuse();
+            Assert.That(state.MaterialOutput || state.MaterialWaiting, Is.False);
+            marker.Kind = 5;
+            Assert.That(Decode(Create(), marker.ToByteArray(), "Fact", out _), Is.True);
+        }
+
+        [Test]
+        public void MaterialMarkerRejectsMixedOutputTypesActorMetadataAndMalformedBooleanWire()
+        {
+            var marker = Fact(); marker.Kind = 4; marker.OutputId = 12; marker.RotationW = 1;
+            marker.MaterialOutput = true;
+            Assert.That(Decode(Create(), marker.ToByteArray(), "Fact", out _), Is.True);
+            marker.PrefabKey = 1; Assert.That(Decode(Create(), marker.ToByteArray(), "Fact", out _), Is.False);
+            marker.PrefabKey = 0; marker.ContainerContentId = "item.container.container_01";
+            Assert.That(Decode(Create(), marker.ToByteArray(), "Fact", out _), Is.False);
+            marker.ContainerContentId = ""; marker.ContainerWaiting = true;
+            Assert.That(Decode(Create(), marker.ToByteArray(), "Fact", out _), Is.False);
+            marker.ContainerWaiting = false; marker.Kind = 1; marker.WandInstanceId = new string('a', 32); marker.ProgramRevision = 1;
+            Assert.That(Decode(Create(), marker.ToByteArray(), "Fact", out _), Is.False, "Setup也不能借早退吞掉不属于它的材料字段。");
+            var state = Fact(); state.Kind = 5; state.OutputId = 12; state.RotationW = 1;
+            state.MaterialWaiting = true; Assert.That(Decode(Create(), state.ToByteArray(), "Fact", out _), Is.False);
+            state.MaterialWaiting = false;
+            Assert.That(Decode(Create(), Append(state.ToByteArray(), new byte[] { 0x88, 3, 2 }), "Fact", out _), Is.False);
+            Assert.That(Decode(Create(), Append(state.ToByteArray(), new byte[] { 0x90, 3, 2 }), "Fact", out _), Is.False);
+            state.MaterialOutput = true;
+            Assert.That(Decode(Create(), Append(state.ToByteArray(), new byte[] { 0x88, 3, 1 }), "Fact", out _), Is.False);
+        }
+
         private static bool Decode(object codec, byte[] bytes, string suffix, out object value)
         {
             var args = new object[] { new ArraySegment<byte>(bytes), null };

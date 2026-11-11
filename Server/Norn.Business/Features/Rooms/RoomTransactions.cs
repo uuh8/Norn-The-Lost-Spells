@@ -43,8 +43,18 @@ public sealed class RoomTransactions(OnlineDatabase database)
             """, new { Room = room }, tx, cancellationToken: ct));
         return new RoomReply { RoomId = room, DungeonId = party.DungeonId, LeaderPlayerId = party.LeaderCharacterId, State = party.State,
             ReadyRevision = party.ReadyRevision, RoomEpoch = party.RoomEpoch, RunId = party.ActiveRunId ?? "",
+            SinglePlayer = await IsSinglePlayerRoom(db, tx, room, ct),
             Members = members.Select(m => new RoomMemberReply { PlayerId = m.CharacterId, Username = m.Username, Seat = m.Seat, Ready = m.IsReady, InventoryVersion = m.ReadyInventoryVersion }).ToArray() };
     }
+    // 使用既有生命周期表的受信事实，不增加DB列，也不把IsMatchmaking=false的普通私房误作单人。
+    internal static Task<bool> IsSinglePlayerRoom(MySqlConnection db, MySqlTransaction tx, string room, CancellationToken ct)
+        => db.ExecuteScalarAsync<bool>(new CommandDefinition("""
+            SELECT EXISTS(SELECT 1 FROM Runs r JOIN RunLifecycleEvents e ON e.RunId=r.RunId AND e.RoomEpoch=r.RoomEpoch
+            WHERE r.RoomId=@Room AND e.EventCode='SinglePlayerEntry')
+            """, new { Room = room }, tx, cancellationToken: ct));
+    internal static Task<bool> IsSinglePlayerRun(MySqlConnection db, MySqlTransaction tx, string run, uint epoch, CancellationToken ct)
+        => db.ExecuteScalarAsync<bool>(new CommandDefinition("SELECT EXISTS(SELECT 1 FROM RunLifecycleEvents WHERE RunId=@Run AND RoomEpoch=@Epoch AND EventCode='SinglePlayerEntry')",
+            new { Run = run, Epoch = epoch }, tx, cancellationToken: ct));
     internal sealed class PartyRow
     {
         public string RoomId { get; set; } = ""; public string DungeonId { get; set; } = ""; public string LeaderCharacterId { get; set; } = "";

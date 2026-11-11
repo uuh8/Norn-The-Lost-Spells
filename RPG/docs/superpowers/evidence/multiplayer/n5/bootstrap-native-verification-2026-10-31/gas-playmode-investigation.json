@@ -1,0 +1,302 @@
+{
+  "collected_utc": "2026-10-31T10:49:00.850339+00:00",
+  "scope": "只读历史证据调查；未运行Unity、测试、构建、服务，未修改仓库文件或Git。",
+  "conclusion": "首轮执行未配置材料Binding的旧PlayMode测试程序集，是高置信度根因；没有证据要求生产Rendering改动。",
+  "confidence": "高置信度历史归因，未达到首轮DLL/PDB逐字节确认；没有本轮复现。",
+  "tests": [
+    {
+      "path": "F:\\Develop Project\\RPG\\RPG\\docs\\superpowers\\evidence\\multiplayer\\n5\\bootstrap-lifecycle-2026-10-31\\playmode-initial-results.xml",
+      "bytes": 6778,
+      "sha256": "39659E3E2593C40934610C4758C279A6E59AFEC2AA65E3688F3D0535062C0250",
+      "last_write_utc": "2026-10-31T10:30:34.270127+00:00",
+      "start_utc": "2026-10-31 10:30:31Z",
+      "end_utc": "2026-10-31 10:30:34Z",
+      "passed": 0,
+      "failed": 2,
+      "cases": [
+        {
+          "name": "P7OriginalEntryActivatesOnlyTheFirstTwoOfTwelveAuthoredEnemies",
+          "result": "Failed",
+          "failure": "Unhandled log message: '[Error] [Rendering] Gas Renderer 缺少初始化世界或 Material。'. Use UnityEngine.TestTools.LogAssert.Expect",
+          "stack": "Game.Core.GameLog:Error (string,string) (at Assets/_Project/Scripts/Core/GameLog.cs:28)\nGame.Rendering.GasFieldVolumeRenderer:Start () (at Assets/_Project/Scripts/Rendering/ElementField/GasFieldVolumeRenderer.cs:68)\n\n",
+          "output": "[Rendering] Gas Renderer 缺少初始化世界或 Material。\n[Combat] 受击动画状态名为空，CrossFade 将无法切换动画\n[Combat] 受击动画状态名为空，CrossFade 将无法切换动画\n"
+        },
+        {
+          "name": "P8VisibleBossStartsOnlyAfterRealSafetyVolumeExit",
+          "result": "Failed",
+          "failure": "Unhandled log message: '[Error] [Rendering] Gas Renderer 缺少初始化世界或 Material。'. Use UnityEngine.TestTools.LogAssert.Expect",
+          "stack": "Game.Core.GameLog:Error (string,string) (at Assets/_Project/Scripts/Core/GameLog.cs:28)\nGame.Rendering.GasFieldVolumeRenderer:Start () (at Assets/_Project/Scripts/Rendering/ElementField/GasFieldVolumeRenderer.cs:68)\n\n",
+          "output": "[Rendering] Gas Renderer 缺少初始化世界或 Material。\nSaving results to: Temp/SinglePlayer/playmode-results.xml\n"
+        }
+      ]
+    },
+    {
+      "path": "F:\\Develop Project\\RPG\\RPG\\docs\\superpowers\\evidence\\multiplayer\\n5\\bootstrap-lifecycle-2026-10-31\\playmode-green-results.xml",
+      "bytes": 4807,
+      "sha256": "BF9F2B255419A56E1860A0C38EC33E95BF74F2A57D364F507047F976A24BC10E",
+      "last_write_utc": "2026-10-31T10:34:27.831759+00:00",
+      "start_utc": "2026-10-31 10:34:25Z",
+      "end_utc": "2026-10-31 10:34:27Z",
+      "passed": 2,
+      "failed": 0,
+      "cases": [
+        {
+          "name": "P7OriginalEntryActivatesOnlyTheFirstTwoOfTwelveAuthoredEnemies",
+          "result": "Passed",
+          "failure": null,
+          "stack": null,
+          "output": "[Combat] 受击动画状态名为空，CrossFade 将无法切换动画\n[Combat] 受击动画状态名为空，CrossFade 将无法切换动画\n"
+        },
+        {
+          "name": "P8VisibleBossStartsOnlyAfterRealSafetyVolumeExit",
+          "result": "Passed",
+          "failure": null,
+          "stack": null,
+          "output": "Saving results to: Temp/SinglePlayer/playmode-results.xml\n"
+        }
+      ]
+    },
+    {
+      "path": "F:\\Develop Project\\RPG\\RPG\\docs\\superpowers\\evidence\\multiplayer\\n5\\bootstrap-lifecycle-2026-10-31\\playmode-repeat-results.xml",
+      "bytes": 4807,
+      "sha256": "FFE4EA172EFC46FDCD0A6E92E519C7B4C93F36361A5BD4C9874144D726993178",
+      "last_write_utc": "2026-10-31T10:36:49.214642+00:00",
+      "start_utc": "2026-10-31 10:35:12Z",
+      "end_utc": "2026-10-31 10:35:13Z",
+      "passed": 2,
+      "failed": 0,
+      "cases": [
+        {
+          "name": "P7OriginalEntryActivatesOnlyTheFirstTwoOfTwelveAuthoredEnemies",
+          "result": "Passed",
+          "failure": null,
+          "stack": null,
+          "output": "[Combat] 受击动画状态名为空，CrossFade 将无法切换动画\n[Combat] 受击动画状态名为空，CrossFade 将无法切换动画\n"
+        },
+        {
+          "name": "P8VisibleBossStartsOnlyAfterRealSafetyVolumeExit",
+          "result": "Passed",
+          "failure": null,
+          "stack": null,
+          "output": "Saving results to: Temp/SinglePlayer/playmode-results.xml\n"
+        }
+      ]
+    }
+  ],
+  "head_test_sha256": "6886E458E9B1A88FB46C8B84CEEFD9D9F759D968B5C9636FC63202E6E8166D37",
+  "head_ensure_enemy_line": 54,
+  "current_ensure_enemy_line": 66,
+  "line_delta": 12,
+  "historical_source_hash_comparisons": [
+    {
+      "path": "RPG/Assets/_Project/Editor/Networking/OnlineDungeonTools.cs",
+      "before": "0CB8810D38EC3B63E651C6FEA96DE2A878FE0D73ED69C71DC8F64EF1E7DE8310",
+      "after": "0CB8810D38EC3B63E651C6FEA96DE2A878FE0D73ED69C71DC8F64EF1E7DE8310",
+      "unchanged": true
+    },
+    {
+      "path": "RPG/Assets/_Project/Scripts/ElementField/Runtime/ElementWorldRuntime.cs",
+      "before": "DF353EBE30D54C43479892AE5CB6F5411020A77A9009FB4AC2180F0A6A1A4C5D",
+      "after": "AF1446CD2CA905EC52C4C65C2C60D2634D45F512114DD351CAF096F806889DD8",
+      "unchanged": false
+    },
+    {
+      "path": "RPG/Assets/_Project/Scripts/ElementField/Runtime/OnlineMaterialWorldBinding.cs",
+      "before": "C93D5613C261812AF5A955FC49E993C15A5E436EA10F4DD3A019B73E5598A5E6",
+      "after": "C93D5613C261812AF5A955FC49E993C15A5E436EA10F4DD3A019B73E5598A5E6",
+      "unchanged": true
+    },
+    {
+      "path": "RPG/Assets/_Project/Scripts/Rendering/ElementField/GasFieldVolumeRenderer.cs",
+      "before": "FB5183049B9053489EFFCEE721DF222639E5FBA6A730E5B6FE2830012C82E0FD",
+      "after": "FB5183049B9053489EFFCEE721DF222639E5FBA6A730E5B6FE2830012C82E0FD",
+      "unchanged": true
+    },
+    {
+      "path": "RPG/Assets/_Project/Tests/RunPlayMode/FormalDungeonWorldPlayModeTests.cs",
+      "before": "6886E458E9B1A88FB46C8B84CEEFD9D9F759D968B5C9636FC63202E6E8166D37",
+      "after": "FCE38422F33827CE377C0AE16460FDB8DD80EA53BCA625FCD797C462D51D5628",
+      "unchanged": false
+    }
+  ],
+  "files_at_collection": [
+    {
+      "path": "F:\\Develop Project\\RPG\\RPG\\docs\\superpowers\\evidence\\multiplayer\\n5\\bootstrap-lifecycle-2026-10-31\\source-hashes-before.json",
+      "bytes": 259859,
+      "sha256": "E431941A14A051A5FE1ECBD53CD8296BBB4241A352AEEA5EFFFC70D239B014B4",
+      "last_write_utc": "2026-10-31T09:43:47.415778+00:00"
+    },
+    {
+      "path": "F:\\Develop Project\\RPG\\RPG\\docs\\superpowers\\evidence\\multiplayer\\n5\\bootstrap-lifecycle-2026-10-31\\source-hashes-after.json",
+      "bytes": 270320,
+      "sha256": "8C70DD87DFB2D99C14F08CB48D40C7F73CCA787D811173D7F7E330073FAE4D9A",
+      "last_write_utc": "2026-10-31T10:36:51.185655+00:00"
+    },
+    {
+      "path": "F:\\Develop Project\\RPG\\RPG\\docs\\superpowers\\evidence\\multiplayer\\n5\\bootstrap-lifecycle-2026-10-31\\source-changes.json",
+      "bytes": 3608,
+      "sha256": "18B68966BA29C5BAA70EE58D67F4BADFD2823E34052B127C5C95A79C997B0C7D",
+      "last_write_utc": "2026-10-31T10:36:49.799095+00:00"
+    },
+    {
+      "path": "F:\\Develop Project\\RPG\\RPG\\docs\\superpowers\\evidence\\multiplayer\\n5\\bootstrap-lifecycle-2026-10-31\\full-results.xml",
+      "bytes": 250443,
+      "sha256": "F5EFFEF89BF40738AB6EBFC7410C8417EE59839A5542E81F6A5E083DEF43D9C9",
+      "last_write_utc": "2026-10-31T10:29:51.628931+00:00"
+    },
+    {
+      "path": "F:\\Develop Project\\RPG\\RPG\\docs\\superpowers\\evidence\\multiplayer\\n5\\bootstrap-lifecycle-2026-10-31\\full-request.json",
+      "bytes": 1460,
+      "sha256": "3073F40D9FC49EB82D178B0EB646B1C27AE3E8F5205567E6883CE5BC2F70369E",
+      "last_write_utc": "2026-10-31T10:26:49.841227+00:00"
+    },
+    {
+      "path": "F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Tests\\RunPlayMode\\FormalDungeonWorldPlayModeTests.cs",
+      "bytes": 7102,
+      "sha256": "FCE38422F33827CE377C0AE16460FDB8DD80EA53BCA625FCD797C462D51D5628",
+      "last_write_utc": "2026-10-31T10:33:41.365876+00:00"
+    },
+    {
+      "path": "F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Scripts\\Rendering\\ElementField\\GasFieldVolumeRenderer.cs",
+      "bytes": 12611,
+      "sha256": "FB5183049B9053489EFFCEE721DF222639E5FBA6A730E5B6FE2830012C82E0FD",
+      "last_write_utc": "2026-10-07T08:15:06.492442+00:00"
+    },
+    {
+      "path": "F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Scripts\\ElementField\\Runtime\\OnlineMaterialWorldBinding.cs",
+      "bytes": 8619,
+      "sha256": "C93D5613C261812AF5A955FC49E993C15A5E436EA10F4DD3A019B73E5598A5E6",
+      "last_write_utc": "2026-10-29T13:32:45.277121+00:00"
+    },
+    {
+      "path": "F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Editor\\Networking\\OnlineDungeonTools.cs",
+      "bytes": 60140,
+      "sha256": "0CB8810D38EC3B63E651C6FEA96DE2A878FE0D73ED69C71DC8F64EF1E7DE8310",
+      "last_write_utc": "2026-10-29T13:34:32.266164+00:00"
+    },
+    {
+      "path": "F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Prefabs\\World\\Online\\P7World.prefab",
+      "bytes": 655217,
+      "sha256": "0DF03DD8F697C3C082DF2C7F0A398BAE85ECA123478CDADD583755BA640D56C3",
+      "last_write_utc": "2026-10-31T10:24:27.468675+00:00"
+    },
+    {
+      "path": "F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Prefabs\\World\\Online\\P8World.prefab",
+      "bytes": 55652021,
+      "sha256": "47C161DD90DA5F60CA5FAD014C1F77D579EAE3E4180E3FA624C44F1CC3E15FBE",
+      "last_write_utc": "2026-10-31T10:24:41.451645+00:00"
+    },
+    {
+      "path": "F:\\Develop Project\\RPG\\RPG\\Library\\ScriptAssemblies\\Game.Run.PlayMode.Tests.dll",
+      "bytes": 1191936,
+      "sha256": "CBDEE88EC5960AE788E5CE17783A414B282FB3BF213EE7F7F486419E598C7F40",
+      "last_write_utc": "2026-10-31T10:45:12.055809+00:00"
+    },
+    {
+      "path": "F:\\Develop Project\\RPG\\RPG\\Library\\ScriptAssemblies\\Game.Run.PlayMode.Tests.pdb",
+      "bytes": 323352,
+      "sha256": "E6A4F822C616C0AEFCB2EB49C70338E490147AA63D0A408DA41FFF2CB533BCD9",
+      "last_write_utc": "2026-10-31T10:45:11.827482+00:00"
+    }
+  ],
+  "editor_log_snapshot": {
+    "path": "C:\\Users\\zhy\\AppData\\Local\\Unity\\Editor\\Editor.log",
+    "bytes_read": 1348220,
+    "sha256_of_bytes_read": "EA366339DA9C8B0A696C08ECB0BD9252F76F5F50C8F78D8543B620030847E3AF",
+    "excerpts": [
+      {
+        "line": 10848,
+        "text": "Loaded scene 'Assets/_Project/Scenes/P7_MainMenu.unity'"
+      },
+      {
+        "line": 10886,
+        "text": "Reloading assemblies for play mode."
+      },
+      {
+        "line": 10887,
+        "text": "Reloading assemblies after forced synchronous recompile."
+      },
+      {
+        "line": 11061,
+        "text": "Asset Pipeline Refresh (id=acb688da2a5924e43bd3e45c519473e9): Total: 10.652 seconds - Initiated by StopAssetImportingV2(ForceSynchronousImport | ForceDomainReload)"
+      },
+      {
+        "line": 11188,
+        "text": "[Rendering] Gas Renderer 缺少初始化世界或 Material。"
+      },
+      {
+        "line": 11196,
+        "text": "Game.Rendering.GasFieldVolumeRenderer:Start () (at Assets/_Project/Scripts/Rendering/ElementField/GasFieldVolumeRenderer.cs:68)"
+      },
+      {
+        "line": 11212,
+        "text": "Game.Run.Tests.FormalDungeonWorldPlayModeTests/<CheckMap>d__6:MoveNext () (at Assets/_Project/Tests/RunPlayMode/FormalDungeonWorldPlayModeTests.cs:54)"
+      },
+      {
+        "line": 11243,
+        "text": "Game.Run.Tests.FormalDungeonWorldPlayModeTests/<CheckMap>d__6:MoveNext () (at Assets/_Project/Tests/RunPlayMode/FormalDungeonWorldPlayModeTests.cs:54)"
+      },
+      {
+        "line": 11262,
+        "text": "[Rendering] Gas Renderer 缺少初始化世界或 Material。"
+      },
+      {
+        "line": 11270,
+        "text": "Game.Rendering.GasFieldVolumeRenderer:Start () (at Assets/_Project/Scripts/Rendering/ElementField/GasFieldVolumeRenderer.cs:68)"
+      },
+      {
+        "line": 11336,
+        "text": "Loaded scene 'Assets/_Project/Scenes/P7_MainMenu.unity'"
+      },
+      {
+        "line": 11434,
+        "text": "[1987/1991  0s] Csc Library/Bee/artifacts/1900b0aEDbg.dag/Game.Run.PlayMode.Tests.dll (+2 others)"
+      },
+      {
+        "line": 11448,
+        "text": "[1989/1991  0s] CopyFiles Library/ScriptAssemblies/Game.Run.PlayMode.Tests.pdb"
+      },
+      {
+        "line": 11449,
+        "text": "[1990/1991  0s] CopyFiles Library/ScriptAssemblies/Game.Run.PlayMode.Tests.dll"
+      },
+      {
+        "line": 11450,
+        "text": "*** Tundra build success (1.82 seconds), 5 items updated, 1991 evaluated"
+      },
+      {
+        "line": 11455,
+        "text": "Reloading assemblies after finishing script compilation."
+      },
+      {
+        "line": 12132,
+        "text": "Game.Run.Tests.FormalDungeonWorldPlayModeTests/<CheckMap>d__6:MoveNext () (at Assets/_Project/Tests/RunPlayMode/FormalDungeonWorldPlayModeTests.cs:66)"
+      },
+      {
+        "line": 12163,
+        "text": "Game.Run.Tests.FormalDungeonWorldPlayModeTests/<CheckMap>d__6:MoveNext () (at Assets/_Project/Tests/RunPlayMode/FormalDungeonWorldPlayModeTests.cs:66)"
+      },
+      {
+        "line": 12599,
+        "text": "Game.Run.Tests.FormalDungeonWorldPlayModeTests/<CheckMap>d__6:MoveNext () (at Assets/_Project/Tests/RunPlayMode/FormalDungeonWorldPlayModeTests.cs:66)"
+      },
+      {
+        "line": 12630,
+        "text": "Game.Run.Tests.FormalDungeonWorldPlayModeTests/<CheckMap>d__6:MoveNext () (at Assets/_Project/Tests/RunPlayMode/FormalDungeonWorldPlayModeTests.cs:66)"
+      }
+    ],
+    "full_log_copied": false
+  },
+  "first_tool_observation": {
+    "note": "调查初次读取时的工具输出；此后主控重编译，不能把当前DLL Hash当作历史首轮Hash。",
+    "dll_last_write_utc": "2026-10-31T10:33:47Z",
+    "pdb_last_write_utc": "2026-10-31T10:33:47Z"
+  },
+  "limitations": [
+    "未保存首次失败时的DLL/PDB或源文件中间版本，不能恢复其MVID/完整IL。",
+    "首次与绿色之间同时发生源码补强、Csc和Domain Reload，无法以两个绿色结果单独排除一切状态清理影响。",
+    "Gas错误没有记录scene/name/instanceID或具体失败谓词，不能仅凭该错误逐对象确认来源。",
+    "Editor.log没有每行UTC；测试UTC来自XML，编译顺序来自日志，文件写时仅作辅证。"
+  ],
+  "blocked_actions": []
+}

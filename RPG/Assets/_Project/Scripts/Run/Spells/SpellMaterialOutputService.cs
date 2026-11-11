@@ -24,11 +24,44 @@ namespace Game.Run
         private readonly ulong[] _lost = new ulong[256];
         private readonly MaterialAmount[] _buffer = new MaterialAmount[8];
         private readonly MaterialDepositExchange _exchange = new MaterialDepositExchange();
+        private Func<bool> _canWrite;
         private bool _executing;
         private static readonly ProfilerMarker Marker = new ProfilerMarker("Norn.SpellMaterials.Deposit");
         public int ActiveOutputs => _outputs.Count;
+        /// <summary>独立已扣量Owner的提交态导出；只读当前预算，不再次扣瓶、不推测原服务没有保存的卡ID。</summary>
+        public bool TryCaptureCheckpoint(out OnlineSpellMaterialCheckpointSnapshot[] outputs,
+            out OnlineOwnedMaterialAmountSnapshot[] lost)
+        {
+            outputs = null; lost = null;
+            if (_executing || _profile.Items.IsResourceBusy || _outputs.Count > OnlineOwnedCheckpointSnapshot.MaximumMaterialOutputs
+                || _profile.PendingMaterialOutputs != _outputs.Count) return false;
+            var captured = new OnlineSpellMaterialCheckpointSnapshot[_outputs.Count]; int at = 0;
+            foreach (var pair in _outputs)
+            {
+                var value = pair.Value;
+                if (value.Resolved || value.Id != pair.Key || string.IsNullOrWhiteSpace(value.Id)
+                    || string.IsNullOrWhiteSpace(value.WorldId) || value.Budget == null || value.Budget.Total == 0) return false;
+                var amounts = new OnlineOwnedMaterialAmountSnapshot[value.Budget.Count];
+                for (int i = 0; i < amounts.Length; i++)
+                { var part = value.Budget[i]; amounts[i] = new OnlineOwnedMaterialAmountSnapshot { MaterialKey = part.MaterialKey, Quantity = part.Quantity }; }
+                captured[at++] = new OnlineSpellMaterialCheckpointSnapshot { OutputId = value.Id, WorldId = value.WorldId, Components = amounts };
+            }
+            int losses = 0; for (int i = 1; i < _lost.Length; i++) if (_lost[i] != 0) losses++;
+            var recordedLost = new OnlineOwnedMaterialAmountSnapshot[losses]; at = 0;
+            for (int i = 1; i < _lost.Length; i++) if (_lost[i] != 0)
+                recordedLost[at++] = new OnlineOwnedMaterialAmountSnapshot { MaterialKey = (byte)i, Quantity = _lost[i] };
+            outputs = captured; lost = recordedLost; return true;
+        }
         public ulong LostQuantity(byte key) => _lost[key];
         public SpellMaterialOutputService(SinglePlayerProfile profile, string inventoryId) { _profile = profile; _inventoryId = inventoryId; }
+        /// <summary>线上工作区绑定动态最终门；原单机构造保持原行为，暂停不销毁已扣量的输出Owner。</summary>
+        internal void ConfigureAuthorityWriteGate(Func<bool> canWrite)
+        {
+            if (canWrite == null) throw new ArgumentNullException(nameof(canWrite));
+            if (_canWrite != null && _canWrite != canWrite) throw new InvalidOperationException("活跃材料输出不能替换权威写入门。");
+            _canWrite = canWrite;
+        }
+        internal bool OwnsOutput(string outputId) => outputId != null && _outputs.ContainsKey(outputId);
         internal PreparedLayer Prepare(SpellAttachmentState[] attachments, string[] cards, string worldId)
         {
             var batch = new PreparedLayer(this, attachments.Length);
@@ -64,11 +97,16 @@ namespace Game.Run
         private bool IsCarried(string id) => _profile.Items.TryGetLocation(id, out var location) && location.Kind == ItemLocationKind.Backpack
             && _profile.Items.TryGetLocation(location.OwnerId, out var bag) && bag.Kind == ItemLocationKind.EquippedBackpack && bag.OwnerId == _profile.ActorId;
         public SpellMaterialOutputResultEvent Execute(in SpellMaterialOutputEvent request)
+            => ExecuteCore(request, false);
+        private SpellMaterialOutputResultEvent ExecuteCore(in SpellMaterialOutputEvent request, bool explicitExit)
         {
             using var marker = Marker.Auto();
             var result = new SpellMaterialOutputResultEvent { InventoryId = _inventoryId, OutputId = request.OutputId, Failure = MaterialTransferFailure.WrongOwnership };
             if (request.InventoryId != _inventoryId || request.OutputId == null || !_outputs.TryGetValue(request.OutputId, out var output)) return result;
-            if (_executing) { result.Failure = MaterialTransferFailure.ResourceBusy; return result; }
+            // Ended 也会销毁真实已扣预算，不能成为绕过Frozen/同步故障门的特殊请求。
+            // 只有明确的EndAll退出路径可结束现场；普通事件和直接Execute都必须服从同一动态许可。
+            if (_executing || !explicitExit && _canWrite != null && !_canWrite())
+            { result.Failure = MaterialTransferFailure.ResourceBusy; return result; }
             if (request.Ended)
             {
                 for (int i = 0; i < output.Budget.Count; i++) { var amount = output.Budget[i]; _lost[amount.MaterialKey] += amount.Quantity; }
@@ -94,8 +132,8 @@ namespace Game.Run
         {
             // 关闭是离散边界；不能在Dictionary枚举中删除成员。
             var ids = new string[_outputs.Count]; _outputs.Keys.CopyTo(ids, 0);
-            for (int i = 0; i < ids.Length; i++) EventBus<SpellMaterialOutputResultEvent>.Publish(Execute(new SpellMaterialOutputEvent
-            { InventoryId = _inventoryId, OutputId = ids[i], Ended = true }));
+            for (int i = 0; i < ids.Length; i++) EventBus<SpellMaterialOutputResultEvent>.Publish(ExecuteCore(new SpellMaterialOutputEvent
+            { InventoryId = _inventoryId, OutputId = ids[i], Ended = true }, true));
         }
         private void Resolve(Output output) { output.Resolved = true; _outputs.Remove(output.Id); _profile.PendingMaterialOutputs--; }
         private static bool Finite(Vector3 p) => float.IsFinite(p.x) && float.IsFinite(p.y) && float.IsFinite(p.z);

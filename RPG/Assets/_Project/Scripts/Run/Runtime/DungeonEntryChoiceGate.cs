@@ -4,20 +4,20 @@ using UnityEngine;
 
 namespace Game.Run
 {
-    /// <summary>门选择的局部状态；不依赖UI或网络，保存/加载仍由门的原单机回调裁决。</summary>
+    /// <summary>门只发布单人/合作服务器意图，不持有本地资产写入或加载权限。</summary>
     public sealed class DungeonEntryChoiceGate
     {
         private readonly int _portalId;
         private readonly string _destination, _label;
-        private readonly Func<Collider, bool> _eligible, _enter;
+        private readonly Func<Collider, bool> _eligible;
         private readonly Func<bool> _acquirePause;
         private readonly Action _releasePause;
         private Collider _actor;
         private bool _pending, _enabled, _matching;
         public bool Pending => _pending;
         public DungeonEntryChoiceGate(int portalId, string destination, string label, Func<Collider, bool> eligible,
-            Func<Collider, bool> enter, Func<bool> acquirePause, Action releasePause)
-        { _portalId = portalId; _destination = destination; _label = label; _eligible = eligible; _enter = enter; _acquirePause = acquirePause; _releasePause = releasePause; }
+            Func<bool> acquirePause, Action releasePause)
+        { _portalId = portalId; _destination = destination; _label = label; _eligible = eligible; _acquirePause = acquirePause; _releasePause = releasePause; }
         public void Enable()
         {
             if (_enabled) return; _enabled = true;
@@ -40,6 +40,19 @@ namespace Game.Run
             { PortalId = _portalId, Actor = actor, DestinationKey = _destination, Label = _label });
             return true;
         }
+        /// <summary>
+        /// 原和平实验场只有单人入口，不弹合作选项。仍持有同一入场暂停，直到业务释放或真实认证确认；
+        /// F重复不会发第二份资产预留，也不借本地Repository切场景。
+        /// </summary>
+        public bool RequestSinglePlayer(Collider actor)
+        {
+            if (!_enabled || _pending || actor == null || !_eligible(actor)
+                || !EventBus<DungeonSinglePlayerRequestedEvent>.HasSubscribers || !_acquirePause()) return false;
+            _actor = actor; _pending = _matching = true;
+            EventBus<DungeonSinglePlayerRequestedEvent>.Publish(new DungeonSinglePlayerRequestedEvent
+                { PortalId = _portalId, DestinationKey = _destination });
+            return true;
+        }
         private void OnChoice(DungeonEntryChoiceSubmittedEvent choice)
         {
             if (!_enabled || !_pending || choice.PortalId != _portalId || choice.Actor != _actor) return;
@@ -51,14 +64,16 @@ namespace Game.Run
                 return;
             }
             if (choice.Mode == DungeonEntryMode.Cancel) { Close(); return; }
-            if (choice.Mode == DungeonEntryMode.Matchmaking && actor != null && _eligible(actor))
+            if ((choice.Mode == DungeonEntryMode.Matchmaking || choice.Mode == DungeonEntryMode.SinglePlayer) && actor != null && _eligible(actor))
             {
-                // 匹配保持弹窗/暂停，绝不调用单机保存/过门；N2独立完成业务入场后才切换玩法。
+                // 两种方式都等待真实Ticket认证，不把单人伪装成合作Ready或回退本地_enter。
                 _matching = true;
-                EventBus<DungeonMatchRequestedEvent>.Publish(new DungeonMatchRequestedEvent { PortalId = _portalId, DestinationKey = _destination }); return;
+                if (choice.Mode == DungeonEntryMode.SinglePlayer)
+                    EventBus<DungeonSinglePlayerRequestedEvent>.Publish(new DungeonSinglePlayerRequestedEvent { PortalId = _portalId, DestinationKey = _destination });
+                else EventBus<DungeonMatchRequestedEvent>.Publish(new DungeonMatchRequestedEvent { PortalId = _portalId, DestinationKey = _destination });
+                return;
             }
             Close(); // 先释放自己持有的暂停，其他Pause Reason仍由协调器保留。
-            if (choice.Mode == DungeonEntryMode.SinglePlayer && actor != null && _eligible(actor)) _enter(actor);
         }
         private void OnMatchReleased(DungeonMatchReleasedEvent released)
         {

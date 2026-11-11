@@ -50,6 +50,46 @@ namespace Game.Character.Tests
             _owned.Clear();
         }
 
+        [Test]
+        public void PeacefulHomeAcceptsTheOriginalEmptyWorldWithoutInventingEnemiesOrEncounters()
+        {
+            var home = MemoryHome();
+            Assert.That(home.TryValidate(out var error), Is.True, error);
+            Assert.That(home.NpcCount, Is.Zero); Assert.That(home.EncounterCount, Is.Zero);
+            Assert.That(home.ShowEncounterHud, Is.False);
+            SetLootField(home, "_dungeonId", "p7");
+            Assert.That(home.TryValidate(out _), Is.False, "和平例外不能令正式战斗副本的坏配置获得准入。");
+        }
+
+        [Test]
+        public void PeacefulHomeRuntimeNeverCreatesFakeStageCompletionOrBattleRewards()
+        {
+            var home = MemoryHome();
+            var world = (GameObject)typeof(OnlineDungeonDefinition).GetField("_worldPrefab", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(home);
+            var bindings = world.AddComponent<OnlineDungeonWorldBindings>();
+            _roster = new Roster();
+            OnlineDungeonRuntime runtime = null;
+            Assert.DoesNotThrow(() => runtime = new OnlineDungeonRuntime(home, bindings, _roster, true, (_, __) => { }, _ => { }));
+            _runtimes.Add(runtime);
+            for (uint tick = 1; tick <= 3; tick++) runtime.Step(1f / 30f, tick);
+            Assert.That(runtime.EncounterCount, Is.Zero); Assert.That(runtime.ShowEncounterHud, Is.False);
+            Assert.That(runtime.TryCapture(out _), Is.False, "无遭遇就没有可广播的战斗进度，更不能把空场景当清关。");
+        }
+
+        private OnlineDungeonDefinition MemoryHome()
+        {
+            var home = ScriptableObject.CreateInstance<OnlineDungeonDefinition>(); _owned.Add(home);
+            SetLootField(home, "_dungeonId", "home");
+            SetLootField(home, "_sourceScenePath", "Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Home.unity");
+            SetLootField(home, "_sourceHash", new string('a', 64));
+            SetLootField(home, "_worldPrefab", Own(new GameObject("Original peaceful Home memory world")));
+            SetLootField(home, "_playerSpawns", new Vector3[4]);
+            SetLootField(home, "_npcs", Array.Empty<OnlineDungeonNpcSpawn>());
+            SetLootField(home, "_encounters", Array.Empty<OnlineDungeonEncounterDefinition>());
+            SetLootField(home, "_showEncounterHud", false);
+            return home;
+        }
+
         [Test] public void OnlyCurrentEntryAndTargetableLivingPlayerMayStartP7Encounter()
         {
             object runtime = Create(false);
@@ -144,6 +184,229 @@ namespace Game.Character.Tests
                 "无效完整快照不能先消耗高Revision，从而阻塞同序号的合法读数。");
             AssertPhase(runtime, "Active", 1, 1);
         }
+
+        // 原始投放位置来自实际Scene内Layout实例的世界Transform；不把Prefab局部坐标或NavMesh散布当新来源。
+        [Test]
+        public void FixedSolidExportKeepsTheOriginalP7IceWorldPoseAndP8HasNoNewSource()
+        {
+            var inspect = SolidExportTools().GetMethod("InspectFixedSolidSpawns", new[] { typeof(string) });
+            Assert.That(inspect, Is.Not.Null, "窄刷新需先读取原固体来源，再剥离单机WorldItemSpawnPoint。");
+            var p7 = (Array)inspect.Invoke(null, new object[] { "p7" });
+            Assert.That(p7.Length, Is.EqualTo(1), "只接原p7.explore.0冰，原7个food点不导入线上来源。");
+            object spawn = p7.GetValue(0);
+            Assert.That(SolidSpawnValue<string>(spawn, "SpawnId"), Is.EqualTo("p7.explore.0"));
+            Assert.That(SolidSpawnValue<string>(spawn, "ContentId"), Is.EqualTo("containertest.ice"));
+            Assert.That(SolidSpawnValue<byte>(spawn, "MaterialKey"), Is.EqualTo((byte)5));
+            Assert.That(SolidSpawnValue<ulong>(spawn, "Quantity"), Is.EqualTo(256ul));
+            var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenPreviewScene("Assets/_Project/Scenes/P7_DemoRun.unity");
+            try
+            {
+                WorldItemSpawnPoint original = null;
+                foreach (var root in scene.GetRootGameObjects()) foreach (var point in root.GetComponentsInChildren<WorldItemSpawnPoint>(true))
+                    if (point.SpawnId == "p7.explore.0") { Assert.That(original, Is.Null); original = point; }
+                Assert.That(original, Is.Not.Null);
+                Assert.That(SolidSpawnValue<Vector3>(spawn, "Position"), Is.EqualTo(original.transform.position));
+                Assert.That(SolidSpawnValue<Quaternion>(spawn, "Rotation"), Is.EqualTo(original.transform.rotation));
+                var data = new SerializedObject(original);
+                Assert.That((ulong)data.FindProperty("_initialMaterialQuantity").intValue, Is.EqualTo(256ul));
+            }
+            finally { UnityEditor.SceneManagement.EditorSceneManager.ClosePreviewScene(scene); }
+            var definition = ScriptableObject.CreateInstance<OnlineDungeonDefinition>(); _owned.Add(definition);
+            SetLootField(definition, "_fixedSolidSpawns", p7);
+            var count = typeof(OnlineDungeonDefinition).GetProperty("FixedSolidCount");
+            var get = typeof(OnlineDungeonDefinition).GetMethod("GetFixedSolid");
+            Assert.That(count, Is.Not.Null); Assert.That(get, Is.Not.Null);
+            Assert.That(count.GetValue(definition), Is.EqualTo(1)); Assert.That(get.Invoke(definition, new object[] { 0 }), Is.SameAs(spawn));
+            var p8 = (Array)inspect.Invoke(null, new object[] { "p8" });
+            Assert.That(p8.Length, Is.Zero, "P8不能借用P7来源或凭空投放固体。");
+        }
+
+        [Test]
+        public void FixedSolidSourceHashIncludesOriginalLayoutIceAndMetadataWithoutAddingP8Inputs()
+        {
+            var enumerate = SolidExportTools().GetMethod("EnumerateLootHashInputs", new[] { typeof(string) });
+            Assert.That(enumerate, Is.Not.Null);
+            var paths = new List<string>((IEnumerable<string>)enumerate.Invoke(null, new object[] { "p7" }));
+            const string layout = "Assets/_Project/Prefabs/SinglePlayer/P7Dungeon/FixedFourStageLayout.prefab";
+            Assert.That(paths, Does.Contain(layout)); Assert.That(paths, Does.Contain(layout + ".meta"));
+            var source = AssetDatabase.LoadAssetAtPath<GameObject>(layout); WorldItemSpawnPoint ice = null;
+            foreach (var point in source.GetComponentsInChildren<WorldItemSpawnPoint>(true)) if (point.SpawnId == "p7.explore.0") ice = point;
+            Assert.That(ice, Is.Not.Null); string definitionPath = AssetDatabase.GetAssetPath(ice.Definition);
+            Assert.That(paths, Does.Contain(definitionPath)); Assert.That(paths, Does.Contain(definitionPath + ".meta"));
+            Assert.That(new List<string>((IEnumerable<string>)enumerate.Invoke(null, new object[] { "p8" })), Is.Empty);
+        }
+
+        private static Type SolidExportTools()
+        {
+            var type = Type.GetType("Game.Project.Editor.OnlineDungeonTools, Game.Project.Editor");
+            Assert.That(type, Is.Not.Null, "使用现有正式导出器，测试不另存Scene或重导大WorldPrefab。"); return type;
+        }
+        private static T SolidSpawnValue<T>(object source, string name)
+        {
+            var field = source.GetType().GetField(name); Assert.That(field, Is.Not.Null, "固定固体缺少原来源值：" + name);
+            return (T)field.GetValue(source);
+        }
+
+        [Test]
+        public void ContainerLootKeepsOriginalStageTablesAndEachNpcsOriginalLocalEnemyIndex()
+        {
+            var definition = LootDefinition();
+            Assert.That(ValidateLoot(definition, out var error), Is.True, error);
+            Assert.That((int)typeof(OnlineDungeonDefinition).GetProperty("LootTableCount").GetValue(definition), Is.EqualTo(4));
+            for (int stage = 0; stage < 4; stage++)
+            {
+                var table = LootTable(definition, stage);
+                Assert.That(table, Is.SameAs(AssetDatabase.LoadAssetAtPath<DungeonLootTable>("Assets/_Project/ScriptableObjects/World/Dungeon/Stage" + (stage + 1) + "Loot.asset")));
+                var expected = ContainerEntry(table); Assert.That(expected.Chance, Is.EqualTo(.12f)); Assert.That(expected.MinCount, Is.EqualTo(1)); Assert.That(expected.MaxCount, Is.EqualTo(1));
+                Assert.That(expected.Pool.Length, Is.EqualTo(4));
+                for (int enemy = 0; enemy < 3; enemy++)
+                {
+                    var args = new object[] { (ulong)(5 + stage * 3 + enemy), null, 0, 0 };
+                    Assert.That((bool)RequireLootMethod("TryGetContainerDrop").Invoke(definition, args), Is.True);
+                    Assert.That(args[1], Is.SameAs(expected)); Assert.That(args[2], Is.EqualTo(stage)); Assert.That(args[3], Is.EqualTo(enemy));
+                }
+            }
+        }
+
+        [TestCase("multiple-count")]
+        [TestCase("second-container-row")]
+        [TestCase("invalid-chance")]
+        [TestCase("missing-stage")]
+        [TestCase("missing-p7-tables")]
+        [TestCase("too-many-npcs")]
+        [TestCase("duplicate-local-index")]
+        [TestCase("wrong-stage")]
+        public void LootProofRejectsInvalidMappingOrSourcesBeyondTheOriginalFortyEightItems(string defect)
+        {
+            var definition = LootDefinition(); var tables = new DungeonLootTable[4];
+            for (int i = 0; i < tables.Length; i++) { tables[i] = Object.Instantiate(LootTable(definition, i)); _owned.Add(tables[i]); }
+            SetLootField(definition, "_lootTables", tables); var row = ContainerEntry(tables[0]);
+            if (defect == "multiple-count") row.MaxCount = 2;
+            if (defect == "second-container-row") { var items = tables[0].Items; Array.Resize(ref items, items.Length + 1); items[items.Length - 1] = row; tables[0].Items = items; }
+            if (defect == "invalid-chance") row.Chance = float.NaN;
+            if (defect == "missing-stage") tables[1] = null;
+            if (defect == "missing-p7-tables") SetLootField(definition, "_lootTables", Array.Empty<DungeonLootTable>());
+            if (defect == "too-many-npcs") { var npcs = LootNpcs(definition); Array.Resize(ref npcs, 13); npcs[12] = new OnlineDungeonNpcSpawn { ActorId = 17, EncounterIndex = 3 }; SetLootField(definition, "_npcs", npcs); }
+            if (defect == "duplicate-local-index") SetLootField(LootNpcs(definition)[1], "LootEnemyIndex", 0);
+            if (defect == "wrong-stage") SetLootField(LootNpcs(definition)[1], "LootStageIndex", 1);
+            Assert.That(ValidateLoot(definition, out var error), Is.False); Assert.That(error, Is.Not.Empty);
+        }
+
+        [Test]
+        public void CompleteItemLootKeepsAMixedOriginalPoolInsteadOfFilteringItsContainerCandidate()
+        {
+            var definition = LootDefinition(); var table = Object.Instantiate(LootTable(definition, 0)); _owned.Add(table);
+            SetLootField(definition, "_lootTables", new[] { table, LootTable(definition, 1), LootTable(definition, 2), LootTable(definition, 3) });
+            var row = ContainerEntry(table); var pool = row.Pool; Array.Resize(ref pool, pool.Length + 1);
+            pool[pool.Length - 1] = table.Items[0].Pool[0]; row.Pool = pool;
+            // 只有候选池混合，最大实例数仍为原48；不能因旧容器切片而过滤、重抽或拒绝完整Item计划。
+            Assert.That(ValidateLoot(definition, out var error), Is.True, error);
+            Assert.That(row.Pool, Is.SameAs(pool)); Assert.That(row.Pool[pool.Length - 1].Kind, Is.EqualTo(ItemKind.Spell));
+        }
+
+        [Test]
+        public void ContainerLootReadsTheActualTableChanceAndPoolWithoutReplacingThemWithTwelvePercentDefaults()
+        {
+            var definition = LootDefinition(); var table = Object.Instantiate(LootTable(definition, 0)); _owned.Add(table);
+            var tables = new[] { table, LootTable(definition, 1), LootTable(definition, 2), LootTable(definition, 3) };
+            SetLootField(definition, "_lootTables", tables); var row = ContainerEntry(table); row.Chance = .37f; Array.Reverse(row.Pool);
+            Assert.That(ValidateLoot(definition, out var error), Is.True, error);
+            var args = new object[] { 5ul, null, 0, 0 };
+            Assert.That((bool)RequireLootMethod("TryGetContainerDrop").Invoke(definition, args), Is.True);
+            Assert.That(((DungeonItemDrop)args[1]).Chance, Is.EqualTo(.37f)); Assert.That(((DungeonItemDrop)args[1]).Pool, Is.SameAs(row.Pool));
+        }
+
+        [Test]
+        public void P8WithoutOriginalLootTablesKeepsNoContainerLootInsteadOfBorrowingP7sRules()
+        {
+            var definition = ScriptableObject.CreateInstance<OnlineDungeonDefinition>(); _owned.Add(definition);
+            SetLootField(definition, "_dungeonId", "p8"); SetLootField(definition, "_lootTables", Array.Empty<DungeonLootTable>());
+            var npc = new OnlineDungeonNpcSpawn { ActorId = 5, EncounterIndex = 0 }; SetLootField(npc, "LootStageIndex", -1); SetLootField(npc, "LootEnemyIndex", -1);
+            SetLootField(definition, "_npcs", new[] { npc }); SetLootField(definition, "_encounters", new[] { new OnlineDungeonEncounterDefinition { DisplayName = "Boss" } });
+            Assert.That(ValidateLoot(definition, out var error), Is.True, error);
+            var args = new object[] { 5ul, null, 0, 0 }; Assert.That((bool)RequireLootMethod("TryGetContainerDrop").Invoke(definition, args), Is.False);
+            Assert.That(args[1], Is.Null);
+        }
+
+        [Test]
+        public void LegacySerializedNpcArrayWithoutLootTablesNeverCreatesAContainerSource()
+        {
+            var definition = ScriptableObject.CreateInstance<OnlineDungeonDefinition>(); _owned.Add(definition);
+            // 与原Create夹具相同：SerializedObject给旧作者数组增加元素会产生int默认0，
+            // 独立JsonUtility.FromJson会执行initializer，不能用它冒充这个实际兼容入口。
+            var data = new SerializedObject(definition); var npcs = data.FindProperty("_npcs"); npcs.arraySize = 1;
+            var element = npcs.GetArrayElementAtIndex(0); element.FindPropertyRelative("ActorId").ulongValue = 5;
+            element.FindPropertyRelative("EncounterIndex").intValue = 0; data.ApplyModifiedPropertiesWithoutUndo();
+            var legacy = LootNpcs(definition)[0];
+            Assert.That((int)legacy.GetType().GetField("LootStageIndex").GetValue(legacy), Is.Zero);
+            Assert.That((int)legacy.GetType().GetField("LootEnemyIndex").GetValue(legacy), Is.Zero);
+            SetLootField(definition, "_dungeonId", "p7"); SetLootField(definition, "_lootTables", Array.Empty<DungeonLootTable>());
+            SetLootField(definition, "_encounters", new[] { new OnlineDungeonEncounterDefinition { DisplayName = "legacy" } });
+            Assert.That(ValidateLoot(definition, out var error), Is.True, error);
+            Assert.That((int)typeof(OnlineDungeonDefinition).GetProperty("LootTableCount").GetValue(definition), Is.Zero);
+            var args = new object[] { 5ul, null, 0, 0 }; Assert.That((bool)RequireLootMethod("TryGetContainerDrop").Invoke(definition, args), Is.False);
+            Assert.That(args[1], Is.Null); Assert.That(args[2], Is.EqualTo(-1)); Assert.That(args[3], Is.EqualTo(-1));
+            SetLootField(legacy, "LootEnemyIndex", -1);
+            Assert.That(ValidateLoot(definition, out _), Is.False, "仅成对0/0是旧缺字段表示；混合索引不能被当成新合法来源。");
+        }
+
+        [Test]
+        public void NpcLootGateRequiresCurrentActiveDeadNpcAndDoesNotAdvanceEncounterState()
+        {
+            var runtime = Create(false); _roster.Alive[4] = false;
+            Assert.That(CanAward(runtime, 5), Is.False, "Armed阶段不能因预先死亡绕过区域激活。");
+            _roster.Alive[4] = true; SetPlayer(0, Vector3.zero); Step(runtime, 1);
+            Assert.That(CanAward(runtime, 5), Is.False, "仍活着的NPC不能领取死亡奖励。");
+            _roster.Alive[5] = false; Assert.That(CanAward(runtime, 6), Is.False, "未来区域即便Health已死也不能提前发放。");
+            _roster.Alive[4] = false; uint revision = Value<uint>(Capture(runtime), "Revision");
+            Assert.That(CanAward(runtime, 5), Is.True); Assert.That(Value<uint>(Capture(runtime), "Revision"), Is.EqualTo(revision));
+        }
+
+        [Test]
+        public void NpcLootGateAllowsAlreadyClearedAreasAndStageClearedButStopsAfterDispose()
+        {
+            var runtime = Create(false); SetPlayer(0, Vector3.zero); Step(runtime, 1); _roster.Alive[4] = false; Step(runtime, 2);
+            Assert.That(CanAward(runtime, 5), Is.True); _roster.Alive[5] = false;
+            Assert.That(CanAward(runtime, 6), Is.False, "下一关仍Armed时只保留上一关的原死亡资格。");
+            SetPlayer(0, new Vector3(20, 0, 0)); Step(runtime, 3); Assert.That(CanAward(runtime, 6), Is.True);
+            Step(runtime, 4); AssertPhase(runtime, "StageCleared", 2, 0); Assert.That(CanAward(runtime, 5), Is.True); Assert.That(CanAward(runtime, 6), Is.True);
+            ((IDisposable)runtime).Dispose(); Assert.That(CanAward(runtime, 5), Is.False);
+        }
+
+        [Test]
+        public void NpcLootGateRejectsReplicaPlayersAndNpcIdsOutsideTheTrustedDefinition()
+        {
+            var replica = Create(false, false); _roster.Alive[4] = false; Assert.That(CanAward(replica, 5), Is.False);
+            var authority = Create(false); SetPlayer(0, Vector3.zero); Step(authority, 1); _roster.Alive[4] = false;
+            Assert.That(CanAward(authority, 5), Is.True); Assert.That(CanAward(authority, 0), Is.False); Assert.That(CanAward(authority, 1), Is.False); Assert.That(CanAward(authority, 16), Is.False);
+        }
+
+        private bool CanAward(object runtime, ulong actor)
+        { var method = _runtimeType.GetMethod("CanAwardNpcDeath"); Assert.That(method, Is.Not.Null, "掉落需复用原Active/Cleared死亡权限门，不另建一套遭遇状态。"); return (bool)method.Invoke(runtime, new object[] { actor }); }
+
+        private OnlineDungeonDefinition LootDefinition()
+        {
+            var definition = ScriptableObject.CreateInstance<OnlineDungeonDefinition>(); _owned.Add(definition);
+            var tables = new DungeonLootTable[4]; var npcs = new OnlineDungeonNpcSpawn[12]; var encounters = new OnlineDungeonEncounterDefinition[4];
+            for (int stage = 0; stage < 4; stage++)
+            {
+                tables[stage] = AssetDatabase.LoadAssetAtPath<DungeonLootTable>("Assets/_Project/ScriptableObjects/World/Dungeon/Stage" + (stage + 1) + "Loot.asset");
+                Assert.That(tables[stage] != null, Is.True); encounters[stage] = new OnlineDungeonEncounterDefinition { DisplayName = "Stage" + stage };
+                for (int enemy = 0; enemy < 3; enemy++)
+                { var npc = new OnlineDungeonNpcSpawn { ActorId = (ulong)(5 + stage * 3 + enemy), EncounterIndex = stage }; SetLootField(npc, "LootStageIndex", stage); SetLootField(npc, "LootEnemyIndex", enemy); npcs[stage * 3 + enemy] = npc; }
+            }
+            SetLootField(definition, "_dungeonId", "p7"); SetLootField(definition, "_npcs", npcs); SetLootField(definition, "_encounters", encounters); SetLootField(definition, "_lootTables", tables); return definition;
+        }
+        private static void SetLootField(object target, string name, object value)
+        { var field = target.GetType().GetField(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance); Assert.That(field, Is.Not.Null, "缺少受控掉落配置字段：" + name); field.SetValue(target, value); }
+        private static OnlineDungeonNpcSpawn[] LootNpcs(OnlineDungeonDefinition definition) => (OnlineDungeonNpcSpawn[])typeof(OnlineDungeonDefinition).GetField("_npcs", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(definition);
+        private static MethodInfo RequireLootMethod(string name)
+        { var method = typeof(OnlineDungeonDefinition).GetMethod(name); Assert.That(method, Is.Not.Null, "需要原SO容器掉落的纯配置API：" + name); return method; }
+        private static bool ValidateLoot(OnlineDungeonDefinition definition, out string error)
+        { var args = new object[] { null }; bool result = (bool)RequireLootMethod("TryValidateContainerDrops").Invoke(definition, args); error = (string)args[0]; return result; }
+        private static DungeonLootTable LootTable(OnlineDungeonDefinition definition, int stage) => (DungeonLootTable)RequireLootMethod("GetLootTable").Invoke(definition, new object[] { stage });
+        private static DungeonItemDrop ContainerEntry(DungeonLootTable table)
+        { foreach (var entry in table.Items) foreach (var item in entry.Pool) if (item.Kind == ItemKind.Container) return entry; Assert.Fail("源StageLoot必须保留其原容器条目。"); return null; }
 
         private object Create(bool boss, bool authority = true, int firstAreaNpcCount = 1, bool showEncounterHud = true)
         {

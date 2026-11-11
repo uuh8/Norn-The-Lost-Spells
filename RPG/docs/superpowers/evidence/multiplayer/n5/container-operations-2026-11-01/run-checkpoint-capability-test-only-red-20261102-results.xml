@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="4" result="Failed(Child)" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 21:34:07Z" end-time="2026-11-02 21:34:08Z" duration="0.7317628">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3954" result="Failed" site="Child" start-time="2026-11-02 21:34:07Z" end-time="2026-11-02 21:34:08Z" duration="0.731763" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3846" name="Game.Networking.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Networking.Tests.dll" runstate="Runnable" testcasecount="482" result="Failed" site="Child" start-time="2026-11-02 21:34:08Z" end-time="2026-11-02 21:34:08Z" duration="0.615981" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3847" name="Game" fullname="Game" runstate="Runnable" testcasecount="482" result="Failed" site="Child" start-time="2026-11-02 21:34:08Z" end-time="2026-11-02 21:34:08Z" duration="0.539807" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3848" name="Networking" fullname="Game.Networking" runstate="Runnable" testcasecount="482" result="Failed" site="Child" start-time="2026-11-02 21:34:08Z" end-time="2026-11-02 21:34:08Z" duration="0.438633" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3849" name="Tests" fullname="Game.Networking.Tests" runstate="Runnable" testcasecount="482" result="Failed" site="Child" start-time="2026-11-02 21:34:08Z" end-time="2026-11-02 21:34:08Z" duration="0.340729" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3338" name="InstanceCheckpointControlTests" fullname="Game.Networking.Tests.InstanceCheckpointControlTests" classname="Game.Networking.Tests.InstanceCheckpointControlTests" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-11-02 21:34:08Z" end-time="2026-11-02 21:34:08Z" duration="0.235618" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="3343" name="ReadyMustExplicitlyAdvertiseTheMatchingCompleteCheckpointSchema" fullname="Game.Networking.Tests.InstanceCheckpointControlTests.ReadyMustExplicitlyAdvertiseTheMatchingCompleteCheckpointSchema" classname="Game.Networking.Tests.InstanceCheckpointControlTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-11-02 21:34:08Z" end-time="2026-11-02 21:34:08Z" duration="0.136861" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="3339" name="ReadyMustExplicitlyAdvertiseTheMatchingCompleteCheckpointSchema(uint.MinValue)" fullname="Game.Networking.Tests.InstanceCheckpointControlTests.ReadyMustExplicitlyAdvertiseTheMatchingCompleteCheckpointSchema(uint.MinValue)" methodname="ReadyMustExplicitlyAdvertiseTheMatchingCompleteCheckpointSchema" classname="Game.Networking.Tests.InstanceCheckpointControlTests" runstate="Runnable" seed="1203931125" result="Failed" start-time="2026-11-02 21:34:08Z" end-time="2026-11-02 21:34:08Z" duration="0.020309" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  实时协议同号还需显式核对完整检查点Schema能力。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.InstanceCheckpointControlTests.ReadyMustExplicitlyAdvertiseTheMatchingCompleteCheckpointSchema (System.UInt32 schema) [0x0004a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InstanceCheckpointControlTests.cs:18
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3340" name="ReadyMustExplicitlyAdvertiseTheMatchingCompleteCheckpointSchema(1)" fullname="Game.Networking.Tests.InstanceCheckpointControlTests.ReadyMustExplicitlyAdvertiseTheMatchingCompleteCheckpointSchema(1)" methodname="ReadyMustExplicitlyAdvertiseTheMatchingCompleteCheckpointSchema" classname="Game.Networking.Tests.InstanceCheckpointControlTests" runstate="Runnable" seed="788677259" result="Failed" start-time="2026-11-02 21:34:08Z" end-time="2026-11-02 21:34:08Z" duration="0.001342" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  实时协议同号还需显式核对完整检查点Schema能力。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.InstanceCheckpointControlTests.ReadyMustExplicitlyAdvertiseTheMatchingCompleteCheckpointSchema (System.UInt32 schema) [0x0004a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InstanceCheckpointControlTests.cs:18
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3341" name="ReadyMustExplicitlyAdvertiseTheMatchingCompleteCheckpointSchema(2)" fullname="Game.Networking.Tests.InstanceCheckpointControlTests.ReadyMustExplicitlyAdvertiseTheMatchingCompleteCheckpointSchema(2)" methodname="ReadyMustExplicitlyAdvertiseTheMatchingCompleteCheckpointSchema" classname="Game.Networking.Tests.InstanceCheckpointControlTests" runstate="Runnable" seed="208754926" result="Failed" start-time="2026-11-02 21:34:08Z" end-time="2026-11-02 21:34:08Z" duration="0.000450" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  实时协议同号还需显式核对完整检查点Schema能力。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.InstanceCheckpointControlTests.ReadyMustExplicitlyAdvertiseTheMatchingCompleteCheckpointSchema (System.UInt32 schema) [0x0004a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InstanceCheckpointControlTests.cs:18
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3342" name="ReadyMustExplicitlyAdvertiseTheMatchingCompleteCheckpointSchema(3)" fullname="Game.Networking.Tests.InstanceCheckpointControlTests.ReadyMustExplicitlyAdvertiseTheMatchingCompleteCheckpointSchema(3)" methodname="ReadyMustExplicitlyAdvertiseTheMatchingCompleteCheckpointSchema" classname="Game.Networking.Tests.InstanceCheckpointControlTests" runstate="Runnable" seed="1773800138" result="Failed" start-time="2026-11-02 21:34:08Z" end-time="2026-11-02 21:34:08Z" duration="0.000362" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  实时协议同号还需显式核对完整检查点Schema能力。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.InstanceCheckpointControlTests.ReadyMustExplicitlyAdvertiseTheMatchingCompleteCheckpointSchema (System.UInt32 schema) [0x0004a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InstanceCheckpointControlTests.cs:18
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

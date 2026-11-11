@@ -1,0 +1,208 @@
+{
+  "RecordedUtc": "2026-10-31T14:16:55.309657+00:00",
+  "ProtocolVersion": 4,
+  "Dungeon": "p7",
+  "WorldEpoch": 15487300152708176739,
+  "Scenario": "Real authenticated DS Actor snapshot diagnostic movement; formal KCP subscription path; not keyboard/full player path",
+  "Checkpoints": [
+    {
+      "Phase": 1,
+      "Pose": "Home",
+      "WorldTick": 5,
+      "SourceChunks": 4,
+      "AChunks": 4,
+      "BChunks": 4,
+      "AInstalled": 4,
+      "BInstalled": 4,
+      "PeerAcks": [
+        4,
+        4
+      ]
+    },
+    {
+      "Phase": 2,
+      "Pose": "away",
+      "WorldTick": 5,
+      "SourceChunks": 4,
+      "AChunks": 0,
+      "BChunks": 4,
+      "AInstalled": 4,
+      "BInstalled": 4,
+      "PeerAcks": [
+        4,
+        4
+      ]
+    },
+    {
+      "Phase": 3,
+      "Pose": "home",
+      "WorldTick": 5,
+      "SourceChunks": 4,
+      "AChunks": 4,
+      "BChunks": 4,
+      "AInstalled": 8,
+      "BInstalled": 4,
+      "PeerAcks": [
+        8,
+        4
+      ]
+    },
+    {
+      "Phase": 4,
+      "Pose": "away",
+      "WorldTick": 10,
+      "SourceChunks": 5,
+      "AChunks": 0,
+      "BChunks": 5,
+      "AInstalled": 8,
+      "BInstalled": 12,
+      "PeerAcks": [
+        8,
+        12
+      ]
+    },
+    {
+      "Phase": 5,
+      "Pose": "home",
+      "WorldTick": 10,
+      "SourceChunks": 5,
+      "AChunks": 5,
+      "BChunks": 5,
+      "AInstalled": 13,
+      "BInstalled": 12,
+      "PeerAcks": [
+        13,
+        12
+      ]
+    }
+  ],
+  "SameRevisionReentryVerified": true,
+  "ChangedWorldReentryVerified": true,
+  "OutsideAReceivesNoNewInstallation": true,
+  "StationaryBAndDSRetainMaterial": true,
+  "PerPeerInstallAcksVerified": true,
+  "InitialASubscriptions": [
+    {
+      "Key": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "Epoch": 1,
+      "Revision": 1
+    },
+    {
+      "Key": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "Epoch": 1,
+      "Revision": 3
+    },
+    {
+      "Key": [
+        2,
+        0,
+        0,
+        0
+      ],
+      "Epoch": 1,
+      "Revision": 1
+    },
+    {
+      "Key": [
+        3,
+        0,
+        0,
+        0
+      ],
+      "Epoch": 1,
+      "Revision": 1
+    }
+  ],
+  "FinalASubscriptions": [
+    {
+      "Key": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "Epoch": 3,
+      "Revision": 1,
+      "BaseRevision": 0
+    },
+    {
+      "Key": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "Epoch": 3,
+      "Revision": 9,
+      "BaseRevision": 0
+    },
+    {
+      "Key": [
+        2,
+        0,
+        0,
+        0
+      ],
+      "Epoch": 3,
+      "Revision": 1,
+      "BaseRevision": 0
+    },
+    {
+      "Key": [
+        3,
+        0,
+        0,
+        0
+      ],
+      "Epoch": 3,
+      "Revision": 1,
+      "BaseRevision": 0
+    },
+    {
+      "Key": [
+        1,
+        0,
+        0,
+        -1
+      ],
+      "Epoch": 2,
+      "Revision": 2,
+      "BaseRevision": 0
+    }
+  ],
+  "Logs": [
+    {
+      "Label": "p7",
+      "BuiltInResourceErrors": 2,
+      "OtherErrors": []
+    },
+    {
+      "Label": "p7-client0",
+      "BuiltInResourceErrors": 0,
+      "OtherErrors": []
+    },
+    {
+      "Label": "p7-client1",
+      "BuiltInResourceErrors": 0,
+      "OtherErrors": []
+    }
+  ],
+  "Limits": [
+    "DS snapshot diagnostic pose rather than keyboard player path",
+    "Two paused material checkpoints with five actual running ticks while A outside",
+    "No Native adversarial old-page/missing-revision/history-overwrite/corruption injection",
+    "No four-player/stress/HOL/performance",
+    "No same-process reconnect/consumption persistence/full Hub path",
+    "P8 Native material data not tested"
+  ]
+}

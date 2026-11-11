@@ -1,0 +1,407 @@
+{
+  "RecordedUtc": "2026-11-01T12:43:36.191533+00:00",
+  "Scope": "F/H权威数量事务、Codec/Reset、可调用Character/DS入口与小型真实World集成；持键/预览/Native未完成",
+  "Runs": [
+    {
+      "Label": "fh-domain-codec-red",
+      "State": "Finished",
+      "StartedUtc": "2026-11-01T12:12:23.7642556Z",
+      "UpdatedUtc": "2026-11-01T12:13:44.6325493Z",
+      "Passed": 131,
+      "Failed": 40,
+      "Error": "",
+      "XmlExists": true,
+      "Fixtures": {
+        "Game.Networking.Tests.InventoryCommandCodecTests": 73,
+        "Game.Run.Tests.OnlineOwnedWorkspaceTests": 98
+      },
+      "Failures": [
+        {
+          "Name": "ContainerTransferIntentRoundTripsExactBudgetAndAim(4,1)",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "ContainerTransferIntentRoundTripsExactBudgetAndAim(4,4096)",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "ContainerTransferIntentRoundTripsExactBudgetAndAim(5,1)",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "ContainerTransferIntentRoundTripsExactBudgetAndAim(5,1024)",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "ContainerTransferRawWireIsAcceptedWithoutGeneratedFieldReference(4)",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "ContainerTransferRawWireIsAcceptedWithoutGeneratedFieldReference(5)",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "ExistingCommandsCannotSilentlyDropTransferBudgetOrAim(1)",
+          "Message": "  TransferBudget\n  Expected: False\n  But was:  True\n"
+        },
+        {
+          "Name": "ExistingCommandsCannotSilentlyDropTransferBudgetOrAim(2)",
+          "Message": "  TransferBudget\n  Expected: False\n  But was:  True\n"
+        },
+        {
+          "Name": "ExistingCommandsCannotSilentlyDropTransferBudgetOrAim(3)",
+          "Message": "  TransferBudget\n  Expected: False\n  But was:  True\n"
+        },
+        {
+          "Name": "FailedTransferReceiptPreservesOriginalMaterialFailure",
+          "Message": "  Expected: 12\n  But was:  0\n"
+        },
+        {
+          "Name": "PooledCommandAndReceiptClearAllTransferFields",
+          "Message": "  生成合同必须提供F/H字段：TransferBudget\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "SuccessfulTransferReceiptRoundTripsUlongWithoutCodecNarrowing(1UL)",
+          "Message": "  Expected: 1\n  But was:  0\n"
+        },
+        {
+          "Name": "SuccessfulTransferReceiptRoundTripsUlongWithoutCodecNarrowing(4096UL)",
+          "Message": "  Expected: 4096\n  But was:  0\n"
+        },
+        {
+          "Name": "SuccessfulTransferReceiptRoundTripsUlongWithoutCodecNarrowing(4294967312UL)",
+          "Message": "  Expected: 4294967312\n  But was:  0\n"
+        },
+        {
+          "Name": "SuccessfulTransferReceiptRoundTripsUlongWithoutCodecNarrowing(ulong.MaxValue)",
+          "Message": "  Expected: 18446744073709551615\n  But was:  0\n"
+        },
+        {
+          "Name": "TransferAimUsesFiniteApproximateUnitRuleWithoutNewWorldAnglePolicy(0.995f)",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "TransferAimUsesFiniteApproximateUnitRuleWithoutNewWorldAnglePolicy(1.004f)",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "TransferReceiptRejectsFailureWithQuantitySuccessWithFailureAndUnknownFailure(10,1UL,0)",
+          "Message": "  Expected: False\n  But was:  True\n"
+        },
+        {
+          "Name": "TransferReceiptRejectsFailureWithQuantitySuccessWithFailureAndUnknownFailure(10,1UL,12)",
+          "Message": "  Expected: False\n  But was:  True\n"
+        },
+        {
+          "Name": "TransferReceiptRejectsFailureWithQuantitySuccessWithFailureAndUnknownFailure(0,ulong.MinValue,1)",
+          "Message": "  Expected: False\n  But was:  True\n"
+        },
+        {
+          "Name": "TransferReceiptRejectsFailureWithQuantitySuccessWithFailureAndUnknownFailure(0,1UL,12)",
+          "Message": "  Expected: False\n  But was:  True\n"
+        },
+        {
+          "Name": "TransferReceiptRejectsFailureWithQuantitySuccessWithFailureAndUnknownFailure(10,ulong.MinValue,13)",
+          "Message": "  Expected: False\n  But was:  True\n"
+        },
+        {
+          "Name": "TransferReceiptRejectsFailureWithQuantitySuccessWithFailureAndUnknownFailure(10,ulong.MinValue,255)",
+          "Message": "  Expected: False\n  But was:  True\n"
+        },
+        {
+          "Name": "ActualSelectionChangesClearBudgetWhileARepeatedSelectionReceiptDoesNot",
+          "Message": "  Owned工作区需要受控容器服务配置，不可读取单机存档或另造资产。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "AuthorityTickBudgetIsBoundedAndDuplicateTickCannotRefillCollectOrPourCredit",
+          "Message": "  Owned工作区需要受控容器服务配置，不可读取单机存档或另造资产。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "ContainerActionReceiptReplaysWithoutReexecutingAndRejectsChangedWireIntent(\"budget\")",
+          "Message": "  Owned工作区需要受控容器服务配置，不可读取单机存档或另造资产。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "ContainerActionReceiptReplaysWithoutReexecutingAndRejectsChangedWireIntent(\"aim-origin\")",
+          "Message": "  Owned工作区需要受控容器服务配置，不可读取单机存档或另造资产。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "ContainerActionReceiptReplaysWithoutReexecutingAndRejectsChangedWireIntent(\"aim-direction\")",
+          "Message": "  Owned工作区需要受控容器服务配置，不可读取单机存档或另造资产。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "ContainerActionsUseRealReservationsAndKeepOwnerPlusWorldQuantitiesConserved",
+          "Message": "  Owned工作区需要受控容器服务配置，不可读取单机存档或另造资产。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "GasPourUsesOriginalMultiplierAndGasDepositRadiusFromTrustedDefinition",
+          "Message": "  Owned工作区需要受控容器服务配置，不可读取单机存档或另造资产。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "GeometryRejectionCancelsRealReservationRollsBackWorldAndConsumesAttemptBudget(CollectMaterial)",
+          "Message": "  Owned工作区需要受控容器服务配置，不可读取单机存档或另造资产。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "GeometryRejectionCancelsRealReservationRollsBackWorldAndConsumesAttemptBudget(PourContainer)",
+          "Message": "  Owned工作区需要受控容器服务配置，不可读取单机存档或另造资产。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "InvalidContainerActionContextNeverTouchesTheWorldOrOwnedQuantity(\"stale\")",
+          "Message": "  Owned工作区需要受控容器服务配置，不可读取单机存档或另造资产。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "InvalidContainerActionContextNeverTouchesTheWorldOrOwnedQuantity(\"unselected\")",
+          "Message": "  Owned工作区需要受控容器服务配置，不可读取单机存档或另造资产。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "InvalidContainerActionContextNeverTouchesTheWorldOrOwnedQuantity(\"wrong-owner\")",
+          "Message": "  Owned工作区需要受控容器服务配置，不可读取单机存档或另造资产。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "InvalidContainerActionContextNeverTouchesTheWorldOrOwnedQuantity(\"frozen\")",
+          "Message": "  Owned工作区需要受控容器服务配置，不可读取单机存档或另造资产。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "InvalidContainerActionContextNeverTouchesTheWorldOrOwnedQuantity(\"wrong-world\")",
+          "Message": "  Owned工作区需要受控容器服务配置，不可读取单机存档或另造资产。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "MissingWorldHandlerPreservesBothSidesAndDoesNotAccumulateFailedBudget(CollectMaterial)",
+          "Message": "  Owned工作区需要受控容器服务配置，不可读取单机存档或另造资产。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "MissingWorldHandlerPreservesBothSidesAndDoesNotAccumulateFailedBudget(PourContainer)",
+          "Message": "  Owned工作区需要受控容器服务配置，不可读取单机存档或另造资产。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "ReconnectingSameWorkspaceKeepsBudgetAndInternalTransferSourceInsteadOfGrantingCredit",
+          "Message": "  Owned工作区需要受控容器服务配置，不可读取单机存档或另造资产。\n  Expected: not null\n  But was:  null\n"
+        }
+      ]
+    },
+    {
+      "Label": "fh-domain-codec-candidate-character-red",
+      "State": "Finished",
+      "StartedUtc": "2026-11-01T12:21:49.5666983Z",
+      "UpdatedUtc": "2026-11-01T12:23:09.3553730Z",
+      "Passed": 215,
+      "Failed": 15,
+      "Error": "",
+      "XmlExists": true,
+      "Fixtures": {
+        "Game.Character.Tests.OnlineCastDriverTests": 51,
+        "Game.Networking.Tests.InventoryCommandCodecTests": 73,
+        "Game.Run.Tests.OnlineInventoryCommandAuthorityTests": 7,
+        "Game.Run.Tests.OnlineOwnedWorkspaceTests": 99
+      },
+      "Failures": [
+        {
+          "Name": "ConfirmedContainerRequestsCarryCurrentInstanceVersionBudgetAndNormalizedRayWithoutChangingSource(CollectMaterial)",
+          "Message": "  F/H需要复用已认证Owner的有限容器请求入口。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "ConfirmedContainerRequestsCarryCurrentInstanceVersionBudgetAndNormalizedRayWithoutChangingSource(PourContainer)",
+          "Message": "  F/H需要复用已认证Owner的有限容器请求入口。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "ContainerRequestsRequireConfirmedContainerConfigurationAndLiveLocalInput(\"wand\")",
+          "Message": "  F/H需要复用已认证Owner的有限容器请求入口。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "ContainerRequestsRequireConfirmedContainerConfigurationAndLiveLocalInput(\"no-config\")",
+          "Message": "  F/H需要复用已认证Owner的有限容器请求入口。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "ContainerRequestsRequireConfirmedContainerConfigurationAndLiveLocalInput(\"blocked\")",
+          "Message": "  F/H需要复用已认证Owner的有限容器请求入口。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "ContainerRequestsRequireConfirmedContainerConfigurationAndLiveLocalInput(\"focus\")",
+          "Message": "  F/H需要复用已认证Owner的有限容器请求入口。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "ContainerRequestsRequireConfirmedContainerConfigurationAndLiveLocalInput(\"remote\")",
+          "Message": "  F/H需要复用已认证Owner的有限容器请求入口。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "ForcedFrozenContainerFailureStaysTheSameWhenTheExactCommandIsRetried",
+          "Message": "  DS必须显式绑定正式材料WorldId，不能猜场景名或广播写入。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "BoundedLedgerRejectsEvictedOldCommandsAndEpochNeverRollsBack",
+          "Message": "System.Reflection.AmbiguousMatchException : Ambiguous match found."
+        },
+        {
+          "Name": "ExactRetryReturnsOriginalReceiptBeforeCurrentVersionAndConflictIsRejected",
+          "Message": "System.Reflection.AmbiguousMatchException : Ambiguous match found."
+        },
+        {
+          "Name": "MoveToRealStorageAndBackReusesQualificationAndExportsLocation",
+          "Message": "System.Reflection.AmbiguousMatchException : Ambiguous match found."
+        },
+        {
+          "Name": "RecordedBusyCannotExecuteSameIdAfterBusyHasEnded",
+          "Message": "System.Reflection.AmbiguousMatchException : Ambiguous match found."
+        },
+        {
+          "Name": "SelectUsesRealEquippedWandAndPreservesInventoryAndMana",
+          "Message": "System.Reflection.AmbiguousMatchException : Ambiguous match found."
+        },
+        {
+          "Name": "StaleVersionsAndOccupiedDestinationRejectWithoutMovingEitherCard",
+          "Message": "System.Reflection.AmbiguousMatchException : Ambiguous match found."
+        },
+        {
+          "Name": "PreparationFailureConsumesAttemptBudgetWithoutCallingWorldAndReplaysTheOriginalFailure",
+          "Message": "  Expected: False\n  But was:  True\n"
+        }
+      ]
+    },
+    {
+      "Label": "fh-entry-candidate-h-origin-red",
+      "State": "Blocked",
+      "StartedUtc": "2026-11-01T12:21:49.5666983Z",
+      "UpdatedUtc": "2026-11-01T12:32:24.9167478Z",
+      "Passed": 0,
+      "Failed": 0,
+      "Error": "当前脚本编译失败；拒绝运行旧Assembly。先修复Console编译错误。",
+      "XmlExists": false
+    },
+    {
+      "Label": "fh-entry-candidate-h-origin-red-v2",
+      "State": "Finished",
+      "StartedUtc": "2026-11-01T12:33:50.9326376Z",
+      "UpdatedUtc": "2026-11-01T12:35:13.7276473Z",
+      "Passed": 230,
+      "Failed": 1,
+      "Error": "",
+      "XmlExists": true,
+      "Fixtures": {
+        "Game.Character.Tests.OnlineCastDriverTests": 52,
+        "Game.Networking.Tests.InventoryCommandCodecTests": 73,
+        "Game.Run.Tests.OnlineInventoryCommandAuthorityTests": 7,
+        "Game.Run.Tests.OnlineOwnedWorkspaceTests": 99
+      },
+      "Failures": [
+        {
+          "Name": "AuthorityPourOriginUsesHorizontalAimWithoutRotatingTheActor",
+          "Message": "  原H先按镜头水平朝向计算起点；DS应按意图水平投影等效计算，不能误用旧移动forward。\n  Expected: less than 0.00999999978f\n  But was:  1.13109469f\n"
+        }
+      ]
+    },
+    {
+      "Label": "fh-related-regression-green",
+      "State": "Finished",
+      "StartedUtc": "2026-11-01T12:37:20.1720609Z",
+      "UpdatedUtc": "2026-11-01T12:39:22.6124288Z",
+      "Passed": 456,
+      "Failed": 0,
+      "Error": "",
+      "XmlExists": true,
+      "Fixtures": {
+        "Game.Character.Tests.OnlineCastDriverTests": 52,
+        "Game.Character.Tests.OnlineCastFocusTests": 2,
+        "Game.ElementField.Tests.MaterialInventoryDepositTests": 12,
+        "Game.ElementField.Tests.MaterialInventoryTransferTests": 17,
+        "Game.ElementField.Tests.MaterialVolumeAimTests": 5,
+        "Game.ElementField.Tests.MaterialWorldTransactionTests": 21,
+        "Game.ElementField.Tests.WorldAuthorityInitializationTests": 3,
+        "Game.Multiplayer.Tests.InventoryChannelLifecycleTests": 2,
+        "Game.Multiplayer.Tests.InventoryCommandRoutingTests": 16,
+        "Game.Networking.Tests.InventoryCommandCodecTests": 73,
+        "Game.Networking.Tests.InventorySnapshotCodecTests": 62,
+        "Game.Run.Tests.ContainerUseServiceTests": 16,
+        "Game.Run.Tests.OnlineInventoryBridgeTests": 4,
+        "Game.Run.Tests.OnlineInventoryCommandAuthorityTests": 7,
+        "Game.Run.Tests.OnlineInventoryPresentationSourceTests": 47,
+        "Game.Run.Tests.OnlineOwnedWorkspaceTests": 99,
+        "Game.UI.Tests.OnlineInventoryUiGatewayTests": 18
+      },
+      "Failures": []
+    },
+    {
+      "Label": "fh-real-world-playmode",
+      "State": "Finished",
+      "StartedUtc": "2026-11-01T12:40:57.5230811Z",
+      "UpdatedUtc": "2026-11-01T12:41:22.3345796Z",
+      "Passed": 3,
+      "Failed": 0,
+      "Error": "",
+      "XmlExists": true,
+      "Fixtures": {
+        "Game.Run.Tests.ContainerUsePlayModeTests": 2,
+        "Game.Run.Tests.OnlineSharedInventoryPlayModeTests": 1
+      },
+      "Failures": []
+    }
+  ],
+  "ProtocolVersion": 6,
+  "SchemaGenerationCheckFiles": 8,
+  "BusinessContractReset": {
+    "Passed": 19,
+    "Failed": 0,
+    "DatabaseStarted": false,
+    "Trx": "RPG/.tools/networking-checks/n5-container-operations-20261101/test-results/fh-contract-reset-green.trx"
+  },
+  "ProtectedFiles": [
+    {
+      "Path": "F:\\Develop Project\\RPG\\RPG\\ProjectSettings\\DynamicsManager.asset",
+      "Before": "53cf96c365b85eefe78b3cda76af21f68246744277ae6ca21ffd6a67bdb72a1c",
+      "After": "53cf96c365b85eefe78b3cda76af21f68246744277ae6ca21ffd6a67bdb72a1c",
+      "Unchanged": true
+    },
+    {
+      "Path": "F:\\Develop Project\\RPG\\RPG\\ProjectSettings\\QualitySettings.asset",
+      "Before": "90a6246b84df30886fb817936db3934edd391241d003785606137c0e27014856",
+      "After": "90a6246b84df30886fb817936db3934edd391241d003785606137c0e27014856",
+      "Unchanged": true
+    },
+    {
+      "Path": "F:\\Develop Project\\RPG\\RPG\\ProjectSettings\\TimeManager.asset",
+      "Before": "96137d2fb1b3cba1643098de4a9c87eb34657cce7bf848f315c5f9d10dffec65",
+      "After": "96137d2fb1b3cba1643098de4a9c87eb34657cce7bf848f315c5f9d10dffec65",
+      "Unchanged": true
+    },
+    {
+      "Path": "F:\\Develop Project\\RPG\\RPG\\ProjectSettings\\EditorBuildSettings.asset",
+      "Before": "311ce57513e692147e786e4d52295262a7acebd3a2b4d735c9560f8e2b25ab37",
+      "After": "311ce57513e692147e786e4d52295262a7acebd3a2b4d735c9560f8e2b25ab37",
+      "Unchanged": true
+    },
+    {
+      "Path": "F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Scenes\\P7_MainMenu.unity",
+      "Before": "a236fa37b4c643c0199a119a4b7f0857e81746882b1aa364391b3d6fa948e8fc",
+      "After": "a236fa37b4c643c0199a119a4b7f0857e81746882b1aa364391b3d6fa948e8fc",
+      "Unchanged": true
+    },
+    {
+      "Path": "F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Scenes\\P7_DemoRun.unity",
+      "Before": "f06f1dabf378ffc749be0e4d55315a90a5fc17462b39e13a4435f716526a3493",
+      "After": "f06f1dabf378ffc749be0e4d55315a90a5fc17462b39e13a4435f716526a3493",
+      "Unchanged": true
+    },
+    {
+      "Path": "F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Scenes\\P8_BossField.unity",
+      "Before": "6fbc20b0a2a34eb6b0d7bf890929a570a40fe2ef06613d6537467e87a9f9cdea",
+      "After": "6fbc20b0a2a34eb6b0d7bf890929a570a40fe2ef06613d6537467e87a9f9cdea",
+      "Unchanged": true
+    }
+  ],
+  "EditorKeptOpen": true,
+  "NativeBuiltOrRunThisSlice": false,
+  "Remaining": [
+    "F/H持键与原优先级/释放门接线",
+    "旧离散命令通道8次/秒预算不能直接承载F/H各10Hz，接输入前适配且保留有界防洪与数量速率",
+    "原H轨迹可视预览",
+    "背包内容器原选择路径",
+    "同实例丢地/队友拾取原子转移及注册复制",
+    "刷新兼容Hash并构建匹配v6 Client/DS后低负载Native功能验收",
+    "旧12项未重跑、Goo舍入/水法线2失败、0.12s扣1或4次及黑截图边界留档",
+    "四人高负载性能用户明确延期/未验证；P7四端火元素时延未解决"
+  ],
+  "N5Complete": false,
+  "ReleaseReady": false,
+  "DeniedActions": {
+    "PhysicsRestore": "未重试，原Hash保持",
+    "RemoveProductionFocusGate": "未重试，保留门禁且回归通过"
+  }
+}

@@ -1,0 +1,338 @@
+{
+  "RecordedUtc": "2026-10-31T14:22:29.149397+00:00",
+  "Scope": "Approved spatial Interest and per-connection per-chunk subscription integration",
+  "ProtocolVersion": 4,
+  "Red": {
+    "Passed": 49,
+    "Failed": 100,
+    "Cases": 149
+  },
+  "InitialGreen": {
+    "Passed": 149,
+    "Failed": 0
+  },
+  "SupplementaryCoordinator": {
+    "Passed": 29,
+    "Failed": 0
+  },
+  "EditMode": {
+    "Fixtures": 27,
+    "Passed": 421,
+    "Failed": 0
+  },
+  "PlayMode": {
+    "Passed": 2,
+    "Failed": 0
+  },
+  "Business": {
+    "Passed": 100,
+    "Failed": 0,
+    "RealMySqlTestSchema": true
+  },
+  "HttpFoundation": {
+    "Status": "passed",
+    "RecordedAtUtc": "2026-10-31T14:00:30.5336123Z",
+    "Sdk": "10.0.402",
+    "Runtime": "10.0.13",
+    "Protobuf": "3.34.2",
+    "ProtocolVersion": 4,
+    "RealProcessHttpProtobuf": true,
+    "RealProcessVersionMismatchRejected": true,
+    "RealProcessOversizedPayloadRejected": true,
+    "KcpMultiplayerValidated": false,
+    "UnityDedicatedServerValidated": false
+  },
+  "NativeBuilds": {
+    "client": {
+      "Result": "Succeeded",
+      "UnityVersion": "6000.3.16f1",
+      "Output": "Builds/OnlineRooms/Client/NornRoomClient.exe",
+      "RecordedAtUtc": "2026-10-31T14:08:41.2077645Z",
+      "DedicatedServer": false,
+      "RenderingInputsIsolated": false,
+      "ClientResourcesExcluded": false,
+      "Errors": 0
+    },
+    "server": {
+      "Result": "Succeeded",
+      "UnityVersion": "6000.3.16f1",
+      "Output": "Builds/OnlineRooms/Server/NornRoomServer.exe",
+      "RecordedAtUtc": "2026-10-31T14:12:52.0480515Z",
+      "DedicatedServer": true,
+      "RenderingInputsIsolated": false,
+      "ClientResourcesExcluded": false,
+      "Errors": 0
+    }
+  },
+  "Native": {
+    "RecordedUtc": "2026-10-31T14:16:55.309657+00:00",
+    "ProtocolVersion": 4,
+    "Dungeon": "p7",
+    "WorldEpoch": 15487300152708176739,
+    "Scenario": "Real authenticated DS Actor snapshot diagnostic movement; formal KCP subscription path; not keyboard/full player path",
+    "Checkpoints": [
+      {
+        "Phase": 1,
+        "Pose": "Home",
+        "WorldTick": 5,
+        "SourceChunks": 4,
+        "AChunks": 4,
+        "BChunks": 4,
+        "AInstalled": 4,
+        "BInstalled": 4,
+        "PeerAcks": [
+          4,
+          4
+        ]
+      },
+      {
+        "Phase": 2,
+        "Pose": "away",
+        "WorldTick": 5,
+        "SourceChunks": 4,
+        "AChunks": 0,
+        "BChunks": 4,
+        "AInstalled": 4,
+        "BInstalled": 4,
+        "PeerAcks": [
+          4,
+          4
+        ]
+      },
+      {
+        "Phase": 3,
+        "Pose": "home",
+        "WorldTick": 5,
+        "SourceChunks": 4,
+        "AChunks": 4,
+        "BChunks": 4,
+        "AInstalled": 8,
+        "BInstalled": 4,
+        "PeerAcks": [
+          8,
+          4
+        ]
+      },
+      {
+        "Phase": 4,
+        "Pose": "away",
+        "WorldTick": 10,
+        "SourceChunks": 5,
+        "AChunks": 0,
+        "BChunks": 5,
+        "AInstalled": 8,
+        "BInstalled": 12,
+        "PeerAcks": [
+          8,
+          12
+        ]
+      },
+      {
+        "Phase": 5,
+        "Pose": "home",
+        "WorldTick": 10,
+        "SourceChunks": 5,
+        "AChunks": 5,
+        "BChunks": 5,
+        "AInstalled": 13,
+        "BInstalled": 12,
+        "PeerAcks": [
+          13,
+          12
+        ]
+      }
+    ],
+    "SameRevisionReentryVerified": true,
+    "ChangedWorldReentryVerified": true,
+    "OutsideAReceivesNoNewInstallation": true,
+    "StationaryBAndDSRetainMaterial": true,
+    "PerPeerInstallAcksVerified": true,
+    "InitialASubscriptions": [
+      {
+        "Key": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "Epoch": 1,
+        "Revision": 1
+      },
+      {
+        "Key": [
+          1,
+          0,
+          0,
+          0
+        ],
+        "Epoch": 1,
+        "Revision": 3
+      },
+      {
+        "Key": [
+          2,
+          0,
+          0,
+          0
+        ],
+        "Epoch": 1,
+        "Revision": 1
+      },
+      {
+        "Key": [
+          3,
+          0,
+          0,
+          0
+        ],
+        "Epoch": 1,
+        "Revision": 1
+      }
+    ],
+    "FinalASubscriptions": [
+      {
+        "Key": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "Epoch": 3,
+        "Revision": 1,
+        "BaseRevision": 0
+      },
+      {
+        "Key": [
+          1,
+          0,
+          0,
+          0
+        ],
+        "Epoch": 3,
+        "Revision": 9,
+        "BaseRevision": 0
+      },
+      {
+        "Key": [
+          2,
+          0,
+          0,
+          0
+        ],
+        "Epoch": 3,
+        "Revision": 1,
+        "BaseRevision": 0
+      },
+      {
+        "Key": [
+          3,
+          0,
+          0,
+          0
+        ],
+        "Epoch": 3,
+        "Revision": 1,
+        "BaseRevision": 0
+      },
+      {
+        "Key": [
+          1,
+          0,
+          0,
+          -1
+        ],
+        "Epoch": 2,
+        "Revision": 2,
+        "BaseRevision": 0
+      }
+    ],
+    "Logs": [
+      {
+        "Label": "p7",
+        "BuiltInResourceErrors": 2,
+        "OtherErrors": []
+      },
+      {
+        "Label": "p7-client0",
+        "BuiltInResourceErrors": 0,
+        "OtherErrors": []
+      },
+      {
+        "Label": "p7-client1",
+        "BuiltInResourceErrors": 0,
+        "OtherErrors": []
+      }
+    ],
+    "Limits": [
+      "DS snapshot diagnostic pose rather than keyboard player path",
+      "Two paused material checkpoints with five actual running ticks while A outside",
+      "No Native adversarial old-page/missing-revision/history-overwrite/corruption injection",
+      "No four-player/stress/HOL/performance",
+      "No same-process reconnect/consumption persistence/full Hub path",
+      "P8 Native material data not tested"
+    ]
+  },
+  "InitialFailures": {
+    "NUnitCompileBlock": "Is.AnyOf unsupported; equivalent assertion syntax fixed before RED",
+    "BusinessMissingConfig": {
+      "Passed": 42,
+      "Failed": 58,
+      "Cause": "NORN_N1_CONFIG and NORN_CONTENT_MANIFEST absent; unchanged tests passed after existing private test configuration supplied"
+    }
+  },
+  "SchemaChanged": true,
+  "GeneratedByPinnedTool": true,
+  "GenerationCheckFiles": 8,
+  "Profile": {
+    "ReferenceChunkMetres": 2,
+    "RadiusXZ": 10,
+    "RadiusY": 3,
+    "BoundsMetres": [
+      42,
+      14,
+      42
+    ]
+  },
+  "Metadata": {
+    "OwnerKeys": 128,
+    "Connections": 4,
+    "PermanentKeyVersionFences": true,
+    "UnboundedEvictionOrReuse": false,
+    "MessageBudgetPerRound": 2
+  },
+  "ProtectedFilesUnchanged": 12,
+  "FormalAssetsUnchanged": 13,
+  "NewSourceDirectories": 0,
+  "Editor": {
+    "Playing": false,
+    "Compiling": false,
+    "Dirty": false,
+    "Scene": "Assets/_Project/Scenes/P7_MainMenu.unity"
+  },
+  "DeferredMinors": [
+    {
+      "Severity": "P3",
+      "Issue": "Explicit DS diagnostic error remains latched after invalid/no-auth request; later valid pose request cannot recover without restarting fixture",
+      "Effect": "Only explicit QA fixture; successful authenticated scenario and default gameplay unaffected",
+      "Source": "RoomInstanceBootstrap.PollExplicitInterestProbe"
+    }
+  ],
+  "N5Complete": false,
+  "PermissionOrDecisionBlocker": false,
+  "NoCommitOrPush": true,
+  "Remaining": [
+    "Native adversarial old-page/missing-revision/history-overwrite/corrupt-page injection",
+    "Four-player sustained reactions/stress/HOL/GC and Native performance",
+    "Same-process reconnect/consumed-resource persistence/full Hub and keyboard path",
+    "P8 Native material data",
+    "Known two DS Built-in Resource startup errors",
+    "N4/N6 and remote platform gates"
+  ],
+  "FinalChecks": {
+    "Links": 41,
+    "MissingLinks": 0,
+    "TextDiffCheckExitCode": 0,
+    "OwnCredentialExposure": 0,
+    "CommitHead": "0d87d0da931ec2b39f7cd569661e750bafa0df84"
+  }
+}

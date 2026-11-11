@@ -1,0 +1,152 @@
+{
+  "RecordedUtc": "2026-11-01T07:15:54.044680+00:00",
+  "State": "Replica presentation-interest technical fix verified through Native CPU Draw submission",
+  "ModifiedRuntime": [
+    "ElementField/Runtime/ElementWorldRuntime.cs",
+    "ElementField/Runtime/ElementWorldRuntime.Replica.cs"
+  ],
+  "Tests": {
+    "InitialEditRed": "2/8",
+    "InitialSceneRed": "0/1",
+    "InitialGreen": "14/0",
+    "InitialPlay": "10/0",
+    "InitialFull": "472/0",
+    "ReviewBoundaryRed": "0/2",
+    "FinalGreen": "16/0",
+    "FinalPlay": "10/0",
+    "FinalFull": "474/0"
+  },
+  "Review": {
+    "P0": 0,
+    "P1": 0,
+    "OriginalP2": 1,
+    "FixedByRedGreen": true,
+    "PublicCoreContractChanged": false
+  },
+  "ClientBuild": {
+    "Result": "Succeeded",
+    "UnityVersion": "6000.3.16f1",
+    "Output": "Builds/OnlineAccounts/Menu/NornMenuClient.exe",
+    "RecordedAtUtc": "2026-11-01T06:46:52.0332210Z",
+    "DedicatedServer": false,
+    "RenderingInputsIsolated": false,
+    "ClientResourcesExcluded": false,
+    "Errors": 0
+  },
+  "ServerBuild": {
+    "Result": "Succeeded",
+    "UnityVersion": "6000.3.16f1",
+    "Output": "Builds/OnlineRooms/Server/NornRoomServer.exe",
+    "RecordedAtUtc": "2026-11-01T06:51:12.7551126Z",
+    "DedicatedServer": true,
+    "RenderingInputsIsolated": false,
+    "ClientResourcesExcluded": false,
+    "Errors": 0
+  },
+  "ProtocolVersion": 4,
+  "NativeReports": {
+    "ds": {
+      "EventCount": 379,
+      "DroppedCount": 0,
+      "FrameSamplesDropped": 0,
+      "State": "Completed"
+    },
+    "a": {
+      "EventCount": 290,
+      "DroppedCount": 0,
+      "FrameSamplesDropped": 0,
+      "State": "Completed"
+    },
+    "b": {
+      "EventCount": 290,
+      "DroppedCount": 0,
+      "FrameSamplesDropped": 0,
+      "State": "Completed"
+    }
+  },
+  "NativeOfflineChecks": {
+    "Passed": 247,
+    "Failed": 0
+  },
+  "InstalledAckVersionsPerPeer": 34,
+  "RendererCpuChainObserved": true,
+  "RendererSeedsUploadsDraws": {
+    "a": 20,
+    "b": 21
+  },
+  "CommonDrawVersions": 17,
+  "NoRendererDistanceRejection": true,
+  "NoObservedPageRejectionOrResync": true,
+  "SameTargetCommitPayloadFingerprintsAsPreFix": true,
+  "ComparisonIgnoresWorldEpochAndClockIdentity": true,
+  "ActorCharges": {
+    "before-timing": {
+      "a": [
+        30,
+        30
+      ],
+      "b": [
+        30,
+        30
+      ]
+    },
+    "after-timing": {
+      "a": [
+        29,
+        30
+      ],
+      "b": [
+        29,
+        30
+      ]
+    }
+  },
+  "MinAvailableBytes": 15353761792,
+  "FirstObservedDrawCpu": {
+    "Versions": {
+      "a": [
+        3411851455541258140,
+        0,
+        -26,
+        0,
+        28,
+        1,
+        1
+      ],
+      "b": [
+        3411851455541258140,
+        0,
+        -26,
+        0,
+        28,
+        1,
+        2
+      ]
+    },
+    "AToB": {
+      "LowerMs": 35.7792,
+      "UpperMs": 35.7975
+    },
+    "DifferentVersions": true
+  },
+  "GpuCompletionOrScreenAppearanceMeasured": false,
+  "UserFourClientP7PhenomenonFullyExplained": false,
+  "GeometryOriginAuthoritySinglePlayerAndAllVisibilityParametersChanged": false,
+  "RuntimeSourceStillFrozen": true,
+  "KnownTaskProcessesRemaining": [],
+  "Private13384Listening": false,
+  "AvailableBytes": 20805513216,
+  "EditorNormallyClosed": true,
+  "PhysicsRestorationAttempted": false,
+  "PhysicsCurrentSha256": "53cf96c365b85eefe78b3cda76af21f68246744277ae6ca21ffd6a67bdb72a1c",
+  "ContainerFirstSliceAuthorized": true,
+  "ContainerImplementationStarted": false,
+  "N5Complete": false,
+  "Remaining": [
+    "GPU/present timing",
+    "original four-client P7 latency under load",
+    "full-frame/performance gates",
+    "existing DS resource errors/P3 diagnostic latch/128Key limit"
+  ],
+  "Next": "Continue approved container first data slice; no repeat approval for carry/pickup/drop/select/collect/pour semantics"
+}

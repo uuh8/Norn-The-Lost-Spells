@@ -115,7 +115,10 @@ namespace Game.Run
             string id = Resolve(slotIndex); if (id == null) return false;
             SetSelection(slotIndex, id, true); return true;
         }
-        public void Synchronize()
+        public void Synchronize() => SynchronizeCore(true);
+        // 线上跨Owner归属提交期间只做内部回退；外部通知留到原收据与模型收尾完成后。
+        internal void SynchronizeWithoutNotifications() => SynchronizeCore(false);
+        private void SynchronizeCore(bool publish)
         {
             bool changed = false;
             for (int i = 0; i < HeldItemSlots.ToolCount; i++)
@@ -123,8 +126,8 @@ namespace Game.Run
                 { _profile.ToolBindings[i] = null; changed = true; }
             if (changed) _profile.ToolConfigurationVersion++;
             string id = Resolve(SelectedSlot);
-            if (id == null) SelectFallback(true); else SetSelection(SelectedSlot, id, true);
-            if (changed) Publish();
+            if (id == null) SelectFallback(publish); else SetSelection(SelectedSlot, id, publish);
+            if (changed && publish) Publish();
         }
         private string Resolve(int slot)
         {

@@ -1,0 +1,529 @@
+{
+  "RecordedUtc": "2026-11-01T13:42:56.572178+00:00",
+  "Scope": "持键/原预览/背包工具绑定及分桶预算：Editor行为阶段；Native/共享转交仍未完成",
+  "Runs": [
+    {
+      "Label": "container-held-bind-budget-red",
+      "State": "Finished",
+      "StartedUtc": "2026-11-01T12:59:50.7671908Z",
+      "UpdatedUtc": "2026-11-01T13:01:08.8992904Z",
+      "Passed": 297,
+      "Failed": 64,
+      "Error": "",
+      "Fixtures": {
+        "Game.Character.Tests.OnlineCastDriverTests": 76,
+        "Game.Multiplayer.Tests.InventoryCommandRoutingTests": 30,
+        "Game.Networking.Tests.InventoryCommandCodecTests": 92,
+        "Game.Run.Tests.OnlineOwnedWorkspaceTests": 123,
+        "Game.UI.Tests.OnlineInventoryUiGatewayTests": 40
+      },
+      "Failures": [
+        {
+          "Name": "ActualPourPreviewEndpointMatchesTheAuthorityTrajectory(False)",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "ActualPourPreviewEndpointMatchesTheAuthorityTrajectory(True)",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "ConfirmedBindingReplacementRequiresReleaseAndTargetsOnlyTheNewInstance",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "ContainerHeldInputIsOnlyBoundForTheLocalOwner(\"remote\")",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "ContainerHeldInputIsOnlyBoundForTheLocalOwner(\"authority\")",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "HeldInputWaitsForConfirmedSelectionAndThenARelease",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "HeldPourCancellationDiscardsDebtAndRequiresANewPress(\"blocked\")",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "HeldPourCancellationDiscardsDebtAndRequiresANewPress(\"focus\")",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "HeldPourCancellationDiscardsDebtAndRequiresANewPress(\"paused\")",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "HeldPourCancellationDiscardsDebtAndRequiresANewPress(\"disconnected\")",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "HeldPourCancellationDiscardsDebtAndRequiresANewPress(\"dead\")",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "HeldPourCancellationDiscardsDebtAndRequiresANewPress(\"disabled\")",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "HigherEpochReconnectWaitsForItsConfirmedSourceAndANewPress",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "LongHeldFrameHasOneBoundedBatchInsteadOfCatchUpRequests",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "OriginalHAndLeftMouseShareOnePourStream(\"h\")",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "OriginalHAndLeftMouseShareOnePourStream(\"mouse\")",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "OriginalHAndLeftMouseShareOnePourStream(\"both\")",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "RealFDefersToOriginalInteractionsAndRequiresReleaseBeforeCollection(\"station\")",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "RealFDefersToOriginalInteractionsAndRequiresReleaseBeforeCollection(\"portal\")",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "RealFDefersToOriginalInteractionsAndRequiresReleaseBeforeCollection(\"nearby\")",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "RealFDefersToOriginalInteractionsAndRequiresReleaseBeforeCollection(\"pickup-frame\")",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "RealHeldFAndHProduceIndependentTenHertzBudgetsWithoutLocalAssetWrites",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "SameBottleOwnerSnapshotVersionChangeDoesNotEraseTheStableHeldInterval",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "SceneActorDestructionUnbindsHeldInputAndDestroysItsPreview",
+          "Message": "  缺少正式Owner容器输入组件，不能由测试直接调用请求API替代按键。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "ActualChannelLifecycleClearsEveryOperationBucket(\"ConfigureWorld\")",
+          "Message": "  按已解码命令种类选择预算，不能复用原离散8/s桶。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "ActualChannelLifecycleClearsEveryOperationBucket(\"DetachWorld\")",
+          "Message": "  按已解码命令种类选择预算，不能复用原离散8/s桶。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "ActualChannelLifecycleClearsEveryOperationBucket(\"OnDisable\")",
+          "Message": "  按已解码命令种类选择预算，不能复用原离散8/s桶。\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "ActualChannelUsesDecodedKindSoDiscreteFloodDoesNotThrottleCollectOrPour",
+          "Message": "  真实OnCommand必须按F种类取独立额度。\n  Expected: None\n  But was:  RateLimited\n"
+        },
+        {
+          "Name": "ClearReleasesAllOperationBudgetsAndTheirIdentityFence",
+          "Message": "  缺少有界库存命令路由：InventoryCommandOperationBudget\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "CollectAndPourEachSustainTenHzWithoutConsumingTheOtherOperationBudget",
+          "Message": "  缺少有界库存命令路由：InventoryCommandOperationBudget\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "DiscreteCommandsKeepTheirSharedEightPerSecondBucketAndMaterialBucketsStayIndependent",
+          "Message": "  缺少有界库存命令路由：InventoryCommandOperationBudget\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "InvalidOrBackwardTimeCannotAttachIdentityOrRefillAnUntouchedOperation",
+          "Message": "  缺少有界库存命令路由：InventoryCommandOperationBudget\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "MaterialFloodIsStillLimitedAndIdleTimeCannotGrowTheSixteenCommandBurst(CollectMaterial)",
+          "Message": "  缺少有界库存命令路由：InventoryCommandOperationBudget\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "MaterialFloodIsStillLimitedAndIdleTimeCannotGrowTheSixteenCommandBurst(PourContainer)",
+          "Message": "  缺少有界库存命令路由：InventoryCommandOperationBudget\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "NewEpochOnOneOperationFencesOldIdentityAcrossEveryOtherOperation",
+          "Message": "  缺少有界库存命令路由：InventoryCommandOperationBudget\n  Expected: not null\n  But was:  null\n"
+        },
+        {
+          "Name": "BindCarriedContainerRoundTripsInstanceAndToolSlotWithoutSelectionOrTransferPayload(0)",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "BindCarriedContainerRoundTripsInstanceAndToolSlotWithoutSelectionOrTransferPayload(6)",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "BindToolCanonicalizesNullOptionalWandIdsToEmpty",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "BindToolRawWireAcceptsCanonicalZeroTransferFields",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "BindingAnUnselectedSlotKeepsTheCurrentSelectionAndItsAvailableTransferBudget",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "BindingBackpackBottleMovesTheRealInstanceToEquipmentWithoutSelectingIt",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "BindingOverOccupiedToolUsesTheSpaceFreedByIncomingBottleEvenWhenTheBackpackIsFull",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "BindingRejectsAtomicallyWhenTheOutgoingToolsRealShapeCannotFitTheFreedCell",
+          "Message": "  Expected: NoCapacity\n  But was:  InvalidInput\n"
+        },
+        {
+          "Name": "BindingUsesTheExistingReceiptWindowAndEpochWithoutDuplicatingOrReselectingTheItem",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "BusyBindingReceiptCannotTurnSuccessfulAfterTheOriginalCastFinishes",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "MovingAnEquippedBottleSwapsRealSlotsAndKeepsSelectionOnItsOriginalSlot(False)",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "MovingAnEquippedBottleSwapsRealSlotsAndKeepsSelectionOnItsOriginalSlot(True)",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "ReplacingTheSelectedSlotKeepsItsIndexUpdatesSelectionVersionAndClearsTransferBudget",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "ContainerBindingKeepsTheVersionCapturedWhenDraggingStarted",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "ContainerBindingReceiptWaitsForConfirmedSourceWithoutOptimisticToolChanges",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "InvalidToolSlotCancelsContainerDragWithoutEitherWritePath(-1)",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "InvalidToolSlotCancelsContainerDragWithoutEitherWritePath(7)",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "InvalidToolSlotCancelsContainerDragWithoutEitherWritePath(255)",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "RealContainerDragToToolSlotPublishesOnlyVersionedBindIntent(\"bag-bottle\",2)",
+          "Message": "  真实装备包内或已装备的容器必须能进入原拖拽表现。\n  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "RealContainerDragToToolSlotPublishesOnlyVersionedBindIntent(\"tool-bottle\",0)",
+          "Message": "  真实装备包内或已装备的容器必须能进入原拖拽表现。\n  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "RebindingPresentationSourceEndsTheCapturedContainerDrag(\"same-identity\")",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "RebindingPresentationSourceEndsTheCapturedContainerDrag(\"new-epoch\")",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "RebindingPresentationSourceEndsTheCapturedContainerDrag(\"old-epoch\")",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "RebindingPresentationSourceEndsTheCapturedContainerDrag(\"other-actor\")",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "RebindingPresentationSourceEndsTheCapturedContainerDrag(\"no-source\")",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "SupportingContainerDragDoesNotOpenUnapprovedDropDestinations(\"Ground\",null,-1)",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "SupportingContainerDragDoesNotOpenUnapprovedDropDestinations(\"Warehouse\",null,-1)",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "SupportingContainerDragDoesNotOpenUnapprovedDropDestinations(\"ProgramSlot\",\"wand\",1)",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "ToolBindingGatewayNeverPromotesCardsWandsOrOtherUsableItems(\"card\")",
+          "Message": "  Expected: False\n  But was:  True\n"
+        }
+      ]
+    },
+    {
+      "Label": "container-held-bind-budget-candidate",
+      "State": "Finished",
+      "StartedUtc": "2026-11-01T13:16:59.0170496Z",
+      "UpdatedUtc": "2026-11-01T13:18:15.6062371Z",
+      "Passed": 335,
+      "Failed": 27,
+      "Error": "",
+      "Fixtures": {
+        "Game.Character.Tests.OnlineCastDriverTests": 76,
+        "Game.Multiplayer.Tests.InventoryCommandRoutingTests": 30,
+        "Game.Networking.Tests.InventoryCommandCodecTests": 92,
+        "Game.Run.Tests.OnlineOwnedWorkspaceTests": 124,
+        "Game.UI.Tests.OnlineInventoryUiGatewayTests": 40
+      },
+      "Failures": [
+        {
+          "Name": "ActualPourPreviewEndpointMatchesTheAuthorityTrajectory(False)",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "ActualPourPreviewEndpointMatchesTheAuthorityTrajectory(True)",
+          "Message": "  Expected: True\n  But was:  False\n"
+        },
+        {
+          "Name": "ConfirmedBindingReplacementRequiresReleaseAndTargetsOnlyTheNewInstance",
+          "Message": "  Expected: 1\n  But was:  0\n"
+        },
+        {
+          "Name": "HeldInputWaitsForConfirmedSelectionAndThenARelease",
+          "Message": "  Expected: 1\n  But was:  0\n"
+        },
+        {
+          "Name": "HeldPourCancellationDiscardsDebtAndRequiresANewPress(\"blocked\")",
+          "Message": "  Expected: 1\n  But was:  0\n"
+        },
+        {
+          "Name": "HeldPourCancellationDiscardsDebtAndRequiresANewPress(\"focus\")",
+          "Message": "  Expected: 1\n  But was:  0\n"
+        },
+        {
+          "Name": "HeldPourCancellationDiscardsDebtAndRequiresANewPress(\"paused\")",
+          "Message": "  Expected: 1\n  But was:  0\n"
+        },
+        {
+          "Name": "HeldPourCancellationDiscardsDebtAndRequiresANewPress(\"disconnected\")",
+          "Message": "  Expected: 1\n  But was:  0\n"
+        },
+        {
+          "Name": "HeldPourCancellationDiscardsDebtAndRequiresANewPress(\"dead\")",
+          "Message": "  Expected: 1\n  But was:  0\n"
+        },
+        {
+          "Name": "HeldPourCancellationDiscardsDebtAndRequiresANewPress(\"disabled\")",
+          "Message": "  Expected: 1\n  But was:  0\n"
+        },
+        {
+          "Name": "HigherEpochReconnectWaitsForItsConfirmedSourceAndANewPress",
+          "Message": "  Expected: 1\n  But was:  0\n"
+        },
+        {
+          "Name": "LongHeldFrameHasOneBoundedBatchInsteadOfCatchUpRequests",
+          "Message": "  Expected: 2\n  But was:  0\n"
+        },
+        {
+          "Name": "OriginalHAndLeftMouseShareOnePourStream(\"h\")",
+          "Message": "  Expected: 5\n  But was:  0\n"
+        },
+        {
+          "Name": "OriginalHAndLeftMouseShareOnePourStream(\"mouse\")",
+          "Message": "  Expected: 5\n  But was:  0\n"
+        },
+        {
+          "Name": "OriginalHAndLeftMouseShareOnePourStream(\"both\")",
+          "Message": "  Expected: 5\n  But was:  0\n"
+        },
+        {
+          "Name": "RealFDefersToOriginalInteractionsAndRequiresReleaseBeforeCollection(\"station\")",
+          "Message": "  Expected: 1\n  But was:  0\n"
+        },
+        {
+          "Name": "RealFDefersToOriginalInteractionsAndRequiresReleaseBeforeCollection(\"portal\")",
+          "Message": "  Expected: 1\n  But was:  0\n"
+        },
+        {
+          "Name": "RealFDefersToOriginalInteractionsAndRequiresReleaseBeforeCollection(\"nearby\")",
+          "Message": "  Expected: 1\n  But was:  0\n"
+        },
+        {
+          "Name": "RealFDefersToOriginalInteractionsAndRequiresReleaseBeforeCollection(\"pickup-frame\")",
+          "Message": "  Expected: 1\n  But was:  0\n"
+        },
+        {
+          "Name": "RealHeldFAndHProduceIndependentTenHertzBudgetsWithoutLocalAssetWrites",
+          "Message": "  Expected: 10\n  But was:  0\n"
+        },
+        {
+          "Name": "SameBottleOwnerSnapshotVersionChangeDoesNotEraseTheStableHeldInterval",
+          "Message": "  同瓶确认库存更新不等于换选，不能每张Owner快照重置10Hz计时。\n  Expected: 1\n  But was:  0\n"
+        },
+        {
+          "Name": "CollectThenPourUsingTheSameConfirmedVersionRequiresANewOwnerVersionBeforeThePourCanCommit(\"source-wand\")",
+          "Message": "Arguments provided for method with no parameters"
+        },
+        {
+          "Name": "CollectThenPourUsingTheSameConfirmedVersionRequiresANewOwnerVersionBeforeThePourCanCommit(\"target-wand\")",
+          "Message": "Arguments provided for method with no parameters"
+        },
+        {
+          "Name": "CollectThenPourUsingTheSameConfirmedVersionRequiresANewOwnerVersionBeforeThePourCanCommit(\"source-revision\")",
+          "Message": "Arguments provided for method with no parameters"
+        },
+        {
+          "Name": "CollectThenPourUsingTheSameConfirmedVersionRequiresANewOwnerVersionBeforeThePourCanCommit(\"target-revision\")",
+          "Message": "Arguments provided for method with no parameters"
+        },
+        {
+          "Name": "CollectThenPourUsingTheSameConfirmedVersionRequiresANewOwnerVersionBeforeThePourCanCommit(\"storage\")",
+          "Message": "Arguments provided for method with no parameters"
+        },
+        {
+          "Name": "MovingTheSelectedToolIntoAnEmptySlotUsesOriginalWandFallbackAndPublishesAnInstallableSource",
+          "Message": "  Expected: 0\n  But was:  7\n"
+        }
+      ]
+    },
+    {
+      "Label": "container-held-bind-budget-candidate-v2",
+      "State": "Finished",
+      "StartedUtc": "2026-11-01T13:28:29.3492711Z",
+      "UpdatedUtc": "2026-11-01T13:29:47.6745900Z",
+      "Passed": 363,
+      "Failed": 0,
+      "Error": "",
+      "Fixtures": {
+        "Game.Character.Tests.OnlineCastDriverTests": 76,
+        "Game.Multiplayer.Tests.InventoryCommandRoutingTests": 30,
+        "Game.Networking.Tests.InventoryCommandCodecTests": 92,
+        "Game.Run.Tests.OnlineOwnedWorkspaceTests": 125,
+        "Game.UI.Tests.OnlineInventoryUiGatewayTests": 40
+      },
+      "Failures": []
+    },
+    {
+      "Label": "container-held-bind-related-regression",
+      "State": "Finished",
+      "StartedUtc": "2026-11-01T13:31:37.2387950Z",
+      "UpdatedUtc": "2026-11-01T13:33:16.1815368Z",
+      "Passed": 561,
+      "Failed": 0,
+      "Error": "",
+      "Fixtures": {
+        "Game.Character.Tests.OnlineCastDriverTests": 76,
+        "Game.Character.Tests.OnlineCastFocusTests": 2,
+        "Game.ElementField.Tests.MaterialInventoryDepositTests": 12,
+        "Game.ElementField.Tests.MaterialInventoryTransferTests": 17,
+        "Game.ElementField.Tests.MaterialVolumeAimTests": 5,
+        "Game.ElementField.Tests.MaterialWorldTransactionTests": 21,
+        "Game.ElementField.Tests.WorldAuthorityInitializationTests": 3,
+        "Game.Multiplayer.Tests.InventoryChannelLifecycleTests": 2,
+        "Game.Multiplayer.Tests.InventoryCommandRoutingTests": 30,
+        "Game.Networking.Tests.InventoryCommandCodecTests": 92,
+        "Game.Networking.Tests.InventorySnapshotCodecTests": 62,
+        "Game.Run.Tests.ContainerUseServiceTests": 16,
+        "Game.Run.Tests.OnlineInventoryBridgeTests": 4,
+        "Game.Run.Tests.OnlineInventoryCommandAuthorityTests": 7,
+        "Game.Run.Tests.OnlineInventoryPresentationSourceTests": 47,
+        "Game.Run.Tests.OnlineOwnedWorkspaceTests": 125,
+        "Game.UI.Tests.OnlineInventoryUiGatewayTests": 40
+      },
+      "Failures": []
+    },
+    {
+      "Label": "container-held-bind-playmode",
+      "State": "Finished",
+      "StartedUtc": "2026-11-01T13:38:15.7026298Z",
+      "UpdatedUtc": "2026-11-01T13:38:34.6068985Z",
+      "Passed": 3,
+      "Failed": 0,
+      "Error": "",
+      "Fixtures": {
+        "Game.Run.Tests.ContainerUsePlayModeTests": 2,
+        "Game.Run.Tests.OnlineSharedInventoryPlayModeTests": 1
+      },
+      "Failures": []
+    }
+  ],
+  "ProtocolVersion": 6,
+  "GeneratedFilesChecked": 8,
+  "BusinessContractReset": {
+    "Passed": 19,
+    "Failed": 0,
+    "DatabaseStarted": false,
+    "Trx": "RPG/.tools/networking-checks/n5-container-operations-20261101/test-results/held-bind-contract-green.trx"
+  },
+  "ProtectedFiles": [
+    {
+      "Path": "F:\\Develop Project\\RPG\\RPG\\ProjectSettings\\DynamicsManager.asset",
+      "Before": "53cf96c365b85eefe78b3cda76af21f68246744277ae6ca21ffd6a67bdb72a1c",
+      "After": "53cf96c365b85eefe78b3cda76af21f68246744277ae6ca21ffd6a67bdb72a1c",
+      "Unchanged": true
+    },
+    {
+      "Path": "F:\\Develop Project\\RPG\\RPG\\ProjectSettings\\QualitySettings.asset",
+      "Before": "90a6246b84df30886fb817936db3934edd391241d003785606137c0e27014856",
+      "After": "90a6246b84df30886fb817936db3934edd391241d003785606137c0e27014856",
+      "Unchanged": true
+    },
+    {
+      "Path": "F:\\Develop Project\\RPG\\RPG\\ProjectSettings\\TimeManager.asset",
+      "Before": "96137d2fb1b3cba1643098de4a9c87eb34657cce7bf848f315c5f9d10dffec65",
+      "After": "96137d2fb1b3cba1643098de4a9c87eb34657cce7bf848f315c5f9d10dffec65",
+      "Unchanged": true
+    },
+    {
+      "Path": "F:\\Develop Project\\RPG\\RPG\\ProjectSettings\\EditorBuildSettings.asset",
+      "Before": "311ce57513e692147e786e4d52295262a7acebd3a2b4d735c9560f8e2b25ab37",
+      "After": "311ce57513e692147e786e4d52295262a7acebd3a2b4d735c9560f8e2b25ab37",
+      "Unchanged": true
+    },
+    {
+      "Path": "F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Scenes\\P7_MainMenu.unity",
+      "Before": "a236fa37b4c643c0199a119a4b7f0857e81746882b1aa364391b3d6fa948e8fc",
+      "After": "a236fa37b4c643c0199a119a4b7f0857e81746882b1aa364391b3d6fa948e8fc",
+      "Unchanged": true
+    },
+    {
+      "Path": "F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Scenes\\P7_DemoRun.unity",
+      "Before": "f06f1dabf378ffc749be0e4d55315a90a5fc17462b39e13a4435f716526a3493",
+      "After": "f06f1dabf378ffc749be0e4d55315a90a5fc17462b39e13a4435f716526a3493",
+      "Unchanged": true
+    },
+    {
+      "Path": "F:\\Develop Project\\RPG\\RPG\\Assets\\_Project\\Scenes\\P8_BossField.unity",
+      "Before": "6fbc20b0a2a34eb6b0d7bf890929a570a40fe2ef06613d6537467e87a9f9cdea",
+      "After": "6fbc20b0a2a34eb6b0d7bf890929a570a40fe2ef06613d6537467e87a9f9cdea",
+      "Unchanged": true
+    }
+  ],
+  "EditorKeptOpen": true,
+  "NativeBuildOrRunThisSlice": false,
+  "GroundTransferImplemented": false,
+  "N5Complete": false,
+  "ReleaseReady": false,
+  "KnownVersionSemantics": "同一已确认库存版本的F先成功推进版本后，H用旧版本必须StaleVersion；安装新Owner版本后新命令才可提交。未预测未来版本、静默rebase或合并请求。",
+  "Next": [
+    "默认关闭只读工具选择诊断与匹配v6构建/低负载Native实际键鼠",
+    "同实例Drop/首拾共享注册、跨Owner原子迁移及复制",
+    "保留既有失败/未测与四人性能延期"
+  ]
+}

@@ -1,0 +1,188 @@
+{
+  "RecordedUtc": "2026-11-02T11:53:46.863479+00:00",
+  "Implementation": "Server entry backpack guarantee under original RunEntry transaction; trusted source binding migration009; no Shared/Unity runtime or protocol change",
+  "Checks": [
+    {
+      "Path": "Server\\TestResults\\entry-backpack-20261102\\entry-backpack-red-20261102.trx",
+      "Sha256": "a7c9e6cd1a8136c2d1032db7b58f8af598ab6bd8d39ad39ec01f17f0f74fd7ea",
+      "Counters": {
+        "total": "1",
+        "executed": "1",
+        "passed": "0",
+        "failed": "1",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "Failures": [
+        {
+          "Name": "Norn.Business.Tests.EntryBackpackTests.EmptyLoadout_ConcurrentEntryGrantsOneBoundEightByEightBag_WithoutSpendingGold",
+          "Outcome": "Failed"
+        }
+      ]
+    },
+    {
+      "Path": "Server\\TestResults\\entry-backpack-20261102\\entry-backpack-green-20261102.trx",
+      "Sha256": "055c285c09bf7fbaed93632e7ea9968b0891baebe48cebe646feaa2bbdd2833c",
+      "Counters": {
+        "total": "5",
+        "executed": "5",
+        "passed": "5",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "Failures": []
+    },
+    {
+      "Path": "Server\\TestResults\\entry-backpack-20261102\\entry-backpack-regression-first-20261102.trx",
+      "Sha256": "13648e8c15139c232fd5dc429cc2ad34776dfd5baacd1d7c5c29225c702043f9",
+      "Counters": {
+        "total": "96",
+        "executed": "96",
+        "passed": "93",
+        "failed": "3",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "Failures": [
+        {
+          "Name": "Norn.Business.Tests.RunEntryTests.ConcurrentStart_OnlyOneRunAndTwoImmutableSnapshots",
+          "Outcome": "Failed"
+        },
+        {
+          "Name": "Norn.Business.Tests.RunEntryTests.ConcurrentInventoryMoveAndStart_NeverSnapshotWrongVersion",
+          "Outcome": "Failed"
+        },
+        {
+          "Name": "Norn.Business.Tests.RunEntryTests.StartFailure_ReleasesOnlyMatchingEpochLease",
+          "Outcome": "Failed"
+        }
+      ]
+    },
+    {
+      "Path": "Server\\TestResults\\entry-backpack-20261102\\entry-backpack-regression-final-20261102.trx",
+      "Sha256": "963b4a7a1d561dea1e28dbcc347f7922a4dc8b415ef81d0f4eaf9a758cf6d315",
+      "Counters": {
+        "total": "102",
+        "executed": "102",
+        "passed": "102",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "Failures": []
+    }
+  ],
+  "FinalRun": {
+    "Total": 102,
+    "Passed": 102,
+    "Failed": 0,
+    "IncludesNewGuaranteeTests": 6,
+    "IndependentRunsNotAdded": true
+  },
+  "InitialRegressionFailures": "Three old expectations assumed no new entry item/version; changed to exact approved bag+version while preserving original identity, lease and atomic assertions",
+  "ProtectedFiles": [
+    {
+      "Path": "RPG\\ProjectSettings\\DynamicsManager.asset",
+      "Sha256": "53cf96c365b85eefe78b3cda76af21f68246744277ae6ca21ffd6a67bdb72a1c",
+      "Unchanged": true
+    },
+    {
+      "Path": "RPG\\ProjectSettings\\QualitySettings.asset",
+      "Sha256": "90a6246b84df30886fb817936db3934edd391241d003785606137c0e27014856",
+      "Unchanged": true
+    },
+    {
+      "Path": "RPG\\ProjectSettings\\TimeManager.asset",
+      "Sha256": "96137d2fb1b3cba1643098de4a9c87eb34657cce7bf848f315c5f9d10dffec65",
+      "Unchanged": true
+    },
+    {
+      "Path": "RPG\\ProjectSettings\\EditorBuildSettings.asset",
+      "Sha256": "311ce57513e692147e786e4d52295262a7acebd3a2b4d735c9560f8e2b25ab37",
+      "Unchanged": true
+    },
+    {
+      "Path": "RPG\\Assets\\_Project\\Scenes\\P7_MainMenu.unity",
+      "Sha256": "a236fa37b4c643c0199a119a4b7f0857e81746882b1aa364391b3d6fa948e8fc",
+      "Unchanged": true
+    },
+    {
+      "Path": "RPG\\Assets\\_Project\\Scenes\\P7_DemoRun.unity",
+      "Sha256": "f06f1dabf378ffc749be0e4d55315a90a5fc17462b39e13a4435f716526a3493",
+      "Unchanged": true
+    },
+    {
+      "Path": "RPG\\Assets\\_Project\\Scenes\\P8_BossField.unity",
+      "Sha256": "6fbc20b0a2a34eb6b0d7bf890929a570a40fe2ef06613d6537467e87a9f9cdea",
+      "Unchanged": true
+    }
+  ],
+  "MainDatabaseMigrationRequested": false,
+  "MainDatabaseLastObservedVersion": 5,
+  "MainDatabaseRequeriedThisPhase": false,
+  "RequiredUndeployedMigrations": [
+    6,
+    7,
+    8,
+    9
+  ],
+  "DatabaseTestSchema": "norn_online_test",
+  "GameplayAcceptanceRun": false,
+  "EditorClosed": false,
+  "ProtocolVersion": 10,
+  "SharedOrUnityRuntimeChanged": false,
+  "BusinessPublishIsStale": true,
+  "InstalledBusinessSha256": "7939e45803a4938173b03f14357a1c5b746dec2666fc5b71c615145288c23957",
+  "CurrentBuildBusinessSha256": "d9dae3ea89df19335130659794d6d0098dbae2bf5c2139cf238816016a9e93fc",
+  "DedicatedServerRebuilt": false,
+  "DedicatedServerProtocolVersionFromPriorDelivery": 10,
+  "NativeClientVersionFromPriorDelivery": 6,
+  "UserAcceptancePending": true,
+  "UnresolvedPolicy": "No current online unequip/store/sell/Bag drop; if later opened, stored fallback disposition/stockpiling and cleanup need decision. Existing marked bag outside equipment now rejects and preserves state.",
+  "OwnTestMySqlProcessId": 57004,
+  "OwnTestMySqlStoppedNormally": true,
+  "OwnTestMySqlStateFileRemoved": true,
+  "EditorPidObservedStillOpen": 15628,
+  "IndependentReadOnlyReview": "No definite blocking issue found; transaction/identity/current online routes reviewed"
+}

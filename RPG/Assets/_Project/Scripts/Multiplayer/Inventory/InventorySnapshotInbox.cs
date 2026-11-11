@@ -13,12 +13,19 @@ namespace Game.Multiplayer
         private readonly JoinConnectionIdentity _identity;
         private readonly string _configHash;
         private readonly string _inventoryId;
+        private readonly Func<OnlineInventoryPresentationSnapshot, bool> _validateDomain;
         private OnlineInventoryPresentationSnapshot _pending;
+        private OnlineInventoryPresentationSnapshot _taken;
         private ulong _lastSequence;
 
         public InventorySnapshotInbox(JoinConnectionIdentity identity, string expectedGameplayHash)
+            : this(identity, expectedGameplayHash, null) { }
+
+        public InventorySnapshotInbox(JoinConnectionIdentity identity, string expectedGameplayHash,
+            Func<OnlineInventoryPresentationSnapshot, bool> validateDomain)
         {
             _identity = identity; _configHash = expectedGameplayHash;
+            _validateDomain = validateDomain;
             // 与业务 FreezeCombatAssets 的稳定身份规则一致；不能信任消息自己声明的 InventoryId。
             _inventoryId = identity != null ? identity.RunId + "/" + identity.PlayerId : null;
         }
@@ -26,15 +33,30 @@ namespace Game.Multiplayer
         /// <summary>先判断所有权，再推进序号；错误玩家的999号包不能挡住正确玩家的第1号包。</summary>
         public bool TryQueue(OnlineInventoryPresentationSnapshot snapshot)
         {
-            if (!Matches(_identity, snapshot, _configHash, _inventoryId) || snapshot.SnapshotSequence <= _lastSequence) return false;
-            _lastSequence = snapshot.SnapshotSequence; _pending = snapshot;
+            if (!Matches(_identity, snapshot, _configHash, _inventoryId)
+                || _validateDomain != null && !_validateDomain(snapshot) || snapshot.SnapshotSequence <= _lastSequence
+                || _pending != null && snapshot.SnapshotSequence <= _pending.SnapshotSequence
+                || _taken != null && snapshot.SnapshotSequence <= _taken.SnapshotSequence) return false;
+            // 这里只接收候选。Codec通过尚不等于目录/容量/占格通过，不能预先提交安装水位。
+            _pending = snapshot;
             return true;
         }
 
         public bool TryTake(out OnlineInventoryPresentationSnapshot snapshot)
         {
-            snapshot = _pending; _pending = null;
+            snapshot = null;
+            if (_taken != null) return false;
+            snapshot = _pending; _pending = null; _taken = snapshot;
             return snapshot != null;
+        }
+
+        /// <summary>调用方完成Run原子安装后确认；失败只丢候选，既有Source与已安装序号保持不变。</summary>
+        public bool ConfirmInstalled(ulong sequence, bool installed)
+        {
+            if (_taken == null || _taken.SnapshotSequence != sequence) return false;
+            if (installed) _lastSequence = sequence;
+            _taken = null;
+            return true;
         }
 
         /// <summary>

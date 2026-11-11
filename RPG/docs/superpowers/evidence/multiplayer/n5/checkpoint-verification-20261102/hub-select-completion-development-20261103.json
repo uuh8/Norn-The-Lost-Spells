@@ -1,0 +1,127 @@
+{
+  "RecordedAtUtc": "2026-11-03T08:00:07.304964+00:00",
+  "SourceProtocol": 14,
+  "ContentHash": "e79b64af2167407e1bf412c982ca526faf17ef3e356e3d02a1024fcf3037e369",
+  "GameplayHash": "30564897d6d5a6762339358578f060d87e9adae201b06b8761294105e64dbeb3",
+  "Implemented": [
+    "Hub原数字1–3选择真实装备杖；账号权威Op2、固定正文和收据、Profile安装、原HUD真实图标/选择；未知Mana/CD不伪造。",
+    "最后所有原Entry成员均有真实离局收据后，专属终态完整捕获沿原schema4 Journal/Receipt/Head确认，再调用有界幂等Complete。",
+    "普通检查点仍拒绝空成员；Completed不被后续Fail覆盖；旧SQL不支持时明确503，不暗改数据库。"
+  ],
+  "DirectChecks": {
+    "Business": {
+      "Label": "hub-select-authority-green-20261103",
+      "ExitCode": 0,
+      "Total": 2,
+      "Failed": 0,
+      "Trx": "F:\\Develop Project\\RPG\\Server\\TestResults\\coin-member-exit-20261103\\hub-select-authority-green-20261103.trx",
+      "RecordedAtUtc": "2026-11-03T07:46:04.9708060Z",
+      "Passed": 2
+    },
+    "Unity": {
+      "State": "Finished",
+      "StartedUtc": "2026-11-03T07:54:28.1567317Z",
+      "UpdatedUtc": "2026-11-03T07:54:35.5566458Z",
+      "OriginalScene": "Assets/_Project/Scenes/P7_MainMenu.unity",
+      "CurrentScene": "",
+      "Error": "",
+      "SceneDirty": false,
+      "Passed": 1,
+      "Failed": 0,
+      "TestNames": []
+    },
+    "OfficialHashRefresh": {
+      "Command": "refresh-online-hashes",
+      "Error": "",
+      "RecordedAtUtc": "2026-11-03T07:57:58.9051890Z",
+      "Passed": true
+    }
+  },
+  "NotImplemented": [
+    "完整整理（合并退休账本未接）",
+    "Hub真实地面丢拾（场景姿态持久化未接）",
+    "账号商店交易/研究/Hub材料写完整适配"
+  ],
+  "Blocked": [
+    "013仅提案，未创建或应用：物品退休、私人Hub地面记录、WorldItem位置约束、Completed状态CHECK。",
+    "最后成员离开后仍在世界的未拾物品/金币或托管资产没有已确认处置规则；严格Complete保持Pending。",
+    "正常Heartbeat409后的等待补丁被自动审批拒绝，已确认未写入；保留原401/409及Idle退出，不保证丢响应期间DS重试一定跑完。"
+  ],
+  "VerificationLimits": [
+    "无新独立Dedicated构建",
+    "无游戏实操/Native/自动输入/压力或验收打包",
+    "业务2项不等同Complete真实HTTP与DDL集成通过",
+    "四人性能由用户延期"
+  ],
+  "Deployment": {
+    "MainDatabase": "最后已知010，本轮未查询/迁移；011/012只隔离",
+    "Published": "旧v11保留、5080不强启",
+    "Next": "013先批准源码/隔离后开发；正式主库和发布另批"
+  },
+  "Protection": {
+    "RecordedAtUtc": "2026-11-03T08:00:07.278826+00:00",
+    "Protected": [
+      {
+        "Path": "RPG/ProjectSettings/DynamicsManager.asset",
+        "Unchanged": true
+      },
+      {
+        "Path": "RPG/ProjectSettings/QualitySettings.asset",
+        "Unchanged": true
+      },
+      {
+        "Path": "RPG/ProjectSettings/TimeManager.asset",
+        "Unchanged": true
+      },
+      {
+        "Path": "RPG/ProjectSettings/EditorBuildSettings.asset",
+        "Unchanged": true
+      },
+      {
+        "Path": "RPG/Assets/_Project/Scenes/P7_MainMenu.unity",
+        "Unchanged": true
+      },
+      {
+        "Path": "RPG/Assets/_Project/Scenes/P7_DemoRun.unity",
+        "Unchanged": true
+      },
+      {
+        "Path": "RPG/Assets/_Project/Scenes/P8_BossField.unity",
+        "Unchanged": true
+      }
+    ],
+    "OldPublished": [
+      {
+        "Path": "RPG/Builds/OnlineRooms/Server/NornRoomServer.exe",
+        "Unchanged": true
+      },
+      {
+        "Path": "RPG/Builds/OnlineRooms/Server/NornRoomServer_Data/Managed/Game.Multiplayer.dll",
+        "Unchanged": true
+      },
+      {
+        "Path": "RPG/Builds/OnlineRooms/Server/NornRoomServer_Data/Managed/Game.NetworkProtocol.dll",
+        "Unchanged": true
+      },
+      {
+        "Path": "Server/.artifacts/publish/online/Norn.Business.dll",
+        "Unchanged": true
+      }
+    ]
+  },
+  "FinalEditorSafety": {
+    "Playing": false,
+    "Compiling": false,
+    "Updating": false,
+    "CompilationFailed": false,
+    "Building": false,
+    "TestsRunning": false,
+    "DirtyScene": false,
+    "RecordedUtc": "2026-11-03T08:00:24.2669171Z"
+  },
+  "DiffCheck": {
+    "ExitCode": 0,
+    "Scope": "本轮目标源码和5份更新文档；未扫描/清理无关内容"
+  },
+  "ExistingDirtyAssetFlags": "只读保留内部Shader/Settings标志；未保存所有dirty、未关闭Editor；保护文件磁盘Hash不变。"
+}

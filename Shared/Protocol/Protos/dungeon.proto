@@ -18,4 +18,12 @@ message DungeonProgressMessage
     uint32 encounter_index_plus_one = 7;  // 当前遭遇索引+1，1..4；0代表缺失而非默认第一关。
     uint32 phase = 8;                     // 1=Armed，2=Active，3=StageCleared；Client不能提交该字段请求开战。
     uint32 remaining_enemies = 9;         // 当前区未死亡NPC数，最多12；具体区域容量由受控Definition再次核对。
+    bool has_return_portal = 10; // 只有DS真实清场并生成/开启原返回门后为true；不赋予结算成功权。
+    float return_portal_position_x = 11; // DS按原场景几何/动态placement选中的有限世界位置X。
+    float return_portal_position_y = 12; // DS实际门世界位置Y，Client不重新接地选位置。
+    float return_portal_position_z = 13; // DS实际门世界位置Z，false时三位置分量必须全0。
+    float return_portal_rotation_x = 14; // 真实Quaternion X，存在时四分量单位长度，无门时全0。
+    float return_portal_rotation_y = 15; // 真实Quaternion Y，Client只安装原姿态。
+    float return_portal_rotation_z = 16; // 真实Quaternion Z，与XYZW共同验证有限性。
+    float return_portal_rotation_w = 17; // 真实Quaternion W，存在时零Quaternion无效。
 }

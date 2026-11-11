@@ -10,9 +10,7 @@ namespace Game.Run
     /// <summary>挂在独立战利品节点，敌人尸体销毁后仍能完成资源忙时的重试。</summary>
     public sealed class DungeonLootDropAdapter:MonoBehaviour
     {
-        private struct PendingItem
-        {public ItemDefinition Definition;public string Key;public Vector3 Position;public int Charges,MaterialQuantity;public bool Unlimited;public WandStats? WandStats;}
-        private readonly List<PendingItem> _pending=new List<PendingItem>();
+        private readonly List<DungeonLootPlannedItem> _pending=new List<DungeonLootPlannedItem>();
         private HealthComponent _health;
         private DemoEncounterController _encounter;
         private SinglePlayerInventorySession _session;
@@ -45,7 +43,6 @@ namespace Game.Run
             if(_session!=null)_session.PendingDungeonDrops-=PendingCount;
             _next=_pending.Count;
         }
-        private static double Sample()=>Math.Min(UnityEngine.Random.value,.999999999d);
         internal Vector3 ResolveDropGround(Vector3 position)
         {
             // 最近NavMesh可能是孤立高台；还要验证与玩家所在面连通，才能保证奖励可拾取。
@@ -77,27 +74,16 @@ namespace Game.Run
             if(_table==null||!_table.IsValid){GameLog.Error("地牢掉落配置非法，未创建奖励。","Dungeon");return;}
             var origin=ResolveDropGround(death.Position);
             // Random只在死亡事实首次消费时调用；资源事务重试永不重新抽奖。
-            if(DungeonLootRoller.ShouldDrop(_table.CoinChance,Sample()))
+            var plan=DungeonLootPlanner.Roll(_table,_key,origin,ResolveDropGround);
+            if(plan.CoinDropped)
             {
                 var coin=Instantiate(_coinPrefab,transform.parent);
                 coin.transform.position=origin;
-                coin.Configure(_session,DungeonLootRoller.Quantity(_table.MinCoins,_table.MaxCoins,Sample()));
+                coin.Configure(_session,plan.CoinAmount);
             }
-            for(int i=0;i<_table.Items.Length;i++)
+            for(int i=0;i<plan.Items.Count;i++)
             {
-                var entry=_table.Items[i];if(!DungeonLootRoller.ShouldDrop(entry.Chance,Sample()))continue;
-                var definition=entry.Pool[DungeonLootRoller.Quantity(0,entry.Pool.Length-1,Sample())];
-                int count=DungeonLootRoller.Quantity(entry.MinCount,entry.MaxCount,Sample());
-                for(int j=0;j<count;j++)
-                {
-                    var offset=UnityEngine.Random.insideUnitCircle*.9f;
-                    _pending.Add(new PendingItem{Definition=definition,Key=_key+"."+i+"."+j,
-                        Position=ResolveDropGround(origin+new Vector3(offset.x,0,offset.y)),
-                        Charges=definition.Kind==ItemKind.Spell&&entry.MaxSpellCharges>0?DungeonLootRoller.Quantity(entry.SpellCharges,entry.MaxSpellCharges,Sample()):entry.SpellCharges,
-                        Unlimited=entry.UnlimitedSpell,MaterialQuantity=entry.MaterialQuantity,
-                        WandStats=definition.Kind==ItemKind.Wand&&_table.WandRolls!=null?_table.WandRolls.Roll():(WandStats?)null});
-                    _session.PendingDungeonDrops++;
-                }
+                _pending.Add(plan.Items[i]); _session.PendingDungeonDrops++;
             }
             Flush();
         }

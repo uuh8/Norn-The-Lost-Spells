@@ -32,12 +32,22 @@ namespace Game.Run
         public readonly bool HasUnlimitedCharges;
         public readonly bool IsQualificationSpell;
         public readonly bool IsStarterEquipment;
+        /// <summary>业务入局免费包的可信实例标记；只展示/阻止移动，不从名称或ContentId猜测免费来源。</summary>
+        public readonly bool EntryBoundBackpack;
         public readonly byte MaterialKey;
         public readonly ulong MaterialQuantity, ContainerTotal, ContainerCapacity;
         public readonly ItemLocation Location;
         public readonly InventoryItemRules Rules;
         public readonly SpellAttachmentState Attachment;
+        // 固定属性随当前实例读模型冻结；UI不再按ContentId重新读取SO，也不把当前Mana/冷却混入模板。
+        // WandStats构造时已经复制并只读封装trait，复制这个值不会暴露可写数组。
+        public readonly WandStats? FixedWandStats;
+        private readonly ItemCatalogIndex _displayCatalog;
+        // 保留原公共四参签名，已有只读Adapter/测试反射调用无需因展示字段增加而改变。
         public InventoryItemSnapshot(RuntimeItemState item, in ItemLocation location, ItemDefinition definition, in InventoryItemRules rules)
+            : this(item, location, definition, rules, null, null) { }
+        internal InventoryItemSnapshot(RuntimeItemState item, in ItemLocation location, ItemDefinition definition, in InventoryItemRules rules,
+            WandStats? fixedWandStats, ItemCatalogIndex displayCatalog)
         {
             InstanceId = item.InstanceId; ContentId = item.ContentId; Location = location; Kind = rules.Kind;
             Category = definition.Category;
@@ -48,9 +58,25 @@ namespace Game.Run
             RemainingCharges = item.RemainingCharges; HasUnlimitedCharges = item.HasUnlimitedCharges; Rules = rules;
             IsQualificationSpell = rules.Kind == ItemKind.Spell && RaidSpellEligibility.IsQualification(definition.SpellDefinition);
             IsStarterEquipment = item.IsStarterEquipment;
+            EntryBoundBackpack = item.EntryBoundBackpack;
             MaterialKey = item.Material?.MaterialKey ?? 0; MaterialQuantity = item.Material?.Quantity ?? 0;
             ContainerTotal = item.Composition?.Total ?? 0; ContainerCapacity = item.Composition?.Capacity ?? 0;
             Attachment = item.Attachment;
+            FixedWandStats = rules.Kind == ItemKind.Wand && fixedWandStats.HasValue && fixedWandStats.Value.IsValid
+                ? fixedWandStats : null;
+            _displayCatalog = displayCatalog;
+        }
+        /// <summary>
+        /// 属性/顺序仍是原实例ID事实；名称只是当前目录的只读表现标签，不把内部配置键当正常玩家文案。
+        /// 仅详情离散打开时解析，不暴露SO或目录写接口、不构造每次查询的名称数组。
+        /// </summary>
+        public string GetFixedWandTraitDisplayName(int index)
+        {
+            if (!FixedWandStats.HasValue || index < 0 || index >= FixedWandStats.Value.AlwaysCastContentIds.Count) return string.Empty;
+            string id = FixedWandStats.Value.AlwaysCastContentIds[index];
+            if (_displayCatalog != null && _displayCatalog.TryGet(id, out var definition) && !string.IsNullOrWhiteSpace(definition.DisplayName))
+                return definition.DisplayName;
+            return id; // 仅缺失作者名称的旧目录沿用原物品显示fallback；不猜造另一张法术。
         }
     }
     public sealed class InventoryReadModel : IInventoryReadOnly, IInventoryPlacementPreview
@@ -119,7 +145,10 @@ namespace Game.Run
         {
             _profile.Items.Catalog.TryGet(item.ContentId, out ItemDefinition definition);
             _profile.Items.Catalog.TryGetRules(item, out InventoryItemRules rules);
-            return new InventoryItemSnapshot(item, location, definition, rules);
+            WandStats? fixedStats = null;
+            // 目录优先采用原实例roll，否则返回初始化时已冻结的模板；不在频繁查询时TryFreeze作者SO。
+            if (rules.Kind == ItemKind.Wand && _profile.Items.Catalog.TryGetWandStats(item, out var stats)) fixedStats = stats;
+            return new InventoryItemSnapshot(item, location, definition, rules, fixedStats, _profile.Items.Catalog);
         }
     }
 }

@@ -19,13 +19,13 @@ namespace Game.Combat
         private int _ownerAttackerId;
         private int _reflectRemaining;
         private bool _initialized;
-        private CombatExecutionMode _executionMode;
+        private CombatExecutionState _execution;
         private bool _replicaColliderWasEnabled;
         private bool _replicaPhysicsDisabled;
-        public CombatExecutionMode ExecutionMode => _executionMode;
+        public CombatExecutionMode ExecutionMode => _execution.Mode;
         public void ConfigureExecutionMode(CombatExecutionMode mode, CombatSimulationWorld world = null)
         {
-            _executionMode = mode;
+            _execution.Configure(this, mode, world, CombatTickPhase.AfterPhysics);
             if (_shieldCollider == null) _shieldCollider = GetComponent<Collider>();
             if (_shieldCollider == null) return;
             if (mode == CombatExecutionMode.Replica && !_replicaPhysicsDisabled)
@@ -48,7 +48,7 @@ namespace Game.Combat
 
         public void Init(byte ownerTeam, int ownerAttackerId, int reflectCount, Collider ownerCollider)
         {
-            if (_executionMode == CombatExecutionMode.Replica) return;
+            if (_execution.Mode == CombatExecutionMode.Replica) return;
             _ownerTeam = ownerTeam;
             _ownerAttackerId = ownerAttackerId;
             _ownerCollider = ownerCollider;
@@ -65,7 +65,7 @@ namespace Game.Combat
         private void OnTriggerEnter(Collider other)
         {
             // 静态盾不经过 ProjectileBase.Init，必须在自己的 Trigger 入口阻止客户端改变投射物归属。
-            if (_executionMode == CombatExecutionMode.Replica) return;
+            if (!_execution.AllowsGameplayWrites) return;
             if (!_initialized)
                 Init(_ownerTeam, _ownerAttackerId, _fallbackReflectCount, _ownerCollider);
 

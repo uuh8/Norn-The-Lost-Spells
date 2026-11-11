@@ -1,0 +1,216 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="424cbda2-e4e1-46a0-8e0d-2c7b2d14d926" name="zhy@ZHY 2026-11-03 18:03:56" runUser="ZHY\zhy" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-11-03T18:03:56.1935486+08:00" queuing="2026-11-03T18:03:56.1935491+08:00" start="2026-11-03T18:03:51.2393252+08:00" finish="2026-11-03T18:03:58.0199375+08:00" />
+  <TestSettings name="default" id="78f4a905-8f55-4c87-bab0-d06d8ea57867">
+    <Deployment runDeploymentRoot="zhy_ZHY_2026-11-03_18_03_56" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="de384f4d-bd4d-42a6-a2bc-5a0fd4d828f9" testId="d141b714-e6da-a25f-8779-112d4ad07f93" testName="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ExistingLargerEquippedBagIsKeptWithoutGrantOrVersionChange" computerName="ZHY" duration="00:00:00.3721449" startTime="2026-11-03T18:03:56.2614888+08:00" endTime="2026-11-03T18:03:56.6322188+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="de384f4d-bd4d-42a6-a2bc-5a0fd4d828f9" />
+    <UnitTestResult executionId="9ffa4190-1229-4bf8-92d5-6cae56290a0f" testId="6e22f924-e927-bdb4-1c18-bbec2870585a" testName="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ConcurrentFirstProfilesRepairLegacyMissingBagExactlyOnce" computerName="ZHY" duration="00:00:00.3141481" startTime="2026-11-03T18:03:57.6143014+08:00" endTime="2026-11-03T18:03:57.9280576+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9ffa4190-1229-4bf8-92d5-6cae56290a0f">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Single() Failure: The collection did not contain any matching items&#xD;
+Expected:   (predicate expression)&#xD;
+Collection: [OnlineItemReply { Area = "WandSlot", AttachmentState = null, ContainerState = null, ContentId = "wandtest.fire", DisplayName = "火球", ··· }, OnlineItemReply { Area = "EquippedWand", AttachmentState = null, ContainerState = null, ContentId = "wandtest.wand.a", DisplayName = "法杖 A", ··· }]</Message>
+          <StackTrace>   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ConcurrentFirstProfilesRepairLegacyMissingBagExactlyOnce() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 53&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ConcurrentFirstProfilesRepairLegacyMissingBagExactlyOnce() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 65&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="6bef3cbe-5b6d-408d-bebf-655f15c9a9bc" testId="5ceee9ab-017a-8e58-562b-fa00a2aec713" testName="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_FirstProfileRestoresTheOriginalWarehouseGrantWithoutReissuing" computerName="ZHY" duration="00:00:00.6034580" startTime="2026-11-03T18:03:57.0098578+08:00" endTime="2026-11-03T18:03:57.6132791+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6bef3cbe-5b6d-408d-bebf-655f15c9a9bc">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Single() Failure: The collection did not contain any matching items&#xD;
+Expected:   (predicate expression)&#xD;
+Collection: [OnlineItemReply { Area = "Warehouse", AttachmentState = null, ContainerState = null, ContentId = "raidtest.starterbag", DisplayName = "免费小背包", ··· }, OnlineItemReply { Area = "WandSlot", AttachmentState = null, ContainerState = null, ContentId = "wandtest.fire", DisplayName = "火球", ··· }, OnlineItemReply { Area = "EquippedWand", AttachmentState = null, ContainerState = null, ContentId = "wandtest.wand.a", DisplayName = "法杖 A", ··· }, OnlineItemReply { Area = "", AttachmentState = null, ContainerState = OnlineOwnedContainerStateSnapshot { Components = [···], SchemaVersion = 1 }, ContentId = "item.container.container_01", DisplayName = "容器 01", ··· }]</Message>
+          <StackTrace>   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_FirstProfileRestoresTheOriginalWarehouseGrantWithoutReissuing() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 82&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_FirstProfileRestoresTheOriginalWarehouseGrantWithoutReissuing() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 87&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_FirstProfileRestoresTheOriginalWarehouseGrantWithoutReissuing() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 87&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="68c52d8f-b70b-4ef1-8b38-c19d9abb2400" testId="34235ec6-ebec-1be0-9bcf-bea4c79a877e" testName="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead" computerName="ZHY" duration="00:00:00.9817495" startTime="2026-11-03T18:03:54.3732266+08:00" endTime="2026-11-03T18:03:55.3796973+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="68c52d8f-b70b-4ef1-8b38-c19d9abb2400">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Created&#xD;
+Actual:   BadRequest</Message>
+          <StackTrace>   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 27&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 43&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="83c60372-8b34-42d7-ab8c-d214e1ba52f2" testId="99df891a-cb61-42a6-fa17-a501b2d33a5e" testName="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_LeasedProfileKeepsTheFrozenBagAndNeverRepairsPersistentRows" computerName="ZHY" duration="00:00:00.8769896" startTime="2026-11-03T18:03:55.3994781+08:00" endTime="2026-11-03T18:03:56.2599400+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="83c60372-8b34-42d7-ab8c-d214e1ba52f2" />
+    <UnitTestResult executionId="45b6a2bc-19d6-4a5c-ba5e-8dc36edb4d15" testId="ebbe5e84-6db0-fb7a-0002-3d2338fd4212" testName="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_StructuredMoveCannotUnequipTheLastBagOrCommitAReceipt" computerName="ZHY" duration="00:00:00.3753104" startTime="2026-11-03T18:03:56.6327428+08:00" endTime="2026-11-03T18:03:57.0085417+08:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="45b6a2bc-19d6-4a5c-ba5e-8dc36edb4d15">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: Conflict&#xD;
+Actual:   OK</Message>
+          <StackTrace>   at Norn.Business.Tests.RoomAdmissionTests.Error(HttpResponseMessage reply, HttpStatusCode status, String code) in F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs:line 101&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_StructuredMoveCannotUnequipTheLastBagOrCommitAReceipt() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 135&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_StructuredMoveCannotUnequipTheLastBagOrCommitAReceipt() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 139&#xD;
+   at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_StructuredMoveCannotUnequipTheLastBagOrCommitAReceipt() in F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs:line 139&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="34235ec6-ebec-1be0-9bcf-bea4c79a877e">
+      <Execution id="68c52d8f-b70b-4ef1-8b38-c19d9abb2400" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.EntryBackpackTests" name="AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_FirstProfileRestoresTheOriginalWarehouseGrantWithoutReissuing" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="5ceee9ab-017a-8e58-562b-fa00a2aec713">
+      <Execution id="6bef3cbe-5b6d-408d-bebf-655f15c9a9bc" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.EntryBackpackTests" name="AccountBaselineBackpack_FirstProfileRestoresTheOriginalWarehouseGrantWithoutReissuing" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_LeasedProfileKeepsTheFrozenBagAndNeverRepairsPersistentRows" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="99df891a-cb61-42a6-fa17-a501b2d33a5e">
+      <Execution id="83c60372-8b34-42d7-ab8c-d214e1ba52f2" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.EntryBackpackTests" name="AccountBaselineBackpack_LeasedProfileKeepsTheFrozenBagAndNeverRepairsPersistentRows" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_StructuredMoveCannotUnequipTheLastBagOrCommitAReceipt" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="ebbe5e84-6db0-fb7a-0002-3d2338fd4212">
+      <Execution id="45b6a2bc-19d6-4a5c-ba5e-8dc36edb4d15" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.EntryBackpackTests" name="AccountBaselineBackpack_StructuredMoveCannotUnequipTheLastBagOrCommitAReceipt" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ConcurrentFirstProfilesRepairLegacyMissingBagExactlyOnce" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="6e22f924-e927-bdb4-1c18-bbec2870585a">
+      <Execution id="9ffa4190-1229-4bf8-92d5-6cae56290a0f" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.EntryBackpackTests" name="AccountBaselineBackpack_ConcurrentFirstProfilesRepairLegacyMissingBagExactlyOnce" />
+    </UnitTest>
+    <UnitTest name="Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ExistingLargerEquippedBagIsKeptWithoutGrantOrVersionChange" storage="f:\develop project\rpg\server\norn.business.tests\bin\release\net10.0\norn.business.tests.dll" id="d141b714-e6da-a25f-8779-112d4ad07f93">
+      <Execution id="de384f4d-bd4d-42a6-a2bc-5a0fd4d828f9" />
+      <TestMethod codeBase="F:\Develop Project\RPG\Server\Norn.Business.Tests\bin\Release\net10.0\Norn.Business.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner3/netcore/" className="Norn.Business.Tests.EntryBackpackTests" name="AccountBaselineBackpack_ExistingLargerEquippedBagIsKeptWithoutGrantOrVersionChange" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="d141b714-e6da-a25f-8779-112d4ad07f93" executionId="de384f4d-bd4d-42a6-a2bc-5a0fd4d828f9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6e22f924-e927-bdb4-1c18-bbec2870585a" executionId="9ffa4190-1229-4bf8-92d5-6cae56290a0f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5ceee9ab-017a-8e58-562b-fa00a2aec713" executionId="6bef3cbe-5b6d-408d-bebf-655f15c9a9bc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="34235ec6-ebec-1be0-9bcf-bea4c79a877e" executionId="68c52d8f-b70b-4ef1-8b38-c19d9abb2400" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="99df891a-cb61-42a6-fa17-a501b2d33a5e" executionId="83c60372-8b34-42d7-ab8c-d214e1ba52f2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ebbe5e84-6db0-fb7a-0002-3d2338fd4212" executionId="45b6a2bc-19d6-4a5c-ba5e-8dc36edb4d15" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="列表中未列出的结果" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="所有已加载的结果" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="6" executed="6" passed="2" failed="4" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 10.0.13)&#xD;
+[xUnit.net 00:00:00.87]   Discovering: Norn.Business.Tests&#xD;
+[xUnit.net 00:00:01.11]   Discovered:  Norn.Business.Tests&#xD;
+[xUnit.net 00:00:01.15]   Starting:    Norn.Business.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:02.19]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:02.19]       Expected: Created&#xD;
+[xUnit.net 00:00:02.19]       Actual:   BadRequest&#xD;
+[xUnit.net 00:00:02.19]       Stack Trace:&#xD;
+[xUnit.net 00:00:02.19]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(27,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead()&#xD;
+[xUnit.net 00:00:02.19]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(43,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead()&#xD;
+[xUnit.net 00:00:02.19]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:03.81]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:03.82]       Expected: Conflict&#xD;
+[xUnit.net 00:00:03.82]       Actual:   OK&#xD;
+[xUnit.net 00:00:03.82]       Stack Trace:&#xD;
+[xUnit.net 00:00:03.82]         F:\Develop Project\RPG\Server\Norn.Business.Tests\RoomAdmissionTests.cs(101,0): at Norn.Business.Tests.RoomAdmissionTests.Error(HttpResponseMessage reply, HttpStatusCode status, String code)&#xD;
+[xUnit.net 00:00:03.82]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(135,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_StructuredMoveCannotUnequipTheLastBagOrCommitAReceipt()&#xD;
+[xUnit.net 00:00:03.82]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(139,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_StructuredMoveCannotUnequipTheLastBagOrCommitAReceipt()&#xD;
+[xUnit.net 00:00:03.82]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(139,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_StructuredMoveCannotUnequipTheLastBagOrCommitAReceipt()&#xD;
+[xUnit.net 00:00:03.82]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:04.42]       Assert.Single() Failure: The collection did not contain any matching items&#xD;
+[xUnit.net 00:00:04.42]       Expected:   (predicate expression)&#xD;
+[xUnit.net 00:00:04.42]       Collection: [OnlineItemReply { Area = "Warehouse", AttachmentState = null, ContainerState = null, ContentId = "raidtest.starterbag", DisplayName = "免费小背包", ··· }, OnlineItemReply { Area = "WandSlot", AttachmentState = null, ContainerState = null, ContentId = "wandtest.fire", DisplayName = "火球", ··· }, OnlineItemReply { Area = "EquippedWand", AttachmentState = null, ContainerState = null, ContentId = "wandtest.wand.a", DisplayName = "法杖 A", ··· }, OnlineItemReply { Area = "", AttachmentState = null, ContainerState = OnlineOwnedContainerStateSnapshot { Components = [···], SchemaVersion = 1 }, ContentId = "item.container.container_01", DisplayName = "容器 01", ··· }]&#xD;
+[xUnit.net 00:00:04.42]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.42]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(82,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_FirstProfileRestoresTheOriginalWarehouseGrantWithoutReissuing()&#xD;
+[xUnit.net 00:00:04.42]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(87,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_FirstProfileRestoresTheOriginalWarehouseGrantWithoutReissuing()&#xD;
+[xUnit.net 00:00:04.42]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(87,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_FirstProfileRestoresTheOriginalWarehouseGrantWithoutReissuing()&#xD;
+[xUnit.net 00:00:04.42]         --- End of stack trace from previous location ---&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:5080&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Development&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: F:\Develop Project\RPG\Server\Norn.Business&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:04.73]       Assert.Single() Failure: The collection did not contain any matching items&#xD;
+[xUnit.net 00:00:04.73]       Expected:   (predicate expression)&#xD;
+[xUnit.net 00:00:04.73]       Collection: [OnlineItemReply { Area = "WandSlot", AttachmentState = null, ContainerState = null, ContentId = "wandtest.fire", DisplayName = "火球", ··· }, OnlineItemReply { Area = "EquippedWand", AttachmentState = null, ContainerState = null, ContentId = "wandtest.wand.a", DisplayName = "法杖 A", ··· }]&#xD;
+[xUnit.net 00:00:04.73]       Stack Trace:&#xD;
+[xUnit.net 00:00:04.74]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(53,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ConcurrentFirstProfilesRepairLegacyMissingBagExactlyOnce()&#xD;
+[xUnit.net 00:00:04.74]         F:\Develop Project\RPG\Server\Norn.Business.Tests\EntryBackpackTests.cs(65,0): at Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ConcurrentFirstProfilesRepairLegacyMissingBagExactlyOnce()&#xD;
+[xUnit.net 00:00:04.74]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:04.74]   Finished:    Norn.Business.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-03T18:03:55.3834906+08:00">
+        <Text>[xUnit.net 00:00:02.19]     Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_RegistrationCommitsTheBoundBagBeforeTheFirstProfileRead [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-03T18:03:57.0089684+08:00">
+        <Text>[xUnit.net 00:00:03.81]     Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_StructuredMoveCannotUnequipTheLastBagOrCommitAReceipt [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-03T18:03:57.6138460+08:00">
+        <Text>[xUnit.net 00:00:04.42]     Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_FirstProfileRestoresTheOriginalWarehouseGrantWithoutReissuing [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="ZHY" outcome="Error" timestamp="2026-11-03T18:03:57.9289773+08:00">
+        <Text>[xUnit.net 00:00:04.73]     Norn.Business.Tests.EntryBackpackTests.AccountBaselineBackpack_ConcurrentFirstProfilesRepairLegacyMissingBagExactlyOnce [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

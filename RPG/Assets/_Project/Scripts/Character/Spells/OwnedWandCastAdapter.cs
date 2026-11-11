@@ -22,6 +22,9 @@ namespace Game.Character
         public bool HasExecutableV2Program(string id) => Workspace != null && Workspace.TryGetWandExecution(id, out var state) && state.Program.Count > 0;
         [SerializeField] private InputActionReference _select1, _select2, _select3;
         [SerializeField] private string _materialWorldId = "container-world";
+        private CombatSimulationWorld _materialAuthorityWorld;
+        private string _practiceMaterialWorldId;
+        internal CombatSimulationWorld MaterialAuthorityWorld => _materialAuthorityWorld;
         [SerializeField] private Material _materialWaitingMaterial;
         private readonly string _callerId = Guid.NewGuid().ToString("N");
         internal string CallerId => _callerId;
@@ -39,11 +42,23 @@ namespace Game.Character
             CancelOutstanding();
             _boundWorkspace = workspace;
         }
+        /// <summary>线上只绑定实际World一次；重连幂等复用，不读取Prefab默认值，也不替换已提交输出的世界归属。</summary>
+        public bool ConfigureMaterialAuthority(CombatSimulationWorld world, string worldId)
+        {
+            if (_boundWorkspace == null || world == null || string.IsNullOrWhiteSpace(worldId)) return false;
+            if (_materialAuthorityWorld != null)
+                return ReferenceEquals(_materialAuthorityWorld, world) && _materialWorldId == worldId;
+            _practiceMaterialWorldId = _materialWorldId;
+            _materialAuthorityWorld = world; _materialWorldId = worldId; return true;
+        }
         public void ConfigurePractice(SinglePlayerInventorySession session,InputActionReference one,InputActionReference two,
             InputActionReference three,Material waiting)
         {
             CancelOutstanding();
             if(isActiveAndEnabled){Unbind(_select1,Select1);Unbind(_select2,Select2);Unbind(_select3,Select3);}
+            // 原单机重装配不继承线上World；新捕获Context也从零根身份开始，旧已提交代理独立持有原World。
+            if (_materialAuthorityWorld != null) _materialWorldId = _practiceMaterialWorldId;
+            _materialAuthorityWorld = null; _practiceMaterialWorldId = null;
             _boundWorkspace=null;_session=session;_select1=one;_select2=two;_select3=three;_materialWaitingMaterial=waiting;
             _heldInput=GetComponent<HeldItemInputController>();
             if(isActiveAndEnabled){Bind(_select1,Select1);Bind(_select2,Select2);Bind(_select3,Select3);}
@@ -77,7 +92,23 @@ namespace Game.Character
         private void Select2(InputAction.CallbackContext _) => Select(1);
         private void Select3(InputAction.CallbackContext _) => Select(2);
         public void Select(int slot)
-        { IWandLoadoutReadOnly read = ReadOnly; if (Time.timeScale > 0 && read != null)
+        {
+            // 账号Hub刻意不提供旧Session的可施法ReadOnly；选杖仍可沿原数字键表达意图，
+            // 不能因此创建本地Store、伪造副本Actor或开启Hub资源消费。
+            if (Time.timeScale > 0 && _boundWorkspace == null && _session != null && _session.AccountInventoryReadOnly)
+            {
+                if (!_session.isActiveAndEnabled || _session.gameObject.scene != gameObject.scene
+                    || slot < 0 || slot >= HeldItemSlots.WandCount
+                    || !_session.TryGetAccountHubSummary(out var account)) return;
+                // 工具手持保留最后一次服务器确认的杖。重按该杖无需伪造资产确认即可退出工具表现；
+                // 另一根杖仍必须等HTTP完整Profile，Unknown/拒绝时不能乐观切换真正选中杖。
+                _session.TrySelectConfirmedAccountWandPresentation(slot);
+                EventBus<OnlineAccountWandSelectionRequestedEvent>.Publish(new OnlineAccountWandSelectionRequestedEvent
+                { CallerId = GetInstanceID(), SceneHandle = gameObject.scene.handle, InventoryId = account.InventoryId,
+                    ExpectedVersion = account.Version, SlotIndex = slot });
+                return;
+            }
+            IWandLoadoutReadOnly read = ReadOnly; if (Time.timeScale > 0 && read != null)
             {
                 string previous = read.SelectedWandId;
                 EventBus<WandSelectionRequestedEvent>.Publish(new WandSelectionRequestedEvent { InventoryId = read.InventoryId, SlotIndex = slot });
@@ -162,13 +193,20 @@ namespace Game.Character
         internal readonly CastSpawnTransaction SpawnTransaction;
         private readonly SpellMaterialOutputSnapshot[] _supplies;
         private readonly MaterialPayloadRuntimeAdapter[] _materials;
+        // 随根上下文冻结并由Child复制，延迟Trigger不读Adapter后来那次输入或Actor连接资格。
+        private readonly ulong _materialActor, _materialCommand;
         internal OwnedWandCastContext(OwnedWandCastAdapter adapter, string inventory, string source, uint revision)
         { Enabled = true; V2 = adapter != null && adapter.IsV2; Adapter = adapter; InventoryId = inventory; SourceWandId = source; ProgramRevision = revision;
-            TicketId = null; LayerIndex = 0; Layer = null; SpawnTransaction = null; _supplies = null; _materials = null; }
+            TicketId = null; LayerIndex = 0; Layer = null; SpawnTransaction = null; _supplies = null; _materials = null; _materialActor = _materialCommand = 0; }
         private OwnedWandCastContext(in OwnedWandCastContext original, string ticket, int index, CastExecutionLayer layer, CastSpawnTransaction transaction,
             SpellMaterialOutputSnapshot[] supplies = null, MaterialPayloadRuntimeAdapter[] materials = null)
         { Enabled = original.Enabled; V2 = original.V2; Adapter = original.Adapter; InventoryId = original.InventoryId; SourceWandId = original.SourceWandId;
-            ProgramRevision = original.ProgramRevision; TicketId = ticket; LayerIndex = index; Layer = layer; SpawnTransaction = transaction; _supplies = supplies; _materials = materials; }
+            ProgramRevision = original.ProgramRevision; TicketId = ticket; LayerIndex = index; Layer = layer; SpawnTransaction = transaction; _supplies = supplies; _materials = materials;
+            _materialActor = original._materialActor; _materialCommand = original._materialCommand; }
+        private OwnedWandCastContext(in OwnedWandCastContext original, ulong actor, ulong command)
+            : this(original, original.TicketId, original.LayerIndex, original.Layer, original.SpawnTransaction, original._supplies, original._materials)
+        { _materialActor = actor; _materialCommand = command; }
+        internal OwnedWandCastContext WithAuthorityOutput(ulong actor, ulong command) => new OwnedWandCastContext(this, actor, command);
         internal OwnedWandCastContext WithTicket(string ticket) => new OwnedWandCastContext(this, ticket, LayerIndex, null, null);
         internal OwnedWandCastContext WithPrepared(string ticket, CastExecutionLayer layer, CastSpawnTransaction transaction, SpellMaterialOutputSnapshot[] supplies) =>
             new OwnedWandCastContext(this, ticket, LayerIndex, layer, transaction, supplies);
@@ -177,7 +215,13 @@ namespace Game.Character
             var proxies = new MaterialPayloadRuntimeAdapter[Layer.CommandCount];
             for (int i = 0; i < proxies.Length; i++) if (_supplies[i].Budget.Total > 0)
             {
-                proxies[i] = MaterialPayloadRuntimeAdapter.Create(owner, InventoryId, _supplies[i].OutputId, position, Layer.GetCommand(i).LandingSiteDuration, Adapter.WaitingMaterial);
+                var world = Adapter.MaterialAuthorityWorld;
+                proxies[i] = world != null
+                    ? MaterialPayloadRuntimeAdapter.CreateAuthority(owner, InventoryId, _supplies[i].OutputId, position,
+                        Layer.GetCommand(i).LandingSiteDuration, Adapter.WaitingMaterial, world, _materialActor, _materialCommand,
+                        SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null)
+                    : MaterialPayloadRuntimeAdapter.Create(owner, InventoryId, _supplies[i].OutputId, position,
+                        Layer.GetCommand(i).LandingSiteDuration, Adapter.WaitingMaterial);
                 Track(proxies[i].gameObject);
             }
             return new OwnedWandCastContext(this, TicketId, LayerIndex, Layer, SpawnTransaction, _supplies, proxies);

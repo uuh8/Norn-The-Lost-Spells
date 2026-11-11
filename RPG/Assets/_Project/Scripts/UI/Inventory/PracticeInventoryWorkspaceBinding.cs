@@ -17,6 +17,7 @@ namespace Game.UI
         [SerializeField] private Canvas _containerCanvas;
         private CombatPresentationScope _combatPresentation;
         private bool _configured;
+        private bool _accountPresentationDirty;
         private void Awake()
         {
             // 场景只装配携带背包；旧法杖编辑器已在 Authoring 迁移时移除，不再运行时互相禁用。
@@ -27,8 +28,18 @@ namespace Game.UI
             if(_eventSystem!=null)_eventSystem.SetActive(EventSystem.current==null);
             _configured = true;
         }
-        private void OnEnable() { if (_configured) BindCombatPresentation(); }
-        private void OnDisable() { if (_combatPresentation != null) _combatPresentation.Clear(); }
+        private void OnEnable()
+        {
+            EventBus<OnlineAccountInventoryHubChangedEvent>.Subscribe(OnAccountInventoryChanged);
+            if (_configured) BindCombatPresentation();
+        }
+        private void OnDisable()
+        {
+            EventBus<OnlineAccountInventoryHubChangedEvent>.Unsubscribe(OnAccountInventoryChanged);
+            if (_combatPresentation != null) _combatPresentation.Clear();
+        }
+        private void OnAccountInventoryChanged(OnlineAccountInventoryHubChangedEvent change)
+        { if (change.SceneHandle == gameObject.scene.handle) _accountPresentationDirty = true; }
 
         /// <summary>
         /// 所有使用共同练习工作区的地图都经过这里，不按 P7/P8 名字分支。Scope 留在场景中，
@@ -43,7 +54,7 @@ namespace Game.UI
             var ability = actor.GetComponent<ICombatActorPresentation>();
             _combatPresentation.Bind(new CombatPresentationContext
             {
-                Actor = actor, WorldScene = actor.scene, InventorySource = _workspace.Session,
+                Actor = actor, WorldScene = actor.scene, InventorySource = _inventory.PresentationSource,
                 InventoryController = _inventory, CrosshairVisible = ability != null && ability.DefaultCrosshairVisible
             });
         }
@@ -51,11 +62,15 @@ namespace Game.UI
         {
             // Start 是另一条保险：工作区 Configure 可能晚于组件首次启用；重复 Context 由 Host 幂等处理。
             BindCombatPresentation();
-            var tools=_workspace.Session.ToolbeltReadOnly;
+            var tools=_inventory.PresentationSource?.ToolbeltReadOnly;
             // 此显示与角色同步均读取同一Run快照；UI不引用Character的采集控制器。
-            if(_containerHud!=null && tools.SelectedSlot>=3 && tools.TryGetBinding(tools.SelectedSlot-3,out var item))_containerHud.Select(item);
+            if(_containerHud!=null && tools!=null && tools.SelectedSlot>=3 && tools.TryGetBinding(tools.SelectedSlot-3,out var item))_containerHud.Select(item);
         }
         private void Update()
-        {if(_containerCanvas!=null && _containerCanvas.enabled==_inventory.IsOpen)_containerCanvas.enabled=!_inventory.IsOpen;}
+        {
+            // 等所有消费者处理完同一离散事件再重绑HUD，不依赖EventBus订阅先后，也不每帧创建Context。
+            if (_accountPresentationDirty) { _accountPresentationDirty = false; BindCombatPresentation(); }
+            if(_containerCanvas!=null && _containerCanvas.enabled==_inventory.IsOpen)_containerCanvas.enabled=!_inventory.IsOpen;
+        }
     }
 }

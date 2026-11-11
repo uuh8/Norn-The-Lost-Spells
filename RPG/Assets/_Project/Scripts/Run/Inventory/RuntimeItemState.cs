@@ -12,6 +12,7 @@ namespace Game.Run
         public string ContentId { get; }
         public int RemainingCharges { get; }
         public bool HasUnlimitedCharges { get; }
+        public bool EntryBoundBackpack { get; } // 线上入场保底身份；独立于单机免费补给键，不因同款模板而绑定普通包。
         // 后续附着/组分模块提供规范化键；这里不把键冒充材料账本，也不在其中保存保护资格。
         public string StackStateKey { get; }
         // 免费来源属于实例，不能仅按名字禁止所有付费同配置装备；现有不可变拷贝和DTO保留此状态键。
@@ -24,7 +25,7 @@ namespace Game.Run
 
         public RuntimeItemState(string instanceId, string contentId, int remainingCharges,
             bool hasUnlimitedCharges = false, string stackStateKey = "", ContainerComposition composition = null, MaterialItemState material = null,
-            SpellAttachmentState attachment = null, WandStats? rolledWandStats = null)
+            SpellAttachmentState attachment = null, WandStats? rolledWandStats = null, bool entryBoundBackpack = false)
         {
             InstanceId = instanceId;
             ContentId = contentId;
@@ -33,6 +34,7 @@ namespace Game.Run
             StackStateKey = stackStateKey;
             Composition = composition; Material = material; Attachment = attachment;
             RolledWandStats=rolledWandStats;
+            EntryBoundBackpack=entryBoundBackpack;
         }
 
         public static RuntimeItemState Create(string contentId, int remainingCharges = 0,

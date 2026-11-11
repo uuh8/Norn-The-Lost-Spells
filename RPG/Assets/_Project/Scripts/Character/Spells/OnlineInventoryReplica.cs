@@ -28,6 +28,13 @@ namespace Game.Character
         public ulong SnapshotSequence => _source != null ? _source.SnapshotSequence : 0;
         public uint ConnectionEpoch => _source != null ? _source.ConnectionEpoch : 0;
 
+        /// <summary>只读K自动来源，沿当前已完整安装Source的真实Store顺序，不截断或另造本地选择。</summary>
+        public bool TryGetFirstBackpackMaterial(out InventoryItemSnapshot item)
+        {
+            item = default;
+            return HasSnapshot && _source.TryGetFirstBackpackMaterial(out item);
+        }
+
         /// <summary>
         /// CatalogIndex 只应由 Character 内部的 OnlineCastDriver 从受控 Definition 取得；Multiplayer
         /// 通过 Driver 的 Core DTO 包装入口调用，不能为这一步新增网络层到 Run 的反向依赖。
@@ -44,6 +51,7 @@ namespace Game.Character
             if (player != null && player.ExecutionMode != PlayerExecutionMode.Prediction)
             { error = "只有本机 Prediction Actor 能绑定线上库存表现。"; return false; }
             uint previousInventory = InventoryVersion;
+            uint previousGround = _source != null ? _source.GroundVersion : 0;
             uint previousSelection = _source != null ? _source.ToolbeltReadOnly.SelectionVersion : 0;
             string previousSelected = _source != null ? _source.WandsReadOnly.SelectedWandId : null;
             var candidate = _source;
@@ -69,7 +77,8 @@ namespace Game.Character
             }
             OnlineInventoryPresentation.Bind(GetInstanceID(), gameObject, _source);
             if (previous != null && !ReferenceEquals(previous, _source)) previous.Dispose();
-            if (replace || previousInventory != InventoryVersion)
+            // 他人拾放不会伪增个人库存版本，但原共享面板也要刷新其公开地面只读内容。
+            if (replace || previousInventory != InventoryVersion || previousGround != _source.GroundVersion)
                 EventBus<InventoryChangedEvent>.Publish(new InventoryChangedEvent { InventoryId = _source.ReadOnly.InventoryId, Version = InventoryVersion });
             if (replace || previousInventory != InventoryVersion || previousSelection != _source.ToolbeltReadOnly.SelectionVersion
                 || previousSelected != _source.WandsReadOnly.SelectedWandId)

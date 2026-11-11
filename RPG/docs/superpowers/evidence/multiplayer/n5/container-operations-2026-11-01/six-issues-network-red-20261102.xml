@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="14" result="Failed(Child)" total="14" passed="0" failed="14" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 16:22:04Z" end-time="2026-11-02 16:22:05Z" duration="1.5159762">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3846" result="Failed" site="Child" start-time="2026-11-02 16:22:04Z" end-time="2026-11-02 16:22:05Z" duration="1.515976" total="14" passed="0" failed="14" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3232" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="323" result="Failed" site="Child" start-time="2026-11-02 16:22:04Z" end-time="2026-11-02 16:22:05Z" duration="0.714188" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3233" name="Game" fullname="Game" runstate="Runnable" testcasecount="323" result="Failed" site="Child" start-time="2026-11-02 16:22:04Z" end-time="2026-11-02 16:22:05Z" duration="0.627949" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3234" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="323" result="Failed" site="Child" start-time="2026-11-02 16:22:04Z" end-time="2026-11-02 16:22:05Z" duration="0.528418" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3235" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="323" result="Failed" site="Child" start-time="2026-11-02 16:22:04Z" end-time="2026-11-02 16:22:05Z" duration="0.428906" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2877" name="InventoryCommandRoutingTests" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" testcasecount="44" result="Failed" site="Child" start-time="2026-11-02 16:22:04Z" end-time="2026-11-02 16:22:04Z" duration="0.229783" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="2887" name="GeneralInventoryCommandsUseTheExistingBoundedDiscreteBucket" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.GeneralInventoryCommandsUseTheExistingBoundedDiscreteBucket" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-11-02 16:22:04Z" end-time="2026-11-02 16:22:04Z" duration="0.127574" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2883" name="GeneralInventoryCommandsUseTheExistingBoundedDiscreteBucket(MoveOwned)" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.GeneralInventoryCommandsUseTheExistingBoundedDiscreteBucket(MoveOwned)" methodname="GeneralInventoryCommandsUseTheExistingBoundedDiscreteBucket" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="7306165" result="Failed" start-time="2026-11-02 16:22:04Z" end-time="2026-11-02 16:22:04Z" duration="0.020395" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventoryCommandRoutingTests.GeneralInventoryCommandsUseTheExistingBoundedDiscreteBucket (Game.Core.OnlineInventoryCommandKind kind) [0x0000b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:62
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2884" name="GeneralInventoryCommandsUseTheExistingBoundedDiscreteBucket(EquipWand)" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.GeneralInventoryCommandsUseTheExistingBoundedDiscreteBucket(EquipWand)" methodname="GeneralInventoryCommandsUseTheExistingBoundedDiscreteBucket" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="634532874" result="Failed" start-time="2026-11-02 16:22:04Z" end-time="2026-11-02 16:22:04Z" duration="0.000689" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventoryCommandRoutingTests.GeneralInventoryCommandsUseTheExistingBoundedDiscreteBucket (Game.Core.OnlineInventoryCommandKind kind) [0x0000b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:62
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2885" name="GeneralInventoryCommandsUseTheExistingBoundedDiscreteBucket(DropItem)" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.GeneralInventoryCommandsUseTheExistingBoundedDiscreteBucket(DropItem)" methodname="GeneralInventoryCommandsUseTheExistingBoundedDiscreteBucket" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="2044348836" result="Failed" start-time="2026-11-02 16:22:04Z" end-time="2026-11-02 16:22:04Z" duration="0.000337" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventoryCommandRoutingTests.GeneralInventoryCommandsUseTheExistingBoundedDiscreteBucket (Game.Core.OnlineInventoryCommandKind kind) [0x0000b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:62
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2886" name="GeneralInventoryCommandsUseTheExistingBoundedDiscreteBucket(PickupItem)" fullname="Game.Multiplayer.Tests.InventoryCommandRoutingTests.GeneralInventoryCommandsUseTheExistingBoundedDiscreteBucket(PickupItem)" methodname="GeneralInventoryCommandsUseTheExistingBoundedDiscreteBucket" classname="Game.Multiplayer.Tests.InventoryCommandRoutingTests" runstate="Runnable" seed="61985103" result="Failed" start-time="2026-11-02 16:22:04Z" end-time="2026-11-02 16:22:04Z" duration="0.000365" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.InventoryCommandRoutingTests.GeneralInventoryCommandsUseTheExistingBoundedDiscreteBucket (Game.Core.OnlineInventoryCommandKind kind) [0x0000b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\InventoryCommandRoutingTests.cs:62
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+            </test-suite>
+            <test-suite type="TestFixture" id="3075" name="OnlineOwnedAssetMappingTests" fullname="Game.Multiplayer.Tests.OnlineOwnedAssetMappingTests" classname="Game.Multiplayer.Tests.OnlineOwnedAssetMappingTests" runstate="Runnable" testcasecount="12" result="Failed" site="Child" start-time="2026-11-02 16:22:04Z" end-time="2026-11-02 16:22:05Z" duration="0.097096" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3076" name="EntryBoundBackpackMarkerSurvivesSharedToCoreMapping" fullname="Game.Multiplayer.Tests.OnlineOwnedAssetMappingTests.EntryBoundBackpackMarkerSurvivesSharedToCoreMapping" methodname="EntryBoundBackpackMarkerSurvivesSharedToCoreMapping" classname="Game.Multiplayer.Tests.OnlineOwnedAssetMappingTests" runstate="Runnable" seed="1885219261" result="Failed" start-time="2026-11-02 16:22:04Z" end-time="2026-11-02 16:22:05Z" duration="0.030740" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineOwnedAssetMappingTests.EntryBoundBackpackMarkerSurvivesSharedToCoreMapping () [0x0008a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineOwnedAssetMappingTests.cs:18
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="3737" name="Game.Networking.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Networking.Tests.dll" runstate="Runnable" testcasecount="426" result="Failed" site="Child" start-time="2026-11-02 16:22:05Z" end-time="2026-11-02 16:22:05Z" duration="0.698085" total="9" passed="0" failed="9" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3738" name="Game" fullname="Game" runstate="Runnable" testcasecount="426" result="Failed" site="Child" start-time="2026-11-02 16:22:05Z" end-time="2026-11-02 16:22:05Z" duration="0.629543" total="9" passed="0" failed="9" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3739" name="Networking" fullname="Game.Networking" runstate="Runnable" testcasecount="426" result="Failed" site="Child" start-time="2026-11-02 16:22:05Z" end-time="2026-11-02 16:22:05Z" duration="0.528606" total="9" passed="0" failed="9" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3740" name="Tests" fullname="Game.Networking.Tests" runstate="Runnable" testcasecount="426" result="Failed" site="Child" start-time="2026-11-02 16:22:05Z" end-time="2026-11-02 16:22:05Z" duration="0.428826" total="9" passed="0" failed="9" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3293" name="InventoryCommandCodecTests" fullname="Game.Networking.Tests.InventoryCommandCodecTests" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" testcasecount="117" result="Failed" site="Child" start-time="2026-11-02 16:22:05Z" end-time="2026-11-02 16:22:05Z" duration="0.206117" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3300" name="GeneralCommandResetClearsDestinationWholeStackAndUnknownFields" fullname="Game.Networking.Tests.InventoryCommandCodecTests.GeneralCommandResetClearsDestinationWholeStackAndUnknownFields" methodname="GeneralCommandResetClearsDestinationWholeStackAndUnknownFields" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="536164060" result="Failed" start-time="2026-11-02 16:22:05Z" end-time="2026-11-02 16:22:05Z" duration="0.016007" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  生成合同必须提供F/H字段：TargetLocationKind
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.SetWireProperty (System.Object message, System.String name, System.Object value) [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:739
+at Game.Networking.Tests.InventoryCommandCodecTests.GeneralCommandResetClearsDestinationWholeStackAndUnknownFields () [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:45
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3299" name="GeneralEquipDropAndAutomaticPickupRoundTripCanonicalIntent" fullname="Game.Networking.Tests.InventoryCommandCodecTests.GeneralEquipDropAndAutomaticPickupRoundTripCanonicalIntent" methodname="GeneralEquipDropAndAutomaticPickupRoundTripCanonicalIntent" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="211514665" result="Failed" start-time="2026-11-02 16:22:05Z" end-time="2026-11-02 16:22:05Z" duration="0.005667" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.Encode (System.Object value, System.String kind) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:759
+at Game.Networking.Tests.InventoryCommandCodecTests.GeneralEquipDropAndAutomaticPickupRoundTripCanonicalIntent () [0x00030] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:35
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="3298" name="MoveOwnedRoundTripsExplicitDestinationWithoutLegacyStorageFlag" fullname="Game.Networking.Tests.InventoryCommandCodecTests.MoveOwnedRoundTripsExplicitDestinationWithoutLegacyStorageFlag" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-11-02 16:22:05Z" end-time="2026-11-02 16:22:05Z" duration="0.082169" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="3294" name="MoveOwnedRoundTripsExplicitDestinationWithoutLegacyStorageFlag(1)" fullname="Game.Networking.Tests.InventoryCommandCodecTests.MoveOwnedRoundTripsExplicitDestinationWithoutLegacyStorageFlag(1)" methodname="MoveOwnedRoundTripsExplicitDestinationWithoutLegacyStorageFlag" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="1694890326" result="Failed" start-time="2026-11-02 16:22:05Z" end-time="2026-11-02 16:22:05Z" duration="0.001141" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.Encode (System.Object value, System.String kind) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:759
+at Game.Networking.Tests.InventoryCommandCodecTests.MoveOwnedRoundTripsExplicitDestinationWithoutLegacyStorageFlag (System.Int32 location) [0x0000a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:24
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3295" name="MoveOwnedRoundTripsExplicitDestinationWithoutLegacyStorageFlag(2)" fullname="Game.Networking.Tests.InventoryCommandCodecTests.MoveOwnedRoundTripsExplicitDestinationWithoutLegacyStorageFlag(2)" methodname="MoveOwnedRoundTripsExplicitDestinationWithoutLegacyStorageFlag" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="544100541" result="Failed" start-time="2026-11-02 16:22:05Z" end-time="2026-11-02 16:22:05Z" duration="0.000791" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.Encode (System.Object value, System.String kind) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:759
+at Game.Networking.Tests.InventoryCommandCodecTests.MoveOwnedRoundTripsExplicitDestinationWithoutLegacyStorageFlag (System.Int32 location) [0x0000a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:24
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3296" name="MoveOwnedRoundTripsExplicitDestinationWithoutLegacyStorageFlag(7)" fullname="Game.Networking.Tests.InventoryCommandCodecTests.MoveOwnedRoundTripsExplicitDestinationWithoutLegacyStorageFlag(7)" methodname="MoveOwnedRoundTripsExplicitDestinationWithoutLegacyStorageFlag" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="1475924264" result="Failed" start-time="2026-11-02 16:22:05Z" end-time="2026-11-02 16:22:05Z" duration="0.000620" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.Encode (System.Object value, System.String kind) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:759
+at Game.Networking.Tests.InventoryCommandCodecTests.MoveOwnedRoundTripsExplicitDestinationWithoutLegacyStorageFlag (System.Int32 location) [0x0000a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:24
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3297" name="MoveOwnedRoundTripsExplicitDestinationWithoutLegacyStorageFlag(8)" fullname="Game.Networking.Tests.InventoryCommandCodecTests.MoveOwnedRoundTripsExplicitDestinationWithoutLegacyStorageFlag(8)" methodname="MoveOwnedRoundTripsExplicitDestinationWithoutLegacyStorageFlag" classname="Game.Networking.Tests.InventoryCommandCodecTests" runstate="Runnable" seed="1791966387" result="Failed" start-time="2026-11-02 16:22:05Z" end-time="2026-11-02 16:22:05Z" duration="0.000566" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.InventoryCommandCodecTests.Encode (System.Object value, System.String kind) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:759
+at Game.Networking.Tests.InventoryCommandCodecTests.MoveOwnedRoundTripsExplicitDestinationWithoutLegacyStorageFlag (System.Int32 location) [0x0000a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventoryCommandCodecTests.cs:24
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+            </test-suite>
+            <test-suite type="TestFixture" id="3434" name="InventorySnapshotCodecTests" fullname="Game.Networking.Tests.InventorySnapshotCodecTests" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" testcasecount="99" result="Failed" site="Child" start-time="2026-11-02 16:22:05Z" end-time="2026-11-02 16:22:05Z" duration="0.123270" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3435" name="EmptyHandsSnapshotPreservesRealBackpackWithoutCreatingWandResources" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.EmptyHandsSnapshotPreservesRealBackpackWithoutCreatingWandResources" methodname="EmptyHandsSnapshotPreservesRealBackpackWithoutCreatingWandResources" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="780431840" result="Failed" start-time="2026-11-02 16:22:05Z" end-time="2026-11-02 16:22:05Z" duration="0.015964" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventorySnapshotCodecTests.EncodeExact (System.Object source) [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventorySnapshotCodecTests.cs:725
+at Game.Networking.Tests.InventorySnapshotCodecTests.EmptyHandsSnapshotPreservesRealBackpackWithoutCreatingWandResources () [0x000be] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventorySnapshotCodecTests.cs:28
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3437" name="GeneralGroundResetClearsRetainedTreeBoundMarkerAndUnknownFields" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.GeneralGroundResetClearsRetainedTreeBoundMarkerAndUnknownFields" methodname="GeneralGroundResetClearsRetainedTreeBoundMarkerAndUnknownFields" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="536570496" result="Failed" start-time="2026-11-02 16:22:05Z" end-time="2026-11-02 16:22:05Z" duration="0.002855" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventorySnapshotCodecTests.GeneralGroundResetClearsRetainedTreeBoundMarkerAndUnknownFields () [0x0002f] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventorySnapshotCodecTests.cs:52
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3436" name="GeneralGroundWandTreeRoundTripsCompleteRootAndInstalledCards" fullname="Game.Networking.Tests.InventorySnapshotCodecTests.GeneralGroundWandTreeRoundTripsCompleteRootAndInstalledCards" methodname="GeneralGroundWandTreeRoundTripsCompleteRootAndInstalledCards" classname="Game.Networking.Tests.InventorySnapshotCodecTests" runstate="Runnable" seed="899074267" result="Failed" start-time="2026-11-02 16:22:05Z" end-time="2026-11-02 16:22:05Z" duration="0.008407" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.InventorySnapshotCodecTests.EncodeExact (System.Object source) [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventorySnapshotCodecTests.cs:725
+at Game.Networking.Tests.InventorySnapshotCodecTests.GeneralGroundWandTreeRoundTripsCompleteRootAndInstalledCards () [0x00007] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\InventorySnapshotCodecTests.cs:37
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

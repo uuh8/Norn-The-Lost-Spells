@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="13" result="Failed(Child)" total="13" passed="0" failed="13" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:20Z" duration="1.2066059">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3134" result="Failed" site="Child" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:20Z" duration="1.206606" total="13" passed="0" failed="13" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1659" name="Game.Core.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Core.Tests.dll" runstate="Runnable" testcasecount="161" result="Failed" site="Child" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:19Z" duration="0.600299" total="11" passed="0" failed="11" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24836" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1660" name="Game" fullname="Game" runstate="Runnable" testcasecount="161" result="Failed" site="Child" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:19Z" duration="0.504758" total="11" passed="0" failed="11" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1661" name="Core" fullname="Game.Core" runstate="Runnable" testcasecount="161" result="Failed" site="Child" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:19Z" duration="0.405302" total="11" passed="0" failed="11" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1662" name="Tests" fullname="Game.Core.Tests" runstate="Runnable" testcasecount="161" result="Failed" site="Child" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:19Z" duration="0.306416" total="11" passed="0" failed="11" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1646" name="WorldReplicationTimingTraceTests" fullname="Game.Core.Tests.WorldReplicationTimingTraceTests" classname="Game.Core.Tests.WorldReplicationTimingTraceTests" runstate="Runnable" testcasecount="11" result="Failed" site="Child" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:19Z" duration="0.206761" total="11" passed="0" failed="11" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1657" name="AttachmentRejectsAnotherOwnerAndOldOwnerCannotDetachTheNewTrace" fullname="Game.Core.Tests.WorldReplicationTimingTraceTests.AttachmentRejectsAnotherOwnerAndOldOwnerCannotDetachTheNewTrace" methodname="AttachmentRejectsAnotherOwnerAndOldOwnerCannotDetachTheNewTrace" classname="Game.Core.Tests.WorldReplicationTimingTraceTests" runstate="Runnable" seed="392815347" result="Failed" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:19Z" duration="0.016515" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp : 缺少真实生产类型 Game.Core.WorldReplicationTimingTrace；此为可编译的缺类型RED，不创建空生产实现。]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldReplicationTimingTraceTests.RequireType (System.String name) [0x0002c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:258
+at Game.Core.Tests.WorldReplicationTimingTraceTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1651" name="BoundEpochFilterDoesNotConsumeCapacityOrCountFilteredEventsAsDrops" fullname="Game.Core.Tests.WorldReplicationTimingTraceTests.BoundEpochFilterDoesNotConsumeCapacityOrCountFilteredEventsAsDrops" methodname="BoundEpochFilterDoesNotConsumeCapacityOrCountFilteredEventsAsDrops" classname="Game.Core.Tests.WorldReplicationTimingTraceTests" runstate="Runnable" seed="572134192" result="Failed" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:19Z" duration="0.001150" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp : 缺少真实生产类型 Game.Core.WorldReplicationTimingTrace；此为可编译的缺类型RED，不创建空生产实现。]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldReplicationTimingTraceTests.RequireType (System.String name) [0x0002c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:258
+at Game.Core.Tests.WorldReplicationTimingTraceTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1647" name="ConstructorLeavesDiagnosticsInactiveAndBufferEmpty" fullname="Game.Core.Tests.WorldReplicationTimingTraceTests.ConstructorLeavesDiagnosticsInactiveAndBufferEmpty" methodname="ConstructorLeavesDiagnosticsInactiveAndBufferEmpty" classname="Game.Core.Tests.WorldReplicationTimingTraceTests" runstate="Runnable" seed="860796129" result="Failed" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:19Z" duration="0.000615" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp : 缺少真实生产类型 Game.Core.WorldReplicationTimingTrace；此为可编译的缺类型RED，不创建空生产实现。]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldReplicationTimingTraceTests.RequireType (System.String name) [0x0002c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:258
+at Game.Core.Tests.WorldReplicationTimingTraceTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1648" name="FullBufferRejectsFurtherEventsWithoutOverwritingAcceptedPrefix" fullname="Game.Core.Tests.WorldReplicationTimingTraceTests.FullBufferRejectsFurtherEventsWithoutOverwritingAcceptedPrefix" methodname="FullBufferRejectsFurtherEventsWithoutOverwritingAcceptedPrefix" classname="Game.Core.Tests.WorldReplicationTimingTraceTests" runstate="Runnable" seed="2012369059" result="Failed" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:19Z" duration="0.000780" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp : 缺少真实生产类型 Game.Core.WorldReplicationTimingTrace；此为可编译的缺类型RED，不创建空生产实现。]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldReplicationTimingTraceTests.RequireType (System.String name) [0x0002c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:258
+at Game.Core.Tests.WorldReplicationTimingTraceTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1652" name="HeaderAndObservationFieldsAreCapturedByValueWithoutVersionTruncation" fullname="Game.Core.Tests.WorldReplicationTimingTraceTests.HeaderAndObservationFieldsAreCapturedByValueWithoutVersionTruncation" methodname="HeaderAndObservationFieldsAreCapturedByValueWithoutVersionTruncation" classname="Game.Core.Tests.WorldReplicationTimingTraceTests" runstate="Runnable" seed="151597379" result="Failed" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:19Z" duration="0.000596" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp : 缺少真实生产类型 Game.Core.WorldReplicationTimingTrace；此为可编译的缺类型RED，不创建空生产实现。]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldReplicationTimingTraceTests.RequireType (System.String name) [0x0002c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:258
+at Game.Core.Tests.WorldReplicationTimingTraceTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1656" name="InvalidReadReturnsFalseAndClearsTheOutValue" fullname="Game.Core.Tests.WorldReplicationTimingTraceTests.InvalidReadReturnsFalseAndClearsTheOutValue" classname="Game.Core.Tests.WorldReplicationTimingTraceTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:19Z" duration="0.071801" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="1654" name="InvalidReadReturnsFalseAndClearsTheOutValue(-1)" fullname="Game.Core.Tests.WorldReplicationTimingTraceTests.InvalidReadReturnsFalseAndClearsTheOutValue(-1)" methodname="InvalidReadReturnsFalseAndClearsTheOutValue" classname="Game.Core.Tests.WorldReplicationTimingTraceTests" runstate="Runnable" seed="522242462" result="Failed" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:19Z" duration="0.001437" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[SetUp : 缺少真实生产类型 Game.Core.WorldReplicationTimingTrace；此为可编译的缺类型RED，不创建空生产实现。]]></message>
+                    <stack-trace><![CDATA[at Game.Core.Tests.WorldReplicationTimingTraceTests.RequireType (System.String name) [0x0002c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:258
+at Game.Core.Tests.WorldReplicationTimingTraceTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:23
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1655" name="InvalidReadReturnsFalseAndClearsTheOutValue(1)" fullname="Game.Core.Tests.WorldReplicationTimingTraceTests.InvalidReadReturnsFalseAndClearsTheOutValue(1)" methodname="InvalidReadReturnsFalseAndClearsTheOutValue" classname="Game.Core.Tests.WorldReplicationTimingTraceTests" runstate="Runnable" seed="1110957370" result="Failed" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:19Z" duration="0.000636" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[SetUp : 缺少真实生产类型 Game.Core.WorldReplicationTimingTrace；此为可编译的缺类型RED，不创建空生产实现。]]></message>
+                    <stack-trace><![CDATA[at Game.Core.Tests.WorldReplicationTimingTraceTests.RequireType (System.String name) [0x0002c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:258
+at Game.Core.Tests.WorldReplicationTimingTraceTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:23
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="1649" name="KeyFilterIncludesDomainAndEverySignedCoordinate" fullname="Game.Core.Tests.WorldReplicationTimingTraceTests.KeyFilterIncludesDomainAndEverySignedCoordinate" methodname="KeyFilterIncludesDomainAndEverySignedCoordinate" classname="Game.Core.Tests.WorldReplicationTimingTraceTests" runstate="Runnable" seed="341654535" result="Failed" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:19Z" duration="0.000393" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp : 缺少真实生产类型 Game.Core.WorldReplicationTimingTrace；此为可编译的缺类型RED，不创建空生产实现。]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldReplicationTimingTraceTests.RequireType (System.String name) [0x0002c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:258
+at Game.Core.Tests.WorldReplicationTimingTraceTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1653" name="RecordUsesItsOwnRealStopwatchTimestampAndAcceptedEventSequence" fullname="Game.Core.Tests.WorldReplicationTimingTraceTests.RecordUsesItsOwnRealStopwatchTimestampAndAcceptedEventSequence" methodname="RecordUsesItsOwnRealStopwatchTimestampAndAcceptedEventSequence" classname="Game.Core.Tests.WorldReplicationTimingTraceTests" runstate="Runnable" seed="1175943288" result="Failed" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:19Z" duration="0.000347" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp : 缺少真实生产类型 Game.Core.WorldReplicationTimingTrace；此为可编译的缺类型RED，不创建空生产实现。]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldReplicationTimingTraceTests.RequireType (System.String name) [0x0002c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:258
+at Game.Core.Tests.WorldReplicationTimingTraceTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1658" name="WindowsCalibrationMapsARealRecordedStopwatchValueIntoAnIndependentQpcInterval" fullname="Game.Core.Tests.WorldReplicationTimingTraceTests.WindowsCalibrationMapsARealRecordedStopwatchValueIntoAnIndependentQpcInterval" methodname="WindowsCalibrationMapsARealRecordedStopwatchValueIntoAnIndependentQpcInterval" classname="Game.Core.Tests.WorldReplicationTimingTraceTests" runstate="Runnable" seed="158139412" result="Failed" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:19Z" duration="0.000317" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp : 缺少真实生产类型 Game.Core.WorldReplicationTimingTrace；此为可编译的缺类型RED，不创建空生产实现。]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldReplicationTimingTraceTests.RequireType (System.String name) [0x0002c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:258
+at Game.Core.Tests.WorldReplicationTimingTraceTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1650" name="ZeroEpochFilterAllowsTheTargetKeyInDifferentWorlds" fullname="Game.Core.Tests.WorldReplicationTimingTraceTests.ZeroEpochFilterAllowsTheTargetKeyInDifferentWorlds" methodname="ZeroEpochFilterAllowsTheTargetKeyInDifferentWorlds" classname="Game.Core.Tests.WorldReplicationTimingTraceTests" runstate="Runnable" seed="1726851924" result="Failed" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:19Z" duration="0.000301" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[SetUp : 缺少真实生产类型 Game.Core.WorldReplicationTimingTrace；此为可编译的缺类型RED，不创建空生产实现。]]></message>
+                  <stack-trace><![CDATA[at Game.Core.Tests.WorldReplicationTimingTraceTests.RequireType (System.String name) [0x0002c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:258
+at Game.Core.Tests.WorldReplicationTimingTraceTests.SetUp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Core\WorldReplicationTimingTraceTests.cs:23
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="2655" name="Game.ElementField.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.ElementField.Tests.dll" runstate="Runnable" testcasecount="813" result="Failed" site="Child" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:20Z" duration="0.510659" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="24836" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2656" name="Game" fullname="Game" runstate="Runnable" testcasecount="813" result="Failed" site="Child" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:20Z" duration="0.420124" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2657" name="ElementField" fullname="Game.ElementField" runstate="Runnable" testcasecount="813" result="Failed" site="Child" start-time="2026-11-01 04:24:19Z" end-time="2026-11-01 04:24:20Z" duration="0.321236" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2658" name="Tests" fullname="Game.ElementField.Tests" runstate="Runnable" testcasecount="813" result="Failed" site="Child" start-time="2026-11-01 04:24:20Z" end-time="2026-11-01 04:24:20Z" duration="0.222440" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2601" name="WorldReplicaStoreTests" fullname="Game.ElementField.Tests.WorldReplicaStoreTests" classname="Game.ElementField.Tests.WorldReplicaStoreTests" runstate="Runnable" testcasecount="29" result="Failed" site="Child" start-time="2026-11-01 04:24:20Z" end-time="2026-11-01 04:24:20Z" duration="0.121879" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2603" name="TimingHeaderDoesNotExposeEvictedInterestOrUnknownChunk" fullname="Game.ElementField.Tests.WorldReplicaStoreTests.TimingHeaderDoesNotExposeEvictedInterestOrUnknownChunk" methodname="TimingHeaderDoesNotExposeEvictedInterestOrUnknownChunk" classname="Game.ElementField.Tests.WorldReplicaStoreTests" runstate="Runnable" seed="245198248" result="Failed" start-time="2026-11-01 04:24:20Z" end-time="2026-11-01 04:24:20Z" duration="0.021743" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  需要读取真实已发布Header，不能把PresentationVersion当网络版本
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.ElementField.Tests.WorldReplicaStoreTests.ReadInstalledHeader (Game.ElementField.WorldReplicaStore store, Game.Core.WorldChunkKey key, Game.Core.WorldChunkPayloadHeader& header, System.UInt32& presentationVersion) [0x00016] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\WorldReplicaStoreTests.cs:29
+at Game.ElementField.Tests.WorldReplicaStoreTests.TimingHeaderDoesNotExposeEvictedInterestOrUnknownChunk () [0x00061] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\WorldReplicaStoreTests.cs:65
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2602" name="TimingHeaderReadsPublishedVersionAndRejectsUnpublishedCandidate" fullname="Game.ElementField.Tests.WorldReplicaStoreTests.TimingHeaderReadsPublishedVersionAndRejectsUnpublishedCandidate" methodname="TimingHeaderReadsPublishedVersionAndRejectsUnpublishedCandidate" classname="Game.ElementField.Tests.WorldReplicaStoreTests" runstate="Runnable" seed="1482933753" result="Failed" start-time="2026-11-01 04:24:20Z" end-time="2026-11-01 04:24:20Z" duration="0.000877" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  需要读取真实已发布Header，不能把PresentationVersion当网络版本
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.ElementField.Tests.WorldReplicaStoreTests.ReadInstalledHeader (Game.ElementField.WorldReplicaStore store, Game.Core.WorldChunkKey key, Game.Core.WorldChunkPayloadHeader& header, System.UInt32& presentationVersion) [0x00016] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\WorldReplicaStoreTests.cs:29
+at Game.ElementField.Tests.WorldReplicaStoreTests.TimingHeaderReadsPublishedVersionAndRejectsUnpublishedCandidate () [0x0004a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\ElementField\WorldReplicaStoreTests.cs:43
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,118 @@
+{
+  "RecordedAtUtc": "2026-10-31T11:11:56.367169+00:00",
+  "Scope": "Close first N5 bootstrap segment verification; no full material data channel",
+  "GasInvestigation": {
+    "Conclusion": "High-confidence stale initial PlayMode test assembly; old fixture activated unconfigured Replica",
+    "Evidence": "Old source SHA matches before manifest; initial stack EnsureEnemy line54 vs new green line66; post-failure assembly compilation in Editor.log",
+    "Limitation": "First DLL/PDB not archived, so historical binary identity cannot be proved byte-for-byte",
+    "ProductionRenderingModified": false,
+    "ExplicitRefreshAndAssemblyHashesRecorded": true
+  },
+  "PrefabAudit": {
+    "P7Renumbered": 581,
+    "P7AddedComponents": 20,
+    "P8Renumbered": 71323,
+    "P8AddedComponents": 21,
+    "P8NpcSemanticChanges": 0,
+    "UnexplainedComponentDifferences": 0,
+    "CpuProfiles": 10,
+    "InternalReferencesResolved": 167330,
+    "ExternalGuidUses": 29491,
+    "UniqueExternalGuids": 231,
+    "ImportedAssetSubassetIdsUnverified": 84,
+    "AuditedAssetHashesUnchangedAfterRuntime": 13
+  },
+  "NativeBuilds": {
+    "Client": {
+      "Result": "Succeeded",
+      "UnityVersion": "6000.3.16f1",
+      "Output": "Builds/OnlineRooms/Client/NornRoomClient.exe",
+      "RecordedAtUtc": "2026-10-31T10:53:19.0830132Z",
+      "DedicatedServer": false,
+      "RenderingInputsIsolated": false,
+      "ClientResourcesExcluded": false,
+      "Errors": 0
+    },
+    "DedicatedServer": {
+      "Result": "Succeeded",
+      "UnityVersion": "6000.3.16f1",
+      "Output": "Builds/OnlineRooms/Server/NornRoomServer.exe",
+      "RecordedAtUtc": "2026-10-31T10:57:45.9311807Z",
+      "DedicatedServer": true,
+      "RenderingInputsIsolated": false,
+      "ClientResourcesExcluded": false,
+      "Errors": 0
+    },
+    "Configuration": "Windows x64 Development, Mono; Client D3D11; Dedicated Server Null graphics; RoomLifecycleLab diagnostic entry with formal P7/P8 content",
+    "MainMenuBuildThisStage": false
+  },
+  "ApplicationProtocolVersion": 3,
+  "HttpVersionGateCases": 3,
+  "Native": {
+    "ContractCasesPassed": 8,
+    "ContractCasesFailed": 0,
+    "FormalDedicatedServerInstances": 2,
+    "NativePlayerProcessLaunches": 10,
+    "InitialAdmissions": 4,
+    "NewTicketReconnects": 3,
+    "UnexpiredConsumedTicketReplayRejections": 1,
+    "AdditionalOldTicketRejectionsWithExpiryNotIsolated": 2,
+    "SameClientProcessReconnectTested": false,
+    "AssetConsumptionNotRefilledTested": false,
+    "BuiltInResourceErrorCounts": {
+      "p7": 2,
+      "p7-client0": 0,
+      "p7-client1": 0,
+      "p7-replay": 0,
+      "p7-reconnect": 0,
+      "p8": 2,
+      "p8-client0": 0,
+      "p8-client1": 0,
+      "p8-reconnect": 0,
+      "p8-replay": 0,
+      "p8-fresh-consume": 0,
+      "p8-fresh-replay": 0
+    }
+  },
+  "EditMode": {
+    "Fixtures": 25,
+    "Passed": 280,
+    "Failed": 0
+  },
+  "PlayMode": {
+    "Passed": 2,
+    "Failed": 0
+  },
+  "ProtectedFilesUnchanged": 12,
+  "ProductionFilesChanged": [
+    "Multiplayer/Diagnostics/RoomAdmissionProbe.cs",
+    "Multiplayer/Runtime/RoomInstanceBootstrap.cs"
+  ],
+  "SetupIssues": [
+    "Harness initially attempted to move already equipped registration starter; corrected harness only, no production asset rule change",
+    "Four historical queued test-schema instances auto-resumed before new DS build and rejected launch compatibility; excluded from formal Native cases",
+    "Two old-ticket replays did not isolate TTL; replaced by immediate fresh-consume replay with report timestamp before expiry"
+  ],
+  "Remaining": [
+    "Two existing Built-in Resource startup errors in each DS",
+    "84 imported external assets only have GUID/file existence checks in static audit",
+    "Same-process client reconnect, real resource consumption persistence, full player Hub path not exercised",
+    "Full material payload/ACK/recovery channel, four-player stress, calibrated Native performance, N4 experience gaps and N6 durable settlement not validated",
+    "Linux, public network, IL2CPP, D3D12 and DS restart recovery not validated"
+  ],
+  "N5Complete": false,
+  "FullMaterialDataChannelConnected": false,
+  "NoCommitOrPush": true,
+  "PermissionOrDecisionBlocker": false,
+  "FinalChecks": {
+    "TextDiffCheckExitCode": 0,
+    "MissingDocumentationLinks": 0,
+    "ProtectedFilesUnchanged": 12,
+    "AuditedAssetsUnchanged": 13,
+    "NativeAndOwnedBusinessDatabaseStopped": true,
+    "EvidenceContainsTestCredentialValues": false,
+    "OwnTemporaryCredentialsCleared": true,
+    "Editor": "P7_MainMenu, not playing/compiling/dirty",
+    "UnrelatedRecoveryFilesPreserved": true
+  }
+}

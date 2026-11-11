@@ -1,0 +1,370 @@
+{
+  "RecordedUtc": "2026-11-01T03:42:15.126676+00:00",
+  "Stage": "Four authenticated peers and bounded observational sample; stopped for low memory",
+  "FunctionalChecksPassed": true,
+  "Assertions": 36,
+  "Checks": [
+    {
+      "Check": "four actual room members",
+      "Passed": true
+    },
+    {
+      "Check": "four authenticated ready DS clients",
+      "Passed": true
+    },
+    {
+      "Check": "same DS process/start/world in two raw checkpoints",
+      "Passed": true
+    },
+    {
+      "Check": "material channel did not fault",
+      "Passed": true
+    },
+    {
+      "Check": "a same actual authenticated actor and epoch",
+      "Passed": true
+    },
+    {
+      "Check": "a three remote players",
+      "Passed": true
+    },
+    {
+      "Check": "a tick progressed while connected",
+      "Passed": true
+    },
+    {
+      "Check": "a DS actual same card/quantity agrees client",
+      "Passed": true
+    },
+    {
+      "Check": "a no manufactured resource refill",
+      "Passed": true
+    },
+    {
+      "Check": "a independent installed ACK records",
+      "Passed": true
+    },
+    {
+      "Check": "a actual Fire Store observed",
+      "Passed": true
+    },
+    {
+      "Check": "b same actual authenticated actor and epoch",
+      "Passed": true
+    },
+    {
+      "Check": "b three remote players",
+      "Passed": true
+    },
+    {
+      "Check": "b tick progressed while connected",
+      "Passed": true
+    },
+    {
+      "Check": "b DS actual same card/quantity agrees client",
+      "Passed": true
+    },
+    {
+      "Check": "b no manufactured resource refill",
+      "Passed": true
+    },
+    {
+      "Check": "b independent installed ACK records",
+      "Passed": true
+    },
+    {
+      "Check": "b actual Fire Store observed",
+      "Passed": true
+    },
+    {
+      "Check": "c same actual authenticated actor and epoch",
+      "Passed": true
+    },
+    {
+      "Check": "c three remote players",
+      "Passed": true
+    },
+    {
+      "Check": "c tick progressed while connected",
+      "Passed": true
+    },
+    {
+      "Check": "c DS actual same card/quantity agrees client",
+      "Passed": true
+    },
+    {
+      "Check": "c no manufactured resource refill",
+      "Passed": true
+    },
+    {
+      "Check": "c independent installed ACK records",
+      "Passed": true
+    },
+    {
+      "Check": "c actual Fire Store observed",
+      "Passed": true
+    },
+    {
+      "Check": "d same actual authenticated actor and epoch",
+      "Passed": true
+    },
+    {
+      "Check": "d three remote players",
+      "Passed": true
+    },
+    {
+      "Check": "d tick progressed while connected",
+      "Passed": true
+    },
+    {
+      "Check": "d DS actual same card/quantity agrees client",
+      "Passed": true
+    },
+    {
+      "Check": "d no manufactured resource refill",
+      "Passed": true
+    },
+    {
+      "Check": "d independent installed ACK records",
+      "Passed": true
+    },
+    {
+      "Check": "four distinct actual ACK connection IDs",
+      "Passed": true
+    },
+    {
+      "Check": "D valid positively calibrated 240-frame recorder",
+      "Passed": true
+    },
+    {
+      "Check": "all four retained Ready for more than 60s of sampled overlap",
+      "Passed": true
+    },
+    {
+      "Check": "no protected source/settings/formal asset changed",
+      "Passed": true
+    },
+    {
+      "Check": "all owned recorded Native and DS processes exited",
+      "Passed": true
+    }
+  ],
+  "WorldEpoch": 5194249043625871581,
+  "DsPid": 22408,
+  "Native": {
+    "a": {
+      "ActorId": 1,
+      "Epoch": 1,
+      "Remotes": 3,
+      "FirstTick": 536,
+      "LastTick": 2872,
+      "RecordedUtc": "2026-11-01T03:37:24.5448911Z",
+      "DriverDroppedSteps": 124
+    },
+    "b": {
+      "ActorId": 2,
+      "Epoch": 1,
+      "Remotes": 3,
+      "FirstTick": 523,
+      "LastTick": 2880,
+      "RecordedUtc": "2026-11-01T03:37:24.8002173Z",
+      "DriverDroppedSteps": 294
+    },
+    "c": {
+      "ActorId": 3,
+      "Epoch": 1,
+      "Remotes": 3,
+      "FirstTick": 539,
+      "LastTick": 2866,
+      "RecordedUtc": "2026-11-01T03:37:24.3512190Z",
+      "DriverDroppedSteps": 228
+    },
+    "d": {
+      "ActorId": 4,
+      "Epoch": 1,
+      "Remotes": 3,
+      "FirstTick": 550,
+      "LastTick": 2872,
+      "RecordedUtc": "2026-11-01T03:37:24.6268162Z",
+      "DriverDroppedSteps": 216
+    }
+  },
+  "Charges": {
+    "a": {
+      "Before": 30,
+      "After": 24,
+      "CardId": "4b2e8dbec3874e1682e4f6d48b840a2d"
+    },
+    "b": {
+      "Before": 30,
+      "After": 28,
+      "CardId": "21dd6c7bca414ccdaedc94f8bbfd3ac1"
+    },
+    "c": {
+      "Before": 30,
+      "After": 15,
+      "CardId": "2cfe4f09f4754e97aeb9ecfc57c769c8"
+    },
+    "d": {
+      "Before": 30,
+      "After": 30,
+      "CardId": "21f9d9a028824fbdacf2c251e8eacca8"
+    }
+  },
+  "PeerAckCounts": [
+    810,
+    772,
+    790,
+    887
+  ],
+  "PeerAckRecordCounts": [
+    32,
+    29,
+    29,
+    32
+  ],
+  "PeerConnectionIds": [
+    35675379,
+    35675389,
+    35675378,
+    35675388
+  ],
+  "MaterialFaulted": false,
+  "MaterialChunks": 32,
+  "MaterialResyncAccepted": 60,
+  "RawReadyOverlapSeconds": 83.343031,
+  "ActualStoreObservations": {
+    "a": {
+      "Samples": 350,
+      "MaxLegacy": 1283,
+      "MaxCells": 25,
+      "LastLegacy": 80
+    },
+    "b": {
+      "Samples": 330,
+      "MaxLegacy": 1249,
+      "MaxCells": 20,
+      "LastLegacy": 181
+    },
+    "c": {
+      "Samples": 343,
+      "MaxLegacy": 1213,
+      "MaxCells": 22,
+      "LastLegacy": 139
+    }
+  },
+  "DProfile": {
+    "Frames": 240,
+    "Intervals": 239,
+    "Seconds": 3.985090299999996,
+    "FrameIntervalMs": {
+      "P50": 16.745899999989433,
+      "P95": 17.778599999985545,
+      "P99": 18.208899999990535,
+      "Maximum": 18.737100000009832
+    },
+    "Calibrated": true,
+    "RecorderValid": true,
+    "PositiveGcFrames": 5,
+    "PeakFrameGcBytes": 1260,
+    "IsCpuGpuFrameTime": false,
+    "IsFullN5PerformancePass": false,
+    "StoreSamplerOnD": false,
+    "OtherThreeStoreSamplersEnabled": true,
+    "PercentileMethod": "nearest rank, ceil(q*N)-1; 239 frame intervals",
+    "SampledBeforeFault100": true,
+    "TotalFrameGcBytes": 4926
+  },
+  "OsLoad": {
+    "Samples": 171,
+    "FirstUtc": "2026-11-01T03:34:29.181464+00:00",
+    "LastUtc": "2026-11-01T03:37:30.081326+00:00",
+    "MinimumAvailableGB": 0.4479103088378906,
+    "MinimumAvailableAtUtc": "2026-11-01T03:35:55.350281+00:00",
+    "CpuPercentMaximum": 84.5,
+    "ProcessPeakRssBytes": {
+      "27472": 3040874496,
+      "14280": 4852625408,
+      "33436": 4564897792,
+      "14800": 5377556480,
+      "22408": 445198336
+    },
+    "AfterCleanupAvailableGB": 16.89104461669922,
+    "StopReason": "Below predeclared 3GB available-memory threshold; no more load or retry",
+    "Units": "GiB = bytes / 2^30",
+    "FirstBelow3GiBUtc": "2026-11-01T03:35:54.302193+00:00",
+    "AutomaticThresholdStop": false,
+    "StopFollowupIncomplete": true,
+    "OwnedCleanupCompletedUtc": "2026-11-01T03:37:30.9271544Z"
+  },
+  "MovementFault100Observed": true,
+  "MovementFaultFirst": {
+    "Line": 1434,
+    "RecordedUtc": "2026-11-01T03:36:59.5055311Z",
+    "Rtt": 100,
+    "Jitter": 20,
+    "Loss": 1,
+    "DiagnosticQueueDropped": 0
+  },
+  "MovementFaultLast": {
+    "Line": 1924,
+    "RecordedUtc": "2026-11-01T03:37:24.6268162Z",
+    "Rtt": 100,
+    "Jitter": 20,
+    "Loss": 1,
+    "DiagnosticQueueDropped": 122
+  },
+  "MovementFaultGatePassed": false,
+  "FourSimultaneousContinuousCastersPassed": false,
+  "PerformanceGatePassed": false,
+  "N5Complete": false,
+  "OwnedNativeDsRemaining": [],
+  "NoRuntimeProtocolOrGameplayChanges": true,
+  "ExtraInputOrUncontrolledAttackObservations": true,
+  "Trace": {
+    "Path": "four-player-trace.jsonl",
+    "Sha256": "8e06df0ea86b3a11a547e341c37a610545e6ca2aa5990c1db596116870a60cb9",
+    "Bytes": 13742039
+  },
+  "Limitations": [
+    "D never performed a controlled real cast or movement after fault-100; 3 actual OS cast actions on A/B/C only",
+    "A charges had decreased before root mouse window; C continued later; sparse AttackHeld is not a full input-edge audit; do not attribute all charge changes to root 2s windows",
+    "D sampler disabled: only its actual DS installation ACKs, no D per-cell Store dump",
+    "ABC asynchronous actual Fire strength is not four-phase GMU conservation or same-tick whole-world equality",
+    "Valid 240 frames ~4 seconds: frame intervals not CPU/GPU time, 5 nonzero GC frames; no >=60s calibrated full performance window",
+    "Memory pressure and cumulative client DroppedSteps prevent interpreting four-process same-machine sample as release performance",
+    "fault-100 only MovementFaultQueue; no reliable material stream UDP loss/jitter or HOL test",
+    "No four-Actor activity union separation, reconnect with large Baseline under faults, complete queues/socket metrics, N6 settlement or alchemy"
+  ],
+  "MaterialResyncAcceptedAtLoadStop": 60,
+  "MaterialResyncAcceptedAfterCleanup": 68,
+  "MaterialResyncCauseVerified": false,
+  "Editor": {
+    "Playing": false,
+    "Compiling": false,
+    "Dirty": false,
+    "Scene": "Assets/_Project/Scenes/P7_MainMenu.unity",
+    "StateFileWrittenUtc": "2026-11-01T03:46:24.318678+00:00",
+    "RequestStillExists": false,
+    "FreshThisPhase": true,
+    "EditorPidAlive": true
+  },
+  "NoCommitsOrPushes": true,
+  "ContainerConfirmedUtc": "2026-11-01T03:39:00Z",
+  "ContainerConfirmedRules": [
+    "个人提前带入",
+    "副本内拾取",
+    "全队共享同一个世界物品，首个成功拾取者获得",
+    "背包丢地后由其他玩家拾取转交"
+  ],
+  "ContainerNewTechnicalContractApproved": false,
+  "AlchemyImplementationAuthorized": false,
+  "RejectedAction": {
+    "Action": "Full private native launch config output in timeout investigation",
+    "Target": "n5-four-player-20261101/p7/a.private.json",
+    "Outcome": "Denied; entire command not executed",
+    "Reason": "Possible credentials disclosure; not needed for startup status",
+    "Alternative": "Only file names/times, owned process response and source install conditions; no private content output",
+    "StillRequiresPermission": false
+  }
+}

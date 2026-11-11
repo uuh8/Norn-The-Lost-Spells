@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Failed(Child)" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 05:41:28Z" end-time="2026-11-02 05:41:29Z" duration="0.8599377">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3754" result="Failed" site="Child" start-time="2026-11-02 05:41:28Z" end-time="2026-11-02 05:41:29Z" duration="0.859938" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3201" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="305" result="Failed" site="Child" start-time="2026-11-02 05:41:28Z" end-time="2026-11-02 05:41:29Z" duration="0.758723" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3202" name="Game" fullname="Game" runstate="Runnable" testcasecount="305" result="Failed" site="Child" start-time="2026-11-02 05:41:28Z" end-time="2026-11-02 05:41:29Z" duration="0.670378" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3203" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="305" result="Failed" site="Child" start-time="2026-11-02 05:41:28Z" end-time="2026-11-02 05:41:29Z" duration="0.571225" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3204" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="305" result="Failed" site="Child" start-time="2026-11-02 05:41:28Z" end-time="2026-11-02 05:41:29Z" duration="0.472340" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2967" name="OnlineCombatReplicationTests" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" testcasecount="10" result="Failed" site="Child" start-time="2026-11-02 05:41:28Z" end-time="2026-11-02 05:41:29Z" duration="0.370591" total="1" passed="0" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2968" name="ContainerBirthRestoresTheRealModelAndWaitingAndCannotReturnToFlying" fullname="Game.Multiplayer.Tests.OnlineCombatReplicationTests.ContainerBirthRestoresTheRealModelAndWaitingAndCannotReturnToFlying" methodname="ContainerBirthRestoresTheRealModelAndWaitingAndCannotReturnToFlying" classname="Game.Multiplayer.Tests.OnlineCombatReplicationTests" runstate="Runnable" seed="1910355480" result="Failed" start-time="2026-11-02 05:41:29Z" end-time="2026-11-02 05:41:29Z" duration="0.263312" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  原ThrowPrefab为Prepare而默认inactive；Replica完成净化后也必须显式出生可见。
+  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineCombatReplicationTests.ContainerBirthRestoresTheRealModelAndWaitingAndCannotReturnToFlying () [0x000a7] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineCombatReplicationTests.cs:96
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

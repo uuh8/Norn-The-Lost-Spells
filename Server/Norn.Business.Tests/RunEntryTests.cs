@@ -41,8 +41,17 @@ public sealed class RunEntryTests
         await using var db = new MySqlConnection(f.Connection);
         var json = (await db.QueryAsync<string>("SELECT EntrySnapshot FROM RunMembers WHERE RunId=@Id", new { Id = results[0].RunId })).ToArray(); Assert.Equal(2, json.Length);
         var snapshots = json.Select(j => JsonSerializer.Deserialize<OnlineProfileReply>(j, OnlineFactory.Json)!).ToArray();
-        Assert.All(snapshots, s => { Assert.Equal(1u, s.Version); Assert.Equal(0, s.Gold); Assert.Equal(2, s.Items.Length); });
-        Assert.Equal(p.A.Items.Select(i => i.InstanceId).Order(), snapshots.Single(s => s.PlayerId == p.A.PlayerId).Items.Select(i => i.InstanceId).Order());
+        // 注册已原子提交一杖一卡和唯一基础包/v1；本次只向空道具栏发一空瓶，因而推进一次版本。
+        // 按对应玩家的真实入场前Profile比较，不能靠固定3掩盖重复补包或额外推进版本。
+        Assert.All(snapshots, s =>
+        {
+            var original = s.PlayerId == p.A.PlayerId ? p.A : p.B;
+            Assert.Equal(original.Version + 1, s.Version); Assert.Equal(s.Version, s.CombatAssets.InventoryVersion);
+            Assert.Equal(10000, s.Gold); Assert.Equal(4, s.Items.Length); Assert.Single(s.Items, i => i.LocationKind == 4);
+            var bottle = Assert.Single(s.Items, i => i.LocationKind == 8); Assert.Equal(0, bottle.Slot); Assert.Empty(bottle.ContainerState.Components);
+            Assert.Equal(original.Items.Select(i => i.InstanceId).Order(),
+                s.Items.Where(i => i.LocationKind != 8).Select(i => i.InstanceId).Order());
+        });
         using var leave = await p.ClientA.DeleteAsync($"/api/online/rooms/{p.Room.RoomId}/members/me"); await RoomAdmissionTests.Error(leave, HttpStatusCode.Conflict, "RoomNotOpen");
         Assert.True(await entries.FailStartAsync(results[0].RunId, results[0].RoomEpoch, "Cancelled", default));
     }
@@ -77,18 +86,24 @@ public sealed class RunEntryTests
     {
         await using var f = new OnlineFactory(); var p = await Pair(f, true); var entries = f.Services.GetRequiredService<RunEntryService>();
         var first = await entries.PrepareAsync(p.A.PlayerId, p.Room.RoomId, p.Room.ReadyRevision, default);
+        var grantedA = (await p.ClientA.GetFromJsonAsync<OnlineProfileReply>("/api/online/profile", OnlineFactory.Json))!;
+        var grantedB = (await p.ClientB.GetFromJsonAsync<OnlineProfileReply>("/api/online/profile", OnlineFactory.Json))!;
         Assert.False(await entries.FailStartAsync(first.RunId, first.RoomEpoch + 1, "LaunchFailed", default));
         Assert.Equal(2, await Count(f, "SELECT COUNT(*) FROM AssetLeases WHERE RunId=@Id", first.RunId));
         Assert.True(await entries.FailStartAsync(first.RunId, first.RoomEpoch, "LaunchFailed", default));
         p.Room = await RoomAdmissionTests.View(p.ClientA, p.Room.RoomId); Assert.Equal("Open", p.Room.State); Assert.All(p.Room.Members, m => Assert.False(m.Ready));
-        p.Room = await RoomAdmissionTests.Ready(p.ClientA, p.Room, p.A.Version); p.Room = await RoomAdmissionTests.Ready(p.ClientB, p.Room, p.B.Version);
+        // 与生产Ready入口一样重新读取补包后的实际Version，不拿入场前缓存去覆盖已提交资产。
+        p.Room = await RoomAdmissionTests.Ready(p.ClientA, p.Room, grantedA.Version); p.Room = await RoomAdmissionTests.Ready(p.ClientB, p.Room, grantedB.Version);
         var second = await entries.PrepareAsync(p.A.PlayerId, p.Room.RoomId, p.Room.ReadyRevision, default); Assert.True(second.RoomEpoch > first.RoomEpoch); Assert.NotEqual(first.RunId, second.RunId);
         Assert.False(await entries.FailStartAsync(first.RunId, first.RoomEpoch, "LaunchFailed", default)); // 迟到的旧启动器不能解锁新Run。
         Assert.Equal(2, await Count(f, "SELECT COUNT(*) FROM AssetLeases WHERE RunId=@Id", second.RunId));
         Assert.True(await entries.FailStartAsync(second.RunId, second.RoomEpoch, "ReadyTimeout", default));
         Assert.Equal(0, await Count(f, "SELECT COUNT(*) FROM AssetLeases WHERE RunId=@Id", second.RunId));
         var restored = (await p.ClientA.GetFromJsonAsync<OnlineProfileReply>("/api/online/profile", OnlineFactory.Json))!;
-        Assert.Equal(p.A.Version, restored.Version); Assert.Equal(p.A.Items.Select(i => i.InstanceId), restored.Items.Select(i => i.InstanceId));
+        // 第二次确实创建新Run，保留原包和瓶并向下一空位发一瓶；旧Epoch失败不能删掉这些资产。
+        Assert.Equal(grantedA.Version + 1, restored.Version); Assert.Equal(grantedA.Items.Length + 1, restored.Items.Length);
+        Assert.All(grantedA.Items, original => Assert.Contains(restored.Items, item => item.InstanceId == original.InstanceId && item.Revision == original.Revision));
+        Assert.Equal(2, restored.Items.Count(i => i.LocationKind == 8)); Assert.Equal(grantedA.Gold, restored.Gold);
         using var usable = await p.ClientA.PostAsJsonAsync("/api/online/inventory/move", OnlineFactory.Move(restored), OnlineFactory.Json); Assert.Equal(HttpStatusCode.OK, usable.StatusCode);
         Assert.Equal(2, await Count(f, "SELECT COUNT(*) FROM RunLifecycleEvents WHERE RunId=@Id", first.RunId)); // Reserved + 1次失败，重试不重复审计。
     }
@@ -120,7 +135,8 @@ public sealed class RunEntryTests
         {
             await RoomAdmissionTests.Error(moved, HttpStatusCode.Conflict, "AssetsLeased");
             Assert.Equal(2, await Count(f, "SELECT COUNT(*) FROM AssetLeases WHERE RunId=@Id", run.RunId));
-            Assert.Equal(1u, (await p.ClientA.GetFromJsonAsync<OnlineProfileReply>("/api/online/profile", OnlineFactory.Json))!.Version);
+            // Start抢先成功只新增本局空瓶；已有基础包保持原身份，失败的Move不能再推进一次版本。
+            Assert.Equal(p.A.Version + 1, (await p.ClientA.GetFromJsonAsync<OnlineProfileReply>("/api/online/profile", OnlineFactory.Json))!.Version);
             Assert.True(await entries.FailStartAsync(run.RunId, run.RoomEpoch, "Cancelled", default));
         }
         else { Assert.Equal(HttpStatusCode.OK, moved.StatusCode); Assert.Equal(0, await Count(f, "SELECT COUNT(*) FROM Runs WHERE RoomId=@Id", p.Room.RoomId)); }
@@ -162,7 +178,19 @@ public sealed class RunEntryTests
     private static async Task<PairData> Pair(OnlineFactory f, bool movableInventory = false)
     {
         var a = movableInventory ? await f.NewInventoryPlayerAsync() : await f.NewPlayerAsync();
-        var b = movableInventory ? await f.NewInventoryPlayerAsync() : await f.NewPlayerAsync(); var room = await RoomAdmissionTests.Create(a.Client);
+        var b = movableInventory ? await f.NewInventoryPlayerAsync() : await f.NewPlayerAsync();
+        if (movableInventory)
+        {
+            // 这些用例验证旧 Move 的租约、幂等和并发，不验证旧平面包携带。
+            // 新 Owned 合同明确拒绝不可表达的 legacy 携带；fixture 把自己的两项放仓库8/9，
+            // 仍通过真实 Move 转到仓库0/1，不伪造背包，也不改变原版本/租约断言。
+            await using var db = new MySqlConnection(f.Connection);
+            await db.ExecuteAsync("UPDATE ItemLocations SET Area='Warehouse',Slot=Slot+8 WHERE OwnerCharacterId IN (@A,@B) AND Area='Backpack'",
+                new { A = a.Profile.PlayerId, B = b.Profile.PlayerId });
+            a.Profile = (await a.Client.GetFromJsonAsync<OnlineProfileReply>("/api/online/profile", OnlineFactory.Json))!;
+            b.Profile = (await b.Client.GetFromJsonAsync<OnlineProfileReply>("/api/online/profile", OnlineFactory.Json))!;
+        }
+        var room = await RoomAdmissionTests.Create(a.Client);
         using var joined = await RoomAdmissionTests.Join(b.Client, room.RoomId); Assert.Equal(HttpStatusCode.OK, joined.StatusCode); room = await RoomAdmissionTests.View(a.Client, room.RoomId);
         room = await RoomAdmissionTests.Ready(a.Client, room, a.Profile.Version); room = await RoomAdmissionTests.Ready(b.Client, room, b.Profile.Version);
         return new PairData { ClientA = a.Client, ClientB = b.Client, A = a.Profile, B = b.Profile, UsernameA = a.Username, Room = room };

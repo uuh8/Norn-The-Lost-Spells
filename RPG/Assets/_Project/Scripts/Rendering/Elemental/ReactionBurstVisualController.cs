@@ -37,6 +37,8 @@ namespace Game.Rendering
 
         private void Awake()
         {
+            // 同源DS保留反应事件接线，粒子池只由具有图形设备的Client创建。
+            if (SystemInfo.graphicsDeviceType == UnityEngine.Rendering.GraphicsDeviceType.Null) return;
             BuildToxicPool();
         }
 

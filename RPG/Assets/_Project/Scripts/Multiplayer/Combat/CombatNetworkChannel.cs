@@ -140,6 +140,13 @@ namespace Game.Multiplayer
                 ClearClientFence();
                 _clientIdentity = identity;
             }
+            // Burst属于当前已认证房间的全局可靠事实，ActorId=0不是角色槽。
+            // 生命周期由本连接及World Owner限定，事实序号由Bridge统一去重。
+            if (message.Kind == 12)
+            {
+                FactReceived?.Invoke(message);
+                return;
+            }
             int index = (int)message.ActorId - 1; // Codec与数组共享Core Actor预算，不再另写旧的8席上限。
             if (message.ActorId == identity.ActorId && message.ConnectionEpoch != identity.ConnectionEpoch ||
                 message.ConnectionEpoch < _factEpochs[index])

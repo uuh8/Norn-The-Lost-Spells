@@ -127,7 +127,11 @@ namespace Game.ElementField
         public int MaximumResidentChunkCount => IsInitialized ? (_replicaStore != null ? _replicaStore.MaximumChunks : _profile.MaximumResidentChunks) : 0;
         public long WorldTick => _worldTick;
         public ElementChunkKey InterestChunk => _interestChunk;
-        public Vector3 InterestPosition=>_interestPoint!=null?_interestPoint.position:transform.position;
+        // Replica的原单机兴趣引用会在正式导出时清除，不能把固定网格Origin误当本地显示距离中心。
+        // 只有表现兴趣走本地Actor生命周期；Authority/单机仍使用原作者引用及原活动规则。
+        public Vector3 InterestPosition => _executionMode == WorldExecutionMode.Replica
+            ? ReplicaPresentationInterestPosition
+            : _interestPoint != null ? _interestPoint.position : transform.position;
         public int ResidentChunkCount => _residentChunkCount;
         public int ActiveChunkCount => _activeChunkCount;
         public int SleepingChunkCount => _sleepingChunkCount;
@@ -162,7 +166,11 @@ namespace Game.ElementField
 
         private void OnEnable()
         {
-            if (_executionMode == WorldExecutionMode.Replica) return;
+            if (_executionMode == WorldExecutionMode.Replica)
+            {
+                EnableReplicaPresentationInterest();
+                return;
+            }
             if (!IsInitialized && !TryInitialize())
             {
                 enabled = false;
@@ -181,6 +189,7 @@ namespace Game.ElementField
 
         private void OnDisable()
         {
+            DisableReplicaPresentationInterest();
             DisableActivitySources();
             ElementRuntimeRegistry.Unregister(this);
         }
@@ -431,7 +440,10 @@ namespace Game.ElementField
                     "ElementField");
                 return false;
             }
-            if (_interestPoint == null)
+            // 单机仍以作者配置的Interest Point组织局部活动；Authority由四Actor活动源及完整
+            // resident/pending推进，不依赖某个客户端Camera/Player。正式在线导出会清除此引用，
+            // 不能在这里把合法CPU权威拒绝；RefreshAuthorityActivity负责其有效遍历边界。
+            if (_interestPoint == null && _executionMode != WorldExecutionMode.Authority)
             {
                 GameLog.Error("ElementWorldRuntime requires an Interest Point Transform.", "ElementField");
                 return false;
@@ -776,6 +788,7 @@ namespace Game.ElementField
 
         private void OnDestroy()
         {
+            DisableReplicaPresentationInterest();
             _replicaSolids?.Dispose();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (_gcSampledWorldTicks > 0)

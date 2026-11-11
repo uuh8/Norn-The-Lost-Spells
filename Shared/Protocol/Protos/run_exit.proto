@@ -1,0 +1,33 @@
+syntax = "proto3";
+package norn.protocol;
+option csharp_namespace = "Game.NetworkProtocol";
+
+// 个人主动退出状态：只有业务服的最终个人收据才允许解锁据点资产。
+enum RunExitWirePhase {
+  RUN_EXIT_WIRE_PHASE_UNSPECIFIED = 0; // 未发起退出，不代表已保存。
+  RUN_EXIT_WIRE_PHASE_DRAINING = 1; // 停止本人新意图，已接受事务自然完成。
+  RUN_EXIT_WIRE_PHASE_SUBMITTING = 2; // 固定正文提交本人最终事实。
+  RUN_EXIT_WIRE_PHASE_UNCERTAIN = 3; // 结果未知，查询收据前不能解锁资产。
+  RUN_EXIT_WIRE_PHASE_COMMITTED = 4; // 最终个人收据已校验。
+  RUN_EXIT_WIRE_PHASE_REJECTED = 5; // 明确拒绝，不代表已退出。
+}
+// 客户端只发退出意图；身份与当前资产由已认证DS读取。
+message RunExitIntentMessage {
+  uint32 protocol_version = 1; // 实时合同版本。
+  fixed64 gameplay_hash = 2; // 当前房间玩法摘要。
+  uint32 connection_epoch = 3; // 已认证连接代次。
+  string command_id = 4; // 新候选为初始认证Epoch的8位hex前缀加96位随机尾；已知跨重连重试保持原ID，不接受客户端资产。
+  bool through_return_portal = 5; // 仅表达F使用原返回门的意图；成功撤离、奖励进度与空间资格由DS重算，ESC默认false。
+}
+// 连接代次阻止旧回包推进当前客户端退出状态。
+message RunExitStatusMessage {
+  uint32 protocol_version = 1; // 实时合同版本。
+  fixed64 gameplay_hash = 2; // 当前房间玩法摘要。
+  uint32 connection_epoch = 3; // 回包所属连接代次。
+  string command_id = 4; // 本人退出固定命令标识。
+  RunExitWirePhase phase = 5; // 只有收据校验完成才能COMMITTED。
+  string failure = 6; // 最多96字节ASCII错误码，禁止异常或秘密。
+  uint32 committed_version = 7; // 仅COMMITTED为非零持久版本。
+  string payload_hash = 8; // 仅COMMITTED携带64位十六进制业务正文摘要。
+  uint32 reason = 9; // DS裁决的原因：1主动退出，2最终不可复活死亡；客户端意图不能提交此字段。
+}

@@ -1,0 +1,147 @@
+{
+  "RecordedAtUtc": "2026-11-02T23:33:39.928486+00:00",
+  "Scope": "Actual Unity Bootstrap delivery coroutine and serialization -> TCP Kestrel -> authentication -> isolated MySQL Journal; no Gameplay capture/tick",
+  "BusinessTrx": "Server/TestResults/checkpoint-http-recovery-20261102/checkpoint-http-final-20261102.trx",
+  "UnityXml": "checkpoint-http-unity-final-20261102-results.xml",
+  "IntegrationBusiness": {
+    "Passed": 1,
+    "Failed": 0
+  },
+  "IntegrationUnity": {
+    "Passed": 1,
+    "Failed": 0
+  },
+  "InternalScenarios": {
+    "Recovery": {
+      "Name": "Recovery",
+      "BodySha256": "3101a34e6f2c2da9c1088676c5a99916bd53430e6680f4629f3e66663be2521a",
+      "HasPending": false,
+      "DeliveryStopped": false,
+      "LastConfirmedSequence": 1,
+      "LastAcknowledgedRetirementSequence": 17,
+      "Attempts": 3,
+      "PendingAttempts": 0,
+      "PostStatuses": [
+        0,
+        0,
+        200
+      ],
+      "ReceiptStatuses": [
+        200,
+        503
+      ],
+      "HeadStatuses": [
+        200,
+        200
+      ]
+    },
+    "Bounded": {
+      "Name": "Bounded",
+      "BodySha256": "1930dfc8f8664129af8192e9934defc15eb21020a7ddee4be1b04b715990596c",
+      "HasPending": true,
+      "DeliveryStopped": true,
+      "LastConfirmedSequence": 0,
+      "LastAcknowledgedRetirementSequence": 0,
+      "Attempts": 3,
+      "PendingAttempts": 3,
+      "PostStatuses": [
+        401,
+        503,
+        200
+      ],
+      "ReceiptStatuses": [
+        401,
+        404
+      ],
+      "HeadStatuses": [
+        200
+      ]
+    }
+  },
+  "ActualHttpRequests": 13,
+  "StaleHeadFromRealPreviouslyConfirmedInstanceByteIdentical": true,
+  "StaleAndActualHeadSha256": "2a86b8af32ac252becab80f92289fc204062a14f625b9c88690d3ab1b62ca545",
+  "DatabaseAssertionsPassed": {
+    "ReceiptPerRun": 1,
+    "HeadPerRun": 1,
+    "RetiredIdentityPerRun": 1,
+    "FullJournalFingerprintUnchangedAcrossRetries": true,
+    "ItemsLocationsWalletsMembersLeasesCharactersUnchanged": true
+  },
+  "RelatedBusinessRegression": {
+    "ExitCode": 0,
+    "Failed": 0,
+    "Trx": "F:\\Develop Project\\RPG\\Server\\TestResults\\checkpoint-http-recovery-20261102\\checkpoint-http-related-regression-20261102.trx",
+    "Label": "checkpoint-http-related-regression-20261102",
+    "Passed": 35,
+    "Total": 35,
+    "RecordedAtUtc": "2026-11-02T23:21:24.1857530Z"
+  },
+  "IsolationGuardRed": {
+    "Label": "checkpoint-isolation-guard-red-20261102",
+    "Passed": 0,
+    "Trx": "F:\\Develop Project\\RPG\\Server\\TestResults\\checkpoint-http-recovery-20261102\\checkpoint-isolation-guard-red-20261102.trx",
+    "RecordedAtUtc": "2026-11-02T22:59:43.0045569Z",
+    "Total": 13,
+    "ExitCode": 1,
+    "Failed": 13
+  },
+  "IsolationGuardGreen": {
+    "Passed": 13,
+    "ExitCode": 0,
+    "Total": 13,
+    "RecordedAtUtc": "2026-11-02T23:06:26.6899854Z",
+    "Label": "checkpoint-isolation-guard-green-20261102",
+    "Trx": "F:\\Develop Project\\RPG\\Server\\TestResults\\checkpoint-http-recovery-20261102\\checkpoint-isolation-guard-green-20261102.trx",
+    "Failed": 0
+  },
+  "PreservedAttempt1": {
+    "Passed": 0,
+    "Failed": 1,
+    "Reason": "OS denied test helper ACL write before Host/DB startup",
+    "AclActionRetried": false,
+    "OldEmptyDirectoryPreserved": true,
+    "SaferAlternative": "Removed all ACL writes; DPAPI CurrentUser protected test-only instance key in ignored Temp bridge"
+  },
+  "PreservedAttempt2": {
+    "BusinessPassed": 1,
+    "UnityPassed": 1,
+    "HeadFault": "Changed epoch; retained as earlier window"
+  },
+  "ProductionRuntimeOrSharedChanges": [],
+  "DeployedFileChanges": [],
+  "ProtectedFileChanges": [],
+  "MainMigration": 10,
+  "TestMigration": 11,
+  "Original13TestTablesAnd37561Mode0ItemsPreserved": true,
+  "EditorSafety": {
+    "Playing": false,
+    "Compiling": false,
+    "Building": false,
+    "TestsRunning": false,
+    "DirtyScene": false,
+    "CompilationFailed": false,
+    "Scenes": [
+      "Assets/_Project/Scenes/P7_MainMenu.unity"
+    ],
+    "RecordedUtc": "2026-11-02T23:28:41.5875157Z"
+  },
+  "TemporaryTestSceneDirtyReportedBeforeFrameworkRestoration": true,
+  "UserSceneSavedOrDiscarded": false,
+  "BridgeRequestRemoved": true,
+  "KestrelAndOwnRunsDisposedSuccessfullyByIntegrationFixture": true,
+  "MainDbWrites": false,
+  "Published": false,
+  "NativeOrGameplayStarted": false,
+  "ReadyBlockingGateRetried": false,
+  "RuntimeBugFound": false,
+  "TestInfrastructureFix": "Guard both runtime and migration connection before Host construction",
+  "Unverified": [
+    "Actual Dedicated/GamePlay tick capture during live play",
+    "Complete two-client gameplay",
+    "All nonempty flight/output combinations through this HTTP fixture",
+    "Actual DB/network outage duration or process crash restoration",
+    "Gold contract, Hub mode, ESC qualification and permanent settlement remain undecided",
+    "High-load/performance explicitly deferred"
+  ]
+}

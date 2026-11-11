@@ -38,7 +38,9 @@ namespace Game.Run.Tests
         {
             var type=Type.GetType("Game.EditorTools.ItemIconBaker, Game.Project.Editor");
             var scene=UnityEngine.SceneManagement.SceneManager.GetActiveScene();bool before=scene.isDirty;
-            Assert.That((int)type.GetMethod("BakeAll").Invoke(null,new object[]{false,null,1.22f}),Is.Zero);
+            // MethodInfo.Invoke 不会补齐 C# 可选参数；显式传入新增 wandsOnly=false，
+            // 仍覆盖原来的全类别“只补缺失”模式，不借只测法杖来跳过已有图标保护。
+            Assert.That((int)type.GetMethod("BakeAll").Invoke(null,new object[]{false,null,1.22f,false}),Is.Zero);
             Assert.That(scene.isDirty,Is.EqualTo(before));
         }
         [Test] public void IconBakerSupportsExplicitAndMissingOnlyGeneration()

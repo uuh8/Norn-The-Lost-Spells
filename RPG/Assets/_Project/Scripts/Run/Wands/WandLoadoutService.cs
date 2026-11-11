@@ -190,6 +190,23 @@ namespace Game.Run
             }
             return result;
         }
+        /// <summary>共享地面只冻结这次迁出的真实杖；整份工作区缓存不能跟随一次交易泄露其他装备状态。</summary>
+        internal WandSessionContinuity CaptureTransfer(IReadOnlyCollection<string> ids)
+        {
+            var result = CaptureContinuity();
+            for (int i = result.Entries.Count - 1; i >= 0; i--)
+            {
+                bool keep = false; foreach (var id in ids) if (result.Entries[i].Id == id) { keep = true; break; }
+                if (!keep) result.Entries.RemoveAt(i);
+            }
+            result.Selected = null; return result;
+        }
+        internal void ForgetTransferred(IReadOnlyCollection<string> ids)
+        {
+            foreach (var id in ids) _entries.Remove(id);
+            // 来源已经提交新Store版本，Synchronize会清热缓存/旧选择；不保留无限历史交易的僵尸Entry。
+            Synchronize(true);
+        }
         internal void RestoreContinuity(WandSessionContinuity source)
         {
             if (source == null) return; Synchronize();

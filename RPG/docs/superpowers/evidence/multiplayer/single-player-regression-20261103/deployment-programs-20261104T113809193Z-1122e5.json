@@ -1,0 +1,49 @@
+{
+  "SchemaVersion": 1,
+  "Passed": false,
+  "Phase": "ValidatePathsAndEvidence",
+  "FailureCode": "PrivateExceptionDetailsOmitted",
+  "FailureType": "System.Management.Automation.SessionStateUnauthorizedAccessException",
+  "StartedAtUtc": "2026-11-04T11:38:09.2061777Z",
+  "FinishedAtUtc": "2026-11-04T11:38:09.4950011Z",
+  "BackupVerified": true,
+  "NativeP7Verified": false,
+  "NativeHomeVerified": false,
+  "DedicatedBuildVerified": false,
+  "NativeP7PassedCheckCount": 0,
+  "NativeHomePassedCheckCount": 0,
+  "NativeP7CardMovementCovered": false,
+  "NativeHomeCardMovementCovered": false,
+  "NativeHomeSameSessionReentryVerified": false,
+  "NativeHomeManaCooldownContinuityAsserted": false,
+  "NativeP7Evidence": "F:\\Develop Project\\RPG\\RPG\\docs\\superpowers\\evidence\\multiplayer\\single-player-regression-20261103\\native-20261104T112818Z\\evidence.json",
+  "NativeHomeEvidence": "F:\\Develop Project\\RPG\\RPG\\docs\\superpowers\\evidence\\multiplayer\\single-player-regression-20261103\\native-20261104T112944Z\\evidence.json",
+  "DedicatedBuildEvidence": "F:\\Develop Project\\RPG\\RPG\\Tools\\Networking\\.artifacts\\room-server-verification-20261104T111641Z-build.json",
+  "Programs": [
+    {
+      "Name": "dedicated-server",
+      "Source": "F:\\Develop Project\\RPG\\RPG\\Builds\\OnlineValidation\\RoomServer\\20261104T111641Z",
+      "Stage": "F:\\Develop Project\\RPG\\RPG\\Builds\\OnlineRooms\\Server.regression-stage-20261104T113809193Z-1122e5",
+      "Current": "F:\\Develop Project\\RPG\\RPG\\Builds\\OnlineRooms\\Server",
+      "Recovery": "F:\\Develop Project\\RPG\\RPG\\.tools\\regression-backups\\20261104T112944769Z-965fc3\\displaced-dedicated-server",
+      "State": "NotPrepared",
+      "Rollback": "NotRequired",
+      "NewFileCount": 0,
+      "NewBytes": 0,
+      "NewManifestSha256": ""
+    },
+    {
+      "Name": "business-publish",
+      "Source": "F:\\Develop Project\\RPG\\Server\\.artifacts\\publish\\single-player-regression-20261104",
+      "Stage": "F:\\Develop Project\\RPG\\Server\\.artifacts\\publish\\online.regression-stage-20261104T113809193Z-1122e5",
+      "Current": "F:\\Develop Project\\RPG\\Server\\.artifacts\\publish\\online",
+      "Recovery": "F:\\Develop Project\\RPG\\RPG\\.tools\\regression-backups\\20261104T112944769Z-965fc3\\displaced-business-publish",
+      "State": "NotPrepared",
+      "Rollback": "NotRequired",
+      "NewFileCount": 0,
+      "NewBytes": 0,
+      "NewManifestSha256": ""
+    }
+  ],
+  "Scope": "Program directory switch only. No service or database operations; Menu directory untouched. Displaced original directories and staging are retained."
+}

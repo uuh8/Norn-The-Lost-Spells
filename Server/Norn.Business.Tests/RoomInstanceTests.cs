@@ -1,9 +1,11 @@
 using System.Diagnostics;
 using System.Net;
+using System.Text.Json;
 using Dapper;
 using Game.NetworkProtocol;
 using Microsoft.Extensions.DependencyInjection;
 using MySqlConnector;
+using Norn.Business.Content;
 using Norn.Business.Features.Rooms;
 using Norn.Business.Features.Runs;
 using Norn.Business.Infrastructure;
@@ -35,8 +37,40 @@ public sealed class RoomInstanceTests
         request = Ready(f, run, process); request.ProcessStartTicks++; await Failure("InstanceProcessMismatch", () => service.ReadyAsync(grant.Descriptor.InstanceId, grant.Secret!, request, default));
         var reply = await service.ReadyAsync(grant.Descriptor.InstanceId, grant.Secret!, Ready(f, run, process), default);
         Assert.Equal(2, reply.Members.Length); Assert.Equal(2, reply.Members.Select(m => m.ActorId).Distinct().Count());
-        Assert.Contains(reply.Members, m => m.Profile.PlayerId == run.A.PlayerId && m.Profile.Items.Length == 2);
+        Assert.Contains(reply.Members, m => m.Profile.PlayerId == run.A.PlayerId && m.Profile.Items.Length == 4);
         await service.FailAsync(grant.Descriptor.InstanceId, "Cancelled", default);
+    }
+
+    [Fact, Trait("Category", "DatabaseIntegration")]
+    public async Task ReadyReply_AdvertisesCompleteCheckpointSchemaWithoutGrantingItToLegacyReplies()
+    {
+        await using var f = new OnlineFactory(instances: true); var run = await Reserve(f);
+        var service = f.Services.GetRequiredService<RoomInstanceService>(); var grant = await service.AllocateAsync(run.Run, default);
+        var process = Identity(); await service.RecordProcessAsync(grant.Descriptor.InstanceId, process, default);
+        try
+        {
+            var reply = await service.ReadyAsync(grant.Descriptor.InstanceId, grant.Secret!, Ready(f, run, process), default);
+            // 反射使缺字段阶段仍可编译；必须检查真实Ready生产值，不能只验证新DTO的默认值。
+            var capability = typeof(InstanceReadyReply).GetField("CheckpointSchemaVersion");
+            Assert.NotNull(capability); Assert.Equal(typeof(uint), capability.FieldType);
+            Assert.Equal(OnlineRunAssetCheckpoint.CompleteSchemaVersion, Assert.IsType<uint>(capability.GetValue(reply)));
+            var legacyReply = JsonSerializer.Deserialize<InstanceReadyReply>("{}", ContentManifestValidator.Json)!;
+            Assert.Equal(0u, Assert.IsType<uint>(capability.GetValue(legacyReply)));
+            // 新字段只追加HTTP能力；旧合同消费者继续读取原字段并忽略未知成员。
+            var legacyConsumer = JsonSerializer.Deserialize<LegacyReadyReply>(
+                JsonSerializer.Serialize(reply, ContentManifestValidator.Json), ContentManifestValidator.Json)!;
+            Assert.Equal(reply.DungeonId, legacyConsumer.DungeonId);
+            Assert.Equal(reply.LeaseExpiresUnixMilliseconds, legacyConsumer.LeaseExpiresUnixMilliseconds);
+            Assert.Equal(reply.Members.Length, legacyConsumer.Members.Length);
+        }
+        finally { await service.FailAsync(grant.Descriptor.InstanceId, "Cancelled", default); }
+    }
+
+    private sealed class LegacyReadyReply
+    {
+        public string DungeonId { get; set; } = "";
+        public long LeaseExpiresUnixMilliseconds { get; set; }
+        public InstanceEntryMember[] Members { get; set; } = [];
     }
 
     [Fact, Trait("Category", "DatabaseIntegration")]

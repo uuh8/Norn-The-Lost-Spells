@@ -1,0 +1,202 @@
+diff --git a/RPG/Assets/_Project/Scripts/Core/Online/WorldChunkReplicaAssembler.cs b/RPG/Assets/_Project/Scripts/Core/Online/WorldChunkReplicaAssembler.cs
+index c7054a1c..9e2a7b69 100644
+--- a/RPG/Assets/_Project/Scripts/Core/Online/WorldChunkReplicaAssembler.cs
++++ b/RPG/Assets/_Project/Scripts/Core/Online/WorldChunkReplicaAssembler.cs
+@@ -7,7 +7,7 @@ public enum WorldReplicaAssemblyFailure : byte
+ 
+     /// <summary>
+     /// 单Chunk固定容量分页收件箱。TryBegin只能由已认证且关联真实请求的协调器调用；Receive绝不按更大ID
+-    /// 抢占候选，也不推进任何水位。ConnectionEpoch属于构造绑定，传输层还必须先检查实际connectionId。
++    /// 抢占候选，也不推进任何水位。可信连接Owner可切换ConnectionEpoch，传输层仍须先审实际connectionId/Epoch。
+     /// staging与published独立；缺页、错误Checksum、非法数量、版本缺口均保留完整旧payload。
+     /// 完整验证后先调用构造期Installer原子安装实际只读Store，再提交版本/交换数组，上层此后才可ACK。
+     /// 不提供Installer只用于独立Core word-Replica测试，正式材料复制必须配置；本类自身不发ACK。
+@@ -25,8 +25,8 @@ public sealed class WorldChunkReplicaAssembler
+         private WorldChunkPayloadHeader _pending;
+         private int _receivedCount,_pageCount;
+         private long _startTick;
+-        public ulong ConnectionEpoch {get;}
+-        public WorldChunkKey Key {get;}
++        public ulong ConnectionEpoch {get;private set;}
++        public WorldChunkKey Key {get;private set;}
+         public bool Installed {get;private set;}
+         public bool HasPending {get;private set;}
+         public bool InstallerConfigured => _installer!=null;
+@@ -49,6 +49,39 @@ public bool TryCopyInstalled(uint[] destination,out WorldChunkPayloadHeader head
+             header=default;if(!Installed || destination==null || destination.Length<Header.WordCount)return false;
+             Array.Copy(_published,destination,Header.WordCount);header=Header;return true;
+         }
++
++        /// <summary>
++        /// 将预分配但尚未使用的收件槽绑定到原生Chunk地址，不重新分配分页缓冲。
++        /// 已收候选不能换Key，否则旧页会被解释成另一块；一旦安装过数据（包括删除tombstone），
++        /// 版本记录就永久属于该Chunk，不能靠池复用遗忘Generation/Revision后接受旧包。
++        /// WorldEpoch始终由构造固定；这里只允许未建立任何版本事实的槽修改Key。
++        /// </summary>
++        public bool TryBindUnusedKey(WorldChunkKey key)
++        {
++            if(IsInstallerFaulted)return Reject(WorldReplicaAssemblyFailure.InstallerFaulted);
++            if(_installing)return Reject(WorldReplicaAssemblyFailure.Installing);
++            if(Installed)return Reject(WorldReplicaAssemblyFailure.WrongIdentity);
++            if(HasPending)return Reject(WorldReplicaAssemblyFailure.PendingBusy);
++            if((byte)key.Domain>(byte)WorldMaterialDomain.Gas)return Reject(WorldReplicaAssemblyFailure.WrongIdentity);
++            Key=key;return Accept();
++        }
++
++        /// <summary>
++        /// 由可信连接Owner在认证连接交接时调用，不授予认证、材料写权或新的世界生命期。
++        /// 更高代次只取消旧候选，已安装Payload、Header和版本栅栏全部保留；同代次重复配置幂等，
++        /// 不能丢半包或重启TTL。零/倒退代次拒绝，不使用可能回绕的加法推断新旧。
++        /// Installer回调与Faulted期间不得换身份，避免破坏原子安装或用重连绕过故障锁存。
++        /// 页接口本身不含连接代次，调用方仍须在每页进入前验证真实connectionId/ConnectionEpoch。
++        /// </summary>
++        public bool ResetConnectionEpoch(ulong connectionEpoch)
++        {
++            if(IsInstallerFaulted)return Reject(WorldReplicaAssemblyFailure.InstallerFaulted);
++            if(_installing)return Reject(WorldReplicaAssemblyFailure.Installing);
++            if(connectionEpoch==0 || connectionEpoch<ConnectionEpoch)return Reject(WorldReplicaAssemblyFailure.WrongIdentity);
++            if(connectionEpoch==ConnectionEpoch)return Accept();
++            CancelPending();ConnectionEpoch=connectionEpoch;return Accept();
++        }
++
+         public bool TryBegin(WorldChunkPayloadHeader header,long nowTick)
+         {
+             if(IsInstallerFaulted)return Reject(WorldReplicaAssemblyFailure.InstallerFaulted);
+diff --git a/RPG/Assets/_Project/Tests/Core/WorldChunkReplicaAssemblerTests.cs b/RPG/Assets/_Project/Tests/Core/WorldChunkReplicaAssemblerTests.cs
+index 0d133179..3e3372fe 100644
+--- a/RPG/Assets/_Project/Tests/Core/WorldChunkReplicaAssemblerTests.cs
++++ b/RPG/Assets/_Project/Tests/Core/WorldChunkReplicaAssemblerTests.cs
+@@ -129,5 +129,133 @@ [Test] public void ConnectionResetCancelsCandidateWithoutResettingInstalledWorld
+             Assert.That(a.TryBegin(Header(w,2,2,1),2),Is.True);method.Invoke(a,new object[]{4UL});
+             Assert.That(a.HasPending,Is.False);Assert.That(a.Header.Revision,Is.EqualTo(1));Assert.That(a.ConnectionEpoch,Is.EqualTo(4));
+         }
++
++        // 以下只补充原两项API的生命周期边界，不替换/放宽前面的既有断言。
++        // Reflection用于方法尚不存在时得到明确RED；断言观察真实分页与版本行为，不依赖mock调用次数。
++        private static bool BindUnused(WorldChunkReplicaAssembler assembler, WorldChunkKey key)
++        {
++            var method = typeof(WorldChunkReplicaAssembler).GetMethod("TryBindUnusedKey");
++            Assert.That(method, Is.Not.Null);
++            return (bool)method.Invoke(assembler, new object[] { key });
++        }
++
++        private static bool ResetEpoch(WorldChunkReplicaAssembler assembler, ulong epoch)
++        {
++            var method = typeof(WorldChunkReplicaAssembler).GetMethod("ResetConnectionEpoch");
++            Assert.That(method, Is.Not.Null);
++            return (bool)method.Invoke(assembler, new object[] { epoch });
++        }
++
++        [Test] public void UnusedBindingRejectsInvalidDomainAndPendingTransferWithoutLosingPages()
++        {
++            var a = new WorldChunkReplicaAssembler(7, Key, 3, 64, 8, 8, 30);
++            Assert.That(BindUnused(a, new WorldChunkKey((WorldMaterialDomain)255, 0, 0, 0)), Is.False);
++            Assert.That(a.Key, Is.EqualTo(Key));
++            var w = Payload(); var h = Header(w);
++            Assert.That(a.TryBegin(h, 0), Is.True);
++            Assert.That(a.TryReceivePage(h, 0, w, 8, 1), Is.True);
++            Assert.That(BindUnused(a, new WorldChunkKey(WorldMaterialDomain.Gas, 8, 0, 0)), Is.False);
++            Assert.That(a.Key, Is.EqualTo(Key)); Assert.That(a.HasPending, Is.True);
++            Assert.That(a.TryReceivePage(h, 1, new[] { w[8], w[9], w[10] }, 3, 2), Is.True);
++            Assert.That(a.Installed, Is.True);
++        }
++
++        [Test] public void ZeroAndOlderConnectionEpochPreservePendingTransfer()
++        {
++            var a = new WorldChunkReplicaAssembler(7, Key, 3, 64, 8, 8, 30);
++            var w = Payload(); var h = Header(w);
++            Assert.That(a.TryBegin(h, 0), Is.True);
++            Assert.That(a.TryReceivePage(h, 0, w, 8, 1), Is.True);
++            Assert.That(ResetEpoch(a, 0), Is.False); Assert.That(ResetEpoch(a, 2), Is.False);
++            Assert.That(a.ConnectionEpoch, Is.EqualTo(3)); Assert.That(a.HasPending, Is.True);
++            Assert.That(a.TryReceivePage(h, 1, new[] { w[8], w[9], w[10] }, 3, 2), Is.True);
++            Assert.That(a.Installed, Is.True);
++        }
++
++        [Test] public void SameConnectionEpochDoesNotRestartOrDiscardPartialTransfer()
++        {
++            var a = new WorldChunkReplicaAssembler(7, Key, 3, 64, 8, 8, 30);
++            var w = Payload(); var h = Header(w);
++            Assert.That(a.TryBegin(h, 0), Is.True);
++            Assert.That(a.TryReceivePage(h, 0, w, 8, 1), Is.True);
++            Assert.That(ResetEpoch(a, 3), Is.True); Assert.That(a.HasPending, Is.True);
++            Assert.That(a.TryReceivePage(h, 1, new[] { w[8], w[9], w[10] }, 3, 2), Is.True);
++            Assert.That(a.Installed, Is.True);
++        }
++
++        [Test] public void NewConnectionEpochRequiresAllPagesAgainBeforeInstallation()
++        {
++            var a = new WorldChunkReplicaAssembler(7, Key, 3, 64, 8, 8, 30);
++            var w = Payload(); var h = Header(w); var last = new[] { w[8], w[9], w[10] };
++            Assert.That(a.TryBegin(h, 0), Is.True);
++            Assert.That(a.TryReceivePage(h, 0, w, 8, 1), Is.True);
++            Assert.That(ResetEpoch(a, 4), Is.True); Assert.That(a.HasPending, Is.False);
++            Assert.That(a.TryReceivePage(h, 1, last, 3, 2), Is.False);
++            var current = Header(w, 2);
++            Assert.That(a.TryBegin(current, 3), Is.True);
++            Assert.That(a.TryReceivePage(current, 1, last, 3, 4), Is.True);
++            Assert.That(a.Installed, Is.False, "新连接不能复用上一候选的已收页标志。");
++            Assert.That(a.TryReceivePage(current, 0, w, 8, 5), Is.True);
++            Assert.That(a.Installed, Is.True); Assert.That(a.ConnectionEpoch, Is.EqualTo(4));
++        }
++
++        [Test] public void ReconnectionPreservesInstalledPayloadAndRejectsVersionRewindOrGap()
++        {
++            var a = new WorldChunkReplicaAssembler(7, Key, 3, 64, 8, 64, 30);
++            var w = Payload(); var installed = Header(w, 1, 5);
++            Assert.That(a.TryBegin(installed, 0), Is.True);
++            Assert.That(a.TryReceivePage(installed, 0, w, w.Length, 1), Is.True);
++            Assert.That(ResetEpoch(a, 4), Is.True);
++            Assert.That(a.Installed, Is.True); Assert.That(a.Header, Is.EqualTo(installed));
++            Assert.That(a.GetWord(9), Is.EqualTo(w[9]));
++            Assert.That(a.TryBegin(Header(w, 2, 4), 2), Is.False);
++            Assert.That(a.TryBegin(Header(w, 3, 9, 8), 3), Is.False);
++            var next = Header(w, 4, 6, 5);
++            Assert.That(a.TryBegin(next, 4), Is.True);
++            Assert.That(a.TryReceivePage(next, 0, w, w.Length, 5), Is.True);
++            Assert.That(a.Header.Revision, Is.EqualTo(6));
++        }
++
++        [Test] public void InstallerCannotChangeKeyOrConnectionEpochDuringAtomicPublication()
++        {
++            var store = new SmallAtomicStore();
++            var a = new WorldChunkReplicaAssembler(7, Key, 3, 64, 8, 64, 30, store);
++            var w = Payload(); var h = Header(w); bool refused = false;
++            store.BeforeInstall = () =>
++            {
++                refused = !BindUnused(a, new WorldChunkKey(WorldMaterialDomain.Gas, 8, 0, 0))
++                    && !ResetEpoch(a, 4) && !ResetEpoch(a, 3);
++                refused &= a.Key == Key && a.ConnectionEpoch == 3 && a.HasPending;
++            };
++            Assert.That(a.TryBegin(h, 0), Is.True);
++            Assert.That(a.TryReceivePage(h, 0, w, w.Length, 1), Is.True);
++            Assert.That(refused, Is.True); Assert.That(a.Header, Is.EqualTo(h));
++            Assert.That(store.Header, Is.EqualTo(h)); Assert.That(a.ConnectionEpoch, Is.EqualTo(3));
++        }
++
++        [Test] public void FaultedInstallerCannotBeRevivedByBindingOrConnectionReset()
++        {
++            var store = new SmallAtomicStore();
++            var a = new WorldChunkReplicaAssembler(7, Key, 3, 64, 8, 64, 30, store);
++            var failure = new System.InvalidOperationException("lifecycle installer fault");
++            store.BeforeInstall = () => throw failure;
++            var w = Payload(); var h = Header(w);
++            Assert.That(a.TryBegin(h, 0), Is.True);
++            Assert.That(a.TryReceivePage(h, 0, w, w.Length, 1), Is.False);
++            Assert.That(ResetEpoch(a, 4), Is.False);
++            Assert.That(BindUnused(a, new WorldChunkKey(WorldMaterialDomain.Gas, 8, 0, 0)), Is.False);
++            Assert.That(a.IsInstallerFaulted, Is.True); Assert.That(a.InstallerException, Is.SameAs(failure));
++            Assert.That(a.ConnectionEpoch, Is.EqualTo(3)); Assert.That(a.Key, Is.EqualTo(Key));
++            store.BeforeInstall = null; Assert.That(a.TryBegin(h, 2), Is.False);
++        }
++
++        [Test] public void ConnectionEpochMaximumNeverWrapsToAnOlderIdentity()
++        {
++            var a = new WorldChunkReplicaAssembler(7, Key, ulong.MaxValue - 1, 64, 8, 64, 30);
++            Assert.That(ResetEpoch(a, ulong.MaxValue), Is.True);
++            Assert.That(ResetEpoch(a, 1), Is.False); Assert.That(ResetEpoch(a, 0), Is.False);
++            Assert.That(ResetEpoch(a, ulong.MaxValue), Is.True);
++            Assert.That(a.ConnectionEpoch, Is.EqualTo(ulong.MaxValue));
++        }
+     }
+ }

@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="19" result="Failed(Child)" total="19" passed="0" failed="19" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-03 03:03:56Z" end-time="2026-11-03 03:03:58Z" duration="1.5004632">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="4104" result="Failed" site="Child" start-time="2026-11-03 03:03:56Z" end-time="2026-11-03 03:03:58Z" duration="1.500463" total="19" passed="0" failed="19" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3933" name="Game.Networking.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Networking.Tests.dll" runstate="Runnable" testcasecount="519" result="Failed" site="Child" start-time="2026-11-03 03:03:56Z" end-time="2026-11-03 03:03:57Z" duration="0.839721" total="11" passed="0" failed="11" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3934" name="Game" fullname="Game" runstate="Runnable" testcasecount="519" result="Failed" site="Child" start-time="2026-11-03 03:03:56Z" end-time="2026-11-03 03:03:57Z" duration="0.774143" total="11" passed="0" failed="11" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3935" name="Networking" fullname="Game.Networking" runstate="Runnable" testcasecount="519" result="Failed" site="Child" start-time="2026-11-03 03:03:56Z" end-time="2026-11-03 03:03:57Z" duration="0.675083" total="11" passed="0" failed="11" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3936" name="Tests" fullname="Game.Networking.Tests" runstate="Runnable" testcasecount="519" result="Failed" site="Child" start-time="2026-11-03 03:03:57Z" end-time="2026-11-03 03:03:57Z" duration="0.575389" total="11" passed="0" failed="11" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3814" name="OnlineCoinGroundCodecTests" fullname="Game.Networking.Tests.OnlineCoinGroundCodecTests" classname="Game.Networking.Tests.OnlineCoinGroundCodecTests" runstate="Runnable" testcasecount="11" result="Failed" site="Child" start-time="2026-11-03 03:03:57Z" end-time="2026-11-03 03:03:57Z" duration="0.473117" total="11" passed="0" failed="11" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="3826" name="DecodeRejectsUnknownDuplicateAndNegativeCoinWireBeforePublishing" fullname="Game.Networking.Tests.OnlineCoinGroundCodecTests.DecodeRejectsUnknownDuplicateAndNegativeCoinWireBeforePublishing" methodname="DecodeRejectsUnknownDuplicateAndNegativeCoinWireBeforePublishing" classname="Game.Networking.Tests.OnlineCoinGroundCodecTests" runstate="Runnable" seed="1951387591" result="Failed" start-time="2026-11-03 03:03:57Z" end-time="2026-11-03 03:03:57Z" duration="0.028420" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少中立Coin值合同
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.OnlineCoinGroundCodecTests.Core (System.String name) [0x00017] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:95
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.Snapshot (System.Int32 count) [0x0016b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:88
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.DecodeRejectsUnknownDuplicateAndNegativeCoinWireBeforePublishing () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:51
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3824" name="EncodeRejectsDuplicateAndThirteenthCoin" fullname="Game.Networking.Tests.OnlineCoinGroundCodecTests.EncodeRejectsDuplicateAndThirteenthCoin" methodname="EncodeRejectsDuplicateAndThirteenthCoin" classname="Game.Networking.Tests.OnlineCoinGroundCodecTests" runstate="Runnable" seed="1320243711" result="Failed" start-time="2026-11-03 03:03:57Z" end-time="2026-11-03 03:03:57Z" duration="0.001135" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少中立Coin值合同
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.OnlineCoinGroundCodecTests.Core (System.String name) [0x00017] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:95
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.Snapshot (System.Int32 count) [0x0016b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:88
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.EncodeRejectsDuplicateAndThirteenthCoin () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:39
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="3820" name="EncodeRejectsIdentityOutsideFiniteNpcDomain" fullname="Game.Networking.Tests.OnlineCoinGroundCodecTests.EncodeRejectsIdentityOutsideFiniteNpcDomain" classname="Game.Networking.Tests.OnlineCoinGroundCodecTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-11-03 03:03:57Z" end-time="2026-11-03 03:03:57Z" duration="0.062051" total="4" passed="0" failed="4" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="3816" name="EncodeRejectsIdentityOutsideFiniteNpcDomain(ulong.MinValue)" fullname="Game.Networking.Tests.OnlineCoinGroundCodecTests.EncodeRejectsIdentityOutsideFiniteNpcDomain(ulong.MinValue)" methodname="EncodeRejectsIdentityOutsideFiniteNpcDomain" classname="Game.Networking.Tests.OnlineCoinGroundCodecTests" runstate="Runnable" seed="1837744791" result="Failed" start-time="2026-11-03 03:03:57Z" end-time="2026-11-03 03:03:57Z" duration="0.001252" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少中立Coin值合同
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.OnlineCoinGroundCodecTests.Core (System.String name) [0x00017] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:95
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.Snapshot (System.Int32 count) [0x0016b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:88
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.EncodeRejectsIdentityOutsideFiniteNpcDomain (System.UInt64 id) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:30
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3817" name="EncodeRejectsIdentityOutsideFiniteNpcDomain(4UL)" fullname="Game.Networking.Tests.OnlineCoinGroundCodecTests.EncodeRejectsIdentityOutsideFiniteNpcDomain(4UL)" methodname="EncodeRejectsIdentityOutsideFiniteNpcDomain" classname="Game.Networking.Tests.OnlineCoinGroundCodecTests" runstate="Runnable" seed="1748094602" result="Failed" start-time="2026-11-03 03:03:57Z" end-time="2026-11-03 03:03:57Z" duration="0.000889" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少中立Coin值合同
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.OnlineCoinGroundCodecTests.Core (System.String name) [0x00017] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:95
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.Snapshot (System.Int32 count) [0x0016b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:88
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.EncodeRejectsIdentityOutsideFiniteNpcDomain (System.UInt64 id) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:30
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3818" name="EncodeRejectsIdentityOutsideFiniteNpcDomain(17UL)" fullname="Game.Networking.Tests.OnlineCoinGroundCodecTests.EncodeRejectsIdentityOutsideFiniteNpcDomain(17UL)" methodname="EncodeRejectsIdentityOutsideFiniteNpcDomain" classname="Game.Networking.Tests.OnlineCoinGroundCodecTests" runstate="Runnable" seed="1678226382" result="Failed" start-time="2026-11-03 03:03:57Z" end-time="2026-11-03 03:03:57Z" duration="0.000854" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少中立Coin值合同
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.OnlineCoinGroundCodecTests.Core (System.String name) [0x00017] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:95
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.Snapshot (System.Int32 count) [0x0016b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:88
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.EncodeRejectsIdentityOutsideFiniteNpcDomain (System.UInt64 id) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:30
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3819" name="EncodeRejectsIdentityOutsideFiniteNpcDomain(ulong.MaxValue)" fullname="Game.Networking.Tests.OnlineCoinGroundCodecTests.EncodeRejectsIdentityOutsideFiniteNpcDomain(ulong.MaxValue)" methodname="EncodeRejectsIdentityOutsideFiniteNpcDomain" classname="Game.Networking.Tests.OnlineCoinGroundCodecTests" runstate="Runnable" seed="428398629" result="Failed" start-time="2026-11-03 03:03:57Z" end-time="2026-11-03 03:03:57Z" duration="0.000754" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少中立Coin值合同
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.OnlineCoinGroundCodecTests.Core (System.String name) [0x00017] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:95
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.Snapshot (System.Int32 count) [0x0016b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:88
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.EncodeRejectsIdentityOutsideFiniteNpcDomain (System.UInt64 id) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:30
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="3825" name="EncodeRejectsNonFinitePosition" fullname="Game.Networking.Tests.OnlineCoinGroundCodecTests.EncodeRejectsNonFinitePosition" methodname="EncodeRejectsNonFinitePosition" classname="Game.Networking.Tests.OnlineCoinGroundCodecTests" runstate="Runnable" seed="551055198" result="Failed" start-time="2026-11-03 03:03:57Z" end-time="2026-11-03 03:03:57Z" duration="0.001223" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少中立Coin值合同
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.OnlineCoinGroundCodecTests.Core (System.String name) [0x00017] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:95
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.Snapshot (System.Int32 count) [0x0016b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:88
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.EncodeRejectsNonFinitePosition () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:46
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="3823" name="EncodeRejectsNonPositiveAmount" fullname="Game.Networking.Tests.OnlineCoinGroundCodecTests.EncodeRejectsNonPositiveAmount" classname="Game.Networking.Tests.OnlineCoinGroundCodecTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-03 03:03:57Z" end-time="2026-11-03 03:03:57Z" duration="0.092891" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="3821" name="EncodeRejectsNonPositiveAmount(0L)" fullname="Game.Networking.Tests.OnlineCoinGroundCodecTests.EncodeRejectsNonPositiveAmount(0L)" methodname="EncodeRejectsNonPositiveAmount" classname="Game.Networking.Tests.OnlineCoinGroundCodecTests" runstate="Runnable" seed="1063362370" result="Failed" start-time="2026-11-03 03:03:57Z" end-time="2026-11-03 03:03:57Z" duration="0.001001" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少中立Coin值合同
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.OnlineCoinGroundCodecTests.Core (System.String name) [0x00017] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:95
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.Snapshot (System.Int32 count) [0x0016b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:88
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.EncodeRejectsNonPositiveAmount (System.Int64 amount) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:34
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3822" name="EncodeRejectsNonPositiveAmount(-1L)" fullname="Game.Networking.Tests.OnlineCoinGroundCodecTests.EncodeRejectsNonPositiveAmount(-1L)" methodname="EncodeRejectsNonPositiveAmount" classname="Game.Networking.Tests.OnlineCoinGroundCodecTests" runstate="Runnable" seed="1892634349" result="Failed" start-time="2026-11-03 03:03:57Z" end-time="2026-11-03 03:03:57Z" duration="0.001039" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少中立Coin值合同
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Networking.Tests.OnlineCoinGroundCodecTests.Core (System.String name) [0x00017] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:95
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.Snapshot (System.Int32 count) [0x0016b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:88
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.EncodeRejectsNonPositiveAmount (System.Int64 amount) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:34
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="3827" name="GroundResetAlsoClearsRetainedCoinAndUnknownFields" fullname="Game.Networking.Tests.OnlineCoinGroundCodecTests.GroundResetAlsoClearsRetainedCoinAndUnknownFields" methodname="GroundResetAlsoClearsRetainedCoinAndUnknownFields" classname="Game.Networking.Tests.OnlineCoinGroundCodecTests" runstate="Runnable" seed="994797749" result="Failed" start-time="2026-11-03 03:03:57Z" end-time="2026-11-03 03:03:57Z" duration="0.171282" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少中立Coin值合同
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.OnlineCoinGroundCodecTests.Core (System.String name) [0x00017] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:95
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.Snapshot (System.Int32 count) [0x0016b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:88
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.GroundResetAlsoClearsRetainedCoinAndUnknownFields () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:69
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="3815" name="RoundTripKeepsTwelveIdentitiesLongAmountsAndDeathPositions" fullname="Game.Networking.Tests.OnlineCoinGroundCodecTests.RoundTripKeepsTwelveIdentitiesLongAmountsAndDeathPositions" methodname="RoundTripKeepsTwelveIdentitiesLongAmountsAndDeathPositions" classname="Game.Networking.Tests.OnlineCoinGroundCodecTests" runstate="Runnable" seed="865975415" result="Failed" start-time="2026-11-03 03:03:57Z" end-time="2026-11-03 03:03:57Z" duration="0.001073" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少中立Coin值合同
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Networking.Tests.OnlineCoinGroundCodecTests.Core (System.String name) [0x00017] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:95
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.Snapshot (System.Int32 count) [0x0016b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:88
+at Game.Networking.Tests.OnlineCoinGroundCodecTests.RoundTripKeepsTwelveIdentitiesLongAmountsAndDeathPositions () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Networking\OnlineCoinGroundCodecTests.cs:18
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="5609" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="1053" result="Failed" site="Child" start-time="2026-11-03 03:03:57Z" end-time="2026-11-03 03:03:58Z" duration="0.532052" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="5610" name="Game" fullname="Game" runstate="Runnable" testcasecount="1053" result="Failed" site="Child" start-time="2026-11-03 03:03:57Z" end-time="2026-11-03 03:03:58Z" duration="0.504836" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="5611" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="1053" result="Failed" site="Child" start-time="2026-11-03 03:03:57Z" end-time="2026-11-03 03:03:58Z" duration="0.404108" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="5612" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="1053" result="Failed" site="Child" start-time="2026-11-03 03:03:57Z" end-time="2026-11-03 03:03:58Z" duration="0.304461" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="4722" name="OnlineCoinGroundProjectionTests" fullname="Game.Run.Tests.OnlineCoinGroundProjectionTests" classname="Game.Run.Tests.OnlineCoinGroundProjectionTests" runstate="Runnable" testcasecount="8" result="Failed" site="Child" start-time="2026-11-03 03:03:57Z" end-time="2026-11-03 03:03:58Z" duration="0.203525" total="8" passed="0" failed="8" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="4723" name="CopyUsesValueFactsWithoutExposingIncomingOrInternalMutableArrays" fullname="Game.Run.Tests.OnlineCoinGroundProjectionTests.CopyUsesValueFactsWithoutExposingIncomingOrInternalMutableArrays" methodname="CopyUsesValueFactsWithoutExposingIncomingOrInternalMutableArrays" classname="Game.Run.Tests.OnlineCoinGroundProjectionTests" runstate="Runnable" seed="407175199" result="Failed" start-time="2026-11-03 03:03:58Z" end-time="2026-11-03 03:03:58Z" duration="0.016570" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少Core Coin值合同
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinGroundProjectionTests.CoinType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:82
+at Game.Run.Tests.OnlineCoinGroundProjectionTests.Snapshot (System.UInt64 sequence, System.UInt32 groundVersion, System.Int32 count) [0x000ae] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:80
+at Game.Run.Tests.OnlineCoinGroundProjectionTests.CopyUsesValueFactsWithoutExposingIncomingOrInternalMutableArrays () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:19
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4731" name="DisposeClearsCoinReadCapabilityAndRejectsLateSnapshot" fullname="Game.Run.Tests.OnlineCoinGroundProjectionTests.DisposeClearsCoinReadCapabilityAndRejectsLateSnapshot" methodname="DisposeClearsCoinReadCapabilityAndRejectsLateSnapshot" classname="Game.Run.Tests.OnlineCoinGroundProjectionTests" runstate="Runnable" seed="2042493664" result="Failed" start-time="2026-11-03 03:03:58Z" end-time="2026-11-03 03:03:58Z" duration="0.001063" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少Core Coin值合同
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinGroundProjectionTests.CoinType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:82
+at Game.Run.Tests.OnlineCoinGroundProjectionTests.Snapshot (System.UInt64 sequence, System.UInt32 groundVersion, System.Int32 count) [0x000ae] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:80
+at Game.Run.Tests.OnlineCoinGroundProjectionTests.DisposeClearsCoinReadCapabilityAndRejectsLateSnapshot () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:66
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4729" name="DuplicateOverflowAndMissingCoinListsRejectEntireCandidate" fullname="Game.Run.Tests.OnlineCoinGroundProjectionTests.DuplicateOverflowAndMissingCoinListsRejectEntireCandidate" methodname="DuplicateOverflowAndMissingCoinListsRejectEntireCandidate" classname="Game.Run.Tests.OnlineCoinGroundProjectionTests" runstate="Runnable" seed="78258899" result="Failed" start-time="2026-11-03 03:03:58Z" end-time="2026-11-03 03:03:58Z" duration="0.001637" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少Core Coin值合同
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinGroundProjectionTests.CoinType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:82
+at Game.Run.Tests.OnlineCoinGroundProjectionTests.Snapshot (System.UInt64 sequence, System.UInt32 groundVersion, System.Int32 count) [0x000ae] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:80
+at Game.Run.Tests.OnlineCoinGroundProjectionTests.DuplicateOverflowAndMissingCoinListsRejectEntireCandidate () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:48
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4730" name="InvalidCoinCannotPublishNewOwnerBalance" fullname="Game.Run.Tests.OnlineCoinGroundProjectionTests.InvalidCoinCannotPublishNewOwnerBalance" methodname="InvalidCoinCannotPublishNewOwnerBalance" classname="Game.Run.Tests.OnlineCoinGroundProjectionTests" runstate="Runnable" seed="2060057139" result="Failed" start-time="2026-11-03 03:03:58Z" end-time="2026-11-03 03:03:58Z" duration="0.001507" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少Core Coin值合同
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinGroundProjectionTests.CoinType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:82
+at Game.Run.Tests.OnlineCoinGroundProjectionTests.Snapshot (System.UInt64 sequence, System.UInt32 groundVersion, System.Int32 count) [0x000ae] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:80
+at Game.Run.Tests.OnlineCoinGroundProjectionTests.InvalidCoinCannotPublishNewOwnerBalance () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:58
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4728" name="NewerEmptyRemovesCoinAndOlderGroundOrEpochCannotResurrectIt" fullname="Game.Run.Tests.OnlineCoinGroundProjectionTests.NewerEmptyRemovesCoinAndOlderGroundOrEpochCannotResurrectIt" methodname="NewerEmptyRemovesCoinAndOlderGroundOrEpochCannotResurrectIt" classname="Game.Run.Tests.OnlineCoinGroundProjectionTests" runstate="Runnable" seed="1598262379" result="Failed" start-time="2026-11-03 03:03:58Z" end-time="2026-11-03 03:03:58Z" duration="0.001236" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  缺少Core Coin值合同
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinGroundProjectionTests.CoinType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:82
+at Game.Run.Tests.OnlineCoinGroundProjectionTests.Snapshot (System.UInt64 sequence, System.UInt32 groundVersion, System.Int32 count) [0x000ae] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:80
+at Game.Run.Tests.OnlineCoinGroundProjectionTests.NewerEmptyRemovesCoinAndOlderGroundOrEpochCannotResurrectIt () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:38
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4727" name="SameGroundVersionCannotChangeAnyCoinFact" fullname="Game.Run.Tests.OnlineCoinGroundProjectionTests.SameGroundVersionCannotChangeAnyCoinFact" classname="Game.Run.Tests.OnlineCoinGroundProjectionTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-11-03 03:03:58Z" end-time="2026-11-03 03:03:58Z" duration="0.078730" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="4724" name="SameGroundVersionCannotChangeAnyCoinFact(&quot;Amount&quot;)" fullname="Game.Run.Tests.OnlineCoinGroundProjectionTests.SameGroundVersionCannotChangeAnyCoinFact(&quot;Amount&quot;)" methodname="SameGroundVersionCannotChangeAnyCoinFact" classname="Game.Run.Tests.OnlineCoinGroundProjectionTests" runstate="Runnable" seed="186003709" result="Failed" start-time="2026-11-03 03:03:58Z" end-time="2026-11-03 03:03:58Z" duration="0.001765" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少Core Coin值合同
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinGroundProjectionTests.CoinType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:82
+at Game.Run.Tests.OnlineCoinGroundProjectionTests.Snapshot (System.UInt64 sequence, System.UInt32 groundVersion, System.Int32 count) [0x000ae] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:80
+at Game.Run.Tests.OnlineCoinGroundProjectionTests.SameGroundVersionCannotChangeAnyCoinFact (System.String field) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:29
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="4725" name="SameGroundVersionCannotChangeAnyCoinFact(&quot;Position&quot;)" fullname="Game.Run.Tests.OnlineCoinGroundProjectionTests.SameGroundVersionCannotChangeAnyCoinFact(&quot;Position&quot;)" methodname="SameGroundVersionCannotChangeAnyCoinFact" classname="Game.Run.Tests.OnlineCoinGroundProjectionTests" runstate="Runnable" seed="255309259" result="Failed" start-time="2026-11-03 03:03:58Z" end-time="2026-11-03 03:03:58Z" duration="0.000858" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少Core Coin值合同
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinGroundProjectionTests.CoinType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:82
+at Game.Run.Tests.OnlineCoinGroundProjectionTests.Snapshot (System.UInt64 sequence, System.UInt32 groundVersion, System.Int32 count) [0x000ae] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:80
+at Game.Run.Tests.OnlineCoinGroundProjectionTests.SameGroundVersionCannotChangeAnyCoinFact (System.String field) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:29
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="4726" name="SameGroundVersionCannotChangeAnyCoinFact(&quot;Id&quot;)" fullname="Game.Run.Tests.OnlineCoinGroundProjectionTests.SameGroundVersionCannotChangeAnyCoinFact(&quot;Id&quot;)" methodname="SameGroundVersionCannotChangeAnyCoinFact" classname="Game.Run.Tests.OnlineCoinGroundProjectionTests" runstate="Runnable" seed="1887327287" result="Failed" start-time="2026-11-03 03:03:58Z" end-time="2026-11-03 03:03:58Z" duration="0.000835" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  缺少Core Coin值合同
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.OnlineCoinGroundProjectionTests.CoinType () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:82
+at Game.Run.Tests.OnlineCoinGroundProjectionTests.Snapshot (System.UInt64 sequence, System.UInt32 groundVersion, System.Int32 count) [0x000ae] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:80
+at Game.Run.Tests.OnlineCoinGroundProjectionTests.SameGroundVersionCannotChangeAnyCoinFact (System.String field) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineCoinGroundProjectionTests.cs:29
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

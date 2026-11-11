@@ -14,9 +14,20 @@ namespace Game.Character
         private bool _waitRelease = true, _focused = true, _paused;
         private uint _selectionVersion;
         public void ConfigurePractice(SinglePlayerInventorySession session){_session=session;_selectionVersion=uint.MaxValue;ResetUse();}
-        public bool IsWandMode => _session?.ToolbeltReadOnly != null && _session.ToolbeltReadOnly.SelectedSlot >= 0
-            && _session.ToolbeltReadOnly.SelectedSlot < 3;
-        public bool CanUseWorld => isActiveAndEnabled && _focused && Time.timeScale > 0 && _session?.ToolbeltReadOnly != null;
+        public bool IsWandMode
+        {
+            get
+            {
+                var read = _session != null && _session.AccountInventoryReadOnly
+                    ? _session.TryGetAccountHeldPresentation(out var account) ? account.ToolbeltReadOnly : null
+                    : _session?.ToolbeltReadOnly;
+                return read != null && read.SelectedSlot >= 0 && read.SelectedSlot < HeldItemSlots.WandCount;
+            }
+        }
+        // Hub账号可以切换已确认物品的Presentation，但旧单机世界操作仍没有资产写权。
+        // 必须把“允许选中”与“允许使用”分开，不能为恢复数字键而顺便开放本地Pour/Throw。
+        public bool CanUseWorld => isActiveAndEnabled && _focused && Time.timeScale > 0 && _session != null
+            && !_session.AccountInventoryReadOnly && _session.ToolbeltReadOnly != null;
         public bool CanPour => CanUseWorld && !IsWandMode && !_waitRelease && _use != null && _use.IsPressed();
         private void Awake()
         {
@@ -53,12 +64,26 @@ namespace Game.Character
         }
         public void Select(int slot)
         {
+            if (_session != null && _session.AccountInventoryReadOnly)
+            {
+                if (isActiveAndEnabled && _focused && Time.timeScale > 0 && _session.gameObject.scene == gameObject.scene
+                    && _session.ActorTransform == transform && slot >= HeldItemSlots.WandCount && slot < HeldItemSlots.TotalCount)
+                    _session.TrySelectAccountHeldTool(slot - HeldItemSlots.WandCount);
+                return;
+            }
             if (!CanUseWorld) return;
             EventBus<HeldItemSelectionRequestedEvent>.Publish(new HeldItemSelectionRequestedEvent
             { InventoryId = _session.ReadOnly.InventoryId, SlotIndex = slot });
         }
         private void OnSelection(ToolbeltChangedEvent change)
         {
+            if (_session != null && _session.AccountInventoryReadOnly)
+            {
+                if (_session.TryGetAccountHeldPresentation(out var source) && change.InventoryId == source.InventoryId
+                    && change.SelectionVersion != _selectionVersion)
+                { _selectionVersion = change.SelectionVersion; ResetUse(); }
+                return;
+            }
             if (_session?.ReadOnly == null || change.InventoryId != _session.ReadOnly.InventoryId || change.SelectionVersion == _selectionVersion) return;
             _selectionVersion = change.SelectionVersion; ResetUse();
         }

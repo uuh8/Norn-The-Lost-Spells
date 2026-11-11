@@ -27,6 +27,8 @@ namespace Game.Multiplayer
             public float TimeScale, CorrectionDistance;
             public float[] ActorHp, ActorMana;
             public int[] ActorCharges;
+            // 仅显式报告读取真实Owner的实例库存；Client不持有远端完整库存，远端槽保持null。
+            public OnlineCastInventoryDiagnosticSnapshot[] ActorInventories;
             public int ActiveOutputs;
             public long SpawnedOutputs, DamageFacts;
             public long[] FrameGcBytes, FrameSpawnTotals, FrameDamageTotals;
@@ -85,7 +87,8 @@ namespace Game.Multiplayer
         }
         private void Update()
         {
-            if (_config == null || _measuring || Time.realtimeSinceStartupAsDouble < _next) return;
+            // 默认关闭的关联计时窗口内不写本探针的1Hz JSON；正式移动/输入仍由原Driver处理。
+            if (_config == null || _measuring || WorldReplicationTimingTrace.Active != null || Time.realtimeSinceStartupAsDouble < _next) return;
             _next = Time.realtimeSinceStartupAsDouble + 1;
             var world = OnlineWorldBootstrap.Active;
             var manager = NetworkManager.singleton as RoomNetworkManager;
@@ -210,11 +213,15 @@ namespace Game.Multiplayer
                 // 仅诊断写报告时分配数组；Measure 窗口完全停写，不把该 IO 成本混进稳态性能结论。
                 report.ActorHp = new float[world.Registry.Capacity]; report.ActorMana = new float[world.Registry.Capacity];
                 report.ActorCharges = new int[world.Registry.Capacity];
+                report.ActorInventories = new OnlineCastInventoryDiagnosticSnapshot[world.Registry.Capacity];
                 for (int i = 0; i < world.Registry.Capacity; i++)
                 {
                     if (world.Registry[i].Health != null) report.ActorHp[i] = world.Registry[i].Health.CurrentHp;
                     if (world.Combat != null && world.Combat.TryGetResources((ulong)i + 1, out var resources))
                     { report.ActorMana[i] = resources.CurrentMana; report.ActorCharges[i] = resources.RemainingCharges; }
+                    // 与原1Hz JSON路径同门控，Measure期间整个Update早退；不把诊断枚举放进正式Tick。
+                    var cast = world.Registry[i].Cast;
+                    if (cast != null) cast.TryCaptureClientInventoryDiagnostic(world.ServerTick, out report.ActorInventories[i]);
                 }
                 if (world.Combat != null) { report.ActiveOutputs = world.Combat.ActiveOutputs; report.SpawnedOutputs = world.Combat.SpawnedOutputs; report.DamageFacts = world.Combat.DamageFacts; }
             }

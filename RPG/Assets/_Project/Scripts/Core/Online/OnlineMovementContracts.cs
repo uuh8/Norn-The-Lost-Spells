@@ -85,6 +85,36 @@ namespace Game.Core
         void Simulate(in PlayerSimulationFrame input, float deltaTime, bool replay = false);
     }
 
+    /// <summary>
+    /// 显式诊断的可选只读口，与会消费边沿的SampleInput/推进模拟的接口分离。
+    /// Run只依赖Core；InputSystem私有门由Character复制为值，不把输入资产或控制权限传出。
+    /// 接口存在不代表启用采样，没有Update/tap/额外Physics查询。
+    /// </summary>
+    public interface IPlayerMovementReadOnlyObservation
+    {
+        Transform CurrentInputActor { get; }
+        PlayerMovementReadOnlyObservation CaptureReadOnlyObservation();
+    }
+
+    /// <summary>
+    /// 同一主线程读取时刻的值。Action值是InputAction当前值，不宣称OS按键已送达。
+    /// CC flags/velocity属于最近一次Move，读取帧号不是Move发生帧；未采集请求位移。
+    /// </summary>
+    [System.Serializable]
+    public struct PlayerMovementReadOnlyObservation
+    {
+        public int Frame, ActorInstanceId;
+        public bool Initialized, InputSubscribed, HasFocus, InputSuppressed, OnlineInputBlocked;
+        public bool WaitJumpRelease, WaitDashRelease, JumpPending, DashPending;
+        public bool ActionAssetAvailable, PlayerMapEnabled, MoveActionEnabled, JumpActionEnabled, JumpHeld;
+        public bool ActiveAndEnabled, ControllerAvailable, ControllerEnabled, ControllerGrounded;
+        public PlayerExecutionMode ExecutionMode;
+        public Vector2 MoveActionValue, ProcessedMove;
+        public Vector3 Position, ControllerVelocity;
+        public int ControllerCollisionFlags;
+        public float VerticalVelocity;
+    }
+
     /// <summary>AI 读取有界角色列表；只读查询不允许跳过角色 Owner 修改 HP／连接状态。</summary>
     public interface ICombatActorRosterReadOnly
     {

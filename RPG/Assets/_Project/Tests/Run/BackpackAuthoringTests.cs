@@ -46,15 +46,25 @@ namespace Game.Run.Tests
                 var use = go.AddComponent<ContainerUseController>();
                 var collection = go.AddComponent<MaterialCollectionController>();
                 var flags = BindingFlags.Instance | BindingFlags.NonPublic;
-                // 普通EditMode不会执行未标ExecuteAlways组件的Awake，显式建立仅供此测试的Actions。
-                if (typeof(ContainerUseController).GetField("_throw", flags).GetValue(use) == null)
+                // 已确认的操作是 F 采集、G 投掷；原 MaterialCollection 的 _solid/J 已退役。
+                // 仍检查真实 InputAction 的明确绑定及不冲突，不能只靠字段存在宣称输入正确。
+                var throwField = typeof(ContainerUseController).GetField("_throw", flags);
+                var collectField = typeof(MaterialCollectionController).GetField("_collect", flags);
+                Assert.That(throwField, Is.Not.Null);
+                Assert.That(collectField, Is.Not.Null);
+                // 普通 EditMode 不保证执行 Awake，显式建立仅供此测试的 Actions。
+                if (throwField.GetValue(use) == null)
                     typeof(ContainerUseController).GetMethod("Awake", flags).Invoke(use, null);
-                if (typeof(MaterialCollectionController).GetField("_solid", flags).GetValue(collection) == null)
+                if (collectField.GetValue(collection) == null)
                     typeof(MaterialCollectionController).GetMethod("Awake", flags).Invoke(collection, null);
-                var throwing = (InputAction)typeof(ContainerUseController).GetField("_throw", flags).GetValue(use);
-                var solid = (InputAction)typeof(MaterialCollectionController).GetField("_solid", flags).GetValue(collection);
+                var throwing = (InputAction)throwField.GetValue(use);
+                var collecting = (InputAction)collectField.GetValue(collection);
+                Assert.That(throwing, Is.Not.Null);
+                Assert.That(collecting, Is.Not.Null);
                 Assert.That(throwing.bindings[0].path, Is.EqualTo("<Keyboard>/g"));
-                Assert.That(solid.bindings[0].path, Is.EqualTo("<Keyboard>/j"));
+                Assert.That(collecting.bindings[0].path, Is.EqualTo("<Keyboard>/f"));
+                foreach (var binding in collecting.bindings)
+                    Assert.That(binding.path, Is.Not.EqualTo("<Keyboard>/g"), "采集不能消费投掷的 G 绑定。");
             }
             finally { Object.DestroyImmediate(go); }
         }

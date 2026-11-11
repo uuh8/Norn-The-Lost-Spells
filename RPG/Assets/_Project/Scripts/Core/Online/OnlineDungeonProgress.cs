@@ -15,5 +15,9 @@ namespace Game.Core
     {
         public uint Revision, ServerTick, EncounterIndexPlusOne, RemainingEnemies;
         public OnlineDungeonPhase Phase;
+        // DS按原出口/动态放门规则批准的位置。只有清场后可存在；Client不得自己寻地重算门位置。
+        public bool HasReturnPortal;
+        public UnityEngine.Vector3 ReturnPortalPosition;
+        public UnityEngine.Quaternion ReturnPortalRotation;
     }
 }

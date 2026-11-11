@@ -20,6 +20,7 @@ namespace Game.Project.Editor
     public sealed class OnlineCombatTools : IPreprocessBuildWithReport
     {
         public const string DefinitionPath = "Assets/_Project/Resources/Online/CombatDefinition.asset";
+        private const string ContainerUsePath = "Assets/_Project/ScriptableObjects/Items/Containers/Use/UseDefinition.asset";
         private const string PlayerPath = "Assets/_Project/Art/Prefabs/WizardPlayer.prefab";
         private const string CatalogPath = "Assets/_Project/ScriptableObjects/World/Hub/Inventory/Catalog.asset";
         private const string ManifestPath = "Assets/_Project/Resources/Online/GameplayManifest.json";
@@ -39,10 +40,18 @@ namespace Game.Project.Editor
             var definition = AssetDatabase.LoadAssetAtPath<OnlineCombatDefinition>(DefinitionPath);
             if (definition == null || definition.WireHash == 0)
                 throw new InvalidOperationException("请先完整Setup Online Combat，不能为未装配内容创建兼容摘要。");
-            string hash = ComputeGameplayHash();
             var data = new SerializedObject(definition);
+            // 小段新增的受控输出也要随同一正式Hash刷新；不重导地图Prefab或保存用户其它资源。
+            var outputPrefabs = OutputPrefabs(); var outputArray = data.FindProperty("_outputPrefabs");
+            outputArray.arraySize = outputPrefabs.Count;
+            for (int i = 0; i < outputPrefabs.Count; i++) outputArray.GetArrayElementAtIndex(i).objectReferenceValue = outputPrefabs[i];
+            data.ApplyModifiedPropertiesWithoutUndo();
+            string hash = ComputeGameplayHash();
+            data.Update();
             data.FindProperty("_gameplayConfigHash").stringValue = hash;
-            data.ApplyModifiedPropertiesWithoutUndo(); EditorUtility.SetDirty(definition); AssetDatabase.SaveAssets();
+            data.ApplyModifiedPropertiesWithoutUndo(); EditorUtility.SetDirty(definition);
+            // 仅保存本次Hash目标，避免把导入脏标记或用户其它未保存资源一起写盘。
+            AssetDatabase.SaveAssetIfDirty(definition);
             File.WriteAllText(ManifestPath, JsonUtility.ToJson(new Manifest { SchemaVersion = 1, GameplayConfigHash = hash }, true));
             AssetDatabase.ImportAsset(ManifestPath);
             GameLog.Info("运行时兼容Hash已刷新；请配套重建Client/DS并重启本地业务服。Hash=" + hash, "OnlineCombat");
@@ -75,6 +84,7 @@ namespace Game.Project.Editor
             if (ground == null || air == null) throw new InvalidOperationException("正式 Wizard 攻击 State 不存在。");
             var data = new SerializedObject(definition);
             data.FindProperty("_catalog").objectReferenceValue = AssetDatabase.LoadAssetAtPath<ItemCatalog>(CatalogPath);
+            data.FindProperty("_containerUseDefinition").objectReferenceValue = AssetDatabase.LoadAssetAtPath<ContainerUseDefinition>(ContainerUsePath);
             for (int slot = 0; slot < 3; slot++)
                 data.FindProperty("_selectWand" + (slot + 1)).objectReferenceValue = AssetDatabase.LoadMainAssetAtPath(
                     "Assets/_Project/ScriptableObjects/Input/Wands/Action_Select" + (slot + 1) + ".asset");
@@ -122,7 +132,7 @@ namespace Game.Project.Editor
         {
             OnlineDungeonTools.Verify();
             var definition = AssetDatabase.LoadAssetAtPath<OnlineCombatDefinition>(DefinitionPath);
-            if (definition == null || definition.Catalog == null || definition.WireHash == 0 ||
+            if (definition == null || definition.Catalog == null || definition.ContainerUse == null || definition.WireHash == 0 ||
                 definition.ReleaseSeconds(false) <= 0 || definition.ReleaseSeconds(true) <= 0)
                 throw new InvalidOperationException("Online Combat 基础配置缺失：Definition/Catalog/Hash/Timeline必须全部有效。");
             string actualHash = ComputeGameplayHash();
@@ -191,6 +201,9 @@ namespace Game.Project.Editor
             // 关卡可以配置不同Enemy Prefab；从已审核地图的实际输出依赖补齐白名单，
             // 避免未来某个Bow/Elite只在特定副本出现时，本地能出手而Replica找不到受控Key。
             foreach (var prefab in OnlineDungeonTools.OutputPrefabs()) Add(prefab);
+            // G使用原受控物理壳；真实瓶模型另按Catalog解析，不能由客户端指定资源路径。
+            var containerUse = AssetDatabase.LoadAssetAtPath<ContainerUseDefinition>(ContainerUsePath);
+            if (containerUse != null) Add(containerUse.ThrowPrefab);
             // 命中表现/火场也采用同一受控表；只收现有生产 Prefab，运行时不能接受路径。
             foreach (string guid in AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/_Project/Art/Prefabs", "Assets/_Project/Prefabs" }))
             {
@@ -226,11 +239,27 @@ namespace Game.Project.Editor
             }
             return new List<AudioClip>(paths.Values);
         }
+        [MenuItem("Tools/Norn/Online/Create World Replication Profile")]
+        public static void CreateWorldReplicationProfile()
+        {
+            OnlineSceneSetup.RequireCleanEditor();
+            const string path="Assets/_Project/Resources/Online/WorldReplicationProfile.asset";
+            var profile=AssetDatabase.LoadAssetAtPath<Game.Multiplayer.OnlineWorldReplicationProfile>(path);
+            if(profile==null)
+            {
+                if(AssetDatabase.LoadMainAssetAtPath(path)!=null)throw new InvalidOperationException("联机复制配置路径已有其他类型资产，保留现场。");
+                // 仅创建独立发送配置，使用类内已批准2/10/3初值；不重导World/NPC或改单机活动参数。
+                profile=ScriptableObject.CreateInstance<Game.Multiplayer.OnlineWorldReplicationProfile>();
+                AssetDatabase.CreateAsset(profile,path);AssetDatabase.SaveAssets();
+            }
+            if(!profile.Validate(out var error))throw new InvalidOperationException(error);
+        }
         private static string ComputeGameplayHash()
         {
             // 对原始 YAML 配置与相关 Prefab 源字节做 Hash，不使用平台相关的导入 Artifact Hash。
             // 美术引用通过 GUID 进入配置；本阶段把角色/动作/技能规则都列入，避免仅身份清单相同就误认为玩法相同。
-            var paths = new SortedSet<string>(StringComparer.Ordinal) { PlayerPath, CatalogPath };
+            var paths = new SortedSet<string>(StringComparer.Ordinal) { PlayerPath, CatalogPath,
+                "Assets/_Project/Resources/Online/WorldReplicationProfile.asset", ContainerUsePath };
             // 原输入的绑定也属于两端配置：使用相同脚本但不同数字键资产不能称为相同操作体验。
             foreach (string input in Directory.EnumerateFiles("Assets/_Project/ScriptableObjects/Input/Wands", "*.asset"))
                 paths.Add(input.Replace('\\', '/'));

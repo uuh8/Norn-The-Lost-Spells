@@ -1,0 +1,217 @@
+using System;
+using Game.Core;
+using Game.Networking;
+using Game.NetworkProtocol;
+
+namespace Game.Multiplayer
+{
+    /// <summary>
+    /// 一个 World Owner 的复制装配：DS 唯一捕获/提交，四连接各持一份冻结传输；Client 只组装和安装。
+    /// 不拥有材料规则或认证权。Mirror 适配器必须先核验真实连接，再调用这里的可信身份入口。
+    /// 本段有界发送全部已提交 Chunk；动态空间 Interest/缓存释放另行接续，不为其重建 Source。
+    /// </summary>
+    public sealed class WorldReplicationCoordinator
+    {
+        public const int DefaultChunks=128, DefaultWords=16384;
+        private readonly WorldReplicationCommitOwner _owner;
+        private readonly WorldReplicationPeerState[] _peers;
+        private readonly bool[] _active=new bool[4];
+        private readonly int[] _cursor=new int[4],_controlCount=new int[4],_resyncCount=new int[4];
+        private readonly double[] _controlWindow=new double[4],_resyncWindow=new double[4];
+        private readonly WorldChunkReplicaAssembler[] _assemblers;
+        private readonly WorldChunkPayloadHeader[] _incoming;
+        private readonly uint[] _page=new uint[WorldPageCodec.PageWords];
+        private readonly WorldPageMessage _outbound=WarmMessage(),_reply=WarmMessage();
+        private readonly int _maxWords;
+        private int _slots;
+        private uint _clientEpoch;
+        private bool _stopped;
+        public ulong WorldEpoch {get;}
+        public ulong GameplayHash {get;}
+        public bool IsAuthority=>_owner!=null;
+        public bool Faulted {get;private set;}
+        public string Failure {get;private set;}
+        public long Captures {get;private set;}
+        public long PagesSent {get;private set;}
+        public long Installed {get;private set;}
+        public long Acknowledged {get;private set;}
+        public long Rejected {get;private set;}
+        public WorldChunkPayloadHeader LastAcknowledged {get;private set;}
+        public WorldChunkPayloadHeader LastInstalled {get;private set;}
+        public WorldReplicationCoordinator(ulong epoch,ulong hash,int chunks,int maxWords,int cells,int pending,int inspections,IWorldChunkPayloadInstaller installer=null)
+        {
+            if(epoch==0 || hash==0 || chunks<1 || maxWords<11 || maxWords>WorldPageCodec.MaxWords)throw new ArgumentOutOfRangeException(nameof(epoch));
+            WorldEpoch=epoch;GameplayHash=hash;_maxWords=maxWords;
+            if(installer==null)
+            {
+                _owner=new WorldReplicationCommitOwner(epoch,chunks,cells,pending,chunks,maxWords,inspections);
+                _peers=new WorldReplicationPeerState[4];
+                for(int i=0;i<4;i++)_peers[i]=new WorldReplicationPeerState(chunks,maxWords,WorldPageCodec.PageWords,18000,3600);
+            }
+            else
+            {
+                _assemblers=new WorldChunkReplicaAssembler[chunks];_incoming=new WorldChunkPayloadHeader[chunks];
+                int pages=1+(maxWords-1)/WorldPageCodec.PageWords;
+                for(int i=0;i<chunks;i++)_assemblers[i]=new WorldChunkReplicaAssembler(epoch,default,1,maxWords,pages,WorldPageCodec.PageWords,15000,installer);
+            }
+        }
+        private static WorldPageMessage WarmMessage()
+        {var m=new WorldPageMessage();for(int i=0;i<WorldPageCodec.PageWords;i++)m.Words.Add(0);m.Words.Clear();return m;}
+
+        /// <summary>在唯一材料步之后调用一次，不能按连接重复扫描 live Source。失败不发布半份版本。</summary>
+        public bool Capture(IWorldReplicationSource source,WorldReplicaBuffer buffer)
+        {
+            if(!IsAuthority || _stopped || Faulted || source==null || buffer==null)return false;
+            if(!source.TryCapture(buffer,out var failure))return Fail("Source:"+failure);
+            if(!_owner.TryCaptureCommit(buffer))return Fail("Commit:"+_owner.LastFailure);
+            Captures++;return true;
+        }
+        public bool BindPeer(int slot,int connectionId,uint epoch)
+        {
+            if(!IsAuthority || _stopped || (uint)slot>=4 || connectionId<0 || epoch==0)return false;
+            var p=_peers[slot];
+            if(_active[slot] && epoch<p.ConnectionEpoch)return false;
+            if(_active[slot] && p.ConnectionId==connectionId && p.ConnectionEpoch==epoch)return true;
+            p.Reset(connectionId,epoch);_active[slot]=true;_cursor[slot]=0;
+            _controlCount[slot]=_resyncCount[slot]=0;_controlWindow[slot]=_resyncWindow[slot]=double.NaN;return true;
+        }
+        public void RemovePeer(int slot)
+        {if(!IsAuthority || (uint)slot>=4)return;_active[slot]=false;_peers[slot].Reset(0,0);}
+        public void BeginRound(double now)
+        {
+            if(!IsAuthority || _stopped || Faulted || !double.IsFinite(now))return;
+            for(int i=0;i<4;i++)if(_active[i]){_peers[i].BeginRound(now);_peers[i].RestartTimedOutTransfer(now,2);}
+        }
+        /// <summary>最多检查一个缓存 Chunk；页面来自 Peer 的冻结副本，后续提交不会改变它。</summary>
+        public bool TryPreparePage(int slot,double now,out WorldPageMessage message)
+        {
+            message=null;
+            if(!IsAuthority || _stopped || Faulted || (uint)slot>=4 || !_active[slot] || !double.IsFinite(now))return false;
+            var p=_peers[slot];
+            if(!p.HasPending)
+            {
+                if(_owner.ChunkCount==0)return false;
+                if(_cursor[slot]>=_owner.ChunkCount)_cursor[slot]=0;
+                var key=_owner.GetChunkHeader(_cursor[slot]++).Key;
+                if(!p.TryFreeze(_owner,key,now))return false;
+            }
+            if(!p.TryPeekPage(_page,out int count,out int index))return false;
+            var h=p.PendingHeader;if(h.ServerTick>uint.MaxValue)return Fail("WorldTick exceeds wire range");
+            Fill(_outbound,h,p.ConnectionEpoch,h.IsResident?(h.BaseRevision==0?1u:2u):5u);
+            _outbound.PageIndex=(uint)index;_outbound.PageCount=(uint)p.PageCount;
+            _outbound.TotalWords=(uint)h.WordCount;_outbound.WordOffset=(uint)(index*WorldPageCodec.PageWords);
+            for(int i=0;i<count;i++)_outbound.Words.Add(_page[i]);message=_outbound;return true;
+        }
+        /// <summary>必须在进入 Mirror 前预留完整编码/ framing 字节；失败不得发送或推进页游标。</summary>
+        public bool MarkPageSent(int slot,double now,int encodedAndFramingBytes)
+        {
+            if(!IsAuthority || _stopped || (uint)slot>=4 || !_active[slot])return false;
+            if(!_peers[slot].TryMarkPageSent(now,encodedAndFramingBytes))return false;PagesSent++;return true;
+        }
+        public bool ReceiveControl(int slot,int actualConnection,uint actualEpoch,WorldPageMessage message,double now)
+        {
+            if(!IsAuthority || _stopped || Faulted || (uint)slot>=4 || !_active[slot] || !Identity(message,actualEpoch) || !double.IsFinite(now))return Reject();
+            var p=_peers[slot];var h=p.PendingHeader;
+            // 所有身份和真实 pending 字段先核对，伪造高 ID 不消耗合法 ACK/Resync 的预算。
+            if(p.ConnectionId!=actualConnection || p.ConnectionEpoch!=actualEpoch || !p.HasPending ||
+                Key(message)!=h.Key || message.Generation!=h.Generation || message.Revision!=h.Revision ||
+                message.SnapshotId!=h.SnapshotId || message.Checksum!=h.Checksum)return Reject();
+            if(message.Kind==3)
+            {
+                if(!p.AwaitingInstallAck || !Budget(now,ref _controlWindow[slot],ref _controlCount[slot],32))return Reject();
+                if(!p.TryAcknowledge(actualConnection,actualEpoch,h.Key,h.Generation,h.Revision,h.SnapshotId,h.Checksum))return Reject();
+                LastAcknowledged=h;Acknowledged++;return true;
+            }
+            if(message.Kind!=4 || !Budget(now,ref _resyncWindow[slot],ref _resyncCount[slot],4))return Reject();
+            p.RequireBaseline(h.Key);
+            // 下一次仍从刚刚缺失的 Key 当前 Baseline 恢复，不等一次完整游标轮转。
+            for(int i=0;i<_owner.ChunkCount;i++)if(_owner.GetChunkHeader(i).Key==h.Key){_cursor[slot]=i;break;}
+            return true;
+        }
+        private static bool Budget(double now,ref double start,ref int count,int limit)
+        {if(double.IsNaN(start)||now-start>=1){start=now;count=0;}if(now<start||count>=limit)return false;count++;return true;}
+        public bool SetClientConnectionEpoch(uint epoch)
+        {
+            if(IsAuthority || _stopped || epoch==0 || epoch<_clientEpoch)return false;
+            if(epoch==_clientEpoch)return true;
+            for(int i=0;i<_assemblers.Length;i++)if(!_assemblers[i].ResetConnectionEpoch(epoch))return Fail("Replica connection reset rejected");
+            _clientEpoch=epoch;return true;
+        }
+        /// <summary>调用方只传已经预检的有界 Codec 消息；返回 ACK 前真实 Installer 已完成原子发布。</summary>
+        public bool ReceivePage(WorldPageMessage message,long nowMilliseconds,out WorldPageMessage response)
+        {
+            response=null;
+            if(IsAuthority || _stopped || Faulted || !Identity(message,_clientEpoch) || nowMilliseconds<0 ||
+                (message.Kind!=1 && message.Kind!=2 && message.Kind!=5) || message.TotalWords>_maxWords || message.Words.Count>_page.Length)return Reject();
+            var key=Key(message);int slot=-1;
+            for(int i=0;i<_slots;i++)if(_assemblers[i].Key==key){slot=i;break;}
+            if(slot<0)
+            {
+                if(_slots==_assemblers.Length){Reply(message,4,out response);return Reject();}
+                slot=_slots;if(!_assemblers[slot].TryBindUnusedKey(key))return Reject();_slots++;
+            }
+            var a=_assemblers[slot];
+            var h=new WorldChunkPayloadHeader(WorldEpoch,message.SnapshotId,key,message.Generation,message.BaseRevision,message.Revision,
+                message.ServerTick,(int)message.TotalWords,(uint)message.Checksum,message.Kind!=5);
+            if(!a.TryBegin(h,nowMilliseconds))
+            {
+                if(a.LastFailure!=WorldReplicaAssemblyFailure.PendingBusy)Reply(message,4,out response);
+                return Reject();
+            }
+            _incoming[slot]=h;
+            for(int i=0;i<message.Words.Count;i++)_page[i]=message.Words[i];
+            if(!a.TryReceivePage(h,(int)message.PageIndex,_page,message.Words.Count,nowMilliseconds))
+            {
+                if(a.IsInstallerFaulted)Fail("Replica installer faulted");
+                Reply(message,4,out response);return Reject();
+            }
+            if(!a.HasPending && a.Installed && a.Header.Equals(h))
+            {LastInstalled=h;Installed++;Reply(message,3,out response);}
+            return true;
+        }
+        public bool ExpirePending(long nowMilliseconds,out WorldPageMessage response)
+        {
+            response=null;if(IsAuthority || _stopped || Faulted)return false;
+            for(int i=0;i<_slots;i++)if(_assemblers[i].ExpirePending(nowMilliseconds))
+            {Fill(_reply,_incoming[i],_clientEpoch,4);response=_reply;return true;}
+            return false;
+        }
+        private bool Identity(WorldPageMessage m,uint epoch)=>m!=null && epoch!=0 && m.ConnectionEpoch==epoch &&
+            ProtocolCompatibility.IsSupported(m.ProtocolVersion) && m.WorldEpoch==WorldEpoch && m.GameplayHash==GameplayHash;
+        private static WorldChunkKey Key(WorldPageMessage m)=>new WorldChunkKey((WorldMaterialDomain)m.Domain,m.ChunkX,m.ChunkY,m.ChunkZ);
+        private void Reply(WorldPageMessage input,uint kind,out WorldPageMessage output)
+        {
+            var h=new WorldChunkPayloadHeader(WorldEpoch,input.SnapshotId,Key(input),input.Generation,input.BaseRevision,input.Revision,input.ServerTick,0,(uint)input.Checksum,true);
+            Fill(_reply,h,_clientEpoch,kind);output=_reply;
+        }
+        private void Fill(WorldPageMessage m,WorldChunkPayloadHeader h,uint epoch,uint kind)
+        {
+            m.ResetForReuse();m.ProtocolVersion=ProtocolCompatibility.CurrentVersion;m.GameplayHash=GameplayHash;
+            m.ConnectionEpoch=epoch;m.WorldEpoch=WorldEpoch;m.SnapshotId=h.SnapshotId;m.Kind=kind;m.Domain=(uint)h.Key.Domain;
+            m.ChunkX=h.Key.X;m.ChunkY=h.Key.Y;m.ChunkZ=h.Key.Z;m.Generation=h.Generation;m.BaseRevision=h.BaseRevision;
+            m.Revision=h.Revision;m.ServerTick=(uint)h.ServerTick;m.Checksum=h.Checksum;
+        }
+        public void Stop()
+        {_stopped=true;if(IsAuthority){for(int i=0;i<4;i++)RemovePeer(i);}else for(int i=0;i<_slots;i++)_assemblers[i].CancelPending();}
+        private bool Reject(){Rejected++;return false;}
+        private bool Fail(string reason){Faulted=true;Failure=reason;return false;}
+
+        /// <summary>仅稀疏诊断调用时分配值副本；不是 Tick 热路径，也不暴露可写 Store 或冻结数组。</summary>
+        public WorldReplicationChunkStamp[] DescribeChunks()
+        {
+            int count=IsAuthority?_owner.ChunkCount:_slots;int installed=0;
+            if(!IsAuthority)for(int i=0;i<count;i++)if(_assemblers[i].Installed)installed++;
+            var result=new WorldReplicationChunkStamp[IsAuthority?count:installed];int at=0;
+            for(int i=0;i<count;i++)
+            {
+                if(!IsAuthority && !_assemblers[i].Installed)continue;
+                var h=IsAuthority?_owner.GetChunkHeader(i):_assemblers[i].Header;
+                result[at++]=new WorldReplicationChunkStamp{Domain=(int)h.Key.Domain,X=h.Key.X,Y=h.Key.Y,Z=h.Key.Z,
+                    WorldEpoch=h.WorldEpoch,Generation=h.Generation,Revision=h.Revision,Checksum=h.Checksum,Words=h.WordCount,Resident=h.IsResident};
+            }
+            return result;
+        }
+    }
+    [Serializable] public struct WorldReplicationChunkStamp
+    {public int Domain,X,Y,Z,Words;public ulong WorldEpoch,Generation,Revision;public uint Checksum;public bool Resident;}
+}

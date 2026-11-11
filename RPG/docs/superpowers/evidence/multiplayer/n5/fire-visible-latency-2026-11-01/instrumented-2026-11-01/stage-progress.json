@@ -1,0 +1,143 @@
+{
+  "RecordedUtc": "2026-11-01T07:19:41.405425+00:00",
+  "State": "Follow-up Replica presentation-interest fix verified through Native CPU Draw; see presentation-interest-fix/summary.json",
+  "Tests": {
+    "timing-green": {
+      "State": "Finished",
+      "Passed": 31,
+      "Failed": 0,
+      "UpdatedUtc": "2026-11-01T04:38:06.2013270Z"
+    },
+    "n5-and-rendering-regression": {
+      "State": "Finished",
+      "Passed": 457,
+      "Failed": 0,
+      "UpdatedUtc": "2026-11-01T04:44:49.5905344Z"
+    },
+    "timing-record-allocation": {
+      "State": "Finished",
+      "Passed": 1,
+      "Failed": 0,
+      "UpdatedUtc": "2026-11-01T04:52:30.5712685Z"
+    },
+    "review-fix-lifecycle": {
+      "State": "Finished",
+      "Passed": 9,
+      "Failed": 0,
+      "UpdatedUtc": "2026-11-01T04:52:50.9377998Z"
+    }
+  },
+  "ClientBuild": {
+    "Result": "Succeeded",
+    "UnityVersion": "6000.3.16f1",
+    "Output": "Builds/OnlineAccounts/Menu/NornMenuClient.exe",
+    "RecordedAtUtc": "2026-11-01T05:12:31.7092196Z",
+    "DedicatedServer": false,
+    "RenderingInputsIsolated": false,
+    "ClientResourcesExcluded": false,
+    "Errors": 0
+  },
+  "ServerBuild": {
+    "Result": "Succeeded",
+    "UnityVersion": "6000.3.16f1",
+    "Output": "Builds/OnlineRooms/Server/NornRoomServer.exe",
+    "RecordedAtUtc": "2026-11-01T05:20:00.7489331Z",
+    "DedicatedServer": true,
+    "RenderingInputsIsolated": false,
+    "ClientResourcesExcluded": false,
+    "Errors": 0
+  },
+  "ProtocolVersion": 4,
+  "NativeFirstCase": {
+    "Error": "Memory guard stopped case",
+    "RecordedUtc": "2026-11-01T05:22:33.4638919Z",
+    "State": "Failed"
+  },
+  "NativeFirstCaseStartedTiming": false,
+  "NativeFirstCaseEventCounts": {
+    "a": 0,
+    "b": 0
+  },
+  "NativeSecondCase": {
+    "Error": "Bounded wait failed: owned menu report",
+    "State": "Failed",
+    "RecordedUtc": "2026-11-01T06:00:57.7856112Z"
+  },
+  "EditorSafety": {
+    "RecordedUtc": "2026-11-01T05:49:49.613926+00:00",
+    "State": "Blocked before normal close; no close request sent",
+    "Reason": "Editor reports dirty persistent assets; user required stopping rather than saving/discarding",
+    "DirtyAssetCount": 67,
+    "DirtyScene": false,
+    "Compiling": false,
+    "TestsRunning": false,
+    "Building": false,
+    "EditorProcessId": 24836,
+    "NoForce": true,
+    "NoSaveOrDiscard": true
+  },
+  "AvailableBytes": 21243006976,
+  "ContainerImplementationAuthorized": true,
+  "ContainerImplementationStarted": false,
+  "FireLatencyRootCauseEstablished": false,
+  "DrawIsCpuSubmissionOnly": true,
+  "N5Complete": false,
+  "ProtectionChecked": 1365,
+  "ProtectionDifferences": 15,
+  "ProtectionMissing": [],
+  "Next": "Continue approved container first data slice; GPU/present and original P7 four-client performance remain unverified",
+  "AdditionalBlockedAction": {
+    "RecordedUtc": "2026-11-01T05:53:47.359739+00:00",
+    "Action": "Add and execute exact-hash guarded restoration of Physics serialization",
+    "Target": "RPG/ProjectSettings/DynamicsManager.asset",
+    "State": "Denied; known not executed",
+    "Reason": "Automatic approval review considered possible rollback of user/tool settings changes; current explicit permission only covers checking and normal Editor exit",
+    "EvidenceOnly": "Current SHA256 53cf96c365b85eefe78b3cda76af21f68246744277ae6ca21ffd6a67bdb72a1c equals pre-existing historical reserialization artifact",
+    "Retried": false,
+    "WorkaroundAttempted": false,
+    "CurrentDifferencePreserved": true,
+    "Resolution": "Leave the difference; restoring it requires explicit relevant authorization and review"
+  },
+  "KnownTaskProcessIdsStillPresent": [],
+  "ScopedSourceDiffCheckExit": 0,
+  "GlobalDiffCheck": "Existing serialized P7/P8 Prefab trailing whitespace reported; not edited in this timing slice",
+  "EditorCloseBlocked": false,
+  "EditorNormalClose": {
+    "Method": "CloseMainWindow; no force, SaveAllAssets, discard or settings restoration",
+    "ProjectSettingsDirty": 0,
+    "NormalCloseRequested": true,
+    "RecordedUtc": "2026-11-01T06:00:03.6214281Z",
+    "RequestedUtc": "2026-11-01T05:59:54.6803265Z",
+    "ExitedWithin20Seconds": true,
+    "AvailableBytesBefore": 13026246656,
+    "ProcessId": 24836,
+    "RemainingDirtyImportedPaths": 63,
+    "AvailableBytesAfter": 20810674176,
+    "StartUtc": "2026-11-01T01:44:38.2559055Z"
+  },
+  "NativeThirdCase": {
+    "RecordedUtc": "2026-11-01T06:06:23.6618686Z",
+    "State": "Captured",
+    "NoProtocolOrVisualParameterChanges": true,
+    "DrawIsCpuSubmissionOnly": true
+  },
+  "NativeTimingAnalysis": "native-3/timing-analysis.json",
+  "NativeOfflineChecksPassed": 155,
+  "NativeOfflineChecksFailed": 0,
+  "NativeAuthorityVersions": 34,
+  "NativeEachPeerInstalledAckVersions": 34,
+  "NativeEvents": {
+    "ds": 378,
+    "a": 203,
+    "b": 203
+  },
+  "NativeRecordDrops": 0,
+  "NativeRendererStages": "Each peer 32 RendererRejected Reason1; no Read/Seed/Upload/Draw",
+  "NativeFixtureDefect": "Replica render interest references empty, falls back world Transform; nearest target distance75.0733m > profile56+padding8+extra3=67m",
+  "NativeFixtureDefectFixed": true,
+  "UserFourClientLatencyRootCauseEstablished": false,
+  "RendererChainComplete": true,
+  "ContainerReadOnlyDesign": "RPG\\docs\\superpowers\\evidence\\multiplayer\\n5\\native-player-reconnect-2026-10-31\\container-first-slice-readonly-design.md",
+  "PrivateDatabase13384Listening": false,
+  "NativeFollowup": "presentation-interest-fix/summary.json"
+}

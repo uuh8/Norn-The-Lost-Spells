@@ -1,0 +1,56 @@
+[
+  {
+    "Case": "p7 client0 initial admission",
+    "Passed": true,
+    "ActorId": 1,
+    "ConnectionEpoch": 1,
+    "WorldEpoch": 17915390655846698748
+  },
+  {
+    "Case": "p7 client1 initial admission",
+    "Passed": true,
+    "ActorId": 2,
+    "ConnectionEpoch": 1,
+    "WorldEpoch": 17915390655846698748
+  },
+  {
+    "Case": "p7 same-world reconnect",
+    "Passed": true,
+    "ActorId": 1,
+    "ConnectionEpoch": 2,
+    "WorldEpoch": 17915390655846698748
+  },
+  {
+    "Case": "p8 client0 initial admission",
+    "Passed": true,
+    "ActorId": 1,
+    "ConnectionEpoch": 1,
+    "WorldEpoch": 833017691645113782
+  },
+  {
+    "Case": "p8 client1 initial admission",
+    "Passed": true,
+    "ActorId": 2,
+    "ConnectionEpoch": 1,
+    "WorldEpoch": 833017691645113782
+  },
+  {
+    "Case": "p8 same-world reconnect",
+    "Passed": true,
+    "ActorId": 1,
+    "ConnectionEpoch": 2,
+    "WorldEpoch": 833017691645113782
+  },
+  {
+    "Case": "p8 repeated reconnect for fresh replay control",
+    "Passed": true,
+    "ActorId": 1,
+    "ConnectionEpoch": 3,
+    "WorldEpoch": 833017691645113782
+  },
+  {
+    "Case": "unexpired consumed Ticket replay rejected",
+    "Passed": true,
+    "RejectedBeforeExpiry": true
+  }
+]

@@ -1,0 +1,11 @@
+# N5现有全量通道：真实Native增量最小验证段
+
+来源：2026-10-31用户明确授权在Interest两项待定期间继续N5-2～N5-6，不实施空间配置/订阅代次。原计划第61–64行规定冻结Baseline、精确BaseRevision和完整安装后ACK，第84–96行要求正式地图与分模块/Native验证。
+
+本段选最小独立目标：真实HTTP/JoinTicket/KCP/正式P7，双Native客户端先安装稳定Baseline，再经同一DS世界/连接的第二次正式材料写入与至少五个实际材料Tick产生变化，确认真实Delta的BaseRevision、Revision、SnapshotId、Tick、Checksum与安装ACK。两个检查点间材料时钟恢复运行，最终暂停精确比较；这是有限两阶段增量，不称无限连续反应、压力或性能通过。缺版本/日志覆盖/损坏页的Native故障注入后段再做，现有同范围行为回归继续运行并保留。
+
+修改只复用现有文件：Coordinator诊断Stamp追加实际Header的BaseRevision/SnapshotId/ServerTick；既有WorldReplicationChannelTests新增真实Owner/Assembler/Store闭环用例先RED。既有OnlineMaterialReplicationProbe仅显式Development DS双环境开关选择两阶段，第一检查点后等待私有目录的一次性请求，再写512GMU并恢复原时钟，五Tick后暂停；默认单次夹具及正常运行不变。诊断操作不经过玩家资产，不写Store/Revision，不变更场景或生产默认材料。不新增Schema、协议含义、源目录或架构。
+
+先诊断字段RED→最小补充→原26 fixtures全回归；显式QA编排由真实Native结果验证，不为文件IO辅助代码创建镜像测试。构建匹配Windows Native Client/真正DS，记录构建种类和Hash，先归档checkpoint1，再驱动checkpoint2并逐端精确比较。必须有非零材料和至少一块实际Delta，拒绝只见Revision增长/空Geometry的假通过。
+
+主控串行Editor/构建/服务/测试；新证据目录native-delta-2026-10-31，保存12保护文件/13派生资源Hash和工作区状态。仅操作本任务PID/启动时间/路径匹配进程，保留用户Editor/Recovery，不提交推送。DS既有两条Built-in Resource错误保留。阶段结束更新总计划/N5解析，保留Interest待定、N5未完成及完整恢复/压力/同进程重连/消耗不补满/完整玩家路径等未测项。

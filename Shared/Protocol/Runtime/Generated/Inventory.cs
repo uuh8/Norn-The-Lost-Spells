@@ -24,7 +24,7 @@ namespace Game.NetworkProtocol {
     static InventoryReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "Cg9pbnZlbnRvcnkucHJvdG8SDW5vcm4ucHJvdG9jb2wiqgMKGEludmVudG9y",
+            "Cg9pbnZlbnRvcnkucHJvdG8SDW5vcm4ucHJvdG9jb2wi3gQKGEludmVudG9y",
             "eVNuYXBzaG90TWVzc2FnZRIYChBwcm90b2NvbF92ZXJzaW9uGAEgASgNEhYK",
             "DnNjaGVtYV92ZXJzaW9uGAIgASgNEhgKEGNvbm5lY3Rpb25fZXBvY2gYAyAB",
             "KA0SGQoRc25hcHNob3Rfc2VxdWVuY2UYBCABKAYSGAoQcmVzb3VyY2VfdmVy",
@@ -34,55 +34,111 @@ namespace Game.NetworkProtocol {
             "ZXRNZXNzYWdlEj4KBXdhbmRzGAogAygLMi8ubm9ybi5wcm90b2NvbC5JbnZl",
             "bnRvcnlXYW5kUHJlc2VudGF0aW9uTWVzc2FnZRJHCgpzcGVsbF91c2VzGAsg",
             "AygLMjMubm9ybi5wcm90b2NvbC5JbnZlbnRvcnlTcGVsbFVzZVByZXNlbnRh",
-            "dGlvbk1lc3NhZ2UilAIKGkludmVudG9yeU93bmVkQXNzZXRNZXNzYWdlEhYK",
-            "DnNjaGVtYV92ZXJzaW9uGAEgASgNEg4KBnJ1bl9pZBgCIAEoCRIRCglwbGF5",
-            "ZXJfaWQYAyABKAkSFAoMaW52ZW50b3J5X2lkGAQgASgJEhwKFGdhbWVwbGF5",
-            "X2NvbmZpZ19oYXNoGAUgASgJEiEKGXNlbGVjdGVkX3dhbmRfaW5zdGFuY2Vf",
-            "aWQYBiABKAkSEAoIYWN0b3JfaWQYByABKAQSGQoRaW52ZW50b3J5X3ZlcnNp",
-            "b24YCCABKA0SNwoFaXRlbXMYCSADKAsyKC5ub3JuLnByb3RvY29sLkludmVu",
-            "dG9yeU93bmVkSXRlbU1lc3NhZ2Ui4gIKGUludmVudG9yeU93bmVkSXRlbU1l",
-            "c3NhZ2USEwoLaW5zdGFuY2VfaWQYASABKAkSEgoKY29udGVudF9pZBgCIAEo",
-            "CRIaChJwYXJlbnRfaW5zdGFuY2VfaWQYAyABKAkSEAoIcmV2aXNpb24YBCAB",
-            "KA0SFQoNbG9jYXRpb25fa2luZBgFIAEoBRIMCgRzbG90GAYgASgFEgkKAXgY",
-            "ByABKAUSCQoBeRgIIAEoBRIVCg1xdWFydGVyX3R1cm5zGAkgASgFEhkKEXJl",
-            "bWFpbmluZ19jaGFyZ2VzGAogASgFEh0KFWhhc191bmxpbWl0ZWRfY2hhcmdl",
-            "cxgLIAEoCBIfChd1c2VfdGVtcGxhdGVfd2FuZF9zdGF0cxgMIAEoCBJBCgp3",
-            "YW5kX3N0YXRzGA0gASgLMi0ubm9ybi5wcm90b2NvbC5JbnZlbnRvcnlPd25l",
-            "ZFdhbmRTdGF0c01lc3NhZ2UigQIKHkludmVudG9yeU93bmVkV2FuZFN0YXRz",
-            "TWVzc2FnZRIQCghtYXhfbWFuYRgBIAEoAhIdChVtYW5hX3JlZ2VuX3Blcl9z",
-            "ZWNvbmQYAiABKAISFwoPYmFzZV9jYXN0X2RlbGF5GAMgASgCEhgKEGJhc2Vf",
-            "cmVsb2FkX3RpbWUYBCABKAISGwoTYmFzZV9zcHJlYWRfZGVncmVlcxgFIAEo",
-            "AhIYChBwcm9ncmFtX2NhcGFjaXR5GAYgASgFEhIKCmJhc2VfZHJhd3MYByAB",
-            "KAUSDwoHc2h1ZmZsZRgIIAEoCBIfChdhbHdheXNfY2FzdF9jb250ZW50X2lk",
-            "cxgJIAMoCSKDAQogSW52ZW50b3J5V2FuZFByZXNlbnRhdGlvbk1lc3NhZ2US",
-            "EwoLaW5zdGFuY2VfaWQYASABKAkSGAoQcHJvZ3JhbV9yZXZpc2lvbhgCIAEo",
-            "DRIUCgxjdXJyZW50X21hbmEYAyABKAISGgoSY29vbGRvd25fcmVtYWluaW5n",
-            "GAQgASgCIk0KJEludmVudG9yeVNwZWxsVXNlUHJlc2VudGF0aW9uTWVzc2Fn",
-            "ZRITCgtpbnN0YW5jZV9pZBgBIAEoCRIQCghlbGlnaWJsZRgCIAEoCCLcAgoX",
-            "SW52ZW50b3J5Q29tbWFuZE1lc3NhZ2USGAoQcHJvdG9jb2xfdmVyc2lvbhgB",
-            "IAEoDRIVCg1nYW1lcGxheV9oYXNoGAIgASgGEhIKCmNvbW1hbmRfaWQYAyAB",
-            "KAYSGAoQY29ubmVjdGlvbl9lcG9jaBgEIAEoDRIiChpleHBlY3RlZF9pbnZl",
-            "bnRvcnlfdmVyc2lvbhgFIAEoDRIMCgRraW5kGAYgASgNEg8KB2l0ZW1faWQY",
-            "ByABKAkSFgoOc291cmNlX3dhbmRfaWQYCCABKAkSHwoXc291cmNlX3Byb2dy",
-            "YW1fcmV2aXNpb24YCSABKA0SFgoOdGFyZ2V0X3dhbmRfaWQYCiABKAkSHwoX",
-            "dGFyZ2V0X3Byb2dyYW1fcmV2aXNpb24YCyABKA0SEwoLdGFyZ2V0X3Nsb3QY",
-            "DCABKAUSGAoQdG9fc3BlbGxfc3RvcmFnZRgNIAEoCCKrAQoeSW52ZW50b3J5",
-            "Q29tbWFuZFJlY2VpcHRNZXNzYWdlEhgKEHByb3RvY29sX3ZlcnNpb24YASAB",
-            "KA0SFQoNZ2FtZXBsYXlfaGFzaBgCIAEoBhISCgpjb21tYW5kX2lkGAMgASgG",
-            "EhgKEGNvbm5lY3Rpb25fZXBvY2gYBCABKA0SGQoRaW52ZW50b3J5X3ZlcnNp",
-            "b24YBSABKA0SDwoHZmFpbHVyZRgGIAEoDUIXqgIUR2FtZS5OZXR3b3JrUHJv",
+            "dGlvbk1lc3NhZ2USIwobc2VsZWN0ZWRfdG9vbF9zbG90X3BsdXNfb25lGAwg",
+            "ASgNEj0KBmdyb3VuZBgNIAEoCzItLm5vcm4ucHJvdG9jb2wuSW52ZW50b3J5",
+            "R3JvdW5kU25hcHNob3RNZXNzYWdlEhUKDXJlc2VhcmNoX29wZW4YDiABKAgS",
+            "IAoYcmVzZWFyY2hfc2Vzc2lvbl92ZXJzaW9uGA8gASgNEhUKDXJlc2VhcmNo",
+            "X2pzb24YECABKAwipQEKHkludmVudG9yeUdyb3VuZFNuYXBzaG90TWVzc2Fn",
+            "ZRIPCgd2ZXJzaW9uGAEgASgNEjgKBWl0ZW1zGAIgAygLMikubm9ybi5wcm90",
+            "b2NvbC5JbnZlbnRvcnlHcm91bmRJdGVtTWVzc2FnZRI4CgVjb2lucxgDIAMo",
+            "CzIpLm5vcm4ucHJvdG9jb2wuSW52ZW50b3J5R3JvdW5kQ29pbk1lc3NhZ2Ui",
+            "eQoaSW52ZW50b3J5R3JvdW5kQ29pbk1lc3NhZ2USDwoHY29pbl9pZBgBIAEo",
+            "BBIOCgZhbW91bnQYAiABKAMSEgoKcG9zaXRpb25feBgDIAEoAhISCgpwb3Np",
+            "dGlvbl95GAQgASgCEhIKCnBvc2l0aW9uX3oYBSABKAIihwQKGkludmVudG9y",
+            "eUdyb3VuZEl0ZW1NZXNzYWdlEhMKC2luc3RhbmNlX2lkGAEgASgJEhIKCmNv",
+            "bnRlbnRfaWQYAiABKAkSFgoOd29ybGRfb3duZXJfaWQYAyABKAkSEAoIcmV2",
+            "aXNpb24YBCABKA0SEgoKcG9zaXRpb25feBgFIAEoAhISCgpwb3NpdGlvbl95",
+            "GAYgASgCEhIKCnBvc2l0aW9uX3oYByABKAISEgoKcm90YXRpb25feBgIIAEo",
+            "AhISCgpyb3RhdGlvbl95GAkgASgCEhIKCnJvdGF0aW9uX3oYCiABKAISEgoK",
+            "cm90YXRpb25fdxgLIAEoAhJLCg9jb250YWluZXJfc3RhdGUYDCABKAsyMi5u",
+            "b3JuLnByb3RvY29sLkludmVudG9yeU93bmVkQ29udGFpbmVyU3RhdGVNZXNz",
+            "YWdlEkkKDm1hdGVyaWFsX3N0YXRlGA0gASgLMjEubm9ybi5wcm90b2NvbC5J",
+            "bnZlbnRvcnlPd25lZE1hdGVyaWFsU3RhdGVNZXNzYWdlEjYKBGl0ZW0YDiAB",
+            "KAsyKC5ub3JuLnByb3RvY29sLkludmVudG9yeU93bmVkSXRlbU1lc3NhZ2US",
+            "OgoIY2hpbGRyZW4YDyADKAsyKC5ub3JuLnByb3RvY29sLkludmVudG9yeU93",
+            "bmVkSXRlbU1lc3NhZ2UivAIKGkludmVudG9yeU93bmVkQXNzZXRNZXNzYWdl",
+            "EhYKDnNjaGVtYV92ZXJzaW9uGAEgASgNEg4KBnJ1bl9pZBgCIAEoCRIRCglw",
+            "bGF5ZXJfaWQYAyABKAkSFAoMaW52ZW50b3J5X2lkGAQgASgJEhwKFGdhbWVw",
+            "bGF5X2NvbmZpZ19oYXNoGAUgASgJEiEKGXNlbGVjdGVkX3dhbmRfaW5zdGFu",
+            "Y2VfaWQYBiABKAkSEAoIYWN0b3JfaWQYByABKAQSGQoRaW52ZW50b3J5X3Zl",
+            "cnNpb24YCCABKA0SNwoFaXRlbXMYCSADKAsyKC5ub3JuLnByb3RvY29sLklu",
+            "dmVudG9yeU93bmVkSXRlbU1lc3NhZ2USDAoEZ29sZBgKIAEoAxIYChBjdXJy",
+            "ZW5jeV92ZXJzaW9uGAsgASgNIucEChlJbnZlbnRvcnlPd25lZEl0ZW1NZXNz",
+            "YWdlEhMKC2luc3RhbmNlX2lkGAEgASgJEhIKCmNvbnRlbnRfaWQYAiABKAkS",
+            "GgoScGFyZW50X2luc3RhbmNlX2lkGAMgASgJEhAKCHJldmlzaW9uGAQgASgN",
+            "EhUKDWxvY2F0aW9uX2tpbmQYBSABKAUSDAoEc2xvdBgGIAEoBRIJCgF4GAcg",
+            "ASgFEgkKAXkYCCABKAUSFQoNcXVhcnRlcl90dXJucxgJIAEoBRIZChFyZW1h",
+            "aW5pbmdfY2hhcmdlcxgKIAEoBRIdChVoYXNfdW5saW1pdGVkX2NoYXJnZXMY",
+            "CyABKAgSHwoXdXNlX3RlbXBsYXRlX3dhbmRfc3RhdHMYDCABKAgSQQoKd2Fu",
+            "ZF9zdGF0cxgNIAEoCzItLm5vcm4ucHJvdG9jb2wuSW52ZW50b3J5T3duZWRX",
+            "YW5kU3RhdHNNZXNzYWdlEksKD2NvbnRhaW5lcl9zdGF0ZRgOIAEoCzIyLm5v",
+            "cm4ucHJvdG9jb2wuSW52ZW50b3J5T3duZWRDb250YWluZXJTdGF0ZU1lc3Nh",
+            "Z2USSQoObWF0ZXJpYWxfc3RhdGUYDyABKAsyMS5ub3JuLnByb3RvY29sLklu",
+            "dmVudG9yeU93bmVkTWF0ZXJpYWxTdGF0ZU1lc3NhZ2USTQoQYXR0YWNobWVu",
+            "dF9zdGF0ZRgQIAEoCzIzLm5vcm4ucHJvdG9jb2wuSW52ZW50b3J5U3BlbGxB",
+            "dHRhY2htZW50U3RhdGVNZXNzYWdlEhwKFGVudHJ5X2JvdW5kX2JhY2twYWNr",
+            "GBEgASgIInMKJEludmVudG9yeVNwZWxsQXR0YWNobWVudFN0YXRlTWVzc2Fn",
+            "ZRIWCg5zY2hlbWFfdmVyc2lvbhgBIAEoDRIUCgxjb250YWluZXJfaWQYAiAB",
+            "KAkSDAoEZG9zZRgDIAEoBBIPCgdlbmFibGVkGAQgASgIImQKIkludmVudG9y",
+            "eU93bmVkTWF0ZXJpYWxTdGF0ZU1lc3NhZ2USFgoOc2NoZW1hX3ZlcnNpb24Y",
+            "ASABKA0SFAoMbWF0ZXJpYWxfa2V5GAIgASgNEhAKCHF1YW50aXR5GAMgASgE",
+            "IoUBCiNJbnZlbnRvcnlPd25lZENvbnRhaW5lclN0YXRlTWVzc2FnZRIWCg5z",
+            "Y2hlbWFfdmVyc2lvbhgBIAEoDRJGCgpjb21wb25lbnRzGAIgAygLMjIubm9y",
+            "bi5wcm90b2NvbC5JbnZlbnRvcnlPd25lZE1hdGVyaWFsQW1vdW50TWVzc2Fn",
+            "ZSJNCiNJbnZlbnRvcnlPd25lZE1hdGVyaWFsQW1vdW50TWVzc2FnZRIUCgxt",
+            "YXRlcmlhbF9rZXkYASABKA0SEAoIcXVhbnRpdHkYAiABKAQigQIKHkludmVu",
+            "dG9yeU93bmVkV2FuZFN0YXRzTWVzc2FnZRIQCghtYXhfbWFuYRgBIAEoAhId",
+            "ChVtYW5hX3JlZ2VuX3Blcl9zZWNvbmQYAiABKAISFwoPYmFzZV9jYXN0X2Rl",
+            "bGF5GAMgASgCEhgKEGJhc2VfcmVsb2FkX3RpbWUYBCABKAISGwoTYmFzZV9z",
+            "cHJlYWRfZGVncmVlcxgFIAEoAhIYChBwcm9ncmFtX2NhcGFjaXR5GAYgASgF",
+            "EhIKCmJhc2VfZHJhd3MYByABKAUSDwoHc2h1ZmZsZRgIIAEoCBIfChdhbHdh",
+            "eXNfY2FzdF9jb250ZW50X2lkcxgJIAMoCSKDAQogSW52ZW50b3J5V2FuZFBy",
+            "ZXNlbnRhdGlvbk1lc3NhZ2USEwoLaW5zdGFuY2VfaWQYASABKAkSGAoQcHJv",
+            "Z3JhbV9yZXZpc2lvbhgCIAEoDRIUCgxjdXJyZW50X21hbmEYAyABKAISGgoS",
+            "Y29vbGRvd25fcmVtYWluaW5nGAQgASgCIk0KJEludmVudG9yeVNwZWxsVXNl",
+            "UHJlc2VudGF0aW9uTWVzc2FnZRITCgtpbnN0YW5jZV9pZBgBIAEoCRIQCghl",
+            "bGlnaWJsZRgCIAEoCCKKBgoXSW52ZW50b3J5Q29tbWFuZE1lc3NhZ2USGAoQ",
+            "cHJvdG9jb2xfdmVyc2lvbhgBIAEoDRIVCg1nYW1lcGxheV9oYXNoGAIgASgG",
+            "EhIKCmNvbW1hbmRfaWQYAyABKAYSGAoQY29ubmVjdGlvbl9lcG9jaBgEIAEo",
+            "DRIiChpleHBlY3RlZF9pbnZlbnRvcnlfdmVyc2lvbhgFIAEoDRIMCgRraW5k",
+            "GAYgASgNEg8KB2l0ZW1faWQYByABKAkSFgoOc291cmNlX3dhbmRfaWQYCCAB",
+            "KAkSHwoXc291cmNlX3Byb2dyYW1fcmV2aXNpb24YCSABKA0SFgoOdGFyZ2V0",
+            "X3dhbmRfaWQYCiABKAkSHwoXdGFyZ2V0X3Byb2dyYW1fcmV2aXNpb24YCyAB",
+            "KA0SEwoLdGFyZ2V0X3Nsb3QYDCABKAUSGAoQdG9fc3BlbGxfc3RvcmFnZRgN",
+            "IAEoCBIXCg90cmFuc2Zlcl9idWRnZXQYDiABKAQSFAoMYWltX29yaWdpbl94",
+            "GA8gASgCEhQKDGFpbV9vcmlnaW5feRgQIAEoAhIUCgxhaW1fb3JpZ2luX3oY",
+            "ESABKAISFwoPYWltX2RpcmVjdGlvbl94GBIgASgCEhcKD2FpbV9kaXJlY3Rp",
+            "b25feRgTIAEoAhIXCg9haW1fZGlyZWN0aW9uX3oYFCABKAISFgoOd29ybGRf",
+            "b3duZXJfaWQYFSABKAkSGgoSdGFyZ2V0X2JhY2twYWNrX2lkGBYgASgJEg4K",
+            "BmdyaWRfeBgXIAEoBRIOCgZncmlkX3kYGCABKAUSFQoNcXVhcnRlcl90dXJu",
+            "cxgZIAEoBRISCgphdXRvX3BsYWNlGBogASgIEh8KF2F0dGFjaG1lbnRfY29u",
+            "dGFpbmVyX2lkGBsgASgJEhcKD2F0dGFjaG1lbnRfZG9zZRgcIAEoBBIaChJh",
+            "dHRhY2htZW50X2VuYWJsZWQYHSABKAgSHAoUdGFyZ2V0X2xvY2F0aW9uX2tp",
+            "bmQYHiABKAUSEwoLd2hvbGVfc3RhY2sYHyABKAgi2gEKHkludmVudG9yeUNv",
+            "bW1hbmRSZWNlaXB0TWVzc2FnZRIYChBwcm90b2NvbF92ZXJzaW9uGAEgASgN",
+            "EhUKDWdhbWVwbGF5X2hhc2gYAiABKAYSEgoKY29tbWFuZF9pZBgDIAEoBhIY",
+            "ChBjb25uZWN0aW9uX2Vwb2NoGAQgASgNEhkKEWludmVudG9yeV92ZXJzaW9u",
+            "GAUgASgNEg8KB2ZhaWx1cmUYBiABKA0SEwoLdHJhbnNmZXJyZWQYByABKAQS",
+            "GAoQdHJhbnNmZXJfZmFpbHVyZRgIIAEoDUIXqgIUR2FtZS5OZXR3b3JrUHJv",
             "dG9jb2xiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.InventorySnapshotMessage), global::Game.NetworkProtocol.InventorySnapshotMessage.Parser, new[]{ "ProtocolVersion", "SchemaVersion", "ConnectionEpoch", "SnapshotSequence", "ResourceVersion", "SelectionVersion", "SpellUseVersion", "ServerTick", "Assets", "Wands", "SpellUses" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.InventoryOwnedAssetMessage), global::Game.NetworkProtocol.InventoryOwnedAssetMessage.Parser, new[]{ "SchemaVersion", "RunId", "PlayerId", "InventoryId", "GameplayConfigHash", "SelectedWandInstanceId", "ActorId", "InventoryVersion", "Items" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.InventoryOwnedItemMessage), global::Game.NetworkProtocol.InventoryOwnedItemMessage.Parser, new[]{ "InstanceId", "ContentId", "ParentInstanceId", "Revision", "LocationKind", "Slot", "X", "Y", "QuarterTurns", "RemainingCharges", "HasUnlimitedCharges", "UseTemplateWandStats", "WandStats" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.InventorySnapshotMessage), global::Game.NetworkProtocol.InventorySnapshotMessage.Parser, new[]{ "ProtocolVersion", "SchemaVersion", "ConnectionEpoch", "SnapshotSequence", "ResourceVersion", "SelectionVersion", "SpellUseVersion", "ServerTick", "Assets", "Wands", "SpellUses", "SelectedToolSlotPlusOne", "Ground", "ResearchOpen", "ResearchSessionVersion", "ResearchJson" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.InventoryGroundSnapshotMessage), global::Game.NetworkProtocol.InventoryGroundSnapshotMessage.Parser, new[]{ "Version", "Items", "Coins" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.InventoryGroundCoinMessage), global::Game.NetworkProtocol.InventoryGroundCoinMessage.Parser, new[]{ "CoinId", "Amount", "PositionX", "PositionY", "PositionZ" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.InventoryGroundItemMessage), global::Game.NetworkProtocol.InventoryGroundItemMessage.Parser, new[]{ "InstanceId", "ContentId", "WorldOwnerId", "Revision", "PositionX", "PositionY", "PositionZ", "RotationX", "RotationY", "RotationZ", "RotationW", "ContainerState", "MaterialState", "Item", "Children" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.InventoryOwnedAssetMessage), global::Game.NetworkProtocol.InventoryOwnedAssetMessage.Parser, new[]{ "SchemaVersion", "RunId", "PlayerId", "InventoryId", "GameplayConfigHash", "SelectedWandInstanceId", "ActorId", "InventoryVersion", "Items", "Gold", "CurrencyVersion" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.InventoryOwnedItemMessage), global::Game.NetworkProtocol.InventoryOwnedItemMessage.Parser, new[]{ "InstanceId", "ContentId", "ParentInstanceId", "Revision", "LocationKind", "Slot", "X", "Y", "QuarterTurns", "RemainingCharges", "HasUnlimitedCharges", "UseTemplateWandStats", "WandStats", "ContainerState", "MaterialState", "AttachmentState", "EntryBoundBackpack" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.InventorySpellAttachmentStateMessage), global::Game.NetworkProtocol.InventorySpellAttachmentStateMessage.Parser, new[]{ "SchemaVersion", "ContainerId", "Dose", "Enabled" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.InventoryOwnedMaterialStateMessage), global::Game.NetworkProtocol.InventoryOwnedMaterialStateMessage.Parser, new[]{ "SchemaVersion", "MaterialKey", "Quantity" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.InventoryOwnedContainerStateMessage), global::Game.NetworkProtocol.InventoryOwnedContainerStateMessage.Parser, new[]{ "SchemaVersion", "Components" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.InventoryOwnedMaterialAmountMessage), global::Game.NetworkProtocol.InventoryOwnedMaterialAmountMessage.Parser, new[]{ "MaterialKey", "Quantity" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.InventoryOwnedWandStatsMessage), global::Game.NetworkProtocol.InventoryOwnedWandStatsMessage.Parser, new[]{ "MaxMana", "ManaRegenPerSecond", "BaseCastDelay", "BaseReloadTime", "BaseSpreadDegrees", "ProgramCapacity", "BaseDraws", "Shuffle", "AlwaysCastContentIds" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.InventoryWandPresentationMessage), global::Game.NetworkProtocol.InventoryWandPresentationMessage.Parser, new[]{ "InstanceId", "ProgramRevision", "CurrentMana", "CooldownRemaining" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.InventorySpellUsePresentationMessage), global::Game.NetworkProtocol.InventorySpellUsePresentationMessage.Parser, new[]{ "InstanceId", "Eligible" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.InventoryCommandMessage), global::Game.NetworkProtocol.InventoryCommandMessage.Parser, new[]{ "ProtocolVersion", "GameplayHash", "CommandId", "ConnectionEpoch", "ExpectedInventoryVersion", "Kind", "ItemId", "SourceWandId", "SourceProgramRevision", "TargetWandId", "TargetProgramRevision", "TargetSlot", "ToSpellStorage" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.InventoryCommandReceiptMessage), global::Game.NetworkProtocol.InventoryCommandReceiptMessage.Parser, new[]{ "ProtocolVersion", "GameplayHash", "CommandId", "ConnectionEpoch", "InventoryVersion", "Failure" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.InventoryCommandMessage), global::Game.NetworkProtocol.InventoryCommandMessage.Parser, new[]{ "ProtocolVersion", "GameplayHash", "CommandId", "ConnectionEpoch", "ExpectedInventoryVersion", "Kind", "ItemId", "SourceWandId", "SourceProgramRevision", "TargetWandId", "TargetProgramRevision", "TargetSlot", "ToSpellStorage", "TransferBudget", "AimOriginX", "AimOriginY", "AimOriginZ", "AimDirectionX", "AimDirectionY", "AimDirectionZ", "WorldOwnerId", "TargetBackpackId", "GridX", "GridY", "QuarterTurns", "AutoPlace", "AttachmentContainerId", "AttachmentDose", "AttachmentEnabled", "TargetLocationKind", "WholeStack" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.InventoryCommandReceiptMessage), global::Game.NetworkProtocol.InventoryCommandReceiptMessage.Parser, new[]{ "ProtocolVersion", "GameplayHash", "CommandId", "ConnectionEpoch", "InventoryVersion", "Failure", "Transferred", "TransferFailure" }, null, null, null, null)
           }));
     }
     #endregion
@@ -139,6 +195,11 @@ namespace Game.NetworkProtocol {
       assets_ = other.assets_ != null ? other.assets_.Clone() : null;
       wands_ = other.wands_.Clone();
       spellUses_ = other.spellUses_.Clone();
+      selectedToolSlotPlusOne_ = other.selectedToolSlotPlusOne_;
+      ground_ = other.ground_ != null ? other.ground_.Clone() : null;
+      researchOpen_ = other.researchOpen_;
+      researchSessionVersion_ = other.researchSessionVersion_;
+      researchJson_ = other.researchJson_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -227,7 +288,7 @@ namespace Game.NetworkProtocol {
     public const int SelectionVersionFieldNumber = 6;
     private uint selectionVersion_;
     /// <summary>
-    /// 同批选杖版本；重放不是一次新的选杖命令。
+    /// 同批杖/工具选择版本；重放不是一次新的选择命令。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -303,12 +364,87 @@ namespace Game.NetworkProtocol {
         = pb::FieldCodec.ForMessage(90, global::Game.NetworkProtocol.InventorySpellUsePresentationMessage.Parser);
     private readonly pbc::RepeatedField<global::Game.NetworkProtocol.InventorySpellUsePresentationMessage> spellUses_ = new pbc::RepeatedField<global::Game.NetworkProtocol.InventorySpellUsePresentationMessage>();
     /// <summary>
-    /// 每张安装卡的资格，最多96张。
+    /// 仅真实法术实例的资格，含包内/安装/专区，最多4096项。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public pbc::RepeatedField<global::Game.NetworkProtocol.InventorySpellUsePresentationMessage> SpellUses {
       get { return spellUses_; }
+    }
+
+    /// <summary>Field number for the "selected_tool_slot_plus_one" field.</summary>
+    public const int SelectedToolSlotPlusOneFieldNumber = 12;
+    private uint selectedToolSlotPlusOne_;
+    /// <summary>
+    /// 0由SelectedWand推导选择，1..7指工具槽0..6；Run核验真实绑定容器，共用SelectionVersion。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint SelectedToolSlotPlusOne {
+      get { return selectedToolSlotPlusOne_; }
+      set {
+        selectedToolSlotPlusOne_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "ground" field.</summary>
+    public const int GroundFieldNumber = 13;
+    private global::Game.NetworkProtocol.InventoryGroundSnapshotMessage ground_;
+    /// <summary>
+    /// 当前Run共享地面容器完整视图；可缺省用于隔离测试，存在则Version非零并有界，不赋予拾取权限。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Game.NetworkProtocol.InventoryGroundSnapshotMessage Ground {
+      get { return ground_; }
+      set {
+        ground_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "research_open" field.</summary>
+    public const int ResearchOpenFieldNumber = 14;
+    private bool researchOpen_;
+    /// <summary>
+    /// 仅可信Home研究会话事实；关闭不含研究正文。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool ResearchOpen {
+      get { return researchOpen_; }
+      set {
+        researchOpen_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "research_session_version" field.</summary>
+    public const int ResearchSessionVersionFieldNumber = 15;
+    private uint researchSessionVersion_;
+    /// <summary>
+    /// 独立会话修订，Home初始关闭为1，普通副本为0，Home每份快照持续携当前值。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint ResearchSessionVersion {
+      get { return researchSessionVersion_; }
+      set {
+        researchSessionVersion_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "research_json" field.</summary>
+    public const int ResearchJsonFieldNumber = 16;
+    private pb::ByteString researchJson_ = pb::ByteString.Empty;
+    /// <summary>
+    /// 仅开启时的Core研究子树canonical UTF8，最多24MiB，整Snapshot仍受32MiB预算约束。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public pb::ByteString ResearchJson {
+      get { return researchJson_; }
+      set {
+        researchJson_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -337,6 +473,11 @@ namespace Game.NetworkProtocol {
       if (!object.Equals(Assets, other.Assets)) return false;
       if(!wands_.Equals(other.wands_)) return false;
       if(!spellUses_.Equals(other.spellUses_)) return false;
+      if (SelectedToolSlotPlusOne != other.SelectedToolSlotPlusOne) return false;
+      if (!object.Equals(Ground, other.Ground)) return false;
+      if (ResearchOpen != other.ResearchOpen) return false;
+      if (ResearchSessionVersion != other.ResearchSessionVersion) return false;
+      if (ResearchJson != other.ResearchJson) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -355,6 +496,11 @@ namespace Game.NetworkProtocol {
       if (assets_ != null) hash ^= Assets.GetHashCode();
       hash ^= wands_.GetHashCode();
       hash ^= spellUses_.GetHashCode();
+      if (SelectedToolSlotPlusOne != 0) hash ^= SelectedToolSlotPlusOne.GetHashCode();
+      if (ground_ != null) hash ^= Ground.GetHashCode();
+      if (ResearchOpen != false) hash ^= ResearchOpen.GetHashCode();
+      if (ResearchSessionVersion != 0) hash ^= ResearchSessionVersion.GetHashCode();
+      if (ResearchJson.Length != 0) hash ^= ResearchJson.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -411,6 +557,26 @@ namespace Game.NetworkProtocol {
       }
       wands_.WriteTo(output, _repeated_wands_codec);
       spellUses_.WriteTo(output, _repeated_spellUses_codec);
+      if (SelectedToolSlotPlusOne != 0) {
+        output.WriteRawTag(96);
+        output.WriteUInt32(SelectedToolSlotPlusOne);
+      }
+      if (ground_ != null) {
+        output.WriteRawTag(106);
+        output.WriteMessage(Ground);
+      }
+      if (ResearchOpen != false) {
+        output.WriteRawTag(112);
+        output.WriteBool(ResearchOpen);
+      }
+      if (ResearchSessionVersion != 0) {
+        output.WriteRawTag(120);
+        output.WriteUInt32(ResearchSessionVersion);
+      }
+      if (ResearchJson.Length != 0) {
+        output.WriteRawTag(130, 1);
+        output.WriteBytes(ResearchJson);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -459,6 +625,26 @@ namespace Game.NetworkProtocol {
       }
       wands_.WriteTo(ref output, _repeated_wands_codec);
       spellUses_.WriteTo(ref output, _repeated_spellUses_codec);
+      if (SelectedToolSlotPlusOne != 0) {
+        output.WriteRawTag(96);
+        output.WriteUInt32(SelectedToolSlotPlusOne);
+      }
+      if (ground_ != null) {
+        output.WriteRawTag(106);
+        output.WriteMessage(Ground);
+      }
+      if (ResearchOpen != false) {
+        output.WriteRawTag(112);
+        output.WriteBool(ResearchOpen);
+      }
+      if (ResearchSessionVersion != 0) {
+        output.WriteRawTag(120);
+        output.WriteUInt32(ResearchSessionVersion);
+      }
+      if (ResearchJson.Length != 0) {
+        output.WriteRawTag(130, 1);
+        output.WriteBytes(ResearchJson);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -498,6 +684,21 @@ namespace Game.NetworkProtocol {
       }
       size += wands_.CalculateSize(_repeated_wands_codec);
       size += spellUses_.CalculateSize(_repeated_spellUses_codec);
+      if (SelectedToolSlotPlusOne != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(SelectedToolSlotPlusOne);
+      }
+      if (ground_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Ground);
+      }
+      if (ResearchOpen != false) {
+        size += 1 + 1;
+      }
+      if (ResearchSessionVersion != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(ResearchSessionVersion);
+      }
+      if (ResearchJson.Length != 0) {
+        size += 2 + pb::CodedOutputStream.ComputeBytesSize(ResearchJson);
+      }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -542,6 +743,24 @@ namespace Game.NetworkProtocol {
       }
       wands_.Add(other.wands_);
       spellUses_.Add(other.spellUses_);
+      if (other.SelectedToolSlotPlusOne != 0) {
+        SelectedToolSlotPlusOne = other.SelectedToolSlotPlusOne;
+      }
+      if (other.ground_ != null) {
+        if (ground_ == null) {
+          Ground = new global::Game.NetworkProtocol.InventoryGroundSnapshotMessage();
+        }
+        Ground.MergeFrom(other.Ground);
+      }
+      if (other.ResearchOpen != false) {
+        ResearchOpen = other.ResearchOpen;
+      }
+      if (other.ResearchSessionVersion != 0) {
+        ResearchSessionVersion = other.ResearchSessionVersion;
+      }
+      if (other.ResearchJson.Length != 0) {
+        ResearchJson = other.ResearchJson;
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -606,6 +825,29 @@ namespace Game.NetworkProtocol {
           }
           case 90: {
             spellUses_.AddEntriesFrom(input, _repeated_spellUses_codec);
+            break;
+          }
+          case 96: {
+            SelectedToolSlotPlusOne = input.ReadUInt32();
+            break;
+          }
+          case 106: {
+            if (ground_ == null) {
+              Ground = new global::Game.NetworkProtocol.InventoryGroundSnapshotMessage();
+            }
+            input.ReadMessage(Ground);
+            break;
+          }
+          case 112: {
+            ResearchOpen = input.ReadBool();
+            break;
+          }
+          case 120: {
+            ResearchSessionVersion = input.ReadUInt32();
+            break;
+          }
+          case 130: {
+            ResearchJson = input.ReadBytes();
             break;
           }
         }
@@ -674,6 +916,1432 @@ namespace Game.NetworkProtocol {
             spellUses_.AddEntriesFrom(ref input, _repeated_spellUses_codec);
             break;
           }
+          case 96: {
+            SelectedToolSlotPlusOne = input.ReadUInt32();
+            break;
+          }
+          case 106: {
+            if (ground_ == null) {
+              Ground = new global::Game.NetworkProtocol.InventoryGroundSnapshotMessage();
+            }
+            input.ReadMessage(Ground);
+            break;
+          }
+          case 112: {
+            ResearchOpen = input.ReadBool();
+            break;
+          }
+          case 120: {
+            ResearchSessionVersion = input.ReadUInt32();
+            break;
+          }
+          case 130: {
+            ResearchJson = input.ReadBytes();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  /// <summary>
+  /// 共享地面状态与Owner携带状态分别编号；同一实例不能同时出现在本Owner和地面候选中。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+  public sealed partial class InventoryGroundSnapshotMessage : pb::IMessage<InventoryGroundSnapshotMessage>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<InventoryGroundSnapshotMessage> _parser = new pb::MessageParser<InventoryGroundSnapshotMessage>(() => new InventoryGroundSnapshotMessage());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<InventoryGroundSnapshotMessage> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Game.NetworkProtocol.InventoryReflection.Descriptor.MessageTypes[1]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public InventoryGroundSnapshotMessage() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public InventoryGroundSnapshotMessage(InventoryGroundSnapshotMessage other) : this() {
+      version_ = other.version_;
+      items_ = other.items_.Clone();
+      coins_ = other.coins_.Clone();
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public InventoryGroundSnapshotMessage Clone() {
+      return new InventoryGroundSnapshotMessage(this);
+    }
+
+    /// <summary>Field number for the "version" field.</summary>
+    public const int VersionFieldNumber = 1;
+    private uint version_;
+    /// <summary>
+    /// 当前共享地面非零版本；完整校验/安装后才成为可读状态，不以收页当安装。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint Version {
+      get { return version_; }
+      set {
+        version_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "items" field.</summary>
+    public const int ItemsFieldNumber = 2;
+    private static readonly pb::FieldCodec<global::Game.NetworkProtocol.InventoryGroundItemMessage> _repeated_items_codec
+        = pb::FieldCodec.ForMessage(18, global::Game.NetworkProtocol.InventoryGroundItemMessage.Parser);
+    private readonly pbc::RepeatedField<global::Game.NetworkProtocol.InventoryGroundItemMessage> items_ = new pbc::RepeatedField<global::Game.NetworkProtocol.InventoryGroundItemMessage>();
+    /// <summary>
+    /// 最多4*4096=16384个真实容器，受整包32MiB预算约束；满容量不隐式淘汰。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public pbc::RepeatedField<global::Game.NetworkProtocol.InventoryGroundItemMessage> Items {
+      get { return items_; }
+    }
+
+    /// <summary>Field number for the "coins" field.</summary>
+    public const int CoinsFieldNumber = 3;
+    private static readonly pb::FieldCodec<global::Game.NetworkProtocol.InventoryGroundCoinMessage> _repeated_coins_codec
+        = pb::FieldCodec.ForMessage(26, global::Game.NetworkProtocol.InventoryGroundCoinMessage.Parser);
+    private readonly pbc::RepeatedField<global::Game.NetworkProtocol.InventoryGroundCoinMessage> coins_ = new pbc::RepeatedField<global::Game.NetworkProtocol.InventoryGroundCoinMessage>();
+    /// <summary>
+    /// 最多12个NPC原始金币掉落的活动事实；不授予客户端领取或记账权。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public pbc::RepeatedField<global::Game.NetworkProtocol.InventoryGroundCoinMessage> Coins {
+      get { return coins_; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as InventoryGroundSnapshotMessage);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(InventoryGroundSnapshotMessage other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Version != other.Version) return false;
+      if(!items_.Equals(other.items_)) return false;
+      if(!coins_.Equals(other.coins_)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Version != 0) hash ^= Version.GetHashCode();
+      hash ^= items_.GetHashCode();
+      hash ^= coins_.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Version != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(Version);
+      }
+      items_.WriteTo(output, _repeated_items_codec);
+      coins_.WriteTo(output, _repeated_coins_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Version != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(Version);
+      }
+      items_.WriteTo(ref output, _repeated_items_codec);
+      coins_.WriteTo(ref output, _repeated_coins_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (Version != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(Version);
+      }
+      size += items_.CalculateSize(_repeated_items_codec);
+      size += coins_.CalculateSize(_repeated_coins_codec);
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(InventoryGroundSnapshotMessage other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Version != 0) {
+        Version = other.Version;
+      }
+      items_.Add(other.items_);
+      coins_.Add(other.coins_);
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            Version = input.ReadUInt32();
+            break;
+          }
+          case 18: {
+            items_.AddEntriesFrom(input, _repeated_items_codec);
+            break;
+          }
+          case 26: {
+            coins_.AddEntriesFrom(input, _repeated_coins_codec);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 8: {
+            Version = input.ReadUInt32();
+            break;
+          }
+          case 18: {
+            items_.AddEntriesFrom(ref input, _repeated_items_codec);
+            break;
+          }
+          case 26: {
+            coins_.AddEntriesFrom(ref input, _repeated_coins_codec);
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  /// <summary>
+  /// 金币保留原死亡位置与自动Trigger；金额沿用DS原掉落表的一次抽样，不创建第二钱包。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+  public sealed partial class InventoryGroundCoinMessage : pb::IMessage<InventoryGroundCoinMessage>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<InventoryGroundCoinMessage> _parser = new pb::MessageParser<InventoryGroundCoinMessage>(() => new InventoryGroundCoinMessage());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<InventoryGroundCoinMessage> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Game.NetworkProtocol.InventoryReflection.Descriptor.MessageTypes[2]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public InventoryGroundCoinMessage() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public InventoryGroundCoinMessage(InventoryGroundCoinMessage other) : this() {
+      coinId_ = other.coinId_;
+      amount_ = other.amount_;
+      positionX_ = other.positionX_;
+      positionY_ = other.positionY_;
+      positionZ_ = other.positionZ_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public InventoryGroundCoinMessage Clone() {
+      return new InventoryGroundCoinMessage(this);
+    }
+
+    /// <summary>Field number for the "coin_id" field.</summary>
+    public const int CoinIdFieldNumber = 1;
+    private ulong coinId_;
+    /// <summary>
+    /// 原副本NPC稳定ActorId 5..16，同一次死亡只有一个唯一掉落身份。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public ulong CoinId {
+      get { return coinId_; }
+      set {
+        coinId_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "amount" field.</summary>
+    public const int AmountFieldNumber = 2;
+    private long amount_;
+    /// <summary>
+    /// 原抽样的正整数数量，保留long范围；不能补默认值或重抽。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public long Amount {
+      get { return amount_; }
+      set {
+        amount_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "position_x" field.</summary>
+    public const int PositionXFieldNumber = 3;
+    private float positionX_;
+    /// <summary>
+    /// DS原死亡位置X，必须有限，不改变服务端拾取触发范围。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float PositionX {
+      get { return positionX_; }
+      set {
+        positionX_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "position_y" field.</summary>
+    public const int PositionYFieldNumber = 4;
+    private float positionY_;
+    /// <summary>
+    /// DS原死亡位置Y；视觉抬高由原Prefab负责。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float PositionY {
+      get { return positionY_; }
+      set {
+        positionY_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "position_z" field.</summary>
+    public const int PositionZFieldNumber = 5;
+    private float positionZ_;
+    /// <summary>
+    /// DS原死亡位置Z，不从客户端视野或参考Actor选择推导。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float PositionZ {
+      get { return positionZ_; }
+      set {
+        positionZ_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as InventoryGroundCoinMessage);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(InventoryGroundCoinMessage other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (CoinId != other.CoinId) return false;
+      if (Amount != other.Amount) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(PositionX, other.PositionX)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(PositionY, other.PositionY)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(PositionZ, other.PositionZ)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (CoinId != 0UL) hash ^= CoinId.GetHashCode();
+      if (Amount != 0L) hash ^= Amount.GetHashCode();
+      if (PositionX != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(PositionX);
+      if (PositionY != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(PositionY);
+      if (PositionZ != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(PositionZ);
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (CoinId != 0UL) {
+        output.WriteRawTag(8);
+        output.WriteUInt64(CoinId);
+      }
+      if (Amount != 0L) {
+        output.WriteRawTag(16);
+        output.WriteInt64(Amount);
+      }
+      if (PositionX != 0F) {
+        output.WriteRawTag(29);
+        output.WriteFloat(PositionX);
+      }
+      if (PositionY != 0F) {
+        output.WriteRawTag(37);
+        output.WriteFloat(PositionY);
+      }
+      if (PositionZ != 0F) {
+        output.WriteRawTag(45);
+        output.WriteFloat(PositionZ);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (CoinId != 0UL) {
+        output.WriteRawTag(8);
+        output.WriteUInt64(CoinId);
+      }
+      if (Amount != 0L) {
+        output.WriteRawTag(16);
+        output.WriteInt64(Amount);
+      }
+      if (PositionX != 0F) {
+        output.WriteRawTag(29);
+        output.WriteFloat(PositionX);
+      }
+      if (PositionY != 0F) {
+        output.WriteRawTag(37);
+        output.WriteFloat(PositionY);
+      }
+      if (PositionZ != 0F) {
+        output.WriteRawTag(45);
+        output.WriteFloat(PositionZ);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (CoinId != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(CoinId);
+      }
+      if (Amount != 0L) {
+        size += 1 + pb::CodedOutputStream.ComputeInt64Size(Amount);
+      }
+      if (PositionX != 0F) {
+        size += 1 + 4;
+      }
+      if (PositionY != 0F) {
+        size += 1 + 4;
+      }
+      if (PositionZ != 0F) {
+        size += 1 + 4;
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(InventoryGroundCoinMessage other) {
+      if (other == null) {
+        return;
+      }
+      if (other.CoinId != 0UL) {
+        CoinId = other.CoinId;
+      }
+      if (other.Amount != 0L) {
+        Amount = other.Amount;
+      }
+      if (other.PositionX != 0F) {
+        PositionX = other.PositionX;
+      }
+      if (other.PositionY != 0F) {
+        PositionY = other.PositionY;
+      }
+      if (other.PositionZ != 0F) {
+        PositionZ = other.PositionZ;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            CoinId = input.ReadUInt64();
+            break;
+          }
+          case 16: {
+            Amount = input.ReadInt64();
+            break;
+          }
+          case 29: {
+            PositionX = input.ReadFloat();
+            break;
+          }
+          case 37: {
+            PositionY = input.ReadFloat();
+            break;
+          }
+          case 45: {
+            PositionZ = input.ReadFloat();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 8: {
+            CoinId = input.ReadUInt64();
+            break;
+          }
+          case 16: {
+            Amount = input.ReadInt64();
+            break;
+          }
+          case 29: {
+            PositionX = input.ReadFloat();
+            break;
+          }
+          case 37: {
+            PositionY = input.ReadFloat();
+            break;
+          }
+          case 45: {
+            PositionZ = input.ReadFloat();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+  public sealed partial class InventoryGroundItemMessage : pb::IMessage<InventoryGroundItemMessage>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<InventoryGroundItemMessage> _parser = new pb::MessageParser<InventoryGroundItemMessage>(() => new InventoryGroundItemMessage());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<InventoryGroundItemMessage> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Game.NetworkProtocol.InventoryReflection.Descriptor.MessageTypes[3]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public InventoryGroundItemMessage() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public InventoryGroundItemMessage(InventoryGroundItemMessage other) : this() {
+      instanceId_ = other.instanceId_;
+      contentId_ = other.contentId_;
+      worldOwnerId_ = other.worldOwnerId_;
+      revision_ = other.revision_;
+      positionX_ = other.positionX_;
+      positionY_ = other.positionY_;
+      positionZ_ = other.positionZ_;
+      rotationX_ = other.rotationX_;
+      rotationY_ = other.rotationY_;
+      rotationZ_ = other.rotationZ_;
+      rotationW_ = other.rotationW_;
+      containerState_ = other.containerState_ != null ? other.containerState_.Clone() : null;
+      materialState_ = other.materialState_ != null ? other.materialState_.Clone() : null;
+      item_ = other.item_ != null ? other.item_.Clone() : null;
+      children_ = other.children_.Clone();
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public InventoryGroundItemMessage Clone() {
+      return new InventoryGroundItemMessage(this);
+    }
+
+    /// <summary>Field number for the "instance_id" field.</summary>
+    public const int InstanceIdFieldNumber = 1;
+    private string instanceId_ = "";
+    /// <summary>
+    /// 原容器实例32位小写hex，丢地/转交保留身份，不为每Client复制新物品。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string InstanceId {
+      get { return instanceId_; }
+      set {
+        instanceId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "content_id" field.</summary>
+    public const int ContentIdFieldNumber = 2;
+    private string contentId_ = "";
+    /// <summary>
+    /// 最多128个ASCII目录键，容器Kind/容量/mask仍由Run按共同目录核验。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string ContentId {
+      get { return contentId_; }
+      set {
+        contentId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "world_owner_id" field.</summary>
+    public const int WorldOwnerIdFieldNumber = 3;
+    private string worldOwnerId_ = "";
+    /// <summary>
+    /// 真实地面归属32位小写hex，Pickup必须匹配，不能仅凭ContentId拾取。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string WorldOwnerId {
+      get { return worldOwnerId_; }
+      set {
+        worldOwnerId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "revision" field.</summary>
+    public const int RevisionFieldNumber = 4;
+    private uint revision_;
+    /// <summary>
+    /// 非零实例修订号，迟到状态不覆盖已安装的更新。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint Revision {
+      get { return revision_; }
+      set {
+        revision_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "position_x" field.</summary>
+    public const int PositionXFieldNumber = 5;
+    private float positionX_;
+    /// <summary>
+    /// DS裁定的有限世界位置X，不是Client提交的掉落坐标。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float PositionX {
+      get { return positionX_; }
+      set {
+        positionX_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "position_y" field.</summary>
+    public const int PositionYFieldNumber = 6;
+    private float positionY_;
+    /// <summary>
+    /// DS裁定的有限世界位置Y，支撑规则由既有Gameplay负责。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float PositionY {
+      get { return positionY_; }
+      set {
+        positionY_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "position_z" field.</summary>
+    public const int PositionZFieldNumber = 7;
+    private float positionZ_;
+    /// <summary>
+    /// DS裁定的有限世界位置Z，不在Codec增加距离或落点政策。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float PositionZ {
+      get { return positionZ_; }
+      set {
+        positionZ_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "rotation_x" field.</summary>
+    public const int RotationXFieldNumber = 8;
+    private float rotationX_;
+    /// <summary>
+    /// 世界Quaternion X，四分量有限且平方长度0.99..1.01，不自动归一化伪造原状态。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float RotationX {
+      get { return rotationX_; }
+      set {
+        rotationX_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "rotation_y" field.</summary>
+    public const int RotationYFieldNumber = 9;
+    private float rotationY_;
+    /// <summary>
+    /// 世界Quaternion Y，与XYZW共同校验，零Quaternion拒绝。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float RotationY {
+      get { return rotationY_; }
+      set {
+        rotationY_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "rotation_z" field.</summary>
+    public const int RotationZFieldNumber = 10;
+    private float rotationZ_;
+    /// <summary>
+    /// 世界Quaternion Z，与XYZW共同校验，不是Euler角。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float RotationZ {
+      get { return rotationZ_; }
+      set {
+        rotationZ_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "rotation_w" field.</summary>
+    public const int RotationWFieldNumber = 11;
+    private float rotationW_;
+    /// <summary>
+    /// 世界Quaternion W，与XYZW共同校验，默认全0不构成合法姿态。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float RotationW {
+      get { return rotationW_; }
+      set {
+        rotationW_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "container_state" field.</summary>
+    public const int ContainerStateFieldNumber = 12;
+    private global::Game.NetworkProtocol.InventoryOwnedContainerStateMessage containerState_;
+    /// <summary>
+    /// 必须显式Schema1组分，保留真实ulong GMU；空瓶与缺状态不同。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Game.NetworkProtocol.InventoryOwnedContainerStateMessage ContainerState {
+      get { return containerState_; }
+      set {
+        containerState_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "material_state" field.</summary>
+    public const int MaterialStateFieldNumber = 13;
+    private global::Game.NetworkProtocol.InventoryOwnedMaterialStateMessage materialState_;
+    /// <summary>
+    /// 原材料别名，必须与完整Item同值；一般卡/杖/物品可都无材料状态。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Game.NetworkProtocol.InventoryOwnedMaterialStateMessage MaterialState {
+      get { return materialState_; }
+      set {
+        materialState_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "item" field.</summary>
+    public const int ItemFieldNumber = 14;
+    private global::Game.NetworkProtocol.InventoryOwnedItemMessage item_;
+    /// <summary>
+    /// 新协议必填完整根，位置WorldItem=5/Slot=-1/空父；旧根/材料字段须与之同值。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Game.NetworkProtocol.InventoryOwnedItemMessage Item {
+      get { return item_; }
+      set {
+        item_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "children" field.</summary>
+    public const int ChildrenFieldNumber = 15;
+    private static readonly pb::FieldCodec<global::Game.NetworkProtocol.InventoryOwnedItemMessage> _repeated_children_codec
+        = pb::FieldCodec.ForMessage(122, global::Game.NetworkProtocol.InventoryOwnedItemMessage.Parser);
+    private readonly pbc::RepeatedField<global::Game.NetworkProtocol.InventoryOwnedItemMessage> children_ = new pbc::RepeatedField<global::Game.NetworkProtocol.InventoryOwnedItemMessage>();
+    /// <summary>
+    /// 仅此根法杖的安装卡，保留原ID/父/次数/附件；与所有地面根合计最多16384实例。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public pbc::RepeatedField<global::Game.NetworkProtocol.InventoryOwnedItemMessage> Children {
+      get { return children_; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as InventoryGroundItemMessage);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(InventoryGroundItemMessage other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (InstanceId != other.InstanceId) return false;
+      if (ContentId != other.ContentId) return false;
+      if (WorldOwnerId != other.WorldOwnerId) return false;
+      if (Revision != other.Revision) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(PositionX, other.PositionX)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(PositionY, other.PositionY)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(PositionZ, other.PositionZ)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(RotationX, other.RotationX)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(RotationY, other.RotationY)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(RotationZ, other.RotationZ)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(RotationW, other.RotationW)) return false;
+      if (!object.Equals(ContainerState, other.ContainerState)) return false;
+      if (!object.Equals(MaterialState, other.MaterialState)) return false;
+      if (!object.Equals(Item, other.Item)) return false;
+      if(!children_.Equals(other.children_)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (InstanceId.Length != 0) hash ^= InstanceId.GetHashCode();
+      if (ContentId.Length != 0) hash ^= ContentId.GetHashCode();
+      if (WorldOwnerId.Length != 0) hash ^= WorldOwnerId.GetHashCode();
+      if (Revision != 0) hash ^= Revision.GetHashCode();
+      if (PositionX != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(PositionX);
+      if (PositionY != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(PositionY);
+      if (PositionZ != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(PositionZ);
+      if (RotationX != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(RotationX);
+      if (RotationY != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(RotationY);
+      if (RotationZ != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(RotationZ);
+      if (RotationW != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(RotationW);
+      if (containerState_ != null) hash ^= ContainerState.GetHashCode();
+      if (materialState_ != null) hash ^= MaterialState.GetHashCode();
+      if (item_ != null) hash ^= Item.GetHashCode();
+      hash ^= children_.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (InstanceId.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(InstanceId);
+      }
+      if (ContentId.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(ContentId);
+      }
+      if (WorldOwnerId.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(WorldOwnerId);
+      }
+      if (Revision != 0) {
+        output.WriteRawTag(32);
+        output.WriteUInt32(Revision);
+      }
+      if (PositionX != 0F) {
+        output.WriteRawTag(45);
+        output.WriteFloat(PositionX);
+      }
+      if (PositionY != 0F) {
+        output.WriteRawTag(53);
+        output.WriteFloat(PositionY);
+      }
+      if (PositionZ != 0F) {
+        output.WriteRawTag(61);
+        output.WriteFloat(PositionZ);
+      }
+      if (RotationX != 0F) {
+        output.WriteRawTag(69);
+        output.WriteFloat(RotationX);
+      }
+      if (RotationY != 0F) {
+        output.WriteRawTag(77);
+        output.WriteFloat(RotationY);
+      }
+      if (RotationZ != 0F) {
+        output.WriteRawTag(85);
+        output.WriteFloat(RotationZ);
+      }
+      if (RotationW != 0F) {
+        output.WriteRawTag(93);
+        output.WriteFloat(RotationW);
+      }
+      if (containerState_ != null) {
+        output.WriteRawTag(98);
+        output.WriteMessage(ContainerState);
+      }
+      if (materialState_ != null) {
+        output.WriteRawTag(106);
+        output.WriteMessage(MaterialState);
+      }
+      if (item_ != null) {
+        output.WriteRawTag(114);
+        output.WriteMessage(Item);
+      }
+      children_.WriteTo(output, _repeated_children_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (InstanceId.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(InstanceId);
+      }
+      if (ContentId.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(ContentId);
+      }
+      if (WorldOwnerId.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(WorldOwnerId);
+      }
+      if (Revision != 0) {
+        output.WriteRawTag(32);
+        output.WriteUInt32(Revision);
+      }
+      if (PositionX != 0F) {
+        output.WriteRawTag(45);
+        output.WriteFloat(PositionX);
+      }
+      if (PositionY != 0F) {
+        output.WriteRawTag(53);
+        output.WriteFloat(PositionY);
+      }
+      if (PositionZ != 0F) {
+        output.WriteRawTag(61);
+        output.WriteFloat(PositionZ);
+      }
+      if (RotationX != 0F) {
+        output.WriteRawTag(69);
+        output.WriteFloat(RotationX);
+      }
+      if (RotationY != 0F) {
+        output.WriteRawTag(77);
+        output.WriteFloat(RotationY);
+      }
+      if (RotationZ != 0F) {
+        output.WriteRawTag(85);
+        output.WriteFloat(RotationZ);
+      }
+      if (RotationW != 0F) {
+        output.WriteRawTag(93);
+        output.WriteFloat(RotationW);
+      }
+      if (containerState_ != null) {
+        output.WriteRawTag(98);
+        output.WriteMessage(ContainerState);
+      }
+      if (materialState_ != null) {
+        output.WriteRawTag(106);
+        output.WriteMessage(MaterialState);
+      }
+      if (item_ != null) {
+        output.WriteRawTag(114);
+        output.WriteMessage(Item);
+      }
+      children_.WriteTo(ref output, _repeated_children_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (InstanceId.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(InstanceId);
+      }
+      if (ContentId.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(ContentId);
+      }
+      if (WorldOwnerId.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(WorldOwnerId);
+      }
+      if (Revision != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(Revision);
+      }
+      if (PositionX != 0F) {
+        size += 1 + 4;
+      }
+      if (PositionY != 0F) {
+        size += 1 + 4;
+      }
+      if (PositionZ != 0F) {
+        size += 1 + 4;
+      }
+      if (RotationX != 0F) {
+        size += 1 + 4;
+      }
+      if (RotationY != 0F) {
+        size += 1 + 4;
+      }
+      if (RotationZ != 0F) {
+        size += 1 + 4;
+      }
+      if (RotationW != 0F) {
+        size += 1 + 4;
+      }
+      if (containerState_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(ContainerState);
+      }
+      if (materialState_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(MaterialState);
+      }
+      if (item_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Item);
+      }
+      size += children_.CalculateSize(_repeated_children_codec);
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(InventoryGroundItemMessage other) {
+      if (other == null) {
+        return;
+      }
+      if (other.InstanceId.Length != 0) {
+        InstanceId = other.InstanceId;
+      }
+      if (other.ContentId.Length != 0) {
+        ContentId = other.ContentId;
+      }
+      if (other.WorldOwnerId.Length != 0) {
+        WorldOwnerId = other.WorldOwnerId;
+      }
+      if (other.Revision != 0) {
+        Revision = other.Revision;
+      }
+      if (other.PositionX != 0F) {
+        PositionX = other.PositionX;
+      }
+      if (other.PositionY != 0F) {
+        PositionY = other.PositionY;
+      }
+      if (other.PositionZ != 0F) {
+        PositionZ = other.PositionZ;
+      }
+      if (other.RotationX != 0F) {
+        RotationX = other.RotationX;
+      }
+      if (other.RotationY != 0F) {
+        RotationY = other.RotationY;
+      }
+      if (other.RotationZ != 0F) {
+        RotationZ = other.RotationZ;
+      }
+      if (other.RotationW != 0F) {
+        RotationW = other.RotationW;
+      }
+      if (other.containerState_ != null) {
+        if (containerState_ == null) {
+          ContainerState = new global::Game.NetworkProtocol.InventoryOwnedContainerStateMessage();
+        }
+        ContainerState.MergeFrom(other.ContainerState);
+      }
+      if (other.materialState_ != null) {
+        if (materialState_ == null) {
+          MaterialState = new global::Game.NetworkProtocol.InventoryOwnedMaterialStateMessage();
+        }
+        MaterialState.MergeFrom(other.MaterialState);
+      }
+      if (other.item_ != null) {
+        if (item_ == null) {
+          Item = new global::Game.NetworkProtocol.InventoryOwnedItemMessage();
+        }
+        Item.MergeFrom(other.Item);
+      }
+      children_.Add(other.children_);
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            InstanceId = input.ReadString();
+            break;
+          }
+          case 18: {
+            ContentId = input.ReadString();
+            break;
+          }
+          case 26: {
+            WorldOwnerId = input.ReadString();
+            break;
+          }
+          case 32: {
+            Revision = input.ReadUInt32();
+            break;
+          }
+          case 45: {
+            PositionX = input.ReadFloat();
+            break;
+          }
+          case 53: {
+            PositionY = input.ReadFloat();
+            break;
+          }
+          case 61: {
+            PositionZ = input.ReadFloat();
+            break;
+          }
+          case 69: {
+            RotationX = input.ReadFloat();
+            break;
+          }
+          case 77: {
+            RotationY = input.ReadFloat();
+            break;
+          }
+          case 85: {
+            RotationZ = input.ReadFloat();
+            break;
+          }
+          case 93: {
+            RotationW = input.ReadFloat();
+            break;
+          }
+          case 98: {
+            if (containerState_ == null) {
+              ContainerState = new global::Game.NetworkProtocol.InventoryOwnedContainerStateMessage();
+            }
+            input.ReadMessage(ContainerState);
+            break;
+          }
+          case 106: {
+            if (materialState_ == null) {
+              MaterialState = new global::Game.NetworkProtocol.InventoryOwnedMaterialStateMessage();
+            }
+            input.ReadMessage(MaterialState);
+            break;
+          }
+          case 114: {
+            if (item_ == null) {
+              Item = new global::Game.NetworkProtocol.InventoryOwnedItemMessage();
+            }
+            input.ReadMessage(Item);
+            break;
+          }
+          case 122: {
+            children_.AddEntriesFrom(input, _repeated_children_codec);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            InstanceId = input.ReadString();
+            break;
+          }
+          case 18: {
+            ContentId = input.ReadString();
+            break;
+          }
+          case 26: {
+            WorldOwnerId = input.ReadString();
+            break;
+          }
+          case 32: {
+            Revision = input.ReadUInt32();
+            break;
+          }
+          case 45: {
+            PositionX = input.ReadFloat();
+            break;
+          }
+          case 53: {
+            PositionY = input.ReadFloat();
+            break;
+          }
+          case 61: {
+            PositionZ = input.ReadFloat();
+            break;
+          }
+          case 69: {
+            RotationX = input.ReadFloat();
+            break;
+          }
+          case 77: {
+            RotationY = input.ReadFloat();
+            break;
+          }
+          case 85: {
+            RotationZ = input.ReadFloat();
+            break;
+          }
+          case 93: {
+            RotationW = input.ReadFloat();
+            break;
+          }
+          case 98: {
+            if (containerState_ == null) {
+              ContainerState = new global::Game.NetworkProtocol.InventoryOwnedContainerStateMessage();
+            }
+            input.ReadMessage(ContainerState);
+            break;
+          }
+          case 106: {
+            if (materialState_ == null) {
+              MaterialState = new global::Game.NetworkProtocol.InventoryOwnedMaterialStateMessage();
+            }
+            input.ReadMessage(MaterialState);
+            break;
+          }
+          case 114: {
+            if (item_ == null) {
+              Item = new global::Game.NetworkProtocol.InventoryOwnedItemMessage();
+            }
+            input.ReadMessage(Item);
+            break;
+          }
+          case 122: {
+            children_.AddEntriesFrom(ref input, _repeated_children_codec);
+            break;
+          }
         }
       }
     }
@@ -699,7 +2367,7 @@ namespace Game.NetworkProtocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Game.NetworkProtocol.InventoryReflection.Descriptor.MessageTypes[1]; }
+      get { return global::Game.NetworkProtocol.InventoryReflection.Descriptor.MessageTypes[4]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -728,6 +2396,8 @@ namespace Game.NetworkProtocol {
       actorId_ = other.actorId_;
       inventoryVersion_ = other.inventoryVersion_;
       items_ = other.items_.Clone();
+      gold_ = other.gold_;
+      currencyVersion_ = other.currencyVersion_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -741,7 +2411,7 @@ namespace Game.NetworkProtocol {
     public const int SchemaVersionFieldNumber = 1;
     private uint schemaVersion_;
     /// <summary>
-    /// Owned资产合同版本，当前1，缺省0拒绝。
+    /// Owned资产合同当前3；旧版缺真实金币/修订，不能补0冒充统一余额。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -863,12 +2533,42 @@ namespace Game.NetworkProtocol {
         = pb::FieldCodec.ForMessage(74, global::Game.NetworkProtocol.InventoryOwnedItemMessage.Parser);
     private readonly pbc::RepeatedField<global::Game.NetworkProtocol.InventoryOwnedItemMessage> items_ = new pbc::RepeatedField<global::Game.NetworkProtocol.InventoryOwnedItemMessage>();
     /// <summary>
-    /// 最大99项：3根法杖及至多96张卡，移入法术专区不增加总量。
+    /// 最多4096项的有界完整携带闭包；不承诺无限背包。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public pbc::RepeatedField<global::Game.NetworkProtocol.InventoryOwnedItemMessage> Items {
       get { return items_; }
+    }
+
+    /// <summary>Field number for the "gold" field.</summary>
+    public const int GoldFieldNumber = 10;
+    private long gold_;
+    /// <summary>
+    /// 同一玩家当前总余额，必须非负且保留long全范围；不是第二种局内币或永久Wallet提交。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public long Gold {
+      get { return gold_; }
+      set {
+        gold_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "currency_version" field.</summary>
+    public const int CurrencyVersionFieldNumber = 11;
+    private uint currencyVersion_;
+    /// <summary>
+    /// 非零DS钱包事实修订，独立于物品/Mana版本；同版本不得改变Gold，重连不重置。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint CurrencyVersion {
+      get { return currencyVersion_; }
+      set {
+        currencyVersion_ = value;
+      }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -895,6 +2595,8 @@ namespace Game.NetworkProtocol {
       if (ActorId != other.ActorId) return false;
       if (InventoryVersion != other.InventoryVersion) return false;
       if(!items_.Equals(other.items_)) return false;
+      if (Gold != other.Gold) return false;
+      if (CurrencyVersion != other.CurrencyVersion) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -911,6 +2613,8 @@ namespace Game.NetworkProtocol {
       if (ActorId != 0UL) hash ^= ActorId.GetHashCode();
       if (InventoryVersion != 0) hash ^= InventoryVersion.GetHashCode();
       hash ^= items_.GetHashCode();
+      if (Gold != 0L) hash ^= Gold.GetHashCode();
+      if (CurrencyVersion != 0) hash ^= CurrencyVersion.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -962,6 +2666,14 @@ namespace Game.NetworkProtocol {
         output.WriteUInt32(InventoryVersion);
       }
       items_.WriteTo(output, _repeated_items_codec);
+      if (Gold != 0L) {
+        output.WriteRawTag(80);
+        output.WriteInt64(Gold);
+      }
+      if (CurrencyVersion != 0) {
+        output.WriteRawTag(88);
+        output.WriteUInt32(CurrencyVersion);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1005,6 +2717,14 @@ namespace Game.NetworkProtocol {
         output.WriteUInt32(InventoryVersion);
       }
       items_.WriteTo(ref output, _repeated_items_codec);
+      if (Gold != 0L) {
+        output.WriteRawTag(80);
+        output.WriteInt64(Gold);
+      }
+      if (CurrencyVersion != 0) {
+        output.WriteRawTag(88);
+        output.WriteUInt32(CurrencyVersion);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -1040,6 +2760,12 @@ namespace Game.NetworkProtocol {
         size += 1 + pb::CodedOutputStream.ComputeUInt32Size(InventoryVersion);
       }
       size += items_.CalculateSize(_repeated_items_codec);
+      if (Gold != 0L) {
+        size += 1 + pb::CodedOutputStream.ComputeInt64Size(Gold);
+      }
+      if (CurrencyVersion != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(CurrencyVersion);
+      }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -1077,6 +2803,12 @@ namespace Game.NetworkProtocol {
         InventoryVersion = other.InventoryVersion;
       }
       items_.Add(other.items_);
+      if (other.Gold != 0L) {
+        Gold = other.Gold;
+      }
+      if (other.CurrencyVersion != 0) {
+        CurrencyVersion = other.CurrencyVersion;
+      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -1130,6 +2862,14 @@ namespace Game.NetworkProtocol {
           }
           case 74: {
             items_.AddEntriesFrom(input, _repeated_items_codec);
+            break;
+          }
+          case 80: {
+            Gold = input.ReadInt64();
+            break;
+          }
+          case 88: {
+            CurrencyVersion = input.ReadUInt32();
             break;
           }
         }
@@ -1187,6 +2927,14 @@ namespace Game.NetworkProtocol {
             items_.AddEntriesFrom(ref input, _repeated_items_codec);
             break;
           }
+          case 80: {
+            Gold = input.ReadInt64();
+            break;
+          }
+          case 88: {
+            CurrencyVersion = input.ReadUInt32();
+            break;
+          }
         }
       }
     }
@@ -1212,7 +2960,7 @@ namespace Game.NetworkProtocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Game.NetworkProtocol.InventoryReflection.Descriptor.MessageTypes[2]; }
+      get { return global::Game.NetworkProtocol.InventoryReflection.Descriptor.MessageTypes[5]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1245,6 +2993,10 @@ namespace Game.NetworkProtocol {
       hasUnlimitedCharges_ = other.hasUnlimitedCharges_;
       useTemplateWandStats_ = other.useTemplateWandStats_;
       wandStats_ = other.wandStats_ != null ? other.wandStats_.Clone() : null;
+      containerState_ = other.containerState_ != null ? other.containerState_.Clone() : null;
+      materialState_ = other.materialState_ != null ? other.materialState_.Clone() : null;
+      attachmentState_ = other.attachmentState_ != null ? other.attachmentState_.Clone() : null;
+      entryBoundBackpack_ = other.entryBoundBackpack_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1288,7 +3040,7 @@ namespace Game.NetworkProtocol {
     public const int ParentInstanceIdFieldNumber = 3;
     private string parentInstanceId_ = "";
     /// <summary>
-    /// 安装卡为所属法杖ID；装备根/随身法术专区为空，不冒充背包。
+    /// 包内指真实装备包，安装卡指装备/备用杖；玩家装备根与专区为空。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1318,7 +3070,7 @@ namespace Game.NetworkProtocol {
     public const int LocationKindFieldNumber = 5;
     private int locationKind_;
     /// <summary>
-    /// 原保存编号：WandSlot=2、EquippedWand=3、SpellStorage=7；其它拒绝。
+    /// 原稳定编号：Bag内1/安装2/装备杖3/装备包4/专区7/工具8；其余拒绝。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1333,7 +3085,7 @@ namespace Game.NetworkProtocol {
     public const int SlotFieldNumber = 6;
     private int slot_;
     /// <summary>
-    /// 装备位0..2、程序位0..31或专区位0..255；Run另核对目录容量。
+    /// Bag内固定-1，装备杖0..2/工具0..6/程序0..31/专区0..255，Run再验目录。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1449,6 +3201,66 @@ namespace Game.NetworkProtocol {
       }
     }
 
+    /// <summary>Field number for the "container_state" field.</summary>
+    public const int ContainerStateFieldNumber = 14;
+    private global::Game.NetworkProtocol.InventoryOwnedContainerStateMessage containerState_;
+    /// <summary>
+    /// 仅容器有显式状态，空瓶与缺状态不同；与Wand属性互斥。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Game.NetworkProtocol.InventoryOwnedContainerStateMessage ContainerState {
+      get { return containerState_; }
+      set {
+        containerState_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "material_state" field.</summary>
+    public const int MaterialStateFieldNumber = 15;
+    private global::Game.NetworkProtocol.InventoryOwnedMaterialStateMessage materialState_;
+    /// <summary>
+    /// 仅Material实物，显式Schema1/Key/真实GMU；与容器和法杖状态互斥。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Game.NetworkProtocol.InventoryOwnedMaterialStateMessage MaterialState {
+      get { return materialState_; }
+      set {
+        materialState_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "attachment_state" field.</summary>
+    public const int AttachmentStateFieldNumber = 16;
+    private global::Game.NetworkProtocol.InventorySpellAttachmentStateMessage attachmentState_;
+    /// <summary>
+    /// 仅具体产出卡；可缺省为关闭，来源失效仍保存设置，不搬运材料。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Game.NetworkProtocol.InventorySpellAttachmentStateMessage AttachmentState {
+      get { return attachmentState_; }
+      set {
+        attachmentState_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "entry_bound_backpack" field.</summary>
+    public const int EntryBoundBackpackFieldNumber = 17;
+    private bool entryBoundBackpack_;
+    /// <summary>
+    /// 业务可信入场来源标记；仅真实装备包可为true，地面和子卡拒绝，命令无设置口。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool EntryBoundBackpack {
+      get { return entryBoundBackpack_; }
+      set {
+        entryBoundBackpack_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -1477,6 +3289,10 @@ namespace Game.NetworkProtocol {
       if (HasUnlimitedCharges != other.HasUnlimitedCharges) return false;
       if (UseTemplateWandStats != other.UseTemplateWandStats) return false;
       if (!object.Equals(WandStats, other.WandStats)) return false;
+      if (!object.Equals(ContainerState, other.ContainerState)) return false;
+      if (!object.Equals(MaterialState, other.MaterialState)) return false;
+      if (!object.Equals(AttachmentState, other.AttachmentState)) return false;
+      if (EntryBoundBackpack != other.EntryBoundBackpack) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1497,6 +3313,10 @@ namespace Game.NetworkProtocol {
       if (HasUnlimitedCharges != false) hash ^= HasUnlimitedCharges.GetHashCode();
       if (UseTemplateWandStats != false) hash ^= UseTemplateWandStats.GetHashCode();
       if (wandStats_ != null) hash ^= WandStats.GetHashCode();
+      if (containerState_ != null) hash ^= ContainerState.GetHashCode();
+      if (materialState_ != null) hash ^= MaterialState.GetHashCode();
+      if (attachmentState_ != null) hash ^= AttachmentState.GetHashCode();
+      if (EntryBoundBackpack != false) hash ^= EntryBoundBackpack.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1567,6 +3387,22 @@ namespace Game.NetworkProtocol {
         output.WriteRawTag(106);
         output.WriteMessage(WandStats);
       }
+      if (containerState_ != null) {
+        output.WriteRawTag(114);
+        output.WriteMessage(ContainerState);
+      }
+      if (materialState_ != null) {
+        output.WriteRawTag(122);
+        output.WriteMessage(MaterialState);
+      }
+      if (attachmentState_ != null) {
+        output.WriteRawTag(130, 1);
+        output.WriteMessage(AttachmentState);
+      }
+      if (EntryBoundBackpack != false) {
+        output.WriteRawTag(136, 1);
+        output.WriteBool(EntryBoundBackpack);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1629,6 +3465,22 @@ namespace Game.NetworkProtocol {
         output.WriteRawTag(106);
         output.WriteMessage(WandStats);
       }
+      if (containerState_ != null) {
+        output.WriteRawTag(114);
+        output.WriteMessage(ContainerState);
+      }
+      if (materialState_ != null) {
+        output.WriteRawTag(122);
+        output.WriteMessage(MaterialState);
+      }
+      if (attachmentState_ != null) {
+        output.WriteRawTag(130, 1);
+        output.WriteMessage(AttachmentState);
+      }
+      if (EntryBoundBackpack != false) {
+        output.WriteRawTag(136, 1);
+        output.WriteBool(EntryBoundBackpack);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -1677,6 +3529,18 @@ namespace Game.NetworkProtocol {
       }
       if (wandStats_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(WandStats);
+      }
+      if (containerState_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(ContainerState);
+      }
+      if (materialState_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(MaterialState);
+      }
+      if (attachmentState_ != null) {
+        size += 2 + pb::CodedOutputStream.ComputeMessageSize(AttachmentState);
+      }
+      if (EntryBoundBackpack != false) {
+        size += 2 + 1;
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1731,6 +3595,27 @@ namespace Game.NetworkProtocol {
           WandStats = new global::Game.NetworkProtocol.InventoryOwnedWandStatsMessage();
         }
         WandStats.MergeFrom(other.WandStats);
+      }
+      if (other.containerState_ != null) {
+        if (containerState_ == null) {
+          ContainerState = new global::Game.NetworkProtocol.InventoryOwnedContainerStateMessage();
+        }
+        ContainerState.MergeFrom(other.ContainerState);
+      }
+      if (other.materialState_ != null) {
+        if (materialState_ == null) {
+          MaterialState = new global::Game.NetworkProtocol.InventoryOwnedMaterialStateMessage();
+        }
+        MaterialState.MergeFrom(other.MaterialState);
+      }
+      if (other.attachmentState_ != null) {
+        if (attachmentState_ == null) {
+          AttachmentState = new global::Game.NetworkProtocol.InventorySpellAttachmentStateMessage();
+        }
+        AttachmentState.MergeFrom(other.AttachmentState);
+      }
+      if (other.EntryBoundBackpack != false) {
+        EntryBoundBackpack = other.EntryBoundBackpack;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1804,6 +3689,31 @@ namespace Game.NetworkProtocol {
               WandStats = new global::Game.NetworkProtocol.InventoryOwnedWandStatsMessage();
             }
             input.ReadMessage(WandStats);
+            break;
+          }
+          case 114: {
+            if (containerState_ == null) {
+              ContainerState = new global::Game.NetworkProtocol.InventoryOwnedContainerStateMessage();
+            }
+            input.ReadMessage(ContainerState);
+            break;
+          }
+          case 122: {
+            if (materialState_ == null) {
+              MaterialState = new global::Game.NetworkProtocol.InventoryOwnedMaterialStateMessage();
+            }
+            input.ReadMessage(MaterialState);
+            break;
+          }
+          case 130: {
+            if (attachmentState_ == null) {
+              AttachmentState = new global::Game.NetworkProtocol.InventorySpellAttachmentStateMessage();
+            }
+            input.ReadMessage(AttachmentState);
+            break;
+          }
+          case 136: {
+            EntryBoundBackpack = input.ReadBool();
             break;
           }
         }
@@ -1880,6 +3790,1111 @@ namespace Game.NetworkProtocol {
             input.ReadMessage(WandStats);
             break;
           }
+          case 114: {
+            if (containerState_ == null) {
+              ContainerState = new global::Game.NetworkProtocol.InventoryOwnedContainerStateMessage();
+            }
+            input.ReadMessage(ContainerState);
+            break;
+          }
+          case 122: {
+            if (materialState_ == null) {
+              MaterialState = new global::Game.NetworkProtocol.InventoryOwnedMaterialStateMessage();
+            }
+            input.ReadMessage(MaterialState);
+            break;
+          }
+          case 130: {
+            if (attachmentState_ == null) {
+              AttachmentState = new global::Game.NetworkProtocol.InventorySpellAttachmentStateMessage();
+            }
+            input.ReadMessage(AttachmentState);
+            break;
+          }
+          case 136: {
+            EntryBoundBackpack = input.ReadBool();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  /// <summary>
+  /// 固体物品是原实例持有的真实数量，不是一个默认满量模板或容器组分。
+  /// 卡片设置不是容器数量；清除由可选状态缺省表达，既有显式Enabled值仍保真。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+  public sealed partial class InventorySpellAttachmentStateMessage : pb::IMessage<InventorySpellAttachmentStateMessage>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<InventorySpellAttachmentStateMessage> _parser = new pb::MessageParser<InventorySpellAttachmentStateMessage>(() => new InventorySpellAttachmentStateMessage());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<InventorySpellAttachmentStateMessage> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Game.NetworkProtocol.InventoryReflection.Descriptor.MessageTypes[6]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public InventorySpellAttachmentStateMessage() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public InventorySpellAttachmentStateMessage(InventorySpellAttachmentStateMessage other) : this() {
+      schemaVersion_ = other.schemaVersion_;
+      containerId_ = other.containerId_;
+      dose_ = other.dose_;
+      enabled_ = other.enabled_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public InventorySpellAttachmentStateMessage Clone() {
+      return new InventorySpellAttachmentStateMessage(this);
+    }
+
+    /// <summary>Field number for the "schema_version" field.</summary>
+    public const int SchemaVersionFieldNumber = 1;
+    private uint schemaVersion_;
+    /// <summary>
+    /// 显式1，缺省0或未知版本拒绝。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint SchemaVersion {
+      get { return schemaVersion_; }
+      set {
+        schemaVersion_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "container_id" field.</summary>
+    public const int ContainerIdFieldNumber = 2;
+    private string containerId_ = "";
+    /// <summary>
+    /// 32位小写hex来源实例；来源已离包或消失仍保留设置，执行时再次裁决。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string ContainerId {
+      get { return containerId_; }
+      set {
+        containerId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "dose" field.</summary>
+    public const int DoseFieldNumber = 3;
+    private ulong dose_;
+    /// <summary>
+    /// 原正整数GMU剂量，不按100或瓶内余量截断配置。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public ulong Dose {
+      get { return dose_; }
+      set {
+        dose_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "enabled" field.</summary>
+    public const int EnabledFieldNumber = 4;
+    private bool enabled_;
+    /// <summary>
+    /// 只控制此卡执行时是否请求供料；不授予客户端扣量权限。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Enabled {
+      get { return enabled_; }
+      set {
+        enabled_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as InventorySpellAttachmentStateMessage);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(InventorySpellAttachmentStateMessage other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (SchemaVersion != other.SchemaVersion) return false;
+      if (ContainerId != other.ContainerId) return false;
+      if (Dose != other.Dose) return false;
+      if (Enabled != other.Enabled) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (SchemaVersion != 0) hash ^= SchemaVersion.GetHashCode();
+      if (ContainerId.Length != 0) hash ^= ContainerId.GetHashCode();
+      if (Dose != 0UL) hash ^= Dose.GetHashCode();
+      if (Enabled != false) hash ^= Enabled.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (SchemaVersion != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(SchemaVersion);
+      }
+      if (ContainerId.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(ContainerId);
+      }
+      if (Dose != 0UL) {
+        output.WriteRawTag(24);
+        output.WriteUInt64(Dose);
+      }
+      if (Enabled != false) {
+        output.WriteRawTag(32);
+        output.WriteBool(Enabled);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (SchemaVersion != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(SchemaVersion);
+      }
+      if (ContainerId.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(ContainerId);
+      }
+      if (Dose != 0UL) {
+        output.WriteRawTag(24);
+        output.WriteUInt64(Dose);
+      }
+      if (Enabled != false) {
+        output.WriteRawTag(32);
+        output.WriteBool(Enabled);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (SchemaVersion != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(SchemaVersion);
+      }
+      if (ContainerId.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(ContainerId);
+      }
+      if (Dose != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Dose);
+      }
+      if (Enabled != false) {
+        size += 1 + 1;
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(InventorySpellAttachmentStateMessage other) {
+      if (other == null) {
+        return;
+      }
+      if (other.SchemaVersion != 0) {
+        SchemaVersion = other.SchemaVersion;
+      }
+      if (other.ContainerId.Length != 0) {
+        ContainerId = other.ContainerId;
+      }
+      if (other.Dose != 0UL) {
+        Dose = other.Dose;
+      }
+      if (other.Enabled != false) {
+        Enabled = other.Enabled;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            SchemaVersion = input.ReadUInt32();
+            break;
+          }
+          case 18: {
+            ContainerId = input.ReadString();
+            break;
+          }
+          case 24: {
+            Dose = input.ReadUInt64();
+            break;
+          }
+          case 32: {
+            Enabled = input.ReadBool();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 8: {
+            SchemaVersion = input.ReadUInt32();
+            break;
+          }
+          case 18: {
+            ContainerId = input.ReadString();
+            break;
+          }
+          case 24: {
+            Dose = input.ReadUInt64();
+            break;
+          }
+          case 32: {
+            Enabled = input.ReadBool();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+  public sealed partial class InventoryOwnedMaterialStateMessage : pb::IMessage<InventoryOwnedMaterialStateMessage>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<InventoryOwnedMaterialStateMessage> _parser = new pb::MessageParser<InventoryOwnedMaterialStateMessage>(() => new InventoryOwnedMaterialStateMessage());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<InventoryOwnedMaterialStateMessage> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Game.NetworkProtocol.InventoryReflection.Descriptor.MessageTypes[7]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public InventoryOwnedMaterialStateMessage() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public InventoryOwnedMaterialStateMessage(InventoryOwnedMaterialStateMessage other) : this() {
+      schemaVersion_ = other.schemaVersion_;
+      materialKey_ = other.materialKey_;
+      quantity_ = other.quantity_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public InventoryOwnedMaterialStateMessage Clone() {
+      return new InventoryOwnedMaterialStateMessage(this);
+    }
+
+    /// <summary>Field number for the "schema_version" field.</summary>
+    public const int SchemaVersionFieldNumber = 1;
+    private uint schemaVersion_;
+    /// <summary>
+    /// 必须显式1，缺状态/0不取得材料写资格。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint SchemaVersion {
+      get { return schemaVersion_; }
+      set {
+        schemaVersion_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "material_key" field.</summary>
+    public const int MaterialKeyFieldNumber = 2;
+    private uint materialKey_;
+    /// <summary>
+    /// 稳定材料身份1..8，校验后才可窄化byte，目录Key由领域层再次核对。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint MaterialKey {
+      get { return materialKey_; }
+      set {
+        materialKey_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "quantity" field.</summary>
+    public const int QuantityFieldNumber = 3;
+    private ulong quantity_;
+    /// <summary>
+    /// GMU精确正整数，不得float/uint32/有符号BIGINT截断，容量由可信目录再验。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public ulong Quantity {
+      get { return quantity_; }
+      set {
+        quantity_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as InventoryOwnedMaterialStateMessage);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(InventoryOwnedMaterialStateMessage other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (SchemaVersion != other.SchemaVersion) return false;
+      if (MaterialKey != other.MaterialKey) return false;
+      if (Quantity != other.Quantity) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (SchemaVersion != 0) hash ^= SchemaVersion.GetHashCode();
+      if (MaterialKey != 0) hash ^= MaterialKey.GetHashCode();
+      if (Quantity != 0UL) hash ^= Quantity.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (SchemaVersion != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(SchemaVersion);
+      }
+      if (MaterialKey != 0) {
+        output.WriteRawTag(16);
+        output.WriteUInt32(MaterialKey);
+      }
+      if (Quantity != 0UL) {
+        output.WriteRawTag(24);
+        output.WriteUInt64(Quantity);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (SchemaVersion != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(SchemaVersion);
+      }
+      if (MaterialKey != 0) {
+        output.WriteRawTag(16);
+        output.WriteUInt32(MaterialKey);
+      }
+      if (Quantity != 0UL) {
+        output.WriteRawTag(24);
+        output.WriteUInt64(Quantity);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (SchemaVersion != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(SchemaVersion);
+      }
+      if (MaterialKey != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(MaterialKey);
+      }
+      if (Quantity != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Quantity);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(InventoryOwnedMaterialStateMessage other) {
+      if (other == null) {
+        return;
+      }
+      if (other.SchemaVersion != 0) {
+        SchemaVersion = other.SchemaVersion;
+      }
+      if (other.MaterialKey != 0) {
+        MaterialKey = other.MaterialKey;
+      }
+      if (other.Quantity != 0UL) {
+        Quantity = other.Quantity;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            SchemaVersion = input.ReadUInt32();
+            break;
+          }
+          case 16: {
+            MaterialKey = input.ReadUInt32();
+            break;
+          }
+          case 24: {
+            Quantity = input.ReadUInt64();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 8: {
+            SchemaVersion = input.ReadUInt32();
+            break;
+          }
+          case 16: {
+            MaterialKey = input.ReadUInt32();
+            break;
+          }
+          case 24: {
+            Quantity = input.ReadUInt64();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  /// <summary>
+  /// 容器已知状态的值副本；组分单位为GMU，目录容量与材料掩码仍由Run核验。
+  /// </summary>
+  [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+  public sealed partial class InventoryOwnedContainerStateMessage : pb::IMessage<InventoryOwnedContainerStateMessage>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<InventoryOwnedContainerStateMessage> _parser = new pb::MessageParser<InventoryOwnedContainerStateMessage>(() => new InventoryOwnedContainerStateMessage());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<InventoryOwnedContainerStateMessage> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Game.NetworkProtocol.InventoryReflection.Descriptor.MessageTypes[8]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public InventoryOwnedContainerStateMessage() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public InventoryOwnedContainerStateMessage(InventoryOwnedContainerStateMessage other) : this() {
+      schemaVersion_ = other.schemaVersion_;
+      components_ = other.components_.Clone();
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public InventoryOwnedContainerStateMessage Clone() {
+      return new InventoryOwnedContainerStateMessage(this);
+    }
+
+    /// <summary>Field number for the "schema_version" field.</summary>
+    public const int SchemaVersionFieldNumber = 1;
+    private uint schemaVersion_;
+    /// <summary>
+    /// 显式1表示已知容器状态；缺省0拒绝，零组分是空瓶。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint SchemaVersion {
+      get { return schemaVersion_; }
+      set {
+        schemaVersion_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "components" field.</summary>
+    public const int ComponentsFieldNumber = 2;
+    private static readonly pb::FieldCodec<global::Game.NetworkProtocol.InventoryOwnedMaterialAmountMessage> _repeated_components_codec
+        = pb::FieldCodec.ForMessage(18, global::Game.NetworkProtocol.InventoryOwnedMaterialAmountMessage.Parser);
+    private readonly pbc::RepeatedField<global::Game.NetworkProtocol.InventoryOwnedMaterialAmountMessage> components_ = new pbc::RepeatedField<global::Game.NetworkProtocol.InventoryOwnedMaterialAmountMessage>();
+    /// <summary>
+    /// 最多8种唯一已知材料，零项为已知空瓶；数量必须正且总量不溢出。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public pbc::RepeatedField<global::Game.NetworkProtocol.InventoryOwnedMaterialAmountMessage> Components {
+      get { return components_; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as InventoryOwnedContainerStateMessage);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(InventoryOwnedContainerStateMessage other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (SchemaVersion != other.SchemaVersion) return false;
+      if(!components_.Equals(other.components_)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (SchemaVersion != 0) hash ^= SchemaVersion.GetHashCode();
+      hash ^= components_.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (SchemaVersion != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(SchemaVersion);
+      }
+      components_.WriteTo(output, _repeated_components_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (SchemaVersion != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(SchemaVersion);
+      }
+      components_.WriteTo(ref output, _repeated_components_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (SchemaVersion != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(SchemaVersion);
+      }
+      size += components_.CalculateSize(_repeated_components_codec);
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(InventoryOwnedContainerStateMessage other) {
+      if (other == null) {
+        return;
+      }
+      if (other.SchemaVersion != 0) {
+        SchemaVersion = other.SchemaVersion;
+      }
+      components_.Add(other.components_);
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            SchemaVersion = input.ReadUInt32();
+            break;
+          }
+          case 18: {
+            components_.AddEntriesFrom(input, _repeated_components_codec);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 8: {
+            SchemaVersion = input.ReadUInt32();
+            break;
+          }
+          case 18: {
+            components_.AddEntriesFrom(ref input, _repeated_components_codec);
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+  public sealed partial class InventoryOwnedMaterialAmountMessage : pb::IMessage<InventoryOwnedMaterialAmountMessage>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<InventoryOwnedMaterialAmountMessage> _parser = new pb::MessageParser<InventoryOwnedMaterialAmountMessage>(() => new InventoryOwnedMaterialAmountMessage());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<InventoryOwnedMaterialAmountMessage> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Game.NetworkProtocol.InventoryReflection.Descriptor.MessageTypes[9]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public InventoryOwnedMaterialAmountMessage() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public InventoryOwnedMaterialAmountMessage(InventoryOwnedMaterialAmountMessage other) : this() {
+      materialKey_ = other.materialKey_;
+      quantity_ = other.quantity_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public InventoryOwnedMaterialAmountMessage Clone() {
+      return new InventoryOwnedMaterialAmountMessage(this);
+    }
+
+    /// <summary>Field number for the "material_key" field.</summary>
+    public const int MaterialKeyFieldNumber = 1;
+    private uint materialKey_;
+    /// <summary>
+    /// 稳定材料身份1..8；先校验再转byte，不允许截断回合法键。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint MaterialKey {
+      get { return materialKey_; }
+      set {
+        materialKey_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "quantity" field.</summary>
+    public const int QuantityFieldNumber = 2;
+    private ulong quantity_;
+    /// <summary>
+    /// GMU精确无符号数量，禁止float/double或uint32截断；容量/mask由真实目录再验。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public ulong Quantity {
+      get { return quantity_; }
+      set {
+        quantity_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as InventoryOwnedMaterialAmountMessage);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(InventoryOwnedMaterialAmountMessage other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (MaterialKey != other.MaterialKey) return false;
+      if (Quantity != other.Quantity) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (MaterialKey != 0) hash ^= MaterialKey.GetHashCode();
+      if (Quantity != 0UL) hash ^= Quantity.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (MaterialKey != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(MaterialKey);
+      }
+      if (Quantity != 0UL) {
+        output.WriteRawTag(16);
+        output.WriteUInt64(Quantity);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (MaterialKey != 0) {
+        output.WriteRawTag(8);
+        output.WriteUInt32(MaterialKey);
+      }
+      if (Quantity != 0UL) {
+        output.WriteRawTag(16);
+        output.WriteUInt64(Quantity);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (MaterialKey != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(MaterialKey);
+      }
+      if (Quantity != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Quantity);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(InventoryOwnedMaterialAmountMessage other) {
+      if (other == null) {
+        return;
+      }
+      if (other.MaterialKey != 0) {
+        MaterialKey = other.MaterialKey;
+      }
+      if (other.Quantity != 0UL) {
+        Quantity = other.Quantity;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            MaterialKey = input.ReadUInt32();
+            break;
+          }
+          case 16: {
+            Quantity = input.ReadUInt64();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 8: {
+            MaterialKey = input.ReadUInt32();
+            break;
+          }
+          case 16: {
+            Quantity = input.ReadUInt64();
+            break;
+          }
         }
       }
     }
@@ -1905,7 +4920,7 @@ namespace Game.NetworkProtocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Game.NetworkProtocol.InventoryReflection.Descriptor.MessageTypes[3]; }
+      get { return global::Game.NetworkProtocol.InventoryReflection.Descriptor.MessageTypes[10]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2418,7 +5433,7 @@ namespace Game.NetworkProtocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Game.NetworkProtocol.InventoryReflection.Descriptor.MessageTypes[4]; }
+      get { return global::Game.NetworkProtocol.InventoryReflection.Descriptor.MessageTypes[11]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2742,7 +5757,7 @@ namespace Game.NetworkProtocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Game.NetworkProtocol.InventoryReflection.Descriptor.MessageTypes[5]; }
+      get { return global::Game.NetworkProtocol.InventoryReflection.Descriptor.MessageTypes[12]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2987,7 +6002,7 @@ namespace Game.NetworkProtocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Game.NetworkProtocol.InventoryReflection.Descriptor.MessageTypes[6]; }
+      get { return global::Game.NetworkProtocol.InventoryReflection.Descriptor.MessageTypes[13]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3020,6 +6035,24 @@ namespace Game.NetworkProtocol {
       targetProgramRevision_ = other.targetProgramRevision_;
       targetSlot_ = other.targetSlot_;
       toSpellStorage_ = other.toSpellStorage_;
+      transferBudget_ = other.transferBudget_;
+      aimOriginX_ = other.aimOriginX_;
+      aimOriginY_ = other.aimOriginY_;
+      aimOriginZ_ = other.aimOriginZ_;
+      aimDirectionX_ = other.aimDirectionX_;
+      aimDirectionY_ = other.aimDirectionY_;
+      aimDirectionZ_ = other.aimDirectionZ_;
+      worldOwnerId_ = other.worldOwnerId_;
+      targetBackpackId_ = other.targetBackpackId_;
+      gridX_ = other.gridX_;
+      gridY_ = other.gridY_;
+      quarterTurns_ = other.quarterTurns_;
+      autoPlace_ = other.autoPlace_;
+      attachmentContainerId_ = other.attachmentContainerId_;
+      attachmentDose_ = other.attachmentDose_;
+      attachmentEnabled_ = other.attachmentEnabled_;
+      targetLocationKind_ = other.targetLocationKind_;
+      wholeStack_ = other.wholeStack_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -3108,7 +6141,7 @@ namespace Game.NetworkProtocol {
     public const int KindFieldNumber = 6;
     private uint kind_;
     /// <summary>
-    /// SelectWand=1、PlaceCard=2；0与未知值拒绝。
+    /// SelectWand=1、PlaceCard=2、SelectTool=3、CollectMaterial=4、PourContainer=5、BindTool=6、DropContainer=7、PickupContainer=8、ThrowContainer=9、ReleaseSolid=10、ConfigureSpellAttachment=11、MoveOwned=12、EquipWand=13、DropItem=14、PickupItem=15、BeginWandResearch=16、EndWandResearch=17；先验原uint防byte截断。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -3123,7 +6156,7 @@ namespace Game.NetworkProtocol {
     public const int ItemIdFieldNumber = 7;
     private string itemId_ = "";
     /// <summary>
-    /// 32位小写hex；选杖为法杖实例，放卡为卡片实例，不是ContentId。
+    /// 32位小写hex真实GUID；绑定须为真实携带Container，Run核验归属，不能用ContentId替代。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -3138,7 +6171,7 @@ namespace Game.NetworkProtocol {
     public const int SourceWandIdFieldNumber = 8;
     private string sourceWandId_ = "";
     /// <summary>
-    /// 原程序所属法杖ID；从随身SpellStorage取卡时为空。
+    /// 原程序所属法杖ID；从SpellStorage取卡、选择、绑定或F/H时为空。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -3153,7 +6186,7 @@ namespace Game.NetworkProtocol {
     public const int SourceProgramRevisionFieldNumber = 9;
     private uint sourceProgramRevision_;
     /// <summary>
-    /// 非空SourceWand对应的非零程序版本；Storage来源/选杖为0。
+    /// 非空SourceWand对应的非零程序版本；Storage来源、选择、绑定或F/H为0。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -3168,7 +6201,7 @@ namespace Game.NetworkProtocol {
     public const int TargetWandIdFieldNumber = 10;
     private string targetWandId_ = "";
     /// <summary>
-    /// 目标法杖ID；移入SpellStorage或选杖时为空。
+    /// 目标法杖ID；移入SpellStorage、选择、绑定或F/H时为空。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -3183,7 +6216,7 @@ namespace Game.NetworkProtocol {
     public const int TargetProgramRevisionFieldNumber = 11;
     private uint targetProgramRevision_;
     /// <summary>
-    /// 非空TargetWand对应的非零程序版本；Storage目标/选杖为0。
+    /// 非空TargetWand对应的非零程序版本；Storage目标、选择、绑定或F/H为0。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -3198,7 +6231,7 @@ namespace Game.NetworkProtocol {
     public const int TargetSlotFieldNumber = 12;
     private int targetSlot_;
     /// <summary>
-    /// 选杖槽0..2；放卡Wire预算0..255，实际程序/专区容量由Run核验。
+    /// 选杖0..2、选工具/绑定/F/H槽0..6；放卡Wire预算0..255，真实绑定/容量由Run核验。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -3213,7 +6246,7 @@ namespace Game.NetworkProtocol {
     public const int ToSpellStorageFieldNumber = 13;
     private bool toSpellStorage_;
     /// <summary>
-    /// true明确表示随身法术专区，不代表Bag/仓库/地面；选杖必须false。
+    /// true仅表示随身法术专区；选择、绑定及F/H必须false，不代表Bag/仓库/地面。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -3221,6 +6254,276 @@ namespace Game.NetworkProtocol {
       get { return toSpellStorage_; }
       set {
         toSpellStorage_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "transfer_budget" field.</summary>
+    public const int TransferBudgetFieldNumber = 14;
+    private ulong transferBudget_;
+    /// <summary>
+    /// GMU请求上限：Collect为1..4096、Pour为1..1024；非F/H必须0，实际数量由DS事务裁决。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public ulong TransferBudget {
+      get { return transferBudget_; }
+      set {
+        transferBudget_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "aim_origin_x" field.</summary>
+    public const int AimOriginXFieldNumber = 15;
+    private float aimOriginX_;
+    /// <summary>
+    /// 镜头射线起点X，必须有限；非F/H必须0，DS按真实Actor位置重新核验采样。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float AimOriginX {
+      get { return aimOriginX_; }
+      set {
+        aimOriginX_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "aim_origin_y" field.</summary>
+    public const int AimOriginYFieldNumber = 16;
+    private float aimOriginY_;
+    /// <summary>
+    /// 镜头射线起点Y，必须有限；非F/H必须0，不是已授权世界落点。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float AimOriginY {
+      get { return aimOriginY_; }
+      set {
+        aimOriginY_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "aim_origin_z" field.</summary>
+    public const int AimOriginZFieldNumber = 17;
+    private float aimOriginZ_;
+    /// <summary>
+    /// 镜头射线起点Z，必须有限；非F/H必须0，不接受客户端直接写世界结果。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float AimOriginZ {
+      get { return aimOriginZ_; }
+      set {
+        aimOriginZ_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "aim_direction_x" field.</summary>
+    public const int AimDirectionXFieldNumber = 18;
+    private float aimDirectionX_;
+    /// <summary>
+    /// 射线方向X，三分量有限且平方长度近1；非F/H必须0，不增加游戏角度政策。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float AimDirectionX {
+      get { return aimDirectionX_; }
+      set {
+        aimDirectionX_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "aim_direction_y" field.</summary>
+    public const int AimDirectionYFieldNumber = 19;
+    private float aimDirectionY_;
+    /// <summary>
+    /// 射线方向Y，与XYZ共同校验平方长度0.99..1.01；非F/H必须0。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float AimDirectionY {
+      get { return aimDirectionY_; }
+      set {
+        aimDirectionY_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "aim_direction_z" field.</summary>
+    public const int AimDirectionZFieldNumber = 20;
+    private float aimDirectionZ_;
+    /// <summary>
+    /// 射线方向Z，与XYZ共同校验平方长度0.99..1.01；非F/H必须0，轨迹仍由DS重算。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public float AimDirectionZ {
+      get { return aimDirectionZ_; }
+      set {
+        aimDirectionZ_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "world_owner_id" field.</summary>
+    public const int WorldOwnerIdFieldNumber = 21;
+    private string worldOwnerId_ = "";
+    /// <summary>
+    /// 仅Pickup必需的32位小写hex地面归属；Drop与非地面命令必须空。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string WorldOwnerId {
+      get { return worldOwnerId_; }
+      set {
+        worldOwnerId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "target_backpack_id" field.</summary>
+    public const int TargetBackpackIdFieldNumber = 22;
+    private string targetBackpackId_ = "";
+    /// <summary>
+    /// 手动Pickup的32位小写hex真实背包；自动Pickup/Drop/其它命令必须空。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string TargetBackpackId {
+      get { return targetBackpackId_; }
+      set {
+        targetBackpackId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "grid_x" field.</summary>
+    public const int GridXFieldNumber = 23;
+    private int gridX_;
+    /// <summary>
+    /// 手动Pickup目标格X为0..255，实际形状/容量由Run核验；其它情形必须0。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int GridX {
+      get { return gridX_; }
+      set {
+        gridX_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "grid_y" field.</summary>
+    public const int GridYFieldNumber = 24;
+    private int gridY_;
+    /// <summary>
+    /// 手动Pickup目标格Y为0..255，不能先窄化超宽值；其它情形必须0。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int GridY {
+      get { return gridY_; }
+      set {
+        gridY_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "quarter_turns" field.</summary>
+    public const int QuarterTurnsFieldNumber = 25;
+    private int quarterTurns_;
+    /// <summary>
+    /// 手动Pickup旋转0..3；自动Pickup/Drop/其它命令必须0。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int QuarterTurns {
+      get { return quarterTurns_; }
+      set {
+        quarterTurns_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "auto_place" field.</summary>
+    public const int AutoPlaceFieldNumber = 26;
+    private bool autoPlace_;
+    /// <summary>
+    /// Pickup为true时由DS按既有装包语义寻找位置且不携带目标格；Drop/非地面必须false。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool AutoPlace {
+      get { return autoPlace_; }
+      set {
+        autoPlace_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "attachment_container_id" field.</summary>
+    public const int AttachmentContainerIdFieldNumber = 27;
+    private string attachmentContainerId_ = "";
+    /// <summary>
+    /// 仅ConfigureSpellAttachment=11启用时的来源实例，清除及其它命令必须空。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string AttachmentContainerId {
+      get { return attachmentContainerId_; }
+      set {
+        attachmentContainerId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "attachment_dose" field.</summary>
+    public const int AttachmentDoseFieldNumber = 28;
+    private ulong attachmentDose_;
+    /// <summary>
+    /// 仅Kind11启用时的正GMU剂量，清除和其它命令为0；不是本次已扣数量。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public ulong AttachmentDose {
+      get { return attachmentDose_; }
+      set {
+        attachmentDose_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "attachment_enabled" field.</summary>
+    public const int AttachmentEnabledFieldNumber = 29;
+    private bool attachmentEnabled_;
+    /// <summary>
+    /// Kind11配置开关；关闭必须空来源/零剂量，客户端不直接改卡片状态。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool AttachmentEnabled {
+      get { return attachmentEnabled_; }
+      set {
+        attachmentEnabled_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "target_location_kind" field.</summary>
+    public const int TargetLocationKindFieldNumber = 30;
+    private int targetLocationKind_;
+    /// <summary>
+    /// 新12/13/15指定既有编号：包1/杖槽2/装备杖3/装备包4/专区7/工具8，自动拾取为0；旧命令必须0。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int TargetLocationKind {
+      get { return targetLocationKind_; }
+      set {
+        targetLocationKind_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "whole_stack" field.</summary>
+    public const int WholeStackFieldNumber = 31;
+    private bool wholeStack_;
+    /// <summary>
+    /// 仅MoveOwned12/DropItem14可请求原同格整堆语义；不是客户端上传的数量或实例表，其余false。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool WholeStack {
+      get { return wholeStack_; }
+      set {
+        wholeStack_ = value;
       }
     }
 
@@ -3252,6 +6555,24 @@ namespace Game.NetworkProtocol {
       if (TargetProgramRevision != other.TargetProgramRevision) return false;
       if (TargetSlot != other.TargetSlot) return false;
       if (ToSpellStorage != other.ToSpellStorage) return false;
+      if (TransferBudget != other.TransferBudget) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(AimOriginX, other.AimOriginX)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(AimOriginY, other.AimOriginY)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(AimOriginZ, other.AimOriginZ)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(AimDirectionX, other.AimDirectionX)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(AimDirectionY, other.AimDirectionY)) return false;
+      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(AimDirectionZ, other.AimDirectionZ)) return false;
+      if (WorldOwnerId != other.WorldOwnerId) return false;
+      if (TargetBackpackId != other.TargetBackpackId) return false;
+      if (GridX != other.GridX) return false;
+      if (GridY != other.GridY) return false;
+      if (QuarterTurns != other.QuarterTurns) return false;
+      if (AutoPlace != other.AutoPlace) return false;
+      if (AttachmentContainerId != other.AttachmentContainerId) return false;
+      if (AttachmentDose != other.AttachmentDose) return false;
+      if (AttachmentEnabled != other.AttachmentEnabled) return false;
+      if (TargetLocationKind != other.TargetLocationKind) return false;
+      if (WholeStack != other.WholeStack) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -3272,6 +6593,24 @@ namespace Game.NetworkProtocol {
       if (TargetProgramRevision != 0) hash ^= TargetProgramRevision.GetHashCode();
       if (TargetSlot != 0) hash ^= TargetSlot.GetHashCode();
       if (ToSpellStorage != false) hash ^= ToSpellStorage.GetHashCode();
+      if (TransferBudget != 0UL) hash ^= TransferBudget.GetHashCode();
+      if (AimOriginX != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(AimOriginX);
+      if (AimOriginY != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(AimOriginY);
+      if (AimOriginZ != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(AimOriginZ);
+      if (AimDirectionX != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(AimDirectionX);
+      if (AimDirectionY != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(AimDirectionY);
+      if (AimDirectionZ != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(AimDirectionZ);
+      if (WorldOwnerId.Length != 0) hash ^= WorldOwnerId.GetHashCode();
+      if (TargetBackpackId.Length != 0) hash ^= TargetBackpackId.GetHashCode();
+      if (GridX != 0) hash ^= GridX.GetHashCode();
+      if (GridY != 0) hash ^= GridY.GetHashCode();
+      if (QuarterTurns != 0) hash ^= QuarterTurns.GetHashCode();
+      if (AutoPlace != false) hash ^= AutoPlace.GetHashCode();
+      if (AttachmentContainerId.Length != 0) hash ^= AttachmentContainerId.GetHashCode();
+      if (AttachmentDose != 0UL) hash ^= AttachmentDose.GetHashCode();
+      if (AttachmentEnabled != false) hash ^= AttachmentEnabled.GetHashCode();
+      if (TargetLocationKind != 0) hash ^= TargetLocationKind.GetHashCode();
+      if (WholeStack != false) hash ^= WholeStack.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -3342,6 +6681,78 @@ namespace Game.NetworkProtocol {
         output.WriteRawTag(104);
         output.WriteBool(ToSpellStorage);
       }
+      if (TransferBudget != 0UL) {
+        output.WriteRawTag(112);
+        output.WriteUInt64(TransferBudget);
+      }
+      if (AimOriginX != 0F) {
+        output.WriteRawTag(125);
+        output.WriteFloat(AimOriginX);
+      }
+      if (AimOriginY != 0F) {
+        output.WriteRawTag(133, 1);
+        output.WriteFloat(AimOriginY);
+      }
+      if (AimOriginZ != 0F) {
+        output.WriteRawTag(141, 1);
+        output.WriteFloat(AimOriginZ);
+      }
+      if (AimDirectionX != 0F) {
+        output.WriteRawTag(149, 1);
+        output.WriteFloat(AimDirectionX);
+      }
+      if (AimDirectionY != 0F) {
+        output.WriteRawTag(157, 1);
+        output.WriteFloat(AimDirectionY);
+      }
+      if (AimDirectionZ != 0F) {
+        output.WriteRawTag(165, 1);
+        output.WriteFloat(AimDirectionZ);
+      }
+      if (WorldOwnerId.Length != 0) {
+        output.WriteRawTag(170, 1);
+        output.WriteString(WorldOwnerId);
+      }
+      if (TargetBackpackId.Length != 0) {
+        output.WriteRawTag(178, 1);
+        output.WriteString(TargetBackpackId);
+      }
+      if (GridX != 0) {
+        output.WriteRawTag(184, 1);
+        output.WriteInt32(GridX);
+      }
+      if (GridY != 0) {
+        output.WriteRawTag(192, 1);
+        output.WriteInt32(GridY);
+      }
+      if (QuarterTurns != 0) {
+        output.WriteRawTag(200, 1);
+        output.WriteInt32(QuarterTurns);
+      }
+      if (AutoPlace != false) {
+        output.WriteRawTag(208, 1);
+        output.WriteBool(AutoPlace);
+      }
+      if (AttachmentContainerId.Length != 0) {
+        output.WriteRawTag(218, 1);
+        output.WriteString(AttachmentContainerId);
+      }
+      if (AttachmentDose != 0UL) {
+        output.WriteRawTag(224, 1);
+        output.WriteUInt64(AttachmentDose);
+      }
+      if (AttachmentEnabled != false) {
+        output.WriteRawTag(232, 1);
+        output.WriteBool(AttachmentEnabled);
+      }
+      if (TargetLocationKind != 0) {
+        output.WriteRawTag(240, 1);
+        output.WriteInt32(TargetLocationKind);
+      }
+      if (WholeStack != false) {
+        output.WriteRawTag(248, 1);
+        output.WriteBool(WholeStack);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -3404,6 +6815,78 @@ namespace Game.NetworkProtocol {
         output.WriteRawTag(104);
         output.WriteBool(ToSpellStorage);
       }
+      if (TransferBudget != 0UL) {
+        output.WriteRawTag(112);
+        output.WriteUInt64(TransferBudget);
+      }
+      if (AimOriginX != 0F) {
+        output.WriteRawTag(125);
+        output.WriteFloat(AimOriginX);
+      }
+      if (AimOriginY != 0F) {
+        output.WriteRawTag(133, 1);
+        output.WriteFloat(AimOriginY);
+      }
+      if (AimOriginZ != 0F) {
+        output.WriteRawTag(141, 1);
+        output.WriteFloat(AimOriginZ);
+      }
+      if (AimDirectionX != 0F) {
+        output.WriteRawTag(149, 1);
+        output.WriteFloat(AimDirectionX);
+      }
+      if (AimDirectionY != 0F) {
+        output.WriteRawTag(157, 1);
+        output.WriteFloat(AimDirectionY);
+      }
+      if (AimDirectionZ != 0F) {
+        output.WriteRawTag(165, 1);
+        output.WriteFloat(AimDirectionZ);
+      }
+      if (WorldOwnerId.Length != 0) {
+        output.WriteRawTag(170, 1);
+        output.WriteString(WorldOwnerId);
+      }
+      if (TargetBackpackId.Length != 0) {
+        output.WriteRawTag(178, 1);
+        output.WriteString(TargetBackpackId);
+      }
+      if (GridX != 0) {
+        output.WriteRawTag(184, 1);
+        output.WriteInt32(GridX);
+      }
+      if (GridY != 0) {
+        output.WriteRawTag(192, 1);
+        output.WriteInt32(GridY);
+      }
+      if (QuarterTurns != 0) {
+        output.WriteRawTag(200, 1);
+        output.WriteInt32(QuarterTurns);
+      }
+      if (AutoPlace != false) {
+        output.WriteRawTag(208, 1);
+        output.WriteBool(AutoPlace);
+      }
+      if (AttachmentContainerId.Length != 0) {
+        output.WriteRawTag(218, 1);
+        output.WriteString(AttachmentContainerId);
+      }
+      if (AttachmentDose != 0UL) {
+        output.WriteRawTag(224, 1);
+        output.WriteUInt64(AttachmentDose);
+      }
+      if (AttachmentEnabled != false) {
+        output.WriteRawTag(232, 1);
+        output.WriteBool(AttachmentEnabled);
+      }
+      if (TargetLocationKind != 0) {
+        output.WriteRawTag(240, 1);
+        output.WriteInt32(TargetLocationKind);
+      }
+      if (WholeStack != false) {
+        output.WriteRawTag(248, 1);
+        output.WriteBool(WholeStack);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -3452,6 +6935,60 @@ namespace Game.NetworkProtocol {
       }
       if (ToSpellStorage != false) {
         size += 1 + 1;
+      }
+      if (TransferBudget != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(TransferBudget);
+      }
+      if (AimOriginX != 0F) {
+        size += 1 + 4;
+      }
+      if (AimOriginY != 0F) {
+        size += 2 + 4;
+      }
+      if (AimOriginZ != 0F) {
+        size += 2 + 4;
+      }
+      if (AimDirectionX != 0F) {
+        size += 2 + 4;
+      }
+      if (AimDirectionY != 0F) {
+        size += 2 + 4;
+      }
+      if (AimDirectionZ != 0F) {
+        size += 2 + 4;
+      }
+      if (WorldOwnerId.Length != 0) {
+        size += 2 + pb::CodedOutputStream.ComputeStringSize(WorldOwnerId);
+      }
+      if (TargetBackpackId.Length != 0) {
+        size += 2 + pb::CodedOutputStream.ComputeStringSize(TargetBackpackId);
+      }
+      if (GridX != 0) {
+        size += 2 + pb::CodedOutputStream.ComputeInt32Size(GridX);
+      }
+      if (GridY != 0) {
+        size += 2 + pb::CodedOutputStream.ComputeInt32Size(GridY);
+      }
+      if (QuarterTurns != 0) {
+        size += 2 + pb::CodedOutputStream.ComputeInt32Size(QuarterTurns);
+      }
+      if (AutoPlace != false) {
+        size += 2 + 1;
+      }
+      if (AttachmentContainerId.Length != 0) {
+        size += 2 + pb::CodedOutputStream.ComputeStringSize(AttachmentContainerId);
+      }
+      if (AttachmentDose != 0UL) {
+        size += 2 + pb::CodedOutputStream.ComputeUInt64Size(AttachmentDose);
+      }
+      if (AttachmentEnabled != false) {
+        size += 2 + 1;
+      }
+      if (TargetLocationKind != 0) {
+        size += 2 + pb::CodedOutputStream.ComputeInt32Size(TargetLocationKind);
+      }
+      if (WholeStack != false) {
+        size += 2 + 1;
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -3503,6 +7040,60 @@ namespace Game.NetworkProtocol {
       }
       if (other.ToSpellStorage != false) {
         ToSpellStorage = other.ToSpellStorage;
+      }
+      if (other.TransferBudget != 0UL) {
+        TransferBudget = other.TransferBudget;
+      }
+      if (other.AimOriginX != 0F) {
+        AimOriginX = other.AimOriginX;
+      }
+      if (other.AimOriginY != 0F) {
+        AimOriginY = other.AimOriginY;
+      }
+      if (other.AimOriginZ != 0F) {
+        AimOriginZ = other.AimOriginZ;
+      }
+      if (other.AimDirectionX != 0F) {
+        AimDirectionX = other.AimDirectionX;
+      }
+      if (other.AimDirectionY != 0F) {
+        AimDirectionY = other.AimDirectionY;
+      }
+      if (other.AimDirectionZ != 0F) {
+        AimDirectionZ = other.AimDirectionZ;
+      }
+      if (other.WorldOwnerId.Length != 0) {
+        WorldOwnerId = other.WorldOwnerId;
+      }
+      if (other.TargetBackpackId.Length != 0) {
+        TargetBackpackId = other.TargetBackpackId;
+      }
+      if (other.GridX != 0) {
+        GridX = other.GridX;
+      }
+      if (other.GridY != 0) {
+        GridY = other.GridY;
+      }
+      if (other.QuarterTurns != 0) {
+        QuarterTurns = other.QuarterTurns;
+      }
+      if (other.AutoPlace != false) {
+        AutoPlace = other.AutoPlace;
+      }
+      if (other.AttachmentContainerId.Length != 0) {
+        AttachmentContainerId = other.AttachmentContainerId;
+      }
+      if (other.AttachmentDose != 0UL) {
+        AttachmentDose = other.AttachmentDose;
+      }
+      if (other.AttachmentEnabled != false) {
+        AttachmentEnabled = other.AttachmentEnabled;
+      }
+      if (other.TargetLocationKind != 0) {
+        TargetLocationKind = other.TargetLocationKind;
+      }
+      if (other.WholeStack != false) {
+        WholeStack = other.WholeStack;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -3573,6 +7164,78 @@ namespace Game.NetworkProtocol {
           }
           case 104: {
             ToSpellStorage = input.ReadBool();
+            break;
+          }
+          case 112: {
+            TransferBudget = input.ReadUInt64();
+            break;
+          }
+          case 125: {
+            AimOriginX = input.ReadFloat();
+            break;
+          }
+          case 133: {
+            AimOriginY = input.ReadFloat();
+            break;
+          }
+          case 141: {
+            AimOriginZ = input.ReadFloat();
+            break;
+          }
+          case 149: {
+            AimDirectionX = input.ReadFloat();
+            break;
+          }
+          case 157: {
+            AimDirectionY = input.ReadFloat();
+            break;
+          }
+          case 165: {
+            AimDirectionZ = input.ReadFloat();
+            break;
+          }
+          case 170: {
+            WorldOwnerId = input.ReadString();
+            break;
+          }
+          case 178: {
+            TargetBackpackId = input.ReadString();
+            break;
+          }
+          case 184: {
+            GridX = input.ReadInt32();
+            break;
+          }
+          case 192: {
+            GridY = input.ReadInt32();
+            break;
+          }
+          case 200: {
+            QuarterTurns = input.ReadInt32();
+            break;
+          }
+          case 208: {
+            AutoPlace = input.ReadBool();
+            break;
+          }
+          case 218: {
+            AttachmentContainerId = input.ReadString();
+            break;
+          }
+          case 224: {
+            AttachmentDose = input.ReadUInt64();
+            break;
+          }
+          case 232: {
+            AttachmentEnabled = input.ReadBool();
+            break;
+          }
+          case 240: {
+            TargetLocationKind = input.ReadInt32();
+            break;
+          }
+          case 248: {
+            WholeStack = input.ReadBool();
             break;
           }
         }
@@ -3646,6 +7309,78 @@ namespace Game.NetworkProtocol {
             ToSpellStorage = input.ReadBool();
             break;
           }
+          case 112: {
+            TransferBudget = input.ReadUInt64();
+            break;
+          }
+          case 125: {
+            AimOriginX = input.ReadFloat();
+            break;
+          }
+          case 133: {
+            AimOriginY = input.ReadFloat();
+            break;
+          }
+          case 141: {
+            AimOriginZ = input.ReadFloat();
+            break;
+          }
+          case 149: {
+            AimDirectionX = input.ReadFloat();
+            break;
+          }
+          case 157: {
+            AimDirectionY = input.ReadFloat();
+            break;
+          }
+          case 165: {
+            AimDirectionZ = input.ReadFloat();
+            break;
+          }
+          case 170: {
+            WorldOwnerId = input.ReadString();
+            break;
+          }
+          case 178: {
+            TargetBackpackId = input.ReadString();
+            break;
+          }
+          case 184: {
+            GridX = input.ReadInt32();
+            break;
+          }
+          case 192: {
+            GridY = input.ReadInt32();
+            break;
+          }
+          case 200: {
+            QuarterTurns = input.ReadInt32();
+            break;
+          }
+          case 208: {
+            AutoPlace = input.ReadBool();
+            break;
+          }
+          case 218: {
+            AttachmentContainerId = input.ReadString();
+            break;
+          }
+          case 224: {
+            AttachmentDose = input.ReadUInt64();
+            break;
+          }
+          case 232: {
+            AttachmentEnabled = input.ReadBool();
+            break;
+          }
+          case 240: {
+            TargetLocationKind = input.ReadInt32();
+            break;
+          }
+          case 248: {
+            WholeStack = input.ReadBool();
+            break;
+          }
         }
       }
     }
@@ -3671,7 +7406,7 @@ namespace Game.NetworkProtocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Game.NetworkProtocol.InventoryReflection.Descriptor.MessageTypes[7]; }
+      get { return global::Game.NetworkProtocol.InventoryReflection.Descriptor.MessageTypes[14]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3697,6 +7432,8 @@ namespace Game.NetworkProtocol {
       connectionEpoch_ = other.connectionEpoch_;
       inventoryVersion_ = other.inventoryVersion_;
       failure_ = other.failure_;
+      transferred_ = other.transferred_;
+      transferFailure_ = other.transferFailure_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -3796,6 +7533,36 @@ namespace Game.NetworkProtocol {
       }
     }
 
+    /// <summary>Field number for the "transferred" field.</summary>
+    public const int TransferredFieldNumber = 7;
+    private ulong transferred_;
+    /// <summary>
+    /// 已提交GMU精确数量；失败必须0，成功0兼容旧选择/移卡，实际F/H数量由事务给出。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public ulong Transferred {
+      get { return transferred_; }
+      set {
+        transferred_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "transfer_failure" field.</summary>
+    public const int TransferFailureFieldNumber = 8;
+    private uint transferFailure_;
+    /// <summary>
+    /// 原材料事务失败0..12（IncompatibleMaterial）；非None要求failure非None，先验原uint防byte截断。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public uint TransferFailure {
+      get { return transferFailure_; }
+      set {
+        transferFailure_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -3817,6 +7584,8 @@ namespace Game.NetworkProtocol {
       if (ConnectionEpoch != other.ConnectionEpoch) return false;
       if (InventoryVersion != other.InventoryVersion) return false;
       if (Failure != other.Failure) return false;
+      if (Transferred != other.Transferred) return false;
+      if (TransferFailure != other.TransferFailure) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -3830,6 +7599,8 @@ namespace Game.NetworkProtocol {
       if (ConnectionEpoch != 0) hash ^= ConnectionEpoch.GetHashCode();
       if (InventoryVersion != 0) hash ^= InventoryVersion.GetHashCode();
       if (Failure != 0) hash ^= Failure.GetHashCode();
+      if (Transferred != 0UL) hash ^= Transferred.GetHashCode();
+      if (TransferFailure != 0) hash ^= TransferFailure.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -3872,6 +7643,14 @@ namespace Game.NetworkProtocol {
         output.WriteRawTag(48);
         output.WriteUInt32(Failure);
       }
+      if (Transferred != 0UL) {
+        output.WriteRawTag(56);
+        output.WriteUInt64(Transferred);
+      }
+      if (TransferFailure != 0) {
+        output.WriteRawTag(64);
+        output.WriteUInt32(TransferFailure);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -3906,6 +7685,14 @@ namespace Game.NetworkProtocol {
         output.WriteRawTag(48);
         output.WriteUInt32(Failure);
       }
+      if (Transferred != 0UL) {
+        output.WriteRawTag(56);
+        output.WriteUInt64(Transferred);
+      }
+      if (TransferFailure != 0) {
+        output.WriteRawTag(64);
+        output.WriteUInt32(TransferFailure);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -3933,6 +7720,12 @@ namespace Game.NetworkProtocol {
       }
       if (Failure != 0) {
         size += 1 + pb::CodedOutputStream.ComputeUInt32Size(Failure);
+      }
+      if (Transferred != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Transferred);
+      }
+      if (TransferFailure != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt32Size(TransferFailure);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -3963,6 +7756,12 @@ namespace Game.NetworkProtocol {
       }
       if (other.Failure != 0) {
         Failure = other.Failure;
+      }
+      if (other.Transferred != 0UL) {
+        Transferred = other.Transferred;
+      }
+      if (other.TransferFailure != 0) {
+        TransferFailure = other.TransferFailure;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -4007,6 +7806,14 @@ namespace Game.NetworkProtocol {
             Failure = input.ReadUInt32();
             break;
           }
+          case 56: {
+            Transferred = input.ReadUInt64();
+            break;
+          }
+          case 64: {
+            TransferFailure = input.ReadUInt32();
+            break;
+          }
         }
       }
     #endif
@@ -4048,6 +7855,14 @@ namespace Game.NetworkProtocol {
           }
           case 48: {
             Failure = input.ReadUInt32();
+            break;
+          }
+          case 56: {
+            Transferred = input.ReadUInt64();
+            break;
+          }
+          case 64: {
+            TransferFailure = input.ReadUInt32();
             break;
           }
         }

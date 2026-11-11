@@ -1,0 +1,70 @@
+{
+  "Scope": "Existing logs, dump, installed matching PDB and source only; no new game execution",
+  "NativeCrashAtUtc": "2026-11-02T18:30:41Z",
+  "DumpException": "0x80000003",
+  "DumpExceptionThread": 31356,
+  "DumpThreadName": "D3D12 Submission Thread",
+  "DeviceErrorReported": "887a0001",
+  "MatchingPdb": {
+    "Path": "D:/Develop/6000.3.16f1/Editor/Data/PlaybackEngines/windowsstandalonesupport/Variations/win64_player_development_mono/UnityPlayer_Win64_player_development_mono_x64.pdb",
+    "Guid": "e3822cba-8ce9-4ae0-8da6-572f13ba7782",
+    "Age": 1,
+    "Bytes": 66514944,
+    "IdentityVerifiedFromPdbStreamAndActualLoadedModule": true,
+    "PdbUnmatched": false,
+    "LineNumbers": false,
+    "SourceLineLookupError": 487
+  },
+  "OfflineApi": {
+    "SymInitializeInvadeProcess": false,
+    "SearchPathReadbackMatchesOnlyLocalVariationsDirectory": true,
+    "SymLoadModuleExBase": "0x7FFB5D4C0000",
+    "SymLoadModuleExError": 0,
+    "SymCleanup": true,
+    "LiveProcessAttached": false,
+    "NetworkOrSymbolServerUsed": false,
+    "DiskSymbolCacheCreated": false,
+    "UnityPlayerCodeExecuted": false,
+    "StackWalkOrReturnAddressScanPerformed": false
+  },
+  "ActualLoggedFrames232To239": [
+    { "Address": "0x7FFB5F6EEC0D", "Symbol": "DebugStringToFilePostprocessedStacktrace+0xB1D" },
+    { "Address": "0x7FFB5F6EE029", "Symbol": "DebugStringToFile+0x6D9" },
+    { "Address": "0x7FFB5E7E5F05", "Symbol": "CheckDeviceStatus+0x2B5" },
+    { "Address": "0x7FFB5E7E3A26", "Symbol": "D3D12SwapChain::Present+0xE6" },
+    { "Address": "0x7FFB5E79A40C", "Symbol": "GfxTaskExecutorD3D12::DoPresent+0x4C" },
+    { "Address": "0x7FFB5E79FF87", "Symbol": "GfxTaskExecutorD3D12::RunTask+0xE07" },
+    { "Address": "0x7FFB5E7A22DE", "Symbol": "GfxTaskExecutorD3D12::Task+0x2E" },
+    { "Address": "0x7FFB5F3AFC9F", "Symbol": "Thread::RunThreadWrapper+0x88F" }
+  ],
+  "ConfirmedGraphicsPath": "D3D12 Present -> CheckDeviceStatus -> fatal logging/stack handling",
+  "InitialPresentFailureRootCauseIdentified": false,
+  "DoNotInfer": [
+    "Last managed Awake log is the crash source",
+    "Breakpoint capture is a separate CPU access violation",
+    "D3D11 login success isolates the cause to one graphics API",
+    "Working Set proves the absence or presence of machine performance bottleneck"
+  ],
+  "D3D11ControlConfound": "ExclusiveFullScreen 1280x720 failed; fallback was FullscreenWindow 2560x1600",
+  "MissingGraphicsEvidence": ["Initial Present call parameters and swapchain/device state", "DXGI debug/DRED cause details", "Native source lines are absent in this PDB"],
+  "HubMovement": {
+    "RootCauseIdentified": false,
+    "FinalSnapshotAtUtc": "2026-11-02T18:59:11Z",
+    "FinalSnapshotTimeScale": 1,
+    "FinalSnapshotApplicationFocused": true,
+    "UiSnapshotAtUtc": "2026-11-02T18:42:47Z",
+    "UiSnapshotShowsLoginMenuAndIsStaleForLaterInput": true,
+    "RecordedInputAtUtc": ["2026-11-02T18:47:00Z", "2026-11-02T18:47:01Z", "2026-11-02T18:52:30Z"],
+    "InputAuditProvesUnityActionMapReceivedInput": false,
+    "FailedNavigateBeforeAfterStepsPersisted": false,
+    "PortalProbeSelectsFirstSessionIncludingInactive": true,
+    "WrongRuntimeActorActuallyProven": false,
+    "StaticScenePlayerAndCameraPrefabBindingsAgree": true,
+    "OnlineMovementProbeDefaultsAreNotValidHubInputEvidence": true,
+    "MissingSameFrameObservation": ["Session/WorldActor/Current/controller InstanceId and active state", "Execution mode, initialization, focus/subscription and map enabled", "Non-consuming raw Move/Jump", "Pause reasons and UI capture", "CC enabled, requested/actual displacement, collision flags and contact identity/normal"]
+  },
+  "FixApplied": false,
+  "SystemOrProtectedSettingsChanged": false,
+  "NewGuiOrNativeLaunched": false,
+  "Helper": "C:/Users/zhy/Documents/Codex/2026-10-31/task/Analyze-D3D12DumpOffline.ps1"
+}

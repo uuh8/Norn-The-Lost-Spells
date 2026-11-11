@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-31 15:36:19Z" end-time="2026-10-31 15:36:20Z" duration="0.7637414">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3106" result="Failed" site="Child" start-time="2026-10-31 15:36:19Z" end-time="2026-10-31 15:36:20Z" duration="0.763741" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2958" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="236" result="Failed" site="Child" start-time="2026-10-31 15:36:19Z" end-time="2026-10-31 15:36:20Z" duration="0.667053" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25660" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2959" name="Game" fullname="Game" runstate="Runnable" testcasecount="236" result="Failed" site="Child" start-time="2026-10-31 15:36:20Z" end-time="2026-10-31 15:36:20Z" duration="0.578424" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2960" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="236" result="Failed" site="Child" start-time="2026-10-31 15:36:20Z" end-time="2026-10-31 15:36:20Z" duration="0.477215" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2961" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="236" result="Failed" site="Child" start-time="2026-10-31 15:36:20Z" end-time="2026-10-31 15:36:20Z" duration="0.378611" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2918" name="WorldReplicationCoordinatorTests" fullname="Game.Multiplayer.Tests.WorldReplicationCoordinatorTests" classname="Game.Multiplayer.Tests.WorldReplicationCoordinatorTests" runstate="Runnable" testcasecount="35" result="Failed" site="Child" start-time="2026-10-31 15:36:20Z" end-time="2026-10-31 15:36:20Z" duration="0.277538" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2952" name="CoveredHistoryNaturallyFreezesCurrentMultiPageBaselinesForTwoNonOriginKeys" fullname="Game.Multiplayer.Tests.WorldReplicationCoordinatorTests.CoveredHistoryNaturallyFreezesCurrentMultiPageBaselinesForTwoNonOriginKeys" methodname="CoveredHistoryNaturallyFreezesCurrentMultiPageBaselinesForTwoNonOriginKeys" classname="Game.Multiplayer.Tests.WorldReplicationCoordinatorTests" runstate="Runnable" seed="818628321" result="Failed" start-time="2026-10-31 15:36:20Z" end-time="2026-10-31 15:36:20Z" duration="0.141036" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.WorldReplicationCoordinatorTests.CoveredHistoryNaturallyFreezesCurrentMultiPageBaselinesForTwoNonOriginKeys () [0x00134] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\WorldReplicationChannelTests.cs:819
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2953" name="TombstoneAcknowledgementPrecedesNewGenerationBaselineAndOldGenerationCannotRefillStore" fullname="Game.Multiplayer.Tests.WorldReplicationCoordinatorTests.TombstoneAcknowledgementPrecedesNewGenerationBaselineAndOldGenerationCannotRefillStore" methodname="TombstoneAcknowledgementPrecedesNewGenerationBaselineAndOldGenerationCannotRefillStore" classname="Game.Multiplayer.Tests.WorldReplicationCoordinatorTests" runstate="Runnable" seed="675244810" result="Failed" start-time="2026-10-31 15:36:20Z" end-time="2026-10-31 15:36:20Z" duration="0.017455" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  已批准的订阅生命周期接口缺失：PeerLastFreezeKind
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.WorldReplicationCoordinatorTests.RequiredCall (System.Object owner, System.String method, System.Object[] args) [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\WorldReplicationChannelTests.cs:326
+at Game.Multiplayer.Tests.WorldReplicationCoordinatorTests.AssertFreeze (System.Object server, Game.NetworkProtocol.WorldPageMessage page, System.String kind) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\WorldReplicationChannelTests.cs:798
+at Game.Multiplayer.Tests.WorldReplicationCoordinatorTests.TombstoneAcknowledgementPrecedesNewGenerationBaselineAndOldGenerationCannotRefillStore () [0x00231] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\WorldReplicationChannelTests.cs:870
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

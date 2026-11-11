@@ -9,6 +9,7 @@ namespace Game.Character
     public sealed class OnlineCombatDefinition : ScriptableObject
     {
         [SerializeField] private ItemCatalog _catalog;
+        [SerializeField] private ContainerUseDefinition _containerUseDefinition;
         [SerializeField] private InputActionReference _selectWand1, _selectWand2, _selectWand3;
         [SerializeField] private string _gameplayConfigHash;
         [SerializeField] private float _groundReleaseSeconds, _airReleaseSeconds;
@@ -23,6 +24,29 @@ namespace Game.Character
         private string _cachedHash;
         private ulong _wireHash;
         public ItemCatalog Catalog => _catalog;
+        /// <summary>线上Client/DS引用原单机同一份容器速率与几何参数，不复制一组平衡数值。</summary>
+        public ContainerUseDefinition ContainerUse => _containerUseDefinition;
+        /// <summary>装配层只询问是否启用容器，不使Multiplayer反向引用Run的SO类型。</summary>
+        public bool HasContainerUse => _containerUseDefinition != null;
+        // 组合根只接触中立Prefab/标量；不能因此让Multiplayer反向引用Run的配置类型。
+        public GameObject ContainerThrowPrefab => _containerUseDefinition != null ? _containerUseDefinition.ThrowPrefab : null;
+        public float ContainerFlightSeconds => _containerUseDefinition != null ? _containerUseDefinition.FlightSeconds : 0;
+        public float ContainerMaximumFlightDistance => _containerUseDefinition != null ? _containerUseDefinition.MaximumFlightDistance : 0;
+        private ItemCatalogIndex _containerPresentationIndex;
+        private ItemCatalog _containerPresentationCatalog;
+        /// <summary>只按共同Hash保护的真实容器目录取纯模型，不从消息加载Prefab路径。</summary>
+        public bool TryGetContainerWorldModel(string contentId, out GameObject model)
+        {
+            model = null;
+            if (_catalog == null || string.IsNullOrEmpty(contentId)) return false;
+            if (_containerPresentationIndex == null || _containerPresentationCatalog != _catalog)
+            {
+                if (!_catalog.TryCreateIndex(out _containerPresentationIndex, out _)) return false;
+                _containerPresentationCatalog = _catalog;
+            }
+            if (!_containerPresentationIndex.TryGet(contentId, out var item) || item.Kind != ItemKind.Container || item.WorldModel == null) return false;
+            model = item.WorldModel; return true;
+        }
         /// <summary>
         /// Editor从原单机WandActions导入同一引用，不在在线代码硬编码KeyCode。
         /// Wizard生产Prefab本身没有库存Adapter；不能假定运行时AddComponent会自动取得场景里的Inspector字段。

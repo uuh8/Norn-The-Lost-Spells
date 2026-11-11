@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-31 14:40:00Z" end-time="2026-10-31 14:40:01Z" duration="0.7196132">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3102" result="Failed" site="Child" start-time="2026-10-31 14:40:00Z" end-time="2026-10-31 14:40:01Z" duration="0.719613" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="2953" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="232" result="Failed" site="Child" start-time="2026-10-31 14:40:00Z" end-time="2026-10-31 14:40:01Z" duration="0.619880" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="25660" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="2954" name="Game" fullname="Game" runstate="Runnable" testcasecount="232" result="Failed" site="Child" start-time="2026-10-31 14:40:00Z" end-time="2026-10-31 14:40:01Z" duration="0.527632" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="2955" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="232" result="Failed" site="Child" start-time="2026-10-31 14:40:01Z" end-time="2026-10-31 14:40:01Z" duration="0.427630" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="2956" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="232" result="Failed" site="Child" start-time="2026-10-31 14:40:01Z" end-time="2026-10-31 14:40:01Z" duration="0.327808" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2918" name="WorldReplicationCoordinatorTests" fullname="Game.Multiplayer.Tests.WorldReplicationCoordinatorTests" classname="Game.Multiplayer.Tests.WorldReplicationCoordinatorTests" runstate="Runnable" testcasecount="31" result="Failed" site="Child" start-time="2026-10-31 14:40:01Z" end-time="2026-10-31 14:40:01Z" duration="0.226805" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2935" name="CorruptDeltaReportsExactRejectedHeadersAndRecoversCurrentBaselineWithPeerAck" fullname="Game.Multiplayer.Tests.WorldReplicationCoordinatorTests.CorruptDeltaReportsExactRejectedHeadersAndRecoversCurrentBaselineWithPeerAck" methodname="CorruptDeltaReportsExactRejectedHeadersAndRecoversCurrentBaselineWithPeerAck" classname="Game.Multiplayer.Tests.WorldReplicationCoordinatorTests" runstate="Runnable" seed="714738276" result="Failed" start-time="2026-10-31 14:40:01Z" end-time="2026-10-31 14:40:01Z" duration="0.107830" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  已批准的恢复观测属性缺失：BaselineInstalled
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.WorldReplicationCoordinatorTests.RecoveryDiagnostic[T] (System.Object owner, System.String name) [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\WorldReplicationChannelTests.cs:393
+at Game.Multiplayer.Tests.WorldReplicationCoordinatorTests.CorruptDeltaReportsExactRejectedHeadersAndRecoversCurrentBaselineWithPeerAck () [0x000d2] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\WorldReplicationChannelTests.cs:429
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2936" name="MissingRevisionReportsPreservedDeltaAndRejectsStaleReplayAfterNewerBaselineRecovery" fullname="Game.Multiplayer.Tests.WorldReplicationCoordinatorTests.MissingRevisionReportsPreservedDeltaAndRejectsStaleReplayAfterNewerBaselineRecovery" methodname="MissingRevisionReportsPreservedDeltaAndRejectsStaleReplayAfterNewerBaselineRecovery" classname="Game.Multiplayer.Tests.WorldReplicationCoordinatorTests" runstate="Runnable" seed="694230940" result="Failed" start-time="2026-10-31 14:40:01Z" end-time="2026-10-31 14:40:01Z" duration="0.005052" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  已批准的恢复观测属性缺失：BaselineInstalled
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.WorldReplicationCoordinatorTests.RecoveryDiagnostic[T] (System.Object owner, System.String name) [0x0000e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\WorldReplicationChannelTests.cs:393
+at Game.Multiplayer.Tests.WorldReplicationCoordinatorTests.MissingRevisionReportsPreservedDeltaAndRejectsStaleReplayAfterNewerBaselineRecovery () [0x00223] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\WorldReplicationChannelTests.cs:493
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

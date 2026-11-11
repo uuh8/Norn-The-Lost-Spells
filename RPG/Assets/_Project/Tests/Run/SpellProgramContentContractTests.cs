@@ -46,9 +46,19 @@ namespace Game.Run.Tests
 
         [Test] public void TerminationHasADifferentTriggerConditionFromExistingFireballs()
         {
-            var termination=AssetDatabase.LoadAssetAtPath<SpellDefinition>("Assets/_Project/ScriptableObjects/Spell/Definitions/Spell_Emit_Termination.asset");
+            // 定义文件可按职责改名；存档 ContentId 和物品引用才是玩家实际执行的稳定入口。
+            // 经正式 Catalog 找终止弹，避免重建旧文件名掩盖正式物品与法术定义断开的错误。
+            var catalog=AssetDatabase.LoadAssetAtPath<ItemCatalog>("Assets/_Project/ScriptableObjects/World/Hub/Inventory/Catalog.asset");
+            Assert.That(catalog,Is.Not.Null);
+            Assert.That(catalog.TryCreateIndex(out var index,out var error),Is.True,error);
+            Assert.That(index.TryGet("norn.v2.termination",out var item),Is.True,"终止弹的稳定物品ID必须保留。");
+            Assert.That(item,Is.Not.Null);
+            var termination=item.SpellDefinition;
             var hit=AssetDatabase.LoadAssetAtPath<SpellDefinition>("Assets/_Project/ScriptableObjects/Spell/Definitions/Spell_Emit_TriggerFireball.asset");
             var timer=AssetDatabase.LoadAssetAtPath<SpellDefinition>("Assets/_Project/ScriptableObjects/Spell/Definitions/Spell_Emit_TimedFireball.asset");
+            Assert.That(termination,Is.Not.Null,"正式终止弹物品必须引用有效指令。");
+            Assert.That(hit,Is.Not.Null);
+            Assert.That(timer,Is.Not.Null);
             Assert.That(termination.PayloadTrigger,Is.EqualTo(PayloadTriggerMode.OnTermination));
             Assert.That(hit.PayloadTrigger,Is.EqualTo(PayloadTriggerMode.OnImpact));
             Assert.That(timer.PayloadTrigger,Is.EqualTo(PayloadTriggerMode.AfterDelay));

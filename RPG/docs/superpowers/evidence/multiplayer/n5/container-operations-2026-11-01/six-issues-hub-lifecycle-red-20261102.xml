@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 17:07:36Z" end-time="2026-11-02 17:07:36Z" duration="0.2461234">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3902" result="Failed" site="Child" start-time="2026-11-02 17:07:36Z" end-time="2026-11-02 17:07:36Z" duration="0.246123" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3243" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="323" result="Failed" site="Child" start-time="2026-11-02 17:07:36Z" end-time="2026-11-02 17:07:36Z" duration="0.181655" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3244" name="Game" fullname="Game" runstate="Runnable" testcasecount="323" result="Failed" site="Child" start-time="2026-11-02 17:07:36Z" end-time="2026-11-02 17:07:36Z" duration="0.161123" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3245" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="323" result="Failed" site="Child" start-time="2026-11-02 17:07:36Z" end-time="2026-11-02 17:07:36Z" duration="0.136554" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3246" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="323" result="Failed" site="Child" start-time="2026-11-02 17:07:36Z" end-time="2026-11-02 17:07:36Z" duration="0.117142" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="3095" name="OnlineRoomHubLifecycleTests" fullname="Game.Multiplayer.Tests.OnlineRoomHubLifecycleTests" classname="Game.Multiplayer.Tests.OnlineRoomHubLifecycleTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-02 17:07:36Z" end-time="2026-11-02 17:07:36Z" duration="0.112547" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="3098" name="RoundTripPreservesActivationAcrossSiblingDisableCallbacks" fullname="Game.Multiplayer.Tests.OnlineRoomHubLifecycleTests.RoundTripPreservesActivationAcrossSiblingDisableCallbacks" classname="Game.Multiplayer.Tests.OnlineRoomHubLifecycleTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-02 17:07:36Z" end-time="2026-11-02 17:07:36Z" duration="0.102594" total="2" passed="1" failed="1" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="3096" name="HubRoundTripPreservesRuntimeRootWhenSessionDisablesFirst" fullname="Game.Multiplayer.Tests.OnlineRoomHubLifecycleTests.HubRoundTripPreservesRuntimeRootWhenSessionDisablesFirst" methodname="RoundTripPreservesActivationAcrossSiblingDisableCallbacks" classname="Game.Multiplayer.Tests.OnlineRoomHubLifecycleTests" runstate="Runnable" seed="1580785224" result="Failed" start-time="2026-11-02 17:07:36Z" end-time="2026-11-02 17:07:36Z" duration="0.065168" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  快照必须记录挂起前的Runtime根，而非前一个根OnDisable改写后的状态。
+  Expected: True
+  But was:  False
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineRoomHubLifecycleTests.RoundTripPreservesActivationAcrossSiblingDisableCallbacks (System.Boolean runtimeFirst) [0x001a2] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineRoomHubLifecycleTests.cs:69
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="3097" name="HubRoundTripPreservesRuntimeRootWhenRuntimeDisablesFirst" fullname="Game.Multiplayer.Tests.OnlineRoomHubLifecycleTests.HubRoundTripPreservesRuntimeRootWhenRuntimeDisablesFirst" methodname="RoundTripPreservesActivationAcrossSiblingDisableCallbacks" classname="Game.Multiplayer.Tests.OnlineRoomHubLifecycleTests" runstate="Runnable" seed="227197715" result="Passed" start-time="2026-11-02 17:07:36Z" end-time="2026-11-02 17:07:36Z" duration="0.005539" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

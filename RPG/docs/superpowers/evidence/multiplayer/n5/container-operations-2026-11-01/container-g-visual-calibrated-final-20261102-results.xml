@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="7" result="Passed" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 05:36:52Z" end-time="2026-11-02 05:36:53Z" duration="0.6875212">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3754" result="Passed" start-time="2026-11-02 05:36:52Z" end-time="2026-11-02 05:36:53Z" duration="0.687521" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1594" name="Game.Combat.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Combat.Tests.dll" runstate="Runnable" testcasecount="143" result="Passed" start-time="2026-11-02 05:36:52Z" end-time="2026-11-02 05:36:53Z" duration="0.582375" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1595" name="Game" fullname="Game" runstate="Runnable" testcasecount="143" result="Passed" start-time="2026-11-02 05:36:52Z" end-time="2026-11-02 05:36:53Z" duration="0.494634" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1596" name="Combat" fullname="Game.Combat" runstate="Runnable" testcasecount="143" result="Passed" start-time="2026-11-02 05:36:52Z" end-time="2026-11-02 05:36:53Z" duration="0.395844" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1597" name="Tests" fullname="Game.Combat.Tests" runstate="Runnable" testcasecount="143" result="Passed" start-time="2026-11-02 05:36:52Z" end-time="2026-11-02 05:36:53Z" duration="0.295195" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1462" name="CombatVisualLifetimeTests" fullname="Game.Combat.Tests.CombatVisualLifetimeTests" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-11-02 05:36:52Z" end-time="2026-11-02 05:36:53Z" duration="0.194135" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1463" name="BirthTick_DoesNotConsumeTimeBeforeMarkerExisted" fullname="Game.Combat.Tests.CombatVisualLifetimeTests.BirthTick_DoesNotConsumeTimeBeforeMarkerExisted" methodname="BirthTick_DoesNotConsumeTimeBeforeMarkerExisted" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" seed="71533080" result="Passed" start-time="2026-11-02 05:36:53Z" end-time="2026-11-02 05:36:53Z" duration="0.041038" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1464" name="DuplicateTick_DoesNotConsumeMarkerLifetimeAgain" fullname="Game.Combat.Tests.CombatVisualLifetimeTests.DuplicateTick_DoesNotConsumeMarkerLifetimeAgain" methodname="DuplicateTick_DoesNotConsumeMarkerLifetimeAgain" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" seed="458384296" result="Passed" start-time="2026-11-02 05:36:53Z" end-time="2026-11-02 05:36:53Z" duration="0.000776" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1466" name="Expiry_DeactivatesBeforeDestroyAndHappensExactlyOnce" fullname="Game.Combat.Tests.CombatVisualLifetimeTests.Expiry_DeactivatesBeforeDestroyAndHappensExactlyOnce" methodname="Expiry_DeactivatesBeforeDestroyAndHappensExactlyOnce" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" seed="1132375400" result="Passed" start-time="2026-11-02 05:36:53Z" end-time="2026-11-02 05:36:53Z" duration="0.008778" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Destroy may not be called from edit mode! Use DestroyImmediate instead.
+Destroying an object in edit mode destroys it permanently.
+]]></output>
+              </test-case>
+              <test-case id="1465" name="NoSimulationDuringFreeze_LeavesRemainingTimeAndMarkerIntact" fullname="Game.Combat.Tests.CombatVisualLifetimeTests.NoSimulationDuringFreeze_LeavesRemainingTimeAndMarkerIntact" methodname="NoSimulationDuringFreeze_LeavesRemainingTimeAndMarkerIntact" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" seed="773841007" result="Passed" start-time="2026-11-02 05:36:53Z" end-time="2026-11-02 05:36:53Z" duration="0.000776" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1469" name="ReplicaWaitingIsOrangeOneWayAndNeverPublishesMaterialImpact" fullname="Game.Combat.Tests.CombatVisualLifetimeTests.ReplicaWaitingIsOrangeOneWayAndNeverPublishesMaterialImpact" methodname="ReplicaWaitingIsOrangeOneWayAndNeverPublishesMaterialImpact" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" seed="1284160826" result="Passed" start-time="2026-11-02 05:36:53Z" end-time="2026-11-02 05:36:53Z" duration="0.017632" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Waiting color precision; space=Linear; source=(r=1/0x3F800000, g=0.55/0x3F0CCCCD, b=0.08/0x3DA3D70A, a=1/0x3F800000); actual=(r=1/0x3F800000, g=0.549999952/0x3F0CCCCC, b=0.0799999759/0x3DA3D707, a=1/0x3F800000); nativeReference=(r=1/0x3F800000, g=0.549999952/0x3F0CCCCC, b=0.0799999759/0x3DA3D707, a=1/0x3F800000); matchesReference=True
+Waiting color precision; space=Linear; source=(r=1/0x3F800000, g=0.55/0x3F0CCCCD, b=0.08/0x3DA3D70A, a=1/0x3F800000); actual=(r=1/0x3F800000, g=0.549999952/0x3F0CCCCC, b=0.0799999759/0x3DA3D707, a=1/0x3F800000); nativeReference=(r=1/0x3F800000, g=0.549999952/0x3F0CCCCC, b=0.0799999759/0x3DA3D707, a=1/0x3F800000); matchesReference=True
+]]></output>
+              </test-case>
+              <test-case id="1468" name="ThrownWorldModelInstallationRejectsBadRepeatedAndAlreadyLaunchedChanges" fullname="Game.Combat.Tests.CombatVisualLifetimeTests.ThrownWorldModelInstallationRejectsBadRepeatedAndAlreadyLaunchedChanges" methodname="ThrownWorldModelInstallationRejectsBadRepeatedAndAlreadyLaunchedChanges" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" seed="181739869" result="Passed" start-time="2026-11-02 05:36:53Z" end-time="2026-11-02 05:36:53Z" duration="0.004603" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1467" name="ThrownWorldModelUsesOriginalNormalizationAndCannotOwnGameplayPhysics" fullname="Game.Combat.Tests.CombatVisualLifetimeTests.ThrownWorldModelUsesOriginalNormalizationAndCannotOwnGameplayPhysics" methodname="ThrownWorldModelUsesOriginalNormalizationAndCannotOwnGameplayPhysics" classname="Game.Combat.Tests.CombatVisualLifetimeTests" runstate="Runnable" seed="560387659" result="Passed" start-time="2026-11-02 05:36:53Z" end-time="2026-11-02 05:36:53Z" duration="0.009073" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

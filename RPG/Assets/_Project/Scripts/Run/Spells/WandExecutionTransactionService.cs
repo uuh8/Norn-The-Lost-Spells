@@ -41,6 +41,8 @@ namespace Game.Run
             internal WandLayerResourceStatus[] Layers;
             internal WandExecutionReplay Replay;
             internal bool ExpectWorldObservations;
+            internal WandStats RecordedStats;
+            internal string[] ProgramContentIds;
         }
         public WandExecutionReplayArchive Archive { get; }
         public SpellMaterialOutputService MaterialOutputs { get; }
@@ -60,6 +62,21 @@ namespace Game.Run
             ReadOnly = new View(this);
         }
         public bool TryGetState(string id, out WandExecutionSnapshot state) => _wands.TryGetExecution(id, out state);
+
+        /// <summary>
+        /// 权威写入门关闭时仍允许重放原收据。只查询既有账本并复用完整原指纹，
+        /// 不创建第二份账本，不推进请求水位，不执行提交/取消，也不把同 ID 异指纹当成旧成功。
+        /// </summary>
+        internal bool TryGetRecordedRequest(in CastResourceRequestedEvent request, out CastResourceResultEvent result)
+        {
+            result = default;
+            if (request.InventoryId != _inventoryId || string.IsNullOrWhiteSpace(request.CallerId) || request.RequestId == 0
+                || !_receipts.TryGetValue((request.CallerId, request.RequestId), out var receipt)
+                || !SameRequest(request, receipt.Request)) return false;
+            result = receipt.Result;
+            return true;
+        }
+
         public CastResourceResultEvent Execute(in CastResourceRequestedEvent request)
         {
             var result = new CastResourceResultEvent { InventoryId = _inventoryId, SourceWandId = request.SourceWandId,
@@ -134,6 +151,16 @@ namespace Game.Run
                 World = request.MaterialWorldId, Before = state, Inputs = inputs, Candidate = candidate, Summary = summary,
                 Uses = payment, InventoryVersion = request.InventoryVersion, Layers = new WandLayerResourceStatus[candidate.Graph.Scopes.Count],
                 RuntimePlan = CastExecutionPlan.FromGraph(candidate.Graph),ExpectWorldObservations=request.UseV2 };
+            // 这里原卡仍在已预约Store中。提交后有限卡可能直接删除，必须现在冻结Index→ContentId的事实。
+            _profile.Items.TryGet(ticket.Wand, out var recordedWand);
+            _profile.Items.Catalog.TryGetWandStats(recordedWand, out ticket.RecordedStats);
+            ticket.ProgramContentIds = new string[state.Program.Count]; int fixedIndex = 0;
+            for (int i = 0; i < state.Program.Count; i++)
+            {
+                var instruction = state.Program.Instructions[i];
+                if (instruction.IsIntrinsic) ticket.ProgramContentIds[i] = ticket.RecordedStats.AlwaysCastContentIds[fixedIndex++];
+                else { _profile.Items.TryGet(instruction.InstanceId, out var card); ticket.ProgramContentIds[i] = card.ContentId; }
+            }
             CaptureAttachments(ticket);
             ticket.Layers[0] = WandLayerResourceStatus.Prepared; _tickets.Add(id, ticket);
             _pending = ticket; _pendingLayer = 0;
@@ -207,8 +234,14 @@ namespace Game.Run
                 {
                     _wands.CommitExecution(ticket.Wand, ticket.Id, ticket.Candidate, ticket.Summary);
                     _wands.TryGetExecution(ticket.Wand, out var after);
+                    var afterContentIds = new string[after.Program.Count];
+                    for (int i = 0; i < after.Program.Count; i++)
+                        for (int j = 0; j < ticket.Before.Program.Count; j++)
+                            if (after.Program.Instructions[i].InstanceId == ticket.Before.Program.Instructions[j].InstanceId)
+                            { afterContentIds[i] = ticket.ProgramContentIds[j]; break; }
                     ticket.Replay = new WandExecutionReplay(ticket.Id, ticket.Wand, ticket.Caller, ticket.Candidate,
-                        ticket.Before.Draw, after.Draw, ticket.Inputs, ticket.Summary, ticket.InventoryVersion, _profile.Items.Version, ticket.Uses, ticket.Layers);
+                        ticket.Before.Draw, after.Draw, ticket.Inputs, ticket.Summary, ticket.InventoryVersion, _profile.Items.Version, ticket.Uses, ticket.Layers,
+                        ticket.RecordedStats, ticket.ProgramContentIds, after.Program, afterContentIds);
                     Archive.Add(ticket.Replay);
                 }
             }

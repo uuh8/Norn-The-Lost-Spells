@@ -35,6 +35,30 @@ namespace Game.ElementField.Tests
         }
 
         [Test]
+        public void SuspendedAuthorityRejectsNewPortTransactionsBeforeTouchingInventory()
+        {
+            _fixture = new Fixture(WorldExecutionMode.Authority);
+            var source = new Source();
+            var destination = new Destination();
+            World.SetSimulationSuspended(true);
+
+            var depositFailure = new MaterialInventoryDepositPort(World).Deposit(Deposit(source, 20), out ulong deposited);
+            var collectionFailure = new MaterialInventoryWorldPort(World).Transfer(Request(20), destination, out ulong collected);
+            Assert.That(depositFailure, Is.EqualTo(MaterialTransferFailure.WorldUnavailable));
+            Assert.That(collectionFailure, Is.EqualTo(MaterialTransferFailure.WorldUnavailable),
+                "直接Port必须在预约或Stage之前拒绝挂起世界，不能只依赖网络入口的前置检查。");
+            Assert.That(deposited + collected, Is.Zero);
+            Assert.That(source.Reserves + source.Commits + source.Cancels, Is.Zero);
+            Assert.That(destination.Reserves + destination.Commits + destination.Cancels, Is.Zero);
+            Assert.That(source.Removed + destination.Added, Is.Zero);
+            Assert.That(_fixture.Liquid.TotalQuantity, Is.EqualTo(100UL));
+            Assert.That(World.ImportedMaterialQuantity(MaterialId.Water), Is.Zero);
+            Assert.That(World.ExportedMaterialQuantity(MaterialId.Water), Is.Zero);
+            Assert.That(World.IsSimulationFaulted, Is.False, "拒绝新事务不把保留的健康现场标成部分执行故障。");
+            AssertTransactionReleased();
+        }
+
+        [Test]
         public void DepositReservationIsolatesClockCaptureWritesAndNestedPortsUntilSuccess()
         {
             _fixture = new Fixture(WorldExecutionMode.Authority);

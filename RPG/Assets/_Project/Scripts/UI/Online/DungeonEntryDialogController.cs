@@ -19,6 +19,7 @@ namespace Game.UI
         private bool _authenticated;
         private Font _font;
         private bool _roomMode;
+        private bool _roomRunning;
         private int _roomPortal;
         private bool _gameplayActive, _gameplayMenu, _gameplayInputCaptured;
         // 菜单和库存可以同时占用本机输入；总 InputCaptured 只表示“至少一位 Owner”，
@@ -43,7 +44,7 @@ namespace Game.UI
         private void Awake()
         {
             if (_instance != null && _instance != this) { Destroy(gameObject); return; }
-            _instance = this; _panel.SetActive(false);
+            _instance = this; ConfigureViewportLayout(); _panel.SetActive(false);
             _single.onClick.AddListener(Single); _match.onClick.AddListener(Match); _cancel.onClick.AddListener(Cancel);
             if (_ready != null) _ready.onClick.AddListener(Ready);
             if (_start != null) _start.onClick.AddListener(StartRoom);
@@ -51,6 +52,7 @@ namespace Game.UI
             _font = Font.CreateDynamicFontFromOSFont(new[] { "Microsoft YaHei", "SimSun", "Arial" }, 20);
             foreach (var text in GetComponentsInChildren<Text>(true)) text.font = _font;
         }
+        private void ConfigureViewportLayout() => UiViewportLayout.FitCanvas(transform);
         private void OnEnable()
         {
             EventBus<DungeonEntryChoiceRequestedEvent>.Subscribe(OnRequested);
@@ -154,7 +156,7 @@ namespace Game.UI
         { if (_request.PortalId != closed.PortalId) return; _request = default; _panel.SetActive(false); }
         private void Single() { if (_authenticated) Submit(DungeonEntryMode.SinglePlayer); }
         private void Match() { if (_authenticated) Submit(DungeonEntryMode.Matchmaking); }
-        private void Cancel() { if (_roomMode) RoomCommand(OnlineRoomAction.Cancel); else Submit(DungeonEntryMode.Cancel); }
+        private void Cancel() { if (_roomMode) RoomCommand(_roomRunning ? OnlineRoomAction.ExitRun : OnlineRoomAction.Cancel); else Submit(DungeonEntryMode.Cancel); }
         private void Ready() => RoomCommand(OnlineRoomAction.Ready);
         private void StartRoom() => RoomCommand(OnlineRoomAction.Start);
         private void Reconnect() => RoomCommand(OnlineRoomAction.Reconnect);
@@ -182,20 +184,22 @@ namespace Game.UI
             _roomMode = true; _roomPortal = view.PortalId; _panel.SetActive(!_gameplayActive || _gameplayMenu || view.Phase == OnlineRoomPhase.Disconnected);
             bool lobby = view.Phase == OnlineRoomPhase.Lobby;
             bool connected = view.Phase == OnlineRoomPhase.Connected || view.Phase == OnlineRoomPhase.Disconnected;
-            _title.text = connected ? "独立副本连接" : "副本匹配与准备";
+            _roomRunning = connected;
+            _title.text = view.SinglePlayer ? (connected ? "单人副本连接" : "单人服务器入场") : connected ? "独立副本连接" : "副本匹配与准备";
             _single.gameObject.SetActive(false); _match.gameObject.SetActive(false);
             _status.text = view.Status ?? "正在同步房间…";
             _cancel.interactable = view.Phase != OnlineRoomPhase.Starting && view.Phase != OnlineRoomPhase.Connecting;
-            _cancel.GetComponentInChildren<Text>().text = connected ? "断开并返回据点" : "取消匹配";
-            if (_ready != null) { _ready.gameObject.SetActive(lobby); _ready.interactable = !view.Busy; _ready.GetComponentInChildren<Text>().text = view.SelfReady ? "取消准备" : "准备"; }
-            if (_start != null) { _start.gameObject.SetActive(lobby); _start.interactable = !view.Busy && view.CanStart; }
+            _cancel.GetComponentInChildren<Text>().text = connected ? "保存并退出本局" : "取消匹配";
+            if (_ready != null) { _ready.gameObject.SetActive(lobby && !view.SinglePlayer); _ready.interactable = !view.Busy; _ready.GetComponentInChildren<Text>().text = view.SelfReady ? "取消准备" : "准备"; }
+            if (_start != null) { _start.gameObject.SetActive(lobby && !view.SinglePlayer); _start.interactable = !view.Busy && view.CanStart; }
             if (_reconnect != null) { _reconnect.gameObject.SetActive(view.Phase == OnlineRoomPhase.Disconnected || view.Phase == OnlineRoomPhase.Error); _reconnect.interactable = !view.Busy; _reconnect.GetComponentInChildren<Text>().text = view.Phase == OnlineRoomPhase.Error ? "重试恢复房间" : "重连"; }
             if (_members != null)
             {
                 // 只在房间应答/操作时重建最多4行文本，不在Update中拼接字符串。
                 string text = connected ? "本局已确认成员：\n" : "";
                 if (view.Members != null) for (int i = 0; i < view.Members.Length; i++)
-                { var m = view.Members[i]; text += (m.Leader ? "[队长] " : "") + m.Name + (m.Self ? "（你）" : "") + (m.Ready ? "  已准备" : "  未准备") + "\n"; }
+                { var m = view.Members[i]; text += (m.Leader ? "[队长] " : "") + m.Name + (m.Self ? "（你）" : "")
+                    + (view.SinglePlayer ? connected ? "  已入局" : "  已预留" : m.Ready ? "  已准备" : "  未准备") + "\n"; }
                 _members.text = text;
             }
         }

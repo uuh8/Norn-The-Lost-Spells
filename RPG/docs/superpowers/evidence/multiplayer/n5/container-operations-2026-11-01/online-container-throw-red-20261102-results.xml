@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="10" result="Failed(Child)" total="10" passed="0" failed="10" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-02 04:53:17Z" end-time="2026-11-02 04:53:18Z" duration="0.9381816">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3742" result="Failed" site="Child" start-time="2026-11-02 04:53:17Z" end-time="2026-11-02 04:53:18Z" duration="0.938182" total="10" passed="0" failed="10" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1414" name="Game.Character.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Character.Tests.dll" runstate="Runnable" testcasecount="342" result="Failed" site="Child" start-time="2026-11-02 04:53:17Z" end-time="2026-11-02 04:53:18Z" duration="0.626261" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1415" name="Game" fullname="Game" runstate="Runnable" testcasecount="342" result="Failed" site="Child" start-time="2026-11-02 04:53:17Z" end-time="2026-11-02 04:53:18Z" duration="0.613863" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1416" name="Character" fullname="Game.Character" runstate="Runnable" testcasecount="342" result="Failed" site="Child" start-time="2026-11-02 04:53:17Z" end-time="2026-11-02 04:53:18Z" duration="0.603535" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1417" name="Tests" fullname="Game.Character.Tests" runstate="Runnable" testcasecount="342" result="Failed" site="Child" start-time="2026-11-02 04:53:17Z" end-time="2026-11-02 04:53:18Z" duration="0.593447" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1222" name="OnlineCastDriverTests" fullname="Game.Character.Tests.OnlineCastDriverTests" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" testcasecount="93" result="Failed" site="Child" start-time="2026-11-02 04:53:17Z" end-time="2026-11-02 04:53:18Z" duration="0.587256" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1284" name="AuthorityThrowContextUsesOriginalHorizontalOriginAndFullPitchVelocity" fullname="Game.Character.Tests.OnlineCastDriverTests.AuthorityThrowContextUsesOriginalHorizontalOriginAndFullPitchVelocity" methodname="AuthorityThrowContextUsesOriginalHorizontalOriginAndFullPitchVelocity" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="1413204209" result="Failed" start-time="2026-11-02 04:53:17Z" end-time="2026-11-02 04:53:18Z" duration="0.302132" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  仅DSContext携带重算后的原投掷起点，Wire仍只传瞄准射线。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.AuthorityThrowContextUsesOriginalHorizontalOriginAndFullPitchVelocity () [0x0012e] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:1250
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1281" name="HeldThrowShowsOriginalTrajectorySuppressesPourAndReleasesOneIntent" fullname="Game.Character.Tests.OnlineCastDriverTests.HeldThrowShowsOriginalTrajectorySuppressesPourAndReleasesOneIntent" methodname="HeldThrowShowsOriginalTrajectorySuppressesPourAndReleasesOneIntent" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="293786272" result="Failed" start-time="2026-11-02 04:53:18Z" end-time="2026-11-02 04:53:18Z" duration="0.171004" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  G瞄准阶段停止H，不能一边预览一边倾倒或提前投掷。
+  Expected: 0
+  But was:  1
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.HeldThrowShowsOriginalTrajectorySuppressesPourAndReleasesOneIntent () [0x000c7] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:1146
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1282" name="ThrowAimFocusLossAndConfirmedBottleReplacementCancelThePendingRelease" fullname="Game.Character.Tests.OnlineCastDriverTests.ThrowAimFocusLossAndConfirmedBottleReplacementCancelThePendingRelease" methodname="ThrowAimFocusLossAndConfirmedBottleReplacementCancelThePendingRelease" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="1072006279" result="Failed" start-time="2026-11-02 04:53:18Z" end-time="2026-11-02 04:53:18Z" duration="0.034802" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.ThrowAimFocusLossAndConfirmedBottleReplacementCancelThePendingRelease () [0x00037] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:1184
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1283" name="ThrowAimReconnectRequiresTheNewEpochSourceAndAFreshPress" fullname="Game.Character.Tests.OnlineCastDriverTests.ThrowAimReconnectRequiresTheNewEpochSourceAndAFreshPress" methodname="ThrowAimReconnectRequiresTheNewEpochSourceAndAFreshPress" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="1787511361" result="Failed" start-time="2026-11-02 04:53:18Z" end-time="2026-11-02 04:53:18Z" duration="0.035632" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: True
+  But was:  False
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.ThrowAimReconnectRequiresTheNewEpochSourceAndAFreshPress () [0x0002a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:1215
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1285" name="ThrowFactoryIsScopedRegisteredOnceAndRetainedAcrossConnectionChanges" fullname="Game.Character.Tests.OnlineCastDriverTests.ThrowFactoryIsScopedRegisteredOnceAndRetainedAcrossConnectionChanges" methodname="ThrowFactoryIsScopedRegisteredOnceAndRetainedAcrossConnectionChanges" classname="Game.Character.Tests.OnlineCastDriverTests" runstate="Runnable" seed="1202552279" result="Failed" start-time="2026-11-02 04:53:18Z" end-time="2026-11-02 04:53:18Z" duration="0.009772" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Character必须让组合层预留输出槽并准备原代理，不能另造复制系统。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Character.Tests.OnlineCastDriverTests.ThrowFactoryIsScopedRegisteredOnceAndRetainedAcrossConnectionChanges () [0x00037] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Character\OnlineCastDriverTests.cs:1274
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="5199" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="932" result="Failed" site="Child" start-time="2026-11-02 04:53:18Z" end-time="2026-11-02 04:53:18Z" duration="0.247369" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="15628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="5200" name="Game" fullname="Game" runstate="Runnable" testcasecount="932" result="Failed" site="Child" start-time="2026-11-02 04:53:18Z" end-time="2026-11-02 04:53:18Z" duration="0.136020" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="5201" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="932" result="Failed" site="Child" start-time="2026-11-02 04:53:18Z" end-time="2026-11-02 04:53:18Z" duration="0.104360" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="5202" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="932" result="Failed" site="Child" start-time="2026-11-02 04:53:18Z" end-time="2026-11-02 04:53:18Z" duration="0.067121" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="4540" name="OnlineOwnedWorkspaceTests" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" testcasecount="133" result="Failed" site="Child" start-time="2026-11-02 04:53:18Z" end-time="2026-11-02 04:53:18Z" duration="0.058361" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="4692" name="OnlineThrowClosedGatePreservesBottleAndUnknownThrownRowsCannotDisappearFromCapture" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.OnlineThrowClosedGatePreservesBottleAndUnknownThrownRowsCannotDisappearFromCapture" methodname="OnlineThrowClosedGatePreservesBottleAndUnknownThrownRowsCannotDisappearFromCapture" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="44418261" result="Failed" start-time="2026-11-02 04:53:18Z" end-time="2026-11-02 04:53:18Z" duration="0.015796" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Owned DTO 缺少字段：ThrowOrigin
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineOwnedWorkspaceTests.Set (System.Object value, System.String name, System.Object fieldValue) [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:1531
+at Game.Run.Tests.OnlineOwnedWorkspaceTests.ThrowContext () [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:1316
+at Game.Run.Tests.OnlineOwnedWorkspaceTests.OnlineThrowClosedGatePreservesBottleAndUnknownThrownRowsCannotDisappearFromCapture () [0x0003f] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:1285
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4689" name="OnlineThrowExactReceiptReplayDoesNotPrepareOrLaunchTheBottleAgain" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.OnlineThrowExactReceiptReplayDoesNotPrepareOrLaunchTheBottleAgain" methodname="OnlineThrowExactReceiptReplayDoesNotPrepareOrLaunchTheBottleAgain" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="807868486" result="Failed" start-time="2026-11-02 04:53:18Z" end-time="2026-11-02 04:53:18Z" duration="0.004958" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Owned DTO 缺少字段：ThrowOrigin
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineOwnedWorkspaceTests.Set (System.Object value, System.String name, System.Object fieldValue) [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:1531
+at Game.Run.Tests.OnlineOwnedWorkspaceTests.ThrowContext () [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:1316
+at Game.Run.Tests.OnlineOwnedWorkspaceTests.OnlineThrowExactReceiptReplayDoesNotPrepareOrLaunchTheBottleAgain () [0x0001b] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:1219
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4690" name="OnlineThrowImpactFailureAndPartialBatchesRetainRemainderUntilOneFinalResolution" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.OnlineThrowImpactFailureAndPartialBatchesRetainRemainderUntilOneFinalResolution" methodname="OnlineThrowImpactFailureAndPartialBatchesRetainRemainderUntilOneFinalResolution" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="343888571" result="Failed" start-time="2026-11-02 04:53:18Z" end-time="2026-11-02 04:53:18Z" duration="0.008143" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Owned DTO 缺少字段：ThrowOrigin
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineOwnedWorkspaceTests.Set (System.Object value, System.String name, System.Object fieldValue) [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:1531
+at Game.Run.Tests.OnlineOwnedWorkspaceTests.ThrowContext () [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:1316
+at Game.Run.Tests.OnlineOwnedWorkspaceTests.OnlineThrowImpactFailureAndPartialBatchesRetainRemainderUntilOneFinalResolution () [0x00059] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:1239
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4688" name="OnlineThrowKeepsTheSameServerItemAndProjectsOnlyCarriedOwnerAssets" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.OnlineThrowKeepsTheSameServerItemAndProjectsOnlyCarriedOwnerAssets" methodname="OnlineThrowKeepsTheSameServerItemAndProjectsOnlyCarriedOwnerAssets" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1652106272" result="Failed" start-time="2026-11-02 04:53:18Z" end-time="2026-11-02 04:53:18Z" duration="0.006017" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Owned DTO 缺少字段：ThrowOrigin
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineOwnedWorkspaceTests.Set (System.Object value, System.String name, System.Object fieldValue) [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:1531
+at Game.Run.Tests.OnlineOwnedWorkspaceTests.ThrowContext () [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:1316
+at Game.Run.Tests.OnlineOwnedWorkspaceTests.OnlineThrowKeepsTheSameServerItemAndProjectsOnlyCarriedOwnerAssets () [0x0002d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:1198
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4691" name="OnlineThrowSurvivesNewConnectionEpochWithoutRestoringCarriedBottle" fullname="Game.Run.Tests.OnlineOwnedWorkspaceTests.OnlineThrowSurvivesNewConnectionEpochWithoutRestoringCarriedBottle" methodname="OnlineThrowSurvivesNewConnectionEpochWithoutRestoringCarriedBottle" classname="Game.Run.Tests.OnlineOwnedWorkspaceTests" runstate="Runnable" seed="1577945292" result="Failed" start-time="2026-11-02 04:53:18Z" end-time="2026-11-02 04:53:18Z" duration="0.005149" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Owned DTO 缺少字段：ThrowOrigin
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.OnlineOwnedWorkspaceTests.Set (System.Object value, System.String name, System.Object fieldValue) [0x00010] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:1531
+at Game.Run.Tests.OnlineOwnedWorkspaceTests.ThrowContext () [0x0000c] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:1316
+at Game.Run.Tests.OnlineOwnedWorkspaceTests.OnlineThrowSurvivesNewConnectionEpochWithoutRestoringCarriedBottle () [0x00012] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\OnlineOwnedWorkspaceTests.cs:1269
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

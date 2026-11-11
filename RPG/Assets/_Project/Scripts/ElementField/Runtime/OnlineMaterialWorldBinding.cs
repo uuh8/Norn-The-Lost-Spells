@@ -11,7 +11,7 @@ namespace Game.ElementField
     /// 它只管理场景Owner与生命周期，不解析网络、不裁决玩家身份、不复制另一套材料Rendering。
     /// </summary>
     [DisallowMultipleComponent]
-    public sealed class OnlineMaterialWorldBinding : MonoBehaviour, IOnlineMaterialWorldBinding
+    public sealed class OnlineMaterialWorldBinding : MonoBehaviour, IOnlineMaterialWorldBinding, IOnlineMaterialTransferWorld
     {
         [SerializeField] private ElementWorldRuntime _world;
         [Header("Bounded replication workspace - target-machine validation required")]
@@ -23,6 +23,9 @@ namespace Game.ElementField
         private bool _configured, _detached, _configurationFaulted;
         private WorldExecutionMode _mode;
         private ulong _epoch;
+        private string _transferWorldId;
+        // 离散装配读取原Adapter的同一ID，避免Multiplayer硬编码第二个WorldId或反向依赖ElementField。
+        public string TransferWorldId => _configured && !_detached ? _transferWorldId : null;
         private IWorldReplicationSource _source;
         private WorldReplicaBuffer _buffer;
         private WorldReplicaStore _replica;
@@ -48,6 +51,10 @@ namespace Game.ElementField
                 || _replicaChunks < 1 || _maximumChunkWords < 64) return false;
             try
             {
+                var transfer = _world.GetComponent<MaterialInventoryTransferAdapter>();
+                var deposit = _world.GetComponent<ContainerDepositAdapter>();
+                _transferWorldId = transfer != null && deposit != null && transfer.enabled && deposit.enabled
+                    && !string.IsNullOrEmpty(transfer.WorldId) && transfer.WorldId == deposit.WorldId ? transfer.WorldId : null;
                 // 先剥所有GPU玩法Owner；两个端的材料事实都必须来自CPU DS，而客户端可继续用GPU绘制外壳。
                 StripOwners(mode, false);
                 if (mode == WorldExecutionMode.Authority)

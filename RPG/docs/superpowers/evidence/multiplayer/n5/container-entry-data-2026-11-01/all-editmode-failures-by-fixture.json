@@ -1,0 +1,182 @@
+[
+  {
+    "Fixture": "Game.Character.Tests.OnlineCastDriverTests",
+    "Count": 9,
+    "Cases": [
+      "Game.Character.Tests.OnlineCastDriverTests.AuthorityInventoryDiagnosticMapsConsumedInstanceValuesWithoutChangingWorkspace",
+      "Game.Character.Tests.OnlineCastDriverTests.ClientInventoryDiagnosticReadsCurrentSourceCopiesValuesAndRejectsOldEpoch",
+      "Game.Character.Tests.OnlineCastDriverTests.DeadActorCancelsDueSchedulerBeforeItCanRelease",
+      "Game.Character.Tests.OnlineCastDriverTests.DeadAuthorityRejectsInventoryEditWithoutMovingOwnedCard",
+      "Game.Character.Tests.OnlineCastDriverTests.DuplicateRootCommand_OnlyCommitsOneRealOwnedCast",
+      "Game.Character.Tests.OnlineCastDriverTests.ForeignWandAndInvalidOrigin_AreRejectedWithoutOutputOrCharge",
+      "Game.Character.Tests.OnlineCastDriverTests.InsufficientMana_DoesNotSpawnOrConsumeFiniteCharge",
+      "Game.Character.Tests.OnlineCastDriverTests.QueuedCastRejectsInventoryEditAndRetryCannotBecomeSuccessfulLater",
+      "Game.Character.Tests.OnlineCastDriverTests.ReinitializingSameRunAndNewEpoch_DoesNotRefillOwnedWorkspace"
+    ]
+  },
+  {
+    "Fixture": "Game.Character.Tests.OnlineInventoryReplicaTests",
+    "Count": 3,
+    "Cases": [
+      "Game.Character.Tests.OnlineInventoryReplicaTests.EarlierResourceFactReplaysBeforeBindingAndLaterFullStateKeepsStableSource",
+      "Game.Character.Tests.OnlineInventoryReplicaTests.InvalidReplacementKeepsOldSourceAndNewEpochDisposesOnlyAfterValidInstall",
+      "Game.Character.Tests.OnlineInventoryReplicaTests.StableSlotResourceCannotUpdateAnotherWandWithTheSameProgramRevision"
+    ]
+  },
+  {
+    "Fixture": "Game.Combat.Tests.MaterialReactionSemanticTests",
+    "Count": 2,
+    "Cases": [
+      "Game.Combat.Tests.MaterialReactionSemanticTests.DefaultBindingAsset_ContainsWaterAndPoisonFireRules",
+      "Game.Combat.Tests.MaterialReactionSemanticTests.Evaluator_IgniteGooConsumesStickyAndProducesFireOnFireSide"
+    ]
+  },
+  {
+    "Fixture": "Game.ElementField.Tests.ElementWorldFluidRoutingTests",
+    "Count": 1,
+    "Cases": [
+      "Game.ElementField.Tests.ElementWorldFluidRoutingTests.SparseFireCollectionPreservesSampleSequenceAcrossChunkAndCursorWrap"
+    ]
+  },
+  {
+    "Fixture": "Game.ElementField.Tests.MaterialReactionProcessTableTests",
+    "Count": 2,
+    "Cases": [
+      "Game.ElementField.Tests.MaterialReactionProcessTableTests.ReservedCapacityKeepsOutputOrderCooldownAndVacantSlotReuse(4)",
+      "Game.ElementField.Tests.MaterialReactionProcessTableTests.ReservedCapacityKeepsOutputOrderCooldownAndVacantSlotReuse(65536)"
+    ]
+  },
+  {
+    "Fixture": "Game.Multiplayer.Tests.InventorySnapshotInboxTests",
+    "Count": 4,
+    "Cases": [
+      "Game.Multiplayer.Tests.InventorySnapshotInboxTests.DuplicateOutOfOrderAndConsumedPacketsNeverReappear",
+      "Game.Multiplayer.Tests.InventorySnapshotInboxTests.InventoryIdentityCannotBeTakenFromTheUntrustedPayload",
+      "Game.Multiplayer.Tests.InventorySnapshotInboxTests.OldEpochWrongActorOrWrongRulesCannotReplacePendingSnapshot",
+      "Game.Multiplayer.Tests.InventorySnapshotInboxTests.OtherPlayerCannotConsumeTheCurrentOwnersFirstSequence"
+    ]
+  },
+  {
+    "Fixture": "Game.Networking.Tests.InventorySnapshotCodecTests",
+    "Count": 10,
+    "Cases": [
+      "Game.Networking.Tests.InventorySnapshotCodecTests.CurrentResourceAndOwnedIdentityRoundTrip",
+      "Game.Networking.Tests.InventorySnapshotCodecTests.DecodeReturnsOwnedDtoRatherThanBorrowingNextDecode",
+      "Game.Networking.Tests.InventorySnapshotCodecTests.DuplicateScalarFieldDoesNotUseProtobufLastWins",
+      "Game.Networking.Tests.InventorySnapshotCodecTests.InstanceStatsAndAlwaysCastTraitsSurviveWithoutTemplateFallback",
+      "Game.Networking.Tests.InventorySnapshotCodecTests.MaximumOwnedClosureIsLargerThanCombatFactAndStillRoundTrips",
+      "Game.Networking.Tests.InventorySnapshotCodecTests.MissingAndOldApplicationVersionCannotBecomeCurrentSnapshot",
+      "Game.Networking.Tests.InventorySnapshotCodecTests.RuntimeSpellStorageRoundTripsAsAnExplicitRootInsteadOfInventingBag",
+      "Game.Networking.Tests.InventorySnapshotCodecTests.TooManyEmptyNestedItemsAreRejectedByWireBudget",
+      "Game.Networking.Tests.InventorySnapshotCodecTests.TruncatedLengthAndWrongWireTypeAreRejected",
+      "Game.Networking.Tests.InventorySnapshotCodecTests.UnknownRootAndNestedFieldsAreRejected"
+    ]
+  },
+  {
+    "Fixture": "Game.Rendering.Tests.ElementWaterShaderContractTests",
+    "Count": 2,
+    "Cases": [
+      "Game.Rendering.Tests.ElementWaterShaderContractTests.ProceduralLiquidOpaqueFragmentDiagnosticIsBoundPerDraw",
+      "Game.Rendering.Tests.ElementWaterShaderContractTests.ProceduralLiquidUsesUnityIndirectContractAndSharedWaterCore"
+    ]
+  },
+  {
+    "Fixture": "Game.Rendering.Tests.GpuFireParcelSplatTests",
+    "Count": 4,
+    "Cases": [
+      "Game.Rendering.Tests.GpuFireParcelSplatTests.BothFlamePhasesKeepCoverageInSteepAndTopViews",
+      "Game.Rendering.Tests.GpuFireParcelSplatTests.DistantFadeIsWideAndContinuous",
+      "Game.Rendering.Tests.GpuFireParcelSplatTests.StraightDownProjectionRemainsStableWithCameraRoll",
+      "Game.Rendering.Tests.GpuFireParcelSplatTests.UniformFlamesRemainVisibleAcrossFormerNearBoundary"
+    ]
+  },
+  {
+    "Fixture": "Game.Rendering.Tests.GridLiquidFieldFrameTests",
+    "Count": 5,
+    "Cases": [
+      "Game.Rendering.Tests.GridLiquidFieldFrameTests.ColdSlopeSupportCannotChangeCommittedGeometryWhenBakeBudgetRenews",
+      "Game.Rendering.Tests.GridLiquidFieldFrameTests.CommittedSlopeShapeDoesNotChangeWhenItBecomesPreviousAtNextTick",
+      "Game.Rendering.Tests.GridLiquidFieldFrameTests.FrozenMixedAndAirFieldKeepsPackedPresentationSignature",
+      "Game.Rendering.Tests.GridLiquidFieldFrameTests.SparseFrozenPoolsKeepPackedShapeAndQuantityWithZeroCaptureAllocation(4096)",
+      "Game.Rendering.Tests.GridLiquidFieldFrameTests.SparseFrozenPoolsKeepPackedShapeAndQuantityWithZeroCaptureAllocation(16)"
+    ]
+  },
+  {
+    "Fixture": "Game.Rendering.Tests.GridLiquidFieldGpuTests",
+    "Count": 4,
+    "Cases": [
+      "Game.Rendering.Tests.GridLiquidFieldGpuTests.EqualQuantityHasComparableVisibleVolumeOnFlatAndSteepSupport",
+      "Game.Rendering.Tests.GridLiquidFieldGpuTests.ProductionFrameMeshHasClosedSurfaceAndQuantityCalibratedVolume",
+      "Game.Rendering.Tests.GridLiquidFieldGpuTests.RealSlopeGpuMeshMovesBetweenTicksAndRetainsBoundaryPose",
+      "Game.Rendering.Tests.GridLiquidFieldGpuTests.SustainedSlopeMeshDoesNotSinkIntoActualCollider"
+    ]
+  },
+  {
+    "Fixture": "Game.Run.Tests.BackpackAuthoringTests",
+    "Count": 1,
+    "Cases": [
+      "Game.Run.Tests.BackpackAuthoringTests.ThrowAndSolidCollectionDoNotShareG"
+    ]
+  },
+  {
+    "Fixture": "Game.Run.Tests.HubSpatialLayoutTests",
+    "Count": 2,
+    "Cases": [
+      "Game.Run.Tests.HubSpatialLayoutTests.AllStationTextHasCameraFacingBehaviour",
+      "Game.Run.Tests.HubSpatialLayoutTests.PersistentHintsAreAtScreenEdge"
+    ]
+  },
+  {
+    "Fixture": "Game.Run.Tests.ItemInventoryClassificationTests",
+    "Count": 1,
+    "Cases": [
+      "Game.Run.Tests.ItemInventoryClassificationTests.EveryCurrentHubDefinitionHasTheExpectedCategoryWithoutChangingKind"
+    ]
+  },
+  {
+    "Fixture": "Game.Run.Tests.ItemPresentationTests",
+    "Count": 1,
+    "Cases": [
+      "Game.Run.Tests.ItemPresentationTests.MissingOnlyBakeKeepsExistingIconsAndSceneClean"
+    ]
+  },
+  {
+    "Fixture": "Game.Run.Tests.OnlineInventoryCommandAuthorityTests",
+    "Count": 6,
+    "Cases": [
+      "Game.Run.Tests.OnlineInventoryCommandAuthorityTests.BoundedLedgerRejectsEvictedOldCommandsAndEpochNeverRollsBack",
+      "Game.Run.Tests.OnlineInventoryCommandAuthorityTests.ExactRetryReturnsOriginalReceiptBeforeCurrentVersionAndConflictIsRejected",
+      "Game.Run.Tests.OnlineInventoryCommandAuthorityTests.MoveToRealStorageAndBackReusesQualificationAndExportsLocation",
+      "Game.Run.Tests.OnlineInventoryCommandAuthorityTests.RecordedBusyCannotExecuteSameIdAfterBusyHasEnded",
+      "Game.Run.Tests.OnlineInventoryCommandAuthorityTests.SelectUsesRealEquippedWandAndPreservesInventoryAndMana",
+      "Game.Run.Tests.OnlineInventoryCommandAuthorityTests.StaleVersionsAndOccupiedDestinationRejectWithoutMovingEitherCard"
+    ]
+  },
+  {
+    "Fixture": "Game.Run.Tests.SinglePlayerSceneAuthoringTests",
+    "Count": 2,
+    "Cases": [
+      "Game.Run.Tests.SinglePlayerSceneAuthoringTests.FormalHubHasOneGameCameraOneWorldAndNoLegacyReflection",
+      "Game.Run.Tests.SinglePlayerSceneAuthoringTests.FormalHubHasProductionInventoryAndIndependentConfiguration"
+    ]
+  },
+  {
+    "Fixture": "Game.Run.Tests.SpellProgramContentContractTests",
+    "Count": 1,
+    "Cases": [
+      "Game.Run.Tests.SpellProgramContentContractTests.TerminationHasADifferentTriggerConditionFromExistingFireballs"
+    ]
+  },
+  {
+    "Fixture": "Game.Run.Tests.WarehouseCatalogViewTests",
+    "Count": 6,
+    "Cases": [
+      "Game.Run.Tests.WarehouseCatalogViewTests.EmptyWarehouseStillDisplaysBackgroundSquares",
+      "Game.Run.Tests.WarehouseCatalogViewTests.FilterAndOrganizeOnlyChangePresentation",
+      "Game.Run.Tests.WarehouseCatalogViewTests.FoodAndHerbsAreMaterialsAndOnlyUsableContainersAreTools",
+      "Game.Run.Tests.WarehouseCatalogViewTests.ManyKindsExtendContentWithoutCreatingEveryRowOfViews",
+      "Game.Run.Tests.WarehouseCatalogViewTests.SameContentHasOneSquareWhileDifferentStatesKeepTheirIdentity",
+      "Game.Run.Tests.WarehouseCatalogViewTests.SameKindContainersUseSeparateWarehouseSquares"
+    ]
+  }
+]

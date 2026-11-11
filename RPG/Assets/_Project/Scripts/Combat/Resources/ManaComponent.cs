@@ -55,7 +55,7 @@ namespace Game.Combat
 
         private void Regenerate(float deltaTime)
         {
-            if (_currentMana >= _maxMana || _manaRegenPerSecond <= 0f)
+            if (!_execution.AllowsGameplayWrites || _currentMana >= _maxMana || _manaRegenPerSecond <= 0f)
                 return;
 
             // Update 每帧执行；“每秒恢复量 × deltaTime”可消除帧率差异。
@@ -76,7 +76,8 @@ namespace Game.Combat
         /// </summary>
         public bool Spend(float amount)
         {
-            if (_execution.Mode == CombatExecutionMode.Replica || !float.IsFinite(amount)) return false;
+            // 原始扣费口与权威时钟共用动态门；查询 CanSpend 与 Awake 初值装配仍保持只读/初始化语义。
+            if (!_execution.AllowsGameplayWrites || !float.IsFinite(amount)) return false;
             float cost = Mathf.Max(0f, amount);
             if (_currentMana < cost)
                 return false;

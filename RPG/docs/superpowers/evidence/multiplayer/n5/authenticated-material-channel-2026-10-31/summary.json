@@ -1,0 +1,183 @@
+{
+  "RecordedUtc": "2026-10-31T12:29:10.684203+00:00",
+  "Scope": "First authenticated bounded full-chunk replication path; Native baseline proof only",
+  "ProtocolVersion": 3,
+  "SchemaChanged": false,
+  "BehaviourTests": {
+    "CoordinatorRed": [
+      0,
+      8
+    ],
+    "CoordinatorGreen": [
+      8,
+      0
+    ],
+    "AdapterRed": [
+      8,
+      4
+    ],
+    "StopRed": [
+      12,
+      1
+    ],
+    "InitialGreen": [
+      13,
+      0
+    ],
+    "DestroyedUnityChannelRed": [
+      4,
+      1
+    ],
+    "FinalNewCases": 14
+  },
+  "EditMode": {
+    "Fixtures": 26,
+    "Passed": 294,
+    "Failed": 0
+  },
+  "PlayMode": {
+    "Passed": 2,
+    "Failed": 0
+  },
+  "NativeBuilds": {
+    "Client": {
+      "Result": "Succeeded",
+      "UnityVersion": "6000.3.16f1",
+      "Output": "Builds/OnlineRooms/Client/NornRoomClient.exe",
+      "RecordedAtUtc": "2026-10-31T12:21:47.1667666Z",
+      "DedicatedServer": false,
+      "RenderingInputsIsolated": false,
+      "ClientResourcesExcluded": false,
+      "Errors": 0
+    },
+    "DedicatedServer": {
+      "Result": "Succeeded",
+      "UnityVersion": "6000.3.16f1",
+      "Output": "Builds/OnlineRooms/Server/NornRoomServer.exe",
+      "RecordedAtUtc": "2026-10-31T12:25:48.8725878Z",
+      "DedicatedServer": true,
+      "RenderingInputsIsolated": false,
+      "ClientResourcesExcluded": false,
+      "Errors": 0
+    }
+  },
+  "NativeConsistency": {
+    "RecordedAtUtc": "2026-10-31T12:26:48.707816+00:00",
+    "Dungeon": "p7",
+    "WorldEpoch": 11612156651785838361,
+    "SourceChunks": 4,
+    "NonEmptyMaterialChunks": 1,
+    "SourcePagesSent": 8,
+    "InstallAcksAccepted": 8,
+    "Seed": {
+      "Accepted": true,
+      "PausedForComparison": true,
+      "Quantity": 512,
+      "WorldTick": 5,
+      "Position": {
+        "x": 0.125,
+        "y": 2.125,
+        "z": 0.125
+      },
+      "RecordedUtc": "2026-10-31T12:26:18.3349206Z"
+    },
+    "Clients": [
+      {
+        "ActorId": 1,
+        "ConnectionEpoch": 1,
+        "ChunksCompared": 4,
+        "ExactChunkFieldsMatch": true,
+        "Installed": 4,
+        "ReportedAtUtc": "2026-10-31T12:26:48.1688461Z"
+      },
+      {
+        "ActorId": 2,
+        "ConnectionEpoch": 1,
+        "ChunksCompared": 4,
+        "ExactChunkFieldsMatch": true,
+        "Installed": 4,
+        "ReportedAtUtc": "2026-10-31T12:26:48.1527340Z"
+      }
+    ],
+    "LogSummary": [
+      {
+        "Label": "p7",
+        "BuiltInResourceErrors": 2,
+        "OtherErrors": []
+      },
+      {
+        "Label": "p7-client0",
+        "BuiltInResourceErrors": 0,
+        "OtherErrors": []
+      },
+      {
+        "Label": "p7-client1",
+        "BuiltInResourceErrors": 0,
+        "OtherErrors": []
+      }
+    ],
+    "ComparedFields": [
+      "Domain",
+      "XYZ",
+      "WorldEpoch",
+      "Generation",
+      "Revision",
+      "Checksum",
+      "Words",
+      "Resident"
+    ],
+    "Limits": [
+      "Explicit Development seed and paused material checkpoint after five real ticks",
+      "No dynamic Interest/evict, stress, continuous-reaction or Native performance claim",
+      "Same-process auto reconnect and resource consumption persistence not tested"
+    ]
+  },
+  "RuntimeAdded": [
+    "Multiplayer/World/WorldReplicationCoordinator.cs",
+    "Multiplayer/World/WorldReplicationNetworkChannel.cs",
+    "ElementField/Diagnostics/OnlineMaterialReplicationProbe.cs"
+  ],
+  "RuntimeModified": [
+    "Multiplayer/Movement/OnlineWorldBootstrap.cs",
+    "Multiplayer/Movement/AuthorityTickDriver.cs",
+    "Multiplayer/Diagnostics/RoomAdmissionProbe.cs",
+    "Multiplayer/Runtime/RoomInstanceBootstrap.cs"
+  ],
+  "PreservedFiles": 12,
+  "FormalAssetsUnchanged": 13,
+  "N5Complete": false,
+  "CurrentPath": "Global bounded committed chunks; existing Baseline/replacement Delta/tombstone, full validation and real Store install before ACK; bounded queue/control budgets and associated Resync",
+  "NativeValidationLimit": "Explicit Development P7 water write, five actual material ticks then existing debug pause, two real clients; exact chunk stamp comparison. Not continuous reaction or performance evidence.",
+  "Remaining": [
+    "Dynamic four-player Interest/eviction/re-entry",
+    "Native delta/fault/stress/HOL and calibrated GC/performance",
+    "Same-process auto reconnect",
+    "Resource consumption not refilled",
+    "Full Hub/player path",
+    "P8 native material-data path",
+    "N4 experience gates and N6 durable settlement",
+    "Linux/public network/IL2CPP/D3D12 and undefined DS restart recovery"
+  ],
+  "Blockers": [
+    "Existing DS Built-in Resource startup errors retained; no observed failure of this baseline proof"
+  ],
+  "PermissionOrDecisionBlocker": false,
+  "NoCommitOrPush": true,
+  "FinalChecks": {
+    "RecordedUtc": "2026-10-31T12:34:18.581719+00:00",
+    "DocumentLinksChecked": 38,
+    "MissingLinks": 0,
+    "TextDiffCheckExitCode": 0,
+    "NewSourceWhitespacePassed": true,
+    "CredentialExposure": 0,
+    "Editor": {
+      "Playing": false,
+      "Compiling": false,
+      "Dirty": false,
+      "Scene": "Assets/_Project/Scenes/P7_MainMenu.unity"
+    },
+    "CommitHead": "0d87d0da931ec2b39f7cd569661e750bafa0df84",
+    "ProtectedFilesUnchanged": 12,
+    "FormalAssetsUnchanged": 13
+  }
+}

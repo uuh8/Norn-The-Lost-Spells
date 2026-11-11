@@ -10,7 +10,7 @@ namespace Game.Run
     // 资源先走上一帧delta，再由角色支付本帧新施法；反序会在提交帧立刻减掉一帧冷却。
     [DefaultExecutionOrder(-100)]
     // UI 只读取共享 Presentation 接口；单机 Session 继续独占原存档与事务生命周期。
-    public sealed class SinglePlayerInventorySession : MonoBehaviour, IWalletReadOnly, IOwnedCastWorkspace, IInventoryPresentationSource
+    public sealed partial class SinglePlayerInventorySession : MonoBehaviour, IWalletReadOnly, IOwnedCastWorkspace, IInventoryPresentationSource, IAccountInventoryHubWriteGuard
     {
         [SerializeField] private ItemCatalog _catalog;
         [SerializeField] private SinglePlayerStartingInventory _startingInventory;
@@ -18,7 +18,7 @@ namespace Game.Run
         private bool _useSpellProgrammingV2;
         public bool UseSpellProgrammingV2 => _useSpellProgrammingV2;
         // 窄接口只投影已有会话能力；单机加载、保存与原资源流程不因联机装配而改变。
-        bool IOwnedCastWorkspace.IsActiveAndEnabled => this != null && isActiveAndEnabled;
+        bool IOwnedCastWorkspace.IsActiveAndEnabled => this != null && isActiveAndEnabled && !AccountInventoryReadOnly;
         string IOwnedCastWorkspace.InventoryId => _read != null ? _read.InventoryId : null;
         uint IOwnedCastWorkspace.InventoryVersion => _read != null ? _read.Version : 0;
         [SerializeField, Tooltip("独立 Sandbox 必须保持启用，避免测试动作写正式资产目录。")]
@@ -61,6 +61,60 @@ namespace Game.Run
         public string ProfileModeDescription=>IsScenePreview?"Scene Preview · 临时内存资产，下一次Play重置":"Saved Profile · 持久化资产";
         public string ProfileStoragePath=>_repository?.MainPath;
         private SinglePlayerProfile _profile;
+        private bool _accountInventoryReadOnly;
+        /// <summary>只锁显式返回的Hub。标记跨OnEnable保留，不把账号物品写进旧Profile。</summary>
+        public bool AccountInventoryReadOnly => _accountInventoryReadOnly
+            || this != null && OnlineAccountInventoryHubScope.IsRequiredForScene(gameObject.scene);
+        public bool RequireAccountInventoryReadOnly(int sceneHandle)
+        {
+            if (this == null || gameObject.scene.handle != sceneHandle || !gameObject.scene.IsValid()) return false;
+            if (!_accountInventoryReadOnly) ReleaseLocalGroundForAccount();
+            _accountInventoryReadOnly = true;
+            if (_profile != null) _profile.RaidActionsFrozen = true;
+            return true;
+        }
+        /// <summary>只借Catalog规则创建账号只读值，不从Repository加载或覆盖任何本地档。</summary>
+        public bool TryCreateAccountPresentation(OnlineAccountInventorySnapshot snapshot,
+            out AccountInventoryPresentationSource source, out string error)
+        {
+            source = null; error = null;
+            ItemCatalogIndex index = _profile?.Items.Catalog;
+            if (index == null && (_catalog == null || !_catalog.TryCreateIndex(out index, out error)))
+            { error = error ?? "原Hub缺少物品规则目录。"; return false; }
+            if (!AccountInventoryPresentationSource.TryCreate(index, snapshot, out source, out error)) { ClearAccountGround(); return false; }
+            if (!PrepareAccountGround(index, snapshot, out error)) { source.Dispose(); source = null; return false; }
+            // 地面、Tab和仓库有各自独立的完整Profile读模型，却必须共享本Scene的十选一状态。
+            // 仅在两种候选都安装成功后同步选择；准备失败不能先清除用户仍有效的原手持状态。
+            _accountHeldSelection ??= new AccountHeldItemSelection();
+            source.BindHeldSelection(_accountHeldSelection);
+            _accountGroundSource.BindHeldSelection(_accountHeldSelection);
+            return true;
+        }
+        /// <summary>
+        /// 账号整备组件只借正式 Catalog 冻结静态规则，不通过创建临时 Profile 取得写权限。
+        /// 先复核当前账号 Scope 与租约，再返回目录；商店、研究等适配不能借失效的旧场景读取规则后冒充就绪。
+        /// </summary>
+        public bool TryGetAccountCatalog(out ItemCatalogIndex catalog, out string error)
+        {
+            catalog = null; error = null;
+            if (!TryGetAccountHubSummary(out _)) { error = "当前账号据点尚未就绪或资产被副本占用。"; return false; }
+            if (_catalog == null) { error = "原据点缺少正式物品规则目录。"; return false; }
+            return _catalog.TryCreateIndex(out catalog, out error);
+        }
+        /// <summary>账号Hub身份来自已确认Scope；不创建旧Profile/ReadModel，也不凭空建立一个Run。</summary>
+        public bool TryGetAccountHubSummary(out OnlineAccountHubSummary summary)
+        {
+            summary = default;
+            return this != null && AccountInventoryReadOnly && !_practiceWorkspace
+                && OnlineAccountInventoryHubScope.TryGetSummaryForScene(gameObject.scene.handle, out summary)
+                && summary.Version != 0 && !summary.AssetsLocked && string.IsNullOrEmpty(summary.ActiveRunId)
+                && (RunCoordinator == null || RunCoordinator.State.Phase == RaidPhase.HubReady);
+        }
+        /// <summary>只授予账号仓库访问资格，仍复核原站点几何；旧CanAccessWarehouse本地写门不变。</summary>
+        public bool CanAccessAccountWarehouse => _allowWarehouse && TryGetAccountHubSummary(out _)
+            && HubInteraction != null && HubInteraction.gameObject.scene == gameObject.scene
+            && HubInteraction.TryGetStation(out var station)
+            && (station.Kind == HubStationKind.Warehouse || station.Kind == HubStationKind.Shop);
         private ProfileSaveRepository _repository;
         private InventoryReadModel _read;
         private bool _subscribed;
@@ -156,13 +210,13 @@ namespace Game.Run
         public bool WorldActionsAllowed=>_profile!=null && (IsAwayRuntime || _allowWorldExperiments && (ExperimentArea==null || ExperimentArea.IsInside));
         public bool TryFindMaterialContent(byte key, out string contentId)
         { contentId = null; return _profile != null && _profile.Items.Catalog.TryFindMaterialContent(key, out contentId); }
-        public bool CanAccessWarehouse => _allowWarehouse && !_practiceWorkspace && _profile != null && _profile.PendingRaid == null && !_profile.RaidActionsFrozen
+        public bool CanAccessWarehouse => !AccountInventoryReadOnly && _allowWarehouse && !_practiceWorkspace && _profile != null && _profile.PendingRaid == null && !_profile.RaidActionsFrozen
             && (RunCoordinator == null || RunCoordinator.State.Phase == RaidPhase.HubReady)
             && (HubInteraction == null || HubInteraction.TryGetStation(out var station)
                 && (station.Kind == HubStationKind.Warehouse || station.Kind == HubStationKind.Shop));
         internal SinglePlayerProfile Profile => _profile;
         internal ProfileSaveRepository Repository => _repository;
-        internal bool RaidWriteLocked => _practiceWorkspace && (_profile?.RaidActionsFrozen??false) || RunCoordinator != null && !RunCoordinator.ActionsAllowed;
+        internal bool RaidWriteLocked => AccountInventoryReadOnly || _practiceWorkspace && (_profile?.RaidActionsFrozen??false) || RunCoordinator != null && !RunCoordinator.ActionsAllowed;
         public int PendingMaterialOutputs => _profile?.PendingMaterialOutputs ?? 0;
         public int PendingContainerFlights => _containerUses?.PendingFlights ?? 0;
         [SerializeField, Tooltip("只供独立次数测试场景模拟入局；正式出发由 M4 发命令。")]
@@ -180,7 +234,7 @@ namespace Game.Run
                 return null;
             }
         }
-        private void Update() { if (_casts == null || !_casts.IsPending) _wands?.Tick(Time.deltaTime); }
+        private void Update() { if (AccountInventoryReadOnly) return; if (_casts == null || !_casts.IsPending) _wands?.Tick(Time.deltaTime); }
         public IInventoryReadOnly ReadOnly => _read;
         public int SpellStorageCapacity => _profile?.Items.Catalog.SpellStorageCapacity ?? 12;
         public string InitializationMessage { get; private set; }
@@ -190,6 +244,7 @@ namespace Game.Run
 
         private void Start()
         {
+            if (AccountInventoryReadOnly) return;
             if (_initializationAttempted) return;
             string directory = Path.Combine(Application.persistentDataPath, "SinglePlayer");
             if (_sandboxProfile)
@@ -208,6 +263,7 @@ namespace Game.Run
 
         public bool ConfigureAndInitialize(ItemCatalog catalog, SinglePlayerStartingInventory seeds, string directory,IProfileFileSystem files=null)
         {
+            if (AccountInventoryReadOnly) return false; // 服务端账号源失效时也不能退回本地初始化/新手模板。
             if (_profile != null) return false;
             // 显式路径加载失败也属于已尝试初始化；Start 不能转去默认路径发放另一份新档。
             _initializationAttempted = true;
@@ -266,6 +322,8 @@ namespace Game.Run
 
         private void OnEnable()
         {
+            EventBus<OnlineAccountInventoryHubChangedEvent>.Subscribe(OnAccountGroundScopeChanged);
+            if (AccountInventoryReadOnly) { RequireAccountInventoryReadOnly(gameObject.scene.handle); ActivateAccountGround(); return; }
             foreach(var root in _worldRoots.Values)if(root!=null)root.gameObject.SetActive(true);
             if (_subscribed) return;
             EventBus<InventoryCommandEvent>.Subscribe(OnCommand);
@@ -288,6 +346,7 @@ namespace Game.Run
         }
         private void OnDisable()
         {
+            EventBus<OnlineAccountInventoryHubChangedEvent>.Unsubscribe(OnAccountGroundScopeChanged);
             // Runtime根与Session并列；必须显式同步停用，防止已关闭的Session仍留下可拾取代理。
             foreach(var root in _worldRoots.Values)if(root!=null)root.gameObject.SetActive(false);
             if (!_subscribed) return;
@@ -315,6 +374,7 @@ namespace Game.Run
         }
         private void OnApplicationQuit()
         {
+            if (AccountInventoryReadOnly) return;
             if (_profile?.PendingRaid != null && RunCoordinator != null) { RunCoordinator.CloseSynchronously(); return; }
             // 已投出的量属于将结束的世界；显式终止在途，再保存剩余整备资产。正式Raid终局留M4。
             _containerUses?.EndWorldTransits();
@@ -326,8 +386,10 @@ namespace Game.Run
         }
         private void OnDestroy()
         {
+            ClearAccountGround();
+            if (AccountInventoryReadOnly) { EndWorldResources(); }
             // Retry已可靠提交入场快照；旧Scene销毁不能再把战败后的资产写回覆盖它。
-            if (_practiceReloadCommitted) { EndWorldResources(); }
+            else if (_practiceReloadCommitted) { EndWorldResources(); }
             else if(_practiceWorkspace && _profile!=null)
             {var saved=SavePracticeForLeaving();if(!saved.Success)GameLog.Error("练习Scene退出保存失败："+saved.Message,"Practice");}
             // 同一轮Play换Scene保留临时状态；正式存档沿用既有退出/事务提交路径。
@@ -396,6 +458,7 @@ namespace Game.Run
         }
         public ProfilePersistenceResult Save()
         {
+            if (AccountInventoryReadOnly) return new ProfilePersistenceResult(ProfilePersistenceStatus.WriteBlocked, "当前账号资产由服务器保存。");
             if (_profile == null) return new ProfilePersistenceResult(ProfilePersistenceStatus.WriteBlocked, "库存未初始化。");
             if (_profile.PendingRaid != null && RunCoordinator != null) return RunCoordinator.Checkpoint();
             // 本局资格不能写入 Hub 快照；M4 PendingRaid 接入前只允许整备保存。
@@ -810,6 +873,7 @@ namespace Game.Run
         }
         private ProfilePersistenceResult SavePortalCandidate(bool removePracticeGround)
         {
+            if (AccountInventoryReadOnly) return new ProfilePersistenceResult(ProfilePersistenceStatus.WriteBlocked, "当前账号资产不可沿本地路径保存或出发。");
             var built=BuildPortalCandidate(removePracticeGround,out var next);
             if(!built.Success)return built;
             // 先清理候选并可靠保存，再采用；失败保留当前地面Store/代理，允许原位置继续拾取或重试回程。
@@ -826,6 +890,8 @@ namespace Game.Run
         internal ProfilePersistenceResult BuildPortalCandidate(bool removePracticeGround,out SinglePlayerProfile next)
         {
             next=null;
+            if (AccountInventoryReadOnly)
+                return new ProfilePersistenceResult(ProfilePersistenceStatus.WriteBlocked, "账号资产不能经原本地出发事务保存。");
             if (PendingDungeonDrops>0)
                 return new ProfilePersistenceResult(ProfilePersistenceStatus.WriteBlocked,"战利品正在落地，请稍后重试。");
             if (_profile.Items.IsResourceBusy || _casts.IsPending)

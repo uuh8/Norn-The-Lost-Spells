@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="16" result="Failed(Child)" total="16" passed="0" failed="16" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-03 05:19:10Z" end-time="2026-11-03 05:19:11Z" duration="1.3910742">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="4166" result="Failed" site="Child" start-time="2026-11-03 05:19:10Z" end-time="2026-11-03 05:19:11Z" duration="1.391074" total="16" passed="0" failed="16" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3369" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="420" result="Failed" site="Child" start-time="2026-11-03 05:19:10Z" end-time="2026-11-03 05:19:10Z" duration="0.706081" total="11" passed="0" failed="11" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34452" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3370" name="Game" fullname="Game" runstate="Runnable" testcasecount="420" result="Failed" site="Child" start-time="2026-11-03 05:19:10Z" end-time="2026-11-03 05:19:10Z" duration="0.611528" total="11" passed="0" failed="11" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3371" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="420" result="Failed" site="Child" start-time="2026-11-03 05:19:10Z" end-time="2026-11-03 05:19:10Z" duration="0.512518" total="11" passed="0" failed="11" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3372" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="420" result="Failed" site="Child" start-time="2026-11-03 05:19:10Z" end-time="2026-11-03 05:19:10Z" duration="0.411524" total="11" passed="0" failed="11" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2843" name="AccountInventoryCommandClientTests" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" testcasecount="11" result="Failed" site="Child" start-time="2026-11-03 05:19:10Z" end-time="2026-11-03 05:19:10Z" duration="0.308195" total="11" passed="0" failed="11" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="2856" name="CompleteMatchingReceiptAndProfileInstallBeforePendingIsCleared" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.CompleteMatchingReceiptAndProfileInstallBeforePendingIsCleared" methodname="CompleteMatchingReceiptAndProfileInstallBeforePendingIsCleared" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="667994214" result="Failed" start-time="2026-11-03 05:19:10Z" end-time="2026-11-03 05:19:10Z" duration="0.035898" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  需要正式账号入口冻结一次命令，不能让UI发布本地写事件。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.Capture (System.Object request) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:77
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.CompleteMatchingReceiptAndProfileInstallBeforePendingIsCleared () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:138
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="2848" name="DifferentAccountOrStaleAndFutureUiVersionsCannotWrite" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.DifferentAccountOrStaleAndFutureUiVersionsCannotWrite" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-11-03 05:19:10Z" end-time="2026-11-03 05:19:10Z" duration="0.059964" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2845" name="DifferentAccountOrStaleAndFutureUiVersionsCannotWrite(&quot;22222222222222222222222222222222&quot;,7)" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.DifferentAccountOrStaleAndFutureUiVersionsCannotWrite(&quot;22222222222222222222222222222222&quot;,7)" methodname="DifferentAccountOrStaleAndFutureUiVersionsCannotWrite" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="1509302146" result="Failed" start-time="2026-11-03 05:19:10Z" end-time="2026-11-03 05:19:10Z" duration="0.001353" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  需要正式账号入口冻结一次命令，不能让UI发布本地写事件。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.Capture (System.Object request) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:77
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.DifferentAccountOrStaleAndFutureUiVersionsCannotWrite (System.String player, System.UInt32 version) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:107
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2846" name="DifferentAccountOrStaleAndFutureUiVersionsCannotWrite(&quot;11111111111111111111111111111111&quot;,6)" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.DifferentAccountOrStaleAndFutureUiVersionsCannotWrite(&quot;11111111111111111111111111111111&quot;,6)" methodname="DifferentAccountOrStaleAndFutureUiVersionsCannotWrite" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="79043453" result="Failed" start-time="2026-11-03 05:19:10Z" end-time="2026-11-03 05:19:10Z" duration="0.000640" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  需要正式账号入口冻结一次命令，不能让UI发布本地写事件。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.Capture (System.Object request) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:77
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.DifferentAccountOrStaleAndFutureUiVersionsCannotWrite (System.String player, System.UInt32 version) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:107
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2847" name="DifferentAccountOrStaleAndFutureUiVersionsCannotWrite(&quot;11111111111111111111111111111111&quot;,8)" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.DifferentAccountOrStaleAndFutureUiVersionsCannotWrite(&quot;11111111111111111111111111111111&quot;,8)" methodname="DifferentAccountOrStaleAndFutureUiVersionsCannotWrite" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="219337137" result="Failed" start-time="2026-11-03 05:19:10Z" end-time="2026-11-03 05:19:10Z" duration="0.000993" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  需要正式账号入口冻结一次命令，不能让UI发布本地写事件。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.Capture (System.Object request) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:77
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.DifferentAccountOrStaleAndFutureUiVersionsCannotWrite (System.String player, System.UInt32 version) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:107
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="2855" name="DifferentCommandCannotConfirmAndSameAccountCannotBeReplacedMidRequest" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.DifferentCommandCannotConfirmAndSameAccountCannotBeReplacedMidRequest" methodname="DifferentCommandCannotConfirmAndSameAccountCannotBeReplacedMidRequest" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="2042927471" result="Failed" start-time="2026-11-03 05:19:10Z" end-time="2026-11-03 05:19:10Z" duration="0.001985" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  需要正式账号入口冻结一次命令，不能让UI发布本地写事件。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.Capture (System.Object request) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:77
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.DifferentCommandCannotConfirmAndSameAccountCannotBeReplacedMidRequest () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:131
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2844" name="RealAccountRequestFreezesOneCandidateAndDoesNotMutateProfile" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.RealAccountRequestFreezesOneCandidateAndDoesNotMutateProfile" methodname="RealAccountRequestFreezesOneCandidateAndDoesNotMutateProfile" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="1979031101" result="Failed" start-time="2026-11-03 05:19:10Z" end-time="2026-11-03 05:19:10Z" duration="0.001552" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  需要正式账号入口冻结一次命令，不能让UI发布本地写事件。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.Capture (System.Object request) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:77
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.RealAccountRequestFreezesOneCandidateAndDoesNotMutateProfile () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:100
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="2854" name="ReplyCannotUnlockWithWrongOldOrLeasedProfile" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ReplyCannotUnlockWithWrongOldOrLeasedProfile" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-11-03 05:19:10Z" end-time="2026-11-03 05:19:10Z" duration="0.095053" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2851" name="ReplyCannotUnlockWithWrongOldOrLeasedProfile(&quot;22222222222222222222222222222222&quot;,8,False)" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ReplyCannotUnlockWithWrongOldOrLeasedProfile(&quot;22222222222222222222222222222222&quot;,8,False)" methodname="ReplyCannotUnlockWithWrongOldOrLeasedProfile" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="515762167" result="Failed" start-time="2026-11-03 05:19:10Z" end-time="2026-11-03 05:19:10Z" duration="0.002045" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  需要正式账号入口冻结一次命令，不能让UI发布本地写事件。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.Capture (System.Object request) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:77
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ReplyCannotUnlockWithWrongOldOrLeasedProfile (System.String player, System.UInt32 version, System.Boolean locked) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:123
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2852" name="ReplyCannotUnlockWithWrongOldOrLeasedProfile(&quot;11111111111111111111111111111111&quot;,7,False)" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ReplyCannotUnlockWithWrongOldOrLeasedProfile(&quot;11111111111111111111111111111111&quot;,7,False)" methodname="ReplyCannotUnlockWithWrongOldOrLeasedProfile" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="222485833" result="Failed" start-time="2026-11-03 05:19:10Z" end-time="2026-11-03 05:19:10Z" duration="0.001968" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  需要正式账号入口冻结一次命令，不能让UI发布本地写事件。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.Capture (System.Object request) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:77
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ReplyCannotUnlockWithWrongOldOrLeasedProfile (System.String player, System.UInt32 version, System.Boolean locked) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:123
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2853" name="ReplyCannotUnlockWithWrongOldOrLeasedProfile(&quot;11111111111111111111111111111111&quot;,8,True)" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ReplyCannotUnlockWithWrongOldOrLeasedProfile(&quot;11111111111111111111111111111111&quot;,8,True)" methodname="ReplyCannotUnlockWithWrongOldOrLeasedProfile" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="1941904303" result="Failed" start-time="2026-11-03 05:19:10Z" end-time="2026-11-03 05:19:10Z" duration="0.001693" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  需要正式账号入口冻结一次命令，不能让UI发布本地写事件。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.Capture (System.Object request) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:77
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.ReplyCannotUnlockWithWrongOldOrLeasedProfile (System.String player, System.UInt32 version, System.Boolean locked) [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:123
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="2850" name="UnknownFirstCandidateCannotBeReplacedByFreshCommand" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.UnknownFirstCandidateCannotBeReplacedByFreshCommand" methodname="UnknownFirstCandidateCannotBeReplacedByFreshCommand" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="1416326473" result="Failed" start-time="2026-11-03 05:19:10Z" end-time="2026-11-03 05:19:10Z" duration="0.001892" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  需要正式账号入口冻结一次命令，不能让UI发布本地写事件。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.Capture (System.Object request) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:77
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.UnknownFirstCandidateCannotBeReplacedByFreshCommand () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:116
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="2849" name="WrongSceneAndUnownedItemCannotReachHttp" fullname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests.WrongSceneAndUnownedItemCannotReachHttp" methodname="WrongSceneAndUnownedItemCannotReachHttp" classname="Game.Multiplayer.Tests.AccountInventoryCommandClientTests" runstate="Runnable" seed="1811703489" result="Failed" start-time="2026-11-03 05:19:10Z" end-time="2026-11-03 05:19:10Z" duration="0.001557" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  需要正式账号入口冻结一次命令，不能让UI发布本地写事件。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.Capture (System.Object request) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:77
+at Game.Multiplayer.Tests.AccountInventoryCommandClientTests.WrongSceneAndUnownedItemCannotReachHttp () [0x00001] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\AccountInventoryCommandClientTests.cs:110
+]]></stack-trace>
+                </failure>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="5685" name="Game.Run.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Run.Tests.dll" runstate="Runnable" testcasecount="1067" result="Failed" site="Child" start-time="2026-11-03 05:19:10Z" end-time="2026-11-03 05:19:11Z" duration="0.588262" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="34452" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="5686" name="Game" fullname="Game" runstate="Runnable" testcasecount="1067" result="Failed" site="Child" start-time="2026-11-03 05:19:11Z" end-time="2026-11-03 05:19:11Z" duration="0.501167" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="5687" name="Run" fullname="Game.Run" runstate="Runnable" testcasecount="1067" result="Failed" site="Child" start-time="2026-11-03 05:19:11Z" end-time="2026-11-03 05:19:11Z" duration="0.402445" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="5688" name="Tests" fullname="Game.Run.Tests" runstate="Runnable" testcasecount="1067" result="Failed" site="Child" start-time="2026-11-03 05:19:11Z" end-time="2026-11-03 05:19:11Z" duration="0.305076" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="4395" name="AccountEntryNavigationTests" fullname="Game.Run.Tests.AccountEntryNavigationTests" classname="Game.Run.Tests.AccountEntryNavigationTests" runstate="Runnable" testcasecount="5" result="Failed" site="Child" start-time="2026-11-03 05:19:11Z" end-time="2026-11-03 05:19:11Z" duration="0.203463" total="5" passed="0" failed="5" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="4398" name="ArmedFirstHubBlocksOldProfileBeforeSessionEnableAndSurvivesIdentityFailure" fullname="Game.Run.Tests.AccountEntryNavigationTests.ArmedFirstHubBlocksOldProfileBeforeSessionEnableAndSurvivesIdentityFailure" methodname="ArmedFirstHubBlocksOldProfileBeforeSessionEnableAndSurvivesIdentityFailure" classname="Game.Run.Tests.AccountEntryNavigationTests" runstate="Runnable" seed="21271059" result="Failed" start-time="2026-11-03 05:19:11Z" end-time="2026-11-03 05:19:11Z" duration="0.001534" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  首次场景激活前需要既有Scope的目标要求，加载后才prepare已经晚于旧Session启用。
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.AccountEntryNavigationTests.TryArm (System.Int32 owner, System.String target) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\AccountEntryNavigationTests.cs:85
+at Game.Run.Tests.AccountEntryNavigationTests.ArmedFirstHubBlocksOldProfileBeforeSessionEnableAndSurvivesIdentityFailure () [0x0003d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\AccountEntryNavigationTests.cs:54
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="4397" name="FreshHubValidationCarriesTheOriginalConfiguredSceneTarget" fullname="Game.Run.Tests.AccountEntryNavigationTests.FreshHubValidationCarriesTheOriginalConfiguredSceneTarget" methodname="FreshHubValidationCarriesTheOriginalConfiguredSceneTarget" classname="Game.Run.Tests.AccountEntryNavigationTests" runstate="Runnable" seed="751623647" result="Failed" start-time="2026-11-03 05:19:11Z" end-time="2026-11-03 05:19:11Z" duration="0.008322" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  业务验证与加载前只读要求必须使用原菜单将加载的同一个Hub，不能另猜场景。
+  Expected: "Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Hub.unity"
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.AccountEntryNavigationTests.FreshHubValidationCarriesTheOriginalConfiguredSceneTarget () [0x00066] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\AccountEntryNavigationTests.cs:41
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="4401" name="LockedOrActiveAccountCannotArmFirstHub" fullname="Game.Run.Tests.AccountEntryNavigationTests.LockedOrActiveAccountCannotArmFirstHub" classname="Game.Run.Tests.AccountEntryNavigationTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-11-03 05:19:11Z" end-time="2026-11-03 05:19:11Z" duration="0.090035" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="4399" name="LockedOrActiveAccountCannotArmFirstHub(True,&quot;&quot;)" fullname="Game.Run.Tests.AccountEntryNavigationTests.LockedOrActiveAccountCannotArmFirstHub(True,&quot;&quot;)" methodname="LockedOrActiveAccountCannotArmFirstHub" classname="Game.Run.Tests.AccountEntryNavigationTests" runstate="Runnable" seed="1303242822" result="Failed" start-time="2026-11-03 05:19:11Z" end-time="2026-11-03 05:19:11Z" duration="0.000907" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  首次场景激活前需要既有Scope的目标要求，加载后才prepare已经晚于旧Session启用。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.AccountEntryNavigationTests.TryArm (System.Int32 owner, System.String target) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\AccountEntryNavigationTests.cs:85
+at Game.Run.Tests.AccountEntryNavigationTests.LockedOrActiveAccountCannotArmFirstHub (System.Boolean locked, System.String runId) [0x0003a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\AccountEntryNavigationTests.cs:77
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="4400" name="LockedOrActiveAccountCannotArmFirstHub(False,&quot;bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb&quot;)" fullname="Game.Run.Tests.AccountEntryNavigationTests.LockedOrActiveAccountCannotArmFirstHub(False,&quot;bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb&quot;)" methodname="LockedOrActiveAccountCannotArmFirstHub" classname="Game.Run.Tests.AccountEntryNavigationTests" runstate="Runnable" seed="1961222441" result="Failed" start-time="2026-11-03 05:19:11Z" end-time="2026-11-03 05:19:11Z" duration="0.000807" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  首次场景激活前需要既有Scope的目标要求，加载后才prepare已经晚于旧Session启用。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Run.Tests.AccountEntryNavigationTests.TryArm (System.Int32 owner, System.String target) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\AccountEntryNavigationTests.cs:85
+at Game.Run.Tests.AccountEntryNavigationTests.LockedOrActiveAccountCannotArmFirstHub (System.Boolean locked, System.String runId) [0x0003a] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\AccountEntryNavigationTests.cs:77
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-case id="4396" name="StartGame_RequiresFreshBusinessValidation" fullname="Game.Run.Tests.AccountEntryNavigationTests.StartGame_RequiresFreshBusinessValidation" methodname="StartGame_RequiresFreshBusinessValidation" classname="Game.Run.Tests.AccountEntryNavigationTests" runstate="Runnable" seed="92024332" result="Failed" start-time="2026-11-03 05:19:11Z" end-time="2026-11-03 05:19:11Z" duration="0.003604" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: 1
+  But was:  2
+]]></message>
+                  <stack-trace><![CDATA[at Game.Run.Tests.AccountEntryNavigationTests.StartGame_RequiresFreshBusinessValidation () [0x0002d] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Run\AccountEntryNavigationTests.cs:25
+]]></stack-trace>
+                </failure>
+                <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

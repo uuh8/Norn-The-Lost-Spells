@@ -1,0 +1,56 @@
+[
+  {
+    "Case": "checksum",
+    "Process": "client0",
+    "MatchedLines": [],
+    "KnownBuiltinResourceErrors": 0
+  },
+  {
+    "Case": "checksum",
+    "Process": "client1",
+    "MatchedLines": [],
+    "KnownBuiltinResourceErrors": 0
+  },
+  {
+    "Case": "checksum",
+    "Process": "server",
+    "MatchedLines": [
+      {
+        "Line": 37,
+        "Text": "Built-in Resource Error: dereference potentially before BuiltinResourceManager::InitializeAllResources(). May cause unexpected or untested fall-back logic."
+      },
+      {
+        "Line": 40,
+        "Text": "Built-in Resource Error: dereference potentially before BuiltinResourceManager::InitializeAllResources(). May cause unexpected or untested fall-back logic."
+      }
+    ],
+    "KnownBuiltinResourceErrors": 2
+  },
+  {
+    "Case": "missing-base",
+    "Process": "client0",
+    "MatchedLines": [],
+    "KnownBuiltinResourceErrors": 0
+  },
+  {
+    "Case": "missing-base",
+    "Process": "client1",
+    "MatchedLines": [],
+    "KnownBuiltinResourceErrors": 0
+  },
+  {
+    "Case": "missing-base",
+    "Process": "server",
+    "MatchedLines": [
+      {
+        "Line": 37,
+        "Text": "Built-in Resource Error: dereference potentially before BuiltinResourceManager::InitializeAllResources(). May cause unexpected or untested fall-back logic."
+      },
+      {
+        "Line": 40,
+        "Text": "Built-in Resource Error: dereference potentially before BuiltinResourceManager::InitializeAllResources(). May cause unexpected or untested fall-back logic."
+      }
+    ],
+    "KnownBuiltinResourceErrors": 2
+  }
+]

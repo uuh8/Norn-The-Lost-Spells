@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Game.Core;
 using Game.Run;
 using UnityEngine;
@@ -29,6 +29,11 @@ namespace Game.Character
         private uint _remaining;
         private OnlineDungeonPhase _phase = OnlineDungeonPhase.Armed;
         private bool _hasTick, _disposed;
+        public bool IsStageCleared => !_disposed && !_definition.IsPeacefulHome && _phase == OnlineDungeonPhase.StageCleared;
+        public uint DefeatedEnemies
+        {
+            get { uint bits = _deadNpcMask, count = 0; while (bits != 0) { bits &= bits - 1; count++; } return count; }
+        }
 
         public OnlineDungeonRuntime(OnlineDungeonDefinition definition, OnlineDungeonWorldBindings bindings,
             ICombatActorRosterReadOnly players, bool authority, Action<ulong, bool> setNpcActive, Action<ulong> activateBoss)
@@ -47,7 +52,7 @@ namespace Game.Character
                 var npc = definition.GetNpc(i); _areaNpcMasks[npc.EncounterIndex] |= 1u << i; _areaNpcCounts[npc.EncounterIndex]++;
                 if (authority) _setNpcActive(npc.ActorId, npc.InitiallyVisible);
             }
-            _remaining = (uint)_areaNpcCounts[0]; _revision = authority ? 1u : 0u;
+            _remaining = _areaNpcCounts.Length == 0 ? 0u : (uint)_areaNpcCounts[0]; _revision = authority ? 1u : 0u;
             _bindings.Prepare(); _bindings.OpenAll();
         }
 
@@ -60,6 +65,8 @@ namespace Game.Character
             if (_disposed || !_authority || tick == 0 || !float.IsFinite(deltaTime) || deltaTime <= 0 ||
                 _hasTick && unchecked((int)(tick - _serverTick)) <= 0) return;
             _hasTick = true; _serverTick = tick;
+            // 和平实验场保留正常角色/法术/材料时钟，但此Owner没有遭遇可推进或可奖励。
+            if (_definition.IsPeacefulHome) return;
             if (_phase == OnlineDungeonPhase.StageCleared) return;
             if (_phase == OnlineDungeonPhase.Armed)
             {
@@ -143,7 +150,7 @@ namespace Game.Character
         public bool TryCapture(out OnlineDungeonProgress progress)
         {
             progress = default;
-            if (_disposed || _revision == 0 || _serverTick == 0) return false;
+            if (_disposed || _definition.IsPeacefulHome || _revision == 0 || _serverTick == 0) return false;
             progress = new OnlineDungeonProgress { Revision = _revision, ServerTick = _serverTick,
                 EncounterIndexPlusOne = (uint)_currentArea + 1, RemainingEnemies = _remaining, Phase = _phase };
             return true;
@@ -157,6 +164,20 @@ namespace Game.Character
         public string GetDisplayName(int index) => index >= 0 && index < EncounterCount ? _definition.GetEncounter(index).DisplayName : string.Empty;
         public string GetObjectiveText(int index) => index >= 0 && index < EncounterCount ? _definition.GetEncounter(index).ObjectiveText : string.Empty;
         public bool TryCaptureProgress(out OnlineDungeonProgress progress) => TryCapture(out progress);
+
+        /// <summary>
+        /// 只读回答原单机Active/Cleared掉落准入，不创建物品或推进遭遇Revision。
+        /// 死亡事实必须属于可信NPC且Health已经死亡；未激活未来区、活NPC、玩家和Replica不能发奖。
+        /// 已清区域仍可消费迟到的首次死亡事实，是否已经抽过由Run级有界plan独立去重。
+        /// </summary>
+        public bool CanAwardNpcDeath(ulong actorId)
+        {
+            if (_disposed || !_authority || !_definition.TryGetNpc(actorId, out var npc)
+                || !_npcs.TryGetNpcState(actorId, out bool alive, out _) || alive) return false;
+            return npc.EncounterIndex < _currentArea || npc.EncounterIndex == _currentArea
+                && (_phase == OnlineDungeonPhase.Active || _phase == OnlineDungeonPhase.StageCleared);
+        }
+
 
         /// <summary>
         /// 只能由已认证上层传入同Run/同Dungeon的完整进度。先验证全部值再改变门与本地读数；

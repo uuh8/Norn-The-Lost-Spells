@@ -1,0 +1,52 @@
+{
+  "RecordedAtUtc": "2026-11-02T19:52:02Z",
+  "Scope": "Backend persistent random-wand carrier and trusted Inventory/Entry/Ready readback only",
+  "ProtocolRemains": 11,
+  "UnitySharedOrManifestChangedByThisSlice": false,
+  "Tests": {
+    "Red": { "Total": 20, "Passed": 1, "Failed": 19, "Report": "Server/TestResults/persistent-wand-state-20261102/persistent-wand-state-red-20261102.trx" },
+    "FocusedGreen": { "Total": 20, "Passed": 20, "Failed": 0, "Report": "Server/TestResults/persistent-wand-state-20261102/persistent-wand-state-green-20261102.trx" },
+    "AffectedFirst": { "Total": 111, "Passed": 109, "Failed": 2, "Report": "Server/TestResults/persistent-wand-state-20261102/persistent-wand-affected-regression-20261102.trx", "FailureReason": "Two old tests expected pre-entry version despite approved new-run container grant. Updated to exact +1, actual-profile/frozen agreement and one new empty tool container; original quantity and immutable snapshot assertions retained." },
+    "Final": { "Total": 131, "Passed": 131, "Failed": 0, "StartedUtc": "2026-11-02T19:50:27.4393007Z", "FinishedUtc": "2026-11-02T19:51:07.2762525Z", "Report": "Server/TestResults/persistent-wand-state-20261102/persistent-wand-final-green-20261102.trx" },
+    "OverlappingRunsMustNotBeSummed": true,
+    "ReleaseBusinessAndSharedCompiled": true,
+    "UnityOrBroadSuiteRerun": false
+  },
+  "Database": {
+    "IsolatedTestSchemaVersion": 11,
+    "MainSchemaVersion": 10,
+    "MainMigration011Applied": false,
+    "Migration011Sha256": "a6a91b69c22029f47348fcf38917ff3376043572163afcc71f7e825e7428b08b",
+    "OriginalTestTablesRowsAndColumnsUnchanged": 13,
+    "OriginalTestItemsRetainMode0": 37561,
+    "OriginalsEvidence": "persistent-wand-state-011-originals-20261102.json",
+    "NoLegacyConversionOrRewardBackfill": true
+  },
+  "Implementation": {
+    "BoundedStateUtf8Bytes": 4096,
+    "SameValueIdempotentDifferentValueRejected": true,
+    "CallerTransactionNotCommittedByHelper": true,
+    "OwnerAndModeCheckedAgainstLockedActualItem": true,
+    "InvalidOrMissingStateIncludingWarehouseRejected": true,
+    "PublicDefaultTemplateGateRemainsStrict": true,
+    "FormalProductionAcquisitionOrAssetWritebackCallsHelper": false,
+    "ProfileItemsRollDisplayImplemented": false,
+    "EscSaveImplemented": false
+  },
+  "Environment": {
+    "ExistingPublishedBusinessSha256": "6518a4f704c086c378e212fa29bb4a5f7016b8045e2da565742d4841354bc1a3",
+    "PublishOrNativeBuildByThisSlice": false,
+    "ProtectedFileHashesUnchanged": 7,
+    "BusinessPidStillAlive": 14912,
+    "MySqlPidStillAlive": 29780,
+    "EditorPidStillAlive": 15628,
+    "GuiProcessesAndGuardsConfirmedClosed": [53004, 31792, 52956, 54972]
+  },
+  "ReadOnlyReview": "No definite defect found in carrier/schema and final Inventory/Entry/Ready consumers; not gameplay acceptance",
+  "PlayerChainEvidence": "six-issues-player-chain-20261102/recovered2/actual-validation-checkpoint.json",
+  "PendingDecisions": ["Hub local versus online inventory mode", "Original-run eligibility after temporary ESC preservation"],
+  "RemainingTechnicalWork": ["Formal authorized random-wand creation/writeback caller", "Profile.Items/warehouse roll display", "Complete DS member/in-flight/retirement capture and submission/recovery", "Runtime actor/input/controller collision observations before another short GUI attempt", "D3D12 crash root cause and actual full two-player chain"],
+  "N5Complete": false,
+  "N6Complete": false,
+  "NoCommitOrPush": true
+}

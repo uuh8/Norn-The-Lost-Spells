@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="14" result="Failed(Child)" total="14" passed="4" failed="10" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-01 10:10:09Z" end-time="2026-11-01 10:10:10Z" duration="0.9211938">
+  <test-suite type="TestSuite" id="1000" name="Norn：The Lost Spells" fullname="Norn：The Lost Spells" runstate="Runnable" testcasecount="3317" result="Failed" site="Child" start-time="2026-11-01 10:10:09Z" end-time="2026-11-01 10:10:10Z" duration="0.921194" total="14" passed="4" failed="10" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="3037" name="Game.Multiplayer.Tests.dll" fullname="F:/Develop Project/RPG/RPG/Library/ScriptAssemblies/Game.Multiplayer.Tests.dll" runstate="Runnable" testcasecount="266" result="Failed" site="Child" start-time="2026-11-01 10:10:09Z" end-time="2026-11-01 10:10:10Z" duration="0.817597" total="14" passed="4" failed="10" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="31012" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="3038" name="Game" fullname="Game" runstate="Runnable" testcasecount="266" result="Failed" site="Child" start-time="2026-11-01 10:10:10Z" end-time="2026-11-01 10:10:10Z" duration="0.730191" total="14" passed="4" failed="10" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="3039" name="Multiplayer" fullname="Game.Multiplayer" runstate="Runnable" testcasecount="266" result="Failed" site="Child" start-time="2026-11-01 10:10:10Z" end-time="2026-11-01 10:10:10Z" duration="0.629840" total="14" passed="4" failed="10" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="3040" name="Tests" fullname="Game.Multiplayer.Tests" runstate="Runnable" testcasecount="266" result="Failed" site="Child" start-time="2026-11-01 10:10:10Z" end-time="2026-11-01 10:10:10Z" duration="0.530795" total="14" passed="4" failed="10" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="2855" name="OnlineInventoryAdmissionBoundsTests" fullname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests" classname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests" runstate="Runnable" testcasecount="14" result="Failed" site="Child" start-time="2026-11-01 10:10:10Z" end-time="2026-11-01 10:10:10Z" duration="0.430138" total="14" passed="4" failed="10" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-suite type="ParameterizedMethod" id="2868" name="AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots" fullname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots" classname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests" runstate="Runnable" testcasecount="7" result="Failed" site="Child" start-time="2026-11-01 10:10:10Z" end-time="2026-11-01 10:10:10Z" duration="0.154428" total="7" passed="0" failed="7" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2861" name="AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots(0,True)" fullname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots(0,True)" methodname="AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots" classname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests" runstate="Runnable" seed="2003866923" result="Failed" start-time="2026-11-01 10:10:10Z" end-time="2026-11-01 10:10:10Z" duration="0.024004" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Refresh需要使用WholeProfile预算的纯验证，不能沿用24项平面槽上限。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.ValidAccountProfile (Game.NetworkProtocol.OnlineProfileReply profile, System.String expectedManifestHash) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineInventoryAdmissionBoundsTests.cs:56
+at Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots (System.Int32 count, System.Boolean accepted) [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineInventoryAdmissionBoundsTests.cs:36
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2862" name="AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots(24,True)" fullname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots(24,True)" methodname="AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots" classname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests" runstate="Runnable" seed="1002434408" result="Failed" start-time="2026-11-01 10:10:10Z" end-time="2026-11-01 10:10:10Z" duration="0.001339" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Refresh需要使用WholeProfile预算的纯验证，不能沿用24项平面槽上限。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.ValidAccountProfile (Game.NetworkProtocol.OnlineProfileReply profile, System.String expectedManifestHash) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineInventoryAdmissionBoundsTests.cs:56
+at Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots (System.Int32 count, System.Boolean accepted) [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineInventoryAdmissionBoundsTests.cs:36
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2863" name="AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots(25,True)" fullname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots(25,True)" methodname="AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots" classname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests" runstate="Runnable" seed="2085835051" result="Failed" start-time="2026-11-01 10:10:10Z" end-time="2026-11-01 10:10:10Z" duration="0.001462" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Refresh需要使用WholeProfile预算的纯验证，不能沿用24项平面槽上限。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.ValidAccountProfile (Game.NetworkProtocol.OnlineProfileReply profile, System.String expectedManifestHash) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineInventoryAdmissionBoundsTests.cs:56
+at Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots (System.Int32 count, System.Boolean accepted) [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineInventoryAdmissionBoundsTests.cs:36
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2864" name="AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots(38,True)" fullname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots(38,True)" methodname="AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots" classname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests" runstate="Runnable" seed="737911624" result="Failed" start-time="2026-11-01 10:10:10Z" end-time="2026-11-01 10:10:10Z" duration="0.000962" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Refresh需要使用WholeProfile预算的纯验证，不能沿用24项平面槽上限。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.ValidAccountProfile (Game.NetworkProtocol.OnlineProfileReply profile, System.String expectedManifestHash) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineInventoryAdmissionBoundsTests.cs:56
+at Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots (System.Int32 count, System.Boolean accepted) [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineInventoryAdmissionBoundsTests.cs:36
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2865" name="AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots(665,True)" fullname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots(665,True)" methodname="AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots" classname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests" runstate="Runnable" seed="2053492990" result="Failed" start-time="2026-11-01 10:10:10Z" end-time="2026-11-01 10:10:10Z" duration="0.001572" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Refresh需要使用WholeProfile预算的纯验证，不能沿用24项平面槽上限。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.ValidAccountProfile (Game.NetworkProtocol.OnlineProfileReply profile, System.String expectedManifestHash) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineInventoryAdmissionBoundsTests.cs:56
+at Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots (System.Int32 count, System.Boolean accepted) [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineInventoryAdmissionBoundsTests.cs:36
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2866" name="AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots(4120,True)" fullname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots(4120,True)" methodname="AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots" classname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests" runstate="Runnable" seed="1923034350" result="Failed" start-time="2026-11-01 10:10:10Z" end-time="2026-11-01 10:10:10Z" duration="0.002325" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Refresh需要使用WholeProfile预算的纯验证，不能沿用24项平面槽上限。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.ValidAccountProfile (Game.NetworkProtocol.OnlineProfileReply profile, System.String expectedManifestHash) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineInventoryAdmissionBoundsTests.cs:56
+at Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots (System.Int32 count, System.Boolean accepted) [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineInventoryAdmissionBoundsTests.cs:36
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2867" name="AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots(4121,False)" fullname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots(4121,False)" methodname="AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots" classname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests" runstate="Runnable" seed="1558327493" result="Failed" start-time="2026-11-01 10:10:10Z" end-time="2026-11-01 10:10:10Z" duration="0.001999" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Refresh需要使用WholeProfile预算的纯验证，不能沿用24项平面槽上限。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.ValidAccountProfile (Game.NetworkProtocol.OnlineProfileReply profile, System.String expectedManifestHash) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineInventoryAdmissionBoundsTests.cs:56
+at Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshAcceptsTheBoundedWholeProfileInsteadOfOnlyTwentyFourSlots (System.Int32 count, System.Boolean accepted) [0x00020] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineInventoryAdmissionBoundsTests.cs:36
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="2872" name="AccountProfileRefreshRejectsMissingPayloadOrManifestMismatch" fullname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshRejectsMissingPayloadOrManifestMismatch" classname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-11-01 10:10:10Z" end-time="2026-11-01 10:10:10Z" duration="0.047040" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <test-case id="2869" name="AccountProfileRefreshRejectsMissingPayloadOrManifestMismatch(&quot;null-profile&quot;)" fullname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshRejectsMissingPayloadOrManifestMismatch(&quot;null-profile&quot;)" methodname="AccountProfileRefreshRejectsMissingPayloadOrManifestMismatch" classname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests" runstate="Runnable" seed="1409879267" result="Failed" start-time="2026-11-01 10:10:10Z" end-time="2026-11-01 10:10:10Z" duration="0.001947" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Refresh需要使用WholeProfile预算的纯验证，不能沿用24项平面槽上限。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.ValidAccountProfile (Game.NetworkProtocol.OnlineProfileReply profile, System.String expectedManifestHash) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineInventoryAdmissionBoundsTests.cs:56
+at Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshRejectsMissingPayloadOrManifestMismatch (System.String defect) [0x00053] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineInventoryAdmissionBoundsTests.cs:49
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2870" name="AccountProfileRefreshRejectsMissingPayloadOrManifestMismatch(&quot;null-items&quot;)" fullname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshRejectsMissingPayloadOrManifestMismatch(&quot;null-items&quot;)" methodname="AccountProfileRefreshRejectsMissingPayloadOrManifestMismatch" classname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests" runstate="Runnable" seed="1536982044" result="Failed" start-time="2026-11-01 10:10:10Z" end-time="2026-11-01 10:10:10Z" duration="0.001293" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Refresh需要使用WholeProfile预算的纯验证，不能沿用24项平面槽上限。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.ValidAccountProfile (Game.NetworkProtocol.OnlineProfileReply profile, System.String expectedManifestHash) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineInventoryAdmissionBoundsTests.cs:56
+at Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshRejectsMissingPayloadOrManifestMismatch (System.String defect) [0x00053] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineInventoryAdmissionBoundsTests.cs:49
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="2871" name="AccountProfileRefreshRejectsMissingPayloadOrManifestMismatch(&quot;manifest-mismatch&quot;)" fullname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshRejectsMissingPayloadOrManifestMismatch(&quot;manifest-mismatch&quot;)" methodname="AccountProfileRefreshRejectsMissingPayloadOrManifestMismatch" classname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests" runstate="Runnable" seed="1502583402" result="Failed" start-time="2026-11-01 10:10:10Z" end-time="2026-11-01 10:10:10Z" duration="0.001428" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Refresh需要使用WholeProfile预算的纯验证，不能沿用24项平面槽上限。
+  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.ValidAccountProfile (Game.NetworkProtocol.OnlineProfileReply profile, System.String expectedManifestHash) [0x00018] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineInventoryAdmissionBoundsTests.cs:56
+at Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.AccountProfileRefreshRejectsMissingPayloadOrManifestMismatch (System.String defect) [0x00053] in F:\Develop Project\RPG\RPG\Assets\_Project\Tests\Multiplayer\OnlineInventoryAdmissionBoundsTests.cs:49
+]]></stack-trace>
+                  </failure>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="2860" name="BoundedWholeProfileIncludesEquippedWandsAndTheirCards" fullname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.BoundedWholeProfileIncludesEquippedWandsAndTheirCards" classname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-01 10:10:10Z" end-time="2026-11-01 10:10:10Z" duration="0.122012" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="2856" name="BoundedWholeProfileIncludesEquippedWandsAndTheirCards(123,True)" fullname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.BoundedWholeProfileIncludesEquippedWandsAndTheirCards(123,True)" methodname="BoundedWholeProfileIncludesEquippedWandsAndTheirCards" classname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests" runstate="Runnable" seed="569869925" result="Passed" start-time="2026-11-01 10:10:10Z" end-time="2026-11-01 10:10:10Z" duration="0.016805" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="2857" name="BoundedWholeProfileIncludesEquippedWandsAndTheirCards(172,True)" fullname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.BoundedWholeProfileIncludesEquippedWandsAndTheirCards(172,True)" methodname="BoundedWholeProfileIncludesEquippedWandsAndTheirCards" classname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests" runstate="Runnable" seed="1470922946" result="Passed" start-time="2026-11-01 10:10:10Z" end-time="2026-11-01 10:10:10Z" duration="0.000461" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="2858" name="BoundedWholeProfileIncludesEquippedWandsAndTheirCards(4120,True)" fullname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.BoundedWholeProfileIncludesEquippedWandsAndTheirCards(4120,True)" methodname="BoundedWholeProfileIncludesEquippedWandsAndTheirCards" classname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests" runstate="Runnable" seed="184000848" result="Passed" start-time="2026-11-01 10:10:10Z" end-time="2026-11-01 10:10:10Z" duration="0.000455" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="2859" name="BoundedWholeProfileIncludesEquippedWandsAndTheirCards(4121,False)" fullname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests.BoundedWholeProfileIncludesEquippedWandsAndTheirCards(4121,False)" methodname="BoundedWholeProfileIncludesEquippedWandsAndTheirCards" classname="Game.Multiplayer.Tests.OnlineInventoryAdmissionBoundsTests" runstate="Runnable" seed="1022587551" result="Passed" start-time="2026-11-01 10:10:10Z" end-time="2026-11-01 10:10:10Z" duration="0.007881" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: Temp/SinglePlayer/editmode-results.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

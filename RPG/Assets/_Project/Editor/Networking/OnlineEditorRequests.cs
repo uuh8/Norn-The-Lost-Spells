@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using Game.Core;
 using UnityEditor;
@@ -35,10 +35,17 @@ namespace Game.Project.Editor
                     WriteResult(command, true, null);
                     return;
                 }
+                if (command == "inspect-safety")
+                {
+                    InspectSafety();
+                    WriteResult(command, true, null);
+                    return;
+                }
                 OnlineSceneSetup.RequireCleanEditor();
                 // 固定白名单，只调用与菜单相同的正式工具，不接受任意方法或路径。
                 switch (command)
                 {
+                    case "reclaim-unreferenced-memory": ReclaimUnreferencedMemory(); break;
                     case "create-lab": OnlineSceneSetup.CreateLab(); break;
                     case "create-room-lab": RoomLifecycleTools.Create(); break;
                     case "setup-portal-room": RoomLifecycleTools.SetupPortal(); break;
@@ -47,6 +54,7 @@ namespace Game.Project.Editor
                     case "align-wizard-feet": CharacterGroundingTools.AlignWizardFeet(); break;
                     case "setup-online-combat": OnlineCombatTools.Setup(); break;
                     case "refresh-online-hashes": OnlineCombatTools.RefreshRuntimeCompatibilityHash(); break;
+                    case "create-world-replication-profile": OnlineCombatTools.CreateWorldReplicationProfile(); break;
                     case "verify-online-combat": OnlineCombatTools.Verify(); break;
                     case "setup-shared-hud": SharedGameplayHudTools.Setup(); break;
                     case "verify-shared-hud": SharedGameplayHudTools.VerifyMenu(); break;
@@ -59,15 +67,25 @@ namespace Game.Project.Editor
                     case "verify-combat-inventory": SharedInventoryPresentationTools.VerifyResource(); break;
                     case "create-early-presentation-fixture": CombatPresentationLifecycleFixtureTools.Create(); break;
                     case "export-online-dungeons": OnlineDungeonTools.Export(); break;
+                    case "export-online-home": OnlineDungeonTools.ExportHome(); break;
+                    case "verify-online-home": OnlineDungeonTools.VerifyHome(); break;
+                    case "refresh-online-return-portals": OnlineDungeonTools.RefreshReturnBindings(); break;
+                    case "verify-online-return-portals": OnlineDungeonTools.VerifyReturnBindings(); break;
+                    // 仅同步原Loot配置/来源基线，不重导世界Prefab；仍经过同一干净Editor与正式Verify门。
+                    case "refresh-online-dungeon-loot": OnlineDungeonTools.RefreshLootConfiguration(); break;
                     case "verify-online-dungeons": OnlineDungeonTools.Verify(); break;
                     case "list-native-profilers": PortalProfilerTools.List(); break;
                     case "capture-native-allocations": PortalProfilerTools.Capture(); break;
                     case "build-room-server": RoomLifecycleTools.BuildServer(); break;
+                    case "build-room-server-verification": RoomLifecycleTools.BuildServerVerification(); break;
+                    case "build-inventory-regression-client": RoomLifecycleTools.BuildInventoryRegressionClient(); break;
                     case "build-room-client": RoomLifecycleTools.BuildClient(); break;
                     case "start-room-business": OnlineLocalServices.StartRoomBusiness(); break;
                     case "verify-shared": OnlineFoundationTools.VerifySharedProtocol(); break;
                     // 外部编辑源码后先显式Refresh，不能用尚未导入的旧Assembly/0测试当作本轮验证。
                     case "refresh-source": AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport); break;
+                    // Player构建可能已导入Test源码却尚未更新Editor测试程序集；显式请求后仍需核DLL时间与实际发现数。
+                    case "recompile-scripts": UnityEditor.Compilation.CompilationPipeline.RequestScriptCompilation(); break;
                     case "export-content": ContentManifestExporter.Export(); break;
                     case "create-account-ui": OnlineAccountTools.Create(); break;
                     case "verify-online-workspace": OnlineAccountTools.VerifyWorkspace(); break;
@@ -111,6 +129,65 @@ namespace Game.Project.Editor
                 WriteResult(command, false, exception.ToString());
                 GameLog.Error(exception.Message, "OnlineLab");
             }
+        }
+
+        /// <summary>
+        /// Native QA前仅回收Editor中真正未被引用的RAM。沿用RequireCleanEditor门禁，
+        /// 不保存/关闭Scene，不清磁盘Library/Shader缓存，不结束用户进程或修改渲染/系统参数。
+        /// false保留脚本字段和static引用；不能用true强行卸载用户仍在使用的对象。
+        /// </summary>
+        private static void ReclaimUnreferencedMemory()
+        {
+            if(BuildPipeline.isBuildingPlayer)throw new InvalidOperationException("构建期间不能回收Editor资产内存。");
+            long before=GC.GetTotalMemory(false);
+            string scene=UnityEngine.SceneManagement.SceneManager.GetActiveScene().path;
+            GC.Collect();
+            EditorUtility.UnloadUnusedAssetsImmediate(false);
+            GC.Collect();
+            File.WriteAllText(Root+"/memory-reclaim.json",JsonUtility.ToJson(new MemoryReclaim
+                {ManagedHeapBefore=before,ManagedHeapAfter=GC.GetTotalMemory(false),Scene=scene,RecordedUtc=DateTime.UtcNow.ToString("O")},true));
+        }
+        [Serializable] private sealed class MemoryReclaim{public long ManagedHeapBefore,ManagedHeapAfter;public string Scene,RecordedUtc;}
+
+        /// <summary>
+        /// 正常退出前的只读快照：场景和持久资源分别检查，不代为保存或丢弃。
+        /// 不把Git未提交等同于Editor未保存；也不将Inspector等临时Editor对象误当生产资产。
+        /// 外部必须核对本次请求时间，并仍通过正常关闭入口保留Unity自身的未保存提示。
+        /// </summary>
+        private static void InspectSafety()
+        {
+            var scenes = new System.Collections.Generic.List<string>();
+            bool dirtyScene = false;
+            for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+            {
+                var scene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+                scenes.Add(scene.path);
+                dirtyScene |= scene.isDirty;
+            }
+            var assets = new System.Collections.Generic.SortedSet<string>(StringComparer.Ordinal);
+            foreach (UnityEngine.Object asset in Resources.FindObjectsOfTypeAll<UnityEngine.Object>())
+                if (asset != null && EditorUtility.IsPersistent(asset) && EditorUtility.IsDirty(asset))
+                {
+                    string path = AssetDatabase.GetAssetPath(asset);
+                    if (!string.IsNullOrEmpty(path)) assets.Add(path);
+                }
+            File.WriteAllText(Root + "/editor-safety.json", JsonUtility.ToJson(new Safety
+            {
+                Playing = EditorApplication.isPlayingOrWillChangePlaymode,
+                Compiling = EditorApplication.isCompiling, Updating = EditorApplication.isUpdating,
+                CompilationFailed = EditorUtility.scriptCompilationFailed,
+                Building = BuildPipeline.isBuildingPlayer,
+                TestsRunning = SessionState.GetBool("Norn.SinglePlayer.Tests.Running", false),
+                DirtyScene = dirtyScene, Scenes = scenes.ToArray(),
+                DirtyAssets = new System.Collections.Generic.List<string>(assets).ToArray(),
+                RecordedUtc = DateTime.UtcNow.ToString("O")
+            }, true));
+        }
+        [Serializable] private sealed class Safety
+        {
+            public bool Playing, Compiling, Updating, CompilationFailed, Building, TestsRunning, DirtyScene;
+            public string[] Scenes, DirtyAssets;
+            public string RecordedUtc;
         }
 
         private static void WriteResult(string command, bool passed, string error)

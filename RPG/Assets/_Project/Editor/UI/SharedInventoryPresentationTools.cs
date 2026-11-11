@@ -39,7 +39,8 @@ namespace Game.Project.Editor
             typeof(SinglePlayerInventoryController), typeof(BackpackWorkspaceView), typeof(InventoryGridView),
             typeof(WandInventoryView), typeof(WandProgramPanelView), typeof(SpellStorageView), typeof(ToolbeltView),
             typeof(ToolbeltSlotView), typeof(NearbyItemGridView), typeof(InventoryItemView), typeof(InventoryDropTarget),
-            typeof(InventoryDragAutoScroll), typeof(InventoryViewportPan), typeof(InventoryGridLinesGraphic), typeof(InventoryInfoPopup)
+            typeof(InventoryDragAutoScroll), typeof(InventoryViewportPan), typeof(InventoryGridLinesGraphic), typeof(InventoryInfoPopup),
+            typeof(NearbyPickupListView)
         };
 
         [MenuItem("Tools/Norn/Combat/Export Shared Combat Inventory")]
@@ -89,8 +90,8 @@ namespace Game.Project.Editor
         }
 
         /// <summary>
-        /// 为回归与显式导出建立可销毁的预览。只克隆 Controller 所在的原 Canvas，
-        /// 其原 Tab 面板和 Ghost 引用由 Instantiate 自动映射到克隆树，外层 Session/Held/EventSystem 不进入复制范围。
+        /// 为回归与显式导出建立可销毁的预览。克隆原 Tab Canvas 与原附近提示 Canvas，
+        /// 两者内部引用由 Instantiate 映射，跨 Canvas 的 Controller 显式重绑；外层 Session/Held/EventSystem 不进入复制范围。
         /// </summary>
         public static GameObject BuildPreview()
         {
@@ -105,6 +106,12 @@ namespace Game.Project.Editor
                 result = new GameObject("CombatInventory"); result.SetActive(false); SceneManager.MoveGameObjectToScene(result, scene);
                 var canvas = Object.Instantiate(controllers[0].gameObject, result.transform, false);
                 canvas.name = controllers[0].name;
+                var nearbyViews = source.GetComponentsInChildren<NearbyPickupListView>(true);
+                if (nearbyViews.Length != 1 || nearbyViews[0].GetComponentInParent<Canvas>(true) == null)
+                    throw new InvalidOperationException("原工作区必须有唯一的附近提示 Canvas，不能另造一套线上拾取提示。");
+                var nearbyCanvas = nearbyViews[0].GetComponentInParent<Canvas>(true);
+                var nearbyRoot = Object.Instantiate(nearbyCanvas.gameObject, result.transform, false);
+                nearbyRoot.name = nearbyCanvas.name;
                 foreach (var node in result.GetComponentsInChildren<Transform>(true))
                 {
                     GameObjectUtility.RemoveMonoBehavioursWithMissingScript(node.gameObject);
@@ -117,7 +124,14 @@ namespace Game.Project.Editor
                 var data = new SerializedObject(controller);
                 foreach (string field in AuthorityFields) data.FindProperty(field).objectReferenceValue = null;
                 data.FindProperty("_openOnStart").boolValue = false; data.ApplyModifiedPropertiesWithoutUndo();
-                ClearExternalReferences(result); Validate(result); return result;
+                ClearExternalReferences(result);
+                // 两个 Canvas 分别 Instantiate，原列表的 _inventory 不会自动指向新的 Tab Controller。
+                // 只保留 UI 之间的内部引用；Nearby/Actor 由运行时 Scope 取得当前认证身份后注入。
+                var nearbyData = new SerializedObject(nearbyRoot.GetComponentInChildren<NearbyPickupListView>(true));
+                nearbyData.FindProperty("_inventory").objectReferenceValue = controller;
+                nearbyData.ApplyModifiedPropertiesWithoutUndo();
+                EnsureInteractionFeedback(controller);
+                Validate(result); return result;
             }
             catch
             {
@@ -131,6 +145,33 @@ namespace Game.Project.Editor
             if (preview == null) return;
             var scene = preview.scene; Object.DestroyImmediate(preview);
             if (scene.IsValid() && EditorSceneManager.IsPreviewScene(scene)) EditorSceneManager.ClosePreviewScene(scene);
+        }
+
+        /// <summary>
+        /// 原作者已删除旧详情/状态区，不能因此把正式拖放的所有失败与等待反馈静默丢弃。
+        /// 只在导出克隆中补一条header反馈，不改原工作区，不复用容量/法杖属性，也不增加Runtime查找或输入Owner。
+        /// 1920x1080原面板的Logo在x约35..414，Close在x约1499..1738；中间x470..1450/y30..74为空白。
+        /// </summary>
+        private static void EnsureInteractionFeedback(SinglePlayerInventoryController controller)
+        {
+            var data = new SerializedObject(controller);
+            if (data.FindProperty("_status").objectReferenceValue != null) return;
+            var panel = data.FindProperty("_panelRoot").objectReferenceValue as GameObject;
+            if (panel == null) throw new InvalidOperationException("原库存缺少面板根，无法接入交互反馈。");
+            var node = new GameObject("InventoryInteractionStatus", typeof(RectTransform), typeof(Text), typeof(Shadow));
+            node.transform.SetParent(panel.transform, false); node.layer = panel.layer;
+            var rect = (RectTransform)node.transform;
+            rect.anchorMin = rect.anchorMax = new Vector2(.5f, 1); rect.pivot = new Vector2(.5f, .5f);
+            rect.anchoredPosition = new Vector2(0, -52); rect.sizeDelta = new Vector2(980, 44);
+            var text = node.GetComponent<Text>();
+            // 原Controller.Start会把面板内Text统一换成同一中文Font；Editor预览保留可绘制的内置后备。
+            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"); text.fontSize = 18;
+            text.color = new Color(.94f, .94f, .91f, 1); text.alignment = TextAnchor.MiddleCenter;
+            text.horizontalOverflow = HorizontalWrapMode.Wrap; text.verticalOverflow = VerticalWrapMode.Truncate;
+            text.resizeTextForBestFit = false; text.supportRichText = false; text.raycastTarget = false; text.text = string.Empty;
+            var shadow = node.GetComponent<Shadow>(); shadow.effectColor = new Color(0, 0, 0, .85f);
+            shadow.effectDistance = new Vector2(1, -1);
+            data.FindProperty("_status").objectReferenceValue = text; data.ApplyModifiedPropertiesWithoutUndo();
         }
 
         private static void ClearExternalReferences(GameObject root)
@@ -164,12 +205,22 @@ namespace Game.Project.Editor
             if (root.activeSelf || controllers.Length != 1)
                 throw new InvalidOperationException("共同库存必须是 inactive 根和唯一原携带 Controller。");
             var controller = new SerializedObject(controllers[0]);
+            var prompts = root.GetComponentsInChildren<NearbyPickupListView>(true);
+            if (prompts.Length != 1 || prompts[0].GetComponentInParent<Canvas>(true) == null)
+                throw new InvalidOperationException("共同库存缺少原附近提示 Canvas。");
+            var prompt = new SerializedObject(prompts[0]);
+            foreach (string field in new[] { "_session", "_nearby", "_hub" })
+                if (prompt.FindProperty(field).objectReferenceValue != null)
+                    throw new InvalidOperationException("共同拾取提示仍保留单机Owner：" + field);
+            if (prompt.FindProperty("_inventory").objectReferenceValue != controllers[0]
+                || prompt.FindProperty("_visual").objectReferenceValue == null || prompt.FindProperty("_rows").arraySize == 0)
+                throw new InvalidOperationException("共同拾取提示缺少原行布局或背包接线。");
             foreach (string field in AuthorityFields)
                 if (controller.FindProperty(field).objectReferenceValue != null)
                     throw new InvalidOperationException("共同库存仍保留单机权限：" + field);
             if (controller.FindProperty("_openOnStart").boolValue)
                 throw new InvalidOperationException("共同库存不能在取得线上只读源前自动打开。");
-            foreach (string field in new[] { "_panelRoot", "_gridView", "_wandsView", "_backpackWorkspace", "_spellStorage", "_nearbyGrid", "_ghost" })
+            foreach (string field in new[] { "_panelRoot", "_gridView", "_wandsView", "_backpackWorkspace", "_spellStorage", "_nearbyGrid", "_ghost", "_status" })
                 if (controller.FindProperty(field).objectReferenceValue == null)
                     throw new InvalidOperationException("共同库存丢失原只读接线：" + field);
             foreach (var component in root.GetComponentsInChildren<Component>(true))
@@ -195,7 +246,7 @@ namespace Game.Project.Editor
             }
         }
 
-        private static string SourceHash() => Hash128.Compute("NornSharedInventoryV1|" + AssetDatabase.GetAssetDependencyHash(SourcePrefabPath)).ToString();
+        private static string SourceHash() => Hash128.Compute("NornSharedInventoryV3|" + AssetDatabase.GetAssetDependencyHash(SourcePrefabPath)).ToString();
 
         private static string Signature(GameObject root)
         {

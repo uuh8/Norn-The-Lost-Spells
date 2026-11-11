@@ -36,9 +36,27 @@ namespace Game.NetworkProtocol
     }
     [Serializable] public sealed class InstanceHeartbeatRequest { public uint RoomEpoch; }
     [Serializable] public sealed class InstanceLeaseReply { public long LeaseExpiresUnixMilliseconds; }
+    /// <summary>只引用已经完整读回的终态Head，不携带新资产或以空连接数声明结束。</summary>
+    [Serializable] public sealed class InstanceCompleteRequest
+    {
+        public string RunId = "", CheckpointId = "", PayloadHash = "";
+        public uint RoomEpoch;
+        public ulong Sequence;
+    }
+    [Serializable] public sealed class InstanceCompleteReply
+    {
+        public string InstanceId = "", RunId = "", CheckpointId = "", PayloadHash = "";
+        public uint RoomEpoch;
+        public ulong Sequence;
+        public bool Completed;
+    }
     [Serializable] public sealed class InstanceReadyReply
     {
+        public bool SinglePlayer; // 仅可信业务Run标记可允许恰好1人；缺省false仍要求合作2–4人。
         public string DungeonId = ""; // 再确认业务授权地图；不允许根据返回值在运行中偷偷切换世界。
+        // HTTP检查点能力独立于实时协议；旧业务缺字段时保持0。2只有旧世界事实，3才含统一金币；
+        // 新DS不能据旧值假定支持当前完整保存，也不能因此跳过正常Ready或伪造Gold=0。
+        public uint CheckpointSchemaVersion;
         public long LeaseExpiresUnixMilliseconds;
         public InstanceEntryMember[] Members = Array.Empty<InstanceEntryMember>();
     }

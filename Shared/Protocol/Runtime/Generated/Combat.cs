@@ -30,7 +30,7 @@ namespace Game.NetworkProtocol {
             "bmRfaW5zdGFuY2VfaWQYBCABKAkSGAoQcHJvZ3JhbV9yZXZpc2lvbhgFIAEo",
             "DRIQCghvcmlnaW5feBgGIAEoAhIQCghvcmlnaW5feRgHIAEoAhIQCghvcmln",
             "aW5fehgIIAEoAhINCgVhaW1feBgJIAEoAhINCgVhaW1feRgKIAEoAhINCgVh",
-            "aW1fehgLIAEoAhIVCg1nYW1lcGxheV9oYXNoGAwgASgGIrcHChFDb21iYXRG",
+            "aW1fehgLIAEoAhIVCg1nYW1lcGxheV9oYXNoGAwgASgGIqMIChFDb21iYXRG",
             "YWN0TWVzc2FnZRIYChBwcm90b2NvbF92ZXJzaW9uGAEgASgNEhUKDWdhbWVw",
             "bGF5X2hhc2gYAiABKAYSEAoIc2VxdWVuY2UYAyABKA0SEwoLc2VydmVyX3Rp",
             "Y2sYBCABKA0SDAoEa2luZBgFIAEoDRIQCghhY3Rvcl9pZBgGIAEoBBIYChBj",
@@ -51,13 +51,16 @@ namespace Game.NetworkProtocol {
             "ZW1haW5pbmdfY2hhcmdlcxgnIAEoDRINCgVmbGFncxgoIAEoDRIZChFhdHRh",
             "Y2tlcl9hY3Rvcl9pZBgpIAEoBBITCgtkYW1hZ2VfdHlwZRgqIAEoDRIWCg5h",
             "bmltYXRpb25faGFzaBgrIAEoDRITCgthY3Rpb25fa2luZBgsIAEoDRIRCglz",
-            "b3VuZF9rZXkYLSABKA0SGgoSd2FuZF9zbG90X3BsdXNfb25lGC4gASgNQheq",
-            "AhRHYW1lLk5ldHdvcmtQcm90b2NvbGIGcHJvdG8z"));
+            "b3VuZF9rZXkYLSABKA0SGgoSd2FuZF9zbG90X3BsdXNfb25lGC4gASgNEhwK",
+            "FGNvbnRhaW5lcl9jb250ZW50X2lkGC8gASgJEhkKEWNvbnRhaW5lcl93YWl0",
+            "aW5nGDAgASgIEhcKD21hdGVyaWFsX291dHB1dBgxIAEoCBIYChBtYXRlcmlh",
+            "bF93YWl0aW5nGDIgASgIQheqAhRHYW1lLk5ldHdvcmtQcm90b2NvbGIGcHJv",
+            "dG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.CombatCastIntentMessage), global::Game.NetworkProtocol.CombatCastIntentMessage.Parser, new[]{ "ProtocolVersion", "ConnectionEpoch", "CommandId", "WandInstanceId", "ProgramRevision", "OriginX", "OriginY", "OriginZ", "AimX", "AimY", "AimZ", "GameplayHash" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.CombatFactMessage), global::Game.NetworkProtocol.CombatFactMessage.Parser, new[]{ "ProtocolVersion", "GameplayHash", "Sequence", "ServerTick", "Kind", "ActorId", "ConnectionEpoch", "CommandId", "OutputId", "PrefabKey", "OutputOrdinal", "PositionX", "PositionY", "PositionZ", "RotationX", "RotationY", "RotationZ", "RotationW", "VelocityX", "VelocityY", "VelocityZ", "CurrentHp", "MaxHp", "CurrentMana", "MaxMana", "Cooldown", "Burning", "Wet", "Poisoned", "Sticky", "MoveMultiplier", "Result", "Phase", "TargetActorId", "Amount", "Team", "WandInstanceId", "ProgramRevision", "RemainingCharges", "Flags", "AttackerActorId", "DamageType", "AnimationHash", "ActionKind", "SoundKey", "WandSlotPlusOne" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Game.NetworkProtocol.CombatFactMessage), global::Game.NetworkProtocol.CombatFactMessage.Parser, new[]{ "ProtocolVersion", "GameplayHash", "Sequence", "ServerTick", "Kind", "ActorId", "ConnectionEpoch", "CommandId", "OutputId", "PrefabKey", "OutputOrdinal", "PositionX", "PositionY", "PositionZ", "RotationX", "RotationY", "RotationZ", "RotationW", "VelocityX", "VelocityY", "VelocityZ", "CurrentHp", "MaxHp", "CurrentMana", "MaxMana", "Cooldown", "Burning", "Wet", "Poisoned", "Sticky", "MoveMultiplier", "Result", "Phase", "TargetActorId", "Amount", "Team", "WandInstanceId", "ProgramRevision", "RemainingCharges", "Flags", "AttackerActorId", "DamageType", "AnimationHash", "ActionKind", "SoundKey", "WandSlotPlusOne", "ContainerContentId", "ContainerWaiting", "MaterialOutput", "MaterialWaiting" }, null, null, null, null)
           }));
     }
     #endregion
@@ -792,6 +795,10 @@ namespace Game.NetworkProtocol {
       actionKind_ = other.actionKind_;
       soundKey_ = other.soundKey_;
       wandSlotPlusOne_ = other.wandSlotPlusOne_;
+      containerContentId_ = other.containerContentId_;
+      containerWaiting_ = other.containerWaiting_;
+      materialOutput_ = other.materialOutput_;
+      materialWaiting_ = other.materialWaiting_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -865,7 +872,7 @@ namespace Game.NetworkProtocol {
     public const int KindFieldNumber = 5;
     private uint kind_;
     /// <summary>
-    /// 1=Setup,2=Receipt,3=Action,4=Spawn,5=OutputState,6=Terminate,7=ActorState,8=Damage,9=Death,10=Teleport,11=CastSound。
+    /// 1=Setup,2=Receipt,3=Action,4=Spawn,5=OutputState,6=Terminate,7=ActorState,8=Damage,9=Death,10=Teleport,11=CastSound,12=ReactionBurst。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -880,7 +887,7 @@ namespace Game.NetworkProtocol {
     public const int ActorIdFieldNumber = 6;
     private ulong actorId_;
     /// <summary>
-    /// 服务器Actor身份；玩家1..4，敌人从5开始。
+    /// 服务器Actor身份；玩家1..4，敌人从5开始；ReactionBurst固定0，载体由target_actor_id表示。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1180,7 +1187,7 @@ namespace Game.NetworkProtocol {
     public const int CooldownFieldNumber = 26;
     private float cooldown_;
     /// <summary>
-    /// 权威剩余射速/Reload间隔（second）。
+    /// 权威剩余射速/Reload间隔（second）；ReactionBurst复用为预计表现时长。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1270,7 +1277,7 @@ namespace Game.NetworkProtocol {
     public const int ResultFieldNumber = 32;
     private uint result_;
     /// <summary>
-    /// 收据/终止原因稳定编号，0不表示默认接受。
+    /// 收据/终止原因稳定编号；ReactionBurst为反应编号，当前1=ToxicCombustion。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1285,7 +1292,7 @@ namespace Game.NetworkProtocol {
     public const int PhaseFieldNumber = 33;
     private uint phase_;
     /// <summary>
-    /// ActorState的Boss：0=未参战，1..3=阶段；其余Kind表示动作环境，不授予改阶段权限。
+    /// ActorState的Boss阶段或动作环境；ReactionBurst当前仅3=Resolved。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1315,7 +1322,7 @@ namespace Game.NetworkProtocol {
     public const int AmountFieldNumber = 35;
     private float amount_;
     /// <summary>
-    /// 按Kind复用：Setup射速秒、Action混合秒、Damage伤害量、Death/死亡ActorState的尸体剩余秒。
+    /// 按Kind复用：Setup射速秒、Action混合秒、Damage伤害量、Death尸体剩余秒、ReactionBurst的0..1表现强度。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1491,6 +1498,66 @@ namespace Game.NetworkProtocol {
       }
     }
 
+    /// <summary>Field number for the "container_content_id" field.</summary>
+    public const int ContainerContentIdFieldNumber = 47;
+    private string containerContentId_ = "";
+    /// <summary>
+    /// 仅容器Spawn：受控目录键，ASCII最多128字节；重连可靠补发，15Hz状态不重复传字符串，不传Prefab路径。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string ContainerContentId {
+      get { return containerContentId_; }
+      set {
+        containerContentId_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "container_waiting" field.</summary>
+    public const int ContainerWaitingFieldNumber = 48;
+    private bool containerWaiting_;
+    /// <summary>
+    /// 容器Spawn/OutputState：已碰撞但未全部释放；Spawn须带目录键，状态仅关联已出生OutputId，保留原橙色等待表现，不授予材料写权限。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool ContainerWaiting {
+      get { return containerWaiting_; }
+      set {
+        containerWaiting_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "material_output" field.</summary>
+    public const int MaterialOutputFieldNumber = 49;
+    private bool materialOutput_;
+    /// <summary>
+    /// 仅Spawn/OutputState：原供料代理的固定表现类型；Spawn时PrefabKey=0，不发送私有组分或来源ID。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool MaterialOutput {
+      get { return materialOutput_; }
+      set {
+        materialOutput_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "material_waiting" field.</summary>
+    public const int MaterialWaitingFieldNumber = 50;
+    private bool materialWaiting_;
+    /// <summary>
+    /// 仅材料Spawn/OutputState：碰撞或调度后等待真实世界接收；客户端只显示，不再次投料。
+    /// </summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool MaterialWaiting {
+      get { return materialWaiting_; }
+      set {
+        materialWaiting_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -1552,6 +1619,10 @@ namespace Game.NetworkProtocol {
       if (ActionKind != other.ActionKind) return false;
       if (SoundKey != other.SoundKey) return false;
       if (WandSlotPlusOne != other.WandSlotPlusOne) return false;
+      if (ContainerContentId != other.ContainerContentId) return false;
+      if (ContainerWaiting != other.ContainerWaiting) return false;
+      if (MaterialOutput != other.MaterialOutput) return false;
+      if (MaterialWaiting != other.MaterialWaiting) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1605,6 +1676,10 @@ namespace Game.NetworkProtocol {
       if (ActionKind != 0) hash ^= ActionKind.GetHashCode();
       if (SoundKey != 0) hash ^= SoundKey.GetHashCode();
       if (WandSlotPlusOne != 0) hash ^= WandSlotPlusOne.GetHashCode();
+      if (ContainerContentId.Length != 0) hash ^= ContainerContentId.GetHashCode();
+      if (ContainerWaiting != false) hash ^= ContainerWaiting.GetHashCode();
+      if (MaterialOutput != false) hash ^= MaterialOutput.GetHashCode();
+      if (MaterialWaiting != false) hash ^= MaterialWaiting.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1807,6 +1882,22 @@ namespace Game.NetworkProtocol {
         output.WriteRawTag(240, 2);
         output.WriteUInt32(WandSlotPlusOne);
       }
+      if (ContainerContentId.Length != 0) {
+        output.WriteRawTag(250, 2);
+        output.WriteString(ContainerContentId);
+      }
+      if (ContainerWaiting != false) {
+        output.WriteRawTag(128, 3);
+        output.WriteBool(ContainerWaiting);
+      }
+      if (MaterialOutput != false) {
+        output.WriteRawTag(136, 3);
+        output.WriteBool(MaterialOutput);
+      }
+      if (MaterialWaiting != false) {
+        output.WriteRawTag(144, 3);
+        output.WriteBool(MaterialWaiting);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -2001,6 +2092,22 @@ namespace Game.NetworkProtocol {
         output.WriteRawTag(240, 2);
         output.WriteUInt32(WandSlotPlusOne);
       }
+      if (ContainerContentId.Length != 0) {
+        output.WriteRawTag(250, 2);
+        output.WriteString(ContainerContentId);
+      }
+      if (ContainerWaiting != false) {
+        output.WriteRawTag(128, 3);
+        output.WriteBool(ContainerWaiting);
+      }
+      if (MaterialOutput != false) {
+        output.WriteRawTag(136, 3);
+        output.WriteBool(MaterialOutput);
+      }
+      if (MaterialWaiting != false) {
+        output.WriteRawTag(144, 3);
+        output.WriteBool(MaterialWaiting);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -2148,6 +2255,18 @@ namespace Game.NetworkProtocol {
       }
       if (WandSlotPlusOne != 0) {
         size += 2 + pb::CodedOutputStream.ComputeUInt32Size(WandSlotPlusOne);
+      }
+      if (ContainerContentId.Length != 0) {
+        size += 2 + pb::CodedOutputStream.ComputeStringSize(ContainerContentId);
+      }
+      if (ContainerWaiting != false) {
+        size += 2 + 1;
+      }
+      if (MaterialOutput != false) {
+        size += 2 + 1;
+      }
+      if (MaterialWaiting != false) {
+        size += 2 + 1;
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -2298,6 +2417,18 @@ namespace Game.NetworkProtocol {
       }
       if (other.WandSlotPlusOne != 0) {
         WandSlotPlusOne = other.WandSlotPlusOne;
+      }
+      if (other.ContainerContentId.Length != 0) {
+        ContainerContentId = other.ContainerContentId;
+      }
+      if (other.ContainerWaiting != false) {
+        ContainerWaiting = other.ContainerWaiting;
+      }
+      if (other.MaterialOutput != false) {
+        MaterialOutput = other.MaterialOutput;
+      }
+      if (other.MaterialWaiting != false) {
+        MaterialWaiting = other.MaterialWaiting;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -2502,6 +2633,22 @@ namespace Game.NetworkProtocol {
             WandSlotPlusOne = input.ReadUInt32();
             break;
           }
+          case 378: {
+            ContainerContentId = input.ReadString();
+            break;
+          }
+          case 384: {
+            ContainerWaiting = input.ReadBool();
+            break;
+          }
+          case 392: {
+            MaterialOutput = input.ReadBool();
+            break;
+          }
+          case 400: {
+            MaterialWaiting = input.ReadBool();
+            break;
+          }
         }
       }
     #endif
@@ -2703,6 +2850,22 @@ namespace Game.NetworkProtocol {
           }
           case 368: {
             WandSlotPlusOne = input.ReadUInt32();
+            break;
+          }
+          case 378: {
+            ContainerContentId = input.ReadString();
+            break;
+          }
+          case 384: {
+            ContainerWaiting = input.ReadBool();
+            break;
+          }
+          case 392: {
+            MaterialOutput = input.ReadBool();
+            break;
+          }
+          case 400: {
+            MaterialWaiting = input.ReadBool();
             break;
           }
         }

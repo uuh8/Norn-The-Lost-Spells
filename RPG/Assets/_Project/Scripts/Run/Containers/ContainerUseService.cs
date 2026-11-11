@@ -12,6 +12,7 @@ namespace Game.Run
         { public string Id, ItemId, WorldId, SourceId; public Vector3 Position; public bool Active, Impacted; public float Radius; public ulong Deposited; }
         private readonly SinglePlayerProfile _profile;
         private readonly string _inventoryId;
+        private readonly Func<bool> _canWrite;
         private readonly Flight[] _flights = new Flight[8];
         private readonly ulong[] _lost = new ulong[256];
         private readonly string[] _sources = new string[32];
@@ -25,15 +26,67 @@ namespace Game.Run
         private bool _executing;
         private static readonly ProfilerMarker Marker = new ProfilerMarker("Norn.ContainerUse.Execute");
         public int PendingFlights { get; private set; }
+        /// <summary>只复制原在途账本与真实损耗；不把仍在飞的实物默认为退役，也不借出Composition引用。</summary>
+        public bool TryCaptureCheckpoint(out OnlineContainerTransitCheckpointSnapshot[] transits,
+            out OnlineOwnedMaterialAmountSnapshot[] lost)
+        {
+            transits = null; lost = null;
+            if (_executing || _profile.Items.IsResourceBusy || PendingFlights < 0 || PendingFlights > _flights.Length) return false;
+            var captured = new OnlineContainerTransitCheckpointSnapshot[PendingFlights]; int at = 0;
+            for (int i = 0; i < _flights.Length; i++)
+            {
+                var flight = _flights[i]; if (!flight.Active) continue;
+                if (at == captured.Length || !IsTrackedFlight(flight.ItemId, flight.Id, flight.WorldId)
+                    || string.IsNullOrWhiteSpace(flight.SourceId) || !float.IsFinite(flight.Radius) || flight.Radius <= 0
+                    || flight.Impacted && !Finite(flight.Position)
+                    || !_profile.Items.TryGet(flight.ItemId, out var item) || !_profile.Items.TryGetLocation(flight.ItemId, out var location)) return false;
+                uint revision = _profile.Items.CheckpointRevision(item.InstanceId); if (revision == 0) return false;
+                captured[at++] = new OnlineContainerTransitCheckpointSnapshot { InventoryId = _inventoryId,
+                    FlightId = flight.Id, WorldId = flight.WorldId, SourceId = flight.SourceId, ItemId = flight.ItemId,
+                    Item = OnlineOwnedWorkspace.CopyGroundItem(item, location, revision, _profile.Items.Catalog),
+                    Impacted = flight.Impacted, ImpactPosition = flight.Impacted ? flight.Position : Vector3.zero,
+                    Radius = flight.Radius, Deposited = flight.Deposited };
+            }
+            if (at != captured.Length) return false;
+            int losses = 0; for (int i = 1; i < _lost.Length; i++) if (_lost[i] != 0) losses++;
+            var amounts = new OnlineOwnedMaterialAmountSnapshot[losses]; at = 0;
+            for (int i = 1; i < _lost.Length; i++) if (_lost[i] != 0)
+                amounts[at++] = new OnlineOwnedMaterialAmountSnapshot { MaterialKey = (byte)i, Quantity = _lost[i] };
+            transits = captured; lost = amounts; return true;
+        }
         public ulong LostTransitQuantity(byte key) => _lost[key];
-        public ContainerUseService(SinglePlayerProfile profile, string inventoryId)
-        { _profile = profile; _inventoryId = inventoryId; _reservation = new ContainerSourceReservation(profile.Items);
+        public ContainerUseService(SinglePlayerProfile profile, string inventoryId, Func<bool> canWrite = null)
+        { _profile = profile; _inventoryId = inventoryId; _canWrite = canWrite; _reservation = new ContainerSourceReservation(profile.Items);
             for (int i = 0; i < _flights.Length; i++) _flights[i] = new Flight(); }
+
+        /// <summary>
+        /// 只读核实原在途账本与唯一 Store 的同一行。Owner 表现可排除该行，不能把所有位置6静默过滤。
+        /// 世界暂停时仍可查询现场；该查询不创建 flight、不补充组分，也不依赖连接 Epoch。
+        /// </summary>
+        internal bool IsTrackedFlight(string itemId, string flightId, string worldId)
+        {
+            var flight = Find(flightId);
+            return flight != null && flight.ItemId == itemId && flight.WorldId == worldId
+                && _profile.Items.TryGet(itemId, out var item) && item.Composition != null
+                && _profile.Items.Catalog.TryGetRules(item.ContentId, out var rules) && rules.Kind == ItemKind.Container
+                && _profile.Items.TryGetLocation(itemId, out var location) && location.Kind == ItemLocationKind.ThrownContainer
+                && location.OwnerId == flightId && location.X == 0 && location.Y == 0 && location.QuarterTurns == 0 && location.SlotIndex == -1;
+        }
+        internal bool TryGetTrackedFlightItem(string flightId, string worldId, out string itemId)
+        {
+            itemId = null; var flight = Find(flightId);
+            if (flight == null || !IsTrackedFlight(flight.ItemId, flightId, worldId)) return false;
+            itemId = flight.ItemId; return true;
+        }
+        internal bool IsPreparingThrow(ContainerThrowExchange exchange)
+            => _executing && ReferenceEquals(exchange, _throw) && !string.IsNullOrEmpty(exchange.FlightId)
+                && exchange.Request.Kind == ContainerUseKind.Throw;
+
         public ContainerUseResultEvent Execute(in ContainerUseRequestedEvent request)
         {
             using var marker = Marker.Auto();
             var result = Result(request.Kind, request.SourceId, request.ItemId, request.WorldId, request.RequestId);
-            if (_executing || _profile.Items.IsResourceBusy) return Fail(result, MaterialTransferFailure.ResourceBusy);
+            if (_canWrite != null && !_canWrite() || _executing || _profile.Items.IsResourceBusy) return Fail(result, MaterialTransferFailure.ResourceBusy);
             if (request.InventoryId != _inventoryId || string.IsNullOrEmpty(request.SourceId) || string.IsNullOrEmpty(request.WorldId)
                 || request.RequestId == 0 || (request.Kind != ContainerUseKind.Throw && request.Budget == 0)
                 || !Finite(request.ActorPosition) || !Finite(request.TargetPosition) || !Finite(request.ThrowVelocity)
@@ -101,7 +154,7 @@ namespace Game.Run
             var result = Result(ContainerUseKind.Throw, flight?.SourceId, flight?.ItemId, impact.WorldId, 0); result.FlightId = impact.FlightId;
             if (impact.InventoryId != _inventoryId || flight == null || flight.WorldId != impact.WorldId || !Finite(impact.Position))
                 return Fail(result, MaterialTransferFailure.WrongOwnership);
-            if (_executing || _profile.Items.IsResourceBusy) return Fail(result, MaterialTransferFailure.ResourceBusy);
+            if (_canWrite != null && !_canWrite() || _executing || _profile.Items.IsResourceBusy) return Fail(result, MaterialTransferFailure.ResourceBusy);
             if (!flight.Impacted) { flight.Position = impact.Position; flight.Impacted = true; }
             if (!_profile.Items.TryGet(flight.ItemId, out var item)) return Fail(result, MaterialTransferFailure.WrongOwnership);
             _executing = true;
@@ -134,7 +187,8 @@ namespace Game.Run
                 if (count == 0)
                 {
                     if (!_profile.Items.TryGetLocation(item.InstanceId, out var location)
-                        || !_profile.Items.TryPrepareMaterialChange(item.InstanceId, null, location, out var prepared)) return Fail(result, MaterialTransferFailure.ResourceBusy);
+                        || !_profile.Items.TryPrepareMaterialChange(item.InstanceId, null, location, out var prepared,
+                            OnlineItemRetirementReason.Destroyed)) return Fail(result, MaterialTransferFailure.ResourceBusy);
                     _profile.Items.CompletePrepared(prepared, true);
                 }
                 else
@@ -172,11 +226,12 @@ namespace Game.Run
         public void End(in ContainerTransitEndedEvent ended)
         {
             Flight flight = Find(ended.FlightId);
-            if (ended.InventoryId != _inventoryId || flight == null || ended.WorldId != flight.WorldId || _executing
+            if (_canWrite != null && !_canWrite() || ended.InventoryId != _inventoryId || flight == null || ended.WorldId != flight.WorldId || _executing
                 || ended.Reason == ContainerTransitEndReason.Deposited || ended.Reason > ContainerTransitEndReason.ProxyDestroyed) return;
             // “已投放”只能由世界写入成功路径裁决；外部默认struct消息不能冒充成功销毁材料。
             if (!_profile.Items.TryGet(flight.ItemId, out var item) || !_profile.Items.TryGetLocation(flight.ItemId, out var location)
-                || !_profile.Items.TryPrepareMaterialChange(flight.ItemId, null, location, out var prepared)) return;
+                || !_profile.Items.TryPrepareMaterialChange(flight.ItemId, null, location, out var prepared,
+                    OnlineItemRetirementReason.Destroyed)) return;
             int count = item.Composition?.CopyTo(_all)??0; ulong quantity = item.Composition?.Total ?? item.Material?.Quantity ?? 0;
             if (item.Material != null) { _all[0] = new MaterialAmount(item.Material.MaterialKey, item.Material.Quantity); count = 1; }
             _profile.Items.CompletePrepared(prepared, true);
@@ -192,8 +247,16 @@ namespace Game.Run
         private void Resolve(Flight flight, ContainerTransitEndReason reason, ulong quantity)
         {
             flight.Active = false; PendingFlights--;
-            EventBus<ContainerTransitResolvedEvent>.Publish(new ContainerTransitResolvedEvent
-            { InventoryId = _inventoryId, FlightId = flight.Id, Reason = reason, Quantity = quantity });
+            var result = new ContainerTransitResolvedEvent
+            { InventoryId = _inventoryId, FlightId = flight.Id, Reason = reason, Quantity = quantity };
+            if (_canWrite == null) EventBus<ContainerTransitResolvedEvent>.Publish(result);
+            else
+            {
+                // 线上资源已完成提交，表现订阅者异常不能把已完成释放伪装成未提交再消耗一次。
+                try { EventBus<ContainerTransitResolvedEvent>.Publish(result); }
+                catch (Exception exception)
+                { GameLog.Error("在途容器已提交结束事实，但表现通知失败：" + exception.Message, "ContainerUse"); }
+            }
         }
         private Flight Find(string id)
         { for (int i = 0; i < _flights.Length; i++) if (_flights[i].Active && _flights[i].Id == id) return _flights[i]; return null; }
