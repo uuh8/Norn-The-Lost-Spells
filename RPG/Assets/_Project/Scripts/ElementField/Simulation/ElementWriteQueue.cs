@@ -13,6 +13,7 @@ namespace Game.ElementField
         private int _tail;
         private int _count;
         private int _rejectedEnqueues;
+        private long[] _retryTicks;
 
         public ElementWriteQueue(int capacity)
         {
@@ -33,6 +34,11 @@ namespace Game.ElementField
         }
 
         public bool TryEnqueue(in ElementWriteRequest request)
+            => TryEnqueue(in request, 0);
+
+        // 已接收的元胞投放可能在处理前被另一笔写入抢占空间。保留整份数量并记录重试时间，
+        // Fire 和原有后端仍使用普通 FIFO，未使用延迟重试的队列无需分配附加数组。
+        internal bool TryEnqueue(in ElementWriteRequest request, long retryTick)
         {
             if (_count >= _buffer.Length)
             {
@@ -41,6 +47,8 @@ namespace Game.ElementField
             }
 
             _buffer[_tail] = request;
+            if (retryTick != 0 && _retryTicks == null) _retryTicks = new long[_buffer.Length];
+            if (_retryTicks != null) _retryTicks[_tail] = retryTick;
             _tail = (_tail + 1) % _buffer.Length;
             _count++;
             return true;
@@ -50,7 +58,11 @@ namespace Game.ElementField
             TryEnqueue(in request);
 
         public bool TryDequeue(out ElementWriteRequest request)
+            => TryDequeue(out request, out _);
+
+        internal bool TryDequeue(out ElementWriteRequest request, out long retryTick)
         {
+            retryTick = 0;
             if (_count == 0)
             {
                 request = default;
@@ -58,6 +70,7 @@ namespace Game.ElementField
             }
 
             request = _buffer[_head];
+            if (_retryTicks != null) retryTick = _retryTicks[_head];
             _buffer[_head] = default;
             _head = (_head + 1) % _buffer.Length;
             _count--;

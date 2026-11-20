@@ -15,26 +15,30 @@ namespace Game.Run
         public ulong GetQuantity(byte key) => _quantities[key];
         public ContainerComposition(ulong capacity, ushort allowedMaterials)
         {
-            if (capacity == 0 || (allowedMaterials & 0x1fe) == 0 || (allowedMaterials & ~0x1fe) != 0)
+            if (capacity == 0 || !MaterialAmount.IsValidLocalInventoryMask(allowedMaterials))
                 throw new ArgumentException("容器需要正容量与已知兼容材料。");
             Capacity = capacity; AllowedMaterials = allowedMaterials;
         }
         public int CopyTo(MaterialAmount[] buffer)
         {
-            int count = 0; for (int i = 1; i <= 8; i++) if (_quantities[i] > 0) count++;
+            int count = 0; for (int i = 1; i <= MaterialAmount.LastLocalInventoryKey; i++) if (_quantities[i] > 0) count++;
             if (buffer == null || buffer.Length < count) throw new ArgumentException("组分快照不可静默截断。");
-            count = 0; for (byte i = 1; i <= 8; i++) if (_quantities[i] > 0) buffer[count++] = new MaterialAmount(i, _quantities[i]);
+            count = 0; for (byte i = 1; i <= MaterialAmount.LastLocalInventoryKey; i++) if (_quantities[i] > 0) buffer[count++] = new MaterialAmount(i, _quantities[i]);
             return count;
         }
         internal bool CanAdd(MaterialAmount[] amounts, int count)
         {
             if (amounts == null || count <= 0 || count > amounts.Length || count > 8) return false;
+            // 八是单瓶可表示的组分上限，不是材料 ID 的上限。先核对加入后的混合物，以便 UI、Save 与投掷均可完整拷贝。
+            int components = 0;
+            for (int key = 1; key <= MaterialAmount.LastLocalInventoryKey; key++) if (_quantities[key] > 0) components++;
             ulong total = 0; ushort seen = 0;
             for (int i = 0; i < count; i++)
             {
                 byte key = amounts[i].MaterialKey;
-                if (!MaterialAmount.IsKnown(key) || (AllowedMaterials & 1 << key) == 0 || (seen & 1 << key) != 0
+                if (!MaterialAmount.IsLocalInventoryMaterial(key) || (AllowedMaterials & 1 << key) == 0 || (seen & 1 << key) != 0
                     || amounts[i].Quantity > FreeCapacity - total) return false;
+                if (amounts[i].Quantity > 0 && _quantities[key] == 0 && ++components > MaterialAmount.MaximumComponents) return false;
                 seen |= (ushort)(1 << key); total += amounts[i].Quantity;
             }
             return total > 0;
@@ -48,7 +52,7 @@ namespace Game.Run
             for (int i = 0; i < count; i++)
             {
                 byte key = amounts[i].MaterialKey;
-                if (!MaterialAmount.IsKnown(key) || (seen & 1 << key) != 0 || amounts[i].Quantity > _quantities[key]) return false;
+                if (!MaterialAmount.IsLocalInventoryMaterial(key) || (seen & 1 << key) != 0 || amounts[i].Quantity > _quantities[key]) return false;
                 seen |= (ushort)(1 << key); total += amounts[i].Quantity;
             }
             return total > 0;
@@ -60,7 +64,7 @@ namespace Game.Run
         {
             if (other == null) return Total == 0;
             if (Total != other.Total || Capacity != other.Capacity || AllowedMaterials != other.AllowedMaterials) return false;
-            for (int i = 1; i <= 8; i++) if (_quantities[i] != other._quantities[i]) return false;
+            for (int i = 1; i <= MaterialAmount.LastLocalInventoryKey; i++) if (_quantities[i] != other._quantities[i]) return false;
             return true;
         }
     }

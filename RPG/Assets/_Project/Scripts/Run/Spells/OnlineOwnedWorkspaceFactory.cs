@@ -183,6 +183,11 @@ namespace Game.Run
             return true;
         }
 
+        // 地面生成和入局导入共用此合同。含本地新物质的空瓶也不能先进入 DS 再收进旧协议无法表达的材料。
+        internal static bool SupportsWireMaterialRules(in InventoryItemRules rules) =>
+            (rules.Kind != ItemKind.Container || MaterialAmount.IsValidWireInventoryMask(rules.ContainerMaterials))
+            && (rules.Kind != ItemKind.Material || MaterialAmount.IsKnown(rules.MaterialKey));
+
         /// <summary>
         /// 容量和兼容材料来自经 Gameplay Hash 校验的 Catalog，网络只声明该实例的实际组分。
         /// 缺少状态不能被 NormalizeContainer 自动补成空瓶；只有 Schema=1 的显式空数组合法。
@@ -192,6 +197,7 @@ namespace Game.Run
             out ContainerComposition composition, out string error)
         {
             composition = null; error = null;
+            if (!SupportsWireMaterialRules(rules)) return Fail("当前联机物品合同不支持目录中的材料键或容器掩码。", out error);
             if (rules.Kind != ItemKind.Container)
                 return item.ContainerState == null || Fail("非容器物品不能携带容器组分状态。", out error);
 

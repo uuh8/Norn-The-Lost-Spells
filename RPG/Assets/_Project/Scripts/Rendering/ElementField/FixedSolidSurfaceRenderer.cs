@@ -16,6 +16,7 @@ namespace Game.Rendering
         private void Start()
         {
             if (_world == null) _world = GetComponent<ElementWorldRuntime>();
+            if (CellularMaterialRenderer.AttachToWorld(_world)) { enabled = false; return; }
             _properties = new MaterialPropertyBlock(); _camera = Camera.main; _planes = new Plane[6];
             if (_material == null) GameLog.Error("FixedSolid Renderer 缺少 Material。", "Rendering");
         }

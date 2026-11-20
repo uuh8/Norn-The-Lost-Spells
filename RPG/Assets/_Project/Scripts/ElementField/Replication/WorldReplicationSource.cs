@@ -17,8 +17,17 @@ namespace Game.ElementField
         public bool TryCapture(WorldReplicaBuffer destination, out WorldCaptureFailure failure)
         {
             failure = WorldCaptureFailure.None;
-            if (_world == null || !_world.IsInitialized || destination == null)
+            if (_world == null || destination == null)
             { failure = WorldCaptureFailure.NotInitialized; return false; }
+            // 单机世界也能被诊断工具直接 capture。必须在第一遍遍历之前检查配置，
+            // 这样显式空覆盖和细格 Owner 不会被当成旧四域全空，调用方原有快照也保持完整。
+            if (!_world.SupportsConfiguredOnlineReplication())
+            { failure = WorldCaptureFailure.UnsupportedCellularWorld; return false; }
+            if (!_world.IsInitialized)
+            { failure = WorldCaptureFailure.NotInitialized; return false; }
+            // Replica 的已安装缓存没有 Authority 数量 Store，不能让诊断调用读到空引用或回传旧状态。
+            if (_world.ExecutionMode == WorldExecutionMode.Replica)
+            { failure = WorldCaptureFailure.UnsupportedBackend; return false; }
             if (_world.IsWorldStepInProgress)
             { failure = WorldCaptureFailure.SimulationInProgress; return false; }
             if (_world.IsSimulationFaulted)

@@ -62,7 +62,8 @@ namespace Game.Run
             if (_disposed) return OnlineInventoryCommandFailure.NotReady;
             if (TryGetLootRegistration(key, out instanceId)) return OnlineInventoryCommandFailure.None;
             if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(contentId) || !Finite(position) || !ValidRotation(rotation)
-                || !_store.Catalog.TryGetRules(contentId, out var rules) || rules.Kind != ItemKind.Container)
+                || !_store.Catalog.TryGetRules(contentId, out var rules) || rules.Kind != ItemKind.Container
+                || !OnlineOwnedWorkspaceFactory.SupportsWireMaterialRules(rules))
                 return OnlineInventoryCommandFailure.InvalidInput;
             if (_lootKeys.Count >= OnlineDungeonContainerLoot.MaximumLootItems || _store.Count >= OnlineGroundInventorySnapshot.MaximumItems || Version == uint.MaxValue)
                 return OnlineInventoryCommandFailure.NoCapacity;
@@ -128,7 +129,7 @@ namespace Game.Run
         }
         private OnlineGroundItemSnapshot ToSnapshot(RuntimeItemState item, Record record)
         {
-            if (!_store.Catalog.TryGetRules(item.ContentId, out var rules)
+            if (!_store.Catalog.TryGetRules(item.ContentId, out var rules) || !OnlineOwnedWorkspaceFactory.SupportsWireMaterialRules(rules)
                 || rules.Kind == ItemKind.Container && (item.Composition == null || item.Material != null)
                 || rules.Kind == ItemKind.Material && (item.Material == null || item.Composition != null
                     || item.Material.MaterialKey != rules.MaterialKey || item.Material.Quantity == 0 || item.Material.Quantity > rules.MaterialItemCapacity))
@@ -166,7 +167,8 @@ namespace Game.Run
             instanceId = null;
             if (_disposed) return OnlineInventoryCommandFailure.NotReady;
             if (TryGetLootRegistration(key, out instanceId)) return OnlineInventoryCommandFailure.None;
-            if (string.IsNullOrWhiteSpace(key) || item == null || !Finite(position) || !ValidRotation(rotation) || item.EntryBoundBackpack)
+            if (string.IsNullOrWhiteSpace(key) || item == null || !Finite(position) || !ValidRotation(rotation) || item.EntryBoundBackpack
+                || !_store.Catalog.TryGetRules(item.ContentId, out var rules) || !OnlineOwnedWorkspaceFactory.SupportsWireMaterialRules(rules))
                 return OnlineInventoryCommandFailure.InvalidInput;
             if (_lootKeys.Count >= OnlineDungeonContainerLoot.MaximumLootItems || _store.Count >= OnlineGroundInventorySnapshot.MaximumItems || Version == uint.MaxValue)
                 return OnlineInventoryCommandFailure.NoCapacity;

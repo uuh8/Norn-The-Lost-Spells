@@ -9,5 +9,6 @@ namespace Game.ElementField
         LegacyCell = 0,
         GpuPbf = 1,
         GridLiquid = 2,
+        Cellular = 3,
     }
 }

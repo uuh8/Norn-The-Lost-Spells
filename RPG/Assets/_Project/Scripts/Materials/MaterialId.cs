@@ -18,5 +18,10 @@ namespace Game.Materials
         DriedSlime = 6,
         Steam = 7,
         ToxicVapor = 8,
+        // 固定岩土、松散颗粒和油的实体数量由选择了三维元胞模式的世界管理。
+        Rock = 9,
+        Soil = 10,
+        Sand = 11,
+        Oil = 12,
     }
 }

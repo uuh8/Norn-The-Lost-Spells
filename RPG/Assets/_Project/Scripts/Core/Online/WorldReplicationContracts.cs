@@ -9,7 +9,9 @@ namespace Game.Core
     public enum WorldCaptureFailure : byte
     {
         None, NotInitialized, UnsupportedBackend, SimulationInProgress, SimulationFaulted,
-        InvalidGeometry, CellCapacity, PendingCapacity, InspectionBudget
+        InvalidGeometry, CellCapacity, PendingCapacity, InspectionBudget,
+        // 接收端需要基底版本、显式空覆盖与细格数量合同。追加故障原因，保留既有诊断编号。
+        UnsupportedCellularWorld
     }
 
     /// <summary>

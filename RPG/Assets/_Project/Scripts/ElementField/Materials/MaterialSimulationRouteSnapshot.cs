@@ -49,6 +49,22 @@ namespace Game.ElementField
             return material != MaterialId.Empty && _hasRoute[index];
         }
 
+        /// <summary>迁入新配置时一次性发布唯一 Owner。Fire 的 byte 强度保留在旧 Cell 通道，
+        /// 岩石与天然泥土由地形占据表达，不通过液体或气体的数量写入口投放。</summary>
+        internal static MaterialSimulationRouteSnapshot CreateCellular()
+        {
+            var owners = new MaterialSimulationBackendKind[Capacity];
+            var present = new bool[Capacity];
+            foreach (MaterialId material in Enum.GetValues(typeof(MaterialId)))
+            {
+                if (material == MaterialId.Empty || material == MaterialId.Rock || material == MaterialId.Soil) continue;
+                present[(byte)material] = true;
+                owners[(byte)material] = material == MaterialId.Fire
+                    ? MaterialSimulationBackendKind.ElementCell : MaterialSimulationBackendKind.Cellular;
+            }
+            return new MaterialSimulationRouteSnapshot(owners, present);
+        }
+
         private static void AddWaterRoute(
             MaterialCatalogSnapshot catalog,
             in WaterSimulationCompatibilityDecision decision,

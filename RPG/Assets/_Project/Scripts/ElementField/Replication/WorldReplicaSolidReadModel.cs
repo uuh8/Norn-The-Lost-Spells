@@ -65,15 +65,15 @@ namespace Game.ElementField
         private static bool[] GetBlocking(FixedSolidWorldProfile profile)
         { var values = new bool[256]; for (int i = 0; i < profile.MaterialCount; i++) { var material = profile.GetMaterial(i); values[(byte)material.Material] = material.BlocksMovement; } return values; }
         private bool Blocks(MaterialId material) => _blocking[(byte)material];
+        internal bool MaterialBlocksWholeCell(MaterialId material) => _blocking[(byte)material] && !_partialVolume[(byte)material];
 
         // 通用HasBlockingVolume仍按真实高度采样；液体需要独立的整格墙/部分容量语义，不能借点查询放宽碰撞。
-        private bool BlocksWholeCell(Vector3Int cell)
+        internal bool BlocksWholeCell(Vector3Int cell)
         {
             for (int i = 0; i < Materials.Length; i++)
             {
                 MaterialId material = Materials[i];
-                if (_blocking[(byte)material] && !_partialVolume[(byte)material]
-                    && TryGetQuantity(cell, material, out uint quantity) && quantity > 0) return true;
+                if (MaterialBlocksWholeCell(material) && TryGetQuantity(cell, material, out uint quantity) && quantity > 0) return true;
             }
             return false;
         }

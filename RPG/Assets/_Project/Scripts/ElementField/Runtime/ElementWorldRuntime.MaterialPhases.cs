@@ -27,46 +27,55 @@ namespace Game.ElementField
         }
         public bool TryGetQuantity(Vector3Int cell, MaterialId material, out uint quantity)
         {
-            if (_executionMode == Game.Core.WorldExecutionMode.Replica) return TryGetReplicaQuantity(cell, material, out quantity);
-            quantity = 0;
-            if (!IsInitialized || !_materialRoutes.TryResolve(material, out var backend)) return false;
-            switch (backend)
-            {
-                case MaterialSimulationBackendKind.FixedSolid:
-                    return _fixedSolidRuntime != null && _fixedSolidRuntime.TryGetQuantity(cell, material, out quantity);
-                case MaterialSimulationBackendKind.GridGas:
-                    return _gasRuntime != null && _gasRuntime.TryGetQuantity(cell, material, out quantity);
-                case MaterialSimulationBackendKind.GridLiquid:
-                    return _gridLiquidRuntime != null && _gridLiquidRuntime.TryGetWorldQuantity(cell, material, out quantity);
-                default:
-                    // Fire 强度和 PBF 投影不当成可用于材料转换记账的 GMU。
-                    return false;
-            }
+            return TryReadQuantityCell(cell, material, out _, out _, out quantity, out _);
         }
         public bool HasFluidOrGasAt(Vector3Int cell)
         {
+            if (!IsInitialized) return false;
+            if (_executionMode == Game.Core.WorldExecutionMode.Replica)
+            {
+                if (_replicaStore == null) return false;
+                // 两个域均已按坐标排序。取一个已安装的组分即可判占据，无需逐材料猜测身份。
+                return _replicaStore.TryGetFirstCell(Game.Core.WorldMaterialDomain.Gas, cell, out _)
+                    || _replicaStore.TryGetFirstCell(Game.Core.WorldMaterialDomain.Liquid,
+                        _replicaVolumeSettings.WorldCellToLiquidCell(cell), out _);
+            }
+            if (CellularSimulation != null) return CellularSimulation.HasFluidOrGasAt(cell)
+                || RestingLiquids != null && RestingLiquids.TryGetCell(cell, out _, out _);
             if (_gasRuntime != null)
                 for (int i = 0; i < _gasRuntime.MaterialCount; i++)
-                    if (_gasRuntime.TryGetQuantity(cell, _gasRuntime.GetMaterial(i), out _)) return true;
-            return _gridLiquidRuntime != null && (_gridLiquidRuntime.TryGetWorldQuantity(cell, MaterialId.Water, out _)
-                || _gridLiquidRuntime.TryGetWorldQuantity(cell, MaterialId.Poison, out _)
-                || _gridLiquidRuntime.TryGetWorldQuantity(cell, MaterialId.Sticky, out _));
+                {
+                    MaterialId material = _gasRuntime.GetMaterial(i);
+                    if (_gasRuntime.TryGetQuantity(cell, material, out _)) return true;
+                }
+            if (_gridLiquidRuntime == null) return false;
+            var nativeCell = _gridLiquidRuntime.WorldCellToLiquidCell(cell);
+            for (int i = 0; i < _gridLiquidRuntime.MaterialCount; i++)
+            {
+                MaterialId material = _gridLiquidRuntime.GetLiquidMaterial(i);
+                if (_gridLiquidRuntime.TryGetQuantity(nativeCell, material, out _)) return true;
+            }
+            return false;
         }
         public void NotifyMaterialTopologyChanged(Vector3Int cell)
         {
-            _gridLiquidRuntime?.NotifyMaterialTopologyChanged(cell);
-            _gasRuntime?.NotifyTopologyChanged(cell);
+            WakeCellularTerrainChange(cell);
+            if (CellularSimulation == null)
+            {
+                _gridLiquidRuntime?.NotifyMaterialTopologyChanged(cell);
+                _gasRuntime?.NotifyTopologyChanged(cell);
+            }
             if (_store == null) return;
             ElementWorldCoordinates.GlobalCellToChunkAndLocal(cell, _profile.ChunkSize, out ElementChunkKey key, out Vector3Int local);
             if (!_store.TryGetChunk(key, out ElementWorldChunk chunk)) return;
             int index = ElementFieldCoordinates.ToIndex(local, chunk.Grid.Dimensions);
-            chunk.SolidMask[index] = _solidBaker.SampleSolidWorldCell(cell, _origin, _profile.CellSize);
+            chunk.SolidMask[index] = IsCellularBlockingCell(cell) || _solidBaker.SampleSolidWorldCell(cell, _origin, _profile.CellSize);
         }
         public bool TryPrepareMaterialTopologyChange(Vector3Int worldCell, bool becomesSolid)
         {
             // Stable 液体区域可能正在借用此格作为池底。先预约它的局部拓扑交接，
             // 失败就保留冰，不能先拆 Collider 再让湖盆继续使用旧支撑。
-            return _gridLiquidRuntime == null || _gridLiquidRuntime.TryPrepareStaticCellChange(
+            return CellularSimulation != null || _gridLiquidRuntime == null || _gridLiquidRuntime.TryPrepareStaticCellChange(
                 _gridLiquidRuntime.WorldCellToLiquidCell(worldCell), becomesSolid);
         }
     }

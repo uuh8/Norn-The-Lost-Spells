@@ -12,5 +12,6 @@ namespace Game.ElementField
         GridLiquid = 3,
         FixedSolid = 4,
         GridGas = 5,
+        Cellular = 6,
     }
 }

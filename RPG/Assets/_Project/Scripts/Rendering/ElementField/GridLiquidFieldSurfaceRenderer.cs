@@ -128,6 +128,7 @@ namespace Game.Rendering
         {
             using var initializeScope=InitializeMarker.Auto();
             if(_valid)return;_started=true;
+            if (CellularMaterialRenderer.AttachToWorld(_world)) { enabled = false; return; }
             // 单机 Runtime 与只读网络 Replica 使用同一个 Renderer，不在此创建模拟 Owner。
             _source=_world!=null?_world.GridLiquids as ILiquidPresentationReadOnly:null;
 #if UNITY_EDITOR

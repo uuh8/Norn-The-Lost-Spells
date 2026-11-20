@@ -65,16 +65,18 @@ namespace Game.ElementField
         private bool TryAimPoint(MaterialCollectionAimExchange e,Vector3 point,bool visibility)
         {
             var cell=Vector3Int.FloorToInt((point-_world.Origin)/_world.CellSize);
-            for(byte key=1;key<=8;key++)
+            for(byte key=1;key<=MaterialAmount.LastLocalInventoryKey;key++)
                 if((e.AllowedMaterials&(1<<key))!=0&&_world.TryGetQuantity(cell,(MaterialId)key,out uint quantity)&&quantity>0)
                 {
                     if(visibility)
                     {
-                        Vector3 delta=point-e.RayOrigin;int count=Physics.RaycastNonAlloc(e.RayOrigin,delta.normalized,_sightHits,delta.magnitude-.01f,~0,QueryTriggerInteraction.Ignore);
+                        Vector3 delta=point-e.RayOrigin;var direction=delta.normalized;
+                        int count=Physics.RaycastNonAlloc(e.RayOrigin,direction,_sightHits,delta.magnitude-.01f,~0,QueryTriggerInteraction.Ignore);
                         bool blocked=count==_sightHits.Length;
                         for(int i=0;i<count;i++)
                         {var hit=_sightHits[i].collider;if(hit is CharacterController||ElementFieldSolidBaker.HasStatusOwner(hit))continue;
-                            if((key==5||key==6)&&hit.TryGetComponent<GeneratedMaterialSolidCollider>(out _))continue;blocked=true;}
+                            if (_world.IsCollectionTargetSurface(_sightHits[i], direction, cell, (MaterialId)key)) continue;
+                            blocked=true;}
                         if(blocked)continue;
                     }
                     e.Point=point;e.MaterialKey=key;e.Found=true;return true;

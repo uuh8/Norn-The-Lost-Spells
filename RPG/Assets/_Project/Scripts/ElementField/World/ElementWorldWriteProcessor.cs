@@ -262,7 +262,7 @@ namespace Game.ElementField
             return 0;
         }
 
-        private static float CalculateWeight(
+        internal static float CalculateWeight(
             Vector3Int globalCell,
             in ElementWriteRequest request,
             Vector3 worldOrigin,

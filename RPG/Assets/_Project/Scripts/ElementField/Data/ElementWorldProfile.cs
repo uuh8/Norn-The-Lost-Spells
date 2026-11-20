@@ -35,7 +35,7 @@ namespace Game.ElementField
         [SerializeField,Range(0,byte.MaxValue)]private int _maxFireDownFlowPerTick;
 
         [Header("Water Simulation Backend")]
-        [Tooltip("Legacy Cell=0、Gpu PBF=1、Grid Liquid=2；后端切换仅在退出并重新进入 Play 后生效。")]
+        [Tooltip("已绑定 Cellular World 时使用 3D 元胞后端。其它模式为 Legacy Cell、GPU PBF 或 Grid Liquid。配置在世界实例创建时生效。")]
         [SerializeField] private WaterSimulationMode _waterSimulationMode = WaterSimulationMode.LegacyCell;
 
         [Header("Fluid Chunk Streaming")]
@@ -87,6 +87,9 @@ namespace Game.ElementField
         public byte FireDecayPerTick => (byte)_fireDecayPerTick;
         public byte MaxFireDownFlowPerTick=>(byte)_maxFireDownFlowPerTick;
         public WaterSimulationMode WaterSimulationMode => _waterSimulationMode;
+        [Tooltip("指定后由三维元胞世界接管本副本的材料。留空的旧资产继续使用已有后端。")]
+        [SerializeField] private ElementCellWorldProfile _cellularWorld;
+        public ElementCellWorldProfile CellularWorld => _cellularWorld;
         public bool EnableFluidChunkStreaming => _enableFluidChunkStreaming;
         public MaterialCatalog MaterialCatalog => _materialCatalog;
         public MaterialSimulationRoutingProfile MaterialSimulationRouting => _materialSimulationRouting;

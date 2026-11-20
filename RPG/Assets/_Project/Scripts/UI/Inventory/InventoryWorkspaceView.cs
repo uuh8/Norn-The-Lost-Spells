@@ -112,7 +112,7 @@ namespace Game.UI
             var labels=GetComponentsInChildren<Text>(true);for(int i=0;i<labels.Length;i++)labels[i].font=_inventory.UiFont;
         }
         public static string MaterialName(byte key)
-        {switch(key){case 1:return "水";case 2:return "火";case 3:return "毒液";case 4:return "黏液";case 5:return "冰";case 6:return "干黏液";case 7:return "蒸汽";case 8:return "毒气";default:return "未知材料";}}
+        {switch(key){case 1:return "水";case 2:return "火";case 3:return "毒液";case 4:return "黏液";case 5:return "冰";case 6:return "干黏液";case 7:return "蒸汽";case 8:return "毒气";case 11:return "沙";case 12:return "油";default:return "未知材料";}}
         private static void Place(RectTransform r,Vector2 position,Vector2 size){r.anchoredPosition=position;r.sizeDelta=size;}
     }
 }

@@ -50,6 +50,7 @@ namespace Game.Rendering
 
         private void Start()
         {
+            if (CellularMaterialRenderer.AttachToWorld(_worldRuntime)) { enabled = false; return; }
             if (_worldRuntime == null || _sourceLiquidMaterial == null || _dormantShader == null
                 || _targetMaterial == MaterialId.Empty)
             {

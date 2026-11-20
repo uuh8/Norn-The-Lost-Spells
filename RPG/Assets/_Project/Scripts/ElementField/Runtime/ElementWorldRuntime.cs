@@ -139,7 +139,7 @@ namespace Game.ElementField
         public ElementFieldSimulationStats LastStats => _lastStats;
         public WaterSimulationMode EffectiveWaterSimulationMode => _effectiveWaterSimulationMode;
         public IMaterialSimulationRouteReadOnly MaterialRoutes => _materialRoutes;
-        public IMaterialAmountReadOnly MaterialAmounts => _executionMode == WorldExecutionMode.Replica ? this : _materialQuery;
+        public IMaterialAmountReadOnly MaterialAmounts => _executionMode == WorldExecutionMode.Replica || UsesCellularWorld ? this : _materialQuery;
         public IFluidDormantReadOnly DormantLiquids => _fluidChunkStreamingRuntime;
         public ILiquidSurfaceReadOnly GridLiquids => _executionMode == WorldExecutionMode.Replica ? _replicaLiquids : _gridLiquidRuntime;
         public FixedSolidWorldRuntime FixedSolids => _fixedSolidRuntime;
@@ -232,6 +232,9 @@ namespace Game.ElementField
 
         public bool TryEnqueueWrite(in ElementWriteRequest request)
         {
+            if (OwnsCellularMaterial(request.MaterialKind))
+                return CanAcceptWorldWrites && !IsWorldStepInProgress && ValidCellularWrite(in request)
+                    && RetainWriteActivity(in request) && _writeQueue.TryEnqueue(in request);
             // Reserve/Commit/Cancel 会同步调用外部实现，期间不允许另一条入队改变同一个数量世界。
             // 内部 Stage/Undo 不经此门，仍由持有事务所有权的 Port 完成原有提交或回滚流程。
             return CanAcceptWorldWrites && !IsMaterialTransactionInProgress
@@ -324,6 +327,8 @@ namespace Game.ElementField
 
         public bool IsSolid(Vector3Int globalCell)
         {
+            if (CellularSimulation != null)
+                return IsCellularBlockingCell(globalCell) || IsEnvironmentBlockedForCells(globalCell);
             if (_executionMode == WorldExecutionMode.Replica) return _solidBaker != null && _solidBaker.SampleEnvironmentSolidWorldCell(globalCell, _origin, CellSize)
                 || _replicaSolids != null && _replicaSolids.HasBlockingVolume(_origin + ((Vector3)globalCell + Vector3.one * .5f) * CellSize);
             return TryResolveResidentCell(globalCell, out ElementWorldChunk chunk, out Vector3Int localCell)
@@ -370,6 +375,12 @@ namespace Game.ElementField
 
         public bool TryGetAmount(Vector3Int globalCell, MaterialId material, out byte amount)
         {
+            if (OwnsCellularMaterial(material))
+            {
+                if (!TryGetCellularQuantity(globalCell, material, out uint quantity)) { amount = 0; return false; }
+                amount = (byte)Math.Max(1UL, (quantity * 255UL) / CellularCellCapacity);
+                return true;
+            }
             if (_executionMode == WorldExecutionMode.Replica)
             {
                 if (TryGetReplicaLegacyCell(globalCell, out var legacy) && legacy.MaterialKind == material) { amount = legacy.Amount; return true; }
@@ -424,6 +435,16 @@ namespace Game.ElementField
             }
             // CPU 权威必须由可信配置显式选择；headless 不支持 Compute 后降级为 LegacyCell
             // 只是原单机兼容策略，不能作为 DS 材料数量权威的初始化依据。
+            if (_executionMode == WorldExecutionMode.Authority && !SupportsConfiguredOnlineReplication())
+            {
+                GameLog.Error(CellularReplicationUnavailable, "ElementField");
+                return false;
+            }
+            if (_profile.WaterSimulationMode == WaterSimulationMode.Cellular && !UsesCellularWorld)
+            {
+                GameLog.Error("Cellular 模式需要在 ElementWorldProfile 上指定 Cellular World 配置。", "ElementField");
+                return false;
+            }
             if (_executionMode == WorldExecutionMode.Authority
                 && _profile.WaterSimulationMode != WaterSimulationMode.GridLiquid)
             {
@@ -431,12 +452,12 @@ namespace Game.ElementField
                 return false;
             }
             if (_profile.MaterialCatalog == null
-                || _profile.MaterialSimulationRouting == null
+                || (!UsesCellularWorld && _profile.MaterialSimulationRouting == null)
                 || _profile.MaterialReactionBindings == null
                 || _profile.MaterialStatusProjection == null)
             {
                 GameLog.Error(
-                    "ElementWorldProfile requires Material Catalog, Material Simulation Routing and Material Reaction Binding assets.",
+                    "ElementWorldProfile requires a material catalog, reactions and status projection. Legacy backends also require simulation routing.",
                     "ElementField");
                 return false;
             }
@@ -478,7 +499,8 @@ namespace Game.ElementField
                 bool supportsPbf = SystemInfo.supportsComputeShaders
                     && SystemInfo.graphicsDeviceType != GraphicsDeviceType.Null;
                 WaterSimulationCompatibilityDecision waterDecision =
-                    WaterSimulationCompatibilityPolicy.Resolve(_profile.WaterSimulationMode, supportsPbf);
+                    WaterSimulationCompatibilityPolicy.Resolve(UsesCellularWorld ? WaterSimulationMode.Cellular
+                        : _profile.WaterSimulationMode, supportsPbf);
                 ReportHardwareFallbackOnce(in waterDecision);
 
                 if (waterDecision.WaterBackend == MaterialSimulationBackendKind.GridLiquid
@@ -496,7 +518,8 @@ namespace Game.ElementField
                         "Water Route requests GpuPbfLiquid, but GpuPbfFluidRuntime is missing or failed initialization.");
                 }
 
-                MaterialSimulationRouteSnapshot finalRoutes = MaterialSimulationRouteSnapshot.Create(
+                MaterialSimulationRouteSnapshot finalRoutes = UsesCellularWorld
+                    ? MaterialSimulationRouteSnapshot.CreateCellular() : MaterialSimulationRouteSnapshot.Create(
                     catalog,
                     _profile.MaterialSimulationRouting,
                     in waterDecision);
@@ -506,7 +529,8 @@ namespace Game.ElementField
                         if (finalRoutes.TryResolve((MaterialId)materialId, out var authorityBackend)
                             && authorityBackend == MaterialSimulationBackendKind.GpuPbfLiquid)
                             throw new InvalidOperationException("Authority material routes must not contain a GPU backend.");
-                InitializeMaterialPhases(finalRoutes);
+                if (UsesCellularWorld) InitializeCellularWorld();
+                else InitializeMaterialPhases(finalRoutes);
                 // Poison/Sticky 也可以单独选择 Grid；一次初始化只能指向同一个数量权威。
                 bool hasGridRoute = false;
                 for (int materialId = 1; materialId <= byte.MaxValue; materialId++)
@@ -625,7 +649,9 @@ namespace Game.ElementField
 
                 // 两个工作数组按 Resident 上限一次性分配；后续 Tick 只覆盖内容，不 new List/Array。
                 _activeChunks = new ElementWorldChunk[_profile.MaximumResidentChunks];
-                if (_hasGridLiquidRoute)
+                if (UsesCellularWorld)
+                    _fireReactionSamples = new LiquidCellFireSample[_profile.MaxPendingWrites];
+                if (_hasGridLiquidRoute || UsesCellularWorld)
                     _gridFireChunks = new ElementWorldChunk[_profile.MaximumResidentChunks];
                 _reclaimKeys = new ElementChunkKey[_profile.MaximumResidentChunks];
                 // 只有 Catalog、Compatibility、PBF 配置和其余 Runtime 资源全部成功后才发布最终路由。
@@ -634,7 +660,8 @@ namespace Game.ElementField
                 _materialStatusProjection = statusProjection;
                 _materialQuery = new MaterialStateQueryRouter(finalRoutes, this,
                     _liquidOccupancy, _gridLiquidRuntime, _fixedSolidRuntime, _gasRuntime);
-                InitializeMaterialConversions();
+                if (UsesCellularWorld) InitializeCellularCombustion();
+                else InitializeMaterialConversions();
                 IsInitialized = true;
 
                 RefreshInterestChunk();
@@ -643,6 +670,7 @@ namespace Game.ElementField
             }
             catch (Exception exception)
             {
+                DisposeCellularWorld();
                 GameLog.Error(
                     $"ElementWorldRuntime initialization failed: {exception.Message}",
                     "ElementField");
@@ -704,9 +732,27 @@ namespace Game.ElementField
             };
             using (ApplyWritesMarker.Auto())
             {
-                while (_writeQueue.TryDequeue(out ElementWriteRequest request))
+                int queuedAtStart = _writeQueue.Count;
+                DeferredCellularWritesLastTick = 0;
+                for (int i = 0; i < queuedAtStart && _writeQueue.TryDequeue(out ElementWriteRequest request, out long retryTick); i++)
                 {
+                    if (retryTick > _worldTick)
+                    {
+                        _writeQueue.TryEnqueue(in request, retryTick);
+                        continue;
+                    }
                     writeStats.ProcessedWrites++;
+                    if (OwnsCellularMaterial(request.MaterialKind))
+                    {
+                        if (!ApplyCellularWrite(in request))
+                        {
+                            // 消费时重新核对几何与容量。等待中的量仍归原命令，其余命令可继续执行。
+                            if (!_writeQueue.TryEnqueue(in request, _worldTick + 4))
+                                throw new InvalidOperationException("无法保留已接收的元胞物质投放。");
+                            DeferredCellularWritesLastTick++;
+                        }
+                        continue;
+                    }
                     if (!ElementWorldWriteProcessor.TryApply(
                             _store,
                             in request,
@@ -724,8 +770,12 @@ namespace Game.ElementField
             RebuildActivitySets();
             // 固体只处理待写／拓扑变化，气体与液体共享固定时钟和活动范围。
             _conversionScheduler?.BeginTick(_tickInterval,LiquidActivityDomain());
-            _fixedSolidRuntime?.Step();
-            _fixedSolidRuntime?.StepGravity(_tickInterval);
+            if (CellularSimulation != null) StepCellularWorld();
+            else
+            {
+                _fixedSolidRuntime?.Step();
+                _fixedSolidRuntime?.StepGravity(_tickInterval);
+            }
             if (_gasRuntime != null && _gasRuntime.IsMaterialInitialized)
             { _gasRuntime.SetActivityDomain(LiquidActivityDomain()); _gasRuntime.Step(_tickInterval); }
             if (_hasGridLiquidRoute)
@@ -773,6 +823,7 @@ namespace Game.ElementField
 
             // Solver 可能按需创建边界接收 Chunk；再次分类使 Inspector 与下一 Tick 立即看到真实生命周期。
             RebuildActivitySets();
+            if (CellularSimulation != null) NotifyCellularObservers();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             long allocated = GC.GetAllocatedBytesForCurrentThread() - gcBefore;
             _gcSampledWorldTicks++;
@@ -788,6 +839,7 @@ namespace Game.ElementField
 
         private void OnDestroy()
         {
+            DisposeCellularWorld();
             DisableReplicaPresentationInterest();
             _replicaSolids?.Dispose();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

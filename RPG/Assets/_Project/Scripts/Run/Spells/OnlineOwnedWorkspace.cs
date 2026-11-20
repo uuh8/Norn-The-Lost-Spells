@@ -519,7 +519,8 @@ namespace Game.Run
             include = false;
             if (!_itemRevisions.ContainsKey(entry.Item.InstanceId)
                 || !_profile.Items.Catalog.TryGet(entry.Item.ContentId, out var definition)
-                || !_profile.Items.Catalog.TryGetRules(entry.Item.ContentId, out var rules)) return false;
+                || !_profile.Items.Catalog.TryGetRules(entry.Item.ContentId, out var rules)
+                || !OnlineOwnedWorkspaceFactory.SupportsWireMaterialRules(rules)) return false;
             if (definition.Kind == ItemKind.Material)
             {
                 if (entry.Item.Material == null || entry.Item.Material.MaterialKey != rules.MaterialKey

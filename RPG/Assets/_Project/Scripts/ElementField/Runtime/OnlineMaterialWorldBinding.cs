@@ -36,7 +36,8 @@ namespace Game.ElementField
         public IWorldAuthoritySimulation AuthoritySimulation => _configured && !_detached && _mode == WorldExecutionMode.Authority ? _world : null;
         public IWorldReplicationSource ReplicationSource => _detached ? null : _source;
         public WorldReplicaBuffer CaptureBuffer => _detached ? null : _buffer;
-        public IWorldChunkPayloadInstaller ReplicaInstaller => _detached ? null : _replica;
+        public IWorldChunkPayloadInstaller ReplicaInstaller => _configured && !_detached && !_configurationFaulted
+            && _mode == WorldExecutionMode.Replica ? _replica : null;
         // 可选表现能力沿现有按端装配：DS只捕获，Client只安装到已存在的Liquid ReadModel。
         // GridLiquids已统一选择Authority/Replica实例，不能再new一个脱离Renderer的数据源。
         public IWorldLiquidMotionSource Source => _configured && !_detached && _mode == WorldExecutionMode.Authority ? _motionSource : null;
@@ -56,6 +57,14 @@ namespace Game.ElementField
             }
             if (_world.IsInitialized || _captureCells < 1 || _capturePending < 1 || _inspectionBudget < 1
                 || _replicaChunks < 1 || _maximumChunkWords < 64) return false;
+            // 此时整棵候选 prefab 仍 inactive。先检查能力，再拆组件、分配快照池或暴露安装器。
+            // 单机继续使用自己的世界，只有试图把这种配置装配成联机 Authority / Replica 才会失败。
+            if (!_world.SupportsConfiguredOnlineReplication())
+            {
+                _configurationFaulted = true;
+                GameLog.Error(ElementWorldRuntime.CellularReplicationUnavailable, "ElementField");
+                return false;
+            }
             try
             {
                 var transfer = _world.GetComponent<MaterialInventoryTransferAdapter>();

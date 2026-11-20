@@ -14,9 +14,13 @@ namespace Game.ElementField
         [SerializeField] private bool _includeDefaultEnvironment = true;
         // 初始化/Bake 复用查询缓冲；Default 层的普通 Cube 不要求额外设置 Layer。
         // 动态 Rigidbody 与角色 Collider 不得进入静态缓存，否则角色离开后会留下隐形墙。
-        private readonly Collider[] _environmentHits = new Collider[64];
+        private Collider[] _environmentHits = new Collider[64];
         private readonly RaycastHit[] _supportHits = new RaycastHit[64];
         private FixedSolidWorldRuntime _materialSolids;
+        private ElementTerrainVolume _editableTerrain;
+        private System.Func<Vector3Int, bool> _cellularSolid;
+        internal void SetEditableTerrain(ElementTerrainVolume terrain, System.Func<Vector3Int, bool> cellularSolid = null)
+        { _editableTerrain = terrain; _cellularSolid = cellularSolid; }
         private Vector3 _materialOrigin;
         private float _materialCellSize;
         public void SetMaterialSolids(FixedSolidWorldRuntime solids, Vector3 origin, float size)
@@ -104,21 +108,37 @@ namespace Game.ElementField
 
         private bool IsEnvironmentSolid(Vector3 center, Vector3 halfExtents)
         {
+            if (_editableTerrain != null && _editableTerrain.IntersectsSolid(center-halfExtents, halfExtents*2f))
+                return true;
+            return HasSceneObstacle(center, halfExtents);
+        }
+
+        // 单独查询原有环境。元胞内核对这一来源进行有界缓存，编辑地层另由树直接回答。
+        internal bool HasSceneObstacle(Vector3 center, Vector3 halfExtents)
+        {
             int configuredEnvironment = _solidLayerMask.value | (_includeDefaultEnvironment ? 1 : 0);
             if (configuredEnvironment == 0) return false;
             int count = Physics.OverlapBoxNonAlloc(center, halfExtents, _environmentHits,
                 Quaternion.identity, configuredEnvironment, QueryTriggerInteraction.Ignore);
-            bool solid = false;
-            for (int i = 0; i < count; i++)
+            while (true)
             {
-                Collider hit = _environmentHits[i];
-                _environmentHits[i] = null;
-                solid |= hit != null && hit.attachedRigidbody == null
-                    && !(hit is CharacterController)
-                    && !hit.TryGetComponent<GeneratedMaterialSolidCollider>(out _)
-                    && !HasStatusOwner(hit);
+                bool solid = false;
+                for (int i = 0; i < count; i++)
+                {
+                    Collider hit = _environmentHits[i];
+                    _environmentHits[i] = null;
+                    solid |= hit != null && hit.attachedRigidbody == null
+                        && !(hit is CharacterController)
+                        && (_editableTerrain == null || !_editableTerrain.OwnsCollider(hit))
+                        && !hit.TryGetComponent<GeneratedMaterialSolidCollider>(out _)
+                        && !HasStatusOwner(hit);
+                }
+                if (solid || count < _environmentHits.Length || _editableTerrain == null) return solid;
+                // 细格材料几何也在 Physics Broadphase 内。满缓冲且全部被过滤时，遗漏的项仍可能是真墙。
+                _environmentHits = new Collider[checked(_environmentHits.Length * 2)];
+                count = Physics.OverlapBoxNonAlloc(center, halfExtents, _environmentHits,
+                    Quaternion.identity, configuredEnvironment, QueryTriggerInteraction.Ignore);
             }
-            return solid;
         }
         internal static bool HasStatusOwner(Collider collider)
         {
@@ -134,7 +154,7 @@ namespace Game.ElementField
                 return 0;
 
             grid.ClearSolidMask();
-            if (_solidLayerMask.value == 0 && !_includeDefaultEnvironment)
+            if (_editableTerrain == null && _solidLayerMask.value == 0 && !_includeDefaultEnvironment)
             {
                 GameLog.Warn(
                     "ElementFieldSolidBaker has an empty LayerMask; no Cell will be marked Solid.",
@@ -174,7 +194,7 @@ namespace Game.ElementField
                 return 0;
 
             chunk.Grid.ClearSolidMask();
-            if (_solidLayerMask.value == 0 && !_includeDefaultEnvironment)
+            if (_editableTerrain == null && _solidLayerMask.value == 0 && !_includeDefaultEnvironment)
             {
                 GameLog.Warn(
                     "ElementFieldSolidBaker has an empty LayerMask; no World Cell will be marked Solid.",
@@ -200,7 +220,8 @@ namespace Game.ElementField
                     (globalCell.z + 0.5f) * cellSize);
                 // 动态冰不写入永久地形缓存，但新创建的 World Chunk 必须读取当前冰占据。
                 // 冰移除时 World 会再次更新此格，避免留下永久隐形墙。
-                bool isSolid = SampleSolidWorldCell(globalCell, origin, cellSize);
+                bool isSolid = (_cellularSolid != null && _cellularSolid(globalCell))
+                    || SampleSolidWorldCell(globalCell, origin, cellSize);
                 int index = ElementFieldCoordinates.ToIndex(localCell, chunk.Grid.Dimensions);
                 chunk.SolidMask[index] = isSolid;
                 if (isSolid)

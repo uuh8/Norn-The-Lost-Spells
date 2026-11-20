@@ -106,6 +106,7 @@ namespace Game.Rendering
 
         private void Start()
         {
+            if (CellularMaterialRenderer.AttachToWorld(_world)) { enabled = false; return; }
             _source = _world != null ? _world.GridLiquids : null;
             if(GridLiquidFieldSurfaceRenderer.Find(_source)!=null)return;
             _motionSource = _source as ILiquidMotionReadOnly;

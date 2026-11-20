@@ -16,6 +16,7 @@ namespace Game.Rendering
     {
         [SerializeField] private ElementWorldRuntime _world;
         [SerializeField] private Material _material;
+        internal Material SharedVolumeMaterial => _material;
         [SerializeField, Min(1)] private float _fadeStart = 32f;
         [SerializeField, Min(1)] private float _fadeEnd = 56f;
         [Tooltip("固定 10Hz 场的密度在此时间内逐帧过渡；新出生不等待。仅影响显示，非 Solver 频率。")]
@@ -63,6 +64,8 @@ namespace Game.Rendering
         private void Start()
         {
             if (_world == null) _world = GetComponent<ElementWorldRuntime>();
+            // 保留序列化的 volume Material 供新 Renderer 复用，避免向同一池气体再分配旧 Owner 的纹理。
+            if (CellularMaterialRenderer.AttachToWorld(_world)) { enabled = false; return; }
             IGasVolumeReadOnly source = _world != null ? _world.GasVolumes : null;
             if (source == null || source.MaximumChunks == 0 || _material == null)
             { GameLog.Error("Gas Renderer 缺少初始化世界或 Material。", "Rendering"); enabled = false; return; }
@@ -175,7 +178,7 @@ namespace Game.Rendering
             float t=Mathf.Clamp01((now-_blendStarts[slot])/EffectiveDensityBlendSeconds);
             return t*t*(3f-2f*t);
         }
-        private static Mesh CreateCube()
+        internal static Mesh CreateCube()
         {
             var mesh = new Mesh { name = "Gas Ray March Bounds" };
             mesh.vertices = new[] { Vector3.zero, Vector3.right, new Vector3(1,1,0), Vector3.up,

@@ -87,6 +87,10 @@ namespace Game.ElementField
         /// </summary>
         public void ConfigureReplica(WorldReplicaStore store)
         {
+            // 正式绑定和直接调用均在配置任何 Geometry、白名单和只读模型之前拒绝。
+            // 否则旧格式可以成功安装、回 ACK，但客户端洞口和障碍仍会从未编辑的 prefab 读出。
+            if (!SupportsConfiguredOnlineReplication())
+                throw new NotSupportedException(CellularReplicationUnavailable);
             if (store == null || _profile == null || _gridLiquidRuntime == null || _fixedSolidRuntime == null || _gasRuntime == null)
                 throw new ArgumentException("Replica缺少可信材料世界配置。");
             if (IsInitialized || _initializationStarted || _replicaStore != null)

@@ -58,13 +58,19 @@ namespace Game.ElementField
             for (int i = 0; i < _usedEnd; i++)
             {
                 if (_entries[i].Used && _entries[i].Reaction == ElementReactionId.ToxicCombustion
-                    && ((_coalesceRadiusCells > 0
-                        && (_entries[i].LiquidCell-poisonCell).sqrMagnitude
-                            <= _coalesceRadiusCells*_coalesceRadiusCells)
+                    && ((_coalesceRadiusCells > 0 && WithinToxicRadius(_entries[i].LiquidCell, poisonCell))
                         || _entries[i].FireCell == fireCell && _entries[i].LiquidCell == poisonCell))
                     return true;
             }
             return false;
+        }
+
+        private bool WithinToxicRadius(Vector3Int a, Vector3Int b)
+        {
+            // 稀疏世界的两个有效格可以相距超过 46340 格。先升为 long 并裁轴，再用 ulong 求平方和，远处毒池不会回绕成近邻。
+            long x = (long)a.x - b.x, y = (long)a.y - b.y, z = (long)a.z - b.z, radius = _coalesceRadiusCells;
+            if (Math.Abs(x) > radius || Math.Abs(y) > radius || Math.Abs(z) > radius) return false;
+            return (ulong)(x * x) + (ulong)(y * y) + (ulong)(z * z) <= (ulong)(radius * radius);
         }
 
         public int TickToxic(
@@ -72,6 +78,11 @@ namespace Game.ElementField
             IMaterialAmountReadOnly occupancy,
             in ToxicCombustionTuning tuning,
             ToxicWorldReactionResolution[] destination)
+            => TickToxicCore(deltaTime, occupancy, in tuning, destination, null);
+
+        // 原 Carrier 的占据是 byte。拥有整数 GMU 的世界可交入启动时缓存的采样方法，继续共用同一预热和冷却表。
+        internal int TickToxicCore(float deltaTime, IMaterialAmountReadOnly occupancy, in ToxicCombustionTuning tuning,
+            ToxicWorldReactionResolution[] destination, Func<Vector3Int, int> readNativePoison)
         {
             int count = 0;
             for (int i = 0; i < _usedEnd && count < destination.Length; i++)
@@ -87,7 +98,8 @@ namespace Game.ElementField
                     continue;
                 }
                 // 浅滩在预热期间仍会流动；Grid 在局部九格重新读数量，不能绑定一格旧位置。
-                int current = ReadPoison(occupancy, entry.LiquidCell, _aggregatePoison);
+                int current = readNativePoison != null ? readNativePoison(entry.LiquidCell)
+                    : ReadPoison(occupancy, entry.LiquidCell, _aggregatePoison);
                 if (!entry.Toxic.Tick(deltaTime, current, in tuning, out int consumed, out float damage, out float radius))
                 {
                     _entries[i] = entry;

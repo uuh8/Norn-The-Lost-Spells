@@ -85,8 +85,8 @@ namespace Game.Run
             { error = "堆叠/背包尺寸必须为正；法杖和背包外壳不堆叠。"; return false; }
             try
             {
-                if (_containerCapacityGmu <= 0 || (_containerMaterialsMask & 0x1fe) == 0 || (_containerMaterialsMask & ~0x1fe) != 0
-                    || _materialItemCapacityGmu <= 0 || !Game.Core.MaterialAmount.IsKnown(_materialKey))
+                if (_containerCapacityGmu <= 0 || !Game.Core.MaterialAmount.IsValidLocalInventoryMask(_containerMaterialsMask)
+                    || _materialItemCapacityGmu <= 0 || !Game.Core.MaterialAmount.IsLocalInventoryMaterial(_materialKey))
                 { error = "容器/材料物品数量或稳定键配置非法。"; return false; }
                 rules = new InventoryItemRules(_kind, new InventoryShape(_shapeWidth, _shapeHeight, _occupiedCells),
                     _maxStack, _backpackWidth, _backpackHeight, capacity, (ulong)_containerCapacityGmu,

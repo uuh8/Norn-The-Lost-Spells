@@ -12,7 +12,7 @@ namespace Game.Run
         internal void AddReserved(ulong amount) { Quantity=checked(Quantity+amount); }
         public MaterialItemState(byte key, ulong quantity)
         {
-            if (!MaterialAmount.IsKnown(key) || quantity == 0) throw new ArgumentException("材料物品需要已知键和正数量。");
+            if (!MaterialAmount.IsLocalInventoryMaterial(key) || quantity == 0) throw new ArgumentException("材料物品需要已知键和正数量。");
             MaterialKey = key; Quantity = quantity;
         }
     }

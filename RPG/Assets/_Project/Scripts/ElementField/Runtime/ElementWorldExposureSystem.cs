@@ -430,6 +430,10 @@ namespace Game.ElementField
         /// 注意这里从不直接访问 Liquid Snapshot：统一 Router 使用最终 Material Route 选择 Cell 或 GPU Occupancy，
         /// 因而不会把迁移残留的 Cell Water 与 GPU Water 再相加一次。
         /// </summary>
+        private static bool UsesBreathingProbe(MaterialSimulationBackendKind owner, MaterialId material) =>
+            owner == MaterialSimulationBackendKind.GridGas ||
+            owner == MaterialSimulationBackendKind.Cellular && ElementCellMaterialRules.Motion(material) == ElementCellMotion.Gas;
+
         private void SampleBounds(
             Bounds targetBounds,
             Bounds activeBounds,
@@ -455,7 +459,7 @@ namespace Game.ElementField
             {
                 var binding = _statusProjection.Get(bindingIndex);
                 if (!_runtime.MaterialRoutes.TryResolve(binding.Material, out var backend)
-                    || backend != MaterialSimulationBackendKind.GridGas) continue;
+                    || !UsesBreathingProbe(backend, binding.Material)) continue;
                 Vector3 chest = targetBounds.center; chest.y = Mathf.Lerp(targetBounds.min.y, targetBounds.max.y, .55f);
                 Vector3 head = chest; head.y = Mathf.Lerp(targetBounds.min.y, targetBounds.max.y, .9f);
                 var chestCell = ElementWorldCoordinates.WorldToGlobalCell(chest, _runtime.Origin, _runtime.CellSize);
@@ -500,7 +504,7 @@ namespace Game.ElementField
                 {
                     MaterialStatusProjection binding = _statusProjection.Get(bindingIndex);
                     if (_runtime.MaterialRoutes.TryResolve(binding.Material, out var backend)
-                        && backend == MaterialSimulationBackendKind.GridGas) continue;
+                        && UsesBreathingProbe(backend, binding.Material)) continue;
                     byte amount = 0;
                     query?.TryGetAmount(globalCell, binding.Material, out amount);
                     // 状态接触是只读查询，Archive Amount 已能提供 Wet/Poisoned/Sticky。

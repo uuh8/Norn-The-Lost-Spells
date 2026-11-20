@@ -16,6 +16,8 @@ namespace Game.UI
         [SerializeField] private GameObject _compactPanel;
         private readonly MaterialAmount[] _snapshot = new MaterialAmount[8];
         private readonly ulong[] _values = new ulong[10];
+        private readonly byte[] _rowKeys = new byte[MaterialAmount.MaximumComponents];
+        private readonly string[] _originalRowLabels = new string[MaterialAmount.MaximumComponents];
         private static readonly string[] Glyphs = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
         private static readonly string[] Failures = { "采集成功", "采集点太远或请求无效", "库存已改变，请重试", "重复请求已拒绝", "先把容器放入装备背包",
             "资产正在交易", "容量或背包空间不足", "近处没有可采材料", "当前材料后端不支持真实数量采集", "采样范围超出预算", "材料世界未就绪", "固体几何或池底交接失败", "容器不兼容该混合样本" };
@@ -28,6 +30,8 @@ namespace Game.UI
             _font = Font.CreateDynamicFontFromOSFont(new[] { "Microsoft YaHei", "Arial" }, 18);
             for (int i = 0; i < _digits.Length; i++) _digits[i].font = _font;
             for (int i = 0; i < _labels.Length; i++) _labels[i].font = _font;
+            for (int i = 0; i < _originalRowLabels.Length && i + 3 < _labels.Length; i++)
+                _originalRowLabels[i] = _labels[i + 3].text;
             _status.font = _font;
         }
         private void OnEnable() { EventBus<MaterialTransferResultEvent>.Subscribe(OnResult); EventBus<ContainerSelectionChangedEvent>.Subscribe(OnSelection); EventBus<ContainerUseResultEvent>.Subscribe(OnUse); EventBus<ContainerTransitResolvedEvent>.Subscribe(OnTransitEnded); }
@@ -68,8 +72,33 @@ namespace Game.UI
             if (!_session.TryCopyContainer(_itemId, _snapshot, out int count, out ulong total, out ulong capacity))
             { for (int row = 0; row < 10; row++) SetNumber(row, 0); return; }
             System.Array.Clear(_values, 0, _values.Length); _values[0] = total; _values[1] = capacity;
-            for (int i = 0; i < count; i++) _values[_snapshot[i].MaterialKey + 1] = _snapshot[i].Quantity;
-            for (int row = 0; row < 10; row++) SetNumber(row, _values[row]);
+            // 正式紧凑 HUD 只显示总量和容量。旧实验面板的八行是组分数上限；材料编号可大于 8。
+            if (_compactPanel == null)
+            {
+                for (byte i = 0; i < _rowKeys.Length; i++) _rowKeys[i] = (byte)(i + 1);
+                for (int i = 0; i < count; i++)
+                {
+                    byte key = _snapshot[i].MaterialKey;
+                    if (key <= _rowKeys.Length) _values[key + 1] = _snapshot[i].Quantity;
+                }
+                for (int i = 0; i < count; i++)
+                {
+                    byte key = _snapshot[i].MaterialKey;
+                    if (key <= _rowKeys.Length) continue;
+                    for (int row = 0; row < _rowKeys.Length; row++)
+                        if (_values[row + 2] == 0)
+                        {
+                            _rowKeys[row] = key;
+                            _values[row + 2] = _snapshot[i].Quantity;
+                            break;
+                        }
+                }
+                for (int i = 0; i < _rowKeys.Length; i++)
+                    if (i + 3 < _labels.Length) _labels[i + 3].text = _rowKeys[i] == i + 1
+                        ? _originalRowLabels[i] : InventoryWorkspaceView.MaterialName(_rowKeys[i]);
+            }
+            int rows = _compactPanel != null ? 2 : _values.Length;
+            for (int row = 0; row < rows; row++) SetNumber(row, _values[row]);
         }
         private void SetNumber(int row, ulong value)
         {

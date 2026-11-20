@@ -74,6 +74,7 @@ namespace Game.Rendering
 
         private void Start()
         {
+            if (CellularMaterialRenderer.AttachToWorld(_world)) { enabled = false; return; }
             _source = _world != null ? _world.GridLiquids : null;
 #if UNITY_EDITOR
             if(_validationSource!=null)_source=_validationSource;

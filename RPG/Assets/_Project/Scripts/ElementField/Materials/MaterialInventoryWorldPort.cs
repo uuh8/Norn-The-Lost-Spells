@@ -14,6 +14,8 @@ namespace Game.ElementField
         private readonly MaterialConversionAddress[] _addresses = new MaterialConversionAddress[MaximumEntries];
         private readonly uint[] _available = new uint[MaximumEntries], _takes = new uint[MaximumEntries];
         private readonly LiquidConversionReceipt[] _receipts = new LiquidConversionReceipt[MaximumEntries];
+        private readonly bool[] _restingRemovals = new bool[MaximumEntries];
+        private bool _hasStagedResting;
         private readonly MaterialAmount[] _sample = new MaterialAmount[8], _amounts = new MaterialAmount[8];
         private readonly ulong[] _totals = new ulong[256], _remaining = new ulong[256];
         private readonly ulong[] _remainders = new ulong[8];
@@ -60,6 +62,7 @@ namespace Game.ElementField
         {
             transferred = 0;
             using var measurement = TransferMarker.Auto();
+            _hasStagedResting = false;
             // 直接 Port 调用也必须封住：Faulted 不是已回滚的空世界，不能把其中的半提交数量转成玩家资产。
             // 在采样与 Destination.TryReserve 之前拒绝，避免失败世界继续改变任一端的数量或 Ledger。
             if (_world == null || !_world.CanAcceptWorldWrites) return MaterialTransferFailure.WorldUnavailable;
@@ -69,11 +72,11 @@ namespace Game.ElementField
             ulong budget = Math.Min(request.Budget, destination.FreeCapacity);
             if (budget == 0) return MaterialTransferFailure.Capacity;
             ulong total = MaterialAmountOps.SplitBudget(_sample, _components, budget, _amounts, _remainders, (int)(request.RequestId % 8));
-            uint liquidVersion = _world.InventoryLiquid?.SurfaceVersion ?? 0, solidVersion = _world.FixedSolids?.Version ?? 0,
-                gasVersion = _world.Gases?.Version ?? 0;
+            uint liquidVersion = _world.InventoryLiquid?.SurfaceVersion ?? 0, solidVersion = _world.InventorySolids?.Version ?? 0,
+                gasVersion = _world.InventoryGases?.Version ?? 0;
             if (!destination.TryReserve(_amounts, _components, out failure)) return failure;
-            if (liquidVersion != (_world.InventoryLiquid?.SurfaceVersion ?? 0) || solidVersion != (_world.FixedSolids?.Version ?? 0)
-                || gasVersion != (_world.Gases?.Version ?? 0)) { return MaterialTransferFailure.StaleVersion; }
+            if (liquidVersion != (_world.InventoryLiquid?.SurfaceVersion ?? 0) || solidVersion != (_world.InventorySolids?.Version ?? 0)
+                || gasVersion != (_world.InventoryGases?.Version ?? 0)) { return MaterialTransferFailure.StaleVersion; }
             Array.Clear(_remaining, 0, _remaining.Length);
             for (int i = 0; i < _components; i++) _remaining[_amounts[i].MaterialKey] = _amounts[i].Quantity;
             for (int i = 0; i < _count; i++)
@@ -83,38 +86,50 @@ namespace Game.ElementField
                 if (_takes[i] > 0 && (!Read(_addresses[i], out uint current) || current != _available[i] || !_world.IsConversionAddressActive(_addresses[i])))
                 { return MaterialTransferFailure.StaleVersion; }
             }
-            _world.FixedSolids?.BeginConversionGeometry();
+            _world.InventorySolids?.BeginConversionGeometry();
             int staged = 0;
             for (; staged < _count; staged++) if (_takes[staged] > 0 && !Remove(staged)) break;
-            bool valid = staged == _count && (_world.FixedSolids == null || _world.FixedSolids.ValidateConversionGeometry());
+            bool valid = staged == _count && (_world.InventorySolids == null || _world.InventorySolids.ValidateConversionGeometry());
             // 改变固体支撑必须先通过现有 Stable 拓扑交接；不是拆 Collider 后让湖泊继续借旧池底。
             for (int i = 0; i < staged && valid; i++)
                 if (_takes[i] > 0 && Backend(_addresses[i]) == MaterialSimulationBackendKind.FixedSolid
-                    && _world.FixedSolids.BlocksWholeCell(_addresses[i].Material))
-                    valid = _world.TryPrepareMaterialTopologyChange(_addresses[i].Cell, _world.FixedSolids.BlocksCell(_addresses[i].Cell));
+                    && _world.InventorySolids.BlocksWholeCell(_addresses[i].Material))
+                    valid = _world.TryPrepareMaterialTopologyChange(_addresses[i].Cell, _world.InventorySolids.BlocksCell(_addresses[i].Cell));
             if (!valid)
             { Undo(staged); return MaterialTransferFailure.GeometryRejected; }
             // Commit 的目标操作仅写已验证的固定数组/预留库存；这段调用不能发布外部事件或交错写入。
             destination.Commit();
+            // 静水在这里之前只持有尚未发布的扣量。容器 Commit 返回后才让地形、水面和后续查询看到新量。
+            if (_hasStagedResting) _world.RestingLiquids.CommitStaged();
             for (int i = 0; i < _components; i++) _world.RecordInventoryExport((MaterialId)_amounts[i].MaterialKey, _amounts[i].Quantity);
-            _world.FixedSolids?.PublishConversionGeometry();
+            _world.InventorySolids?.PublishConversionGeometry();
             for (int i = 0; i < _count; i++) if (_takes[i] > 0) Publish(_addresses[i]);
-            _world.Gases?.FinishConversion(); transferred = total; return MaterialTransferFailure.None;
+            _world.InventoryGases?.FinishConversion();
+            if (_world.CellularSimulation != null) _world.PublishCellularChanges();
+            transferred = total; return MaterialTransferFailure.None;
         }
         private MaterialTransferFailure Sample(Vector3 center, float radius, ushort allowed, bool strictMix,Vector3 actor)
         {
             _count = _components = 0; Array.Clear(_totals, 0, _totals.Length); int visited = 0;
-            for (byte key = 1; key <= 8; key++)
+            for (byte key = 1; key <= MaterialAmount.LastLocalInventoryKey; key++)
             {
+                if (!MaterialAmount.IsLocalInventoryMaterial(key)) continue;
                 bool compatible = (allowed & 1 << key) != 0;
                 // 容器检查整个真实样本；跳过不兼容组分会把混合物变成免费提纯。
                 // 直接拾取固体仍按所选材料身份采样，不把周围液体变成该固体物品。
                 if (!compatible && !strictMix) continue;
-                if (!_world.MaterialRoutes.TryResolve((MaterialId)key, out var backend)) continue;
+                var material = (MaterialId)key;
+                if (!_world.MaterialRoutes.TryResolve(material, out var backend)) continue;
                 // 容器只采流体相；较大采样球触及地面冰块时，不应把整次采气当作不兼容混合物拒绝。
                 if(strictMix&&backend==MaterialSimulationBackendKind.FixedSolid)continue;
+                if (strictMix && backend == MaterialSimulationBackendKind.Cellular)
+                {
+                    // 可采沙的容器显式选择 Grain。普通瓶只检查液/气混合物，采水球擦到地面固体不导致拒绝。
+                    var motion = ElementCellMaterialRules.Motion(material);
+                    if (motion == ElementCellMotion.Fixed || motion == ElementCellMotion.Grain && !compatible) continue;
+                }
                 if (backend != MaterialSimulationBackendKind.GridLiquid && backend != MaterialSimulationBackendKind.FixedSolid
-                    && backend != MaterialSimulationBackendKind.GridGas)
+                    && backend != MaterialSimulationBackendKind.GridGas && backend != MaterialSimulationBackendKind.Cellular)
                 {
                     if (compatible) return MaterialTransferFailure.UnsupportedBackend;
                     continue;
@@ -135,17 +150,28 @@ namespace Game.ElementField
                     // 放大范围只增加可见样本：仍限制实际材料格在角色3m内，墙后的气体不能被大球抽走。
                     Vector3 target=lower+Vector3.one*(size*.5f),delta=target-actor;
                     if(delta.sqrMagnitude>9)continue;
-                    int hits=Physics.RaycastNonAlloc(actor,delta.normalized,_visibility,Mathf.Max(0,delta.magnitude-.01f),~0,QueryTriggerInteraction.Ignore);
+                    var direction = delta.normalized;
+                    int hits=Physics.RaycastNonAlloc(actor,direction,_visibility,Mathf.Max(0,delta.magnitude-.01f),~0,QueryTriggerInteraction.Ignore);
                     bool blocked=hits==_visibility.Length;
                     for(int h=0;h<hits;h++)
-                    {var collider=_visibility[h].collider;if(collider is CharacterController||ElementFieldSolidBaker.HasStatusOwner(collider)||collider.TryGetComponent<GeneratedMaterialSolidCollider>(out _))continue;blocked=true;}
+                    {
+                        var hit = _visibility[h];
+                        var collider = hit.collider;
+                        if(collider is CharacterController || ElementFieldSolidBaker.HasStatusOwner(collider)) continue;
+                        if (_world.IsCollectionTargetSurface(hit, direction, cell, material)) continue;
+                        blocked = true;
+                    }
                     if(blocked)continue;
                     if (!compatible) return MaterialTransferFailure.IncompatibleMaterial;
                     if (_count == MaximumEntries) return MaterialTransferFailure.SamplingLimit;
                     _addresses[_count] = address; _available[_count] = quantity; _count++;
                     _totals[key] += quantity;
                 }
-                if (_totals[key] > 0) _sample[_components++] = new MaterialAmount(key, _totals[key]);
+                if (_totals[key] > 0)
+                {
+                    if (_components == _sample.Length) return MaterialTransferFailure.Capacity;
+                    _sample[_components++] = new MaterialAmount(key, _totals[key]);
+                }
             }
             return _components == 0 ? MaterialTransferFailure.NoMaterial : MaterialTransferFailure.None;
         }
@@ -155,38 +181,55 @@ namespace Game.ElementField
             quantity = 0;
             switch (Backend(address))
             {
+                case MaterialSimulationBackendKind.Cellular: return _world.TryGetCellularQuantity(address.Cell, address.Material, out quantity);
                 case MaterialSimulationBackendKind.GridLiquid: return _world.InventoryLiquid.TryGetQuantity(address.Cell, address.Material, out quantity);
-                case MaterialSimulationBackendKind.FixedSolid: return _world.FixedSolids.TryGetQuantity(address.Cell, address.Material, out quantity);
-                case MaterialSimulationBackendKind.GridGas: return _world.Gases.TryGetQuantity(address.Cell, address.Material, out quantity);
+                case MaterialSimulationBackendKind.FixedSolid: return _world.InventorySolids.TryGetQuantity(address.Cell, address.Material, out quantity);
+                case MaterialSimulationBackendKind.GridGas: return _world.InventoryGases.TryGetQuantity(address.Cell, address.Material, out quantity);
                 default: return false;
             }
         }
         private bool Remove(int i)
         {
             var address = _addresses[i];
+            _restingRemovals[i] = false;
             switch (Backend(address))
             {
+                case MaterialSimulationBackendKind.Cellular:
+                    if (_world.RestingLiquids != null && _world.RestingLiquids.TryGetQuantity(address.Cell, address.Material, out _))
+                    {
+                        if (!_world.RestingLiquids.TryStageRemove(address.Cell, address.Material, _takes[i])) return false;
+                        _restingRemovals[i] = _hasStagedResting = true;
+                        return true;
+                    }
+                    return _world.CellularSimulation.TryRemove(address.Cell, address.Material, _takes[i]);
                 case MaterialSimulationBackendKind.GridLiquid: return _world.InventoryLiquid.StageConversionRemove(address.Cell, address.Material, _takes[i], out _receipts[i]);
-                case MaterialSimulationBackendKind.FixedSolid: return _world.FixedSolids.StageConversionRemove(address.Cell, address.Material, _takes[i]);
-                case MaterialSimulationBackendKind.GridGas: return _world.Gases.StageConversionRemove(address.Cell, address.Material, _takes[i]);
+                case MaterialSimulationBackendKind.FixedSolid: return _world.InventorySolids.StageConversionRemove(address.Cell, address.Material, _takes[i]);
+                case MaterialSimulationBackendKind.GridGas: return _world.InventoryGases.StageConversionRemove(address.Cell, address.Material, _takes[i]);
                 default: return false;
             }
         }
         private void Undo(int staged)
         {
+            // 压缩静水没有写入动态布局。取消其批量草稿，不把水重新投成另一种表示。
+            if (_hasStagedResting) _world.RestingLiquids.CancelStaged();
             for (int i = staged - 1; i >= 0; i--) if (_takes[i] > 0)
             {
+                if (_restingRemovals[i]) continue;
                 var address = _addresses[i];
                 switch (Backend(address))
                 {
+                    case MaterialSimulationBackendKind.Cellular:
+                        if (!_world.CellularSimulation.TryDeposit(address.Cell, address.Material, _takes[i]))
+                            throw new InvalidOperationException("Cellular 采集事务无法恢复原格数量。");
+                        break;
                     case MaterialSimulationBackendKind.GridLiquid: _world.InventoryLiquid.UndoConversionRemove(address.Cell, address.Material, _receipts[i]); break;
                     case MaterialSimulationBackendKind.FixedSolid:
-                        _world.FixedSolids.UndoConversionRemove(address.Cell, address.Material, _takes[i]);
+                        _world.InventorySolids.UndoConversionRemove(address.Cell, address.Material, _takes[i]);
                         _world.InventoryLiquid?.InvalidateConversionCell(address.Cell); break;
-                    case MaterialSimulationBackendKind.GridGas: _world.Gases.UndoConversionRemove(address.Cell, address.Material, _takes[i]); break;
+                    case MaterialSimulationBackendKind.GridGas: _world.InventoryGases.UndoConversionRemove(address.Cell, address.Material, _takes[i]); break;
                 }
             }
-            _world.FixedSolids?.CancelConversionGeometry(); _world.Gases?.FinishConversion();
+            _world.InventorySolids?.CancelConversionGeometry(); _world.InventoryGases?.FinishConversion();
         }
         private void Publish(MaterialConversionAddress address)
         {
@@ -194,7 +237,7 @@ namespace Game.ElementField
             {
                 case MaterialSimulationBackendKind.GridLiquid: _world.InventoryLiquid.PublishConversionChange(address.Cell); break;
                 case MaterialSimulationBackendKind.FixedSolid: _world.NotifyMaterialTopologyChanged(address.Cell); break;
-                case MaterialSimulationBackendKind.GridGas: _world.Gases.PublishConversionChange(address.Cell); break;
+                case MaterialSimulationBackendKind.GridGas: _world.InventoryGases.PublishConversionChange(address.Cell); break;
             }
         }
     }

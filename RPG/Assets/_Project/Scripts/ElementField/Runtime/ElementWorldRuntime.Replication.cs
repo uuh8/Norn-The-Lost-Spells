@@ -5,6 +5,13 @@ namespace Game.ElementField
 {
     public sealed partial class ElementWorldRuntime
     {
+        internal const string CellularReplicationUnavailable =
+            "当前 N5 四域复制合同不能表示地形基底版本、显式挖空和细格材料，不能在此配置上建立联机材料世界。";
+
+        // 在 inactive prefab 上也读取同一份世界配置。等模拟开始或等到第一格被挖才判断，
+        // 会让客户端先 ACK 一份缺少地形覆盖的 Baseline，后续 Delta 无法补回这些历史修改。
+        internal bool SupportsConfiguredOnlineReplication() => !UsesCellularWorld;
+
         /// <summary>
         /// 只枚举真实Store，不取Presentation Interest；Source先验证完整遍历再复制。
         /// Dictionary的具体类型枚举器是struct，不通过IEnumerable装箱，不创建临时keys数组。
