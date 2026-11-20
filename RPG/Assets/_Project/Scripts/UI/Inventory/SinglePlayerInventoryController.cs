@@ -142,6 +142,8 @@ namespace Game.UI
             if(_infoPopup!=null){CancelDrag();_infoPopup.Show(item,pointer,camera,UiFont);}
         }
         [SerializeField] private InputActionReference _toggleAction, _rotateAction, _cancelAction, _splitAction;
+        private InputActionReference _embeddedRotateReference;
+        private InputAction _embeddedRotate;
         [SerializeField] private bool _openOnStart = true;
         [SerializeField] private InventoryWorkspaceView _workspace;
         [SerializeField] private BackpackWorkspaceView _backpackWorkspace;
@@ -160,6 +162,8 @@ namespace Game.UI
         public bool WarehouseMode=>_warehouseMode && PresentationSource != null && PresentationSource.CanAccessWarehouse
             && (!(PresentationSource is IAccountInventoryCommandContext) || CanAccessAccountWarehouse(PresentationSource));
         public SinglePlayerInventorySession Session=>_session;
+        /// <summary>容量顶行只读取本Controller已接线的原网格，不查找其他工作区或授予资产写权限。</summary>
+        internal InventoryGridView BackpackGridView => _gridView;
         public void ConfigurePracticeWorkspace(SinglePlayerInventorySession session,NearbyPickupController nearby,RunPauseCoordinator pause)
         {
             Close();_hasPresentationOverride=false;_presentationSource=null;_session=session;_nearby=nearby;
@@ -301,7 +305,7 @@ namespace Game.UI
             EventBus<ToolbeltBindingResultEvent>.Subscribe(OnToolResult);
             EventBus<HubInteractionResultEvent>.Subscribe(OnHubInteraction);
             if (_toggleAction != null) { _toggleAction.action.performed += OnToggle; _toggleAction.action.Enable(); }
-            if (_rotateAction != null) { _rotateAction.action.performed += OnRotate; _rotateAction.action.Enable(); }
+            if (!_embedded && _rotateAction != null) { _rotateAction.action.performed += OnRotate; _rotateAction.action.Enable(); }
             if (_cancelAction != null) { _cancelAction.action.performed += OnCancel; _cancelAction.action.Enable(); }
             if (_splitAction != null) _splitAction.action.Enable();
             RefreshCombatPresentation();
@@ -322,7 +326,8 @@ namespace Game.UI
             EventBus<ToolbeltBindingResultEvent>.Unsubscribe(OnToolResult);
             EventBus<HubInteractionResultEvent>.Unsubscribe(OnHubInteraction);
             if (_toggleAction != null) { _toggleAction.action.performed -= OnToggle; _toggleAction.action.Disable(); }
-            if (_rotateAction != null) { _rotateAction.action.performed -= OnRotate; _rotateAction.action.Disable(); }
+            if (!_embedded && _rotateAction != null) { _rotateAction.action.performed -= OnRotate; _rotateAction.action.Disable(); }
+            ReleaseEmbeddedRotate();
             if (_cancelAction != null) { _cancelAction.action.performed -= OnCancel; _cancelAction.action.Disable(); }
             if (_splitAction != null) _splitAction.action.Disable();
             if (_combatPresentation != null) _combatPresentation.Clear();
@@ -350,6 +355,7 @@ namespace Game.UI
         private void OnApplicationFocus(bool focus) { if (!focus){CancelDrag();CancelArrangement();Refresh();} }
         private void OnDestroy()
         {
+            ReleaseEmbeddedRotate(); _embeddedRotateReference = null;
             _accountSource?.Dispose(); _accountSource = null;
             // OS 动态 Font 是本界面创建的 Unity native 对象，结束 Scene 时主动释放。
             if (UiFont != null) Destroy(UiFont);
@@ -403,6 +409,7 @@ namespace Game.UI
         {
             // Close 是一次交互的结束边界。真实快照仍可继续安装，但旧收据/完成文字不能串到下次打开。
             ClearOnlineCommandStatus();
+            ReleaseEmbeddedRotate();
             _infoPopup?.Hide();
             _backpackPan?.Cancel();_nearbyPan?.Cancel();
             CancelDrag(); CancelArrangement(); _waitingOpen = false;
@@ -425,10 +432,45 @@ namespace Game.UI
             if (_hasPresentationOverride && !(PresentationSource is IAccountInventoryCommandContext)) { SetStatus("当前资产仅可查看。"); return; }
             _read = PresentationSource?.ReadOnly; if (_read == null) return;
             _warehouseMode = true; _waitingOpen = false; _open = true;
+            EnsureEmbeddedRotate();
             _gridView?.Initialize(this, _itemPrefab);
             _warehouseTarget?.Initialize(this, InventoryDropKind.Warehouse);
             _backpackTarget?.Initialize(this, InventoryDropKind.EquippedBackpack);
             Refresh();
+        }
+        /// <summary>
+        /// Shop显式借入原随身UI的Rotate配置；Tab/Esc/Pause仍由Shop与原工作区管理。
+        /// InputActionReference指向共享Action，不能由embedded直接Enable/Disable，否则关商店会切断其他窗口。
+        /// 每次开窗Clone当前binding与override，克隆只拥有本窗口的回调和寿命，不重写作者资源。
+        /// </summary>
+        internal void ConfigureEmbeddedInput(SinglePlayerInventoryController owner)
+        {
+            if (!_embedded) return;
+            var reference = owner != null ? owner._rotateAction : null;
+            if (_embeddedRotateReference != reference)
+            { ReleaseEmbeddedRotate(); _embeddedRotateReference = reference; }
+            if (_open) EnsureEmbeddedRotate();
+        }
+        private void EnsureEmbeddedRotate()
+        {
+            if (!_embedded || !_open || _embeddedRotate != null) return;
+            var reference = _embeddedRotateReference != null ? _embeddedRotateReference : _rotateAction;
+            if (reference == null || reference.action == null) return;
+            _embeddedRotate = reference.action.Clone();
+            _embeddedRotate.performed += OnEmbeddedRotate;
+            _embeddedRotate.Enable();
+        }
+        private void OnEmbeddedRotate(InputAction.CallbackContext context)
+        {
+            // 只有已捕获的物品拖拽消费R；搜索框内正常输入不会改变选择或触发资产命令。
+            // 窗口失焦沿已有OnApplicationFocus取消拖拽，关闭则释放整个克隆。
+            if (_open && _dragging) RotateDrag();
+        }
+        private void ReleaseEmbeddedRotate()
+        {
+            if (_embeddedRotate == null) return;
+            _embeddedRotate.performed -= OnEmbeddedRotate;
+            _embeddedRotate.Disable(); _embeddedRotate.Dispose(); _embeddedRotate = null;
         }
         public void BeginDrag(in InventoryItemSnapshot source, Vector2 pointer, Camera camera, bool split, Vector2Int grab = default,int displayTurns=-1,
             Vector2? preciseGrab=null,RectTransform sourceRect=null,float sourceCellSize=0)
@@ -559,30 +601,34 @@ namespace Game.UI
                 WholeStack = item.Kind != ItemKind.Container && _wholeStack };
             PublishOnlineGroundIntent(intent);
         }
-        private void SubmitOnlineGroundPickup(int x, int y, string backpackId)
+        private void SubmitOnlineGroundPickup(int x, int y, string backpackId, int quarterTurns)
         {
             if (!IsCapturedOnlineDragCurrent(out var source, out _)
                 || !_read.TryGetView(_dragSource.InstanceId, out var item) || !IsOnlineGroundPickup(item)
                 || item.Location.OwnerId != _dragSource.Location.OwnerId || backpackId != source.EquippedBackpackId
                 || string.IsNullOrEmpty(backpackId) || !_read.TryGetView(backpackId, out var bag)
                 || bag.Kind != ItemKind.Backpack || bag.Location.Kind != ItemLocationKind.EquippedBackpack
-                || bag.Location.OwnerId != _read.ActorId || x < 0 || y < 0 || _turns < 0 || _turns > 3)
+                || bag.Location.OwnerId != _read.ActorId || x < 0 || y < 0 || quarterTurns < 0 || quarterTurns > 3)
             { RejectOnlineGroundDrag(); return; }
             var intent = new OnlineInventoryCommandIntent
             { CommandId = OnlineInventoryCommandIds.Next(), ConnectionEpoch = _dragOnlineEpoch,
                 ExpectedInventoryVersion = _dragVersion, Kind = item.Kind == ItemKind.Container || item.Kind == ItemKind.Material
                     ? OnlineInventoryCommandKind.PickupContainer : OnlineInventoryCommandKind.PickupItem, ItemId = item.InstanceId,
-                WorldOwnerId = item.Location.OwnerId, TargetBackpackId = backpackId, GridX = x, GridY = y, QuarterTurns = _turns,
+                WorldOwnerId = item.Location.OwnerId, TargetBackpackId = backpackId, GridX = x, GridY = y, QuarterTurns = quarterTurns,
                 TargetLocationKind = item.Kind == ItemKind.Container || item.Kind == ItemKind.Material ? 0 : (int)ItemLocationKind.Backpack };
             PublishOnlineGroundIntent(intent);
         }
         private void RejectOnlineGroundDrag()
         { CancelDrag(); CancelArrangement(); SetStatus("当前物品或目标已变化；请从真实附近或随身库存重新拖动。"); }
         private void PublishOnlineGroundIntent(in OnlineInventoryCommandIntent intent)
+            => PublishOnlineIntent(intent, _dragOnlineActor, _dragOnlineEpoch);
+
+        /// <summary>按钮和拖放复用同一收据/完整快照等待路径；按钮从当前Source捕获身份，不借用旧拖拽身份。</summary>
+        private void PublishOnlineIntent(in OnlineInventoryCommandIntent intent, ulong actorId, uint connectionEpoch)
         {
             _onlineSnapshotVersion = 0; _onlineCommandId = intent.CommandId;
             LastOnlineCommandReceipt = null;
-            _onlineCommandActor = _dragOnlineActor; _onlineCommandEpoch = _dragOnlineEpoch;
+            _onlineCommandActor = actorId; _onlineCommandEpoch = connectionEpoch;
             CancelDrag(); CancelArrangement(); SetStatus("已提交服务器，等待处理结果与库存快照。");
             EventBus<OnlineInventoryCommandRequestedEvent>.Publish(new OnlineInventoryCommandRequestedEvent
             { ActorId = _onlineCommandActor, CallerId = GetInstanceID(), Intent = intent });
@@ -669,13 +715,15 @@ namespace Game.UI
             else CancelDrag();
         }
         public void SubmitToBackpack(int x, int y, string backpackId)
+            => SubmitBackpackPlacement(x, y, backpackId, _turns);
+        private void SubmitBackpackPlacement(int x, int y, string backpackId, int quarterTurns)
         {
             if (!_dragging) return;
             if (_hasPresentationOverride && !(PresentationSource is IAccountInventoryCommandContext)
                 && _dragSource.Location.Kind == ItemLocationKind.WorldItem)
-            { SubmitOnlineGroundPickup(x, y, backpackId); return; }
+            { SubmitOnlineGroundPickup(x, y, backpackId, quarterTurns); return; }
             var command = BaseCommand(); command.Kind = InventoryCommandKind.Place;
-            command.OwnerId = backpackId; command.X = x; command.Y = y; command.QuarterTurns = _turns;
+            command.OwnerId = backpackId; command.X = x; command.Y = y; command.QuarterTurns = quarterTurns;
             if (_dragSource.Location.Kind == ItemLocationKind.WorldItem) command.Kind = InventoryCommandKind.Pickup;
             if (_hasPresentationOverride) Submit(command); else Arrange(command);
         }
@@ -758,7 +806,10 @@ namespace Game.UI
             if(_dragSource.Kind==ItemKind.Material&&target.Kind==ItemKind.Material&&_dragSource.ContentId==target.ContentId
                 &&target.Location.Kind==ItemLocationKind.Backpack)
             {
-                if (_hasPresentationOverride) { SubmitToBackpack(target.Location.X, target.Location.Y, target.Location.OwnerId); return; }
+                // 并堆按目标完整位置匹配，1x1材料也保留朝向；空格摆放仍从公开入口取Ghost朝向。
+                // 显式传入目标角度，不修改拖拽状态，并保留线上地面材料的专用PickupContainer路径。
+                if (_hasPresentationOverride)
+                { SubmitBackpackPlacement(target.Location.X, target.Location.Y, target.Location.OwnerId, target.Location.QuarterTurns); return; }
                 var merge=BaseCommand();merge.Kind=_dragSource.Location.Kind==ItemLocationKind.WorldItem?InventoryCommandKind.Pickup:InventoryCommandKind.Place;
                 merge.Destination=InventoryDestination.Backpack;merge.OwnerId=target.Location.OwnerId;merge.X=target.Location.X;merge.Y=target.Location.Y;
                 merge.QuarterTurns=target.Location.QuarterTurns;merge.WholeStack=false;Submit(merge);return;
@@ -938,6 +989,15 @@ namespace Game.UI
         public void ClickItem(string instanceId)
         {
             if(_selectedId!=instanceId){SelectItem(instanceId);return;}
+            // 仓库目录聚合同ContentId，但卡次数/法杖固定属性仍属于具体InstanceId。
+            // 轮换代表实例只是读模型选择，必须先于本地写权限门；账号视图不能因此失去选择后续实例的入口。
+            // 随身Tab、关闭的窗口及离开仓库/商店区域都不取得远程仓库选择资格。
+            if (!_dragging && _read != null && _read.TryGetView(instanceId, out var grouped)
+                && grouped.Location.Kind == ItemLocationKind.Warehouse && !_draft.Contains(instanceId))
+            {
+                if (!_open || !WarehouseMode) return;
+                SelectNextMember(); SetStatus("已切换同类物品中的具体一份；拖动只取这一份。"); return;
+            }
             // 原附近区的再次点击只是排列旋转。线上仍保留此纯显示动作，不改成未经确认的自动拾取。
             if (_hasPresentationOverride && !_dragging && _read != null && _read.TryGetView(instanceId, out var ground)
                 && ground.Location.Kind == ItemLocationKind.WorldItem && _nearbyGrid != null
@@ -950,8 +1010,6 @@ namespace Game.UI
                     || inspected.Location.Kind == ItemLocationKind.SpellStorage)) return;
             if(!AllowLocalCommand())return;
             if(_dragging || _read==null || !_read.TryGetView(instanceId,out var item))return;
-            if(item.Location.Kind==ItemLocationKind.Warehouse && !_draft.Contains(instanceId))
-            { SelectNextMember(); SetStatus("已切换同类物品中的具体一份；拖动只取这一份。"); return; }
             if(item.Location.Kind==ItemLocationKind.WorldItem && !IsPendingPickup(instanceId))
             {if(_nearbyGrid!=null && _nearbyGrid.TryPlacement(instanceId,out var groundPlacement))
                 {_nearbyGrid.MoveItem(instanceId,item.Rules.Shape,new GridPlacement(groundPlacement.X,groundPlacement.Y,(groundPlacement.QuarterTurns+1)%4));Refresh();}return;}
@@ -972,6 +1030,21 @@ namespace Game.UI
         public void OrganizeBackpack()
         {
             if (PresentationSource is IAccountInventoryCommandContext) { SubmitAccountOrganizeBackpack(); return; }
+            if (PresentationSource is IOnlineInventoryCommandContext context)
+            {
+                // 线上按钮必须进入DS原子布局事务。等待中的请求/快照、活动拖拽和本地草稿不能被新整理覆盖。
+                if (!_open || _read == null || _dragging || _draft.Active || _onlineCommandId != 0 || _onlineSnapshotVersion != 0) return;
+                string bagId = PresentationSource.EquippedBackpackId;
+                if (context.ActorId == 0 || context.ConnectionEpoch == 0 || _read.Version == 0 || string.IsNullOrEmpty(bagId)
+                    || !_read.TryGetView(bagId, out var bag) || bag.Kind != ItemKind.Backpack || !IsOwnedOnlineItem(_read, bag))
+                { SetStatus("服务器背包尚未就绪，等待真实库存后重试。"); return; }
+                PublishOnlineIntent(new OnlineInventoryCommandIntent
+                {
+                    CommandId = OnlineInventoryCommandIds.Next(), ConnectionEpoch = context.ConnectionEpoch,
+                    ExpectedInventoryVersion = _read.Version, Kind = OnlineInventoryCommandKind.OrganizeBackpack, ItemId = bagId
+                }, context.ActorId, context.ConnectionEpoch);
+                return;
+            }
             if(_read==null||_dragging||_draft.Active||!AllowLocalCommand())return;CancelArrangement();
             _organizeRequest=++_requestId;
             EventBus<InventoryCommandEvent>.Publish(new InventoryCommandEvent{InventoryId=_read.InventoryId,RequestId=_organizeRequest,

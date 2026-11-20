@@ -95,6 +95,8 @@ namespace Game.ElementField.Tests
             Assert.That(InvokePrivateResult<bool>(_runtime, "TryInitialize"), Is.True);
             InvokePrivateVoid(_exposure, "Awake");
             _worldRoot.SetActive(true);
+            // EditMode显式执行组件登记生命周期，Authority固定步通过真实Runtime持有同一个Exposure实例。
+            InvokePrivateVoid(_exposure, "OnEnable");
         }
 
         [Test] public void ExposureAwakeBeforeWorldProjectionRecoversAtStart()
@@ -395,11 +397,61 @@ namespace Game.ElementField.Tests
                 "直接TickExposure也必须拒绝挂起世界，保留原Status且不继续增加剂量。");
 
             _runtime.SetSimulationSuspended(false);
-            _exposure.TickExposure(ExposureInterval / 2f);
+            Assert.That(_runtime.TrySetActor(0, 1, target.transform.position), Is.True);
+            _runtime.StepAuthority(ExposureInterval / 2f, 1);
             Assert.That(target.GetIntensity(StatusKind.Burning), Is.EqualTo(dose).Within(.0001f));
-            _exposure.TickExposure(ExposureInterval / 2f);
+            _runtime.StepAuthority(ExposureInterval / 2f, 2);
             Assert.That(target.GetIntensity(StatusKind.Burning), Is.EqualTo(2f * dose).Within(.0001f),
                 "显式恢复只积新的有效采样时间，不补十秒暂停剂量。");
+        }
+
+        [Test]
+        public void AuthorityOnlyAcceptedWorldTicksAdvanceExposure()
+        {
+            Deposit(0, MaterialId.Water, byte.MaxValue);
+            StatusController target = CreateTarget(CellCenter(0), Vector3.one * .4f);
+            // 延用真实已初始化Store，隔离时钟装配；不是生产中允许热切换执行Owner的示例。
+            SetPrivateField(_runtime, "_executionMode", WorldExecutionMode.Authority);
+            Assert.That(_runtime.TrySetActor(0, 1, target.transform.position), Is.True);
+
+            _runtime.StepAuthority(.125f, 1);
+            _runtime.StepAuthority(.125f, 1);
+            Assert.That(target.GetIntensity(StatusKind.Wet), Is.Zero, "重复serverTick不能再消费Exposure时间。");
+            _runtime.StepAuthority(.125f, 2);
+            Assert.That(target.GetIntensity(StatusKind.Wet), Is.EqualTo(10f).Within(.0001f),
+                "World的两个合法固定步累计0.25s，必须驱动真实环境接触一次。");
+        }
+
+        [Test]
+        public void AuthorityLegacyExposureEntryCannotAdvanceOutsideWorldTick()
+        {
+            Deposit(0, MaterialId.Water, byte.MaxValue);
+            StatusController target = CreateTarget(CellCenter(0), Vector3.one * .4f);
+            SetPrivateField(_runtime, "_executionMode", WorldExecutionMode.Authority);
+            _exposure.TickExposure(.25f);
+            Assert.That(target.GetIntensity(StatusKind.Wet), Is.Zero,
+                "Authority不能从Render/遗留公开Tick入口额外消费时间；只接受World固定步。");
+        }
+
+        [Test]
+        public void AuthorityExposureFrozenTicksCannotBecomeRecoveryDebt()
+        {
+            Deposit(0, MaterialId.Water, byte.MaxValue);
+            StatusController target = CreateTarget(CellCenter(0), Vector3.one * .4f);
+            SetPrivateField(_runtime, "_executionMode", WorldExecutionMode.Authority);
+            Assert.That(_runtime.TrySetActor(0, 1, target.transform.position), Is.True);
+            _runtime.StepAuthority(.25f, 1);
+            Assert.That(target.GetIntensity(StatusKind.Wet), Is.EqualTo(10f).Within(.0001f));
+
+            _runtime.SetSimulationSuspended(true);
+            _runtime.StepAuthority(10f, 2);
+            _runtime.SetSimulationSuspended(false);
+            _runtime.StepAuthority(.25f, 2);
+            _runtime.StepAuthority(.125f, 3);
+            Assert.That(target.GetIntensity(StatusKind.Wet), Is.EqualTo(10f).Within(.0001f));
+            _runtime.StepAuthority(.125f, 4);
+            Assert.That(target.GetIntensity(StatusKind.Wet), Is.EqualTo(20f).Within(.0001f),
+                "冻结编号不可重放，恢复仅消费新0.25s，不补10s墙钟剂量。");
         }
 
         [Test]
@@ -412,6 +464,7 @@ namespace Game.ElementField.Tests
             InvokePrivateVoid(first, "Awake");
             InvokePrivateVoid(second, "Awake");
             SetPrivateField(_runtime, "_executionMode", WorldExecutionMode.Authority);
+            Assert.That(_runtime.TrySetActor(0, 1, first.transform.position), Is.True);
             int changes = 0;
             System.Action<StatusChangedEvent> suspend = change =>
             {
@@ -423,13 +476,13 @@ namespace Game.ElementField.Tests
             EventBus<StatusChangedEvent>.Subscribe(suspend);
             try
             {
-                _exposure.TickExposure(3f * ExposureInterval);
+                _runtime.StepAuthority(3f * ExposureInterval, 1);
                 float dose = MaxApplyPerTick * 128f / byte.MaxValue;
                 Assert.That(changes, Is.EqualTo(1), "首个Status通知中暂停后，同轮后续目标和补采样不得继续写。");
                 Assert.That(first.GetIntensity(StatusKind.Burning) + second.GetIntensity(StatusKind.Burning),
                     Is.EqualTo(dose).Within(.0001f), "Physics目标顺序不影响只提交首个合法剂量的事实。");
                 _runtime.SetSimulationSuspended(false);
-                _exposure.TickExposure(ExposureInterval / 2f);
+                _runtime.StepAuthority(ExposureInterval / 2f, 2);
                 Assert.That(changes, Is.EqualTo(1), "被中断的补采样预算不能成为恢复后的时间债。");
             }
             finally { EventBus<StatusChangedEvent>.Unsubscribe(suspend); }

@@ -45,6 +45,10 @@ namespace Game.Project.Editor
                 // 固定白名单，只调用与菜单相同的正式工具，不接受任意方法或路径。
                 switch (command)
                 {
+                    // 只重开已保存的正式菜单，供测试清理后恢复用户入口；不保存当前Scene或改变Build列表。
+                    case "open-saved-main-menu":
+                        UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/_Project/Scenes/P7_MainMenu.unity", UnityEditor.SceneManagement.OpenSceneMode.Single);
+                        break;
                     case "reclaim-unreferenced-memory": ReclaimUnreferencedMemory(); break;
                     case "create-lab": OnlineSceneSetup.CreateLab(); break;
                     case "create-room-lab": RoomLifecycleTools.Create(); break;
@@ -91,6 +95,7 @@ namespace Game.Project.Editor
                     case "verify-online-workspace": OnlineAccountTools.VerifyWorkspace(); break;
                     case "build-account-client": OnlineAccountTools.BuildLab(); break;
                     case "build-account-menu-client": OnlineAccountTools.BuildMenu(); break;
+                    case "build-account-menu-verification": OnlineAccountTools.BuildMenuVerification(); break;
                     case "start-online-business": OnlineLocalServices.StartBusiness(); break;
                     case "stop-online-business": OnlineLocalServices.StopBusiness(); break;
                     case "start-online-database": OnlineLocalServices.StartDatabase(); break;

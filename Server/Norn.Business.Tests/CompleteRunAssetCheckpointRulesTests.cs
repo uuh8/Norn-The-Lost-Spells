@@ -23,6 +23,67 @@ public sealed class CompleteRunAssetCheckpointRulesTests : IDisposable
     [Fact]
     public void CompleteCurrentOwnerAndPublishedWorldAreAcceptedWithoutEnablingSolverRestore()
     { var f = Valid(); RunAssetCheckpointRules.Require(f.Candidate, f.Context, _content); }
+
+    [Fact]
+    public void OwnedWandMovedIntoBackpackKeepsItsExactResourceFacts()
+    {
+        var f = Valid(); var member = f.Candidate.Members[0];
+        member.Wands[0].CurrentMana = 12.25f; member.Wands[0].CooldownRemaining = .375f;
+        member.Wands[0].ProgramRevision = 7;
+        RunAssetCheckpointRules.Require(f.Candidate, f.Context, _content);
+        f.Context = f.Context with { PreviousCheckpoint = Clone(f.Candidate), LastSequence = 1 };
+        f.Candidate.CheckpointId = Id(11); f.Candidate.Sequence = 2;
+        var wand = member.Assets.Items.Single(i => i.InstanceId == Wand);
+        wand.LocationKind = 1; wand.ParentInstanceId = Bag; wand.Slot = -1; wand.X = 1; wand.Revision++;
+        member.Assets.InventoryVersion++; member.Assets.SelectedWandInstanceId = "";
+        // 收入背包没有生成新杖，也不允许删掉资源事实后按模板补满。安装卡仍随原杖父链携带。
+        RunAssetCheckpointRules.Require(f.Candidate, f.Context, _content);
+        Assert.Equal(12.25f, member.Wands[0].CurrentMana); Assert.Equal(.375f, member.Wands[0].CooldownRemaining);
+        Assert.Equal(7u, member.Wands[0].ProgramRevision); Assert.False(f.Candidate.World.CanRestoreAuthorityRules);
+    }
+
+    [Fact]
+    public void FourOwnedWandsKeepAllResourcesBeyondTheThreeEquipmentSlots()
+    {
+        var f = Valid(); var member = f.Candidate.Members[0];
+        var added = Enumerable.Range(20, 3).Select((n, x) => new OnlineOwnedItemSnapshot
+        { InstanceId = Id(n), ContentId = "wandtest.wand.a", Revision = 1, LocationKind = 1,
+            ParentInstanceId = Bag, Slot = -1, X = x + 1, UseTemplateWandStats = true }).ToArray();
+        member.Assets.Items = [.. member.Assets.Items, .. added];
+        member.Wands = [.. member.Wands, .. added.Select((item, i) => new OnlineRunAssetCheckpointWandResource
+        { InstanceId = item.InstanceId, ProgramRevision = (uint)i + 2, CurrentMana = i + .25f, CooldownRemaining = i + .125f })];
+        f.Context = f.Context with { NewItemIds = added.Select(i => i.InstanceId).ToHashSet(StringComparer.Ordinal) };
+        RunAssetCheckpointRules.Require(f.Candidate, f.Context, _content);
+        Assert.Equal(4, member.Wands.Length); Assert.Single(member.Assets.Items.Where(i => i.LocationKind == 3));
+        Assert.Equal(new[] { .25f, 1.25f, 2.25f }, member.Wands.Skip(1).Select(w => w.CurrentMana));
+    }
+
+    [Theory, InlineData("missing"), InlineData("duplicate"), InlineData("non-wand"), InlineData("unknown")]
+    public void OwnedWandResourcePartitionRejectsMissingDuplicateOrForeignKinds(string defect)
+    {
+        var f = Valid(); var member = f.Candidate.Members[0];
+        switch (defect)
+        {
+            case "missing": member.Wands = []; break;
+            case "duplicate": member.Wands = [member.Wands[0], Clone(member.Wands[0])]; break;
+            case "non-wand": member.Wands[0].InstanceId = Bottle; break;
+            case "unknown": member.Wands[0].InstanceId = Id(99); break;
+        }
+        var failure = Assert.Throws<OnlineFailure>(() => RunAssetCheckpointRules.Require(f.Candidate, f.Context, _content));
+        Assert.Equal("RunCheckpointCompleteInvalid", failure.Code);
+    }
+
+    [Fact]
+    public void BackpackWandCannotOmitItsResourceFacts()
+    {
+        var f = Valid(); var member = f.Candidate.Members[0];
+        var wand = member.Assets.Items.Single(i => i.InstanceId == Wand);
+        wand.LocationKind = 1; wand.ParentInstanceId = Bag; wand.Slot = -1; wand.X = 1;
+        member.Assets.SelectedWandInstanceId = ""; member.Wands = [];
+        // 旧校验只数装备杖，会把携带备用杖资源遗漏当成合法完整快照。
+        var failure = Assert.Throws<OnlineFailure>(() => RunAssetCheckpointRules.Require(f.Candidate, f.Context, _content));
+        Assert.Equal("RunCheckpointCompleteInvalid", failure.Code);
+    }
     [Fact]
     public void EmptyActivePartitionRequiresExplicitVerifiedTerminalCaptureAndKeepsTheWorld()
     {

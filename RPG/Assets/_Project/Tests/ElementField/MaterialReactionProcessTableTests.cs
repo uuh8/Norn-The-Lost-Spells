@@ -8,6 +8,9 @@ namespace Game.ElementField.Tests
 {
     public sealed class MaterialReactionProcessTableTests
     {
+        [SetUp]
+        public void PrepareEvidenceDirectory() => System.IO.Directory.CreateDirectory("Temp/ElementPerformance");
+
         [TestCase(4)]
         [TestCase(65536)]
         public void ReservedCapacityKeepsOutputOrderCooldownAndVacantSlotReuse(int capacity)

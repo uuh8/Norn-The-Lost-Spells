@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using Game.ElementField;
 using Game.Materials;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.TestTools;
@@ -16,6 +17,18 @@ namespace Game.Rendering.Tests
     public sealed class GridLiquidVisibilityTests
     {
         private const BindingFlags Hidden=BindingFlags.Instance|BindingFlags.NonPublic;
+        [SetUp]
+        public void PrepareEvidenceDirectory() => Directory.CreateDirectory("Temp/ElementPerformance");
+
+        private static ElementFieldSolidBaker CreateEmptyEnvironmentBaker(GameObject host)
+        {
+            // 本夹具验证视域/页预算，没有地形输入；不能把Editor当前Scene的任意Collider当作测试材料墙。
+            // 只关闭本Baker的查询mask，不清Scene、不改全局Physics，也不改变生产默认配置。
+            var baker=host.AddComponent<ElementFieldSolidBaker>();
+            typeof(ElementFieldSolidBaker).GetField("_solidLayerMask",Hidden).SetValue(baker,(LayerMask)0);
+            typeof(ElementFieldSolidBaker).GetField("_includeDefaultEnvironment",Hidden).SetValue(baker,false);
+            return baker;
+        }
         [TestCase(false,false)]
         [TestCase(true,false)]
         [TestCase(true,true)]
@@ -33,7 +46,7 @@ namespace Game.Rendering.Tests
                 JsonUtility.FromJsonOverwrite("{\"_maximumChunks\":256,\"_maximumActiveCells\":1024,\"_enableAutoStableDetection\":false}",profile);
                 // Dense case deliberately exceeds the r2 page budget in one view; distant case is behind/outside it.
                 var source=host.AddComponent<LiquidWorldRuntime>();typeof(LiquidWorldRuntime).GetField("_profile",Hidden).SetValue(source,profile);
-                Assert.That(source.TryInitialize(Vector3.zero,.25f,8,host.AddComponent<ElementFieldSolidBaker>()),Is.True);
+                Assert.That(source.TryInitialize(Vector3.zero,.25f,8,CreateEmptyEnvironmentBaker(host)),Is.True);
                 for(int i=0;i<120;i++)
                 {
                     int x=allVisible?((i%12)-6)*16+4:800+i*16;
@@ -41,6 +54,7 @@ namespace Game.Rendering.Tests
                     Assert.That(source.TryAddInitial(new Vector3Int(x,0,z),MaterialId.Water,128,false),Is.True);
                 }
                 var renderer=host.AddComponent<GridLiquidFieldSurfaceRenderer>();renderer.ConfigureForValidation(source,rendering);
+                renderer.SetValidationViewCamera(camera);
                 typeof(GridLiquidFieldSurfaceRenderer).GetMethod("Start",Hidden).Invoke(renderer,null);
                 typeof(GridLiquidFieldSurfaceRenderer).GetMethod("LateUpdate",Hidden).Invoke(renderer,null);
                 var impact=fartherImpact?new Vector3Int(70,0,0):Vector3Int.zero;
@@ -61,8 +75,8 @@ namespace Game.Rendering.Tests
             using(var setup=new Setup(false))
             {
                 var near=Vector3Int.zero;var other=new Vector3Int(40,0,0);
-                setup.Source.TryAddInitial(near,MaterialId.Water,256,false);
-                setup.Source.TryAddInitial(other,MaterialId.Water,128,false);
+                Assert.That(setup.Source.TryAddInitial(near,MaterialId.Water,256,false),Is.True);
+                Assert.That(setup.Source.TryAddInitial(other,MaterialId.Water,128,false),Is.True);
                 var frame=new GridLiquidFieldFrame(setup.Source,32,64,.8f);
                 frame.Capture();
                 var snapshot=new GridLiquidFieldFrame(setup.Source,32,64,.8f,1.8f,true);
@@ -72,7 +86,7 @@ namespace Game.Rendering.Tests
                 Assert.That(snapshot.OwnerCount,Is.EqualTo(completeOwners));
                 Assert.That(snapshot.Read(near,0,false).Quantity,Is.EqualTo(256));
                 Assert.That(snapshot.Read(other,0,false).Quantity,Is.EqualTo(128));
-                setup.Source.TryAddInitial(near,MaterialId.Water,64,false);
+                Assert.That(setup.Source.TryAddInitial(near,MaterialId.Water,64,false),Is.True);
                 Assert.That(snapshot.Read(near,0,false).Quantity,Is.EqualTo(256),"CPU分批构建必须读取不可变快照。");
             }
         }
@@ -103,7 +117,7 @@ namespace Game.Rendering.Tests
             using(var setup=new Setup(true))
             {
                 for(int i=0;i<120;i++)Assert.That(setup.Source.TryAddInitial(new Vector3Int((i%12-6)*16+4,0,(i/12-5)*16+4),MaterialId.Water,128,false),Is.True);
-                setup.Update();setup.Source.TryAddInitial(Vector3Int.zero,MaterialId.Water,256,false);setup.Update();
+                setup.Update();Assert.That(setup.Source.TryAddInitial(Vector3Int.zero,MaterialId.Water,256,false),Is.True);setup.Update();
                 Assert.That(setup.Renderer.HybridPages,Is.GreaterThan(0));Assert.That(setup.Renderer.CpuFallback,Is.False);
                 // 当前插值本来落后一个Tick；受控地检查alpha=1的真正GPU输出，避免只检查CPU打包量。
                 typeof(GridLiquidFieldSurfaceRenderer).GetField("_capturedAt",Hidden).SetValue(setup.Renderer,Time.time-.2f);setup.Update();
@@ -111,13 +125,36 @@ namespace Game.Rendering.Tests
                 Assert.That(owner,Is.GreaterThanOrEqualTo(0));
                 int subdivision=(int)typeof(GridLiquidFieldSurfaceRenderer).GetField("_subdivision",Hidden).GetValue(setup.Renderer);
                 int cube=setup.Source.ChunkSize*subdivision+6,bytes=cube*cube*cube*GridLiquidFieldGpuLayout.VertexStride;
-                var vertices=AsyncGPUReadback.Request(setup.Renderer.DebugVertices,bytes,owner*bytes);var arguments=AsyncGPUReadback.Request(setup.Renderer.DebugArguments);
-                float timeout=Time.realtimeSinceStartup+10;
-                while(!vertices.done || !arguments.done){Assert.That(Time.realtimeSinceStartup,Is.LessThan(timeout));yield return null;}
-                Assert.That(vertices.hasError || arguments.hasError,Is.False);
-                var data=vertices.GetData<Vertex>();int impactVertices=0;
+                int pending=2;bool error=false,verticesReceived=false,argumentsReceived=false;
+                Vertex[] data=null;uint[] argumentValues=null;
+                // 局部顶点Buffer与arguments独立完成，callback立即复制，避免较早结果过期。
+                var vertices=AsyncGPUReadback.Request(setup.Renderer.DebugVertices,bytes,owner*bytes,r=>
+                {verticesReceived=true;error|=r.hasError;if(!r.hasError)data=r.GetData<Vertex>().ToArray();pending--;});
+                var arguments=AsyncGPUReadback.Request(setup.Renderer.DebugArguments,r=>
+                {argumentsReceived=true;error|=r.hasError;if(!r.hasError)argumentValues=r.GetData<uint>().ToArray();pending--;});
+                vertices.forcePlayerLoopUpdate=true;arguments.forcePlayerLoopUpdate=true;
+                // EditMode不依赖偶然的Scene重绘触发D3D12提交；仍以异步readback检验实际GPU输出。
+                GL.Flush();
+                var probe=new RenderingReadbackDiagnostics.Probe("liquid-visible-impact");
+                double deadline=EditorApplication.timeSinceStartup+10;
+                try
+                {
+                    while(pending>0)
+                    {
+                        probe.Poll();
+                        if(!verticesReceived)vertices.Update();
+                        if(!argumentsReceived)arguments.Update();
+                        if(pending==0)break;
+                        EditorApplication.QueuePlayerLoopUpdate();
+                        Assert.That(EditorApplication.timeSinceStartup,Is.LessThan(deadline),"Visible-impact GPU readback timed out; pending="+pending+"; "+probe.State);
+                        yield return null;
+                    }
+                }
+                finally{probe.Save("pending="+pending+",error="+error+",verticesCopied="+verticesReceived+",argsCopied="+argumentsReceived);}
+                Assert.That(error,Is.False,"GPU readback callback reported an actual error.");
+                int impactVertices=0;
                 for(int i=0;i<data.Length;i++)if(data[i].Valid>0 && new Vector2(data[i].Position.x,data[i].Position.z).sqrMagnitude<1)impactVertices++;
-                uint indices=arguments.GetData<uint>()[owner*5];
+                uint indices=argumentValues[owner*5];
                 Assert.That(impactVertices,Is.GreaterThan(8));Assert.That(indices,Is.GreaterThan(24));
                 File.WriteAllText("Temp/ElementPerformance/liquid-visible-impact-gpu.json",JsonUtility.ToJson(new GeometryReport
                     {Utc=DateTime.UtcNow.ToString("O"),GpuPages=setup.Renderer.SurfacePages,VisiblePages=setup.Renderer.VisibleSurfacePages,HybridPages=setup.Renderer.HybridPages,ImpactVertices=impactVertices,ImpactIndices=indices,Quantity=setup.Source.TotalQuantity},true));
@@ -128,8 +165,8 @@ namespace Game.Rendering.Tests
         {
             using(var setup=new Setup(false))
             {
-                for(int i=0;i<120;i++)setup.Source.TryAddInitial(new Vector3Int(800+i*16,0,800),MaterialId.Water,128,false);
-                setup.Source.TryAddInitial(Vector3Int.zero,MaterialId.Water,256,false);
+                for(int i=0;i<120;i++)Assert.That(setup.Source.TryAddInitial(new Vector3Int(800+i*16,0,800),MaterialId.Water,128,false),Is.True);
+                Assert.That(setup.Source.TryAddInitial(Vector3Int.zero,MaterialId.Water,256,false),Is.True);
                 var frame=new GridLiquidFieldFrame(setup.Source,512,1024,.8f);var view=new MaterialPresentationView();
                 view.Update(setup.Camera,setup.Camera.transform.position,32,56,8);
                 var sampler=new GridLiquidFieldSampler(frame);frame.Capture();int beforePages=frame.Count;float expected=sampler.Evaluate(new Vector3(.25f,.25f,.25f),1);
@@ -165,8 +202,10 @@ namespace Game.Rendering.Tests
                 _rendering=UnityEngine.Object.Instantiate(UnityEditor.AssetDatabase.LoadAssetAtPath<GridLiquidFieldRenderProfile>("Assets/_Project/ScriptableObjects/ElementField/Liquids/GridLiquidFieldRenderProfile_Default.asset"));
                 JsonUtility.FromJsonOverwrite("{\"_maximumChunks\":256,\"_maximumActiveCells\":1024,\"_enableAutoStableDetection\":false}",_profile);
                 Source=_host.AddComponent<LiquidWorldRuntime>();typeof(LiquidWorldRuntime).GetField("_profile",Hidden).SetValue(Source,_profile);
-                Assert.That(Source.TryInitialize(Vector3.zero,.25f,8,_host.AddComponent<ElementFieldSolidBaker>()),Is.True);
+                Assert.That(Source.TryInitialize(Vector3.zero,.25f,8,CreateEmptyEnvironmentBaker(_host)),Is.True);
                 Renderer=_host.AddComponent<GridLiquidFieldSurfaceRenderer>();Renderer.ConfigureForValidation(Source,_rendering);
+                // Camera.main属于整个Editor，不保证返回刚创建的相机；显式传入夹具真正控制的视域。
+                Renderer.SetValidationViewCamera(Camera);
                 typeof(GridLiquidFieldSurfaceRenderer).GetMethod("Start",Hidden).Invoke(Renderer,null);
                 Update=(Action)Delegate.CreateDelegate(typeof(Action),Renderer,typeof(GridLiquidFieldSurfaceRenderer).GetMethod("LateUpdate",Hidden));
             }

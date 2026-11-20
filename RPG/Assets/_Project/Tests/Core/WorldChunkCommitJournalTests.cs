@@ -53,6 +53,12 @@ namespace Game.Core.Tests
         private bool Commit(params object[] changes) => CommitArray(Changes(changes), changes.Length);
         private bool CommitArray(Array changes, int count)
             => (bool)_journalType.GetMethod("TryCommit").Invoke(_journal, new object[] { changes, count });
+        private bool Retire(object key)
+        {
+            MethodInfo method = _journalType.GetMethod("TryRetireInactiveChunk", new[] { _keyType });
+            Assert.That(method, Is.Not.Null, "缺少已退出网络订阅的 tombstone 显式退休 API。");
+            return (bool)method.Invoke(_journal, new[] { key });
+        }
         private ulong Sequence => (ulong)Read(_journal, "CommitSequence");
         private ulong Floor => (ulong)Read(_journal, "HistoryFloorSequence");
         private string Failure => Read(_journal, "LastFailure").ToString();
@@ -238,6 +244,64 @@ namespace Game.Core.Tests
             Assert.That(Failure, Is.EqualTo("MetadataCapacity")); State(key, 1, 2, false);
             Assert.False(Find(other, out _)); Unchanged(2, 0, old);
             Assert.True(Commit(Change(key, "Create"))); State(key, 2, 1, true);
+        }
+
+        [Test]
+        public void ExplicitRetirementReusesMetadataWithoutRewritingCommittedHistory()
+        {
+            _journal = Journal(metadata: 2, records: 8);
+            object retired = Key(), survivor = Key(x: 10), replacement = Key(x: 11);
+            Assert.True(Commit(Change(retired, "Create"), Change(survivor, "Create")));
+            Assert.True(Commit(Change(retired, "Remove"))); Array history = Records();
+            Assert.That(Retire(retired), Is.True);
+            Assert.That(Find(retired, out _), Is.False); State(survivor, 1, 1, true);
+            Unchanged(2, 0, history);
+            Assert.True(Commit(Change(replacement, "Create"))); State(replacement, 2, 1, true);
+            Assert.True(Commit(Change(survivor, "Update"))); State(survivor, 1, 2, true);
+        }
+
+        [Test]
+        public void RetirementFloorKeepsRecreatedAddressNewerWithoutChangingUnretiredIncrement()
+        {
+            object high = Key(), low = Key(x: 8), added = Key(x: 9);
+            Assert.True(Commit(Change(high, "Create"), Change(low, "Create")));
+            for (int life = 0; life < 2; life++)
+            {
+                Assert.True(Commit(Change(high, "Remove"))); Assert.True(Commit(Change(high, "Create")));
+            }
+            Assert.True(Commit(Change(high, "Remove"), Change(low, "Remove")));
+            Assert.True(Retire(high));
+            // high 已经历三代，退休后所有未知地址至少从4开始；low 的历史仍在，保持自己的 +1。
+            Assert.True(Commit(Change(high, "Create"), Change(low, "Create"), Change(added, "Create")));
+            State(high, 4, 1, true); State(low, 2, 1, true); State(added, 4, 1, true);
+        }
+
+        [Test]
+        public void RetiringLowerGenerationCannotLowerExistingRetirementFloor()
+        {
+            object high = Key(), low = Key(x: 8), added = Key(x: 9);
+            Assert.True(Commit(Change(high, "Create"), Change(low, "Create")));
+            Assert.True(Commit(Change(high, "Remove"))); Assert.True(Commit(Change(high, "Create")));
+            Assert.True(Commit(Change(high, "Remove"), Change(low, "Remove")));
+            Assert.True(Retire(high)); Assert.True(Retire(low));
+            Assert.True(Commit(Change(added, "Create"))); State(added, 3, 1, true);
+        }
+
+        [Test]
+        public void ResidentUnknownAndOverflowRetirementPreserveMetadataAndHistory()
+        {
+            object key = Key(), missing = Key(x: 99), added = Key(x: 10);
+            Assert.True(Commit(Change(key, "Create"))); Array original = Records();
+            Assert.False(Retire(key)); Assert.That(Failure, Is.EqualTo("InvalidTransition"));
+            State(key, 1, 1, true); Unchanged(1, 0, original);
+            Assert.False(Retire(missing)); Assert.That(Failure, Is.EqualTo("InvalidInput"));
+            State(key, 1, 1, true); Unchanged(1, 0, original);
+            Assert.True(Commit(Change(key, "Remove"))); SeedStateCounters(key, ulong.MaxValue, 2);
+            Array removed = Records();
+            Assert.False(Retire(key)); Assert.That(Failure, Is.EqualTo("VersionExhausted"));
+            State(key, ulong.MaxValue, 2, false); Unchanged(2, 0, removed);
+            // 失败退休也不能偷偷抬高新地址的种子。
+            Assert.True(Commit(Change(added, "Create"))); State(added, 1, 1, true);
         }
 
         [Test]

@@ -141,6 +141,18 @@ namespace Game.Multiplayer.Tests
             return (bool)take.Invoke(budget, new object[] { connection, epoch, kind, now });
         }
 
+        [Test]
+        public void OrganizeBackpackUsesTheOriginalSharedDiscreteBudget()
+        {
+            var budget=NewOperationBudget();var organize=(OnlineInventoryCommandKind)18;
+            for(int i=0;i<16;i++)Assert.That(TakeOperation(budget,organize,100d),Is.True);
+            Assert.That(TakeOperation(budget,OnlineInventoryCommandKind.SelectWand,100d),Is.False);
+            Assert.That(TakeOperation(budget,organize,100.125d),Is.True);
+            Assert.That(TakeOperation(budget,organize,100.125d),Is.False);
+            Assert.That(TakeOperation(budget,OnlineInventoryCommandKind.CollectMaterial,100.125d),Is.True,
+                "背包整理属于离散交互，不消耗或放大材料连续收取的独立额度。");
+        }
+
         [TestCase(OnlineInventoryCommandKind.BindTool)]
         [TestCase(OnlineInventoryCommandKind.DropContainer)]
         [TestCase(OnlineInventoryCommandKind.PickupContainer)]

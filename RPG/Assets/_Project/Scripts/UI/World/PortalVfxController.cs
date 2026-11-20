@@ -36,6 +36,15 @@ namespace Game.UI
 #endif
             _genericPortal = GetComponentInParent<IPortalVisualSource>();
             if (_portal == null) _portal = GetComponentInParent<StageExitPortal>();
+            // 统一资源和动态返回门都复用现有纯视觉Billboard。必须是显式的无Collider视觉子根，
+            // 不能把下面为兼容旧资源保留的transform fallback当作可旋转的Gameplay/Trigger根。
+            if (_visualRoot != null && _visualRoot != transform && _visualRoot.IsChildOf(transform)
+                && _visualRoot.GetComponentsInChildren<Collider>(true).Length == 0)
+            {
+                var billboard = _visualRoot.GetComponent<WorldSpaceLabelBillboard>();
+                if (billboard == null) billboard = _visualRoot.gameObject.AddComponent<WorldSpaceLabelBillboard>();
+                billboard.ConfigureCameraFacing(true);
+            }
             Transform parent = _visualRoot != null ? _visualRoot : transform;
             _openInstance = CreateVisual(_openPrefab, parent);
             _idleInstance = _idleVisual != null ? _idleVisual : CreateVisual(_idlePrefab, parent);

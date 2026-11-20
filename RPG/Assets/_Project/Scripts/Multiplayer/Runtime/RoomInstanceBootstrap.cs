@@ -203,9 +203,8 @@ namespace Game.Multiplayer
                     var slot = world.Registry[i];
                     // 复用现有当前值导出：sequence=1只生成诊断副本，绝不改正式库存通道发送序列。
                     // 断线席位仍可读取其存活工作区；Epoch和采样Tick明确随值保留，不能重新发放Entry资产。
-                    if (inventories != null && slot.Cast != null && slot.Epoch != 0
-                        && slot.Cast.TryCaptureInventory(slot.Epoch, 1ul, world.ServerTick, out var currentInventory))
-                        OnlineCastInventoryDiagnosticSnapshot.TryFromAuthoritySnapshot(currentInventory, world.ServerTick, out inventories[i]);
+                    if (inventories != null && slot.Cast != null && slot.Epoch != 0)
+                        slot.Cast.TryCaptureAuthorityInventoryDiagnostic(world.ServerTick, out inventories[i]);
                 }
             var enemy = world != null && world.Registry != null ? world.Registry[4].Enemy : null;
             var driver = world != null ? world.GetComponent<AuthorityTickDriver>() : null;
@@ -228,6 +227,8 @@ namespace Game.Multiplayer
                 MaterialPeerAck3=world!=null?world.MaterialReplication?.DescribePeerAcknowledgements(3):null,
                 MaterialHistoryRecords=world!=null && world.MaterialReplication!=null?world.MaterialReplication.HistoryRecordsWritten:0,
                 MaterialHistoryCapacity=world!=null && world.MaterialReplication!=null?world.MaterialReplication.HistoryCapacity:0,
+                MaterialMetadataKeys=world!=null && world.MaterialReplication!=null?world.MaterialReplication.MetadataKeys:0,
+                MaterialRetiredKeys=world!=null && world.MaterialReplication!=null?world.MaterialReplication.RetiredKeys:0,
                 MaterialResyncAccepted=world!=null && world.MaterialReplication!=null?world.MaterialReplication.ResyncAccepted:0,
                 MaterialResyncActorSlot=world!=null && world.MaterialReplication!=null?world.MaterialReplication.LastResyncActorSlot:-1,
                 MaterialLastAcceptedResync=world!=null && world.MaterialReplication!=null?world.MaterialReplication.LastAcceptedResync:default,
@@ -257,6 +258,7 @@ namespace Game.Multiplayer
         [Serializable] private sealed class State { public bool Ready, Frozen, CanSimulate; public int Heartbeats, Members, Clients, ProcessId; public long ProcessStartTicks, Accepted, Served; public string InstanceId, Error, RecordedAtUtc;
             public bool CompletionStarted, CompletionConfirmed; public string CompletionError;
             public ulong WorldEpoch; public bool WorldReady;
+            public int MaterialMetadataKeys;public ulong MaterialRetiredKeys;
             public ulong CheckpointSequence; public string PendingCheckpoint, CheckpointError;
             public WorldReplicationChunkStamp[] MaterialChunks; public long MaterialAcks, MaterialPages; public bool MaterialFaulted; public string MaterialFailure;
             public ulong[] MaterialPeerAcks;public string InterestProbePose,InterestProbeError;

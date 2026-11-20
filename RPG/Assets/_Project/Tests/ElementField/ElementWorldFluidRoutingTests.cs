@@ -10,6 +10,9 @@ namespace Game.ElementField.Tests
 {
     public sealed class ElementWorldFluidRoutingTests
     {
+        [SetUp]
+        public void PrepareEvidenceDirectory() => System.IO.Directory.CreateDirectory("Temp/ElementPerformance");
+
         [Test]
         public void SparseFireCollectionPreservesSampleSequenceAcrossChunkAndCursorWrap()
         {

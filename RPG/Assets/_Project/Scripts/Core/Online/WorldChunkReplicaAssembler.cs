@@ -22,13 +22,16 @@ namespace Game.Core
         private readonly long _timeoutTicks;
         private readonly IWorldChunkPayloadInstaller _installer;
         private bool _installing;
+        // 普通“当前不可读”也可能只是尚未安装/半包；只有可信Release才授予一次退休资格。
+        // 新Begin/Bind会撤销资格，防止上一个订阅的Release被下一订阅复用。
+        private bool _interestReleased;
         private WorldChunkPayloadHeader _pending;
         private int _receivedCount,_pageCount;
         private long _startTick;
         public ulong ConnectionEpoch {get;private set;}
         public WorldChunkKey Key {get;private set;}
-        // Installed是该槽曾提交过版本的永久事实，包含权威删除tombstone；退出Interest不能清零，
-        // 否则TryBindUnusedKey会把有历史的槽当成空槽，遗忘旧Generation/Revision并接受迟到包。
+        // Installed是该槽已提交的版本事实，包含权威删除tombstone；普通退出Interest不能清零。
+        // 只有可信协调器隔离旧订阅并显式退休后才可清除，TryBindUnusedKey本身仍不能遗忘历史。
         public bool Installed {get;private set;}
         /// <summary>
         /// 当前发布数组是否允许读取。与永久版本事实分离：退出Interest后Header仍用于拒绝旧包，
@@ -59,7 +62,7 @@ namespace Game.Core
 
         /// <summary>
         /// 由可信协调器处理当前订阅退出：取消未完成候选并撤销payload读取资格，重复退出幂等。
-        /// Key、Installed、Header与版本对象永久保留；数组无需清空，读取守卫阻止旧数量再发布，
+        /// Key、Installed、Header与版本对象仍保留；数组无需清空，读取守卫阻止旧数量再发布，
         /// 下一份合法Baseline会重新填满staging并经过实际Installer，不能用旧Header直接恢复可见性。
         /// 本类不持有订阅代次，也不直接调用InterestSink；协调器须先核验订阅，并串行释放实际占据。
         /// Installer期间拒绝以保护候选原子发布，Faulted期间拒绝以防退出/重入绕过故障锁存。
@@ -68,14 +71,34 @@ namespace Game.Core
         {
             if(IsInstallerFaulted)return Reject(WorldReplicaAssemblyFailure.InstallerFaulted);
             if(_installing)return Reject(WorldReplicaAssemblyFailure.Installing);
-            CancelPending();PayloadAvailable=false;return Accept();
+            CancelPending();PayloadAvailable=false;_interestReleased=true;return Accept();
+        }
+
+        /// <summary>
+        /// 可信协调器完成旧订阅的可靠Leave/单调代次隔离后，显式退休已经Release的收件槽。
+        /// 本类不持有SubscriptionEpoch，也不能单独调用本方法来证明旧包安全；协调器须先释放
+        /// 实际Installer的只读量，再退休本槽，并在任何分层失败时锁存Replica故障。
+        /// Release与Retire分开，保留普通退出和TryBindUnusedKey原有版本栅栏合同；未Release、
+        /// 新候选、安装中或Installer已故障均不能清历史。成功后只清值并复用原数组/版本对象，
+        /// 下一Key仍须由TryBindUnusedKey显式绑定，首份只能完整Baseline，不能继承旧Key的Delta。
+        /// </summary>
+        public bool TryRetireReleasedKey()
+        {
+            if(IsInstallerFaulted)return Reject(WorldReplicaAssemblyFailure.InstallerFaulted);
+            if(_installing)return Reject(WorldReplicaAssemblyFailure.Installing);
+            if(HasPending)return Reject(WorldReplicaAssemblyFailure.PendingBusy);
+            if(!_interestReleased || PayloadAvailable)return Reject(WorldReplicaAssemblyFailure.WrongIdentity);
+            _version.ResetForTrustedKeyRetirement();
+            Installed=false;PayloadAvailable=false;Header=default;_pending=default;
+            _receivedCount=0;_pageCount=0;_startTick=0;_interestReleased=false;
+            return Accept();
         }
 
         /// <summary>
         /// 将预分配但尚未使用的收件槽绑定到原生Chunk地址，不重新分配分页缓冲。
-        /// 已收候选不能换Key，否则旧页会被解释成另一块；一旦安装过数据（包括删除tombstone），
-        /// 版本记录就永久属于该Chunk，不能靠池复用遗忘Generation/Revision后接受旧包。
-        /// WorldEpoch始终由构造固定；这里只允许未建立任何版本事实的槽修改Key。
+        /// 已收候选不能换Key，否则旧页会被解释成另一块；已安装数据（包括删除tombstone）
+        /// 在显式可信退休前始终属于该Chunk，不能靠普通Bind遗忘Generation/Revision后接受旧包。
+        /// WorldEpoch始终由构造固定；这里只允许尚无版本事实或已完成显式退休的槽修改Key。
         /// </summary>
         public bool TryBindUnusedKey(WorldChunkKey key)
         {
@@ -84,7 +107,7 @@ namespace Game.Core
             if(Installed)return Reject(WorldReplicaAssemblyFailure.WrongIdentity);
             if(HasPending)return Reject(WorldReplicaAssemblyFailure.PendingBusy);
             if((byte)key.Domain>(byte)WorldMaterialDomain.Gas)return Reject(WorldReplicaAssemblyFailure.WrongIdentity);
-            Key=key;return Accept();
+            Key=key;_interestReleased=false;return Accept();
         }
 
         /// <summary>
@@ -121,7 +144,7 @@ namespace Game.Core
             }
             if(!VersionAllowed(header))return false;
             for(int i=0;i<pages;i++)_received[i]=false;
-            _pending=header;_pageCount=pages;_receivedCount=0;_startTick=nowTick;HasPending=true;return Accept();
+            _pending=header;_pageCount=pages;_receivedCount=0;_startTick=nowTick;HasPending=true;_interestReleased=false;return Accept();
         }
         private bool VersionAllowed(WorldChunkPayloadHeader h)
         {

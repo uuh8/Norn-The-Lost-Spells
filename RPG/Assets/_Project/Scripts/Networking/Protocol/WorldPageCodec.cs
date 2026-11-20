@@ -1,4 +1,5 @@
 using System;
+using Game.Core;
 using Game.NetworkProtocol;
 using Google.Protobuf;
 
@@ -42,9 +43,18 @@ namespace Game.Networking
         private static bool Valid(WorldPageMessage m)
         {
             if(m==null || !ProtocolCompatibility.IsSupported(m.ProtocolVersion) || m.GameplayHash==0
-                || m.ConnectionEpoch==0 || m.WorldEpoch==0 || m.SubscriptionEpoch==0 || m.Kind<1 || m.Kind>7
+                || m.ConnectionEpoch==0 || m.WorldEpoch==0 || m.Kind<1 || m.Kind>8
                 || m.Domain>3
                 || m.Words.Count>PageWords)return false;
+            // 运动是跨Chunk的完整表现窗口；每个anchor的数量/订阅身份在body内验证。
+            // 外层不得伪造某一个Chunk的Revision，也不经过数量ACK/Resync或checkpoint。
+            if(m.Kind==8)
+                return m.Domain==1 && m.SubscriptionEpoch==0 && m.ChunkX==0 && m.ChunkY==0 && m.ChunkZ==0
+                    && m.Generation==0 && m.BaseRevision==0 && m.Revision==0 && m.SnapshotId!=0
+                    && m.ServerTick!=0 && m.Checksum<=uint.MaxValue
+                    && m.TotalWords>=WorldLiquidMotionCodec.PrefixWords && m.TotalWords<=WorldLiquidMotionCodec.MaxWords
+                    && ValidPageShape(m);
+            if(m.SubscriptionEpoch==0)return false;
             // 订阅控制只声明“这个认证连接当前可接收这个Key的哪一代”，不描述材料状态。
             // 先单独校验零材料字段，再处理1–5：若套用旧的Snapshot/Generation必需规则，
             // 就会被迫伪造材料版本；若放任这些字段，则控制包可能偷偷推进候选/版本水位。
@@ -58,11 +68,15 @@ namespace Game.Networking
                 return m.Words.Count==0 && m.TotalWords==0 && m.WordOffset==0 && m.PageCount==0 && m.PageIndex==0;
             if(m.Kind==5)return m.Words.Count==0 && m.TotalWords==0 && m.WordOffset==0
                 && m.PageCount==1 && m.PageIndex==0 && m.Checksum==2166136261u && m.BaseRevision<m.Revision;
-            if(m.TotalWords==0 || m.TotalWords>MaxWords || m.PageCount<1 || m.PageCount>MaxPages
-                || m.PageIndex>=m.PageCount || m.PageCount!=(m.TotalWords+PageWords-1)/PageWords
-                || m.WordOffset!=m.PageIndex*PageWords || m.WordOffset>=m.TotalWords
-                || m.Words.Count!=Math.Min(PageWords,(int)(m.TotalWords-m.WordOffset)))return false;
+            if(m.TotalWords==0 || m.TotalWords>MaxWords || !ValidPageShape(m))return false;
             return m.Kind==1 ? m.BaseRevision==0 : m.BaseRevision>0 && m.Revision>m.BaseRevision;
+        }
+        private static bool ValidPageShape(WorldPageMessage m)
+        {
+            return m.PageCount>=1 && m.PageCount<=MaxPages
+                && m.PageIndex<m.PageCount && m.PageCount==(m.TotalWords+PageWords-1)/PageWords
+                && m.WordOffset==m.PageIndex*PageWords && m.WordOffset<m.TotalWords
+                && m.Words.Count==Math.Min(PageWords,(int)(m.TotalWords-m.WordOffset));
         }
         private static bool Wire(ReadOnlySpan<byte> bytes)
         {

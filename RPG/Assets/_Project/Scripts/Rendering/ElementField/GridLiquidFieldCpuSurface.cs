@@ -21,13 +21,17 @@ namespace Game.Rendering
         private readonly Dictionary<Vector3Int,float> _nodeCache=new Dictionary<Vector3Int,float>(NodeCacheCapacity);
         private readonly Mesh[] _meshes,_pending;
         private readonly Material _material;
+        // D3D12提交Draw时就验证所有SRV绑定，即使_LiquidDomainEnabled为0仍会跳过
+        // 缺Owner Lookup的整个CPU壳。空域只满足绘制契约，不声明任何Gameplay/显示归属；
+        // overflow路径以后绑定真实GPU域时仍可覆盖材质绑定，空Buffer随本CPU实例释放。
+        private readonly GraphicsBuffer _emptyDomainLookup;
         private readonly float[] _field,_weights=new float[8],_dropWeights=new float[8];
         private readonly Vector3[] _positions,_other;
         private readonly int[] _vertexIds,_activeVertices;
         private int _activeCount;
         private readonly List<Vector3> _vertices,_normals;
         private readonly List<Vector4> _first,_second;
-        private readonly List<Vector2> _swell,_batchSwell;
+        private readonly List<Vector4> _swell,_batchSwell;
         private readonly List<int> _indices;
         private readonly List<Vector3> _batchVertices,_batchNormals;
         private readonly List<Vector4> _batchFirst,_batchSecond;
@@ -70,15 +74,16 @@ namespace Game.Rendering
             // 当前所有自由液体都进入Surface Nets。去掉已废弃的逐格Icosphere预留，
             // 仍覆盖每Cube一个Vertex和每格18个Index，既省启动内存又不降低画面。
             _vertices=new List<Vector3>(pageCapacity);_normals=new List<Vector3>(pageCapacity);_first=new List<Vector4>(pageCapacity);_second=new List<Vector4>(pageCapacity);_indices=new List<int>(pageIndices);
-            _swell=new List<Vector2>(pageCapacity);
+            _swell=new List<Vector4>(pageCapacity);
             int batches=(pages+PagesPerMesh-1)/PagesPerMesh;
             _meshes=new Mesh[batches];_pending=new Mesh[batches];
             for(int i=0;i<batches;i++){_meshes[i]=new Mesh{name="LiquidField.CPU",indexFormat=IndexFormat.UInt32};_pending[i]=new Mesh{name="LiquidField.CPU.Pending",indexFormat=IndexFormat.UInt32};}
             int vertexCapacity=pageCapacity*PagesPerMesh;
             _batchVertices=new List<Vector3>(vertexCapacity);_batchNormals=new List<Vector3>(vertexCapacity);
             _batchFirst=new List<Vector4>(vertexCapacity);_batchSecond=new List<Vector4>(vertexCapacity);_batchIndices=new List<int>(pageIndices*PagesPerMesh);
-            _batchSwell=new List<Vector2>(vertexCapacity);
+            _batchSwell=new List<Vector4>(vertexCapacity);
             _material=new Material(material);_material.EnableKeyword("LIQUID_CPU_REFERENCE");
+            _emptyDomainLookup=LiquidSurfaceDomainBindings.CreateEmpty(_material);
             _draw=new RenderParams(_material){layer=layer,shadowCastingMode=ShadowCastingMode.Off,receiveShadows=true};
         }
         public void Begin(){if(_building)return;_built=_staged=_cursor=0;BuildFrames=0;BuildMilliseconds=0;_stage=Stage.Idle;_nodeCache.Clear();ClearBatch();_building=true;}
@@ -154,7 +159,9 @@ namespace Game.Rendering
             {float field=LocalField(x,y,z,(p-low)*(Resolution/_frame.CellSize),out gradient);float length=gradient.sqrMagnitude;if(length>1e-6f)p-=gradient*(field/length);p=Vector3.Min(low+Vector3.one*(_frame.CellSize/Resolution),Vector3.Max(low,p));}
             LocalField(x,y,z,(p-low)*(Resolution/_frame.CellSize),out gradient);
             Vector3 normal=gradient.sqrMagnitude>1e-10f?-gradient.normalized:Vector3.up;
-            _sampler.CompressGroundProxy(ref p,ref normal,1);_swell.Add(new Vector2(_sampler.LastSwellWeight,0));
+            _sampler.CompressGroundProxy(ref p,ref normal,1);
+            // CPU保存GPU同一RGBA8约定的解码值，不另建逐帧数组或第二个流速Owner。
+            _swell.Add(GridLiquidFlowPresentation.Unpack(GridLiquidFlowPresentation.Pack(_sampler.LastSwellWeight,_sampler.LastFlowVelocity,_sampler.LastImpact)));
             _vertices[v]=p;_normals.Add(normal);_sampler.Weights(p,1,_weights);
             _first.Add(new Vector4(_weights[0],_weights[1],_weights[2],_weights[3]));_second.Add(new Vector4(_weights[4],_weights[5],_weights[6],_weights[7]));
         }
@@ -259,6 +266,6 @@ namespace Game.Rendering
         }
         private static void Release(UnityEngine.Object value)
         {if(value==null)return;if(Application.isPlaying)UnityEngine.Object.Destroy(value);else UnityEngine.Object.DestroyImmediate(value);}
-        public void Dispose(){for(int i=0;i<_meshes.Length;i++){Release(_meshes[i]);Release(_pending[i]);}Release(_material);}
+        public void Dispose(){for(int i=0;i<_meshes.Length;i++){Release(_meshes[i]);Release(_pending[i]);}_emptyDomainLookup?.Dispose();Release(_material);}
     }
 }

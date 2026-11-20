@@ -10,10 +10,11 @@ int _SkipAirRows;
 int4 _Groups0,_Groups1;
 int GroupAt(int slot){return slot<4?_Groups0[slot&3]:_Groups1[slot&3];}
 float4 _OriginSize;
+float4 _QueryReach;
 float _Capacity, _Interval, _Alpha, _CrownStrength, _CartoonVolumeScale;
 // 每个Compute线程私有的采样相位；运动页取_Alpha，严格静态页统一取Current端点。
 // 相同静态数据的两条浮点分支也可能在Half颜色量化边界差1 ULP，固定端点使缓存与重建一致。
-static float SampleAlpha;
+static float SampleAlpha=1;
 struct CellSample { float q; float3 v, offset; uint flags; };
 uint HashChunk(int3 c) { return (uint)c.x*73856093u^(uint)c.y*19349663u^(uint)c.z*83492791u; }
 int ChunkSlot(int3 key)
@@ -29,13 +30,14 @@ int ChunkSlot(int3 key)
 }
 // 每个采样点只涉及8～12个Chunk。先查一次页槽，随后175个邻格复用，
 // 减少GPU随机Hash读取；私有小数组属于当前Compute线程，不是共享跨线程状态。
-static int3 CachedMinimum,CachedSpan;
-static int CachedSlots[12];
+static int3 CachedMinimum=0,CachedSpan=0;
+static int CachedSlots[12]={0,0,0,0,0,0,0,0,0,0,0,0};
 void PrepareLookup(float3 p)
 {
     int3 c=(int3)floor(p);
-    CachedMinimum=(int3)floor((float3)(c-int3(2,3,2))/_K);
-    int3 high=(int3)floor((float3)(c+int3(2,3,2))/_K);
+    int3 reach=max(int3(2,3,2),(int3)_QueryReach.xyz);
+    CachedMinimum=(int3)floor((float3)(c-reach)/_K);
+    int3 high=(int3)floor((float3)(c+reach)/_K);
     CachedSpan=high-CachedMinimum+1;int count=CachedSpan.x*CachedSpan.y*CachedSpan.z;
     // 很小的Grid Chunk仍走完整Lookup，不能因优化适用范围而裁掉邻格。
     if(count>12){CachedSpan=0;return;}
@@ -71,10 +73,27 @@ float Kernel(float2 d,out float2 gradient)
     float w=max(0,1-dot(d,d)/2.1025);gradient=d*(-6*w*w/2.1025);return w*w*w;
 }
 // 两个Tick只前推已提交速度的有限距离，单位从World Space换到粗格坐标。
-float3 BoundedWarp(float3 velocity,float phase)
+float3 BoundedWarp(float3 velocity,float phase,float gravity)
 {
-    float3 warp=velocity*(_Interval*phase)/_OriginSize.w;
-    return warp*min(1,3/max(.000001,length(warp)));
+    float seconds=_Interval*phase;
+    // 自由行Terrain.y的负值为冻结重力；接地/近障碍传0。两端使用同一二阶轨迹，避免每Tick速度重启。
+    float3 warp=(velocity*seconds+float3(0,-.5*gravity*seconds*seconds,0))/_OriginSize.w;
+    return warp*min(1,6/max(.000001,length(warp)));
+}
+// 与GridLiquidFlowPresentation.AirAxes一致的对角协方差近似。
+// 有界三轴缩放乘积为1，速度改变剪影但不凭空增加显示体积；不参与Gameplay。
+float3 AirAxes(float3 velocity)
+{
+    float speed=length(velocity);if(speed<.00001)return 1;
+    float3 direction=velocity/speed;float stretch=1+.6*saturate(speed*_Interval/max(.001,_OriginSize.w));
+    float crossScale=1/stretch,along=stretch*stretch-crossScale;
+    float3 axes=sqrt(crossScale+along*direction*direction);
+    return axes/pow(axes.x*axes.y*axes.z,1.0/3.0);
+}
+uint PackSurfaceFlow(float4 detail)
+{
+    int x=(int)round(clamp(detail.y/8,-1,1)*127),z=(int)round(clamp(detail.z/8,-1,1)*127);
+    return (uint)round(saturate(detail.x)*255)|((uint)x&255u)<<8|((uint)z&255u)<<16|(uint)round(saturate(detail.w)*255)<<24;
 }
 struct GroundPlane
 {
@@ -116,10 +135,10 @@ float GatherPlanes(float3 at,int singlePhase,bool colors,bool air,out GroundPlan
 {
     planeCount=0;PrepareLookup(at);
     [unroll]for(int clear=0;clear<8;clear++){planes[clear]=(GroundPlane)0;planeFirst[clear]=0;planeSecond[clear]=0;}
-    int3 atCell=(int3)floor(at);float free=-.65;
-    [loop]for(int y=atCell.y-3;y<=atCell.y+3;y++)
+    int3 atCell=(int3)floor(at),reach=max(int3(2,3,2),(int3)_QueryReach.xyz);float free=-.65;
+    [loop]for(int y=atCell.y-reach.y;y<=atCell.y+reach.y;y++)
     {
-        [loop]for(int z=atCell.z-2;z<=atCell.z+2;z++)[loop]for(int x=atCell.x-2;x<=atCell.x+2;x++)
+        [loop]for(int z=atCell.z-reach.z;z<=atCell.z+reach.z;z++)[loop]for(int x=atCell.x-reach.x;x<=atCell.x+reach.x;x++)
         {
             int index=CellIndex(int3(x,y,z));if(index<0)continue;
             // Renderer只把两帧所有材料均为空的行标成+Infinity。有效材料/History行
@@ -134,13 +153,15 @@ float GatherPlanes(float3 at,int singlePhase,bool colors,bool air,out GroundPlan
                 if(q<=0)continue;velocity/=q;offset/=q;
                 // bit 7 由同一 CPU 快照分配少量落水实例；容量溢出时标志全清，连续场负责兜底。
                 if((flags&128u)!=0)continue;
-                float3 warp=BoundedWarp(velocity,previous?SampleAlpha:SampleAlpha-1),center=float3(x,y,z)+.5+offset+warp;
                 bool supported=(flags&1u)!=0;
+                float4 terrain=_TerrainCells[index];float gravity=!supported && terrain.y<0?-terrain.y:0;
+                float3 warp=BoundedWarp(velocity,previous?SampleAlpha:SampleAlpha-1,gravity),center=float3(x,y,z)+.5+offset+warp;
                 // 与贴地液体共用连续外壳；自由液体形成液舌/液帘，不走圆球实例。
                 if(!supported && !colors && !air)continue;
                 bool shaped=_CrownStrength>.15 && (flags&16u)!=0;float scale=shaped?max(.4,(flags>>8)/255.0):1;
-                float2 d=(at.xz-center.xz)/scale,g;float k=Kernel(d,g)*mix;if(k<=0)continue;g*=mix/scale;
-                float4 terrain=_TerrainCells[index];float2 slope=supported?-terrain.xz/max(.25,terrain.y):float2(0,0);
+                float3 axes=!supported && _CrownStrength>.15 && (flags&8u)==0?AirAxes(velocity):float3(1,1,1);
+                float2 scales=scale*axes.xz,d=(at.xz-center.xz)/scales,g;float k=Kernel(d,g)*mix;if(k<=0)continue;g*=mix/scales;
+                float2 slope=supported?-terrain.xz/max(.25,terrain.y):float2(0,0);
                 // 水平覆盖前推，真实支撑固定；落水History不能移动Collider平面。
                 float floorHeight=supported?(terrain.w-_OriginSize.y)/_OriginSize.w+dot(slope,at.xz-float2(x,z)-.5):center.y-.5;
                 float fill=q/_Capacity,crown=(flags&8u)!=0?(flags>>8)/255.0:1;
@@ -154,7 +175,7 @@ float GatherPlanes(float3 at,int singlePhase,bool colors,bool air,out GroundPlan
                 // 与CPU校准档一致：自由截面上下收圆后不重复添加顶冠补偿。
                 if(!supported && _CrownStrength<=.15)realHeight=fill;
                 // 自由液舌以真实中心对称生成截面，不再把每行的小数量铺在行底当成薄盖片。
-                if(!supported)floorHeight=center.y-realHeight*.5;
+                if(!supported){realHeight*=axes.y;floorHeight=center.y-realHeight*.5;}
                 if(shaped && (flags&32u)!=0)
                 {float meanFill=realHeight*scale*scale/(reconstructionGain*volumeScale*2.25),wet=saturate(fill/max(.001,meanFill*.75));wet=wet*wet*(3-2*wet);k*=wet;g*=wet;if(k<=0)continue;}
                 float proxyHeight=max((shaped?.8:.5)*(1+abs(slope.x)+abs(slope.y)),realHeight);
@@ -162,7 +183,7 @@ float GatherPlanes(float3 at,int singlePhase,bool colors,bool air,out GroundPlan
                 // 圆冠角肩的r2 Cube不能同时跨顶/底；厚代理只改善Topology，最终仍压回realHeight。
                 if(shaped && supported && dot(slope,slope)<.0625)proxyHeight=max(1.6,realHeight);
                 if(!supported)proxyHeight=max(1.6,realHeight);
-                GroundPlane row=(GroundPlane)0;row.ground=supported;row.solid=supported && ((flags&2u)!=0 || (flags&4u)==0);row.coverage=k;row.floorHeight=k*floorHeight;row.realHeight=k*realHeight;row.proxyHeight=k*proxyHeight;row.rimScale=k*scale;row.slope=k*slope;
+                GroundPlane row=(GroundPlane)0;row.ground=supported;row.solid=supported && ((flags&2u)!=0 || (flags&4u)==0);row.coverage=k;row.floorHeight=k*floorHeight;row.realHeight=k*realHeight;row.proxyHeight=k*proxyHeight;row.rimScale=k*sqrt(scales.x*scales.y);row.slope=k*slope;
                 row.gradient=g;row.floorGradient=g*floorHeight+k*slope;row.realGradient=g*realHeight;row.proxyGradient=g*proxyHeight;
                 int plane=AddPlane(row,planes,planeCount);float4 rowFirst=0,rowSecond=0;
                 // Vector分量写入须用固定8槽展开，不能让FXC强制展开有[loop]属性的动态材料循环。
@@ -297,6 +318,34 @@ void CompressGroundProxy(inout float3 p,inout float3 normal,out float swellWeigh
         p-=supportNormal*inset;
     }
 }
+float3 SurfaceFlow(float3 at)
+{
+    // 仅独立Flow Kernel执行，与几何相同的有界邻域包含跨多格下落的Previous。
+    // 静态页在Kernel入口早退；热流只读已上传页，空气哨兵跳过不改变实际权重。
+    PrepareLookup(at);int3 center=(int3)floor(at),reach=max(int3(2,3,2),(int3)_QueryReach.xyz);float3 flow=0;float total=0,impact=0,support=0;
+    [loop]for(int y=-reach.y;y<=reach.y;y++)[loop]for(int z=-reach.z;z<=reach.z;z++)[loop]for(int x=-reach.x;x<=reach.x;x++)
+    {
+        int3 cell=center+int3(x,y,z);int index=CellIndex(cell);if(index<0)continue;
+        if(_SkipAirRows!=0 && isinf(_TerrainCells[index].w))continue;
+        [loop]for(int phase=0;phase<2;phase++)
+        {
+            bool previous=phase==0;float mix=previous?1-SampleAlpha:SampleAlpha;if(mix<=0)continue;
+            [loop]for(int m=0;m<_MaterialCount;m++)
+            {
+                CellSample row=ReadCell(index,m,previous);if(row.q<=0)continue;
+                float terrainY=_TerrainCells[index].y;float gravity=(row.flags&1u)==0 && terrainY<0?-terrainY:0;
+                float3 delta=at-(cell+.5+row.offset+BoundedWarp(row.v,previous?SampleAlpha:SampleAlpha-1,gravity));
+                float weight=row.q*mix/(1+4*dot(delta,delta));total+=weight;flow+=weight*row.v;
+                // 同一窗口的Previous仍在空中，Current已落地停下；由实际支撑量门控，
+                // 再统计邻域真实下落速度，避免漏掉落地瞬间或在空中生成冲击泡沫。
+                impact+=weight*saturate(-row.v.y*.12);
+                if((row.flags&1u)!=0 && ((row.flags&2u)!=0 || (row.flags&4u)==0))support+=weight;
+            }
+        }
+    }
+    if(total<=0)return 0;flow/=total;float2 horizontal=flow.xz;horizontal*=min(1,8/max(.00001,length(horizontal)));
+    return float3(horizontal,support>0?impact/total:0);
+}
 void MaterialWeights(float3 p,out float4 first,out float4 second)
 {
     GroundPlane planes[8];float4 planeFirst[8],planeSecond[8];int planeCount;
@@ -313,7 +362,14 @@ void MaterialWeights(float3 p,out float4 first,out float4 second)
         if(group<=0)continue;float top=bottom+group/allAmount;
         if(local<=top || groupIndex==_GroupCount-1)
         {[unroll]for(int outputSlot=0;outputSlot<8;outputSlot++)if(outputSlot<_MaterialCount && GroupAt(outputSlot)==groupIndex)
-            {if(outputSlot<4)first[outputSlot&3]=a[outputSlot&3]/group;else second[outputSlot&3]=b[outputSlot&3]/group;}return;}
+            {
+                float amount=outputSlot<4?a[outputSlot&3]:b[outputSlot&3];
+                // 单一材料的数学权重严格为1；实测全量/空行优化路径曾分别得到
+                // Half 0x3C00与0x3BFF。显式固定数学0/1端点，避免规范化及后续量化
+                // 让纯材质在近1之间闪动；保留真实混合比例，不靠放宽测试容差掩盖。
+                float normalized=amount<=0?0:amount>=group?1:amount/group;
+                if(outputSlot<4)first[outputSlot&3]=normalized;else second[outputSlot&3]=normalized;
+            }return;}
         bottom=top;
     }
 }

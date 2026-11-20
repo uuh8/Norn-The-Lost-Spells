@@ -122,11 +122,23 @@ namespace Game.Multiplayer
                 if (!CreateCheckpointRequest(2)) yield break;
                 yield return _checkpointRequest.SendWebRequest();
                 if (!_checkpointPublishing || _checkpointRequest == null) yield break;
-                bool matched = _checkpointRequest.result == UnityWebRequest.Result.Success
-                    && _checkpointPending.ConfirmReadback(ParseCheckpointResponse<OnlineRunAssetCheckpointHeadReply>());
+                // ConfirmReadback成功会Clear pending，因此先保留实际解析的冻结Head；不能事后重捕live
+                // 世界来冒充本次保存正文。未知/不匹配读回绝不推进材料连续性锚点。
+                var readback = _checkpointRequest.result == UnityWebRequest.Result.Success
+                    ? ParseCheckpointResponse<OnlineRunAssetCheckpointHeadReply>() : null;
+                bool matched = readback != null && _checkpointPending.ConfirmReadback(readback);
                 ReleaseCheckpointRequest();
                 if (matched)
                 {
+                    var currentWorld = OnlineWorldBootstrap.Active;
+                    if (currentWorld == null || currentWorld.MaterialReplication == null
+                        || !currentWorld.MaterialReplication.ConfirmCheckpointWorld(readback.Checkpoint.World))
+                    {
+                        // 持久化读回已确认，但当前World不接受此offered身份时不能继续造缺连续性证明的Head。
+                        // 明确停publisher并保留诊断；不改正文/Hash，不补材料，也不假装回滚已保存的事实。
+                        CheckpointError("CheckpointWorldConfirmationRejected", true);
+                        yield break;
+                    }
                     _checkpointAttempts = _checkpointRejectedCandidates = 0; _checkpointError = null;
                     WriteState();
                 }

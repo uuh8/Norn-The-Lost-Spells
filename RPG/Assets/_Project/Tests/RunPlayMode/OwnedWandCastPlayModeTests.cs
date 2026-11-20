@@ -34,6 +34,8 @@ namespace Game.Run.Tests
         private WizardController _wizard;
         private SinglePlayerInventoryController _ui;
         private string _directory;
+        // 本轮证据使用独立目录，重跑不能覆盖此前失败截图；临时Profile仍沿原隔离路径。
+        private readonly string _evidenceDirectory = System.IO.Path.Combine("TestResults/FullAuditPlayMode/OwnedWandCast", Guid.NewGuid().ToString("N"));
         private float _time;
         private CursorLockMode _lock;
         private bool _cursor;
@@ -366,9 +368,11 @@ namespace Game.Run.Tests
             Assert.That(Find<AudioListener>(), Is.Not.Null);
             EditorWindow.GetWindow(Type.GetType("UnityEditor.GameView,UnityEditor")).Focus();
             yield return null; yield return new WaitForSecondsRealtime(.3f);
-            ScreenCapture.CaptureScreenshot("Temp/SinglePlayer/wand-sandbox.png");
+            Directory.CreateDirectory(_evidenceDirectory);
+            string screenshot = System.IO.Path.Combine(_evidenceDirectory, "wand-sandbox.png");
+            ScreenCapture.CaptureScreenshot(screenshot);
             yield return null; yield return new WaitForSecondsRealtime(.3f);
-            Assert.That(File.Exists("Temp/SinglePlayer/wand-sandbox.png"), Is.True);
+            Assert.That(File.Exists(screenshot), Is.True);
             foreach (Image image in Find<WandResourceHud>().GetComponentsInChildren<Image>())
                 if (image.type == Image.Type.Filled)
                 { Assert.That(image.sprite, Is.Not.Null, "Filled Image 必须绑定 Sprite 才会按 fillAmount 生成 Mesh。");

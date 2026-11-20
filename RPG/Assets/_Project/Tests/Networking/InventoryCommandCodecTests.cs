@@ -17,6 +17,40 @@ namespace Game.Networking.Tests
         private Type _type;
         private const ulong Hash = 12345678;
 
+        [Test]
+        public void OrganizeBackpackRoundTripsOnlyAnExistingBagIdentityAndInventoryVersion()
+        {
+            // Kind用既有底层数值，旧Runtime仍可编译；RED必须来自Codec拒绝合法意图。
+            var value=Intent(18);Set(value,"TargetSlot",0);
+            Assert.That(Decode(Encode(value,"Intent"),"Intent",Hash,out var restored),Is.True);
+            Assert.That(Convert.ToInt32(Get<object>(restored,"Kind")),Is.EqualTo(18));
+            Assert.That(Get<string>(restored,"ItemId"),Is.EqualTo(Id(5)));
+            Assert.That(Get<uint>(restored,"ExpectedInventoryVersion"),Is.EqualTo(7u));
+        }
+
+        [TestCase("SourceWandId")][TestCase("TargetWandId")][TestCase("SourceProgramRevision")]
+        [TestCase("TargetProgramRevision")][TestCase("TargetSlot")][TestCase("ToSpellStorage")]
+        [TestCase("TransferBudget")][TestCase("AimOrigin")][TestCase("AimDirection")]
+        [TestCase("WorldOwnerId")][TestCase("TargetBackpackId")][TestCase("GridX")][TestCase("GridY")]
+        [TestCase("QuarterTurns")][TestCase("AutoPlace")][TestCase("AttachmentContainerId")]
+        [TestCase("AttachmentDose")][TestCase("AttachmentEnabled")][TestCase("TargetLocationKind")][TestCase("WholeStack")]
+        public void OrganizeBackpackRejectsEverySmuggledDestinationOrWorldField(string field)
+        {
+            var value=Intent(18);Set(value,"TargetSlot",0);
+            object dirty=field.EndsWith("Id",StringComparison.Ordinal)?Id(44)
+                :field=="AimOrigin"||field=="AimDirection"?(object)Vector3.right
+                :field=="TransferBudget"||field=="AttachmentDose"?(object)1UL
+                :field.EndsWith("Revision",StringComparison.Ordinal)?(object)1u
+                :field=="ToSpellStorage"||field=="AutoPlace"||field=="AttachmentEnabled"||field=="WholeStack"?(object)true:1;
+            Set(value,field,dirty);Assert.That(TryEncode(value,"Intent",Hash,out _,out _),Is.False);
+            // 直接由既有合法消息改Wire值，确保Decode也校验形状，而不是只信本机Encode。
+            var clean=Intent(3);Set(clean,"TargetSlot",0);
+            var wire=InventoryCommandMessage.Parser.ParseFrom(Encode(clean,"Intent"));wire.Kind=18;
+            SetWireProperty(wire,field=="AimOrigin"?"AimOriginX":field=="AimDirection"?"AimDirectionX":field,
+                field=="AimOrigin"||field=="AimDirection"?(object)1f:dirty);
+            Assert.That(Decode(wire.ToByteArray(),"Intent",Hash,out _),Is.False);
+        }
+
         [TestCase(16)] [TestCase(17)]
         public void PeacefulResearchSessionCommandsRoundTripWithoutInventingAnItem(int kind)
         {

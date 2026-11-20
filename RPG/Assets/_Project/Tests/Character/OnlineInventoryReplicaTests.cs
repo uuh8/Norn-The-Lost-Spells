@@ -178,6 +178,7 @@ namespace Game.Character.Tests
             Assets = new OnlineOwnedAssetSnapshot
             {
                 SchemaVersion = OnlineOwnedAssetSnapshot.CurrentSchemaVersion, RunId = "run", PlayerId = "player", ActorId = 1, InventoryId = "inventory", InventoryVersion = 9,
+                Gold = 0, CurrencyVersion = 1, // 明确的零余额事实；缺货币修订不能当作合法快照。
                 GameplayConfigHash = Hash, SelectedWandInstanceId = "wand", Items = new[]
                 {
                     new OnlineOwnedItemSnapshot { InstanceId = "wand", ContentId = "replica.wand", Revision = 1,

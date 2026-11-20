@@ -14,7 +14,9 @@ namespace Game.Run.Tests
     public sealed class SpellStoragePlayModeTests : BackpackWorkspacePlayModeTests
     {
         protected override string ReviewPath => "Assets/_Project/Scenes/Tests/Hub/SinglePlayer_Hub_SpellStorageReview.unity";
-        protected override string EvidencePath => "TestResults/SinglePlayer/M6-T1-SpellStorage";
+        // 每轮独立保留截图/Profiler证据，不能覆盖历史阶段结果；不改变Profile或测试断言。
+        private readonly string _evidencePath = "TestResults/UiAudit/SpellStoragePlayModeTests/" + System.DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffZ") + "-" + System.Guid.NewGuid().ToString("N");
+        protected override string EvidencePath => _evidencePath;
 
         [UnityTest] public IEnumerator CapturePopulatedTrayAndSevenToolLayout()
         {
@@ -36,12 +38,29 @@ namespace Game.Run.Tests
             Backpack.OpenBackpack();yield return null;
             Session.ReadOnly.TryGetView("fire",out var fire);Backpack.BeginDrag(fire,Vector2.zero,null,true);Backpack.SubmitToTarget(InventoryDropKind.ProgramSlot,"w0",0);yield return null;
             var coordinator=Session.RunCoordinator;Assert.That(coordinator,Is.Not.Null);
+            Assert.That(Session.ReadOnly.TryGetView("fire",out fire),Is.True);
+            Assert.That(fire.Location.Kind,Is.EqualTo(ItemLocationKind.WandSlot));Assert.That(fire.Location.OwnerId,Is.EqualTo("w0"));
+            var originalLocation=fire.Location;int originalCharges=fire.RemainingCharges;uint originalVersion=Session.ReadOnly.Version;
+            Assert.That(coordinator.Protection.Count,Is.Zero);
             EventBus<RaidDepartureRequestedEvent>.Publish(new RaidDepartureRequestedEvent{InventoryId=Session.ReadOnly.InventoryId,Command=RaidCommand.Protect,ItemId="fire"});yield return null;
             var panel=Backpack.GetComponentsInChildren<WandProgramPanelView>(true)[0];
             var header=(Text)new UnityEditor.SerializedObject(panel).FindProperty("_header").objectReferenceValue;
-            Assert.That(header.text,Does.Contain("基础抽取"));Assert.That(header.text,Does.Contain("受保护法术 1"));
+            // M6-T20已取消法杖标题中的保护数量。保护仍属于具体实例，必须验证真实Owner状态，
+            // 不能把退休文案删掉后只剩“没有异常”，也不能把整根法杖或另一张卡误当成受保护。
+            Assert.That(coordinator.Protection.Count,Is.EqualTo(1));Assert.That(coordinator.Protection.Contains("fire"),Is.True);
+            Assert.That(coordinator.Protection.Contains("ice"),Is.False);Assert.That(coordinator.Protection.Contains("w0"),Is.False);
+            Assert.That(header.text,Does.Contain("基础抽取").And.Contain("本次预估蓝耗").And.Contain("槽内合计"));
+            Assert.That(header.text,Does.Not.Contain("保护"));
+            Assert.That(Session.ReadOnly.TryGetView("fire",out fire),Is.True);
+            Assert.That(fire.Location,Is.EqualTo(originalLocation));Assert.That(fire.RemainingCharges,Is.EqualTo(originalCharges));
+            Assert.That(Session.ReadOnly.Version,Is.EqualTo(originalVersion),"保护选择不能移动或消耗具体卡。");
             EventBus<RaidDepartureRequestedEvent>.Publish(new RaidDepartureRequestedEvent{InventoryId=Session.ReadOnly.InventoryId,Command=RaidCommand.Unprotect,ItemId="fire"});yield return null;
-            Assert.That(header.text,Does.Contain("受保护法术 0"));
+            Assert.That(coordinator.Protection.Count,Is.Zero);Assert.That(coordinator.Protection.Contains("fire"),Is.False);
+            Assert.That(coordinator.Protection.Contains("ice"),Is.False);Assert.That(coordinator.Protection.Contains("w0"),Is.False);
+            Assert.That(header.text,Does.Not.Contain("保护"));
+            Assert.That(Session.ReadOnly.TryGetView("fire",out fire),Is.True);
+            Assert.That(fire.Location,Is.EqualTo(originalLocation));Assert.That(fire.RemainingCharges,Is.EqualTo(originalCharges));
+            Assert.That(Session.ReadOnly.Version,Is.EqualTo(originalVersion));
         }
 
         [UnityTest] public IEnumerator YellowRegionAcceptsRealSpellAndReturnsToProgramAndBag()
@@ -69,9 +88,19 @@ namespace Game.Run.Tests
             var hud = Find<HeldItemHud>();
             var cells = new UnityEditor.SerializedObject(hud).FindProperty("_cells");
             Assert.That(cells.arraySize, Is.EqualTo(10));
-            Assert.That(((Text)cells.GetArrayElementAtIndex(9).FindPropertyRelative("Title").objectReferenceValue).text, Does.StartWith("0 "));
+            var last=cells.GetArrayElementAtIndex(9);
+            var title=(Text)last.FindPropertyRelative("Title").objectReferenceValue;
+            var icon=(Image)last.FindPropertyRelative("Icon").objectReferenceValue;
+            // M6-T17道具栏只保留快捷键数字和图标。名称不再拼接在Title后面，精确验证"0"，
+            // 同时验证绑定内容的图标，不能让标签正确但图标缺失/错误的HUD通过。
+            Assert.That(title,Is.Not.Null);Assert.That(title.text,Is.EqualTo("0"));
+            Assert.That(Session.ReadOnly.TryGetView("b0",out var bottle),Is.True);Assert.That(bottle.Icon,Is.Not.Null);
+            Assert.That(icon,Is.Not.Null);Assert.That(icon.enabled && icon.gameObject.activeInHierarchy,Is.True);
+            Assert.That(icon.sprite,Is.SameAs(bottle.Icon));
             Keys(Key.Digit1); yield return null; Keys(); yield return null;
             Assert.That(Find<HeldItemInputController>().IsWandMode, Is.True);
+            Assert.That(Session.ToolbeltReadOnly.SelectedSlot,Is.Zero);Assert.That(Session.ToolbeltReadOnly.SelectedItemId,Is.EqualTo("w0"));
+            Assert.That(title.text,Is.EqualTo("0"));Assert.That(icon.sprite,Is.SameAs(bottle.Icon),"切换手持不能清掉第七道具格的绑定图标。");
         }
 
         [UnityTest] public IEnumerator NearbySpellUsesTrayThenBagAndBothFullLeavesWorldItem()

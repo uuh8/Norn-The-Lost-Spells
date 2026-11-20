@@ -60,7 +60,7 @@ internal static class AccountInventoryMoves
         var dropped=new List<OnlineHubWorldItemReply>();
         var removedWorlds=new List<string>();
         var retired=new List<OnlineOwnedItemSnapshot>();
-        ulong transferred=0;bool mergedPickup=false;
+        ulong transferred=0;bool mergedPickup=false,mergedMove=false;
         string previousSelected=candidate.SelectedWandInstanceId;
         if(move.OperationKind==2)
         {
@@ -108,7 +108,7 @@ internal static class AccountInventoryMoves
             }
             if(!mergedPickup)
             {
-                if(move.TargetLocationKind==0)Apply(items,source,move,content);
+                if(move.TargetLocationKind==0)Apply(items,source,move,content,candidate);
                 else Put(source,destination);
                 removedWorlds.Add(source.InstanceId);
             }
@@ -117,7 +117,8 @@ internal static class AccountInventoryMoves
         {
             // 地面进入库存必须携带匹配Spawn的Pickup，不能以普通Move绕开旧请求栅栏。
             if(source.LocationKind==5)throw Failure("WorldItemChanged");
-            Apply(items,source,move,content);
+            mergedMove=TryMergeMaterialMove(items,source,move,content,retired,out transferred);
+            if(!mergedMove)Apply(items,source,move,content,candidate);
         }
         candidate.Items=items.Values.ToArray();
         // 玩家始终保有实际装备的包；直接卸掉最后一包不是换包。原目标4分支会原子交换
@@ -164,7 +165,9 @@ internal static class AccountInventoryMoves
                 """,new{Player=player,Selected=selected.Length==0?null:selected,Version=committed},tx,cancellationToken:ct));
         }
         var actual=items.TryGetValue(move.InstanceId,out var surviving)?surviving:source;
-        var replyAt=mergedPickup?new Position(move.TargetLocationKind,move.TargetParentInstanceId,move.Slot,move.GridX,move.GridY,move.QuarterTurns):At(actual);
+        // 部分并堆的源仍在原格，完整并堆的源已退休；两种回执都描述用户指定目标，
+        // 由Transferred与完整Profile共同确认数量，不能把源剩余位置冒充目标。
+        var replyAt=mergedPickup||mergedMove?new Position(move.TargetLocationKind,move.TargetParentInstanceId,move.Slot,move.GridX,move.GridY,move.QuarterTurns):At(actual);
         var reply=new InventoryMoveReply{CommandId=move.CommandId,CommittedVersion=committed,InstanceId=move.InstanceId,
             OperationKind=move.OperationKind,TargetLocationKind=replyAt.Kind,TargetParentInstanceId=replyAt.Parent,
             Slot=replyAt.Slot,GridX=replyAt.X,GridY=replyAt.Y,QuarterTurns=replyAt.Turns,WholeStack=move.WholeStack,Transferred=transferred,
@@ -189,7 +192,7 @@ internal static class AccountInventoryMoves
     }
 
     private static void Apply(Dictionary<string,OnlineOwnedItemSnapshot> items,OnlineOwnedItemSnapshot source,
-        InventoryMoveRequest move,ContentManifestValidator content)
+        InventoryMoveRequest move,ContentManifestValidator content,OnlineOwnedAssetSnapshot candidate)
     {
         var original=At(source);
         var destination=new Position(move.TargetLocationKind,move.TargetParentInstanceId,move.Slot,move.GridX,move.GridY,move.QuarterTurns);
@@ -205,6 +208,19 @@ internal static class AccountInventoryMoves
                 foreach(var child in items.Values.Where(i=>i.LocationKind==1&&i.ParentInstanceId==old.InstanceId))
                     child.ParentInstanceId=source.InstanceId;
             }
+            return;
+        }
+        if(destination.Kind==8)
+        {
+            if(content.RequireItem(source.ContentId).UseKind==0||original.Kind is not (0 or 1 or 8))
+                throw Failure("InvalidCombatLocation");
+            var outgoing=items.Values.SingleOrDefault(i=>i.InstanceId!=source.InstanceId&&At(i)==destination);
+            Put(source,destination);
+            if(outgoing==null)return;
+            // 与原ToolbeltService一致：工具槽互换保持两件真实实例；包/仓库进工具槽时，
+            // 先在候选中腾出来源位置，再让旧工具回装备包。不能先写SQL再寻找退路。
+            if(original.Kind==8)Put(outgoing,original);
+            else ReturnToolToBackpack(items,outgoing,content,candidate);
             return;
         }
         var moving=new List<OnlineOwnedItemSnapshot>{source};
@@ -237,6 +253,54 @@ internal static class AccountInventoryMoves
             if(target!=null)Put(target,original); // 原TryPlaceSpell：两个原卡原子换位，不重建次数或附件。
         }
         foreach(var item in moving)Put(item,destination);
+    }
+
+    /// <summary>
+    /// Hub与DS同样按原材料实物补入目标容量，部分转移保留源ID/位置，全部并入才登记退休。
+    /// 操作仍在账号行锁内的候选表；SQL、Revision、退休事实和幂等收据由原统一提交段写入。
+    /// </summary>
+    private static bool TryMergeMaterialMove(Dictionary<string,OnlineOwnedItemSnapshot> items,OnlineOwnedItemSnapshot source,
+        InventoryMoveRequest move,ContentManifestValidator content,List<OnlineOwnedItemSnapshot> retired,out ulong transferred)
+    {
+        transferred=0;
+        if(source.MaterialState==null||move.TargetLocationKind!=1)return false;
+        var destination=new Position(1,move.TargetParentInstanceId,move.Slot,move.GridX,move.GridY,move.QuarterTurns);
+        var target=items.Values.FirstOrDefault(i=>i.InstanceId!=source.InstanceId&&At(i)==destination
+            &&i.ContentId==source.ContentId&&i.MaterialState!=null&&i.MaterialState.MaterialKey==source.MaterialState.MaterialKey);
+        if(target==null)return false;
+        ulong room=content.RequireItem(target.ContentId).MaterialItemCapacityGmu-target.MaterialState!.Quantity;
+        transferred=Math.Min(source.MaterialState.Quantity,room);
+        if(transferred==0)throw Failure("BackpackFull");
+        target.MaterialState.Quantity+=transferred;
+        if(transferred==source.MaterialState.Quantity){items.Remove(source.InstanceId);retired.Add(source);}
+        else source.MaterialState.Quantity-=transferred;
+        return true;
+    }
+
+    private static void ReturnToolToBackpack(Dictionary<string,OnlineOwnedItemSnapshot> items,OnlineOwnedItemSnapshot outgoing,
+        ContentManifestValidator content,OnlineOwnedAssetSnapshot candidate)
+    {
+        var bag=items.Values.SingleOrDefault(i=>i.LocationKind==4);
+        if(bag==null)throw Failure("BackpackFull");
+        var bagRules=content.RequireItem(bag.ContentId);var shape=content.RequireItem(outgoing.ContentId);
+        // 这是离散HTTP事务；复用正式完整规则检查候选，避免在业务服另写一套Shape空洞、
+        // 旋转和可堆叠判定。仅试合法外界内的格位，转角/行/列顺序与Unity工具回包一致。
+        for(int turn=0;turn<4;turn++)
+        {
+            int width=(turn&1)==0?shape.ShapeWidth:shape.ShapeHeight,height=(turn&1)==0?shape.ShapeHeight:shape.ShapeWidth;
+            for(int y=0;y<=bagRules.BackpackHeight-height;y++)for(int x=0;x<=bagRules.BackpackWidth-width;x++)
+            {
+                Put(outgoing,new(1,bag.InstanceId,-1,x,y,turn));
+                try
+                {
+                    OwnedCombatAssetRules.RequireAccount(candidate,candidate.PlayerId,content.GameplayConfigHash,content);
+                    return;
+                }
+                catch(OnlineFailure failure)when(failure.Code is "InvalidCombatLocation" or "InvalidCombatAsset")
+                { /* 原输入已完整验证；当前候选占格失败，只尝试下一位置，不修改持久资产。 */ }
+            }
+        }
+        throw Failure("BackpackFull");
     }
 
     // 结构移动与商店共用同一服务端完整账号映射；调用方只接已验证DB快照，不能接Client资产草稿。
@@ -292,7 +356,7 @@ internal static class AccountInventoryMoves
     private static bool Scale(float value)=>float.IsFinite(value)&&Math.Abs(value)>.00001f;
 
     /// <summary>
-    /// 逐项保持原BackpackOrganizeOps：按ID合并兼容GMU，再以类型/内容/面积/ID整组排格。
+    /// 与共用BackpackOrganizeOps同序：按ID合并兼容GMU，再以类型/内容/面积/ID整组向左上排格。
     /// 候选完全成功后才写SQL；找不到位置、容量不足或版本冲突不会产生半份材料或丢失源身份。
     /// </summary>
     private static void Organize(Dictionary<string,OnlineOwnedItemSnapshot> items,OnlineOwnedItemSnapshot bag,
@@ -334,6 +398,8 @@ internal static class AccountInventoryMoves
         foreach(var group in groups)
         {
             bool placed=false;int originalTurns=group.First.QuarterTurns;
+            // 与Unity共用规则保持相同坐标语义：Y=0是上方，每行从X=0向右填充。
+            // 每个原点先试原朝向，全部候选合法后再由外层SQL事务提交，失败不改变玩家资产。
             for(int y=0;y<bagRules.BackpackHeight&&!placed;y++)for(int x=0;x<bagRules.BackpackWidth&&!placed;x++)for(int turn=0;turn<4&&!placed;turn++)
             {
                 int rotation=(originalTurns+turn)%4;

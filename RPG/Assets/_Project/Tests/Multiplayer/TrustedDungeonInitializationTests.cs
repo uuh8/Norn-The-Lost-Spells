@@ -152,7 +152,7 @@ namespace Game.Multiplayer.Tests
             Assert.That(_world.Registry, Is.SameAs(registry)); Assert.That(Field(_world, "_dungeonRuntime"), Is.SameAs(runtime));
         }
 
-        [Test] public void ReusedCastPublishesOnlyToCurrentCombatOwnerAndRemoteBindCannotSendLocalIntent()
+        [Test] public void ReboundCastKeepsOneCombatOwnerAndRemoteBindCannotSendLocalIntent()
         {
             PrepareLiveWorldWithInactiveManager();
             var root = new GameObject("RetainedPredictionActor"); root.SetActive(false); root.transform.SetParent(_root.transform, false);
@@ -170,29 +170,29 @@ namespace Game.Multiplayer.Tests
                 Assert.That(CountOwnedHandlers(captured, previous), Is.EqualTo(1), "重复Bind不能积累同一Owner的订阅。");
                 captured.Invoke(default);
                 Assert.That(observed, Is.EqualTo(1));
-                previous.Dispose();
-                Assert.That(CountOwnedHandlers(IntentHandlers(driver), previous), Is.Zero,
-                    "角色比Manager活得久；旧Combat释放时必须解绑自己真正持有的Cast委托。");
-                // 多播委托可能已被当前调用捕获。即使Dispose完成，旧Owner也必须自行拒绝迟到发布。
-                Assert.DoesNotThrow(() => captured.Invoke(default)); Assert.That(observed, Is.EqualTo(2));
+                // Manager只拥有传输Adapter；换连接不能提前Dispose仍承载角色/物资的Combat。
                 var replacement = CreateInactiveManager("CastReplacementManager");
                 typeof(NetworkManager).GetProperty("singleton").SetValue(null, replacement);
                 typeof(OnlineWorldBootstrap).GetMethod("BindNetwork", Private).Invoke(_world, null);
                 var current = _world.Combat;
+                Assert.That(current, Is.SameAs(previous), "网络换代保留原Gameplay Owner，不能用重建状态消除重复订阅。");
                 current.BindClient(slot, 1, 2, true); current.BindClient(slot, 1, 2, true);
                 Assert.That(slot.Cast, Is.SameAs(driver), "重连复用角色Driver，不重发资产或用销毁角色掩盖委托泄漏。");
                 var active = IntentHandlers(driver);
-                Assert.That(CountOwnedHandlers(active, previous), Is.Zero);
                 Assert.That(CountOwnedHandlers(active, current), Is.EqualTo(1));
-                active.Invoke(default); Assert.That(observed, Is.EqualTo(3), "真实事件仍保留非Combat订阅者。");
+                active.Invoke(default); Assert.That(observed, Is.EqualTo(2), "真实事件仍保留非Combat订阅者。");
                 current.BindClient(slot, 1, 2, false);
                 Assert.That(CountOwnedHandlers(IntentHandlers(driver), current), Is.Zero, "Replica远端角色没有本机发送权限。");
-                current.Dispose(); IntentHandlers(driver).Invoke(default); Assert.That(observed, Is.EqualTo(4));
+                current.Dispose();
+                Assert.That(CountOwnedHandlers(IntentHandlers(driver), current), Is.Zero);
+                // 已被调用者捕获的旧多播委托仍可到达；终止Owner自行拒绝，不能清掉独立观察者。
+                Assert.DoesNotThrow(() => captured.Invoke(default)); Assert.That(observed, Is.EqualTo(3));
+                IntentHandlers(driver).Invoke(default); Assert.That(observed, Is.EqualTo(4));
             }
             finally { driver.IntentProduced -= independentObserver; }
         }
 
-        [Test] public void ReplacingFrozenCombatOwnerRestoresOnlyItsCapturedAnimatorSpeed()
+        [Test] public void RebindingFrozenCombatPreservesFreezeAndDisposeRestoresOnlyCapturedAnimatorSpeed()
         {
             PrepareLiveWorldWithInactiveManager();
             var root = new GameObject("RetainedFrozenActor"); root.SetActive(false); root.transform.SetParent(_root.transform, false);
@@ -202,18 +202,20 @@ namespace Game.Multiplayer.Tests
             var previous = _world.Combat;
             SetWorld("_frozen", true); previous.Present(1);
             Assert.That(animator.speed, Is.Zero, "先观察真实Present冻结边沿，不能直接伪造缓存中的速度。");
-            previous.Dispose();
-            Assert.That(animator.speed, Is.EqualTo(.65f),
-                "旧Combat持有冻结权限；角色跨Manager存活时必须恢复原速，不能把speed=0交给默认未冻结的新Owner。");
+            // 冻结属于存活Combat；连接重绑不交还Animator控制权，真正解冻/终止才归还作者速度。
             var replacement = CreateInactiveManager("FrozenReplacementManager");
             typeof(NetworkManager).GetProperty("singleton").SetValue(null, replacement);
             typeof(OnlineWorldBootstrap).GetMethod("BindNetwork", Private).Invoke(_world, null);
+            Assert.That(_world.Combat, Is.SameAs(previous));
+            Assert.That(animator.speed, Is.Zero, "网络换代不能使仍Frozen的角色恢复播放。");
             SetWorld("_frozen", false); _world.Combat.Present(2);
-            Assert.That(animator.speed, Is.EqualTo(.65f), "不能将作者原速度强改成1，也不能依赖新Owner不存在的冻结恢复边沿。");
+            Assert.That(animator.speed, Is.EqualTo(.65f), "同Owner在解冻边沿恢复原速，不能强改成1。");
             SetWorld("_frozen", true); _world.Combat.Present(3);
-            SetWorld("_frozen", false); _world.Combat.Present(4);
+            Assert.That(animator.speed, Is.Zero);
+            _world.Combat.Dispose();
+            Assert.That(animator.speed, Is.EqualTo(.65f), "终止仍Frozen的Owner必须归还所捕获的原速度。");
             animator.speed = .8f; _world.Combat.Dispose();
-            Assert.That(animator.speed, Is.EqualTo(.8f), "Owner已经结束冻结后，Dispose不能用历史快照覆盖角色后来的速度。");
+            Assert.That(animator.speed, Is.EqualTo(.8f), "重复Dispose不能用历史快照覆盖角色后来的速度。");
         }
 
         private static Action<OnlineCastIntent> IntentHandlers(OnlineCastDriver driver) =>

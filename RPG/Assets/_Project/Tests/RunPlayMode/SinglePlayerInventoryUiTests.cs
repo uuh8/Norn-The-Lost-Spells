@@ -37,6 +37,8 @@ namespace Game.Run.Tests
         private bool _configured;
         private EditorWindow _previousWindow;
         private bool _unrecognizedProfile;
+        // 真实Profile仍写每例GUID的Temp目录；画面证据单独按轮保留，不覆盖历史截图。
+        private readonly string _evidencePath = "TestResults/UiAudit/SinglePlayerInventoryUiTests/" + DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffZ") + "-" + Guid.NewGuid().ToString("N");
 
         [UnitySetUp]
         public IEnumerator SetUp()
@@ -134,13 +136,33 @@ namespace Game.Run.Tests
         public IEnumerator PointerDropUsesRealGridCellsAndLShapeHole()
         {
             InventoryItemSnapshot corner = Item("hub.corner");
+            Assert.That(corner.Rules.Shape.Width, Is.EqualTo(2)); Assert.That(corner.Rules.Shape.Height, Is.EqualTo(2));
+            Assert.That(corner.Rules.Shape.CellCount, Is.EqualTo(3), "本例必须是真实三格L形，不能因资源改变退化成实心矩形。");
             Begin(corner);
             var data = new PointerEventData(Find<EventSystem>()) { position = GridPoint(0, 0) };
             ExecuteEvents.Execute(_grid.gameObject, data, ExecuteEvents.dropHandler);
             AssertLocation(corner.InstanceId, new GridPlacement(0, 0, 0).InBackpack(_grid.BackpackId));
-            InventoryItemView view = View(corner.InstanceId);
-            Assert.That(view.IsRaycastLocationValid(GridPoint(1, 0), null), Is.False, "L 的右上空洞应放行 raycast。");
-            Assert.That(view.IsRaycastLocationValid(GridPoint(0, 0), null), Is.True);
+            // 资产命令同步完成，表现按Controller约定在LateUpdate重建；同栈全Scene查找会取到旧仓库Row，
+            // Row本来就没有占格过滤。等待正常帧后仅检查真实Grid，不能直接调用Refresh绕过生命周期。
+            var holes = new[] { new Vector2Int(1, 0), new Vector2Int(1, 1), new Vector2Int(0, 1), new Vector2Int(0, 0) };
+            for (int turn = 0; turn < 4; turn++)
+            {
+                yield return null; Canvas.ForceUpdateCanvases();
+                InventoryItemView view = null;
+                foreach (var candidate in _grid.GetComponentsInChildren<InventoryItemView>())
+                    if (candidate.Snapshot.InstanceId == corner.InstanceId) view = candidate;
+                Assert.That(view, Is.Not.Null, "提交后的实例必须出现在真实背包Grid。");
+                Assert.That(view.Snapshot.Location, Is.EqualTo(new GridPlacement(0, 0, turn).InBackpack(_grid.BackpackId)));
+                Assert.That(view.DisplayTurns, Is.EqualTo(turn));
+                for (int y = 0; y < 2; y++) for (int x = 0; x < 2; x++)
+                    Assert.That(view.IsRaycastLocationValid(GridPoint(x, y), null),
+                        Is.EqualTo(new Vector2Int(x, y) != holes[turn]), "L形旋转" + turn + "：空洞必须放行，实格必须接受raycast。");
+                _ui.BeginDrag(Current(corner.InstanceId), Vector2.zero, null, false, Vector2Int.zero);
+                _ui.RotateDrag(); _ui.SubmitToBackpack(0, 0, _grid.BackpackId);
+                AssertLocation(corner.InstanceId, new GridPlacement(0, 0, (turn + 1) % 4).InBackpack(_grid.BackpackId));
+            }
+            // 最后一轮已恢复原朝向，保留原右上空洞实际接收药瓶和实格冲突拒绝两项资产断言。
+            yield return null; Canvas.ForceUpdateCanvases();
             Begin(Item("hub.potion")); data.position = GridPoint(1, 0);
             ExecuteEvents.Execute(_grid.gameObject, data, ExecuteEvents.dropHandler);
             Assert.That(Item("hub.potion").Location.X, Is.EqualTo(1));
@@ -232,7 +254,8 @@ namespace Game.Run.Tests
             Type gameView = Type.GetType("UnityEditor.GameView,UnityEditor");
             if (gameView != null) EditorWindow.GetWindow(gameView).Focus();
             yield return null; yield return new WaitForSecondsRealtime(.3f);
-            ScreenCapture.CaptureScreenshot("Temp/SinglePlayer/inventory-sandbox.png");
+            Directory.CreateDirectory(_evidencePath);
+            ScreenCapture.CaptureScreenshot(Path.Combine(_evidencePath,"inventory-sandbox.png"));
             yield return null; yield return new WaitForSecondsRealtime(.3f);
             _pause.RequestPause(RunPauseReason.PauseMenu); _ui.Close();
             Assert.That(_pause.HasReason(RunPauseReason.Inventory), Is.False);

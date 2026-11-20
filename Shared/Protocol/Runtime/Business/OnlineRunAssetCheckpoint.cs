@@ -27,7 +27,10 @@ namespace Game.NetworkProtocol
         public const int MaximumGroundItems = MaximumMembers * OnlineOwnedAssetSnapshot.MaximumItems;
         public const int MaximumActiveItems = MaximumMembers * OnlineOwnedAssetSnapshot.MaximumItems + MaximumGroundItems;
         public const int MaximumRetiredItems = MaximumActiveItems;
-        public const int MaximumWorldKeys = 128;
+        // 运行时当前地址预算仍为128；检查点还可能需要替上一份已确认Head的resident地址
+        // 写一次空tombstone，之后才能忘记。额外128仅容纳零payload连续性证据，不扩大活世界容量。
+        public const int MaximumCurrentWorldKeys = 128;
+        public const int MaximumWorldKeys = MaximumCurrentWorldKeys * 2;
         public const int MaximumWordsPerChunk = 32768;
         public const int MaximumFlightsPerMember = 8;
         public uint SchemaVersion;
@@ -134,7 +137,11 @@ namespace Game.NetworkProtocol
         public string InstanceId = "";
         public bool Eligible;
     }
-    /// <summary>已正式发布的所有历史Key（含tombstone），只保存数量/版本，不恢复Solver规则执行。</summary>
+    /// <summary>
+    /// 当前正式发布的Key，以及关闭上一份已确认Head中旧resident生命周期的空tombstone。
+    /// tombstone完整保存并读回确认后，下一份Head可以省略；不是永久携带全世界经过的地址。
+    /// 只保存数量/版本，不恢复Solver规则执行。字段布局与既有Schema4正文保持不变。
+    /// </summary>
     [Serializable] public sealed class OnlineRunAssetCheckpointWorld
     {
         public string WorldId = "";

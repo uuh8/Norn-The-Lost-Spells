@@ -13,7 +13,15 @@ namespace Game.UI
     {
         [SerializeField, Min(48)] private float _cellSize = 112;
         [SerializeField, Min(1)] private int _minimumRows = 4;
-        private struct Group { public InventoryItemSnapshot Item; public int Count, MemberIndex; public string Caption; }
+        private struct Group
+        {
+            // Item只负责当前代表实例与拖动身份；聚合数字另存，不能把合计次数写回代表Snapshot。
+            public InventoryItemSnapshot Item;
+            public int Count;
+            public long SpellCharges;
+            public bool UnlimitedSpell;
+            public string Caption;
+        }
         private sealed class GroupOrder : IComparer<Group>
         {
             public static readonly GroupOrder Instance = new GroupOrder();
@@ -96,22 +104,36 @@ namespace Game.UI
                 _instanceCount++; _allKinds.Add(item.ContentId); if (!Show(item)) continue;
                 // 容器一份一格显示自己的组分；其他物品继续按种类汇总，不更改真实 InstanceId。
                 if(item.Kind==ItemKind.Container)
-                {_groups.Add(new Group {Item=item,Count=1,MemberIndex=1});continue;}
+                {_groups.Add(new Group {Item=item,Count=1});continue;}
                 if (!_byContent.TryGetValue(item.ContentId, out int index))
-                { index = _groups.Count; _byContent.Add(item.ContentId, index); _groups.Add(new Group { Item = item, Count = 1, MemberIndex = 1 }); }
-                else
-                { var group = _groups[index]; group.Count++; if (item.InstanceId == selected) { group.Item = item; group.MemberIndex = group.Count; } _groups[index] = group; }
+                { index = _groups.Count; _byContent.Add(item.ContentId, index); _groups.Add(new Group { Item = item }); }
+                var group = _groups[index]; group.Count++;
+                if(item.InstanceId==selected)group.Item=item;
+                if(item.Kind==ItemKind.Spell)
+                {
+                    // 仓库没有把两张12次卡合成一张24次卡；这里只将每份可信只读值相加。
+                    // 资格法术仍不显示投射余次；无限组使用∞，有限成员的状态与取出选择完全保留。
+                    int charges=item.RemainingCharges;bool unlimited=item.HasUnlimitedCharges;
+                    var uses=_controller!=null?_controller.PresentationSource?.SpellUsesReadOnly:null;
+                    if(uses!=null && uses.TryGetState(item.InstanceId,out var state))
+                    {charges=state.RemainingCharges;unlimited=state.Unlimited;}
+                    group.SpellCharges+=Math.Max(0,charges);group.UnlimitedSpell|=unlimited;
+                }
+                _groups[index]=group;
             }
             _groups.Sort(GroupOrder.Instance);
             // Caption在库存/筛选变化时预计算。滑动经过新的组时只交换字符串引用和Sprite，不产生每帧格式化。
             for (int i = 0; i < _groups.Count; i++)
             {
                 var group = _groups[i]; var item = group.Item;
-                string state = item.Kind == ItemKind.Spell ? (_controller != null ? _controller.SpellCountCaption(item) : item.HasUnlimitedCharges ? "" : item.RemainingCharges.ToString())
-                    : item.Kind == ItemKind.Material ? item.MaterialQuantity.ToString() : "";
-                // 容器逐份展示，储量由同 Sprite 底部填充表达，不产生溢出的长容量文字。
-                group.Caption = item.Kind==ItemKind.Spell?state:item.DisplayName + (item.Kind == ItemKind.Container ? "" : "\n×" + group.Count + (group.Count > 1 ? " · " + group.MemberIndex + "/" + group.Count : ""))
-                    + (state.Length > 0 ? "\n" + state : ""); _groups[i] = group;
+                // 普通物品保留原名称，只在独立数字行表达一次总份数，不再将×2与1/2重复叠加。
+                // 具体实例仍由原选取保留；材料GMU与容器各自的数量单位不改成普通份数。
+                group.Caption=item.Kind==ItemKind.Spell
+                    ? item.IsQualificationSpell?"":group.UnlimitedSpell?"∞":group.SpellCharges>0?group.SpellCharges.ToString():""
+                    : item.Kind==ItemKind.Container?item.DisplayName
+                    : item.Kind==ItemKind.Material?item.DisplayName+"\n×"+group.Count+"\n"+item.MaterialQuantity
+                    : item.DisplayName+"\n"+group.Count;
+                _groups[i] = group;
             }
             _stamp++; LayoutAndWarmPool(); Render();
         }

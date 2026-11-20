@@ -5,6 +5,185 @@ using UnityEngine;
 
 namespace Game.ElementField.Tests
 {
+    /// <summary>粗液体格与细固体格共用数量事实；期望值直接按8细格和GMU体积手算。</summary>
+    public sealed class WorldReplicaLiquidSolidProjectionTests
+    {
+        private GameObject _root;
+        private LiquidWorldProfile _liquidProfile;
+        private LiquidBehaviorProfile _water;
+        private FixedSolidWorldProfile _solidProfile;
+        private WorldReplicaStore _store;
+        private WorldReplicaSolidReadModel _solids;
+        private WorldReplicaLiquidReadModel _liquids;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _root = new GameObject("Replica coarse liquid projection");
+            _liquidProfile = ScriptableObject.CreateInstance<LiquidWorldProfile>();
+            _water = ScriptableObject.CreateInstance<LiquidBehaviorProfile>();
+            JsonUtility.FromJsonOverwrite("{\"_resolutionScale\":2,\"_cellCapacityGmu\":64}", _liquidProfile);
+            typeof(LiquidWorldProfile).GetField("_materials", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                .SetValue(_liquidProfile, new[] { _water });
+            _solidProfile = ScriptableObject.CreateInstance<FixedSolidWorldProfile>();
+            JsonUtility.FromJsonOverwrite("{\"_maximumChunks\":8,\"_cellCapacityGmu\":64,\"_maximumNavigationBoxesPerChunk\":4}", _solidProfile);
+            _store = new WorldReplicaStore(7, 16, 64, 0, 256);
+            var solidGeometry = new WorldGridGeometry(WorldMaterialDomain.Solid, Vector3.zero, 1, 2);
+            var liquidGeometry = new WorldGridGeometry(WorldMaterialDomain.Liquid, Vector3.zero, 2, 2);
+            Assert.That(_store.ConfigureGeometry(solidGeometry), Is.True);
+            Assert.That(_store.ConfigureGeometry(liquidGeometry), Is.True);
+            Assert.That(_store.ConfigureMaterials(WorldMaterialDomain.Solid, 64, new[] { (byte)MaterialId.Ice, (byte)MaterialId.DriedSlime }, true, 8), Is.True);
+            _solids = new WorldReplicaSolidReadModel(_store, solidGeometry, _solidProfile, _root.transform);
+            _liquids = new WorldReplicaLiquidReadModel(_store, liquidGeometry, _liquidProfile, 1, null, _solids);
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _solids?.Dispose(); Object.DestroyImmediate(_root);
+            Object.DestroyImmediate(_liquidProfile); Object.DestroyImmediate(_water); Object.DestroyImmediate(_solidProfile);
+        }
+
+        [TestCase(0, 0, 0)] [TestCase(0, 0, 1)] [TestCase(0, 1, 0)] [TestCase(0, 1, 1)]
+        [TestCase(1, 0, 0)] [TestCase(1, 0, 1)] [TestCase(1, 1, 0)] [TestCase(1, 1, 1)]
+        public void IceInAnyFineCellBlocksTheCoveringCoarseLiquidCell(int x, int y, int z)
+        {
+            Install(new Vector3Int(x, y, z), MaterialId.Ice, 1);
+            Assert.That(_liquids.IsSolidForSurface(Vector3Int.zero), Is.True,
+                "液体整格墙依据覆盖的全部细格，不能仅采粗格中心；少量Ice也沿Authority整格规则阻挡。");
+        }
+
+        [Test]
+        public void NegativeCoarseCoordinatesDoNotAliasAnotherSolidCell()
+        {
+            Install(new Vector3Int(-2, -2, -2), MaterialId.Ice, 64);
+            Assert.That(_liquids.IsSolidForSurface(new Vector3Int(-1, -1, -1)), Is.True);
+            Assert.That(_liquids.IsSolidForSurface(Vector3Int.zero), Is.False);
+        }
+
+        [Test]
+        public void PartialResidueDoesNotBecomeAWholeLiquidCellWall()
+        {
+            Install(Vector3Int.one, MaterialId.DriedSlime, 32);
+            Assert.That(_liquids.IsSolidForSurface(Vector3Int.zero), Is.False,
+                "DriedSlime的UsesPartialVolume占容量并抬升液面，不能走Ice整格墙语义。");
+        }
+
+        [Test]
+        public void ResidueRaisesLiquidBaseAndRefreshesAfterReplacementAndInterestExit()
+        {
+            Install(Vector3Int.zero, MaterialId.DriedSlime, 32);
+            Assert.That(_liquids.GetPresentationBaseHeight(Vector3Int.zero), Is.EqualTo(.125f).Within(.00001f),
+                "32 GMU / 512 GMU粗格容量 × 2m格高 = 0.125m。");
+            Assert.That(_liquids.GetGameplayBaseHeight(Vector3Int.zero), Is.EqualTo(.125f).Within(.00001f));
+            Install(Vector3Int.zero, MaterialId.DriedSlime, 64, 2);
+            Assert.That(_liquids.GetPresentationBaseHeight(Vector3Int.zero), Is.EqualTo(.25f).Within(.00001f));
+            Assert.That(_store.TotalQuantity(WorldMaterialDomain.Solid), Is.EqualTo(64UL), "只读高度查询不能消费或复制材料。");
+            Assert.That(_store.TryEvictInterest(new WorldChunkKey(WorldMaterialDomain.Solid, 0, 0, 0)), Is.True);
+            Assert.That(_liquids.GetPresentationBaseHeight(Vector3Int.zero), Is.Zero);
+        }
+
+        [Test]
+        public void GeneralPointQueryRetainsActualHeightInsteadOfWholeCellBlocking()
+        {
+            Install(Vector3Int.zero, MaterialId.Ice, 32);
+            Assert.That(_solids.HasBlockingVolume(new Vector3(.5f, .25f, .5f)), Is.True);
+            Assert.That(_solids.HasBlockingVolume(new Vector3(.5f, .75f, .5f)), Is.False,
+                "修液体粗格规则不能把通用点查询改成整格，角色/占据仍读实际体积高度。");
+        }
+
+        [Test]
+        public void SolidOnlyChangesInvalidateLiquidSurfaceChunkVersion()
+        {
+            var key = new ElementChunkKey(0, 0, 0);
+            uint initial = _liquids.GetSurfaceChunkVersion(key, MaterialId.Water);
+            Install(Vector3Int.zero, MaterialId.DriedSlime, 16);
+            uint deposited = _liquids.GetSurfaceChunkVersion(key, MaterialId.Water);
+            Assert.That(deposited, Is.Not.EqualTo(initial),
+                "CPU Renderer按chunk version决定重建；仅改变全局SurfaceVersion不能刷新原Mesh的残留底高。");
+            Install(Vector3Int.zero, MaterialId.DriedSlime, 32, 2);
+            uint replaced = _liquids.GetSurfaceChunkVersion(key, MaterialId.Water);
+            Assert.That(replaced, Is.Not.EqualTo(deposited));
+            Assert.That(_store.TryEvictInterest(new WorldChunkKey(WorldMaterialDomain.Solid, 0, 0, 0)), Is.True);
+            Assert.That(_liquids.GetSurfaceChunkVersion(key, MaterialId.Water), Is.Not.EqualTo(replaced));
+        }
+
+        [Test]
+        public void ResidueColliderDoesNotDoubleCountSupportHeightAboveRealFloor()
+        {
+            var baker = _root.AddComponent<ElementFieldSolidBaker>();
+            var ground = new GameObject("Projection support floor"); ground.transform.SetParent(_root.transform);
+            ground.transform.position = new Vector3(1, -.1f, 1);
+            ground.AddComponent<BoxCollider>().size = new Vector3(4, .2f, 4);
+            var residue = new GameObject("Generated partial residue support"); residue.transform.SetParent(_root.transform);
+            residue.transform.position = new Vector3(1, .125f, 1);
+            residue.AddComponent<GeneratedMaterialSolidCollider>();
+            residue.AddComponent<BoxCollider>().size = new Vector3(.8f, .25f, .8f);
+            Install(new Vector3Int(1, 0, 1), MaterialId.DriedSlime, 16);
+            Physics.SyncTransforms();
+            // 先证明真实Raycast能命中残留顶面，避免没有碰撞命中而让过滤测试空通过。
+            Assert.That(baker.TrySampleLiquidSupport(new Vector3(1, .5f, 1), 8, out float rawHeight, out _), Is.True);
+            Assert.That(rawHeight, Is.EqualTo(.25f).Within(.0001f));
+            _liquids = new WorldReplicaLiquidReadModel(_store,
+                new WorldGridGeometry(WorldMaterialDomain.Liquid, Vector3.zero, 2, 2), _liquidProfile, 1, baker, _solids);
+            Assert.That(_liquids.TryGetTerrainSupportForPresentation(Vector3Int.zero, out var support), Is.True);
+            Assert.That(support.Height, Is.EqualTo(0f).Within(.0001f), "残留只贡献GMU底高，terrain support仍取真实地板。");
+            Assert.That(_liquids.GetPresentationBaseHeight(Vector3Int.zero), Is.EqualTo(.0625f).Within(.0001f),
+                "16/512×2m=0.0625m；不能再叠加Collider的0.25m顶面。");
+            Assert.That(_store.TotalQuantity(WorldMaterialDomain.Solid), Is.EqualTo(16UL));
+        }
+
+        [TestCase(448u, 1.8f)]
+        [TestCase(447u, 2f)]
+        public void LiquidColumnInheritsTerrainOnlyWhenLiquidAndResidueExactlyFillLowerCell(uint lowerWater, float expectedBase)
+        {
+            var baker = _root.AddComponent<ElementFieldSolidBaker>();
+            var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            typeof(ElementFieldSolidBaker).GetField("_solidLayerMask", flags).SetValue(baker, (LayerMask)(1 << 29));
+            typeof(ElementFieldSolidBaker).GetField("_includeDefaultEnvironment", flags).SetValue(baker, false);
+            var ground = new GameObject("Offset terrain plane for full liquid column"); ground.transform.SetParent(_root.transform);
+            ground.layer = 29; ground.transform.position = new Vector3(1, -.3f, 1);
+            ground.AddComponent<BoxCollider>().size = new Vector3(4, .2f, 4);
+            Install(Vector3Int.zero, MaterialId.DriedSlime, 64);
+            InstallLiquidColumn(lowerWater, 64);
+            Physics.SyncTransforms();
+            _liquids = new WorldReplicaLiquidReadModel(_store,
+                new WorldGridGeometry(WorldMaterialDomain.Liquid, Vector3.zero, 2, 2), _liquidProfile, 1, baker, _solids);
+            Assert.That(_liquids.TryGetTerrainSupportForPresentation(Vector3Int.zero, out var support), Is.True);
+            Assert.That(support.Height, Is.EqualTo(-.2f).Within(.0001f), "必须命中偏离Grid底的真实地板，避免水平默认底掩盖错误。");
+            // 448 Water + 64 residue恰好占满512 GMU，故上格继承-0.2+2=1.8；少1 GMU时不得跨空隙继承。
+            Assert.That(_liquids.GetPresentationBaseHeight(Vector3Int.up), Is.EqualTo(expectedBase).Within(.0001f));
+            Assert.That(_liquids.GetGameplayBaseHeight(Vector3Int.up), Is.EqualTo(expectedBase).Within(.0001f));
+            Assert.That(_store.TotalQuantity(WorldMaterialDomain.Liquid), Is.EqualTo((ulong)lowerWater + 64));
+            Assert.That(_store.TotalQuantity(WorldMaterialDomain.Solid), Is.EqualTo(64UL));
+        }
+
+        private void InstallLiquidColumn(uint lowerWater, uint upperWater)
+        {
+            var words = new uint[25]; words[0] = WorldChunkPayloadCodec.Magic; words[1] = 2; words[3] = 1;
+            WorldChunkPayloadCodec.WriteGeometry(words, 4, new WorldGridGeometry(WorldMaterialDomain.Liquid, Vector3.zero, 2, 2));
+            WorldChunkPayloadCodec.WriteCell(words, 11, new WorldMaterialCellSample(WorldMaterialDomain.Liquid,
+                WorldMaterialStorage.Resident, Vector3Int.zero, (byte)MaterialId.Water, lowerWater));
+            WorldChunkPayloadCodec.WriteCell(words, 18, new WorldMaterialCellSample(WorldMaterialDomain.Liquid,
+                WorldMaterialStorage.Resident, Vector3Int.up, (byte)MaterialId.Water, upperWater));
+            var header = new WorldChunkPayloadHeader(7, 20, new WorldChunkKey(WorldMaterialDomain.Liquid, 0, 0, 0), 1, 0, 1, 1,
+                words.Length, WorldChunkPayloadCodec.ComputeChecksum(words, words.Length), true);
+            Assert.That(_store.TryInstall(header, words, words.Length), Is.True);
+        }
+
+        private void Install(Vector3Int cell, MaterialId material, uint quantity, ulong revision = 1)
+        {
+            var words = new uint[18]; words[0] = WorldChunkPayloadCodec.Magic; words[1] = 1; words[3] = 1;
+            WorldChunkPayloadCodec.WriteGeometry(words, 4, new WorldGridGeometry(WorldMaterialDomain.Solid, Vector3.zero, 1, 2));
+            WorldChunkPayloadCodec.WriteCell(words, 11, new WorldMaterialCellSample(WorldMaterialDomain.Solid,
+                WorldMaterialStorage.Resident, cell, (byte)material, quantity));
+            var key = WorldChunkPayloadCodec.CellKey(WorldMaterialDomain.Solid, cell, 2);
+            var header = new WorldChunkPayloadHeader(7, revision, key, 1, 0, revision, 1,
+                words.Length, WorldChunkPayloadCodec.ComputeChecksum(words, words.Length), true);
+            Assert.That(_store.TryInstall(header, words, words.Length), Is.True);
+        }
+    }
+
     public sealed class WorldReplicaStoreTests
     {
         private static uint[] Payload(WorldMaterialDomain domain, uint quantity, Vector3Int cell = default)
@@ -317,6 +496,113 @@ namespace Game.ElementField.Tests
             Assert.That(store.TotalQuantity(WorldMaterialDomain.Liquid), Is.Zero);
             Assert.That(store.TryInstall(Header(words, WorldMaterialDomain.Liquid, 1, 0, 2), words, 18), Is.True);
             Assert.That(store.TotalQuantity(WorldMaterialDomain.Liquid), Is.EqualTo(20));
+        }
+
+        private static bool RetireInterest(WorldReplicaStore store, WorldChunkKey key)
+        {
+            var contract = typeof(IWorldChunkPayloadInterestSink).Assembly.GetType("Game.Core.IWorldChunkPayloadRetirementSink");
+            Assert.That(contract, Is.Not.Null, "退休属于可信生命周期的可选扩展，不能改变原InterestSink合同。");
+            Assert.That(contract.IsAssignableFrom(typeof(WorldReplicaStore)), Is.True);
+            var method = typeof(WorldReplicaStore).GetMethod("TryRetireInterest");
+            Assert.That(method, Is.Not.Null, "释放只读量后需要显式归还metadata槽。");
+            return (bool)method.Invoke(store, new object[] { key });
+        }
+
+        private static WorldChunkPayloadHeader HeaderAtKey(uint[] words, WorldChunkKey key,
+            ulong revision = 1, ulong generation = 1) => new WorldChunkPayloadHeader(
+                7, revision, key, generation, 0, revision, 12, words.Length,
+                WorldChunkPayloadCodec.ComputeChecksum(words, words.Length), true);
+
+        [Test]
+        public void RetirementRejectsLiveQuantityAndUnknownKeyWithoutMutatingPresentation()
+        {
+            var store = new WorldReplicaStore(7, 1, 4, 0, 64);
+            var words = Payload(WorldMaterialDomain.Liquid, 20);
+            var header = Header(words, WorldMaterialDomain.Liquid, 8, 0, 9);
+            Assert.That(store.TryInstall(header, words, words.Length), Is.True);
+            uint version = store.PresentationVersion;
+            Assert.That(RetireInterest(store, header.Key), Is.False);
+            Assert.That(RetireInterest(store, new WorldChunkKey(WorldMaterialDomain.Liquid, 1, 0, 0)), Is.False);
+            Assert.That(store.TotalQuantity(WorldMaterialDomain.Liquid), Is.EqualTo(20));
+            Assert.That(store.PresentationVersion, Is.EqualTo(version));
+            Assert.That(ReadInstalledHeader(store, header.Key, out var preserved, out _), Is.True);
+            Assert.That(preserved, Is.EqualTo(header));
+        }
+
+        [TestCase(WorldMaterialDomain.LegacyCell)]
+        [TestCase(WorldMaterialDomain.Liquid)]
+        [TestCase(WorldMaterialDomain.Solid)]
+        [TestCase(WorldMaterialDomain.Gas)]
+        public void OneMetadataSlotCanFollowMoreThan128DistinctReleasedKeys(WorldMaterialDomain domain)
+        {
+            var store = new WorldReplicaStore(7, 1, 4, 0, 64);
+            for (int step = 0; step < 130; step++)
+            {
+                var cell = new Vector3Int(step * 4, 0, 0);
+                var key = new WorldChunkKey(domain, step, 0, 0);
+                var words = Payload(domain, 20, cell);
+                // 第一块留下高版本，后续每块从G1/R1开始；只清Header、不清Version会在第二块真实失败。
+                var header = HeaderAtKey(words, key, step == 0 ? 17UL : 1UL, step == 0 ? 9UL : 1UL);
+                Assert.That(store.TryInstall(header, words, words.Length), Is.True, "step=" + step);
+                Assert.That(store.TryGetQuantity(domain, cell, domain == WorldMaterialDomain.LegacyCell
+                    ? (byte)MaterialId.Fire : (byte)MaterialId.Water, out uint quantity), Is.True);
+                Assert.That(quantity, Is.EqualTo(20));
+                Assert.That(store.TryEvictInterest(key), Is.True);
+                uint releasedVersion = store.PresentationVersion;
+                uint releasedDomainVersion = store.DomainVersion(domain);
+                Assert.That(RetireInterest(store, key), Is.True, "step=" + step);
+                Assert.That(store.PresentationVersion, Is.GreaterThan(releasedVersion));
+                Assert.That(store.DomainVersion(domain), Is.GreaterThan(releasedDomainVersion));
+                Assert.That(store.CellCount, Is.Zero); Assert.That(store.TotalQuantity(domain), Is.Zero);
+                Assert.That(ReadInstalledHeader(store, key, out _, out _), Is.False);
+                Assert.That(RetireInterest(store, key), Is.False, "已退休Key不再存在，重复请求不得再次推进版本。");
+            }
+        }
+
+        [Test]
+        public void RetirementCompactsMetadataWithoutChangingAnotherDomainChunk()
+        {
+            var store = new WorldReplicaStore(7, 3, 4, 0, 64);
+            var a = new WorldChunkKey(WorldMaterialDomain.Liquid, 0, 0, 0);
+            var b = new WorldChunkKey(WorldMaterialDomain.Solid, 1, 0, 0);
+            var c = new WorldChunkKey(WorldMaterialDomain.Gas, 2, 0, 0);
+            var wordsA = Payload(a.Domain, 20);
+            var wordsB = Payload(b.Domain, 30, new Vector3Int(4, 0, 0));
+            var wordsC = Payload(c.Domain, 40, new Vector3Int(8, 0, 0));
+            var headerB = HeaderAtKey(wordsB, b, 7, 8);
+            var headerC = HeaderAtKey(wordsC, c, 5, 6);
+            Assert.That(store.TryInstall(HeaderAtKey(wordsA, a, 17, 9), wordsA, wordsA.Length), Is.True);
+            Assert.That(store.TryInstall(headerB, wordsB, wordsB.Length), Is.True);
+            Assert.That(store.TryInstall(headerC, wordsC, wordsC.Length), Is.True);
+            Assert.That(ReadInstalledHeader(store, c, out _, out uint cVersion), Is.True);
+            uint gasVersion = store.DomainVersion(c.Domain);
+            Assert.That(store.TryEvictInterest(a), Is.True); Assert.That(RetireInterest(store, a), Is.True);
+            Assert.That(ReadInstalledHeader(store, b, out var actualB, out _), Is.True);
+            Assert.That(ReadInstalledHeader(store, c, out var actualC, out uint preservedCVersion), Is.True);
+            Assert.That(actualB, Is.EqualTo(headerB)); Assert.That(actualC, Is.EqualTo(headerC));
+            Assert.That(preservedCVersion, Is.EqualTo(cVersion)); Assert.That(store.DomainVersion(c.Domain), Is.EqualTo(gasVersion));
+            Assert.That(store.TotalQuantity(b.Domain), Is.EqualTo(30)); Assert.That(store.TotalQuantity(c.Domain), Is.EqualTo(40));
+            Assert.That(store.CellCount, Is.EqualTo(2));
+            var d = new WorldChunkKey(WorldMaterialDomain.Liquid, 3, 0, 0);
+            var wordsD = Payload(d.Domain, 50, new Vector3Int(12, 0, 0));
+            Assert.That(store.TryInstall(HeaderAtKey(wordsD, d), wordsD, wordsD.Length), Is.True);
+            Assert.That(store.TotalQuantity(d.Domain), Is.EqualTo(50)); Assert.That(store.CellCount, Is.EqualTo(3));
+            Assert.That(ReadInstalledHeader(store, c, out actualC, out _), Is.True); Assert.That(actualC, Is.EqualTo(headerC));
+        }
+
+        [Test]
+        public void TrustedRetirementAlsoReleasesATombstoneSlotForANewKey()
+        {
+            var store = new WorldReplicaStore(7, 1, 4, 0, 64);
+            var key = new WorldChunkKey(WorldMaterialDomain.Liquid, 0, 0, 0);
+            var removed = new WorldChunkPayloadHeader(7, 9, key, 9, 0, 17, 12, 0, 2166136261u, false);
+            Assert.That(store.TryInstall(removed, null, 0), Is.True);
+            Assert.That(RetireInterest(store, key), Is.True,
+                "tombstone没有只读量，但仍占metadata；可信Leave栅栏建立后才可显式退休。");
+            var nextKey = new WorldChunkKey(WorldMaterialDomain.Liquid, 1, 0, 0);
+            var words = Payload(nextKey.Domain, 20, new Vector3Int(4, 0, 0));
+            Assert.That(store.TryInstall(HeaderAtKey(words, nextKey), words, words.Length), Is.True);
+            Assert.That(store.TotalQuantity(nextKey.Domain), Is.EqualTo(20));
         }
     }
 }

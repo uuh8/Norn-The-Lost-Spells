@@ -27,7 +27,7 @@ namespace Game.Multiplayer
         internal bool CanBeginServerRun(out string error)
         {
             error = null;
-            if (_busy || _accountInventoryPending != null || _accountShopPending != null)
+            if (Busy || _roomRecoveryPending || _accountInventoryPending != null || _accountShopPending != null)
             { error = "账号资产操作尚未确认，请先保存或刷新恢复。"; return false; }
             if (!Authenticated || _manifest == null || _view == null || string.IsNullOrEmpty(_view.PlayerId)
                 || _view.Version == 0 || _view.ContentManifestHash != _manifest.Hash)
@@ -40,7 +40,7 @@ namespace Game.Multiplayer
         internal bool TryBeginHubEntry(string scenePathOrName, out string error)
         {
             error = null;
-            if (_accountInventoryPending != null || _accountShopPending != null)
+            if (_roomRecoveryPending || _accountInventoryPending != null || _accountShopPending != null)
             { error = "上一笔账号资产操作结果尚未确认，请先刷新恢复。"; return false; }
             if (!Authenticated || _manifest == null || _view == null || _view.AssetsLocked
                 || !string.IsNullOrEmpty(_view.ActiveRunId))
@@ -88,7 +88,7 @@ namespace Game.Multiplayer
         {
             error = null;
             var value = request.Intent;
-            if (_accountInventoryPending != null || _accountShopPending != null || _busy)
+            if (_roomRecoveryPending || _accountInventoryPending != null || _accountShopPending != null || Busy)
             { error = "已有账号操作等待确认，请勿重复拖放。"; return false; }
             if (!Authenticated || _manifest == null || _view == null || request.CallerId == 0
                 || value.PlayerId != _view.PlayerId || value.ExpectedVersion == 0 || value.ExpectedVersion != _view.Version
@@ -302,6 +302,8 @@ namespace Game.Multiplayer
             if (candidate == null || reply == null) return false;
             var intent = candidate.Request.Intent;
             return MatchesAccountWorldReceipt(intent, reply)
+                && (intent.Kind != OnlineAccountInventoryCommandKind.Move || reply.Transferred == 0
+                    || reply.CommittedVersion > intent.ExpectedVersion && TryGetMaterialMoveEndpoints(candidate, reply, out _, out _))
                 && reply.CommandId == intent.CommandId && reply.InstanceId == intent.ItemId && reply.OperationKind == (int)intent.Kind
                 && reply.CommittedVersion >= intent.ExpectedVersion && reply.TargetLocationKind == intent.TargetLocationKind
                 && reply.TargetParentInstanceId == intent.TargetParentInstanceId && reply.GridX == intent.GridX
@@ -317,7 +319,10 @@ namespace Game.Multiplayer
                     && OnlineAccountWorldItemPose.Same(intent.WorldPose, OnlineAccountInventoryMapping.ToCorePose(receipt.WorldPose));
             if (intent.Kind == OnlineAccountInventoryCommandKind.Pickup)
                 return receipt.WorldOwnerId == intent.WorldOwnerId && receipt.WorldPose == null;
-            return string.IsNullOrEmpty(receipt.WorldOwnerId) && receipt.WorldPose == null && receipt.Transferred == 0;
+            // Move也能把真实固体堆并入另一实例；有量的Move必须再用固定Before核实源/目标，
+            // 不能仅凭一个非零Transferred把普通卡/瓶移动当成合法材料结果。
+            return string.IsNullOrEmpty(receipt.WorldOwnerId) && receipt.WorldPose == null
+                && (receipt.Transferred == 0 || intent.Kind == OnlineAccountInventoryCommandKind.Move);
         }
 
         private bool TryConfirmAccountInventoryCommand(InventoryMoveReply receipt, OnlineProfileReply profile, out string error)
@@ -365,6 +370,8 @@ namespace Game.Multiplayer
 
         private static bool ProfileConfirmsAccountCommand(AccountInventoryPending candidate, OnlineProfileReply profile, InventoryMoveReply receipt)
         {
+            if (candidate.Request.Intent.Kind == OnlineAccountInventoryCommandKind.Move && receipt.Transferred != 0)
+                return ProfileConfirmsMaterialMove(candidate, profile, receipt);
             if (candidate.Request.Intent.Kind == OnlineAccountInventoryCommandKind.Drop)
             {
                 if (!ProfileContainsAccountMove(profile, receipt) || profile.WorldItems == null) return false;
@@ -401,6 +408,60 @@ namespace Game.Multiplayer
             return TryAccountTargetMaterialTotal(candidate.Before.Items, before.ContentId, before.MaterialState.MaterialKey, receipt, out var oldTotal)
                 && TryProfileTargetMaterialTotal(profile, before.ContentId, before.MaterialState.MaterialKey, receipt, out var newTotal)
                 && oldTotal <= ulong.MaxValue - receipt.Transferred && newTotal == oldTotal + receipt.Transferred;
+        }
+
+        /// <summary>
+        /// 账号材料Move与世界Pickup共用Transferred合同，但确认语义不同：同包内并堆总量不变，
+        /// 因此必须固定目标原ID和准确格位，不能用“整包增加”或“源ID已到目标”判断成功。
+        /// Before来自首次发包时的深拷贝；Unknown重试保持同一命令和两端数量证据。
+        /// </summary>
+        private static bool TryGetMaterialMoveEndpoints(AccountInventoryPending candidate, InventoryMoveReply receipt,
+            out Game.Core.OnlineOwnedItemSnapshot source, out Game.Core.OnlineOwnedItemSnapshot target)
+        {
+            source = null; target = null;
+            if (candidate?.Before?.Items == null || receipt == null || receipt.Transferred == 0
+                || receipt.TargetLocationKind != 1 || string.IsNullOrEmpty(receipt.TargetParentInstanceId)) return false;
+            foreach (var item in candidate.Before.Items)
+                if (item != null && item.InstanceId == receipt.InstanceId) source = item;
+            if (source?.MaterialState == null || source.MaterialState.SchemaVersion != 1
+                || source.MaterialState.Quantity < receipt.Transferred || source.LocationKind == 5) return false;
+            foreach (var item in candidate.Before.Items)
+            {
+                if (item == null || item.InstanceId == source.InstanceId || item.LocationKind != receipt.TargetLocationKind
+                    || item.ParentInstanceId != receipt.TargetParentInstanceId || item.Slot != receipt.Slot
+                    || item.X != receipt.GridX || item.Y != receipt.GridY || item.QuarterTurns != receipt.QuarterTurns) continue;
+                if (target != null || item.ContentId != source.ContentId || item.MaterialState == null
+                    || item.MaterialState.SchemaVersion != 1 || item.MaterialState.MaterialKey != source.MaterialState.MaterialKey
+                    || item.MaterialState.Quantity == 0) return false;
+                target = item;
+            }
+            return target != null && target.MaterialState.Quantity <= ulong.MaxValue - receipt.Transferred;
+        }
+
+        private static bool ProfileConfirmsMaterialMove(AccountInventoryPending candidate, OnlineProfileReply profile, InventoryMoveReply receipt)
+        {
+            if (profile.Items == null || !TryGetMaterialMoveEndpoints(candidate, receipt, out var source, out var target)) return false;
+            Game.NetworkProtocol.OnlineItemReply sourceAfter = null, targetAfter = null;
+            foreach (var item in profile.Items)
+            {
+                if (item == null) return false;
+                if (item.InstanceId == source.InstanceId) { if (sourceAfter != null) return false; sourceAfter = item; }
+                if (item.InstanceId == target.InstanceId) { if (targetAfter != null) return false; targetAfter = item; }
+            }
+            if (targetAfter == null || targetAfter.ContentId != target.ContentId || targetAfter.MaterialState == null
+                || targetAfter.MaterialState.SchemaVersion != 1 || targetAfter.MaterialState.MaterialKey != target.MaterialState.MaterialKey
+                || targetAfter.MaterialState.Quantity != target.MaterialState.Quantity + receipt.Transferred
+                || targetAfter.LocationKind != target.LocationKind || targetAfter.ParentInstanceId != target.ParentInstanceId
+                || targetAfter.Slot != target.Slot || targetAfter.X != target.X || targetAfter.Y != target.Y
+                || targetAfter.QuarterTurns != target.QuarterTurns) return false;
+            ulong remaining = source.MaterialState.Quantity - receipt.Transferred;
+            // 部分并堆时源保留原位置与余量；完整并堆后原身份必须退休，不能留下另一份同ID材料。
+            if (remaining == 0) return sourceAfter == null;
+            return sourceAfter != null && sourceAfter.ContentId == source.ContentId && sourceAfter.MaterialState != null
+                && sourceAfter.MaterialState.SchemaVersion == 1 && sourceAfter.MaterialState.MaterialKey == source.MaterialState.MaterialKey
+                && sourceAfter.MaterialState.Quantity == remaining && sourceAfter.LocationKind == source.LocationKind
+                && sourceAfter.ParentInstanceId == source.ParentInstanceId && sourceAfter.Slot == source.Slot
+                && sourceAfter.X == source.X && sourceAfter.Y == source.Y && sourceAfter.QuarterTurns == source.QuarterTurns;
         }
         private static bool TryAccountTargetMaterialTotal(Game.Core.OnlineOwnedItemSnapshot[] items, string content, byte key, InventoryMoveReply receipt, out ulong total)
         {

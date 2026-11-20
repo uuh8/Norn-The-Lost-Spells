@@ -16,7 +16,9 @@ namespace Game.Run.Tests
     /// <summary>最新作者Review验证普通Items物理投掷、三处右键、图片与只读资源格式。</summary>
     public sealed class ItemsAndPopupPlayModeTests:BackpackWorkspacePlayModeTests
     {
-        protected override string EvidencePath=>"TestResults/SinglePlayer/M6-T21-ItemsAndPopup";
+        // 每轮独立保留截图/Profiler证据，不能覆盖历史阶段结果；不改变Profile或测试断言。
+        private readonly string _evidencePath = "TestResults/UiAudit/ItemsAndPopupPlayModeTests/" + System.DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffZ") + "-" + System.Guid.NewGuid().ToString("N");
+        protected override string EvidencePath => _evidencePath;
         private static T Ref<T>(Object target,string field) where T:Object
         {var property=new SerializedObject(target).FindProperty(field);return property!=null?(T)property.objectReferenceValue:(T)target.GetType().GetField(field,System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(target);}
         protected override ItemCatalog CustomizeCatalog(ItemCatalog catalog)
@@ -80,7 +82,8 @@ namespace Game.Run.Tests
             var card=Card(Backpack,"ice");Assert.That(card.Snapshot.IsQualificationSpell,Is.True);
             Assert.That(Ref<Text>(card,"_spellCount").text,Is.Empty);
             var panel=Backpack.GetComponentInChildren<WandProgramPanelView>();string text=Ref<Text>(panel,"_header").text;
-            Assert.That(text,Does.Contain("Mana 240</color>").And.Contain("恢复 14/s").And.Contain("冷却 0.69s</color>"));
+            // 当前Header明确展示Mana上限；仍检查整数格式及真实资源未被UI取整写回。
+            Assert.That(text,Does.Contain("Mana上限 240</color>").And.Contain("恢复 14/s").And.Contain("冷却 0.69s</color>"));
             Assert.That(text,Does.Not.Contain("239.9").And.Not.Contain("14.2").And.Not.Contain("0/0.69"));
             Session.WandsReadOnly.TryGetState("w0",out var actual);Assert.That(actual.MaxMana,Is.EqualTo(239.9f));
             yield return new WaitForEndOfFrame();Capture("qualification-no-counter-max-stats.png");

@@ -31,7 +31,9 @@ namespace Game.Character
         [Tooltip("未配置 Sight Origin 时，从角色 Root 向上偏移的眼睛高度(米)。")]
         [Min(0f)] [SerializeField] private float _lineOfSightOriginHeight = 1.6f;
 
-        private HealthComponent _health;
+        // Unity hot reload也会临时序列化private引用；与父类_health同名会冲突。
+        // 这是Awake取得的远程施法缓存，不是Prefab配置或另一份HP状态，保留原生命周期。
+        private HealthComponent _rangedHealth;
         private SpellCaster _spellCaster;
         private WandLoadout[] _validPrograms;
         private int _lastProgramIndex = -1;
@@ -45,7 +47,7 @@ namespace Game.Character
         protected override void Awake()
         {
             base.Awake();
-            _health = GetComponent<HealthComponent>();
+            _rangedHealth = GetComponent<HealthComponent>();
             _spellCaster = GetComponent<SpellCaster>();
             BuildValidProgramCache();
             _kiteState = new EnemyKiteState(this);
@@ -121,8 +123,8 @@ namespace Game.Character
                 ? ResolveAimPoint(target.position)
                 : _castOrigin.position + transform.forward;
 
-            byte team = _health != null ? _health.TeamId : (byte)0;
-            int attackerId = _health != null ? _health.Id : gameObject.GetInstanceID();
+            byte team = _rangedHealth != null ? _rangedHealth.TeamId : (byte)0;
+            int attackerId = _rangedHealth != null ? _rangedHealth.Id : gameObject.GetInstanceID();
             // NPC 与玩家共用输出身份，但命令由服务器递增生成；客户端动画没有授予出手的权限。
             PrepareAuthorityCast();
             _spellCaster.CastProgram(

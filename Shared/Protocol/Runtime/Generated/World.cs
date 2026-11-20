@@ -200,7 +200,7 @@ namespace Game.NetworkProtocol {
     public const int KindFieldNumber = 6;
     private uint kind_;
     /// <summary>
-    /// 1=Baseline、2=Delta、3=安装ACK、4=Resync、5=权威删除、6=订阅Enter、7=订阅Leave。
+    /// 1=Baseline、2=Delta、3=安装ACK、4=Resync、5=权威删除、6=订阅Enter、7=订阅Leave、8=只读液体运动窗口（外层Chunk/版本/订阅为0，body自带anchor，不产生数量ACK）。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]

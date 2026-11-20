@@ -20,6 +20,10 @@ namespace Game.Run.Tests
         private Scene _loadedScene;
         private System.Action _restoreView;
         private readonly List<Object> _assets=new List<Object>();
+        // 输出随本轮fixture隔离；临时GameView恢复报告也保留在同一目录，不覆盖旧证据。
+        private readonly string _evidencePath = "TestResults/UiAudit/SpellProgrammingV2WorkbenchPlayModeTests/" + System.DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffZ") + "-" + System.Guid.NewGuid().ToString("N");
+        private string EvidenceFile(string name)
+        { Directory.CreateDirectory(_evidencePath); return Path.Combine(_evidencePath, name); }
         [UnityTearDown] public IEnumerator Cleanup()
         {
             _restoreView?.Invoke();_restoreView=null;
@@ -65,11 +69,10 @@ namespace Game.Run.Tests
             Assert.Ignore("此项验证Editor保存的独立Sandbox资产，不作为Player Build测试。");yield break;
 #endif
         }
-        private static IEnumerator Capture(string file)
+        private IEnumerator Capture(string file)
         {
             yield return new WaitForEndOfFrame();var texture=ScreenCapture.CaptureScreenshotAsTexture();
-            Directory.CreateDirectory("Temp/Spells");
-            File.WriteAllBytes("Temp/Spells/"+file,texture.EncodeToPNG());Object.Destroy(texture);
+            File.WriteAllBytes(EvidenceFile(file),texture.EncodeToPNG());Object.Destroy(texture);
         }
         [UnityTest] public IEnumerator NativeUgui_ClickSourceAndStepWithoutCommittingGameplay()
         {
@@ -105,12 +108,11 @@ namespace Game.Run.Tests
             foreach(var text in _host.GetComponentsInChildren<Text>())
                 Assert.That(text.text.Contains("Output") || text.text.Contains("DamageMul") || text.text.Contains("候选Mana"),Is.False);
             Assert.That(p.SimulatedBefore.ExecutionRevision,Is.Zero);
-            Directory.CreateDirectory("Temp/Spells");
             yield return new WaitForEndOfFrame();
             // 真实Game View像素证据，不能用HTML草图或直接生成图片替代。
             var screenshot=ScreenCapture.CaptureScreenshotAsTexture();
-            File.WriteAllBytes("Temp/Spells/workbench-native.png",screenshot.EncodeToPNG());Object.Destroy(screenshot);
-            File.WriteAllText("Temp/Spells/workbench-capture.txt",$"{Screen.width}x{Screen.height}; root outputs=4; mana=50; selected modifier=5; no gameplay commit");
+            File.WriteAllBytes(EvidenceFile("workbench-native.png"),screenshot.EncodeToPNG());Object.Destroy(screenshot);
+            File.WriteAllText(EvidenceFile("workbench-capture.txt"),$"{Screen.width}x{Screen.height}; root outputs=4; mana=50; selected modifier=5; no gameplay commit");
         }
         private WandProgramWorkbenchPresenter Build(SpellProgramSandboxDefinition sample)
         {
@@ -191,7 +193,7 @@ namespace Game.Run.Tests
                 if(window!=null)window.Repaint();
                 int remaining=0;current=(int)groupClass.GetMethod("GetCustomCount").Invoke(group,null);
                 for(int i=0;i<current;i++)if((string)label.GetValue(get.Invoke(group,new object[]{built+i}))=="Norn Grid Responsive Test")remaining++;
-                File.WriteAllText("Temp/Spells/game-view-restore.json",$"{{\"TemporaryEntriesRemaining\":{remaining},\"SelectedSizeRestored\":{((int)selected.GetValue(window)==original).ToString().ToLowerInvariant()}}}");
+                File.WriteAllText(EvidenceFile("game-view-restore.json"),$"{{\"TemporaryEntriesRemaining\":{remaining},\"SelectedSizeRestored\":{((int)selected.GetValue(window)==original).ToString().ToLowerInvariant()}}}");
                 Assert.That(remaining,Is.Zero,"测试必须清理自己的临时分辨率。");
             };
             selected.SetValue(window,built+custom);window.Repaint();
@@ -244,8 +246,7 @@ namespace Game.Run.Tests
                 for(int i=0;i<=count;i++){p.Seek(i);view.SetZoom(i%2==0 ? .8f : 1);}
                 long allocated=System.GC.GetAllocatedBytesForCurrentThread()-start;
                 yield return null;
-                Directory.CreateDirectory("Temp/Spells");
-                File.WriteAllText("Temp/Spells/grid-allocation-evidence.json",
+                File.WriteAllText(EvidenceFile("grid-allocation-evidence.json"),
                     $"{{\"ManagedBytesForWarmStepAndZoom\":{allocated},\"RefreshProfilerValid\":{recorder.Valid.ToString().ToLowerInvariant()},\"ProfilerSamples\":{recorder.Count},\"LastRefreshNanoseconds\":{recorder.LastValue}}}");
                 Assert.That(allocated,Is.Zero,"步进/缩放不应每帧重新生成模型、格子或字符串。");
             }

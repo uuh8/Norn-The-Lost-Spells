@@ -22,6 +22,9 @@ namespace Game.UI
         private bool _roomRunning;
         private int _roomPortal;
         private bool _gameplayActive, _gameplayMenu, _gameplayInputCaptured;
+        // 冷恢复暂停时原 World 留在内存供重连，主菜单独占显示与输入。
+        // 该事实来自账户/房间 Owner；不能用 Busy、断线或某段错误文字反推导航归属。
+        private bool _recoveryMenuVisible;
         // 菜单和库存可以同时占用本机输入；总 InputCaptured 只表示“至少一位 Owner”，
         // 不能再用 !MenuOpen 反推库存已经关闭。这里只记录原库存 Controller 的可见性事实。
         private readonly HashSet<int> _inventoryInputOwners = new HashSet<int>(4);
@@ -62,6 +65,9 @@ namespace Game.UI
             EventBus<OnlineRoomChangedEvent>.Subscribe(OnRoom);
             EventBus<OnlineMovementPresentationEvent>.Subscribe(OnGameplay);
             EventBus<InventoryPresentationVisibilityEvent>.Subscribe(OnInventoryVisibility);
+            // 常驻 Dialog 也可能晚启用或临时停用。先重放导航归属，再查询原 World，
+            // 避免同步 Gameplay 重放先打开高层 Canvas 或把登录鼠标锁回游戏。
+            EventBus<OnlineLobbyRequestEvent>.Publish(new OnlineLobbyRequestEvent { Action = OnlineLobbyAction.Observe });
             ReplayCurrentInputPresentation();
         }
         private void OnDisable()
@@ -78,13 +84,14 @@ namespace Game.UI
         }
         private void OnInventoryVisibility(InventoryPresentationVisibilityEvent state)
         {
-            if (state.OwnerId == 0) return;
+            if (_recoveryMenuVisible || state.OwnerId == 0) return;
             if (state.Open) _inventoryInputOwners.Add(state.OwnerId);
             else if (_inventoryInputOwners.Remove(state.OwnerId))
                 _inventoryCaptureReleasedFrame = Time.frameCount;
         }
         private void ReplayCurrentInputPresentation()
         {
+            if (_recoveryMenuVisible) return;
             // EventBus 不缓存 Visibility。Dialog 可能晚于库存启用，或在库存保持打开时重启；
             // 此时从现有原 Controller 的只读显示事实恢复 Owner，不能要求它重新 Open 或关闭重开。
             // FindObjectsByType 会创建数组，只允许在这个离散启用边界使用，绝不放入 Update 热路径。
@@ -105,6 +112,9 @@ namespace Game.UI
         }
         private void OnGameplay(OnlineMovementPresentationEvent view)
         {
+            // 网络停止不等于 World 销毁；旧 World 的 Frozen/MenuOpen 和输入 Owner 事件仍可到达。
+            // 主菜单期间不缓存它们，否则解除导航占用后仍会吞掉新 Esc 或重锁鼠标。
+            if (_recoveryMenuVisible) return;
             // 保留原 View-only 合同的保守保护：尚未观察到 Owner 事件时，非菜单捕获仍属于上层交互。
             // 该 fallback 不能区分“菜单和库存同开”，所以明确 Owner 和其释放帧始终独立保留。
             bool inventoryWasCapturing = _gameplayActive && _gameplayInputCaptured && !_gameplayMenu;
@@ -122,7 +132,7 @@ namespace Game.UI
         }
         private void Update()
         {
-            if (!_gameplayActive || Keyboard.current == null || !Keyboard.current.escapeKey.wasPressedThisFrame) return;
+            if (_recoveryMenuVisible || !_gameplayActive || Keyboard.current == null || !Keyboard.current.escapeKey.wasPressedThisFrame) return;
             // 库存仍打开时 Esc 用于取消拖动/关闭原 Tab；本帧已关闭时，也不能让同一个按键穿透。
             // 明确检查库存 Owner，而非总捕获位；即使先开连接菜单再开 Tab，第一下 Esc 也只属于库存。
             // 释放帧只保护这次输入，下一帧新的 Esc 仍能关闭已经没有库存 Owner 的连接菜单。
@@ -139,12 +149,30 @@ namespace Game.UI
         private void OnDestroy() { if (_instance == this) _instance = null; if (_font != null) Destroy(_font); }
         private void OnRequested(DungeonEntryChoiceRequestedEvent request)
         {
+            if (_recoveryMenuVisible) return;
             _request = request; _panel.SetActive(true); _title.text = request.Label.Replace("F ", string.Empty);
             _roomMode = false; ResetRoomButtons(); _authenticated = false; UpdateIdentity();
             EventBus<OnlineLobbyRequestEvent>.Publish(new OnlineLobbyRequestEvent { Action = OnlineLobbyAction.Observe });
         }
         private void OnIdentity(OnlineLobbyChangedEvent view)
-        { _authenticated = view.Authenticated; if (_request.PortalId != 0 && !_roomMode) UpdateIdentity(); }
+        {
+            _authenticated = view.Authenticated;
+            bool wasRecoveryMenuVisible = _recoveryMenuVisible;
+            _recoveryMenuVisible = view.RecoveryMenuVisible;
+            if (_recoveryMenuVisible)
+            {
+                // 立即撤下已经打开的断线菜单，而不等待下一条 Room 事件。
+                // 只清本 Presentation 的捕获记录；不关闭库存、不发送Gameplay命令、不停止可恢复World。
+                _gameplayActive = _gameplayMenu = _gameplayInputCaptured = false;
+                _roomMode = _roomRunning = false; _roomPortal = 0;
+                _inventoryInputOwners.Clear(); _inventoryCaptureReleasedFrame = -1;
+                _panel.SetActive(false); SetCursor(true);
+                return;
+            }
+            // 解除菜单占用后重新读取本次 World/库存的事实；不复活此前保存的断线视图。
+            if (wasRecoveryMenuVisible) ReplayCurrentInputPresentation();
+            if (_request.PortalId != 0 && !_roomMode) UpdateIdentity();
+        }
         private void UpdateIdentity()
         {
             _single.interactable = _match.interactable = _authenticated;
@@ -160,7 +188,11 @@ namespace Game.UI
         private void Ready() => RoomCommand(OnlineRoomAction.Ready);
         private void StartRoom() => RoomCommand(OnlineRoomAction.Start);
         private void Reconnect() => RoomCommand(OnlineRoomAction.Reconnect);
-        private void RoomCommand(OnlineRoomAction action) => EventBus<OnlineRoomRequestEvent>.Publish(new OnlineRoomRequestEvent { PortalId = _roomPortal, Action = action });
+        private void RoomCommand(OnlineRoomAction action)
+        {
+            if (_recoveryMenuVisible) return;
+            EventBus<OnlineRoomRequestEvent>.Publish(new OnlineRoomRequestEvent { PortalId = _roomPortal, Action = action });
+        }
         private void ResetRoomButtons()
         {
             _single.gameObject.SetActive(true); _match.gameObject.SetActive(true); _cancel.interactable = true;
@@ -172,6 +204,7 @@ namespace Game.UI
         }
         private void OnRoom(OnlineRoomChangedEvent view)
         {
+            if (_recoveryMenuVisible) return;
             if (view.Phase == OnlineRoomPhase.None)
             {
                 // 返回据点结束上一局的输入显示寿命，不让常驻 Dialog 保留已卸载库存的 Owner。
@@ -205,7 +238,7 @@ namespace Game.UI
         }
         private void Submit(DungeonEntryMode mode)
         {
-            if (_request.PortalId == 0) return;
+            if (_recoveryMenuVisible || _request.PortalId == 0) return;
             // 不先自行关框；Run结束选择后才发布Closed，匹配请求本身不能擅自切换场景。
             EventBus<DungeonEntryChoiceSubmittedEvent>.Publish(new DungeonEntryChoiceSubmittedEvent
             { PortalId = _request.PortalId, Actor = _request.Actor, Mode = mode });

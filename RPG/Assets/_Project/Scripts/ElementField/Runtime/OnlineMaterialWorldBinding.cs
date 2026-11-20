@@ -11,7 +11,8 @@ namespace Game.ElementField
     /// 它只管理场景Owner与生命周期，不解析网络、不裁决玩家身份、不复制另一套材料Rendering。
     /// </summary>
     [DisallowMultipleComponent]
-    public sealed class OnlineMaterialWorldBinding : MonoBehaviour, IOnlineMaterialWorldBinding, IOnlineMaterialTransferWorld
+    public sealed class OnlineMaterialWorldBinding : MonoBehaviour, IOnlineMaterialWorldBinding, IOnlineMaterialTransferWorld,
+        IOnlineLiquidMotionWorld
     {
         [SerializeField] private ElementWorldRuntime _world;
         [Header("Bounded replication workspace - target-machine validation required")]
@@ -27,6 +28,7 @@ namespace Game.ElementField
         // 离散装配读取原Adapter的同一ID，避免Multiplayer硬编码第二个WorldId或反向依赖ElementField。
         public string TransferWorldId => _configured && !_detached ? _transferWorldId : null;
         private IWorldReplicationSource _source;
+        private IWorldLiquidMotionSource _motionSource;
         private WorldReplicaBuffer _buffer;
         private WorldReplicaStore _replica;
         public bool Faulted => _configurationFaulted || (_world != null && _world.IsSimulationFaulted);
@@ -35,6 +37,11 @@ namespace Game.ElementField
         public IWorldReplicationSource ReplicationSource => _detached ? null : _source;
         public WorldReplicaBuffer CaptureBuffer => _detached ? null : _buffer;
         public IWorldChunkPayloadInstaller ReplicaInstaller => _detached ? null : _replica;
+        // 可选表现能力沿现有按端装配：DS只捕获，Client只安装到已存在的Liquid ReadModel。
+        // GridLiquids已统一选择Authority/Replica实例，不能再new一个脱离Renderer的数据源。
+        public IWorldLiquidMotionSource Source => _configured && !_detached && _mode == WorldExecutionMode.Authority ? _motionSource : null;
+        public IWorldLiquidMotionSink Sink => _configured && !_detached && _mode == WorldExecutionMode.Replica && _world != null
+            ? _world.GridLiquids as IWorldLiquidMotionSink : null;
 
         public bool TryConfigure(WorldExecutionMode mode, ulong epoch)
         {
@@ -61,6 +68,7 @@ namespace Game.ElementField
                 {
                     _world.ConfigureExecutionMode(mode);
                     _source = new WorldReplicationSource(_world);
+                    _motionSource = new WorldLiquidMotionSource(_world);
                     _buffer = new WorldReplicaBuffer(_captureCells, _capturePending, _inspectionBudget);
                     foreach (var exposure in GetComponentsInChildren<ElementWorldExposureSystem>(true)) exposure.enabled = true;
                     // Renderer脚本已剥除，保留CPU MeshCollider；静态关卡的Renderer不属于材料子树，不在这里改动。
@@ -105,7 +113,7 @@ namespace Game.ElementField
                 for (int i = 0; i < 4; i++) _world.ClearActor(i);
                 _world.gameObject.SetActive(false);
             }
-            _source = null; _buffer = null; _replica = null;
+            _source = null; _motionSource = null; _buffer = null; _replica = null;
         }
         private void OnDestroy() => Detach();
 

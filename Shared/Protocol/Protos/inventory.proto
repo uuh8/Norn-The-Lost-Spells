@@ -184,7 +184,7 @@ message InventoryCommandMessage
     fixed64 command_id = 3;                   // 当前连接Epoch内单调命令号，非零；重试必须沿用原意图。
     uint32 connection_epoch = 4;              // 认证连接代数，非零；旧连接命令不能作用到重入后的角色。
     uint32 expected_inventory_version = 5;    // Client提交时所读的资产版本，非零；冲突后读取新快照再操作。
-    uint32 kind = 6; // SelectWand=1、PlaceCard=2、SelectTool=3、CollectMaterial=4、PourContainer=5、BindTool=6、DropContainer=7、PickupContainer=8、ThrowContainer=9、ReleaseSolid=10、ConfigureSpellAttachment=11、MoveOwned=12、EquipWand=13、DropItem=14、PickupItem=15、BeginWandResearch=16、EndWandResearch=17；先验原uint防byte截断。
+    uint32 kind = 6; // SelectWand=1、PlaceCard=2、SelectTool=3、CollectMaterial=4、PourContainer=5、BindTool=6、DropContainer=7、PickupContainer=8、ThrowContainer=9、ReleaseSolid=10、ConfigureSpellAttachment=11、MoveOwned=12、EquipWand=13、DropItem=14、PickupItem=15、BeginWandResearch=16、EndWandResearch=17、OrganizeBackpack=18（仅真实装备包ID与库存版本，其余字段中性）；先验原uint防byte截断。
     string item_id = 7; // 32位小写hex真实GUID；绑定须为真实携带Container，Run核验归属，不能用ContentId替代。
     string source_wand_id = 8; // 原程序所属法杖ID；从SpellStorage取卡、选择、绑定或F/H时为空。
     uint32 source_program_revision = 9; // 非空SourceWand对应的非零程序版本；Storage来源、选择、绑定或F/H为0。

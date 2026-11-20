@@ -96,10 +96,73 @@ public sealed class RunCheckpointWorldRulesTests
     }
 
     [Fact]
-    public void PriorHistoricalKeyCannotDisappearInsteadOfBecomingTombstone()
+    public void PriorResidentKeyCannotDisappearWhileAnotherValidOriginRemains()
     {
-        var previous = Valid(); var next = Valid(); next.CommitSequence++; next.WorldTick++;
-        next.Chunks = []; Assert.Throws<OnlineFailure>(() => RunCheckpointWorldRules.Require(next, previous));
+        var previous = Valid(); previous.Chunks = [previous.Chunks[0], ResidentAt(1)];
+        var next = Next(4, 6);
+        // 保留合法origin，排除“空世界且序号非0”的形状错误，精确覆盖旧resident漏报。
+        RunCheckpointWorldRules.Require(previous); RunCheckpointWorldRules.Require(next);
+        Assert.Throws<OnlineFailure>(() => RunCheckpointWorldRules.Require(next, previous));
+    }
+
+    [Fact]
+    public void ConfirmedTombstoneMayBeOmittedFromTheNextCurrentHead()
+    {
+        var previous = Valid(); previous.Chunks = [previous.Chunks[0], Tombstone()];
+        var next = Next(4, 6);
+        // 业务已确认的上一Head明确记录此Key为空，下一Head才可省略；不依赖DS的Peer ACK冒充入库确认。
+        RunCheckpointWorldRules.Require(previous); RunCheckpointWorldRules.Require(next);
+        RunCheckpointWorldRules.Require(next, previous);
+    }
+
+    [Fact]
+    public void ResidentMustBecomeAnExplicitTombstoneBeforeAConfirmedHeadCanOmitIt()
+    {
+        var previous = Valid(); previous.Chunks = [previous.Chunks[0], ResidentAt(1)];
+        var removed = Next(4, 6);
+        removed.Chunks = [removed.Chunks[0], new()
+        {
+            Domain = 1, X = 1, WorldEpoch = 42, SnapshotId = 4, Generation = 1,
+            BaseRevision = 0, Revision = 2, ServerTick = 6, IsResident = false,
+            Words = [], WordCount = 0, Checksum = 2166136261
+        }];
+        // DS可能已安全退休网络metadata，但上次业务Head仍有真实量；先提交可校验的空删除头，
+        // 读回确认这一Head后，下一次才可省略，保持防止漏活量的原有保护。
+        RunCheckpointWorldRules.Require(removed, previous);
+        var afterConfirmation = Next(5, 7);
+        RunCheckpointWorldRules.Require(afterConfirmation);
+        RunCheckpointWorldRules.Require(afterConfirmation, removed);
+    }
+
+    [Fact]
+    public void AdditionalContinuityHeadersDoNotIncreaseTheResidentWorldLimit()
+    {
+        var world = Valid();
+        world.Chunks = Enumerable.Range(0, 129).Select(ResidentAt).ToArray();
+        // 头部预算扩到256只容纳零payload删除证据，当前resident容量仍为128。
+        Assert.Throws<OnlineFailure>(() => RunCheckpointWorldRules.Require(world));
+    }
+
+    [Fact]
+    public void CurrentResidentAndTwoHundredZeroPayloadContinuityHeadersFitTheHeadBudget()
+    {
+        var world = Valid();
+        world.Chunks = [world.Chunks[0], .. Enumerable.Range(1, 200).Select(x =>
+        {
+            var tombstone = Tombstone(); tombstone.X = x; return tombstone;
+        })];
+        RunCheckpointWorldRules.Require(world);
+    }
+
+    [Fact]
+    public void TotalHeadRowsRemainBoundedEvenWhenEveryExtraHeaderHasZeroPayload()
+    {
+        var world = Valid();
+        world.Chunks = [world.Chunks[0], .. Enumerable.Range(1, 256).Select(x =>
+        {
+            var tombstone = Tombstone(); tombstone.X = x; return tombstone;
+        })];
+        Assert.Throws<OnlineFailure>(() => RunCheckpointWorldRules.Require(world));
     }
 
     internal static OnlineRunAssetCheckpointWorld Valid()
@@ -114,6 +177,16 @@ public sealed class RunCheckpointWorldRulesTests
     private static OnlineRunAssetCheckpointChunk Tombstone() => new() { Domain = 1, X = 2, WorldEpoch = 42,
         SnapshotId = 2, Generation = 2, BaseRevision = 4, Revision = 5, ServerTick = 4, IsResident = false,
         Words = [], WordCount = 0, Checksum = 2166136261 };
+    private static OnlineRunAssetCheckpointChunk ResidentAt(int x)
+    {
+        var chunk = Clone(Valid().Chunks[0]);
+        chunk.X = x; chunk.Words[13] = unchecked((uint)(x * 16)); Refresh(chunk); return chunk;
+    }
+    private static OnlineRunAssetCheckpointWorld Next(ulong sequence, long tick)
+    {
+        var world = Valid(); world.CommitSequence = sequence; world.WorldTick = tick;
+        world.Chunks[0].SnapshotId = sequence; world.Chunks[0].ServerTick = tick; return world;
+    }
     private static uint Float(float value) => BitConverter.SingleToUInt32Bits(value);
     private static void Refresh(OnlineRunAssetCheckpointChunk chunk) { chunk.WordCount = chunk.Words.Length; chunk.Checksum = Checksum(chunk.Words); }
     private static uint Checksum(uint[] words)

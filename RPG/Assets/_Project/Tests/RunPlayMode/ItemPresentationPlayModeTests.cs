@@ -1,6 +1,8 @@
 #if UNITY_EDITOR
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
 using Game.Core;
 using Game.UI;
 using NUnit.Framework;
@@ -8,6 +10,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
 namespace Game.Run.Tests
@@ -96,6 +99,205 @@ namespace Game.Run.Tests
             Assert.That(outline,Is.Not.Null);var before=outline.color;
             Assert.That(before.r,Is.EqualTo(1));Backpack.RefreshPresentation();yield return null;
             Assert.That(outline.color,Is.EqualTo(before));
+        }
+    }
+
+    /// <summary>
+    /// 只验证 Rendering 对 Core 视觉生命周期的接线，不创建账号、资产或第二套拾取逻辑。
+    /// 独立的内存 Hub/副本 Scene 重现正式入局时 Hub 被挂起的边界；正式 Profile 和模型只读。
+    /// 此测试程序集没有 Rendering/URP 依赖，因此通过已加载类型调用真实组件，而不增加 Runtime 反向依赖。
+    /// </summary>
+    public sealed class WorldItemHighlightLifecyclePlayModeTests
+    {
+        private const string ProfilePath = "Assets/_Project/ScriptableObjects/Rendering/Items/PickupHighlight.asset";
+        private const string ApplePath = "Assets/_Project/ScriptableObjects/Items/Food/Item_Food_Apple.asset";
+        private const string ContainerPath = "Assets/_Project/ScriptableObjects/Items/Containers/Item_Container_01.asset";
+        private readonly List<GameObject> _ownedRoots = new List<GameObject>();
+        private readonly List<ScriptableObject> _features = new List<ScriptableObject>();
+        private Scene _hub, _dungeon;
+        private ScriptableObject _profile;
+        private Type _binderType, _highlightType, _featureType;
+        private string _profileBefore;
+
+        [SetUp]
+        public void BeginRenderingLifetime()
+        {
+            _binderType = Type.GetType("Game.Rendering.WorldItemHighlightBinder, Game.Rendering", true);
+            _highlightType = Type.GetType("Game.Rendering.WorldItemHighlight, Game.Rendering", true);
+            _featureType = Type.GetType("Game.Rendering.WorldItemGlowRendererFeature, Game.Rendering", true);
+            _profile = AssetDatabase.LoadAssetAtPath<ScriptableObject>(ProfilePath);
+            Assert.That(_profile, Is.Not.Null);
+            _profileBefore = EditorJsonUtility.ToJson(_profile);
+            Assert.That((float)_profile.GetType().GetField("Strength").GetValue(_profile), Is.EqualTo(.2f),
+                "回归复用用户目前的轻微发光参数，不用更亮的测试配置掩盖接线缺失。");
+
+            // 模拟一个新 Player 会话，防止上一用例或 Editor 的 Renderer 预热留下全局 Profile。
+            // 只执行该表现领域实际声明的 Unity 初始化入口；旧代码没有入口时直接继续，
+            // RED 必须来自可拾取物没有轮廓，而不能来自测试要求一个尚不存在的方法。
+            ResetRenderingRuntime(RuntimeInitializeLoadType.SubsystemRegistration);
+            ResetRenderingRuntime(RuntimeInitializeLoadType.BeforeSceneLoad);
+            _hub = SceneManager.CreateScene("HighlightLifecycleHub");
+            _dungeon = SceneManager.CreateScene("HighlightLifecycleDungeon");
+        }
+
+        [UnityTest]
+        public IEnumerator DisabledHubBinderStillAllowsDungeonFoodAndContainerToUseSharedProfile()
+        {
+            CreateFeature(_profile);
+            var hubRoot = new GameObject("Suspended Hub rendering systems");
+            SceneManager.MoveGameObjectToScene(hubRoot, _hub); _ownedRoots.Add(hubRoot);
+            hubRoot.SetActive(false);
+            var binder = hubRoot.AddComponent(_binderType);
+            _binderType.GetField("_profile", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(binder, _profile);
+            hubRoot.SetActive(true);
+            var hubItem = CreateModel(ApplePath, _hub);
+            Publish(hubItem, true);
+            Assert.That(hubItem.GetComponent(_highlightType), Is.Not.Null, "先确认原 Hub 接线实际工作。");
+
+            // 正式 OnlineRoomClient.SuspendHub 会关闭整个根，从而触发 Binder.OnDisable 退订。
+            hubRoot.SetActive(false);
+            var food = CreateModel(ApplePath, _dungeon);
+            var container = CreateModel(ContainerPath, _dungeon);
+            Publish(food, true); Publish(container, true);
+            yield return null;
+            Assert.That(food.GetComponent(_highlightType), Is.Not.Null,
+                "Hub 被挂起后，普通副本 Item 仍必须接入原 WorldItemHighlight。");
+            Assert.That(container.GetComponent(_highlightType), Is.Not.Null,
+                "容器必须与普通 Item 共用视觉生命周期，不依赖另一个副本专用系统。");
+        }
+
+        [UnityTest]
+        public IEnumerator FirstVisualBindingBeforeFeaturePreparationIsReplayedWithTheExistingProfile()
+        {
+            var food = CreateModel(ApplePath, _dungeon);
+            Publish(food, true);
+            Assert.That(food.GetComponent(_highlightType), Is.Null,
+                "Profile 尚未由 RendererFeature 提供时不能临时发明材质或参数。");
+            CreateFeature(_profile);
+            yield return null;
+            Assert.That(food.GetComponent(_highlightType), Is.Not.Null,
+                "首个地面快照早于 Renderer 准备时，已确认的视觉绑定不能丢失。");
+        }
+
+        [UnityTest]
+        public IEnumerator RepeatedVisualBindingKeepsOneHighlightAndLeavesOriginalMaterialsUntouched()
+        {
+            CreateFeature(_profile);
+            var food = CreateModel(ApplePath, _dungeon);
+            var originals = food.GetComponentsInChildren<MeshRenderer>(true);
+            var sourceMaterials = new Material[originals.Length][];
+            var serializedMaterials = new string[originals.Length][];
+            int sourceSlots = 0;
+            for (int i = 0; i < originals.Length; i++)
+            {
+                sourceMaterials[i] = originals[i].sharedMaterials;
+                serializedMaterials[i] = new string[sourceMaterials[i].Length];
+                sourceSlots += sourceMaterials[i].Length;
+                for (int j = 0; j < sourceMaterials[i].Length; j++)
+                    serializedMaterials[i][j] = EditorJsonUtility.ToJson(sourceMaterials[i][j]);
+            }
+            Publish(food, true);
+            var highlight = food.GetComponent(_highlightType);
+            Assert.That(highlight, Is.Not.Null, "跨 Scene 的已确认 Item 必须先取得原高亮。");
+            int rendererCount = food.GetComponentsInChildren<MeshRenderer>(true).Length;
+            for (int repeat = 0; repeat < 4; repeat++) Publish(food, true);
+            yield return null;
+            Assert.That(food.GetComponents(_highlightType).Length, Is.EqualTo(1));
+            Assert.That(food.GetComponentsInChildren<MeshRenderer>(true).Length, Is.EqualTo(rendererCount));
+            Assert.That((int)_highlightType.GetProperty("MaterialCount").GetValue(highlight), Is.EqualTo(sourceSlots * 2),
+                "每个原材质只增加现有 Mask/Outline 两层；重绑不得把附层再次包裹。");
+            for (int i = 0; i < originals.Length; i++)
+            {
+                CollectionAssert.AreEqual(sourceMaterials[i], originals[i].sharedMaterials);
+                for (int j = 0; j < sourceMaterials[i].Length; j++)
+                    Assert.That(EditorJsonUtility.ToJson(sourceMaterials[i][j]), Is.EqualTo(serializedMaterials[i][j]));
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator DestroyingDungeonVisualReleasesItsHighlightRegistrationAndOwnedMaterials()
+        {
+            CreateFeature(_profile);
+            int before = (int)_highlightType.GetProperty("ActiveCount").GetValue(null);
+            var food = CreateModel(ApplePath, _dungeon);
+            Publish(food, true);
+            Assert.That(food.GetComponent(_highlightType), Is.Not.Null);
+            var layers = new List<Material>();
+            foreach (var renderer in food.GetComponentsInChildren<MeshRenderer>(true))
+                if (renderer.gameObject.name == "Pickup silhouette mask" || renderer.gameObject.name == "Pickup outline")
+                    layers.AddRange(renderer.sharedMaterials);
+            Assert.That(layers, Is.Not.Empty, "必须实际创建原轮廓材质，不能用一个空标记组件满足测试。");
+            Publish(food, false);
+            UnityEngine.Object.Destroy(food);
+            yield return null; yield return null;
+            Assert.That((int)_highlightType.GetProperty("ActiveCount").GetValue(null), Is.EqualTo(before));
+            foreach (var layer in layers) Assert.That(layer == null, Is.True, "代理销毁必须释放自己创建的材质。");
+        }
+
+        [UnityTest]
+        public IEnumerator RemovedBindingBeforeFeaturePreparationDoesNotTurnDecorationIntoPickup()
+        {
+            var removed = CreateModel(ApplePath, _dungeon);
+            var decoration = CreateModel(ContainerPath, _dungeon);
+            Publish(removed, true); Publish(removed, false);
+            CreateFeature(_profile);
+            yield return null;
+            Assert.That(removed.GetComponent(_highlightType), Is.Null, "已解除绑定的排队来源必须被移除。");
+            Assert.That(decoration.GetComponent(_highlightType), Is.Null, "未收到真实绑定事件的美术装饰不能被全图扫描描边。");
+        }
+
+        private void CreateFeature(ScriptableObject profile)
+        {
+            var feature = ScriptableObject.CreateInstance(_featureType); _features.Add(feature);
+            _featureType.GetField("Profile").SetValue(feature, profile);
+            _featureType.GetMethod("Create", BindingFlags.Instance | BindingFlags.Public).Invoke(feature, null);
+        }
+
+        private GameObject CreateModel(string itemPath, Scene scene)
+        {
+            var definition = AssetDatabase.LoadAssetAtPath<ItemDefinition>(itemPath);
+            Assert.That(definition, Is.Not.Null); Assert.That(definition.WorldModel, Is.Not.Null);
+            var root = new GameObject("Confirmed Ground Visual"); root.SetActive(false);
+            SceneManager.MoveGameObjectToScene(root, scene); _ownedRoots.Add(root);
+            UnityEngine.Object.Instantiate(definition.WorldModel, root.transform, false);
+            root.SetActive(true);
+            return root;
+        }
+
+        private static void Publish(GameObject root, bool added)
+            => EventBus<WorldItemVisualBoundEvent>.Publish(new WorldItemVisualBoundEvent
+                { Root = root.transform, InventoryId = "rendering-lifecycle-inventory", RegisteredCount = added ? 1 : 0, Added = added });
+
+        private void ResetRenderingRuntime(RuntimeInitializeLoadType phase)
+        {
+            foreach (var type in _binderType.Assembly.GetTypes())
+            {
+                if (type.Namespace != "Game.Rendering" || !type.Name.StartsWith("WorldItemHighlight", StringComparison.Ordinal)) continue;
+                foreach (var method in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
+                {
+                    var attribute = method.GetCustomAttribute<RuntimeInitializeOnLoadMethodAttribute>();
+                    if (attribute != null && attribute.loadType == phase) method.Invoke(null, null);
+                }
+            }
+        }
+
+        [UnityTearDown]
+        public IEnumerator EndRenderingLifetime()
+        {
+            foreach (var root in _ownedRoots)
+                if (root != null) { Publish(root, false); UnityEngine.Object.Destroy(root); }
+            _ownedRoots.Clear();
+            foreach (var feature in _features)
+                if (feature != null)
+                {
+                    _featureType.GetMethod("Dispose", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(feature, new object[] { true });
+                    UnityEngine.Object.Destroy(feature);
+                }
+            _features.Clear();
+            yield return null; yield return null;
+            if (_dungeon.IsValid() && _dungeon.isLoaded) yield return SceneManager.UnloadSceneAsync(_dungeon);
+            if (_hub.IsValid() && _hub.isLoaded) yield return SceneManager.UnloadSceneAsync(_hub);
+            Assert.That(EditorJsonUtility.ToJson(_profile), Is.EqualTo(_profileBefore), "测试及Runtime表现不得修改用户的共享Profile。");
         }
     }
 }

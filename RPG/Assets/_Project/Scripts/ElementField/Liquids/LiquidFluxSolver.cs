@@ -46,6 +46,8 @@ namespace Game.ElementField
         private readonly float _cellSize, _gravity, _terminalVelocity;
         private float _deltaTime, _sampleTime;
         public float MotionHorizon => _deltaTime;
+        public float Gravity=>_gravity;
+        public float TerminalVelocity=>_terminalVelocity;
         private int _tick;
 
         public LiquidFluxSolver(LiquidVolumeStore store, LiquidActivityScheduler activity,
@@ -79,12 +81,19 @@ namespace Game.ElementField
             _activity.BeginStep();
             // 本轮只处理开始时已有的队列；新扰动留给下一 Tick，避免一帧贯穿整湖。
             int count = Mathf.Min(maximumCells, _activity.Count);
-            for (int i = 0; i < count; i++)
+            // 此scope仅给只读网络表现标记来源，原调度数量、积分顺序和dt均保持不变。
+            // finally避免异常留下“后续F写入也是Solver运动”的错误资格。
+            bool previousScope = _history != null && _history.SetSolverCaptureScope(true);
+            try
             {
-                if (!_activity.TryDequeue(out Vector3Int cell)) break;
-                for (int material = 0; material < _materials.Length; material++)
-                    FlowMaterial(cell, material);
+                for (int i = 0; i < count; i++)
+                {
+                    if (!_activity.TryDequeue(out Vector3Int cell)) break;
+                    for (int material = 0; material < _materials.Length; material++)
+                        FlowMaterial(cell, material);
+                }
             }
+            finally { _history?.SetSolverCaptureScope(previousScope); }
             _tick++;
             return count;
         }
@@ -108,6 +117,44 @@ namespace Game.ElementField
             {velocity=fall.HorizontalVelocity+Vector3.down*fall.Velocity;return true;}
             if (!_ground.TryRead(cell, material, _tick, out LiquidTransportState.State state)) return false;
             velocity = state.Velocity; return true;
+        }
+
+        internal int AvailableInitialMotionSlots=>Mathf.Max(0,_maximumFalling-_falling.Count);
+        internal bool CanAllocateInitialMotion(Vector3Int cell,MaterialId material)=>
+            _falling.ContainsKey(new FallKey(cell,material)) || AvailableInitialMotionSlots>0;
+        internal bool CanPrepareInitialMotion(Vector3Int cell,MaterialId material,out bool newSlot)
+        {
+            newSlot=!_falling.ContainsKey(new FallKey(cell,material));
+            return _store.TryGetQuantity(cell,material,out uint quantity) && quantity>0;
+        }
+        /// <summary>
+        /// 原数量已提交后的运动补充；addedQuantity只用于动量加权，0表示调用者替换整格初速度。
+        /// 这不是GMU来源。事务入口已预检固定容量，不能在扣瓶后才发现字典没位置。
+        /// </summary>
+        internal void CommitPreparedInitialMotion(Vector3Int cell,MaterialId material,Vector3 velocity,uint addedQuantity)
+        {
+            var key=new FallKey(cell,material);bool existed=_falling.TryGetValue(key,out var state);
+            _store.TryGetQuantity(cell,material,out uint total);
+            uint prior=addedQuantity>0 && total>addedQuantity?total-addedQuantity:0;
+            if(prior>0)
+            {
+                Vector3 old=existed?state.HorizontalVelocity+Vector3.down*state.Velocity:Vector3.zero;
+                if(!existed && _ground.TryRead(cell,material,_tick,out var ground))old=ground.Velocity;
+                velocity=(old*prior+velocity*addedQuantity)/total;
+                // 新水从本格喷口位置进入，不能整份继承旧水的格内偏移；按相同GMU权重合并质心。
+                state.Offset*=prior/(float)total;state.HorizontalOffset*=prior/(float)total;
+            }
+            else state=default;
+            state.HorizontalVelocity=new Vector3(velocity.x,0,velocity.z);state.Velocity=-velocity.y;
+            state.AdvancedTick=_tick-1;state.SampleTime=_sampleTime;state.SafeDistance=0;
+            _falling[key]=state;_store.MarkMotionChanged(cell,material);_activity.WakeNeighbors(cell);
+        }
+        public bool TrySetInitialVelocity(Vector3Int cell,MaterialId material,Vector3 velocity,uint addedQuantity=0)
+        {
+            if(!float.IsFinite(velocity.x) || !float.IsFinite(velocity.y) || !float.IsFinite(velocity.z)
+                || !float.IsFinite(velocity.sqrMagnitude) || velocity.sqrMagnitude>4096f
+                || !CanPrepareInitialMotion(cell,material,out bool needed) || needed && AvailableInitialMotionSlots==0)return false;
+            CommitPreparedInitialMotion(cell,material,velocity,addedQuantity);return true;
         }
 
         private Vector3Int GroundTarget(Vector3Int source, Vector3Int direction)
@@ -155,7 +202,11 @@ namespace Game.ElementField
                         || !_store.TryGetQuantity(below,_materials[otherIndex],out uint lighter))continue;
                     uint exchange=(uint)Mathf.Min(_downRates[materialIndex],Mathf.Min((int)quantity,(int)lighter));
                     if(_store.TryExchange(source,below,material,_materials[otherIndex],exchange))
-                    {_activity.WakeNeighbors(source);_activity.WakeNeighbors(below);}
+                    {
+                        // 密度交换同时搬两种材料；两格与其中全部材料共同构成完整表现组。
+                        _history?.RecordSolverTransfer(source, below);
+                        _activity.WakeNeighbors(source);_activity.WakeNeighbors(below);
+                    }
                 }
 
             LiquidTerrainSupport support = default;
@@ -233,10 +284,12 @@ namespace Game.ElementField
                 if (reserve > 0 && !onSlope && !rasterDescent && _store.OccupancyAt(target)==0
                     && !(_stable != null && _stable.OwnsMaterial(target, material)))
                 {
-                    // 卡通聚团近似：新空格的最小团量受本材料通量上限约束。
-                    // 避免不断唤醒几 GMU 的纸片；重力、已有湿格均衡、湖泊注入照常运行。
-                    // Store 成对扣加，画面夸张不通过丢失数量实现。
-                    int seed = Mathf.Max(1,Mathf.Min(_sideRates[materialIndex],(_store.CapacityGmu+3)/4));
+                    // Reserve既表示源格的保留量，也决定新湿格所需的最小团量。
+                    // 旧“1/4格”seed在正式水参数下是112GMU，使30/100GMU小量水即使
+                    // 降低Reserve仍完全不扩散。这里随材料Reserve下降，但至少跨过Deadband，
+                    // 避免把同量水摊成大量无法继续流动的1GMU尾格；再受既有通量上限约束。
+                    // 重力、坡面、已有湿格均衡与Stable吸收仍走各自原路径，Store继续成对扣加。
+                    int seed = Mathf.Min(_sideRates[materialIndex],Mathf.Max(_sideDeadbands[materialIndex]+1,reserve));
                     int available = (int)quantity - reserve;
                     if (available < seed || sideCapacity < seed) continue;
                     amount = Mathf.Min(amount,available);
@@ -263,23 +316,14 @@ namespace Game.ElementField
                 // 目标格可能早就在本 Tick 队列中；跳过二次积分后仍须保留下一 Tick 的 Wake。
                 _activity.Wake(source); return true;
             }
-            if (_store.FreeCapacity(source + Vector3Int.down) < quantity
-                || (_stable != null && _stable.HasForeignOccupancy(source+Vector3Int.down,material))) return false;
+            // 初速度可以向上；只有向下且下一格不接收时才进入原接地分支，不能把瓶口上扬直接钳成零。
+            bool upward=existing && (state.Velocity<0 || state.Offset<0);
+            if (!upward && !AirCellAccepts(source+Vector3Int.down,material,quantity)) return false;
             if (!existing && _falling.Count == _maximumFalling)
             {
                 // 过载时保留数量并继续排队，不能扩容字典产生 GC 或退回空中横向摊开。
                 _activity.Wake(source); return true;
             }
-            int free = 0;
-            for (int i = 1; i <= 8; i++)
-            {
-                var target = source + Vector3Int.down * i;
-                if (_store.FreeCapacity(target) < quantity
-                    || (_stable != null && (_stable.OwnsMaterial(target, material)
-                        || _stable.HasForeignOccupancy(target,material)))) break;
-                free++;
-            }
-            if (free == 0) return false;
             if(!existing && _ground.TryRead(source,material,_tick,out LiquidTransportState.State inherited))
             {
                 if(inherited.Tick==_tick){_activity.Wake(source);return true;}
@@ -291,25 +335,37 @@ namespace Game.ElementField
             float velocity = Mathf.Min(_terminalVelocity, state.Velocity + _gravity * _deltaTime);
             float distance = (state.Velocity + velocity) * .5f * _deltaTime / _cellSize;
             float offset = state.Offset + distance;
-            int cells = Mathf.Min(free, Mathf.Min(8, Mathf.FloorToInt(offset)));
+            int direction=offset<0?-1:1,free=0;
+            for(int i=1;i<=8;i++)
+            {if(!AirCellAccepts(source+Vector3Int.down*(i*direction),material,quantity))break;free++;}
+            int wanted=Mathf.Min(8,Mathf.FloorToInt(Mathf.Abs(offset)));
+            int cells=Mathf.Min(free,wanted)*direction;
             Vector3Int destination = source + Vector3Int.down * cells;
+            bool diagonalBlocked=ClampAirDiagonal(source,material,quantity,ref state,cells);
             AdvanceAirAxis(source,ref destination,material,quantity,ref state,0,cells);
             AdvanceAirAxis(source,ref destination,material,quantity,ref state,2,cells);
+            if(diagonalBlocked)state.HorizontalVelocity=Vector3.zero;
             bool moved=destination!=source;
             if (moved && !_store.TryTransfer(source, destination, material, quantity))
             { _activity.Wake(source); return true; }
-            if (moved) { _falling.Remove(key); _activity.WakeNeighbors(source); }
-            state.Offset = Mathf.Clamp(offset - cells, 0f, .9999f);
-            state.Velocity = velocity;
+            if (moved)
+            {
+                _history?.RecordSolverTransfer(source, destination);
+                _falling.Remove(key); _activity.WakeNeighbors(source);
+            }
+            // 已走完全部净空后，格内余量也不能继续向障碍方向偏移；否则未满一格的上扬会先穿进天花板。
+            bool blocked=free<=wanted;
+            state.Offset=blocked?0:Mathf.Clamp(offset-cells,-.9999f,.9999f);
+            state.Velocity=blocked?0:velocity;
             state.AdvancedTick = _tick;
             state.SampleTime = _sampleTime;
             // Shader 只能前推已验证的空间，不能让插值视觉穿过地板或湖面。
             // 横向跨列后必须重查目标列净空，旧列的安全距离不能作为新列的视觉预测依据。
-            int remaining=0;
+            int remaining=0,predictionDirection=state.Velocity<0?-1:1;
             for(int i=1;i<=8;i++)
-            {var next=destination+Vector3Int.down*i;if(_store.FreeCapacity(next)<quantity
+            {var next=destination+Vector3Int.down*(i*predictionDirection);if(_store.FreeCapacity(next)<quantity
                 || (_stable!=null && (_stable.OwnsMaterial(next,material) || _stable.HasForeignOccupancy(next,material))))break;remaining++;}
-            state.SafeDistance = Mathf.Max(0f, (remaining - state.Offset) * _cellSize);
+            state.SafeDistance = Mathf.Max(0f, (remaining - Mathf.Abs(state.Offset)) * _cellSize);
             _falling[new FallKey(destination, material)] = state;
             _store.MarkMotionChanged(destination, material);
             _activity.WakeNeighbors(destination);
@@ -321,38 +377,93 @@ namespace Game.ElementField
         {
             float speed=state.HorizontalVelocity[axis];if(Mathf.Abs(speed)<.00001f)return;
             Vector3Int direction=axis==0?Vector3Int.right:Vector3Int.forward;if(speed<0)direction=-direction;
-            // 分别检查离开列和落到列，不能用一次对角搬运跳过墙角或跨进Stable的未展开区域。
-            bool clear=true;
-            for(int dy=0;dy<=verticalCells;dy++)
-            {
-                Vector3Int next=source+Vector3Int.down*dy+direction;
-                if(_store.FreeCapacity(next)<quantity || (_stable!=null && (_stable.OwnsMaterial(next,material)
-                    || _stable.HasForeignOccupancy(next,material)))){clear=false;break;}
-            }
-            if(!clear){state.HorizontalVelocity[axis]=0;state.HorizontalOffset[axis]=0;return;}
             state.HorizontalOffset[axis]+=speed*_deltaTime/_cellSize;
-            int shift=state.HorizontalOffset[axis]>=1?1:state.HorizontalOffset[axis]<=-1?-1:0;
-            if(shift==0)return;
-            Vector3Int target=destination+(axis==0?Vector3Int.right:Vector3Int.forward)*shift;
-            if(_store.FreeCapacity(target)<quantity || (_stable!=null && (_stable.OwnsMaterial(target,material)
-                || _stable.HasForeignOccupancy(target,material)))){state.HorizontalVelocity[axis]=0;state.HorizontalOffset[axis]=0;return;}
-            destination=target;state.HorizontalOffset[axis]-=shift;
+            int shifts=Mathf.Min(8,Mathf.FloorToInt(Mathf.Abs(state.HorizontalOffset[axis])));
+            // 8m/s在0.1s内是3.2个0.25m格。旧实现只搬1格，Offset会越积越大。
+            // 每轴最多8步，每步覆盖起飞列到落点列的竖直区间；固定上界防止高速输入造成无界遍历。
+            for(int step=0;step<Mathf.Max(1,shifts);step++)
+            {
+                Vector3Int horizontalOrigin=destination-Vector3Int.down*verticalCells;
+                bool clear=true;int sign=verticalCells<0?-1:1;
+                for(int dy=0;dy<=Mathf.Abs(verticalCells);dy++)
+                    if(!AirCellAccepts(horizontalOrigin+Vector3Int.down*(dy*sign)+direction,material,quantity)){clear=false;break;}
+                if(!clear){state.HorizontalVelocity[axis]=0;state.HorizontalOffset[axis]=0;return;}
+                if(shifts==0)return;
+                destination+=direction;state.HorizontalOffset[axis]-=speed<0?-1:1;
+            }
+            state.HorizontalOffset[axis]=Mathf.Clamp(state.HorizontalOffset[axis],-.9999f,.9999f);
+        }
+
+        private bool AirCellAccepts(Vector3Int cell,MaterialId material,uint quantity)=>_store.FreeCapacity(cell)>=quantity
+            && (_stable==null || !_stable.OwnsMaterial(cell,material) && !_stable.HasForeignOccupancy(cell,material));
+
+        private bool ClampAirDiagonal(Vector3Int source,MaterialId material,uint quantity,ref FallState state,int verticalCells)
+        {
+            Vector3 desired=state.HorizontalOffset+state.HorizontalVelocity*(_deltaTime/_cellSize);
+            int x=Mathf.Clamp((int)desired.x,-8,8),z=Mathf.Clamp((int)desired.z,-8,8);
+            if(x==0 || z==0)return false;
+            int steps=Mathf.Max(Mathf.Abs(x),Mathf.Abs(z));
+            // 先检验真实对角经过的列，随后再用原轴向走廊检查墙角；最多8步，每步最多3列×9格。
+            // 只检查L形两条边会错过正好位于对角上的薄墙，不能以终点空闲代替连续路径合法。
+            for(int i=1;i<=steps;i++)
+            {
+                int dx=Mathf.FloorToInt(Mathf.Abs(x)*i/(float)steps)*(x<0?-1:1);
+                int dz=Mathf.FloorToInt(Mathf.Abs(z)*i/(float)steps)*(z<0?-1:1);
+                int previousX=Mathf.FloorToInt(Mathf.Abs(x)*(i-1)/(float)steps)*(x<0?-1:1);
+                int previousZ=Mathf.FloorToInt(Mathf.Abs(z)*(i-1)/(float)steps)*(z<0?-1:1);
+                bool clear=AirColumnClear(source,dx,dz,verticalCells,material,quantity);
+                // 对角同时越过两条格边时也检查两侧格，避免恰擦墙角的穿透；每次最多3列，仍有固定上界。
+                if(clear && dx!=previousX && dz!=previousZ)
+                    clear=AirColumnClear(source,previousX,dz,verticalCells,material,quantity)
+                        && AirColumnClear(source,dx,previousZ,verticalCells,material,quantity);
+                if(!clear)
+                {
+                    int allowedX=Mathf.FloorToInt(Mathf.Abs(x)*(i-1)/(float)steps)*(x<0?-1:1);
+                    int allowedZ=Mathf.FloorToInt(Mathf.Abs(z)*(i-1)/(float)steps)*(z<0?-1:1);
+                    state.HorizontalVelocity=new Vector3(allowedX-state.HorizontalOffset.x,0,allowedZ-state.HorizontalOffset.z)*(_cellSize/_deltaTime);
+                    return true;
+                }
+            }
+            return false;
+        }
+        private bool AirColumnClear(Vector3Int source,int dx,int dz,int verticalCells,MaterialId material,uint quantity)
+        {
+            for(int dy=0;dy<=Mathf.Abs(verticalCells);dy++)
+                if(!AirCellAccepts(source+new Vector3Int(dx,dy*(verticalCells<0?1:-1),dz),material,quantity))return false;
+            return true;
         }
 
         private bool Move(Vector3Int source, Vector3Int target, MaterialId material, int amount)
         {
-            if (_stable != null && _stable.TryAbsorb(source, target, material, (uint)amount))
+            if (_stable != null && TryAbsorbStable(source, target, material, (uint)amount))
                 return true;
             if (_stable != null && _stable.OwnsMaterial(target, material)) return false;
-            if (_stable != null && !_stable.TryPrepareMaterialContact(target,material))
+            if (_stable != null && !TryPrepareStableContact(target,material))
             {
                 // 展开预算不足时保留源格并继续排队，不能穿进静水表面或遗失重试机会。
                 _activity.Wake(source); return false;
             }
             if (!_store.TryTransfer(source, target, material, (uint)amount)) return false;
+            _history?.RecordSolverTransfer(source, target);
             _activity.WakeNeighbors(source);
             _activity.WakeNeighbors(target);
             return true;
+        }
+
+        // Stable吸收和展开改变数量的存储Owner；其Store回调须按外部改写处理。
+        // 两个包装只切换History资格，原Stable操作的参数、次序、返回值与回滚行为都保留。
+        private bool TryAbsorbStable(Vector3Int source, Vector3Int target, MaterialId material, uint quantity)
+        {
+            bool previousScope = _history != null && _history.SetSolverCaptureScope(false);
+            try { return _stable.TryAbsorb(source, target, material, quantity); }
+            finally { _history?.SetSolverCaptureScope(previousScope); }
+        }
+
+        private bool TryPrepareStableContact(Vector3Int target, MaterialId material)
+        {
+            bool previousScope = _history != null && _history.SetSolverCaptureScope(false);
+            try { return _stable.TryPrepareMaterialContact(target, material); }
+            finally { _history?.SetSolverCaptureScope(previousScope); }
         }
     }
 }

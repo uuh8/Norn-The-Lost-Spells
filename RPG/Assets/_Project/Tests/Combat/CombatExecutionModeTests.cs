@@ -197,6 +197,52 @@ namespace Game.Combat.Tests
         }
 
         [Test]
+        public void AuthorityStatusKeepsDotDamageWithoutInstantiatingPureVisuals()
+        {
+            HealthComponent health = Health();
+            StatusController status = health.gameObject.AddComponent<StatusController>();
+            Invoke(status, "Awake");
+            var definition = ScriptableObject.CreateInstance<StatusDefinition>();
+            try
+            {
+                definition.Kind = StatusKind.Burning; definition.NaturalDecayPerSecond = 0;
+                definition.DealsDamage = true; definition.DamageInterval = .1f;
+                definition.BaseDamagePerTick = 10; definition.DamageType = DamageType.True;
+                definition.VfxPrefab = Root("Pure status visual template");
+                status.SetDefinitionsForTests(definition);
+                var world = new CombatSimulationWorld();
+                world.ConfigureHierarchy(health.gameObject, CombatExecutionMode.Authority);
+                status.ApplyStatus(StatusKind.Burning, 100, 99, 2);
+                world.StepAfterPhysics(.1f, 1);
+                Assert.That(health.CurrentHp, Is.EqualTo(90f), "移除DS纯视觉不能关闭真实状态DoT。");
+                Assert.That(status.GetIntensity(StatusKind.Burning), Is.EqualTo(100f));
+                Assert.That(health.transform.childCount, Is.Zero, "Authority不应实例化StatusDefinition的纯VFX Prefab。");
+            }
+            finally { Object.DestroyImmediate(definition); }
+        }
+
+        [TestCase(CombatExecutionMode.SinglePlayer)]
+        [TestCase(CombatExecutionMode.Replica)]
+        public void VisibleStatusOwnersRetainTheirExistingVisuals(CombatExecutionMode mode)
+        {
+            StatusController status = Root("Visible status owner").AddComponent<StatusController>();
+            Invoke(status, "Awake");
+            var definition = ScriptableObject.CreateInstance<StatusDefinition>();
+            try
+            {
+                definition.Kind = StatusKind.Burning; definition.VfxPrefab = Root("Visible status template");
+                status.SetDefinitionsForTests(definition);
+                status.ConfigureExecutionMode(mode);
+                if (mode == CombatExecutionMode.Replica)
+                    status.ApplyReplicatedState(new StatusReplicaSnapshot { Burning = 20, MoveSpeedMultiplier = 1 });
+                else status.ApplyStatus(StatusKind.Burning, 20, 99, 2);
+                Assert.That(status.transform.childCount, Is.EqualTo(1));
+                Assert.That(status.GetIntensity(StatusKind.Burning), Is.EqualTo(20f));
+            }
+            finally { Object.DestroyImmediate(definition); }
+        }
+
+        [Test]
         public void Authority_CancelDoesNotBecomeLifetimeExpiryOrTriggerPayload()
         {
             object world = World();

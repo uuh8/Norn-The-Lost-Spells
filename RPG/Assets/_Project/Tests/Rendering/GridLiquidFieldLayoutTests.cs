@@ -9,6 +9,14 @@ namespace Game.Rendering.Tests
 {
     public sealed class GridLiquidFieldLayoutTests
     {
+        private string _evidenceDirectory;
+        [SetUp]
+        public void BeginEvidenceRun()
+        {
+            // 唯一目录属于本次用例；旧L427证据只读保留。
+            _evidenceDirectory=Path.Combine("TestResults","ElementPerformance",nameof(GridLiquidFieldLayoutTests),
+                DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffffffZ",System.Globalization.CultureInfo.InvariantCulture)+"-"+Guid.NewGuid().ToString("N"));
+        }
         [Test]
         public void HalfDecodeKeepsEveryUnityBitPatternAndRemovesRepeatedNativeConversionCost()
         {
@@ -36,8 +44,8 @@ namespace Game.Rendering.Tests
                 native[round]=nativeFirst?first:second;actual[round]=nativeFirst?second:first;
             }
             allocated=GC.GetAllocatedBytesForCurrentThread()-allocated;
-            Directory.CreateDirectory("Backups/ElementPerformance/L427");
-            File.WriteAllText("Backups/ElementPerformance/L427/half-decode-work.json",JsonUtility.ToJson(new HalfWork
+            Directory.CreateDirectory(_evidenceDirectory);
+            File.WriteAllText(Path.Combine(_evidenceDirectory,"half-decode-work.json"),JsonUtility.ToJson(new HalfWork
             {Utc=DateTime.UtcNow.ToString("O"),NativeMilliseconds=native,ActualMilliseconds=actual,AllocatedBytes=allocated,
                 NativeImplementation=typeof(Mathf).GetMethod("HalfToFloat").GetMethodImplementationFlags().ToString()},true));
             Assert.That(result,Is.EqualTo(expected));Assert.That(allocated,Is.Zero);

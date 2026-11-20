@@ -17,13 +17,21 @@ namespace Game.Rendering.Tests
     public sealed class GridLiquidFieldPerformanceTests
     {
         private const BindingFlags Members=BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic;
-        private const string EvidenceDirectory="Backups/ElementPerformance/L426";
-        private static void SaveEvidence(string name,string json,bool append=false)
+        private string _evidenceDirectory;
+        [SetUp]
+        public void BeginEvidenceRun()
+        {
+            // 每次用例独立归档，不覆盖历史L426，也不把上次JSONL追加进本次测量。
+            _evidenceDirectory=Path.Combine("TestResults","ElementPerformance",nameof(GridLiquidFieldPerformanceTests),
+                DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffffffZ",System.Globalization.CultureInfo.InvariantCulture)+"-"+Guid.NewGuid().ToString("N"));
+        }
+        private void SaveEvidence(string name,string json,bool append=false)
         {
             // Temp 会在 Editor 重启时被清理。测试证据立即双写到 Assets 外，避免重新导入和丢证据。
-            Directory.CreateDirectory(EvidenceDirectory);Directory.CreateDirectory("Temp/ElementPerformance");
-            if(append){File.AppendAllText(EvidenceDirectory+"/"+name,json);File.AppendAllText("Temp/ElementPerformance/"+name,json);}
-            else{File.WriteAllText(EvidenceDirectory+"/"+name,json);File.WriteAllText("Temp/ElementPerformance/"+name,json);}
+            Directory.CreateDirectory(_evidenceDirectory);Directory.CreateDirectory("Temp/ElementPerformance");
+            string archive=Path.Combine(_evidenceDirectory,name);
+            if(append){File.AppendAllText(archive,json);File.AppendAllText("Temp/ElementPerformance/"+name,json);}
+            else{File.WriteAllText(archive,json);File.WriteAllText("Temp/ElementPerformance/"+name,json);}
         }
         private sealed class Fixture:IDisposable
         {
@@ -44,7 +52,11 @@ namespace Game.Rendering.Tests
                 Assert.That(Source.TryInitialize(Vector3.zero,.5f,4,Host.AddComponent<ElementFieldSolidBaker>()),Is.True);
                 History=(LiquidTransportHistory)typeof(LiquidWorldRuntime).GetField("_history",Members).GetValue(Source);
                 RenderProfile=Object.Instantiate(AssetDatabase.LoadAssetAtPath<GridLiquidFieldRenderProfile>("Assets/_Project/ScriptableObjects/ElementField/Liquids/GridLiquidFieldRenderProfile_Default.asset"));
-                JsonUtility.FromJsonOverwrite("{\"_budgetMiB\":32,\"_inputChunks\":64,\"_views\":64,\"_fineViews\":64,\"_cullByCamera\":false}",RenderProfile);
+                // 本夹具只检验连续Field的页面缓存、上传与Compute输出；后文会手工修改Packed页，
+                // 并只读回Field顶点。接地cap在Capture时另冻为实例记录，不能把水合法交给实例后，
+                // 再仅修改Field buffer而要求实例跟随；也不能用空Field的cached/full相等冒充通过。
+                // 仅此测试clone关闭cap，正式默认不变；cap的相位数量与真实像素由专属夹具覆盖。
+                JsonUtility.FromJsonOverwrite("{\"_budgetMiB\":32,\"_inputChunks\":64,\"_views\":64,\"_fineViews\":64,\"_cullByCamera\":false,\"_useGroundContactCaps\":false}",RenderProfile);
             }
             internal void AddPool(int x)
             {for(int z=0;z<2;z++)for(int dx=0;dx<2;dx++){var c=new Vector3Int(x+dx,0,z);Assert.That(Source.TryAddInitial(c,MaterialId.Water,128,false),Is.True);Assert.That(Source.TryAddInitial(c,MaterialId.Poison,64,false),Is.True);}}
@@ -54,6 +66,7 @@ namespace Game.Rendering.Tests
                 Renderer=Host.AddComponent<GridLiquidFieldSurfaceRenderer>();Renderer.ConfigureForValidation(Source,RenderProfile);
                 typeof(GridLiquidFieldSurfaceRenderer).GetMethod("Start",Members).Invoke(Renderer,null);
                 Update=(Action)Delegate.CreateDelegate(typeof(Action),Renderer,typeof(GridLiquidFieldSurfaceRenderer).GetMethod("LateUpdate",Members));Update();
+                Assert.That(Renderer.SmallDropCount,Is.Zero,"连续Field回归的输入不能被实例路径接管。");
             }
             internal void Alpha(float alpha)
             {typeof(GridLiquidFieldSurfaceRenderer).GetField("_capturedAt",Members).SetValue(Renderer,Time.time-alpha*Renderer.Frame.Interval);Update();}
@@ -117,8 +130,13 @@ namespace Game.Rendering.Tests
             if(!SystemInfo.supportsComputeShaders || !SystemInfo.supportsAsyncGPUReadback)Assert.Ignore("需要实际GPU。");
             using(var f=new Fixture())
             {
-                f.AddPool(-8);f.History.BeginTick();f.Start();f.Alpha(1);
+                // 先运行真实10Hz窗口；仅History.BeginTick不会设置Solver的MotionHorizon，
+                // 未Step的0秒会在Frame中被夹成1ms。自然平水面的对称2mm扰动不能保证可见几何变化，
+                // 那不是本测试要覆盖的“两个有效100ms端点都带速度但缓存错误宣布静止”。
+                // Pool以wake=false加入，推进只建立时基，不改变既有GMU或制造真实流动。
+                f.AddPool(-8);f.Source.Step(.1f);f.History.BeginTick();f.Start();f.Alpha(1);
                 var frame=f.Renderer.Frame;var key=GridLiquidFieldFrame.Key(new Vector3Int(-8,0,0),4);int page=-1;
+                Assert.That(frame.Interval,Is.EqualTo(.1f).Within(.000001f));
                 for(int i=0;i<frame.Count;i++)if(frame.Keys[i].Equals(key))page=i;
                 Assert.That(page,Is.GreaterThanOrEqualTo(0));int row=page*64*frame.MaterialCount;
                 // 显式构造“两端Packed相同、速度非零”的合法场输入，直接检查真实Compute。
@@ -133,7 +151,10 @@ namespace Game.Rendering.Tests
                 Assert.That(Rebuilt(f.Renderer),Is.GreaterThan(0));var late=ReadVertices(f.Renderer);yield return late.Wait();
                 float movement=0;for(int i=0;i<early.Bytes.Length;i+=48)if(BitConverter.ToSingle(early.Bytes,i+12)>0 && BitConverter.ToSingle(late.Bytes,i+12)>0)
                     movement=Mathf.Max(movement,Mathf.Abs(BitConverter.ToSingle(early.Bytes,i)-BitConverter.ToSingle(late.Bytes,i)));
-                Assert.That(movement,Is.GreaterThan(1e-5f),"相同数量的带速度页仍需连续运动。");
+                Directory.CreateDirectory(_evidenceDirectory);
+                File.WriteAllBytes(Path.Combine(_evidenceDirectory,"equal-velocity-early.bin"),early.Bytes);
+                File.WriteAllBytes(Path.Combine(_evidenceDirectory,"equal-velocity-late.bin"),late.Bytes);
+                Assert.That(movement,Is.GreaterThan(1e-5f),"相同数量的带速度页仍需连续运动。Alpha="+f.Renderer.InterpolationAlpha+" Interval="+frame.Interval);
                 f.Renderer.SetValidationRenderWork(false,false,true);f.Renderer.SetValidationAirSkip(false);f.Update();var full=ReadVertices(f.Renderer);yield return full.Wait();SameVertices(late,full);
                 Assert.That(f.Source.TotalQuantity,Is.EqualTo(768UL));
             }
@@ -141,15 +162,42 @@ namespace Game.Rendering.Tests
         private sealed class VertexReadback
         {
             internal byte[] Bytes;internal uint[] Arguments;private int _pending=2;private bool _error;
+            private AsyncGPUReadbackRequest _verticesRequest,_argumentsRequest;
+            private bool _verticesReceived,_argumentsReceived;
             internal VertexReadback(GridLiquidFieldSurfaceRenderer renderer)
             {
-                var vertices=AsyncGPUReadback.Request(renderer.DebugVertices,r=>{_error|=r.hasError;if(!r.hasError)Bytes=r.GetData<byte>().ToArray();_pending--;});vertices.forcePlayerLoopUpdate=true;
-                var args=AsyncGPUReadback.Request(renderer.DebugArguments,r=>{_error|=r.hasError;if(!r.hasError)Arguments=r.GetData<uint>().ToArray();_pending--;});args.forcePlayerLoopUpdate=true;
+                _verticesRequest=AsyncGPUReadback.Request(renderer.DebugVertices,r=>{_verticesReceived=true;_error|=r.hasError;if(!r.hasError)Bytes=r.GetData<byte>().ToArray();_pending--;});_verticesRequest.forcePlayerLoopUpdate=true;
+                _argumentsRequest=AsyncGPUReadback.Request(renderer.DebugArguments,r=>{_argumentsReceived=true;_error|=r.hasError;if(!r.hasError)Arguments=r.GetData<uint>().ToArray();_pending--;});_argumentsRequest.forcePlayerLoopUpdate=true;
+                // 这里只核对实际Buffer内容，不把提交/读取等待当作GPU dispatch性能。
+                // 显式提交测试批次，保持callback、hasError和原10秒deadline。
+                GL.Flush();
             }
-            internal IEnumerator Wait(){double end=EditorApplication.timeSinceStartup+10;while(_pending>0){Assert.That(EditorApplication.timeSinceStartup,Is.LessThan(end));yield return null;}Assert.That(_error,Is.False);}
+            internal IEnumerator Wait()
+            {
+                var probe=new RenderingReadbackDiagnostics.Probe("liquid-gpu-equivalence");
+                double end=EditorApplication.timeSinceStartup+10;
+                try
+                {
+                    while(_pending>0)
+                    {
+                        probe.Poll();
+                        // 显式驱动当前request，保留callback当帧复制和原10秒deadline。
+                        if(!_verticesReceived)_verticesRequest.Update();
+                        if(!_argumentsReceived)_argumentsRequest.Update();
+                        if(_pending==0)break;
+                        EditorApplication.QueuePlayerLoopUpdate();
+                        Assert.That(EditorApplication.timeSinceStartup,Is.LessThan(end),"GPU callback timed out; pending="+_pending+"; "+probe.State);
+                        yield return null;
+                    }
+                }
+                finally{probe.Save("pending="+_pending+",error="+_error+",vertices="+RequestState(_verticesRequest,_verticesReceived)+",args="+RequestState(_argumentsRequest,_argumentsReceived));}
+                Assert.That(_error,Is.False);
+            }
+            private static string RequestState(AsyncGPUReadbackRequest request,bool received)
+                =>received?"callback copied":"done="+request.done+"/error="+request.hasError;
         }
         private static VertexReadback ReadVertices(GridLiquidFieldSurfaceRenderer r)=>new VertexReadback(r);
-        private static void SameVertices(VertexReadback a,VertexReadback b)
+        private void SameVertices(VertexReadback a,VertexReadback b)
         {
             Assert.That(b.Arguments,Is.EqualTo(a.Arguments),"保留顶点时也必须保留实际Draw的Index Count/Indirect Args。");
             // 无效Slot没有可见语义；有效Slot的48字节包含位置、最终Normal、混色、Swell。
@@ -160,10 +208,16 @@ namespace Game.Rendering.Tests
             {
                 bool av=BitConverter.ToSingle(a.Bytes,i+12)>0,bv=BitConverter.ToSingle(b.Bytes,i+12)>0;if(av!=bv)Assert.Fail("GPU缓存有效性不同：Slot="+i/48);if(!av)continue;count++;
                 for(int axis=0;axis<3;axis++){positionError=Mathf.Max(positionError,Mathf.Abs(BitConverter.ToSingle(a.Bytes,i+axis*4)-BitConverter.ToSingle(b.Bytes,i+axis*4)));normalError=Mathf.Max(normalError,Mathf.Abs(BitConverter.ToSingle(a.Bytes,i+16+axis*4)-BitConverter.ToSingle(b.Bytes,i+16+axis*4)));}
-                swellError=Mathf.Max(swellError,Mathf.Abs(BitConverter.ToSingle(a.Bytes,i+44)-BitConverter.ToSingle(b.Bytes,i+44)));
-                for(int j=28;j<44;j++)if(a.Bytes[i+j]!=b.Bytes[i+j])Assert.Fail("GPU缓存混色不同：Slot="+i/48+" Byte="+j);
+                for(int j=28;j<44;j++)if(a.Bytes[i+j]!=b.Bytes[i+j])
+                {
+                    Directory.CreateDirectory(_evidenceDirectory);File.WriteAllBytes(Path.Combine(_evidenceDirectory,"cached.bin"),a.Bytes);File.WriteAllBytes(Path.Combine(_evidenceDirectory,"full.bin"),b.Bytes);
+                    Assert.Fail("GPU缓存混色不同：Slot="+i/48+" Byte="+j+" A="+BitConverter.ToUInt32(a.Bytes,i+28).ToString("X8")+" B="+BitConverter.ToUInt32(b.Bytes,i+28).ToString("X8")+" PositionA="+new Vector3(BitConverter.ToSingle(a.Bytes,i),BitConverter.ToSingle(a.Bytes,i+4),BitConverter.ToSingle(a.Bytes,i+8))+" PositionB="+new Vector3(BitConverter.ToSingle(b.Bytes,i),BitConverter.ToSingle(b.Bytes,i+4),BitConverter.ToSingle(b.Bytes,i+8)));
+                }
+                Vector4 da=GridLiquidFlowPresentation.Unpack(BitConverter.ToUInt32(a.Bytes,i+44)),db=GridLiquidFlowPresentation.Unpack(BitConverter.ToUInt32(b.Bytes,i+44));
+                swellError=Mathf.Max(swellError,(da-db).magnitude);
             }
             SaveEvidence("l426-gpu-equivalence.jsonl",JsonUtility.ToJson(new GpuComparison{Utc=DateTime.UtcNow.ToString("O"),Vertices=count,MaximumPositionError=positionError,MaximumNormalError=normalError,MaximumSwellError=swellError})+"\n",true);
+            Assert.That(count,Is.GreaterThan(0),"cached/full等价必须比较实际可见Field顶点，不能两份空几何假通过。");
             Assert.That(positionError,Is.LessThan(1e-5f));Assert.That(normalError,Is.LessThan(1e-5f));Assert.That(swellError,Is.LessThan(1e-6f));
         }
         [Serializable]private sealed class GpuComparison{public string Utc;public int Vertices;public float MaximumPositionError,MaximumNormalError,MaximumSwellError;}
@@ -173,6 +227,9 @@ namespace Game.Rendering.Tests
         {
             using(var f=new Fixture())
             {
+                // 该逐位hash锁定空气快跳引入前的历史几何；正式自然水档有意改变塑形，不能沿用它验证旧hash。
+                // 明确保留旧输入及原断言；新自然档另由同GMU几何/实际CPU-GPU可见性回归覆盖。
+                JsonUtility.FromJsonOverwrite("{\"_cartoonCrownStrength\":0.8,\"_cartoonVolumeScale\":1.8,\"_useMaterialSurfaceTension\":false}",f.RenderProfile);
                 f.AddPool(-8);f.AddPool(24);f.History.BeginTick();f.Start(true);
                 int rounds=0;long allocated=GC.GetAllocatedBytesForCurrentThread();
                 while(f.Renderer.IsPresentationPending && rounds++<16384)f.Update();allocated=GC.GetAllocatedBytesForCurrentThread()-allocated;

@@ -1161,6 +1161,107 @@ namespace Game.Character.Tests
             }
         }
 
+        // 数字键回归必须经过设备事件 -> InputAction.performed -> Driver -> 只读库存确认门。
+        // 此夹具沿正式 BindClient 顺序在活跃 Actor 上 InitializeClient，不反射调用 BindSelectionInput。
+        private readonly List<KeyValuePair<UnityEngine.InputSystem.InputAction, bool>> _keyboardSelectionSharedStates
+            = new List<KeyValuePair<UnityEngine.InputSystem.InputAction, bool>>();
+
+        private OnlineCastDriver CreateActiveKeyboardSelectionClient(out OnlineInventoryPresentationSnapshot snapshot,
+            bool selectedTool = false)
+        {
+            var driver = CreateContainerInput(out snapshot, selectedTool);
+            for (int slot = 0; slot < HeldItemSlots.WandCount; slot++)
+            {
+                var action = _containerDefinitionClone.GetWandSelectionAction(slot)?.action;
+                Assert.That(action, Is.Not.Null, "正式 SelectWand1–3 必须引用实际 InputAction。");
+                _keyboardSelectionSharedStates.Add(new KeyValuePair<UnityEngine.InputSystem.InputAction, bool>(action, action.enabled));
+            }
+            driver.InitializeClient(1, 7, _containerDefinitionClone, true);
+            Assert.That(driver.isActiveAndEnabled, Is.True);
+            return driver;
+        }
+
+        private void RestoreKeyboardSelectionSharedActions()
+        {
+            foreach (var prior in _keyboardSelectionSharedStates)
+                if (prior.Value) prior.Key.Enable(); else prior.Key.Disable();
+            _keyboardSelectionSharedStates.Clear();
+        }
+
+        [TestCase(0, UnityEngine.InputSystem.Key.Digit4)]
+        [TestCase(1, UnityEngine.InputSystem.Key.Digit5)]
+        [TestCase(2, UnityEngine.InputSystem.Key.Digit6)]
+        [TestCase(3, UnityEngine.InputSystem.Key.Digit7)]
+        [TestCase(4, UnityEngine.InputSystem.Key.Digit8)]
+        [TestCase(5, UnityEngine.InputSystem.Key.Digit9)]
+        [TestCase(6, UnityEngine.InputSystem.Key.Digit0)]
+        public void ActualToolNumberKeyUsesActiveOwnerBindingAndConfirmedInventory(int slot, UnityEngine.InputSystem.Key key)
+        {
+            var driver = CreateActiveKeyboardSelectionClient(out var snapshot);
+            snapshot.Assets.Items[2].Slot = slot;
+            snapshot.SnapshotSequence++; snapshot.ServerTick++; snapshot.Assets.InventoryVersion++;
+            Assert.That(driver.InstallClientInventory(ValidationIdentity(_containerDefinitionClone), snapshot, out var error), Is.True, error);
+            var source = _root.GetComponent<OnlineInventoryReplica>().Source;
+            InputState(false, key);
+            Assert.That(_containerKeyboard[key].isPressed, Is.True);
+            Assert.That(_containerInputCommands.Count, Is.EqualTo(1), "真实数字键应只提交一次选择意图。");
+            var intent = _containerInputCommands[0];
+            Assert.That(intent.Kind, Is.EqualTo(OnlineInventoryCommandKind.SelectTool));
+            Assert.That(intent.ItemId, Is.EqualTo("validation-bottle"));
+            Assert.That(intent.TargetSlot, Is.EqualTo(slot));
+            Assert.That(intent.ConnectionEpoch, Is.EqualTo(7));
+            Assert.That(intent.ExpectedInventoryVersion, Is.EqualTo(snapshot.Assets.InventoryVersion));
+            Assert.That(source.ToolbeltReadOnly.SelectedItemId, Is.EqualTo(Wand), "按键不能在 Authority 确认前本地改选中项。");
+            Assert.That(source.ToolbeltReadOnly.SelectedSlot, Is.Zero);
+        }
+
+        [TestCase(0, UnityEngine.InputSystem.Key.Digit1)]
+        [TestCase(1, UnityEngine.InputSystem.Key.Digit2)]
+        [TestCase(2, UnityEngine.InputSystem.Key.Digit3)]
+        public void ActualWandNumberKeyLeavesConfirmedToolSelectedUntilAuthorityResponds(int slot, UnityEngine.InputSystem.Key key)
+        {
+            var driver = CreateActiveKeyboardSelectionClient(out var snapshot, true);
+            snapshot.Assets.Items[0].Slot = slot;
+            snapshot.SnapshotSequence++; snapshot.ServerTick++; snapshot.Assets.InventoryVersion++;
+            Assert.That(driver.InstallClientInventory(ValidationIdentity(_containerDefinitionClone), snapshot, out var error), Is.True, error);
+            InputState(false, key);
+            Assert.That(_containerKeyboard[key].isPressed, Is.True);
+            Assert.That(_containerInputCommands.Count, Is.EqualTo(1));
+            Assert.That(_containerInputCommands[0].Kind, Is.EqualTo(OnlineInventoryCommandKind.SelectWand));
+            Assert.That(_containerInputCommands[0].ItemId, Is.EqualTo(Wand));
+            Assert.That(_containerInputCommands[0].TargetSlot, Is.EqualTo(slot));
+            Assert.That(_root.GetComponent<OnlineInventoryReplica>().Source.ToolbeltReadOnly.SelectedItemId,
+                Is.EqualTo("validation-bottle"));
+        }
+
+        [TestCase(false)] [TestCase(true)]
+        public void ActualToolNumberKeyRecoversAfterFocusReturnWithoutAnEquippedWand(bool keepWandInBackpack)
+        {
+            var driver = CreateActiveKeyboardSelectionClient(out var snapshot);
+            ConfirmEmptyHands(snapshot, keepWandInBackpack);
+            Assert.That(driver.InstallClientInventory(ValidationIdentity(_containerDefinitionClone), snapshot, out var error), Is.True, error);
+            Assert.That(driver.Ready, Is.False, "没有当前法杖程序是合法库存状态，不能把施法就绪作为工具输入解锁前提。");
+            Assert.That(driver.ClientInventoryReady, Is.True);
+            InvokeInputLifecycle(driver, "OnApplicationFocus", false);
+            InputState(false, UnityEngine.InputSystem.Key.Digit4);
+            Assert.That(_containerInputCommands, Is.Empty, "失焦时实际按键仍必须被门禁拒绝。");
+            InputState(false);
+            InvokeInputLifecycle(driver, "OnApplicationFocus", true);
+            driver.StepPrediction(.05f, 41, true);
+            InputState(false, UnityEngine.InputSystem.Key.Digit4);
+            Assert.That(_containerInputCommands, Is.Empty, "已回焦但 World 仍阻断时不能选择。");
+            InputState(false);
+            driver.StepPrediction(.05f, 42, false);
+            InputState(false, UnityEngine.InputSystem.Key.Digit4);
+            Assert.That(_containerInputCommands.Count, Is.EqualTo(1), "回焦且 World 恢复后真实数字键应可选择工具，不等待法杖 Setup。");
+            Assert.That(_containerInputCommands[0].Kind, Is.EqualTo(OnlineInventoryCommandKind.SelectTool));
+            Assert.That(_containerInputCommands[0].ItemId, Is.EqualTo("validation-bottle"));
+            Assert.That(_containerInputCommands[0].ExpectedInventoryVersion, Is.EqualTo(snapshot.Assets.InventoryVersion));
+            Assert.That(_root.GetComponent<OnlineInventoryReplica>().Source.ToolbeltReadOnly.SelectedSlot, Is.EqualTo(-1));
+            Assert.That(_born, Is.Zero, "同步通用输入门不能让空手角色施法。");
+        }
+
+
         [Test]
         public void ToolSelectionInputsUseOriginalFourThroughZeroKeysAndOnlyDisableOwnedActions()
         {
@@ -1513,6 +1614,7 @@ namespace Game.Character.Tests
 
         private void CleanupContainerInputFixture()
         {
+            RestoreKeyboardSelectionSharedActions();
             if (_containerInputSubscribed)
                 EventBus<OnlineInventoryCommandRequestedEvent>.Unsubscribe(OnContainerInputCommand);
             _containerInputSubscribed = false;
@@ -1990,6 +2092,82 @@ namespace Game.Character.Tests
             Assert.That(total, Is.EqualTo(150ul));
             InputState(false); StepContainerInput(.5f);
             Assert.That(_containerInputCommands.Count, Is.EqualTo(20));
+        }
+
+        [Test]
+        public void FirstHeldFDispatchesEarnedBudgetBeforeTheBatchIntervalAndKeepsFollowingCadence()
+        {
+            CreateContainerInput(out _);
+            InputState(false, UnityEngine.InputSystem.Key.F); StepContainerInput(.025f);
+            Assert.That(_containerInputCommands.Count, Is.EqualTo(1), "首F不能为攒满0.1秒的人为批次再等一次；只发送本帧确已累计的GMU。");
+            var first = _containerInputCommands[0];
+            Assert.That(first.Kind, Is.EqualTo(OnlineInventoryCommandKind.CollectMaterial));
+            Assert.That(first.TransferBudget, Is.EqualTo((ulong)((double)_containerDefinitionClone.ContainerUse.CollectionRate * .025f)));
+            StepContainerInput(.05f); Assert.That(_containerInputCommands.Count, Is.EqualTo(1));
+            StepContainerInput(.05f); Assert.That(_containerInputCommands.Count, Is.EqualTo(2), "首包之后仍等原0.1秒批次，不每帧发包。");
+            Assert.That(_containerInputCommands[1].TransferBudget,
+                Is.EqualTo((ulong)((double)_containerDefinitionClone.ContainerUse.CollectionRate * .1f)));
+            var source = _root.GetComponent<OnlineInventoryReplica>().Source;
+            Assert.That(source.ReadOnly.Version, Is.EqualTo(9u));
+            Assert.That(source.TryCopyContainer("validation-bottle", new MaterialAmount[8], out _, out ulong total, out _), Is.True);
+            Assert.That(total, Is.EqualTo(150ul), "首包即时只是发意图，Client不能先增加瓶内量或扣世界量。");
+        }
+
+        [Test]
+        public void FreshFPressesDispatchOnlyTheBudgetEarnedDuringTheirHeldTime()
+        {
+            CreateContainerInput(out _); ulong totalBudget = 0;
+            for (int i = 0; i < 8; i++)
+            {
+                InputState(false, UnityEngine.InputSystem.Key.F); StepContainerInput(.025f);
+                Assert.That(_containerInputCommands.Count, Is.EqualTo(i + 1));
+                var intent = _containerInputCommands[i]; totalBudget += intent.TransferBudget;
+                Assert.That(intent.TransferBudget,
+                    Is.EqualTo((ulong)((double)_containerDefinitionClone.ContainerUse.CollectionRate * .025f)));
+                InputState(false); StepContainerInput(.001f);
+            }
+            Assert.That(totalBudget, Is.LessThanOrEqualTo((ulong)((double)_containerDefinitionClone.ContainerUse.CollectionRate * .025f * 8)),
+                "释放/重按不预支0.1秒满包；真实DS数量预算和命令限流仍独立裁决。");
+        }
+
+        [Test]
+        public void FirstFStillRequiresReleaseAfterAnAuthorityInputGateCloses()
+        {
+            var driver = CreateContainerInput(out _);
+            InputState(false, UnityEngine.InputSystem.Key.F); StepContainerInput(.025f);
+            Assert.That(_containerInputCommands.Count, Is.EqualTo(1));
+            driver.SetBlocked(true); StepContainerInput(.5f);
+            driver.SetBlocked(false); StepContainerInput(.5f);
+            Assert.That(_containerInputCommands.Count, Is.EqualTo(1), "恢复权限不能把旧按住自动变成新首包或追补冻结预算。");
+            InputState(false); StepContainerInput(.001f);
+            InputState(false, UnityEngine.InputSystem.Key.F); StepContainerInput(.025f);
+            Assert.That(_containerInputCommands.Count, Is.EqualTo(2));
+            Assert.That(_containerInputCommands[1].TransferBudget,
+                Is.EqualTo((ulong)((double)_containerDefinitionClone.ContainerUse.CollectionRate * .025f)));
+        }
+
+        [Test]
+        public void FreshCollectionCommandsCannotMintAuthorityBudgetOrBypassInventoryVersion()
+        {
+            var driver = CreateContainerAuthority(true); int writes = 0;
+            Action<MaterialWorldTransferRequestedEvent> listener = _ => writes++;
+            EventBus<MaterialWorldTransferRequestedEvent>.Subscribe(listener);
+            try
+            {
+                var intent = ContainerAuthorityIntent(driver); intent.TransferBudget = 200;
+                var first = driver.ExecuteInventoryCommand(intent);
+                intent.CommandId++; var second = driver.ExecuteInventoryCommand(intent);
+                Assert.That(first.Failure, Is.EqualTo(OnlineInventoryCommandFailure.RateLimited));
+                Assert.That(second.Failure, Is.EqualTo(OnlineInventoryCommandFailure.RateLimited));
+                // 本夹具Entry的InventoryVersion为1；减1会变成协议无效的0，并在版本冲突比较前
+                // 正确返回InvalidInput。这里使用另一个合法正版本，只验证版本不匹配不能绕过DS门。
+                Assert.That(driver.OwnedInventoryVersion, Is.GreaterThan(0u));
+                intent.CommandId++; intent.ExpectedInventoryVersion = checked(driver.OwnedInventoryVersion + 1u);
+                Assert.That(intent.ExpectedInventoryVersion, Is.Not.EqualTo(driver.OwnedInventoryVersion));
+                Assert.That(driver.ExecuteInventoryCommand(intent).Failure, Is.EqualTo(OnlineInventoryCommandFailure.StaleVersion));
+                Assert.That(writes, Is.Zero, "首包策略不能给尚未经历真实Authority时间的DS发放采集GMU。");
+            }
+            finally { EventBus<MaterialWorldTransferRequestedEvent>.Unsubscribe(listener); }
         }
 
         [TestCase("h")] [TestCase("mouse")] [TestCase("both")]

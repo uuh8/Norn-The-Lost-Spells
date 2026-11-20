@@ -29,9 +29,9 @@ namespace Game.Rendering.Tests
             using (var triangleCounter = new GraphicsBuffer(GraphicsBuffer.Target.Structured, 1, 4))
             using (var overflowCounter = new GraphicsBuffer(GraphicsBuffer.Target.Structured, 1, 4))
             using (var args = new GraphicsBuffer(
-                       GraphicsBuffer.Target.IndirectArguments | GraphicsBuffer.Target.Raw,
-                       1,
-                       GraphicsBuffer.IndirectDrawArgs.size))
+                       GraphicsBuffer.Target.IndirectArguments,
+                       4,
+                       sizeof(uint)))
             {
                 try
                 {
@@ -87,9 +87,9 @@ namespace Game.Rendering.Tests
             using (var triangleCounter = new GraphicsBuffer(GraphicsBuffer.Target.Structured, 1, 4))
             using (var overflowCounter = new GraphicsBuffer(GraphicsBuffer.Target.Structured, 1, 4))
             using (var args = new GraphicsBuffer(
-                       GraphicsBuffer.Target.IndirectArguments | GraphicsBuffer.Target.Raw,
-                       1,
-                       GraphicsBuffer.IndirectDrawArgs.size))
+                       GraphicsBuffer.Target.IndirectArguments,
+                       4,
+                       sizeof(uint)))
             {
                 try
                 {
@@ -142,9 +142,9 @@ namespace Game.Rendering.Tests
             using (var triangleCounter = new GraphicsBuffer(GraphicsBuffer.Target.Structured, 1, 4))
             using (var overflowCounter = new GraphicsBuffer(GraphicsBuffer.Target.Structured, 1, 4))
             using (var args = new GraphicsBuffer(
-                       GraphicsBuffer.Target.IndirectArguments | GraphicsBuffer.Target.Raw,
-                       1,
-                       GraphicsBuffer.IndirectDrawArgs.size))
+                       GraphicsBuffer.Target.IndirectArguments,
+                       4,
+                       sizeof(uint)))
             {
                 try
                 {

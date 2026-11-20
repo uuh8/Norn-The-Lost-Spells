@@ -502,5 +502,95 @@ namespace Game.Core.Tests
             Assert.That(a.TryBegin(Header(w, 3, 4), 5), Is.False);
             Assert.That(a.LastFailure, Is.EqualTo(WorldReplicaAssemblyFailure.StaleVersion));
         }
+
+        // 退休必须是可信协调器在订阅代次已隔离后执行的独立步骤；普通Release/Bind的历史栅栏合同不变。
+        // RED阶段反射调用新增入口，缺实现只使本fixture失败，不使整个Unity项目编译失败。
+        private static bool RetireReleased(WorldChunkReplicaAssembler assembler)
+        {
+            var method = typeof(WorldChunkReplicaAssembler).GetMethod("TryRetireReleasedKey");
+            Assert.That(method, Is.Not.Null, "可靠Leave之后需要显式退休已释放Key，不能让普通Bind悄悄遗忘历史。");
+            return (bool)method.Invoke(assembler, null);
+        }
+
+        [Test] public void RetirementRequiresExplicitReleaseEvenForAnUnusedSlot()
+        {
+            var a = new WorldChunkReplicaAssembler(7, Key, 3, 64, 8, 64, 30);
+            Assert.That(RetireReleased(a), Is.False);
+            Assert.That(a.Installed, Is.False); Assert.That(a.Key, Is.EqualTo(Key));
+            Assert.That(ReleaseInterest(a), Is.True);
+            Assert.That(RetireReleased(a), Is.True);
+            Assert.That(a.ConnectionEpoch, Is.EqualTo(3));
+        }
+
+        [TestCase(false)] [TestCase(true)]
+        public void RetirementReusesReleasedBufferAndVersionStateForANewBaseline(bool retireTombstone)
+        {
+            var a = new WorldChunkReplicaAssembler(7, Key, 3, 64, 8, 64, 30);
+            var words = Payload();
+            var installed = new WorldChunkPayloadHeader(7, 8, Key, 9, 0, 17, 9, words.Length,
+                WorldChunkPayloadCodec.ComputeChecksum(words, words.Length), true);
+            Assert.That(a.TryBegin(installed, 0), Is.True);
+            Assert.That(a.TryReceivePage(installed, 0, words, words.Length, 1), Is.True);
+            if (retireTombstone)
+            {
+                var removed = new WorldChunkPayloadHeader(7, 9, Key, 9, 17, 18, 10, 0, 2166136261u, false);
+                Assert.That(a.TryBegin(removed, 2), Is.True);
+                Assert.That(a.TryReceivePage(removed, 0, new uint[0], 0, 3), Is.True);
+            }
+            Assert.That(RetireReleased(a), Is.False, "已安装事实不能在可读或未显式释放时被抹掉。");
+            Assert.That(ReleaseInterest(a), Is.True);
+            var nextKey = new WorldChunkKey(WorldMaterialDomain.Liquid, 1, 0, 0);
+            Assert.That(BindUnused(a, nextKey), Is.False, "普通Bind保留已有历史拒绝合同。");
+            Assert.That(RetireReleased(a), Is.True);
+            Assert.That(a.Installed, Is.False); Assert.That(PayloadReadable(a), Is.False);
+            Assert.That(a.Header, Is.EqualTo(default(WorldChunkPayloadHeader)));
+            Assert.That(a.HasPending, Is.False); Assert.That(a.ConnectionEpoch, Is.EqualTo(3));
+            Assert.That(BindUnused(a, nextKey), Is.True);
+            var next = new WorldChunkPayloadHeader(7, 10, nextKey, 1, 0, 1, 11, words.Length,
+                WorldChunkPayloadCodec.ComputeChecksum(words, words.Length), true);
+            Assert.That(a.TryReceivePage(installed, 0, words, words.Length, 4), Is.False);
+            Assert.That(a.TryBegin(next, 5), Is.True);
+            Assert.That(a.TryReceivePage(next, 0, words, words.Length, 6), Is.True,
+                "新Key的G1/R1不能被已退休Key的G9/R17或tombstone版本阻挡。");
+            Assert.That(a.Header, Is.EqualTo(next)); Assert.That(PayloadReadable(a), Is.True);
+        }
+
+        [Test] public void RetirementCannotCancelAPendingCandidateOrBypassANewBind()
+        {
+            var a = new WorldChunkReplicaAssembler(7, Key, 3, 64, 8, 8, 30);
+            var words = Payload(); var header = Header(words);
+            Assert.That(ReleaseInterest(a), Is.True);
+            Assert.That(a.TryBegin(header, 0), Is.True);
+            Assert.That(a.TryReceivePage(header, 0, words, 8, 1), Is.True);
+            Assert.That(RetireReleased(a), Is.False); Assert.That(a.HasPending, Is.True);
+            Assert.That(a.TryReceivePage(header, 1, new[] { words[8], words[9], words[10] }, 3, 2), Is.True);
+            Assert.That(a.Installed, Is.True); Assert.That(a.Header, Is.EqualTo(header));
+            Assert.That(ReleaseInterest(a), Is.True); Assert.That(RetireReleased(a), Is.True);
+            Assert.That(BindUnused(a, new WorldChunkKey(WorldMaterialDomain.Liquid, 1, 0, 0)), Is.True);
+            Assert.That(RetireReleased(a), Is.False, "成功绑定新订阅后必须重新Release，不能复用上一Key的退休资格。");
+        }
+
+        [Test] public void RetirementIsRejectedDuringInstallerReentryAndAfterInstallerFault()
+        {
+            var store = new SmallAtomicStore();
+            var a = new WorldChunkReplicaAssembler(7, Key, 3, 64, 8, 64, 30, store);
+            var words = Payload(); var header = Header(words);
+            Assert.That(ReleaseInterest(a), Is.True);
+            bool rejectedDuringInstall = false;
+            store.BeforeInstall = () => rejectedDuringInstall = !RetireReleased(a)
+                && a.LastFailure == WorldReplicaAssemblyFailure.Installing && a.HasPending;
+            Assert.That(a.TryBegin(header, 0), Is.True);
+            Assert.That(a.TryReceivePage(header, 0, words, words.Length, 1), Is.True);
+            Assert.That(rejectedDuringInstall, Is.True); Assert.That(a.Header, Is.EqualTo(header));
+            Assert.That(ReleaseInterest(a), Is.True);
+            store.BeforeInstall = () => throw new System.InvalidOperationException("retirement fault fence");
+            var next = Header(words, 2, 2);
+            Assert.That(a.TryBegin(next, 2), Is.True);
+            Assert.That(a.TryReceivePage(next, 0, words, words.Length, 3), Is.False);
+            Assert.That(RetireReleased(a), Is.False);
+            Assert.That(a.LastFailure, Is.EqualTo(WorldReplicaAssemblyFailure.InstallerFaulted));
+            Assert.That(a.IsInstallerFaulted, Is.True); Assert.That(a.Installed, Is.True);
+            Assert.That(a.Header, Is.EqualTo(header));
+        }
     }
 }

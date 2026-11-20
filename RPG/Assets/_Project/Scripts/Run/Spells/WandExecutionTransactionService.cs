@@ -49,6 +49,35 @@ namespace Game.Run
         public ICastResourceReadOnly ReadOnly { get; }
         public bool IsPending => _pending != null;
         public int ActiveReservations => _tickets.Count;
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        /// <summary>
+        /// 仅在新的 Busy 拒绝发生时描述最多四张活票据，不用于 Gameplay 判定。
+        /// 只记录本地序号/程序修订/层状态和未观察输出编号，不输出账户、InventoryId 或凭据。
+        /// 不执行 Collect/Cancel/Synchronize，故障证据不能顺手清掉被调查的持有者。
+        /// </summary>
+        public string DescribeReservations()
+        {
+            var text = new System.Text.StringBuilder(256);
+            text.Append("PreparedOwned=").Append(_profile.Items.OwnsPreparation(_prepared));
+            int ordinal = 0;
+            foreach (var ticket in _tickets.Values)
+            {
+                if (ordinal == 4) { text.Append("; remaining=").Append(_tickets.Count - ordinal); break; }
+                text.Append("; Ticket#").Append(ordinal++).Append(" Revision=").Append(ticket.Revision)
+                    .Append(" PendingLayer=").Append(ReferenceEquals(_pending, ticket) ? _pendingLayer : -1)
+                    .Append(" Layers=[");
+                for (int i = 0; i < ticket.Layers.Length; i++)
+                { if (i != 0) text.Append(','); text.Append(i).Append(':').Append(ticket.Layers[i]); }
+                text.Append("] MissingOutputs=[");
+                for (int i = 0; i < ticket.Candidate.Graph.Outputs.Count; i++)
+                    if (ticket.Layers[ticket.Candidate.Graph.Outputs[i].ScopeId] == WandLayerResourceStatus.Committed
+                        && (ticket.Replay == null || !ticket.Replay.ReleasedOutputs[i]))
+                        text.Append(i).Append('@').Append(ticket.Candidate.Graph.Outputs[i].ScopeId).Append(';');
+                text.Append(']');
+            }
+            return text.ToString();
+        }
+#endif
         public SpellExecutionTrace LastRejectedTrace { get; private set; }
         public WandExecutionTransactionService(SinglePlayerProfile profile, WandLoadoutService wands,
             RaidSpellEligibility eligibility, string inventoryId, WandExecutionReplayArchive archive,
@@ -162,7 +191,16 @@ namespace Game.Run
                 else { _profile.Items.TryGet(instruction.InstanceId, out var card); ticket.ProgramContentIds[i] = card.ContentId; }
             }
             CaptureAttachments(ticket);
-            ticket.Layers[0] = WandLayerResourceStatus.Prepared; _tickets.Add(id, ticket);
+            ticket.Layers[0] = WandLayerResourceStatus.Prepared;
+            // 冻结图保留空子 Scope 供 Trace/Replay 解释，但 FreezeGraph 已将父输出的
+            // PayloadScopeId 断开：没有输出的子层不会进入 Runtime，也不会收到 Prepare/Abandon。
+            // 若仍保持默认 Unattempted，根输出即使全部释放，Collect 也会永久保留整张票据，
+            // 继而锁住拾取和背包编辑。只终结没有 Runtime 输出的子层；有效 payload 与尚未
+            // 观察到的根输出继续持有原 Reservation，不按超时解锁，也不改变已支付的资源。
+            for (int layer = 1; layer < ticket.Layers.Length; layer++)
+                if (candidate.Graph.Scopes[layer].OutputIds.Count == 0)
+                    ticket.Layers[layer] = WandLayerResourceStatus.Cancelled;
+            _tickets.Add(id, ticket);
             _pending = ticket; _pendingLayer = 0;
             _materialLayer = MaterialOutputs.Prepare(ticket.Attachments[0], ticket.Cards[0], ticket.World);
             ticketId = id; return OwnedWandFailureReason.None;

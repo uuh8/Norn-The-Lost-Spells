@@ -97,5 +97,25 @@ namespace Game.Run.Tests
             Assert.That(p.Items.Count,Is.EqualTo(3));p.Items.TryGet("a",out var item);Assert.That(item.Material.Quantity,Is.EqualTo(300));
             At(p.Items,"a",Bag(0,0));At(p.Items,"food",Bag(1,0));At(p.Items,"bag",new ItemLocation(ItemLocationKind.EquippedBackpack,"player",0,0,0,0));
         }
+
+        [Test]
+        public void OrganizePacksMixedShapesFromUpperLeftAndKeepsSameContentAdjacent()
+        {
+            // 使用稀疏原布局验证玩家要求的方向；同类排序不等于合并独立实例。
+            var p=Build(6);
+            Assert.That(p.Items.TryAdd(new RuntimeItemState("food.a","food",0),Bag(0,1)),Is.True);
+            Assert.That(p.Items.TryAdd(new RuntimeItemState("food.b","food",0),Bag(2,1)),Is.True);
+            Assert.That(p.Items.TryAdd(new RuntimeItemState("large","big",0),Bag(4,1)),Is.True);
+            int count=p.Items.Count;
+            Assert.That(BackpackOrganizeOps.TryOrganize(p.Items,"bag",p.Items.Version).Success,Is.True);
+            At(p.Items,"a",Bag(0,0));At(p.Items,"food.a",Bag(1,0));At(p.Items,"food.b",Bag(2,0));
+            At(p.Items,"large",Bag(3,0));
+            Assert.That(p.Items.Count,Is.EqualTo(count));
+            Assert.That(p.Items.TryGet("a",out var material),Is.True);
+            Assert.That(material.Material.Quantity,Is.EqualTo(100));
+            // 再整理采用同一合法顺序，不能因旧位置或旋转迭代而漂移。
+            Assert.That(BackpackOrganizeOps.TryOrganize(p.Items,"bag",p.Items.Version).Success,Is.True);
+            At(p.Items,"a",Bag(0,0));At(p.Items,"large",Bag(3,0));
+        }
     }
 }

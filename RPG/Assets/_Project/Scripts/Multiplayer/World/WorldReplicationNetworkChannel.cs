@@ -12,20 +12,35 @@ namespace Game.Multiplayer
 {
     /// <summary>
     /// 正式 WorldEnvelope 的薄适配器：认证属于 RoomManager/Auth，数量/原子安装属于 Core/ElementField。
-    /// Client 接收回调只预检并复制4个固定页槽；每个 Render 轮最多安装处理2页，不能在借用包上跨帧留引用。
+    /// Client 接收回调只预检并复制32个固定页槽；每个 Render 轮最多处理8页，不能在借用包上跨帧留引用。
     /// DS 只对首个合法输入已证实 SimulationReady 的当前席位发送，避免 Hello 与未装配 World 的竞态。
     /// </summary>
     [RequireComponent(typeof(RoomNetworkManager),typeof(JoinTicketAuthenticator))]
-    public sealed class WorldReplicationNetworkChannel : MonoBehaviour
+    public sealed partial class WorldReplicationNetworkChannel : MonoBehaviour
     {
         private RoomNetworkManager _manager;
         private JoinTicketAuthenticator _auth;
         private OnlineWorldBootstrap _world;
         private WorldReplicationCoordinator _coordinator;
+        private WorldLiquidMotionReplication _motion;
+        public WorldLiquidMotionReplication LiquidMotion=>_motion;
+        public void CaptureLiquidMotion(WorldReplicaBuffer committed)=>_motion?.Capture(committed,NetworkTime.time);
         private readonly WorldPageCodec _codec=new WorldPageCodec();
         private readonly byte[] _send=new byte[WorldPageCodec.MaxPayloadBytes];
-        private readonly byte[][] _inbox={new byte[WorldPageCodec.MaxPayloadBytes],new byte[WorldPageCodec.MaxPayloadBytes],new byte[WorldPageCodec.MaxPayloadBytes],new byte[WorldPageCodec.MaxPayloadBytes]};
-        private readonly int[] _lengths=new int[4];
+        // 四个不同Chunk可同时在途，可靠Transport可能在一次回调批次交付多个完整页组。
+        // 原四槽会在合法八页burst的后半段直接丢页，迫使已安装不了的页组等待超时重传。
+        // 一份完整Motion最多11页，再加数量4页；32个固定槽可容纳两轮15页突发，不按停顿时长扩容。
+        // 安装总上限每Pump8页，运动和数量共享；极端长暂停仍沿原overflow/retry边界安全恢复。
+        private const int InboxCapacity=32;
+        private const int ClientPagesPerPump=8;
+        private readonly byte[][] _inbox=CreateInbox();
+        private readonly int[] _lengths=new int[InboxCapacity];
+        private static byte[][] CreateInbox()
+        {
+            var slots=new byte[InboxCapacity][];
+            for(int i=0;i<slots.Length;i++)slots[i]=new byte[WorldPageCodec.MaxPayloadBytes];
+            return slots;
+        }
         private int _head,_count;
         private bool _serverRegistered,_clientRegistered,_reportedFault;
         private JoinConnectionIdentity _clientIdentity;
@@ -41,6 +56,8 @@ namespace Game.Multiplayer
         {
             if(ReferenceEquals(_world,world) && ReferenceEquals(_coordinator,coordinator)){EnsureHandlers();return;}
             Clear();_world=world;_coordinator=coordinator;_reportedFault=false;
+            _motion=coordinator!=null?new WorldLiquidMotionReplication(coordinator,world!=null?world.LiquidMotionWorld:null):null;
+            ConfigureLiquidMotionDiagnostics();
             _manager=GetComponent<RoomNetworkManager>();_auth=GetComponent<JoinTicketAuthenticator>();EnsureHandlers();
 #if DEVELOPMENT_BUILD || UNITY_EDITOR
             InitializeRecoveryProbe();
@@ -49,6 +66,11 @@ namespace Game.Multiplayer
         private void Update()
         {
             EnsureHandlers();
+            PollLiquidMotionDiagnostics();
+            // Replica本地模拟始终被禁止；表现时钟只服从真实连接/Frozen生命周期，不能复用SimulationSuspended。
+            if(_coordinator!=null && !_coordinator.IsAuthority && _world!=null)
+                _motion?.Advance(Time.realtimeSinceStartupAsDouble,NetworkTime.time,
+                    !_world.WorldReady || _world.Frozen || _world.ResearchPaused || !NetworkClient.isConnected || _coordinator.Faulted);
             if(!NetworkClient.active)
             {
                 if(_clientRegistered)NetworkClient.UnregisterHandler<WorldEnvelope>();
@@ -78,6 +100,7 @@ namespace Game.Multiplayer
             if(ReferenceEquals(identity,_clientIdentity))return true;
             // 新认证上下文先丢旧连接的在途借用页，再只取消旧候选；已安装 Store/版本由 Coordinator 保留。
             ClearInbox();if(!_coordinator.SetClientConnectionEpoch(identity.ConnectionEpoch))return false;
+            _motion?.ResetConnection(identity.ConnectionEpoch);
             _clientIdentity=identity;return true;
         }
         private void OnClientPage(WorldEnvelope envelope)
@@ -88,13 +111,20 @@ namespace Game.Multiplayer
             if(page.ConnectionEpoch!=identity.ConnectionEpoch || page.WorldEpoch!=_coordinator.WorldEpoch || page.GameplayHash!=_coordinator.GameplayHash ||
                 !BindClient(identity)) {ObserveChannelTiming(WorldReplicationTimingStage.PageRejected,page,3,envelope.Payload.Count,actorId:identity.ActorId);Rejected++;return;}
             ObserveChannelTiming(WorldReplicationTimingStage.PageReceived,page,(int)page.Kind,envelope.Payload.Count,actorId:identity.ActorId);
-            if(page.Kind==6 || page.Kind==7)
+            if(page.Kind==8)
+            {
+                // 数量和运动必须保留可靠通道的到达顺序。此前运动在回调立即推进，而较早到达
+                // 的数量还等Update安装；下一Sequence会先取消旧完整窗口，错过即将齐全的witness。
+                // 两类页现在共用固定FIFO，并受每Pump总4页约束；运动仍不写Store、不回数量ACK。
+                if(_motion==null){Rejected++;return;}
+            }
+            else if(page.Kind==6 || page.Kind==7)
             {
                 if(!_coordinator.ReceiveSubscription(page)){ObserveChannelTiming(WorldReplicationTimingStage.PageRejected,page,4,envelope.Payload.Count,actorId:identity.ActorId);Rejected++;return;}
-                // 控制在可信主线程回调同步生效，即使四槽已满仍能退出；只压缩已失效的数据，保持其他Key顺序。
+                // 控制在可信主线程回调同步生效，即使队列已满仍能退出；淘汰运动候选与已失效数据，保持其他Key顺序。
                 PurgeClosedPages();return;
             }
-            if(!_coordinator.AcceptsPage(page)){ObserveChannelTiming(WorldReplicationTimingStage.PageRejected,page,4,envelope.Payload.Count,actorId:identity.ActorId);Rejected++;return;}
+            else if(!_coordinator.AcceptsPage(page)){ObserveChannelTiming(WorldReplicationTimingStage.PageRejected,page,4,envelope.Payload.Count,actorId:identity.ActorId);Rejected++;return;}
             if(_count==_inbox.Length){ObserveChannelTiming(WorldReplicationTimingStage.PageRejected,page,5,envelope.Payload.Count,actorId:identity.ActorId);Rejected++;return;}
             int slot=(_head+_count)%_inbox.Length;
             Array.Copy(envelope.Payload.Array,envelope.Payload.Offset,_inbox[slot],0,envelope.Payload.Count);
@@ -136,63 +166,107 @@ namespace Game.Multiplayer
             {
                 var connection=_manager.ActorConnection(slot);
                 var identity=connection!=null?connection.authenticationData as JoinConnectionIdentity:null;
-                if(!_manager.IsCurrentActorConnection(connection,identity) || !Matches(identity)) {_coordinator.RemovePeer(slot);continue;}
+                if(!_manager.IsCurrentActorConnection(connection,identity) || !Matches(identity)) {_coordinator.RemovePeer(slot);_motion?.ResetPeer(slot);continue;}
                 if(!_coordinator.BindPeer(slot,connection.connectionId,identity.ConnectionEpoch) || !_world.Registry[slot].SimulationReady)continue;
                 var actor=_world.Registry[slot];
                 if(actor.Body==null || !_coordinator.UpdatePeerPosition(slot,connection.connectionId,identity.ConnectionEpoch,actor.Body.position))continue;
 #if DEVELOPMENT_BUILD || UNITY_EDITOR
                 if(slot==0 && _recoveryProbe!=null && _recoveryProbe.Holding(now))continue;
 #endif
-                for(int page=0;page<2;page++)
+                int quantityPages=0,quantityLimit=_coordinator.QuantityPagesPerRound;
+                bool lifecycleBlocked=false;
+                // Lifecycle必须先进入可靠流，不能为平滑把Leave排在无关的大运动窗口后。
+                // TryPreparePage遇第一份data时仅取消借用，冻结payload保留，随后运动不会写它或授予ACK。
+                while(quantityPages<quantityLimit)
                 {
                     if(!_coordinator.TryPreparePage(slot,now,out var message))break;
-#if DEVELOPMENT_BUILD || UNITY_EDITOR
-                    var mutation=default(RecoveryMutation);
-                    int bytes;
-                    if(slot==0 && _recoveryProbe!=null)
-                    {
-                        mutation=_recoveryProbe.BeforeEncode(connection,identity,message,now);
-                        if(_recoveryProbe.Holding(now))break;
-                        bool encoded;
-                        // outbound只是本次借用的编码输入。无论编码返回false还是抛异常，都必须先恢复，
-                        // 再让原MarkPageSent读取准备态；Owner/Peer的冻结数组从未被故障诊断写入。
-                        try{encoded=_codec.TryEncode(message,new ArraySegment<byte>(_send),out bytes);}
-                        finally{if(mutation.TargetPage)RecoveryProbe.Restore(message,mutation);}
-                        if(!encoded){_recoveryProbe.EncodeRejected(mutation,now);break;}
-                    }
-                    else if(!_codec.TryEncode(message,new ArraySegment<byte>(_send),out bytes))break;
-#else
-                    if(!_codec.TryEncode(message,new ArraySegment<byte>(_send),out int bytes))break;
-#endif
-                    // 72B 为 Mirror framing + KCP/IPv4/UDP 的保守预留，实际 batching/socket 成本仍须压测。
-                    if(!_coordinator.MarkPageSent(slot,now,bytes+72))break;
-                    connection.Send(new WorldEnvelope{Payload=new ArraySegment<byte>(_send,0,bytes)},Channels.Reliable);
-                    EncodedBytesSent+=bytes;
-                    // Send返回只证明已提交给Mirror可靠发送入口，不等于socket发出/Client收到或GPU可见。
-                    // 所有页均写入有界目标trace，PageIndex/Count可还原首末页与同冻结快照重启；不复制payload。
-                    ObserveChannelTiming(WorldReplicationTimingStage.PageSent,message,(int)message.Kind,bytes,connection.connectionId,identity.ActorId);
-#if DEVELOPMENT_BUILD || UNITY_EDITOR
-                    if(_recoveryProbe!=null)_recoveryProbe.Sent(slot,connection,identity,message,mutation,_send,bytes,now);
-#endif
+                    if(message.Kind!=6 && message.Kind!=7){_coordinator.CancelPreparedPage(slot);break;}
+                    if(!SendQuantityPage(slot,connection,identity,message,now)){lifecycleBlocked=true;break;}
+                    quantityPages++;
                 }
+                if(_coordinator.Faulted)return;
+                if(lifecycleBlocked)continue;
+                // 已有合法订阅时先发一份完整Motion，Client FIFO才能先Stage，再观察数量的中间态。
+                // Motion不足/失败立即结束运动段，数量仍继续；不新增依赖gate或无限延期实际采集。
+                // 控制已耗尽本轮预算时保守跳过Motion，避免尚未发送的Lifecycle被新运动挤后。
+                for(int page=0;page<WorldLiquidMotionReplication.MaxPagesPerPump && _motion!=null && quantityPages<quantityLimit;page++)
+                {
+                    if(!_motion.TryPreparePage(slot,identity.ConnectionEpoch,actor.Body.position,now,NetworkTime.time,out var motion))break;
+                    if(!_codec.TryEncode(motion,new ArraySegment<byte>(_send),out int bytes)
+                        || !_motion.MarkPageSent(slot,bytes))break;
+                    bool lastPage=motion.PageIndex+1==motion.PageCount;
+                    try {connection.Send(new WorldEnvelope{Payload=new ArraySegment<byte>(_send,0,bytes)},Channels.Reliable);}
+                    catch(Exception error) {_motion.ResetPeer(slot);GameLog.Warn("液体运动发送已降级："+error.Message,"WorldReplication");break;}
+                    EncodedBytesSent+=bytes;
+                    // 即使刚补完旧window尾页，本轮也不连发下一份window的半帧；下一Pump再送完整新窗口。
+                    if(lastPage)break;
+                }
+                while(quantityPages<quantityLimit)
+                {
+                    if(!_coordinator.TryPreparePage(slot,now,out var message))break;
+                    if(!SendQuantityPage(slot,connection,identity,message,now))break;
+                    quantityPages++;
+                }
+                if(_coordinator.Faulted)return;
             }
+            // Leave已经进入与后续Enter相同的可靠发送入口后，才维护可退休的空metadata。
+            // MarkPageSent只是预算预留，不能把它当作Send完成或Client安装证明。
+            _coordinator.CompleteSendRound();
+        }
+        /// <summary>Lifecycle和data复用同一编码/预算/诊断路径，避免两阶段发送偷偷增加数量预算或改变恢复语义。</summary>
+        private bool SendQuantityPage(int slot,NetworkConnectionToClient connection,JoinConnectionIdentity identity,WorldPageMessage message,double now)
+        {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            var mutation=default(RecoveryMutation);int bytes;
+            if(slot==0 && _recoveryProbe!=null)
+            {
+                mutation=_recoveryProbe.BeforeEncode(connection,identity,message,now);
+                if(_recoveryProbe.Holding(now)){_coordinator.CancelPreparedPage(slot);return false;}
+                bool encoded;
+                try{encoded=_codec.TryEncode(message,new ArraySegment<byte>(_send),out bytes);}
+                finally{if(mutation.TargetPage)RecoveryProbe.Restore(message,mutation);}
+                if(!encoded){_recoveryProbe.EncodeRejected(mutation,now);_coordinator.CancelPreparedPage(slot);return false;}
+            }
+            else if(!_codec.TryEncode(message,new ArraySegment<byte>(_send),out bytes)){_coordinator.CancelPreparedPage(slot);return false;}
+#else
+            if(!_codec.TryEncode(message,new ArraySegment<byte>(_send),out int bytes)){_coordinator.CancelPreparedPage(slot);return false;}
+#endif
+            // 按实际编码长度加72B保守framing扣款，data与Lifecycle共用Peer唯一token桶/轮页上限。
+            if(!_coordinator.MarkPageSent(slot,now,bytes+72)){_coordinator.CancelPreparedPage(slot);return false;}
+            try{connection.Send(new WorldEnvelope{Payload=new ArraySegment<byte>(_send,0,bytes)},Channels.Reliable);}
+            catch(Exception error){_coordinator.ReportTransportFailure(error);GameLog.Error("材料可靠发送异常："+error,"WorldReplication");return false;}
+            EncodedBytesSent+=bytes;
+            ObserveChannelTiming(WorldReplicationTimingStage.PageSent,message,(int)message.Kind,bytes,connection.connectionId,identity.ActorId);
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            if(_recoveryProbe!=null)_recoveryProbe.Sent(slot,connection,identity,message,mutation,_send,bytes,now);
+#endif
+            return true;
         }
         private void PumpClient(double now)
         {
             if(!ClientContext(out var identity) || !BindClient(identity))return;
             long milliseconds=(long)(now*1000);
-            for(int i=0;i<2 && _count>0;i++)
+            for(int i=0;i<ClientPagesPerPump && _count>0;i++)
             {
                 int at=_head;_head=(_head+1)%_inbox.Length;_count--;
                 if(!_codec.TryDecode(new ArraySegment<byte>(_inbox[at],0,_lengths[at]),out var message))
                 {Rejected++;continue;}
+                if(message.Kind==8)
+                {
+                    if(_motion==null || !_motion.ReceivePage(message,now,NetworkTime.time,_world.Frozen || _world.ResearchPaused))Rejected++;
+                    continue;
+                }
                 if(message.ConnectionEpoch!=identity.ConnectionEpoch || !_coordinator.AcceptsPage(message))
                 {ObserveChannelTiming(WorldReplicationTimingStage.PageRejected,message,6,_lengths[at],actorId:identity.ActorId);Rejected++;continue;}
                 bool accepted=_coordinator.ReceivePage(message,milliseconds,out var reply);
                 if(!accepted)Rejected++;
                 if(reply!=null)SendReply(reply);
+                // 每页原子安装之后立即检查完整运动候选。两页之间可能只有这一刻与witness一致；
+                // 等整轮结束会错过该窗口，下一页又可能已经推进了另一个材料版本。
+                _motion?.Advance(now,NetworkTime.time,_world.Frozen || _world.ResearchPaused);
             }
             if(_coordinator.ExpirePending(milliseconds,out var expired))SendReply(expired);
+            _motion?.Advance(now,NetworkTime.time,_world.Frozen || _world.ResearchPaused);
         }
         private void SendReply(WorldPageMessage message)
         {
@@ -201,7 +275,7 @@ namespace Game.Multiplayer
             ObserveChannelTiming(WorldReplicationTimingStage.ReplySent,message,(int)message.Kind,count,actorId:identity.ActorId);
         }
         /// <summary>
-        /// Channel PageRejected.Reason3=已解码身份/世界或Bind拒绝，4=订阅拒绝，5=四槽满，6=延后Pump时身份/订阅已失效；
+        /// Channel PageRejected.Reason3=已解码身份/世界或Bind拒绝，4=订阅拒绝，5=固定入口队列满，6=延后Pump时身份/订阅已失效；
         /// PageReceived/PageSent/ReplySent.Reason保留实际wire Kind。Count0是此刻真实inbox深度，Count1是编码字节。
         /// GameplayTick单列取World.ServerTick，Header.ServerTick原样保留材料Tick；Frame也不是网络版本。
         /// ActorId来自当前真实认证对象。DS ConnectionId来自真实发送连接；Client不知道DS连接id，填-1，
@@ -679,6 +753,7 @@ namespace Game.Multiplayer
             if(_serverRegistered)NetworkServer.UnregisterHandler<WorldEnvelope>();
             if(_clientRegistered)NetworkClient.UnregisterHandler<WorldEnvelope>();
             _serverRegistered=_clientRegistered=false;ClearInbox();_clientIdentity=null;
+            _motion?.Clear();
         }
         private void OnDisable()=>Clear();
         private void OnDestroy()=>Clear();

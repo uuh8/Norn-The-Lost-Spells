@@ -428,6 +428,19 @@ namespace Game.Multiplayer
         }
         private void OnBorn(CombatOutputSpawnedEvent born)
         {
+            try { OnBornCore(born); }
+            catch (Exception error)
+            {
+                // 出生事实属于已提交的 Gameplay。表现订阅错误可以隔离，权威复制装配错误则必须
+                // 保留原现场并关闭世界写门，不能因事实总线继续投递就把未复制输出默认为安全。
+                Faulted = true;
+                try { _world.SynchronizeMaterialLifecycle(); }
+                catch (Exception cleanup) { error.Data["Norn.CombatBirthFailureCleanup"] = cleanup; }
+                throw;
+            }
+        }
+        private void OnBornCore(CombatOutputSpawnedEvent born)
+        {
             if (_disposed || !_world.IsAuthority || born.Output == null) return;
             var material = born.Output.GetComponent<MaterialPayloadRuntimeAdapter>();
             bool materialOutput = material != null && material.ExecutionMode == CombatExecutionMode.Authority;

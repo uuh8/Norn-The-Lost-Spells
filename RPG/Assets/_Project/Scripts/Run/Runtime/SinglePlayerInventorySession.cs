@@ -432,15 +432,16 @@ namespace Game.Run
             if ((RaidWriteLocked && (request.Operation == CastResourceOperation.PrepareRoot || request.Operation == CastResourceOperation.PrepareLayer))
                 || !WorldActionsAllowed && request.Operation==CastResourceOperation.PrepareRoot)
             {
-                EventBus<CastResourceResultEvent>.Publish(new CastResourceResultEvent { InventoryId = request.InventoryId,
+                EventBus<CastResourceResultEvent>.PublishFact(new CastResourceResultEvent { InventoryId = request.InventoryId,
                     SourceWandId = request.SourceWandId, CallerId = request.CallerId, RequestId = request.RequestId,
                     TicketId = request.TicketId, Operation = request.Operation, Reason = OwnedWandFailureReason.ResourceBusy }); return;
             }
             uint before = _profile.Items.Version;
             CastResourceResultEvent result = request.UseV2 ? _castsV2.Execute(request) : _casts.Execute(request);
             if (before != _profile.Items.Version)
-                EventBus<InventoryChangedEvent>.Publish(new InventoryChangedEvent { InventoryId = _read.InventoryId, Version = _read.Version });
-            EventBus<CastResourceResultEvent>.Publish(result);
+                // 和 DS 一致：资源结果已确定，某个面板的异常不能阻止原施法收到该结果。
+                EventBus<InventoryChangedEvent>.PublishFact(new InventoryChangedEvent { InventoryId = _read.InventoryId, Version = _read.Version });
+            EventBus<CastResourceResultEvent>.PublishFact(result);
         }
         private void OnRaidLifecycle(SpellRaidLifecycleRequestedEvent request)
         {

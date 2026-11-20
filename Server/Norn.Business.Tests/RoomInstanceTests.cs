@@ -111,7 +111,12 @@ public sealed class RoomInstanceTests
         await using var f = new OnlineFactory(instances: true); var run = await Reserve(f); var (service, grant) = await MakeReady(f, run);
         var ticket = await service.MintTicketAsync(run.A.PlayerId, run.Run.RoomId, default);
         await Failure("InstanceEpochExpired", () => service.HeartbeatAsync(grant.Descriptor.InstanceId, grant.Secret!, run.Run.RoomEpoch + 1, default));
-        f.Clock.Advance(TimeSpan.FromSeconds(121)); Assert.Equal(1, await service.ExpireDueAsync(default)); Assert.Equal(0, await Leases(f, run.Run.RunId));
+        f.Clock.Advance(TimeSpan.FromSeconds(121));
+        // test Schema保留历史Run；ExpireDueAsync按整个Schema回收到期租约，返回值不是本fixture的数量。
+        // 直接验证本次Instance已退出活动集和本次Run租约释放，不能把正常回收历史预约误报成产品失败。
+        Assert.True(await service.ExpireDueAsync(default) >= 1);
+        Assert.DoesNotContain(await service.ActiveAsync(default), row => row.InstanceId == grant.Descriptor.InstanceId);
+        Assert.Equal(0, await Leases(f, run.Run.RunId));
         await Failure("InstanceEpochExpired", () => service.HeartbeatAsync(grant.Descriptor.InstanceId, grant.Secret!, run.Run.RoomEpoch, default));
         await Failure("InstanceEpochExpired", () => service.ConsumeAsync(grant.Descriptor.InstanceId, grant.Secret!, new ConsumeJoinTicketRequest { Ticket = ticket.Ticket, PlayerId = run.A.PlayerId, RoomEpoch = run.Run.RoomEpoch }, default));
         var room = await RoomAdmissionTests.View(run.ClientA, run.Run.RoomId); Assert.Equal("Open", room.State); Assert.True(room.RoomEpoch > run.Run.RoomEpoch);
@@ -121,8 +126,13 @@ public sealed class RoomInstanceTests
     public async Task ReadyTimeout45Seconds_ReleasesOnlyThatRun()
     {
         await using var f = new OnlineFactory(instances: true); var run = await Reserve(f); var service = f.Services.GetRequiredService<RoomInstanceService>(); var grant = await service.AllocateAsync(run.Run, default);
-        f.Clock.Advance(TimeSpan.FromSeconds(44)); Assert.Equal(0, await service.ExpireDueAsync(default)); Assert.Equal(2, await Leases(f, run.Run.RunId));
-        f.Clock.Advance(TimeSpan.FromSeconds(2)); Assert.Equal(1, await service.ExpireDueAsync(default)); Assert.Equal(0, await Leases(f, run.Run.RunId));
+        f.Clock.Advance(TimeSpan.FromSeconds(44)); await service.ExpireDueAsync(default);
+        // 历史到期实例可被同一次扫描回收；44s时本次Launching实例及其两位成员资产仍必须保持。
+        Assert.Contains(await service.ActiveAsync(default), row => row.InstanceId == grant.Descriptor.InstanceId && row.State == "Launching");
+        Assert.Equal(2, await Leases(f, run.Run.RunId));
+        f.Clock.Advance(TimeSpan.FromSeconds(2)); Assert.True(await service.ExpireDueAsync(default) >= 1);
+        Assert.DoesNotContain(await service.ActiveAsync(default), row => row.InstanceId == grant.Descriptor.InstanceId);
+        Assert.Equal(0, await Leases(f, run.Run.RunId));
         Assert.False(await service.FailAsync(grant.Descriptor.InstanceId, "LaunchFailed", default));
     }
 

@@ -440,11 +440,39 @@ namespace Game.Rendering.Tests
             }
             public IEnumerator Read()
             {
-                var count = AsyncGPUReadback.Request(_resources.Counter); var triangles = AsyncGPUReadback.Request(_resources.Triangles); var overflow = AsyncGPUReadback.Request(_resources.Overflow);
-                while (!count.done || !triangles.done || !overflow.done) yield return null;
-                Assert.That(count.hasError || triangles.hasError || overflow.hasError, Is.False);
-                Assert.That(overflow.GetData<uint>()[0], Is.Zero);
-                Count = (int)count.GetData<uint>()[0]; Triangles = triangles.GetData<Triangle>().ToArray();
+                int pending=3;bool error=false,countReceived=false,trianglesReceived=false,overflowReceived=false;
+                uint countValue=0,overflowValue=0;Triangle[] triangleValues=null;
+                // 各request结果只在完成后的一个PlayerLoop内有效，必须分别在callback复制。
+                // 等最慢的Triangle后再读Counter/Overflow会访问已过期结果；这里的临时分配仅属测试。
+                var count=AsyncGPUReadback.Request(_resources.Counter,r=>
+                {countReceived=true;error|=r.hasError;if(!r.hasError)countValue=r.GetData<uint>()[0];pending--;});
+                var triangles=AsyncGPUReadback.Request(_resources.Triangles,r=>
+                {trianglesReceived=true;error|=r.hasError;if(!r.hasError)triangleValues=r.GetData<Triangle>().ToArray();pending--;});
+                var overflow=AsyncGPUReadback.Request(_resources.Overflow,r=>
+                {overflowReceived=true;error|=r.hasError;if(!r.hasError)overflowValue=r.GetData<uint>()[0];pending--;});
+                count.forcePlayerLoopUpdate=true;triangles.forcePlayerLoopUpdate=true;overflow.forcePlayerLoopUpdate=true;
+                // 显式提交D3D12 pending command lists，不依赖场景恰好重绘，也不改用同步GPU等待。
+                GL.Flush();
+                var probe=new RenderingReadbackDiagnostics.Probe("fire-surface");
+                double deadline=EditorApplication.timeSinceStartup+10;
+                try
+                {
+                    while(pending>0)
+                    {
+                        probe.Poll();
+                        if(!countReceived)count.Update();
+                        if(!trianglesReceived)triangles.Update();
+                        if(!overflowReceived)overflow.Update();
+                        if(pending==0)break;
+                        EditorApplication.QueuePlayerLoopUpdate();
+                        Assert.That(EditorApplication.timeSinceStartup,Is.LessThan(deadline),"Fire surface readback timed out; pending="+pending+"; "+probe.State);
+                        yield return null;
+                    }
+                }
+                finally{probe.Save("pending="+pending+",error="+error+",countCopied="+countReceived+",trianglesCopied="+trianglesReceived+",overflowCopied="+overflowReceived);}
+                Assert.That(error,Is.False,"Fire surface GPU readback reported an error.");
+                Assert.That(overflowValue,Is.Zero);
+                Count=(int)countValue;Triangles=triangleValues;
             }
             public int Components()
             {

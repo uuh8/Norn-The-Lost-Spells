@@ -373,15 +373,31 @@ namespace Game.Multiplayer.Tests
             var baseline=Pages(server,2);Assert.That(baseline[0].BaseRevision,Is.Zero);
             foreach(var page in baseline)Assert.That(Receive(client,page,200,out reply),Is.True);Assert.That(Quantity(store),Is.EqualTo(1200UL));
         }
-        [Test] public void ReconnectRejectsOldAckAndPreservesInstalledReplicaUntilFreshBaseline()
+        [Test] public void ReconnectClearsOldReplicaRejectsOldMessagesAndRestoresCurrentBaseline()
         {
             var server=Server(out _);var client=Client(out var store);var pages=Pages(server);WorldPageMessage ack=null;
             foreach(var page in pages)Assert.That(Receive(client,page,100,out ack),Is.True);
+            Assert.That(Quantity(store),Is.EqualTo(1200UL));var oldAck=ack.Clone();
             Assert.That(Call(server,"BindPeer",0,11,4u),Is.True);Assert.That(Call(client,"SetClientConnectionEpoch",4u),Is.True);
-            Assert.That(Quantity(store),Is.EqualTo(1200UL));Assert.That(Call(server,"ReceiveControl",0,10,3u,ack,1d),Is.False);
+            // 旧约定在重连时保留可读量；DS现在可能已经退休断线期间的空Key，旧量不一定还能等到Leave。
+            // 新约定只撤销Client缓存，Authority世界/资源仍保持原值，由同一World的当前Baseline重新恢复。
+            Assert.That(Quantity(store),Is.Zero);
+            Assert.That(Call(server,"ReceiveControl",0,10,3u,oldAck,1d),Is.False);
+            foreach(var old in pages)
+            {Assert.That(ReceiveExplicit(client,old,150,out var rejected),Is.False);Assert.That(rejected,Is.Null);}
+            Assert.That(Quantity(store),Is.Zero,"旧连接页不能恢复刚撤销的只读量。");
             var fresh=Pages(server,2);Assert.That(fresh[0].ConnectionEpoch,Is.EqualTo(4));Assert.That(fresh[0].BaseRevision,Is.Zero);
-            foreach(var page in fresh)Assert.That(Receive(client,page,200,out ack),Is.True);
+            Assert.That(fresh[0].WorldEpoch,Is.EqualTo(pages[0].WorldEpoch));
+            Assert.That(fresh[0].Generation,Is.EqualTo(pages[0].Generation));
+            Assert.That(Call(server,"ReceiveControl",0,10,3u,oldAck,2.5d),Is.False,"旧ACK不能清除当前连接的冻结Baseline。");
+            for(int i=0;i<fresh.Length;i++)
+            {
+                Assert.That(Receive(client,fresh[i],200,out ack),Is.True);
+                if(i<fresh.Length-1){Assert.That(ack,Is.Null);Assert.That(Quantity(store),Is.Zero,"整块安装前仍不可读半份当前量。");}
+            }
             Assert.That(Call(server,"ReceiveControl",0,11,4u,ack,3d),Is.True);Assert.That(Quantity(store),Is.EqualTo(1200UL));
+            foreach(var old in pages)Assert.That(ReceiveExplicit(client,old,250,out _),Is.False);
+            Assert.That(Quantity(store),Is.EqualTo(1200UL));
         }
         [TestCase("unauthenticated")][TestCase("stale-reference")][TestCase("world-handshake-missing")][TestCase("queue-capacity")][TestCase("destroyed-channel")][TestCase("queue-timing")]
         public void NativeClientIngressChecksRealAuthenticationBeforeBoundedPageQueue(string boundary)
@@ -431,17 +447,20 @@ namespace Game.Multiplayer.Tests
                 if(boundary=="world-handshake-missing")Set(auth,"<ClientWorldEpoch>k__BackingField",0UL);
                 if(boundary=="queue-capacity" || boundary=="queue-timing")
                 {
-                    foreach(var page in pages)send(page);
-                    Assert.That(type.GetProperty("QueuedPages").GetValue(channel),Is.EqualTo(4));
+                    // 队列允许四在途的合法突发后，容量仍须是硬边界。重复合法页只用于灌满
+                    // 这个入口边界，不发布数量；新四Flight专例另证真实不同Key八页不丢失。
+                    int capacity=((byte[][])type.GetField("_inbox",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(channel)).Length;
+                    for(int i=0;i<capacity+2;i++)send(pages[i%pages.Length]);
+                    Assert.That(type.GetProperty("QueuedPages").GetValue(channel),Is.EqualTo(capacity));
                     Assert.That(type.GetProperty("Rejected").GetValue(channel),Is.GreaterThanOrEqualTo(2));
                     if(timing!=null)
                     {
-                        var rejected=timing.Events("PageRejected");Assert.That(rejected.Length,Is.EqualTo(pages.Length-4));
-                        Assert.That(TimingCapture.Field(rejected[0],"Reason"),Is.EqualTo(5),"四槽满必须与身份/Codec拒绝分开。");
-                        Assert.That(TimingCapture.Field(rejected[0],"Count0"),Is.EqualTo(4));
-                        Assert.That(TimingCapture.Field(rejected[0],"PageIndex"),Is.EqualTo(4));
+                        var rejected=timing.Events("PageRejected");Assert.That(rejected.Length,Is.EqualTo(2));
+                        Assert.That(TimingCapture.Field(rejected[0],"Reason"),Is.EqualTo(5),"队列满必须与身份/Codec拒绝分开。");
+                        Assert.That(TimingCapture.Field(rejected[0],"Count0"),Is.EqualTo(capacity));
+                        Assert.That(TimingCapture.Field(rejected[0],"PageIndex"),Is.EqualTo((int)pages[capacity%pages.Length].PageIndex));
                         Assert.That(TimingCapture.Field(rejected[0],"ActorId"),Is.EqualTo(1UL));
-                        Assert.That(TimingCapture.Header(rejected[0]).SnapshotId,Is.EqualTo(pages[4].SnapshotId));
+                        Assert.That(TimingCapture.Header(rejected[0]).SnapshotId,Is.EqualTo(pages[capacity%pages.Length].SnapshotId));
                         Assert.That(timing.Events("ResyncRequested"),Is.Empty,"入口丢页不等于此刻已经请求Resync。");
                     }
                 }
@@ -561,6 +580,42 @@ namespace Game.Multiplayer.Tests
             Assert.That(codec.TryEncode(message,new ArraySegment<byte>(bytes),out int size),Is.True,"故障注入须保持wire形状合法。");
             Assert.That(codec.TryDecode(new ArraySegment<byte>(bytes,0,size),out var decoded),Is.True);return decoded.Clone();
         }
+        [Test] public void CoalescedLatestDeltaInstallsTheCollectedAfterImageWithItsExactPeerAck()
+        {
+            var server = Server(out var source); var client = Client(out var store); Interest(server, NearInterest);
+            var original = SubscriptionTransfer(server, 0, out var enter);
+            var firstAck = InstallExplicit(client, enter, original, 100);
+            Assert.That(Call(server, "ReceiveControl", 0, 10, 3u, WireCopy(firstAck), .9), Is.True);
+            foreach (uint tick in new[] { 2u, 3u, 4u })
+            {
+                uint quantity = tick == 4 ? 5u : tick * 10;
+                source.Value.Cells[0] = new WorldMaterialCellSample(WorldMaterialDomain.Liquid,
+                    WorldMaterialStorage.Dynamic, Vector3Int.zero, 2, quantity);
+                source.Value.Header = new WorldReplicaHeader(tick, 120, 0, 1);
+                Assert.That(Call(server, "Capture", source, new WorldReplicaBuffer(200, 4, 1000000)), Is.True);
+            }
+            var owner = (WorldReplicationCommitOwner)_type.GetField("_owner", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(server);
+            Assert.That(owner.TryGetCurrentHeader(TimingKey, out var current), Is.True);
+            var pages = SubscriptionTransfer(server, 1, out var unexpectedEnter); Assert.That(unexpectedEnter, Is.Null);
+            Assert.That(pages[0].Kind, Is.EqualTo(2)); Assert.That(pages[0].BaseRevision, Is.EqualTo(firstAck.Revision));
+            Assert.That(pages[0].Revision, Is.EqualTo(current.Revision)); Assert.That(pages[0].SnapshotId, Is.EqualTo(current.SnapshotId));
+            Assert.That(pages[0].ServerTick, Is.EqualTo(current.ServerTick)); Assert.That(pages[0].Checksum, Is.EqualTo(current.Checksum));
+            WorldPageMessage ack = null;
+            for (int i = 0; i < pages.Length; i++)
+            {
+                Assert.That(pages[i].SnapshotId, Is.EqualTo(current.SnapshotId)); Assert.That(pages[i].Revision, Is.EqualTo(current.Revision));
+                Assert.That(ReceiveExplicit(client, pages[i], 200 + i, out ack), Is.True);
+                if (i != pages.Length - 1)
+                { Assert.That(ack, Is.Null); Assert.That(Quantity(store), Is.EqualTo(1200UL)); AssertFirstQuantity(store, 10); }
+            }
+            Assert.That(ack, Is.Not.Null); Assert.That(ack.Revision, Is.EqualTo(current.Revision));
+            Assert.That(Quantity(store), Is.EqualTo(1195UL)); AssertFirstQuantity(store, 5);
+            Assert.That(Call(server, "ReceiveControl", 0, 10, 3u, WireCopy(ack), 2d), Is.True);
+            Assert.That(Call(server, "ReceiveControl", 0, 10, 3u, WireCopy(firstAck), 2.1), Is.False);
+            Assert.That(ReceiveExplicit(client, original[0], 300, out _), Is.False);
+            Assert.That(Quantity(store), Is.EqualTo(1195UL)); AssertFirstQuantity(store, 5);
+        }
+
         [Test] public void CorruptDeltaReportsExactRejectedHeadersAndRecoversCurrentBaselineWithPeerAck()
         {
             var server=Server(out var source);var client=Client(out var store);Interest(server,NearInterest);
@@ -761,17 +816,28 @@ namespace Game.Multiplayer.Tests
             WorldPageMessage ack=null;foreach(var page in fresh)Assert.That(ReceiveExplicit(client,page,201,out ack),Is.True);
             Assert.That(Quantity(store),Is.EqualTo(1200UL));
         }
-        [Test] public void FixedClientKeyCapacityIsNotRecycledByInterestLeave()
+        [Test] public void LegalLeaveRecyclesClientKeyButConcurrentActiveCapacityStillFailsClosed()
         {
-            var server=Server(out _);Interest(server,NearInterest);SubscriptionTransfer(server,0,out var enter);
+            var server=Server(out _);Interest(server,NearInterest);var pages=SubscriptionTransfer(server,0,out var enter);
             var storeType=Type.GetType("Game.ElementField.WorldReplicaStore, Game.ElementField");
             var store=Activator.CreateInstance(storeType,new object[]{7UL,2,200,4,2048});
             var client=Activator.CreateInstance(_type,new object[]{7UL,99UL,2,2048,200,4,1000000,store});
             Assert.That(Call(client,"SetClientConnectionEpoch",3u),Is.True);
-            Assert.That(Subscribe(client,enter),Is.True);var other=enter.Clone();other.ChunkX=1;Assert.That(Subscribe(client,other),Is.True);
+            InstallExplicit(client,enter,pages,100);Assert.That(Quantity(store),Is.EqualTo(1200UL));
+            var other=enter.Clone();other.ChunkX=1;SetSubscription(other,Subscription(enter)+1);
+            Assert.That(Subscribe(client,other),Is.True);
+            // 旧约定永久占住探索过的Key；现在合法Leave完成数量释放和metadata退休，允许有界槽复用。
+            // 保护迁移到全连接单调订阅水位，因此新地址必须用新epoch，旧Enter/页仍不得复活旧量。
             var leave=enter.Clone();leave.Kind=7;Assert.That(Subscribe(client,leave),Is.True);
-            var overflow=enter.Clone();overflow.ChunkX=2;Assert.That(Subscribe(client,overflow),Is.False,"固定Key元数据不得借Leave成为无限探索缓存。");
             Assert.That(Quantity(store),Is.Zero);
+            Assert.That(Subscribe(client,enter),Is.False);
+            foreach(var old in pages)Assert.That(ReceiveExplicit(client,old,150,out _),Is.False);
+            var reused=enter.Clone();reused.ChunkX=2;SetSubscription(reused,Subscription(other)+1);
+            Assert.That(Subscribe(client,reused),Is.True,"已释放槽应能容纳新的单调订阅地址。");
+            Assert.That(_type.GetProperty("Faulted").GetValue(client),Is.False);
+            var overflow=enter.Clone();overflow.ChunkX=3;SetSubscription(overflow,Subscription(reused)+1);
+            Assert.That(Subscribe(client,overflow),Is.False,"两槽均为真实active时仍须FailClosed，不能覆盖另一块活数据。");
+            Assert.That(_type.GetProperty("Faulted").GetValue(client),Is.True);Assert.That(Quantity(store),Is.Zero);
         }
         [Test] public void StopRejectsLifecycleAndDelayedPagesWithoutPublishingCandidate()
         {
@@ -785,17 +851,26 @@ namespace Game.Multiplayer.Tests
         [Test] public void LifecycleUsesActualEncodedBytesAndSameTwoMessageRoundBudget()
         {
             var server=Server(out _);Interest(server,NearInterest);Call(server,"BeginRound",0d);
+            var peer=((WorldReplicationPeerState[])_type.GetField("_peers",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(server))[0];
+            double initialTokens=peer.Tokens;
             var enter=Prepared(server,0);Assert.That(enter.Kind,Is.EqualTo(6));
             Assert.That(Call(server,"MarkPageSent",0,0d,3601),Is.False,"Enter也必须先预留真实编码及framing字节。");
-            var retry=Prepared(server,0);Assert.That(retry,Is.EqualTo(enter));SendEncoded(server,retry,0);
-            SendEncoded(server,Prepared(server,0),0);object[] thirdArgs={0,0d,null};
-            bool prepared=(bool)Call(server,"TryPreparePage",thirdArgs);
-            var third=prepared?((WorldPageMessage)thirdArgs[2]).Clone():null;
-            if(prepared)Assert.That(Call(server,"MarkPageSent",0,0d,100),Is.False,"控制和数据共同占每轮最多两条的预算。");
+            Assert.That(peer.Tokens,Is.EqualTo(initialTokens));Assert.That(_type.GetProperty("PagesSent").GetValue(server),Is.EqualTo(0L));
+            // 旧测试要求未发送Enter逐字相等；全连接身份改为在准备发送时分配，失败重试允许跳号。
+            // 跳号不能扣掉未发送的字节或消息额度，真正发送的控制和数据仍共用精确预算。
+            var retry=Prepared(server,0);Assert.That(Subscription(retry),Is.GreaterThan(Subscription(enter)));
+            var comparable=retry.Clone();SetSubscription(comparable,Subscription(enter));Assert.That(comparable,Is.EqualTo(enter));
+            var codec=new WorldPageCodec();var bytes=new byte[900];
+            Assert.That(codec.TryEncode(retry,new ArraySegment<byte>(bytes),out int enterBytes),Is.True);
+            SendEncoded(server,retry,0);Assert.That(peer.Tokens,Is.EqualTo(initialTokens-enterBytes-16).Within(.0001));
+            var firstPage=Prepared(server,0);Assert.That(firstPage.Kind,Is.EqualTo(1));Assert.That(firstPage.PageIndex,Is.Zero);
+            Assert.That(codec.TryEncode(firstPage,new ArraySegment<byte>(bytes),out int pageBytes),Is.True);
+            SendEncoded(server,firstPage,0);Assert.That(peer.Tokens,Is.EqualTo(initialTokens-enterBytes-pageBytes-32).Within(.0001));
+            object[] thirdArgs={0,0d,null};Assert.That(Call(server,"TryPreparePage",thirdArgs),Is.False,"控制和数据共同占每轮最多两条的预算。");
             Assert.That(_type.GetProperty("PagesSent").GetValue(server),Is.EqualTo(2L));
             Call(server,"BeginRound",.1);var resumed=Prepared(server,.1);
-            if(prepared)Assert.That(resumed,Is.EqualTo(third));
-            else {Assert.That(resumed.Kind,Is.EqualTo(1));Assert.That(resumed.PageIndex,Is.EqualTo(1));}
+            Assert.That(resumed.Kind,Is.EqualTo(1));Assert.That(resumed.PageIndex,Is.EqualTo(1));
+            Assert.That(Subscription(resumed),Is.EqualTo(Subscription(retry)));
         }
         [Test] public void RapidUnsentCrossingsCompressToOldLeaveThenLatestEnterAndCurrentBaseline()
         {
@@ -820,30 +895,26 @@ namespace Game.Multiplayer.Tests
             Assert.That(Quantity(store),Is.EqualTo(1210UL));Assert.That(Call(server,"ReceiveControl",0,10,3u,ack,3d),Is.True);
             Call(server,"BeginRound",3.1);object[] remaining={0,3.1,null};Assert.That(Call(server,"TryPreparePage",remaining),Is.False,"当前Baseline确认后不能残留跨界控制债务。");
         }
-        [Test] public void MaximumSubscriptionEpochCanLeaveButReentryFaultsWithoutWrapping()
+        [Test] public void GlobalSubscriptionEpochExhaustionAllowsOldLeaveButNewEnterFaultsWithoutWrapping()
         {
             var server=Server(out _);var client=Client(out var store);Interest(server,NearInterest);Call(server,"BeginRound",0d);
             var announced=SendEncoded(server,Prepared(server,0),0);Assert.That(announced.Kind,Is.EqualTo(6));
-            // 只把固定Key的两个计数推到最后一个合法值，保留真实发送形成的Known/Desired/Announced等状态。
-            // 这是耗尽前置条件注入；后续Baseline、Leave、预算及Faulted都走真实生产入口。
-            var subscriptions=(Array)_type.GetField("_subscriptions",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(server);
-            object state=subscriptions.GetValue(0,0);var stateType=state.GetType();
-            const BindingFlags fields=BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic;
-            foreach(string flag in new[]{"Known","Desired","Announced","AnnouncementKnown"})
-                Assert.That(stateType.GetField(flag,fields).GetValue(state),Is.True);
-            stateType.GetField("Epoch",fields).SetValue(state,ulong.MaxValue);
-            stateType.GetField("AnnouncedEpoch",fields).SetValue(state,ulong.MaxValue);subscriptions.SetValue(state,0,0);
-            var maximum=announced.Clone();SetSubscription(maximum,ulong.MaxValue);Assert.That(Subscribe(client,maximum),Is.True);
+            // 旧约定耗尽的是某个Key的计数；现在身份来自连接级单调种子，不能再篡改已真实公布的旧epoch。
+            // 仅注入现实中无法循环到达的全连接耗尽边界；原Baseline/ACK/Leave继续使用已公布身份。
+            var nextEpochs=(ulong[])_type.GetField("_nextSubscriptionEpoch",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(server);
+            nextEpochs[0]=ulong.MaxValue;Assert.That(Subscribe(client,announced),Is.True);
             var pages=SubscriptionTransfer(server,.1,out var extra);Assert.That(extra,Is.Null);WorldPageMessage ack=null;
             foreach(var page in pages)
-            {Assert.That(Subscription(page),Is.EqualTo(ulong.MaxValue));Assert.That(ReceiveExplicit(client,page,100,out ack),Is.True);}
+            {Assert.That(Subscription(page),Is.EqualTo(Subscription(announced)));Assert.That(ReceiveExplicit(client,page,100,out ack),Is.True);}
             Assert.That(Quantity(store),Is.EqualTo(1200UL));Assert.That(Call(server,"ReceiveControl",0,10,3u,ack,.9),Is.True);
-            var leave=Leave(server,1);Assert.That(Subscription(leave),Is.EqualTo(ulong.MaxValue));
+            var leave=Leave(server,1);Assert.That(Subscription(leave),Is.EqualTo(Subscription(announced)));
             Assert.That(Subscribe(client,leave),Is.True);Assert.That(Quantity(store),Is.Zero);
-            Assert.That(RequiredCall(server,"UpdatePeerInterest",0,10,3u,NearInterest),Is.False);
-            Assert.That(_type.GetProperty("Faulted").GetValue(server),Is.True);
-            state=subscriptions.GetValue(0,0);Assert.That(stateType.GetField("Epoch",fields).GetValue(state),Is.EqualTo(ulong.MaxValue));
+            Assert.That(nextEpochs[0],Is.EqualTo(ulong.MaxValue));
+            Assert.That(RequiredCall(server,"UpdatePeerInterest",0,10,3u,NearInterest),Is.True,"更新desired范围尚未分配新Enter身份。");
             Call(server,"BeginRound",2d);object[] next={0,2d,null};Assert.That(Call(server,"TryPreparePage",next),Is.False);Assert.That(next[2],Is.Null);
+            Assert.That(_type.GetProperty("Faulted").GetValue(server),Is.True);
+            Assert.That(nextEpochs[0],Is.EqualTo(ulong.MaxValue));
+            foreach(var old in pages)Assert.That(ReceiveExplicit(client,old,200,out _),Is.False);
             Assert.That(Quantity(store),Is.Zero,"耗尽不能通过回绕代次重新激活缓存。");
         }
         /// <summary>同一真实合同Source含两块非原点Chunk；每块120格产生851 words/6页，原点仅保留Geometry元数据。</summary>

@@ -35,6 +35,8 @@ namespace Game.ElementField
     /// <summary>固定活动槽池，休眠后槽位可回收；回收运动状态不会回收GMU。</summary>
     internal sealed class LiquidTransportState
     {
+        // Solver休眠状态与Replica独立endpoint证明共用同一物理寿命；抽常量不改变保留/回收行为。
+        internal const int MaximumRetainedAgeTicks=2;
         internal struct State { internal Vector3 Velocity; internal Vector4 Remainder; internal int Tick; }
         private readonly Dictionary<LiquidTransportKey, int> _map;
         private readonly LiquidTransportKey[] _keys;
@@ -45,7 +47,7 @@ namespace Game.ElementField
         { _map = new Dictionary<LiquidTransportKey, int>(capacity); _keys = new LiquidTransportKey[capacity]; _states = new State[capacity]; }
         internal bool TryRead(Vector3Int cell, MaterialId material, int tick, out State state)
         {
-            if (_map.TryGetValue(new LiquidTransportKey(cell, material), out int i) && tick - _states[i].Tick <= 2)
+            if (_map.TryGetValue(new LiquidTransportKey(cell, material), out int i) && tick - _states[i].Tick <= MaximumRetainedAgeTicks)
             { state = _states[i]; return true; }
             state = default; return false;
         }
@@ -60,7 +62,7 @@ namespace Game.ElementField
                     i = -1;
                     // 有界回收扫描，绝不因运动槽满在一帧遍历全湖或扩容。
                     for (int n = 0; n < 64; n++)
-                    { int c = _cursor; _cursor = (_cursor + 1) % _states.Length; if (state.Tick - _states[c].Tick > 2) { i = c; break; } }
+                    { int c = _cursor; _cursor = (_cursor + 1) % _states.Length; if (state.Tick - _states[c].Tick > MaximumRetainedAgeTicks) { i = c; break; } }
                     if (i < 0) { CapacityFallbacks++; return; }
                     _map.Remove(_keys[i]);
                 }

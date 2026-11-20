@@ -5,6 +5,7 @@ using Game.ElementField;
 using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace Game.Rendering
 {
@@ -28,17 +29,25 @@ namespace Game.Rendering
         private readonly MaterialPresentationView _view=new MaterialPresentationView();
         private Camera _viewCamera;
         private Vector3 _capturedViewCenter;
+        // AutoScope是值类型。标记区分初始化、整段Renderer调用与上传尾段，不能把CPU提交耗时称作GPU执行时间。
+        private static readonly ProfilerMarker InitializeMarker=new ProfilerMarker("GridLiquid.Field.Initialize");
+        private static readonly ProfilerMarker LateUpdateMarker=new ProfilerMarker("GridLiquid.Field.LateUpdate");
+        private static readonly ProfilerMarker GpuUploadMarker=new ProfilerMarker("GridLiquid.Field.GpuInputUpload");
         private static readonly ProfilerMarker CaptureMarker=new ProfilerMarker("GridLiquid.Field.Capture");
         private static readonly ProfilerMarker DispatchMarker=new ProfilerMarker("GridLiquid.Field.Dispatch");
         private static readonly ProfilerMarker DrawMarker=new ProfilerMarker("GridLiquid.Field.Draw");
         private static readonly ProfilerMarker PageReuseMarker=new ProfilerMarker("GridLiquid.Field.PageReuse");
         private static readonly GridLiquidFieldSurfaceRenderer[] Registry=new GridLiquidFieldSurfaceRenderer[32];
         private ILiquidPresentationReadOnly _source;
+        private ILiquidPresentationPlaybackSource _playback;
+        private uint _playbackRevision = uint.MaxValue, _playbackInvalidation = uint.MaxValue;
+        private ulong _capturedPlaybackWindow, _snapPlaybackWindow;
+        private bool _displayedRawQuantityEndpoint;
 #if UNITY_EDITOR
-        private LiquidWorldRuntime _validationSource;
+        private ILiquidPresentationReadOnly _validationSource;
         private bool _validationFreezeDispatch,_validationHideDraw,_validationForceRebuild;
         // 仅供Editor临时验证场景使用；正式场景仍从世界只读入口取得数据。
-        public void ConfigureForValidation(LiquidWorldRuntime source,GridLiquidFieldRenderProfile profile)
+        public void ConfigureForValidation(ILiquidPresentationReadOnly source,GridLiquidFieldRenderProfile profile)
         {if(_valid)throw new InvalidOperationException("验证源必须在Start之前配置。");_validationSource=source;_profile=profile;}
         public void SetValidationViewCamera(Camera camera){_viewCamera=camera;}
         public void SetValidationOpaque(bool value)=>SetValidationDiagnostic("_DebugForceOpaqueFragment",value?1:0);
@@ -75,11 +84,12 @@ namespace Game.Rendering
         private GridLiquidFallingMotion[] _fallingMotion;
         private int _fallingMotionCount;
         private readonly float[] _weights=new float[8];
-        private int _fieldKernel,_verticesKernel,_smoothKernel,_finishKernel,_normalsKernel,_facesKernel,_argsKernel,_clearKernel;
+        private int _fieldKernel,_verticesKernel,_smoothKernel,_finishKernel,_normalsKernel,_flowKernel,_facesKernel,_argsKernel,_clearKernel;
         private uint _version=uint.MaxValue,_epoch=uint.MaxValue;
         private float _capturedAt,_lastAlpha=-1;
         private bool _captured,_uploaded,_valid,_cpuDomainUploaded,_cpuDomainPendingUpload,_started;
         private int _gpuSurfacePages;
+        private int _lastCaptureFrame=-1;
         private GridLiquidFieldCpuSurface _cpu;
         private GridLiquidFieldCpuSurface _overflowCpu;
         private bool _overflowDomainUploaded,_overflowPendingUpload,_hybrid;
@@ -98,6 +108,14 @@ namespace Game.Rendering
         public int CulledSourcePages=>_culledSourcePages;
         public MaterialPresentationView PresentationView=>_view;
         public float InterpolationAlpha=>_alpha;
+        // 只读诊断值供显式Native采样关联慢帧。外部不能改变Renderer的构建或数量来源，
+        // 也不必通过Reflection读取私有字段；采样组件默认不创建。
+        public float CaptureMilliseconds=>_captureMilliseconds;
+        public int LastCaptureFrame=>_lastCaptureFrame;
+        public float DisplayLagMilliseconds=>_displayLagMilliseconds;
+        public int SurfaceSubdivision=>_subdivision;
+        public int CpuBuildFrames=>_cpu!=null?_cpu.BuildFrames:0;
+        public double CpuBuildMilliseconds=>_cpu!=null?_cpu.BuildMilliseconds:0;
         public GraphicsBuffer DebugArguments=>_gpu?.Arguments;
         public GraphicsBuffer DebugVertices=>_gpu?.Vertices;
         public GraphicsBuffer DebugIndices=>_gpu?.Indices;
@@ -108,12 +126,14 @@ namespace Game.Rendering
         {for(int i=0;i<Registry.Length;i++){var r=Registry[i];if(r!=null && r.isActiveAndEnabled && r._valid && ReferenceEquals(r._source,source))return r;}return null;}
         private void Start()
         {
+            using var initializeScope=InitializeMarker.Auto();
             if(_valid)return;_started=true;
             // 单机 Runtime 与只读网络 Replica 使用同一个 Renderer，不在此创建模拟 Owner。
             _source=_world!=null?_world.GridLiquids as ILiquidPresentationReadOnly:null;
 #if UNITY_EDITOR
             if(_validationSource!=null)_source=_validationSource;
 #endif
+            _playback = _source as ILiquidPresentationPlaybackSource;
             if(_source==null || _profile==null || _profile.Shader==null){enabled=false;return;}
             try
             {
@@ -123,6 +143,7 @@ namespace Game.Rendering
                 int table=1;while(table<frameCapacity*2)table<<=1;
                 _frame=new GridLiquidFieldFrame(_source,frameCapacity,table,_profile.CartoonCrownStrength,_profile.CartoonVolumeScale);_sampler=new GridLiquidFieldSampler(_frame);
                 _overflowFrame=new GridLiquidFieldFrame(_source,frameCapacity,table,_profile.CartoonCrownStrength,_profile.CartoonVolumeScale,true);
+                _frame.ConfigureMaterialSurfaceTension(_profile);_overflowFrame.ConfigureMaterialSurfaceTension(_profile);
                 // CPU Mesh仍由GPU光栅化。无Compute时只保留小型Owner表，裁掉Stable与CPU外壳重叠的面。
                 long domainBytes=(long)_frame.OwnerLookup.Length*32;
                 _budget=_profile.Budget(_source.ChunkSize,_source.MaterialCount,domainBytes);
@@ -156,13 +177,13 @@ namespace Game.Rendering
                     {
                     _compute=Instantiate(_profile.Compute);_gpu=new GridLiquidFieldResources(_budget);_gpuBytes+=_gpu.AllocatedBytes;
                     _fieldKernel=_compute.FindKernel("SampleField");_verticesKernel=_compute.FindKernel("BuildVertices");_smoothKernel=_compute.FindKernel("SmoothVertices");
-                    _finishKernel=_compute.FindKernel("FinishVertices");_normalsKernel=_compute.FindKernel("FinishNormals");_facesKernel=_compute.FindKernel("BuildFaces");_argsKernel=_compute.FindKernel("FinishArguments");_clearKernel=_compute.FindKernel("ClearCounters");
+                    _finishKernel=_compute.FindKernel("FinishVertices");_normalsKernel=_compute.FindKernel("FinishNormals");_flowKernel=_compute.FindKernel("FinishFlow");_facesKernel=_compute.FindKernel("BuildFaces");_argsKernel=_compute.FindKernel("FinishArguments");_clearKernel=_compute.FindKernel("ClearCounters");
                     // 平台支持Compute不代表每个Kernel都满足设备要求；初始化失败仍保留CPU完整显示路径。
                     if(!_compute.IsSupported(_fieldKernel) || !_compute.IsSupported(_verticesKernel) || !_compute.IsSupported(_smoothKernel)
-                        || !_compute.IsSupported(_finishKernel) || !_compute.IsSupported(_normalsKernel) || !_compute.IsSupported(_facesKernel) || !_compute.IsSupported(_argsKernel) || !_compute.IsSupported(_clearKernel))
+                        || !_compute.IsSupported(_finishKernel) || !_compute.IsSupported(_normalsKernel) || !_compute.IsSupported(_flowKernel) || !_compute.IsSupported(_facesKernel) || !_compute.IsSupported(_argsKernel) || !_compute.IsSupported(_clearKernel))
                         throw new InvalidOperationException("A continuous liquid Compute kernel is unsupported.");
                     _gpu.Bind(_compute,_fieldKernel);_gpu.Bind(_compute,_verticesKernel);_gpu.Bind(_compute,_smoothKernel);_gpu.Bind(_compute,_finishKernel);
-                    _gpu.Bind(_compute,_normalsKernel);_gpu.Bind(_compute,_facesKernel);_gpu.Bind(_compute,_argsKernel);_gpu.Bind(_compute,_clearKernel);
+                    _gpu.Bind(_compute,_normalsKernel);_gpu.Bind(_compute,_flowKernel);_gpu.Bind(_compute,_facesKernel);_gpu.Bind(_compute,_argsKernel);_gpu.Bind(_compute,_clearKernel);
                     _compute.SetInt("_K",_source.ChunkSize);_compute.SetInt("_MaterialCount",_source.MaterialCount);_compute.SetInt("_GroupCount",_source.DensityGroupCount);
                     var groups0=new int[4];var groups1=new int[4];Array.Copy(_frame.Groups,0,groups0,0,4);Array.Copy(_frame.Groups,4,groups1,0,4);
                     _compute.SetInts("_Groups0",groups0);_compute.SetInts("_Groups1",groups1);_compute.SetInt("_LookupMask",_budget.LookupSlots-1);
@@ -205,11 +226,12 @@ namespace Game.Rendering
                 Material m=_profile.GetMaterial(i);if(m==null)m=target;
                 shallow[i]=m.GetColor("_ShallowColor");deep[i]=m.GetColor("_DeepColor");fresnel[i]=m.GetColor("_FresnelColor");foam[i]=m.GetColor("_FoamColor");
                 alpha[i]=new Vector4(m.GetFloat("_ShallowAlpha"),m.GetFloat("_DeepAlpha"),m.GetFloat("_FresnelAlphaStrength"),m.GetFloat("_WaterAlpha"));surface[i].x=m.GetFloat("_Smoothness");
-                float art=Mathf.SmoothStep(0,1,Mathf.InverseLerp(.15f,.8f,_profile.CartoonCrownStrength));
+                float art=_profile.UseMaterialSurfaceTension?0:Mathf.SmoothStep(0,1,Mathf.InverseLerp(.15f,.8f,_profile.CartoonCrownStrength));
                 // 宽白Fresnel会吞掉圆冠的体色；保留各材料Palette身份，压缩白边并让高光更集中。
                 fresnel[i]=Vector4.Lerp(fresnel[i],shallow[i],.4f*art);surface[i].x=Mathf.Lerp(surface[i].x,.78f,art);
-                // 卡通液团保留主体色和侧壁；大量透明/白泡沫会把真正厚的Mesh照成贴地薄膜。
-                alpha[i].x=Mathf.Lerp(alpha[i].x,.94f,art);alpha[i].y=Mathf.Lerp(alpha[i].y,.94f,art);
+                // 自然档保留材料自己的Depth Alpha与Smoothness，不能把清水统一推成
+                // 0.94不透明乳胶。旧档仅用于有明确标记的前后美术对照。
+                if(!_profile.UseMaterialSurfaceTension){alpha[i].x=Mathf.Lerp(alpha[i].x,.94f,art);alpha[i].y=Mathf.Lerp(alpha[i].y,.94f,art);}
             }
             target.SetVectorArray("_PaletteShallow",shallow);target.SetVectorArray("_PaletteDeep",deep);target.SetVectorArray("_PaletteFresnel",fresnel);
             target.SetVectorArray("_PaletteFoam",foam);target.SetVectorArray("_PaletteAlpha",alpha);target.SetVectorArray("_PaletteSurface",surface);target.SetInt("_PaletteCount",_source.MaterialCount);
@@ -227,6 +249,16 @@ namespace Game.Rendering
             target.SetFloat("_DepthFadeDistance",Mathf.Lerp(target.GetFloat("_DepthFadeDistance"),.6f,art));
             target.SetFloat("_CartoonSwellAmplitude",.015f*art);
         }
+        private void UpdateRefractionCapability()
+        {
+            // OpaqueTexture由当前管线/Camera配置提供，关闭时必须禁用采样，避免灰色背景污染。
+            var pipeline=GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
+            bool enabled=pipeline!=null && pipeline.supportsCameraOpaqueTexture;
+            if(_viewCamera!=null && _viewCamera.TryGetComponent<UniversalAdditionalCameraData>(out var data))enabled=data.requiresColorTexture;
+            float strength=enabled?.008f:0;
+            _material.SetFloat("_LiquidRefractionStrength",strength);_cpu.Material.SetFloat("_LiquidRefractionStrength",strength);
+            _overflowCpu.Material.SetFloat("_LiquidRefractionStrength",strength);_dropMaterial.SetFloat("_LiquidRefractionStrength",strength);
+        }
         private static void Insert(GridLiquidChunkLookup[] table,ElementChunkKey key,int slot)
         {
             int mask=table.Length-1,h=(int)(GridLiquidFieldGpuLayout.Hash(key.X,key.Y,key.Z)&(uint)mask);
@@ -236,10 +268,27 @@ namespace Game.Rendering
         {
             long started=System.Diagnostics.Stopwatch.GetTimestamp();
             using(CaptureMarker.Auto())_frame.Capture(_view.Enabled?_view:null);
+            if (_playback != null)
+            {
+                // 只在切换权威窗口时决定是否snap；普通相机/地形Capture不得重启同一播放区间。
+                // 先前已展示最新数量端点时，迟到sidecar回放Previous会倒退，所以这一窗口直接Current。
+                if (_capturedPlaybackWindow != _frame.PlaybackWindowId)
+                {
+                    _snapPlaybackWindow = _displayedRawQuantityEndpoint ? _frame.PlaybackWindowId : 0;
+                    if (_frame.PlaybackWindowId != 0) _displayedRawQuantityEndpoint = false;
+                    _capturedPlaybackWindow = _frame.PlaybackWindowId;
+                }
+                _playbackRevision = _frame.PlaybackRevision;
+                _playbackInvalidation = _playback.PresentationInvalidationRevision;
+            }
             // 在 GPU 页面压紧前保留整个可见域的水滴；CPU 远页也跳过相同标记，只由此实例批次绘制一次。
             _fallingMotionCount=_frame.CopyFallingMotion(_fallingMotion);
             _captureMilliseconds=(float)((System.Diagnostics.Stopwatch.GetTimestamp()-started)*1000.0/System.Diagnostics.Stopwatch.Frequency);
-            _version=_source.SurfaceVersion;_epoch=_source.TransportEpoch;_capturedAt=Time.time;_captured=true;
+            // Capture 只是重新冻结/打包可见数据，不拥有模拟时间。相机转动、页面压紧或同 Tick
+            // 的数量失效可能多次进入这里；若每次重置起点，空中水就会在 Alpha=0 附近反复停顿。
+            // 新 TransportEpoch 才开始新本地窗口；Replica 则始终由同步播放时钟决定 Alpha。
+            if(!_captured || _epoch!=_source.TransportEpoch)_capturedAt=Time.time;
+            _version=_source.SurfaceVersion;_epoch=_source.TransportEpoch;_captured=true;_lastCaptureFrame=Time.frameCount;
             _visibleSurfacePages=_frame.OwnerCount;_culledSourcePages=_frame.CulledSourcePages;_capacityOverflow=_frame.Overflow;
             _capturedViewCenter=_view.Center;
             _cpuFallback=_gpu==null || _frame.Overflow || _budget.FineViews==0;
@@ -252,6 +301,9 @@ namespace Game.Rendering
                 if(_gpu!=null)_fallbackReason="Presentation snapshot capacity exceeded; CPU reference surface.";
                 _cpu.Begin();return;
             }
+            // 原CaptureMilliseconds到冻结数据/水滴行就停止；这段域压紧、页复用准备和SetData此前未被它覆盖。
+            // 单独标记实际GPU输入准备/上传，便于区分CPU打包、Native上传等待和后续异步Dispatch/Draw。
+            using var uploadScope=GpuUploadMarker.Auto();
             bool copiedOverflow=!_overflowCpu.IsBuilding && (_frame.Count>_budget.InputChunks || _frame.OwnerCount>_budget.FineViews);
             if(copiedOverflow){_overflowFrame.CopyFrom(_frame);_overflowCapturedAt=Time.time;}
             _frame.SelectGpuDomain(_budget.InputChunks,_budget.FineViews);
@@ -286,21 +338,42 @@ namespace Game.Rendering
         }
         private void LateUpdate()
         {
+            using var updateScope=LateUpdateMarker.Auto();
             if(!_valid || _source==null || !_source.IsFluidInitialized || _frame==null)return;
             _rebuiltSurfacePages=0;
             long before=GC.GetAllocatedBytesForCurrentThread();
+            uint playbackRevision = _playback != null ? _playback.PresentationRevision : 0;
+            if (_playback != null && _captured &&
+                (_playbackInvalidation != _playback.PresentationInvalidationRevision
+                || _playback.PresentationWindowId == 0 && _version != _source.SurfaceVersion))
+            {
+                // 采集、Interest退出或连接变更后，旧Mesh不再有数量依据。取消旧CPU工作并撤掉旧壳，
+                // 下一次完整构建可能暂未可见，但不能继续展示已经收走的水。合法新motion窗口不走此分支。
+                _cpu.Cancel(); _overflowCpu.Cancel(); _uploaded = false; _gpuSurfacePages = 0;
+                _fallingMotionCount = _smallDrops = 0;
+                _cpuDomainUploaded = _cpuDomainPendingUpload = false;
+                _overflowDomainUploaded = _overflowPendingUpload = false;
+            }
             // Camera.main只在引用缺失时解析，避免Scene查找热路径。Unity销毁相机时会呈现null。
             if(_viewCamera==null || !_viewCamera.isActiveAndEnabled)_viewCamera=Camera.main;
             Vector3 viewCenter=_world!=null?_world.InterestPosition:_viewCamera!=null?_viewCamera.transform.position:transform.position;
             _view.Update(_viewCamera,viewCenter,_profile.VisibilityFadeStart,_profile.VisibilityFadeEnd,_profile.ViewPadding,_profile.CullByCamera);
             _view.Bind(_material);_view.Bind(_cpu.Material);_view.Bind(_overflowCpu.Material);
             _view.Bind(_dropMaterial);
+            UpdateRefractionCapability();
             bool viewChanged=_captured && (_frame.ViewSignature(_view.Enabled?_view:null)!=_frame.SelectionSignature
                 || _hybrid && (viewCenter-_capturedViewCenter).sqrMagnitude>_source.CellSize*_source.CellSize);
             if(viewChanged && IsPresentationPending)_cpu.CancelBuild();
             if(!IsPresentationPending && (!_captured || _version!=_source.SurfaceVersion
-                || viewChanged || _epoch!=_source.TransportEpoch && (_source.ActiveCellCount>0 || _frame.Animated)))Capture();
-            _alpha=Mathf.Clamp01((Time.time-_capturedAt)/_frame.Interval);
+                || viewChanged || _playback != null && playbackRevision != _playbackRevision
+                || _epoch!=_source.TransportEpoch && (_source.ActiveCellCount>0 || _frame.Animated)))Capture();
+            if (_playback != null)
+            {
+                // 旧CPU快照只能停在自己的Current端点，不能借用新窗口的Alpha；同步时钟来自Source。
+                if (!_playback.TryGetPresentationAlpha(_frame.PlaybackWindowId, out _alpha)
+                    || _snapPlaybackWindow != 0 && _snapPlaybackWindow == _frame.PlaybackWindowId) _alpha = 1;
+            }
+            else _alpha=Mathf.Clamp01((Time.time-_capturedAt)/_frame.Interval);
             // 插值区间正常落后一个Tick；CPU分批构造期间若快照停滞，指标继续增加，不能固定报100ms。
             _displayLagMilliseconds=_frame.Animated || IsPresentationPending
                 ?(Time.time-_capturedAt+_frame.Interval*(1-_alpha))*1000:0;
@@ -314,6 +387,7 @@ namespace Game.Rendering
                 UpdateDrops();DrawDrops();
                 if(!_cpu.IsBuilding && _cpuDomainPendingUpload)
                 {_cpuOwnerBuffer.SetData(_frame.OwnerLookup);_cpuDomainUploaded=true;_cpuDomainPendingUpload=false;}
+                if (!_cpu.IsBuilding || _cpu.HasVisibleSurface) RecordQuantityEndpointPresentation();
                 _gcBytes+=GC.GetAllocatedBytesForCurrentThread()-before;return;
             }
             bool rebuild=(_animatedSurfacePages>0 && _alpha!=_lastAlpha) || _lastAlpha<0;
@@ -326,6 +400,7 @@ namespace Game.Rendering
             }
             UpdateDrops();
             DrawGpu();
+            RecordQuantityEndpointPresentation();
             if(_hybrid)
             {
                 // GPU域实时裁掉旧CPU快照的重复部分，角色周围的颜色/反应显示始终来自新Tick。
@@ -336,6 +411,15 @@ namespace Game.Rendering
             }
             _hybridDisplayLagMilliseconds=_hybrid?(Time.time-(_overflowCpu.HasVisibleSurface?_overflowVisibleAt:_overflowCapturedAt))*1000:0;
             _gcBytes+=GC.GetAllocatedBytesForCurrentThread()-before;
+        }
+        private void RecordQuantityEndpointPresentation()
+        {
+#if UNITY_EDITOR
+            if (_validationHideDraw) return;
+#endif
+            // 这里记录的是本Renderer已经提交的状态，不回写readmodel或数量Owner。
+            // 空表面也代表已经显示“水被移走”，后到History同样不能令它复活。
+            if (_playback != null && _frame.PlaybackWindowId == 0) _displayedRawQuantityEndpoint = true;
         }
         private void DrawGpu(bool drawDrops=true)
         {
@@ -372,6 +456,7 @@ namespace Game.Rendering
             _gpu.Owners.SetData(_ownerKeys,0,0,_surfacePages);
             _compute.SetInt("_OwnerCount",_surfacePages);_compute.SetInt("_Resolution",_subdivision);_compute.SetInt("_NodeSide",node);_compute.SetInt("_CubeSide",cube);
             _compute.SetInt("_IndexCapacity",18*n*n*n);_compute.SetFloat("_Alpha",_alpha);_compute.SetFloat("_Interval",_frame.Interval);
+            var reach=_frame.QueryReach;_compute.SetVector("_QueryReach",new Vector4(reach.x,reach.y,reach.z,0));
             _compute.Dispatch(_clearKernel,(_surfacePages+63)/64,1,1);
             _compute.Dispatch(_fieldKernel,(node*node*node*_surfacePages+63)/64,1,1);
             int cubes=(cube*cube*cube*_surfacePages+63)/64;_compute.Dispatch(_verticesKernel,cubes,1,1);
@@ -379,6 +464,7 @@ namespace Game.Rendering
             _compute.Dispatch(_finishKernel,cubes,1,1);
             // 法线必须在代理形变/接地完成后重建，不能拿粗节点的底面梯度给顶面打光。
             _compute.Dispatch(_normalsKernel,cubes,1,1);
+            _compute.Dispatch(_flowKernel,cubes,1,1);
             _compute.Dispatch(_facesKernel,(n*n*n*_surfacePages+63)/64,1,1);_compute.Dispatch(_argsKernel,(_surfacePages+63)/64,1,1);
             Array.Clear(_ownerDirty,0,_surfacePages);
         }
@@ -416,7 +502,8 @@ namespace Game.Rendering
                 }
                 _inputChanged[page]=changed;_inputAnimated[page]=animated;
             }
-            int halo=Mathf.CeilToInt(5f/_source.ChunkSize);_animatedSurfacePages=0;
+            int queryReach=Mathf.Max(_frame.QueryReach.x,Mathf.Max(_frame.QueryReach.y,_frame.QueryReach.z));
+            int halo=Mathf.CeilToInt((queryReach+2f)/_source.ChunkSize);_animatedSurfacePages=0;
             for(int owner=0;owner<_surfacePages;owner++)
             {
                 var key=_frame.Owners[owner];
@@ -442,8 +529,9 @@ namespace Game.Rendering
             if(_smallDrops==0)return;
             (_gpu!=null?_gpu.Drops:_fallbackDropBuffer).SetData(_drops,0,0,_smallDrops);
             // RenderMeshPrimitives 不知道程序化实例的位置；正确 World Bounds 才不会在转镜头时被误剔除。
-            var first=_drops[0];var bounds=new Bounds(first.Position,Vector3.one*(first.Radius*3));
-            for(int i=1;i<_smallDrops;i++) bounds.Encapsulate(new Bounds(_drops[i].Position,Vector3.one*(_drops[i].Radius*3)));
+            // 最大轴向拉伸1.6，Bounds直径至少3.2r，否则沿视锥边的斜向水滴会过早被剔除。
+            var first=_drops[0];var bounds=new Bounds(first.Position,Vector3.one*(first.Radius*3.2f));
+            for(int i=1;i<_smallDrops;i++) bounds.Encapsulate(new Bounds(_drops[i].Position,Vector3.one*(_drops[i].Radius*3.2f)));
             _dropDraw.worldBounds=bounds;
         }
         private void DrawDrops()

@@ -50,6 +50,7 @@ namespace Game.Rendering.Tests
             const string shaderPath =
                 "Assets/_Project/Art/Elemental/Shaders/ElementLiquidProcedural.shader";
             string source = File.ReadAllText(shaderPath);
+            string lighting = ReadSharedLighting(source);
             int defineIndex = source.IndexOf("#define UNITY_INDIRECT_DRAW_ARGS IndirectDrawArgs");
             int includeIndex = source.IndexOf("#include \"UnityIndirect.cginc\"");
             Assert.That(defineIndex, Is.GreaterThanOrEqualTo(0));
@@ -67,8 +68,10 @@ namespace Game.Rendering.Tests
             StringAssert.DoesNotContain(
                 "return cornerIndex == 1u ? surfaceTriangle.v1 : surfaceTriangle.v2;",
                 source);
-            StringAssert.Contains("ElementWaterCore.hlsl", source);
-            StringAssert.Contains("ElementWaterBuildOrthonormalBasis", source);
+            StringAssert.Contains("#pragma fragment LiquidProceduralFragment", source);
+            StringAssert.Contains("#include \"ElementWaterCore.hlsl\"", lighting);
+            StringAssert.Contains("ElementWaterBuildOrthonormalBasis", lighting);
+            StringAssert.Contains("return LiquidProceduralFragmentWithPalette(input,LiquidDefaultPalette());", lighting);
             StringAssert.Contains("\"Queue\" = \"Transparent\"", source);
             StringAssert.Contains("Cull Back", source);
         }
@@ -81,13 +84,17 @@ namespace Game.Rendering.Tests
             const string rendererPath =
                 "Assets/_Project/Scripts/Rendering/ElementField/GpuLiquidSurfaceRenderer.cs";
             string shaderSource = File.ReadAllText(shaderPath);
+            string lighting = ReadSharedLighting(shaderSource);
             string rendererSource = File.ReadAllText(rendererPath);
 
             // 诊断开关必须从 Component 经 MaterialPropertyBlock 到达 Fragment；
             // 只在 Material 上声明但 Draw 时未绑定，会制造“参数怎么调都没变化”的假象。
             StringAssert.Contains("_DebugForceOpaqueFragment", shaderSource);
-            StringAssert.Contains("if (_DebugForceOpaqueFragment > 0.5f)", shaderSource);
-            StringAssert.Contains("return half4(_ShallowColor.rgb, 1.0h);", shaderSource);
+            // Fragment已提取为共享Lighting。诊断1旁路光照但保留远景visibility，默认palette仍取材质浅水色。
+            StringAssert.Contains("if (_DebugForceOpaqueFragment > 0.5f && _DebugForceOpaqueFragment < 1.5f)", lighting);
+            StringAssert.Contains("return half4(palette.shallow.rgb, visibility);", lighting);
+            StringAssert.Contains("p.shallow=_ShallowColor;", lighting);
+            StringAssert.Contains("float visibility=LiquidVisibilityFactor(input.positionWS);", lighting);
             StringAssert.Contains("Shader.PropertyToID(\"_DebugForceOpaqueFragment\")", rendererSource);
             // 生产默认必须走真实透明 Fragment；诊断值仍通过 MPB 逐 Draw 绑定，按需在 Inspector 开启。
             StringAssert.Contains("private bool _debugForceOpaqueFragment = false", rendererSource);
@@ -116,6 +123,13 @@ namespace Game.Rendering.Tests
                 // Material 是 Unity Native Engine Object，不由普通 C# using/IDisposable 管理。
                 Object.DestroyImmediate(material);
             }
+        }
+
+        private static string ReadSharedLighting(string shaderSource)
+        {
+            // 同时锁定include接线与被包含文件的语义，不能只在无关文件找到同名代码就算Shader合同成立。
+            StringAssert.Contains("#include \"ElementLiquidSurfaceLighting.hlsl\"", shaderSource);
+            return File.ReadAllText("Assets/_Project/Art/Elemental/Shaders/ElementLiquidSurfaceLighting.hlsl");
         }
     }
 }

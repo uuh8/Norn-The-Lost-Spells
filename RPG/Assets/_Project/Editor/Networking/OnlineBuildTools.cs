@@ -80,6 +80,7 @@ namespace Game.Project.Editor
             bool excludeClientResources = false, string[] explicitScenes = null)
         {
             OnlineSceneSetup.RequireCleanEditor();
+            using var importWorkers = new ImportWorkersBuildScope();
             if (AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath) == null)
                 throw new InvalidOperationException("请先通过对应 Online 菜单创建实验场景：" + scenePath);
             if (explicitScenes != null)
@@ -124,6 +125,25 @@ namespace Game.Project.Editor
         {
             string variations = Path.Combine(EditorApplication.applicationContentsPath, "PlaybackEngines", "WindowsStandaloneSupport", "Variations");
             return Directory.Exists(variations) && Directory.GetDirectories(variations, "*server*").Length > 0;
+        }
+
+        /// <summary>
+        /// 大场景构建会在主进程读取纹理依赖；多个闲置导入进程仍可能各占用GB级内存。
+        /// 只在本次构建把AssetDatabase会话目标降到1，并由Unity官方API退出闲置worker，
+        /// 不按进程名终止程序、不修改系统内存或项目导入设置。结束恢复原会话目标，
+        /// 不立即强制重新创建全部worker，下一次正常Refresh由AssetDatabase自行调度。
+        /// </summary>
+        private sealed class ImportWorkersBuildScope : IDisposable
+        {
+            private readonly int _previous;
+            internal ImportWorkersBuildScope()
+            {
+                _previous=AssetDatabase.DesiredWorkerCount;
+                if(_previous<=1)return;
+                AssetDatabase.DesiredWorkerCount=1;
+                AssetDatabase.ForceToDesiredWorkerCount();
+            }
+            public void Dispose()=>AssetDatabase.DesiredWorkerCount=_previous;
         }
 
         [Serializable]

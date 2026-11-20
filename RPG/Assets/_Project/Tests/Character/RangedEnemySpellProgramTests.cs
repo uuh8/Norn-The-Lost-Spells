@@ -156,7 +156,8 @@ namespace Game.Character.Tests
 
             RangedEnemyController enemy = enemyObject.AddComponent<RangedEnemyController>();
             SetPrivateField(enemy, "_definition", CreateEnemyDefinition());
-            SetPrivateField(enemy, "_health", enemyObject.GetComponent<HealthComponent>());
+            // 明确填远程缓存；沿继承查找旧名会误填基类，掩盖本fixture未执行Awake的问题。
+            SetPrivateField(enemy, "_rangedHealth", enemyObject.GetComponent<HealthComponent>());
             SetPrivateField(enemy, "_spellCaster", caster);
             SetPrivateField(enemy, "_castOrigin", enemyObject.transform);
             SetPrivateField(enemy, "_spellPrograms", programs);

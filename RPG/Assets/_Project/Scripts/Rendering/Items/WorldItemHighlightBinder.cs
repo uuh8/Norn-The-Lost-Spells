@@ -11,8 +11,90 @@ namespace Game.Rendering
         private void OnDisable()=>EventBus<WorldItemVisualBoundEvent>.Unsubscribe(OnBound);
         private void OnBound(WorldItemVisualBoundEvent e)
         {if(e.Added && e.Root!=null && e.Root.gameObject.scene==gameObject.scene && _profile!=null)
-            (e.Root.GetComponent<WorldItemHighlight>()??e.Root.gameObject.AddComponent<WorldItemHighlight>()).Initialize(_profile);}
+            WorldItemHighlightBinding.Bind(e.Root,_profile);}
     }
+
+    /// <summary>
+    /// Client 进程内共用的视觉绑定接线。Hub 在进入单人 DS/合作副本时会整根挂起，
+    /// 所以真实地面代理的表现不能由 Hub Scene 的 Binder 存活与否决定。
+    /// 这里只消费 Core 已发布的视觉事实并复用原高亮，不读取库存、不授予拾取资格，也不保存 Actor。
+    /// </summary>
+    internal static class WorldItemHighlightBinding
+    {
+        // 只暂存早于 Renderer 准备的真实绑定；Profile 就绪后立即排空，不在每帧扫描场景。
+        // HashSet 同时合并同一代理的重复快照，Added=false 则撤回尚未安装的绑定。
+        private static readonly HashSet<Transform> Pending = new HashSet<Transform>();
+        private static WorldItemHighlightProfile _profile;
+        private static bool _subscribed;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetRuntime()
+        {
+            // Enter Play Mode 可关闭 Domain Reload，静态订阅必须按进程会话显式重置。
+            // 仅撤销自己的委托，不能 Clear 全局事件而误删库存/附近物的其他合法订阅者。
+            EventBus<WorldItemVisualBoundEvent>.Unsubscribe(OnBound);
+            Application.quitting -= ResetRuntime;
+            _subscribed = false; _profile = null; Pending.Clear();
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void BeginRuntime()
+        {
+#if UNITY_SERVER && !UNITY_EDITOR
+            return; // Dedicated Server 保留地面权威，不订阅 Client 表现或创建任何附加材质。
+#else
+            if (!Application.isPlaying || _subscribed) return;
+            EventBus<WorldItemVisualBoundEvent>.Subscribe(OnBound);
+            Application.quitting += ResetRuntime;
+            _subscribed = true;
+#endif
+        }
+
+        /// <summary>
+        /// Profile 来自现有 RendererFeature 的序列化引用；不复制/改写用户的 SO，也不猜默认颜色强度。
+        /// Create 可能早于 Play Mode，AddRenderPasses 再补一次幂等准备，覆盖 Renderer 被 Editor 预先缓存的情况。
+        /// </summary>
+        internal static void PrepareProfile(WorldItemHighlightProfile profile)
+        {
+#if UNITY_SERVER && !UNITY_EDITOR
+            return;
+#else
+            BeginRuntime();
+            if (!Application.isPlaying || !IsReady(profile)) return;
+            _profile = profile;
+            if (Pending.Count == 0) return;
+            foreach (var root in Pending) if (root != null) Bind(root, profile);
+            // 异常会原样传播，失败时保留候选，不能把未成功准备的绑定伪装成已安装。
+            Pending.Clear();
+#endif
+        }
+
+        private static void OnBound(WorldItemVisualBoundEvent change)
+        {
+            if (change.Root == null) return;
+            if (!change.Added) { Pending.Remove(change.Root); return; }
+            if (IsReady(_profile)) Bind(change.Root, _profile);
+            else Pending.Add(change.Root);
+        }
+
+        private static bool IsReady(WorldItemHighlightProfile profile)
+            => profile != null && profile.MaskShader != null && profile.FallbackShader != null;
+
+        internal static void Bind(Transform root, WorldItemHighlightProfile profile)
+        {
+#if UNITY_SERVER && !UNITY_EDITOR
+            return;
+#else
+            if (root == null || !IsReady(profile)) return;
+            // Bind 可以同时收到兼容的 Scene Binder 与共用订阅。Initialize 已按自有材质幂等，
+            // 因而一次代理重绑不会嵌套包装新增的 Mask/Outline Renderer。
+            var highlight = root.GetComponent<WorldItemHighlight>();
+            if (highlight == null) highlight = root.gameObject.AddComponent<WorldItemHighlight>();
+            highlight.Initialize(profile);
+#endif
+        }
+    }
+
     /// <summary>只增加无色遮罩和像素轮廓，原表面材质完全保留；资源在离散绑定创建、代理销毁释放。</summary>
     public sealed class WorldItemHighlight:MonoBehaviour
     {

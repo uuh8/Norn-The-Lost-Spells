@@ -7,7 +7,8 @@ namespace Game.Character
 {
     /// <summary>
     /// 已认证本地Owner的F/H/G/K输入桥。只读取Driver解析的确认实例并发送意图，不持有单机Session或修改组分。
-    /// F/H有界10Hz，G有效瞄准松开一次，K包内首材料按下一次；真实输出与数量仍由DS/Run事务裁决。
+    /// F首包发送已累计预算，持续F/H仍为有界10Hz；G有效瞄准松开一次，K包内首材料按下一次。
+    /// 真实输出与数量仍由DS/Run事务裁决，首包策略不授予本地数量或服务端预算。
     /// </summary>
     [DisallowMultipleComponent]
     [DefaultExecutionOrder(1000)]
@@ -20,6 +21,9 @@ namespace Game.Character
         private readonly CollectionRateAccumulator _pourRate = new CollectionRateAccumulator();
         private ulong _collectBudget, _pourBudget;
         private float _collectInterval, _pourInterval;
+        // 首F只发送这一帧已经按真实持键时间累计的GMU，避免先等满一个100ms批次。
+        // 后续仍按原0.1秒节奏；松键/换物/权限变化清掉资格，不预支满包或修改DS数量预算。
+        private bool _collectDispatched;
         private string _collectItem, _pourItem, _throwItem;
         private int _throwSlot = -1;
         private uint _epoch;
@@ -193,11 +197,12 @@ namespace Game.Character
             // 先算剩余空间再加，避免大帧或异常速率制造溢出/补追债务；每次Step每流至多发一批。
             budget += System.Math.Min(capacity - budget, gained);
             interval = Mathf.Min(.1f, interval + deltaTime);
-            if (interval >= .1f && budget != 0)
+            if (budget != 0 && (interval >= .1f || collect && !_collectDispatched))
             {
                 bool accepted = _driver.RequestContainerTransfer(kind, budget, ray);
                 budget = 0; interval = 0;
                 if (!accepted) { if (collect) ResetCollect(true); else ResetPour(true); return; }
+                if (collect) _collectDispatched = true;
             }
             if (collect) { _collectBudget = budget; _collectInterval = interval; }
             else { _pourBudget = budget; _pourInterval = interval; }
@@ -218,7 +223,7 @@ namespace Game.Character
             _trajectory.enabled = true;
         }
         private void ResetCollect(bool wait)
-        { _collectBudget = 0; _collectInterval = 0; _collectRate.Reset(); _waitCollectRelease = wait; }
+        { _collectBudget = 0; _collectInterval = 0; _collectRate.Reset(); _collectDispatched = false; _waitCollectRelease = wait; }
         private void ResetPour(bool wait)
         { _pourBudget = 0; _pourInterval = 0; _pourRate.Reset(); _waitPourRelease = wait; }
         private void ResetThrow(bool wait) { _throwAiming = false; _waitThrowRelease = wait; }

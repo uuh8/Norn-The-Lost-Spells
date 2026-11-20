@@ -119,7 +119,9 @@ namespace Game.Multiplayer.Tests
                     if (name == "Unity.AI.Navigation.NavMeshSurface") surfaces++;
                     if (!(component is MonoBehaviour) || !(component.GetType().Namespace ?? "").StartsWith("Game.", StringComparison.Ordinal)) continue;
                     Assert.That(name == "Game.Character.OnlineHomeWorldBindings" || name == "Game.Character.OnlineDungeonWorldBindings"
-                        || name == "Game.Character.OnlineDungeonEnvironment" || AllowedInactiveMaterial(name), Is.True,
+                        || name == "Game.Character.OnlineDungeonEnvironment" || AllowedInactiveMaterial(name)
+                        || name == "Game.UI.WorldSpaceLabelBillboard" && component.transform != copiedPortal
+                            && component.transform.IsChildOf(copiedPortal), Is.True,
                         "Home静态世界不能保留旧Session/Actor/Canvas/Portal/Account Owner：" + name);
                 }
                 Assert.That(surfaces, Is.Zero, "原和平Home没有NavMesh，导出不能为满足战斗地图规则伪造一个。");
@@ -127,6 +129,66 @@ namespace Game.Multiplayer.Tests
             finally { EditorSceneManager.ClosePreviewScene(source); }
             Assert.That(File.ReadAllBytes(sourcePath), Is.EqualTo(before));
         }
+
+        [Test]
+        public void HomePreviewRetainsPureBillboardOnTheOriginalVisualChildWithoutKeepingSinglePlayerPortalOwners()
+        {
+            const string sourcePath = "Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Home.unity";
+            byte[] before = File.ReadAllBytes(sourcePath);
+            var root = Preview("home");
+            var bindings = FindNamed(root, "Game.Character.OnlineHomeWorldBindings");
+            Assert.That(bindings, Is.Not.Null);
+            var copiedPortal = Property<Transform>(bindings, "ReturnPortalTransform");
+            Assert.That(copiedPortal, Is.Not.Null);
+            var source = EditorSceneManager.OpenPreviewScene(sourcePath);
+            try
+            {
+                var original = FindNamed(source, "Game.UI.HomePortalPresentation");
+                Assert.That(original, Is.Not.Null);
+                var originalVisual = new SerializedObject(original).FindProperty("_visual").objectReferenceValue as Transform;
+                Assert.That(originalVisual, Is.Not.Null);
+                string path = AnimationUtility.CalculateTransformPath(originalVisual, original.transform);
+                var copiedVisual = copiedPortal.Find(path);
+                Assert.That(copiedVisual, Is.Not.Null, "复用源门视觉节点，不能重建一个近似中心。");
+                var billboard = FindNamed(copiedVisual.gameObject, "Game.UI.WorldSpaceLabelBillboard");
+                Assert.That(billboard, Is.Not.Null,
+                    "导出会剥离原单机Portal表现；原视觉子根必须接入共用的纯视觉Billboard。");
+                Assert.That(billboard.transform, Is.SameAs(copiedVisual), "Billboard不能装在返回Trigger根上。");
+                Assert.That(copiedVisual.localPosition, Is.EqualTo(originalVisual.localPosition));
+                Assert.That(copiedVisual.localScale, Is.EqualTo(originalVisual.localScale));
+                Assert.That(FindNamed(root, "Game.UI.HomePortalPresentation"), Is.Null);
+                Assert.That(FindNamed(root, "Game.Run.HomePortal"), Is.Null);
+                Assert.That(FindNamed(root, "Game.Run.SinglePlayerInventorySession"), Is.Null);
+            }
+            finally { EditorSceneManager.ClosePreviewScene(source); }
+            Assert.That(File.ReadAllBytes(sourcePath), Is.EqualTo(before));
+        }
+
+        [Test]
+        public void PortalBillboardWhitelistRejectsLogicRootUnrelatedWorldNodesAndColliderSubtrees()
+        {
+            var root = Preview("home");
+            var bindings = FindNamed(root, "Game.Character.OnlineHomeWorldBindings");
+            var portal = Property<Transform>(bindings, "ReturnPortalTransform");
+            var visual = FindNamed(portal.gameObject, "Game.UI.WorldSpaceLabelBillboard");
+            Assert.That(visual, Is.Not.Null);
+            var allowed = RequireExporter().GetMethod("AllowedWorld", BindingFlags.Static | BindingFlags.NonPublic);
+            Assert.That(allowed, Is.Not.Null);
+            Assert.That((bool)allowed.Invoke(null, new object[] { visual }), Is.True);
+
+            // 仅修改本测试的inactive Preview。不能用全局类型白名单放行触发体或任意世界节点。
+            var onLogic = portal.gameObject.AddComponent(visual.GetType());
+            Assert.That((bool)allowed.Invoke(null, new object[] { onLogic }), Is.False);
+            var unrelated = new GameObject("Unrelated world billboard"); unrelated.transform.SetParent(root.transform, false);
+            var unrelatedBillboard = unrelated.AddComponent(visual.GetType());
+            Assert.That((bool)allowed.Invoke(null, new object[] { unrelatedBillboard }), Is.False);
+            var colliderVisual = new GameObject("Unsafe visual with nested Collider"); colliderVisual.transform.SetParent(portal, false);
+            var nested = new GameObject("Nested gameplay Collider"); nested.transform.SetParent(colliderVisual.transform, false);
+            nested.AddComponent<BoxCollider>();
+            var unsafeBillboard = colliderVisual.AddComponent(visual.GetType());
+            Assert.That((bool)allowed.Invoke(null, new object[] { unsafeBillboard }), Is.False);
+        }
+
         private static Component FindNamed(GameObject root, string name)
         {
             foreach (var value in root.GetComponentsInChildren<Component>(true)) if (value != null && value.GetType().FullName == name) return value;
@@ -345,7 +407,9 @@ namespace Game.Multiplayer.Tests
             || name == "Game.Rendering.LiquidSurfaceRenderer" || name == "Game.Rendering.StableLiquidSurfaceRenderer"
             || name == "Game.Rendering.FixedSolidSurfaceRenderer" || name == "Game.Rendering.GasFieldVolumeRenderer"
             || name == "Game.Rendering.ElementWorldWaterRenderer" || name == "Game.Rendering.ElementWorldFireRenderer"
-            || name == "Game.Rendering.GpuFireParcelRenderer";
+            || name == "Game.Rendering.GpuFireParcelRenderer"
+            // 原反应VFX只读事件；Null graphics的DS不建粒子池，不是被剥离的Gameplay Owner。
+            || name == "Game.Rendering.ReactionBurstVisualController";
 
         [Test] public void UnknownDungeonNeverBuildsAFallbackGraybox()
         {

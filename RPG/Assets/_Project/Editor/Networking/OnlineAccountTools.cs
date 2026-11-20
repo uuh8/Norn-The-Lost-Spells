@@ -216,14 +216,27 @@ namespace Game.Project.Editor
         [MenuItem("Tools/Norn/Online/Build Online Account Windows Client")]
         public static void BuildLab() => OnlineBuildTools.Build(false, ScenePath, "Builds/OnlineAccounts/Lab/NornAccountClient.exe", "account-client");
         [MenuItem("Tools/Norn/Online/Build Online Main Menu Windows Client")]
-        public static void BuildMenu()
+        public static void BuildMenu() => BuildMenuAt("Builds/OnlineAccounts/Menu/NornMenuClient.exe", "account-menu-client");
+
+        /// <summary>
+        /// 排查交付沿用正式主菜单与场景集合，只把输出放到独立目录。
+        /// 这样可让新Client与本轮验证DS配套，而不覆盖用户正在使用的旧版本或修改全局Scene List。
+        /// </summary>
+        [MenuItem("Tools/Norn/Online/Build Main Menu Client Verification (Windows)")]
+        public static void BuildMenuVerification()
+        {
+            string stamp = DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffZ");
+            BuildMenuAt("Builds/OnlineValidation/MenuClient/" + stamp + "/NornMenuClient.exe", "menu-client-verification-" + stamp);
+        }
+
+        private static void BuildMenuAt(string output, string evidenceName)
         {
             // 角色、SO或碰撞几何改变后必须重新生成同一Hash，再构建两端；不能静默发送不兼容运动状态。
             OnlineMovementTools.Verify();
             var scenes = new List<string> { MainMenu };
             foreach (var scene in EditorBuildSettings.scenes) if (scene.enabled && !scenes.Contains(scene.path)) scenes.Add(scene.path);
             if (!scenes.Contains(RoomLifecycleTools.PortalScenePath)) scenes.Add(RoomLifecycleTools.PortalScenePath);
-            OnlineBuildTools.Build(false, MainMenu, "Builds/OnlineAccounts/Menu/NornMenuClient.exe", "account-menu-client", explicitScenes: scenes.ToArray());
+            OnlineBuildTools.Build(false, MainMenu, output, evidenceName, explicitScenes: scenes.ToArray());
         }
 
         [MenuItem("Tools/Norn/Online/Verify Online Workspace")]

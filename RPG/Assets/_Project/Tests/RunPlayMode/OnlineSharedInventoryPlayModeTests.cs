@@ -23,23 +23,31 @@ namespace Game.Run.Tests
     /// 验证实际导出的原Tab在PlayMode中的输入/Scene寿命。使用内存Authority导出当前值，
     /// 不读取单机存档，不建立账号或假装网络验收；真实DS到Client的Wire由独立Native验收覆盖。
     /// </summary>
-    public sealed class OnlineSharedInventoryPlayModeTests
+    public sealed partial class OnlineSharedInventoryPlayModeTests
     {
         private Scene _scene;
         private CombatPresentationScope _scope;
-        private CombatPresentationHost _host;
+        private CombatPresentationHost _host, _initialHost;
         private OnlineOwnedWorkspace _authority;
         private OnlineInventoryPresentationSource _source;
         private InputTestFixture _input;
         private Keyboard _keyboard;
         private bool _background;
         private float _scale;
+        private CursorLockMode _cursorMode;
+        private bool _cursorVisible;
+        private readonly Dictionary<InputActionAsset, InputActionAsset> _inputAssets = new Dictionary<InputActionAsset, InputActionAsset>();
+        private readonly List<InputActionReference> _inputReferences = new List<InputActionReference>();
+        private readonly List<InputAction> _enabledProjectActions = new List<InputAction>();
+        private object _originalInputManager;
+        private PropertyInfo _managerActionsProperty;
+        private InputActionAsset _originalManagerActions, _projectActions;
+        private bool _projectActionsCaptured;
 
         [UnityTest]
         public IEnumerator FormalCombatInventoryRaycastsAndOriginalHandlersSubmitSevenOwnedActions()
         {
-            _background = Application.runInBackground; Application.runInBackground = true; _scale = Time.timeScale;
-            _input = new InputTestFixture(); _input.Setup(); _keyboard = InputSystem.AddDevice<Keyboard>();
+            BeginIsolatedInput();
             var definition = Resources.Load<OnlineCombatDefinition>("Online/CombatDefinition");
             Assert.That(definition.Catalog.TryCreateIndex(out var catalog, out var error), Is.True, error);
             const string wand = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", card = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
@@ -70,7 +78,7 @@ namespace Game.Run.Tests
             typeof(CombatPresentationScope).GetField("_online", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(_scope, true);
             var eventRoot = new GameObject("FormalDragEventSystem", typeof(FocusAwareEventSystem)); SceneManager.MoveGameObjectToScene(eventRoot, _scene);
             var events = eventRoot.GetComponent<EventSystem>();
-            root.SetActive(true); LocalActorPresentation.Bind(70177, actor, true); OnlineInventoryPresentation.Bind(70177, actor, _source);
+            ActivateScopeWithIsolatedInventoryInput(root, actor);
             yield return null; yield return null; yield return null;
             var inventory = root.GetComponentInChildren<SinglePlayerInventoryController>(true);
             Assert.That(inventory, Is.Not.Null); _host = CombatPresentationHost.Active;
@@ -183,15 +191,122 @@ namespace Game.Run.Tests
                 phase + "被其他图形遮挡：" + hits[0].gameObject.name);
         }
 
-        [UnityTest] public IEnumerator OriginalTabUsesOnlineSourceWithoutPausingAndIsReleasedWithItsScene()
+        private void BeginIsolatedInput()
         {
             _background = Application.runInBackground; Application.runInBackground = true; _scale = Time.timeScale;
+            _cursorMode = Cursor.lockState; _cursorVisible = Cursor.visible;
+            // 本夹具隔离测试原Inventory Canvas/InputModule与真实指针事务，没有装配
+            // OnlineWorldBootstrap→DungeonEntryDialogController这条生产Cursor Owner链。
+            // 明确建立UI鼠标前置条件，避免上一Hub夹具的RunPauseCoordinator残留Locked
+            // 使结果依赖执行顺序；Cleanup仍恢复进入前状态。完整Tab光标装配由Native合作回归覆盖。
+            Cursor.lockState=CursorLockMode.None;Cursor.visible=true;
+            _initialHost = CombatPresentationHost.Active;
+            Assert.That(_initialHost == null || !_initialHost.IsBound, Is.True, "不能抢占其他 Scene 的有效表现租约。");
+            Assert.That(LocalActorPresentation.Actor == null, Is.True, "前一夹具必须释放自己的 Actor。");
+            CaptureAndReleaseProjectActionState();
             _input = new InputTestFixture(); _input.Setup(); _keyboard = InputSystem.AddDevice<Keyboard>();
+        }
+
+        private void CaptureAndReleaseProjectActionState()
+        {
+            // Input System 1.19 的 Setup 会先保存全局 ActionState 列表，再切换 InputManager，
+            // 并从 EditorBuildSettings 自动 Enable 项目 Actions。已加载 asset 的运行时 state
+            // 可能仍指向前一 fixture 的 Keyboard，导致 InitialStateCheck 读取失效的 statePtr。
+            // 在旧 runtime 仍有效时 Dispose ActionMap state，Setup 才会解析本次虚拟设备。
+            // 仅重建非序列化运行时缓存；保留 asset、bindings、override 和项目配置，不保存/销毁资产。
+            var managerField = typeof(InputSystem).GetField("s_Manager", BindingFlags.Static | BindingFlags.NonPublic);
+            Assert.That(managerField, Is.Not.Null, "Input System 升级时需复核 fixture 的 runtime 恢复边界。");
+            _originalInputManager = managerField.GetValue(null);
+            Assert.That(_originalInputManager, Is.Not.Null);
+            _managerActionsProperty = _originalInputManager.GetType().GetProperty("actions");
+            Assert.That(_managerActionsProperty, Is.Not.Null);
+            _originalManagerActions = InputSystem.actions;
+            // 前一个 InputTestFixture.Restore 可能已留下 null manager.actions；下一次 Setup
+            // 仍读取此配置，所以必须只读取得配置资产，不能仅清理当前 manager 的引用。
+            UnityEditor.EditorBuildSettings.TryGetConfigObject("com.unity.input.settings.actions", out _projectActions);
+            Assert.That(_originalManagerActions == null || _originalManagerActions == _projectActions, Is.True,
+                "当前 manager 必须沿用项目配置，不能抢占其他测试自行注入的 Actions。");
+            _enabledProjectActions.Clear();
+            if (_projectActions != null)
+                foreach (var action in _projectActions) if (action.enabled) _enabledProjectActions.Add(action);
+            _projectActionsCaptured = true;
+            if (_projectActions == null) return;
+            _projectActions.Disable();
+            foreach (var map in _projectActions.actionMaps) map.Dispose();
+        }
+
+        private void RestoreProjectActionState()
+        {
+            if (!_projectActionsCaptured) return;
+            try
+            {
+                var manager = typeof(InputSystem).GetField("s_Manager", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
+                Assert.That(manager, Is.SameAs(_originalInputManager), "先由 InputTestFixture 恢复原 runtime，再恢复项目 Actions。");
+                // Reset 会将旧 manager.actions 置 null，而 Restore 只复用旧 manager，不补回引用。
+                // 内部 InputManager.actions setter 仅设置字段并通知观察者；公共 InputSystem.actions
+                // setter 会写项目配置且不允许 PlayMode，故这里仅恢复这个已保存的内存对象。
+                if (!ReferenceEquals(InputSystem.actions, _originalManagerActions))
+                    _managerActionsProperty.SetValue(manager, _originalManagerActions);
+                if (_projectActions == null) return;
+                // TearDown 已 Dispose 临时 runtime 的全部 ActionState。按原逐 Action enabled 恢复，
+                // 不用 asset.Enable() 把调用前禁用的 Action 一并打开；重新解析的 controls 属于旧 runtime。
+                _projectActions.Disable();
+                foreach (var action in _enabledProjectActions) action.Enable();
+                foreach (var action in _projectActions)
+                    Assert.That(action.enabled, Is.EqualTo(_enabledProjectActions.Contains(action)), action.name);
+                Assert.That(InputSystem.actions, Is.SameAs(_originalManagerActions));
+            }
+            finally
+            {
+                _projectActionsCaptured = false; _enabledProjectActions.Clear();
+                _originalInputManager = null; _managerActionsProperty = null;
+                _originalManagerActions = _projectActions = null;
+            }
+        }
+
+        private void ActivateScopeWithIsolatedInventoryInput(GameObject root, GameObject actor)
+        {
+            Assert.That(root.activeInHierarchy, Is.False);
+            // InputTestFixture 切换的是全局 InputManager，并不会清除已加载资源中 ActionMap 的 m_State。
+            // 库存资源也只为本实例复制正式 Action 配置，使它与测试 runtime 同寿命。
+            // 原17例组合的实际异常 Owner 是项目 Actions（见上面的隔离），这里同时避免复用资源缓存；
+            // 不 Disable/Dispose 或修改 Resources 中的库存共享资产。正常游戏不切换测试 runtime。
+            // 使用 Scope 原装配方法先生成 inactive 子树，保留原 prefab、布局、View 和 Raycast 树。
+            var ensure = typeof(CombatPresentationScope).GetMethod("EnsureOnlineInventory", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.That((bool)ensure.Invoke(_scope, null), Is.True);
+            var inventory = root.GetComponentInChildren<SinglePlayerInventoryController>(true);
+            Assert.That(inventory, Is.Not.Null); Assert.That(inventory.gameObject.activeInHierarchy, Is.False);
+            foreach (var fieldName in new[] { "_toggleAction", "_rotateAction", "_cancelAction", "_splitAction" })
+            {
+                var field = typeof(SinglePlayerInventoryController).GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+                var original = (InputActionReference)field.GetValue(inventory);
+                Assert.That(original != null && original.asset != null && original.action != null, Is.True, fieldName);
+                if (!_inputAssets.TryGetValue(original.asset, out var clone))
+                {
+                    // 克隆整个 asset 保留正式 action/map ID、binding 和 control scheme，只让设备解析属于本次 runtime。
+                    clone = Object.Instantiate(original.asset); _inputAssets.Add(original.asset, clone);
+                    clone.LoadBindingOverridesFromJson(original.asset.SaveBindingOverridesAsJson());
+                }
+                var action = clone.FindAction(original.action.id);
+                Assert.That(action, Is.Not.Null);
+                var reference = InputActionReference.Create(action); _inputReferences.Add(reference);
+                field.SetValue(inventory, reference);
+            }
+            // 先交付真实 Actor 事实，Scope.OnEnable 会走生产重放；否则空 Actor 会合法 Clear 上面的未绑定子树。
+            // Source 仍在启用后通过原事件抵达，UI 的 Awake/OnEnable/Start、Tab Action 与命令链完全由生产执行。
+            LocalActorPresentation.Bind(70177, actor, true); root.SetActive(true);
+            OnlineInventoryPresentation.Bind(70177, actor, _source);
+            _host = CombatPresentationHost.Active; // 在首个 yield 前记住拥有的 Host，断言/输入异常也能正确清理。
+        }
+
+        [UnityTest] public IEnumerator OriginalTabUsesOnlineSourceWithoutPausingAndIsReleasedWithItsScene()
+        {
+            BeginIsolatedInput();
             var definition = Resources.Load<OnlineCombatDefinition>("Online/CombatDefinition");
             Assert.That(definition.Catalog.TryCreateIndex(out var catalog, out var error), Is.True, error);
             const string wand = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", card = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
             var assets = new OnlineOwnedAssetSnapshot { SchemaVersion = OnlineOwnedAssetSnapshot.CurrentSchemaVersion, ActorId = 1, RunId = "tab-run", PlayerId = "tab-player", InventoryId = "tab-inventory",
-                InventoryVersion = 1, GameplayConfigHash = definition.GameplayConfigHash, SelectedWandInstanceId = wand,
+                InventoryVersion = 1, CurrencyVersion = 1, GameplayConfigHash = definition.GameplayConfigHash, SelectedWandInstanceId = wand,
                 Items = new[] {
                     new OnlineOwnedItemSnapshot { InstanceId = wand, ContentId = "wandtest.wand.a", Revision = 1, LocationKind = 3, UseTemplateWandStats = true },
                     new OnlineOwnedItemSnapshot { InstanceId = card, ContentId = "wandtest.fire", Revision = 1, LocationKind = 2, ParentInstanceId = wand, RemainingCharges = 30 } } };
@@ -204,7 +319,7 @@ namespace Game.Run.Tests
             var root = new GameObject("CombatScope"); root.SetActive(false); SceneManager.MoveGameObjectToScene(root, _scene);
             _scope = root.AddComponent<CombatPresentationScope>();
             typeof(CombatPresentationScope).GetField("_online", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(_scope, true);
-            root.SetActive(true); LocalActorPresentation.Bind(70177, actor, true); OnlineInventoryPresentation.Bind(70177, actor, _source);
+            ActivateScopeWithIsolatedInventoryInput(root, actor);
             yield return null; yield return null; yield return null;
             var inventory = root.GetComponentInChildren<SinglePlayerInventoryController>(true);
             Assert.That(inventory, Is.Not.Null); Assert.That(inventory.Session, Is.Null); Assert.That(inventory.PresentationSource, Is.SameAs(_source));
@@ -223,13 +338,34 @@ namespace Game.Run.Tests
 
         [UnityTearDown] public IEnumerator ReleaseOnlyThisTestWorld()
         {
-            if (_scope != null) _scope.Clear();
-            LocalActorPresentation.Clear(70177); OnlineInventoryPresentation.Clear(70177);
-            if (_scene.IsValid() && _scene.isLoaded) yield return SceneManager.UnloadSceneAsync(_scene);
-            if (_host != null) Object.Destroy(_host.gameObject);
-            _source?.Dispose(); _authority?.Dispose(); yield return null;
-            _input?.TearDown();
-            Application.runInBackground = _background;
+            try
+            {
+                ReleaseGroundPickupFixture();
+                if (_scope != null) _scope.Clear();
+                LocalActorPresentation.Clear(70177); OnlineInventoryPresentation.Clear(70177);
+                if (_scene.IsValid() && _scene.isLoaded) yield return SceneManager.UnloadSceneAsync(_scene);
+                if (_host != null && _initialHost == null) Object.Destroy(_host.gameObject);
+                _source?.Dispose(); _authority?.Dispose();
+                // 控件先经真实 OnDisable 退订，再销毁测试独占的引用/asset；其 OnDestroy 必须发生在恢复原 runtime 前。
+                foreach (var reference in _inputReferences) if (reference != null) Object.Destroy(reference);
+                foreach (var asset in _inputAssets.Values) if (asset != null) Object.Destroy(asset);
+                yield return null;
+            }
+            finally
+            {
+                _inputReferences.Clear(); _inputAssets.Clear();
+                try
+                {
+                    try { _input?.TearDown(); }
+                    finally { RestoreProjectActionState(); }
+                }
+                finally
+                {
+                    _input = null; _keyboard = null;
+                    _scope = null; _host = _initialHost = null; _scene = default; _source = null; _authority = null;
+                    Application.runInBackground = _background; Cursor.lockState = _cursorMode; Cursor.visible = _cursorVisible;
+                }
+            }
             Assert.That(Time.timeScale, Is.EqualTo(_scale));
         }
     }

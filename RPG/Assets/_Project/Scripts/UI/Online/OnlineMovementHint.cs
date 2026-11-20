@@ -22,7 +22,7 @@ namespace Game.UI
         private void OnView(OnlineMovementPresentationEvent view)
         {
             _text.enabled = view.Active;
-            _normalText = view.Frozen ? "连接暂时中断，战斗已暂停；Esc打开联机菜单" : "WASD移动  ·  Space跳跃  ·  Shift冲刺  ·  鼠标左键施法  ·  Esc联机菜单";
+            _normalText = view.Frozen ? "副本暂时暂停；Esc打开联机菜单" : "WASD移动  ·  Space跳跃  ·  Shift冲刺  ·  鼠标左键施法  ·  Esc联机菜单";
             _feedbackUntil = 0; _text.text = _normalText;
         }
         private void OnCastFeedback(OnlineCastFeedbackEvent feedback)

@@ -162,7 +162,7 @@ namespace Game.Character
         internal void ReportSpawnFailure(in OwnedWandCastContext context)
         {
             LastFailure = OwnedWandFailureReason.SpawnFailed;
-            EventBus<CastResourceResultEvent>.Publish(new CastResourceResultEvent { InventoryId = context.InventoryId,
+            EventBus<CastResourceResultEvent>.PublishFact(new CastResourceResultEvent { InventoryId = context.InventoryId,
                 SourceWandId = context.SourceWandId, CallerId = _callerId, Reason = LastFailure });
         }
         internal void CancelOutstanding()
@@ -256,7 +256,8 @@ namespace Game.Character
         internal void ReportOutput(int command)
         {
             if(!V2||Adapter==null||Layer==null)return;
-            EventBus<SpellExecutionObservedEvent>.Publish(new SpellExecutionObservedEvent{InventoryId=InventoryId,SourceWandId=SourceWandId,
+            // 这是已提交输出的终结事实；其他观察者异常不能让真正的资源 Owner 漏收而永久保留票据。
+            EventBus<SpellExecutionObservedEvent>.PublishFact(new SpellExecutionObservedEvent{InventoryId=InventoryId,SourceWandId=SourceWandId,
                 CallerId=Adapter.CallerId,TicketId=TicketId,ProgramRevision=ProgramRevision,LayerId=LayerIndex,
                 OutputId=Layer.GetOutputId(command),SimulationTime=Time.timeAsDouble,Kind=SpellExecutionObservationKind.OutputReleased});
         }

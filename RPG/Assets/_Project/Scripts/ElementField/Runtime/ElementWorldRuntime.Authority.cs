@@ -14,6 +14,12 @@ namespace Game.ElementField
         private bool _initializationStarted;
         private bool _worldStepInProgress;
         private bool _simulationFaulted;
+        private ElementWorldExposureSystem _authorityExposure;
+
+        // 同GameObject组件按生命周期登记，固定步无需GetComponent；退出/禁用后不能残留场景Adapter引用。
+        internal void RegisterExposure(ElementWorldExposureSystem exposure) => _authorityExposure = exposure;
+        internal void UnregisterExposure(ElementWorldExposureSystem exposure)
+        { if (_authorityExposure == exposure) _authorityExposure = null; }
 
         public WorldExecutionMode ExecutionMode => _executionMode;
         public bool IsSimulationFaulted => _simulationFaulted;
@@ -60,12 +66,24 @@ namespace Game.ElementField
                 return;
 
             _lastAuthorityServerTick = serverTick;
-            if (SimulationPausedForDebug || SimulationSuspended) return;
+            if (SimulationPausedForDebug || SimulationSuspended)
+            {
+                if (_authorityExposure != null) _authorityExposure.ResetAuthorityExposureClock();
+                return;
+            }
 
             // 材料写入/反应可同步触发外部事件；重入不得再次向同一个累加器和 Store 写入。
             // 不读取 Time.timeScale：单机 Pause 与服务器冻结属于不同生命周期，由外部明确设置冻结门。
             _authorityStepInProgress = true;
-            try { AdvanceSimulationClock(deltaTime); }
+            try
+            {
+                AdvanceSimulationClock(deltaTime);
+                // 材料与环境接触共用已接受的Authority时间；Render卡顿被外部时钟丢弃的时间不会单独变成状态剂量。
+                // 保持重入门直到Exposure结束，其同步Status事件也不能再次推进同一个世界。
+                if (this != null && IsInitialized && !_simulationFaulted && !SimulationPausedForDebug
+                    && !SimulationSuspended && _authorityExposure != null)
+                    _authorityExposure.TickAuthorityExposure(deltaTime);
+            }
             finally { _authorityStepInProgress = false; }
         }
 

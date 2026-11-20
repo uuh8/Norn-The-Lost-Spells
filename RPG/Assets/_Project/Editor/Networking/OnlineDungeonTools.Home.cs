@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using Game.Character;
 using Game.Core;
 using Game.Run;
+using Game.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -43,6 +44,21 @@ namespace Game.Project.Editor
             data.FindProperty("_returnPortalEnabled").boolValue = portal.enabled;
             data.ApplyModifiedPropertiesWithoutUndo();
             if (!bindings.TryValidate(out var error)) throw new InvalidOperationException(error);
+
+            // 原HomePortalPresentation包含单机Portal事件/缩门责任，仍由受控导出剥离。
+            // 只从源组件读取既有视觉节点，并在克隆上接共用纯视觉Billboard；不保留单机Owner，
+            // 不复制一个近似中心，也不转动HomeBindings用于权威空间判定的原返回Box。
+            var presentation = portal.GetComponent<HomePortalPresentation>();
+            var sourceVisual = presentation != null
+                ? new SerializedObject(presentation).FindProperty("_visual").objectReferenceValue as Transform : null;
+            if (sourceVisual == null || sourceVisual == portal.transform || !sourceVisual.IsChildOf(portal.transform))
+                throw new InvalidOperationException("原Home返回门必须有明确的独立视觉子根，不能猜测Billboard目标。");
+            var visual = Clone(preview, sourceVisual);
+            if (visual == null || visual.GetComponentsInChildren<Collider>(true).Length != 0)
+                throw new InvalidOperationException("Home返回门视觉子树不能包含交互Collider。");
+            var billboard = visual.GetComponent<WorldSpaceLabelBillboard>();
+            if (billboard == null) billboard = visual.gameObject.AddComponent<WorldSpaceLabelBillboard>();
+            billboard.ConfigureCameraFacing(true);
         }
 
         private static void FindHomeSourceGeometry(UnityEngine.SceneManagement.Scene source, out HubAreaVolume area,

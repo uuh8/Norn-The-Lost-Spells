@@ -24,6 +24,9 @@ namespace Game.UI
         private NearbyPickupController _nearby;
         private int _spareColumns,_spareRows;
         private string _inventoryId,_sceneKey;
+        private string _accountPlayer;
+        private int _layoutScene;
+        private bool _accountLayout;
         private IInventoryPresentationSource _sourceIdentity;
         private uint _connectionEpoch;
         public int Columns{get;private set;}public int Rows{get;private set;}
@@ -70,9 +73,17 @@ namespace Game.UI
             var source=controller.PresentationSource;
             string inventory=source?.ReadOnly?.InventoryId,scene=source?.WorldSceneKey;
             uint epoch=(source as IOnlineInventoryCommandContext)?.ConnectionEpoch??0;
-            // 同InventoryId重连仍是新来源；清的是附近展示布局，不更改世界位置或任何资产。
-            if(!ReferenceEquals(_sourceIdentity,source) || _connectionEpoch!=epoch || _inventoryId!=inventory || _sceneKey!=scene)
-            {_placements.Clear();_known.Clear();_spareColumns=_spareRows=0;_hasLayout=false;_inventoryId=inventory;_sceneKey=scene;_sourceIdentity=source;_connectionEpoch=epoch;}
+            var account=source as IAccountInventoryCommandContext;
+            int ownerScene=controller.gameObject.scene.handle;
+            // 账号每次确认Profile都会换不可变Source，普通版本推进不能抹掉玩家排好的附近格子。
+            // 身份必须在上一轮存值：旧Source已Dispose后，其PlayerId/ReadOnly可能已清空。
+            // DS则仍以Source/Epoch划分连接寿命；账号、世界键或Controller Scene改变也必须清展示缓存。
+            bool sameAccount=account!=null && _accountLayout && account.PlayerId==_accountPlayer && ownerScene==_layoutScene;
+            if(!ReferenceEquals(_sourceIdentity,source) && !sameAccount || _connectionEpoch!=epoch
+                || _inventoryId!=inventory || _sceneKey!=scene || _layoutScene!=ownerScene)
+            {_placements.Clear();_known.Clear();_spareColumns=_spareRows=0;_hasLayout=false;}
+            _inventoryId=inventory;_sceneKey=scene;_sourceIdentity=source;_connectionEpoch=epoch;
+            _accountLayout=account!=null;_accountPlayer=account?.PlayerId;_layoutScene=ownerScene;
             for(int k=_known.Count-1;k>=0;k--)
             {bool exists=false;for(int i=0;i<count;i++)if(items[i].InstanceId==_known[k] && items[i].Location.Kind==ItemLocationKind.WorldItem){exists=true;break;}
                 if(!exists){_placements.Remove(_known[k]);_known.RemoveAt(k);}}

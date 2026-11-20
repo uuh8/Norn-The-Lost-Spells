@@ -48,8 +48,10 @@ namespace Game.Run.Tests
                 report.AppendLine(definition.ContentId+"\t"+definition.DisplayName+"\t"+definition.Kind+"\t"+(tool?"道具":material?"材料":definition.Kind.ToString()));
             }
             Assert.That(food,Is.EqualTo(10));Assert.That(herbs,Is.EqualTo(5));Assert.That(tools,Is.GreaterThanOrEqualTo(3));
-            Directory.CreateDirectory("TestResults/SinglePlayer/M6-T3-ItemCarry");
-            File.WriteAllText("TestResults/SinglePlayer/M6-T3-ItemCarry/catalog-classification.tsv",report.ToString());
+            // 当前目录快照独立留证，不覆盖此前M6阶段已交付的分类记录。
+            string evidence = Path.Combine("TestResults/ItemInventoryClassification", System.DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffZ"));
+            Directory.CreateDirectory(evidence);
+            File.WriteAllText(Path.Combine(evidence,"catalog-classification.tsv"),report.ToString());
         }
     }
 }

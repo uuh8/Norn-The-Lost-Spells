@@ -82,6 +82,99 @@ namespace Game.Run.Tests
             Assert.That(context.GetMethods().Length, Is.EqualTo(2), "仅暴露 Actor/Epoch，不交出 Store 写口。");
         }
 
+        [Test]
+        public void OrganizeCommandUsesTheAuthorityBackpackAndExactReplayKeepsChargesAndMana()
+        {
+            using var workspace=Create(true,true,true);
+            Assert.That(workspace.TryGetItem("bag.card.a",out var initialA),Is.True);
+            Assert.That(workspace.TryGetItem("bag.card.b",out var initialB),Is.True);
+            Assert.That(workspace.WandsReadOnly.TryGetState("wand",out var beforeMana),Is.True);
+            var intent=Intent(workspace,1,18,"bag");
+            var first=Execute(workspace,intent);AssertFailure(first,"None");
+            At(workspace.OwnershipStore,"bag.card.a",Bag(0,0));At(workspace.OwnershipStore,"bag.card.b",Bag(1,0));
+            Assert.That(workspace.TryGetItem("bag.card.a",out var a),Is.True);Assert.That(a.RemainingCharges,Is.EqualTo(initialA.RemainingCharges));
+            Assert.That(workspace.TryGetItem("bag.card.b",out var b),Is.True);Assert.That(b.RemainingCharges,Is.EqualTo(initialB.RemainingCharges));
+            Assert.That(workspace.WandsReadOnly.TryGetState("wand",out var afterMana),Is.True);
+            Assert.That(afterMana.CurrentMana,Is.EqualTo(beforeMana.CurrentMana));
+            uint committed=workspace.InventoryVersion;AssertFailure(Execute(workspace,intent),"None");
+            Assert.That(workspace.InventoryVersion,Is.EqualTo(committed));
+            Set(intent,"ItemId","wand");AssertFailure(Execute(workspace,intent),"CommandConflict");
+        }
+
+        [Test]
+        public void OrganizeCommandRejectsNonBackpackAndPreservesExistingLayout()
+        {
+            using var workspace=Create(false,true);uint version=workspace.InventoryVersion;
+            AssertFailure(Execute(workspace,Intent(workspace,1,18,"wand")),"NotOwned");
+            Assert.That(workspace.InventoryVersion,Is.EqualTo(version));
+            At(workspace.OwnershipStore,"bag",new ItemLocation(ItemLocationKind.EquippedBackpack,"player",0,0,0,0));
+        }
+
+        [Test]
+        public void OrganizeCommandKeepsTheOriginalStaleAndClosedAuthorityGates()
+        {
+            using var workspace=Create(false,true);uint version=workspace.InventoryVersion;
+            var stale=Intent(workspace,1,18,"bag");Set(stale,"ExpectedInventoryVersion",version-1);
+            AssertFailure(Execute(workspace,stale),"StaleVersion");
+            ConfigureWriteGate(workspace,()=>false);
+            AssertFailure(Execute(workspace,Intent(workspace,2,18,"bag")),"NotReady");
+            Assert.That(workspace.InventoryVersion,Is.EqualTo(version));
+        }
+
+        [TestCase(false)] [TestCase(true)]
+        public void OrganizeMaterialMergeKeepsTheOriginalRetirementJournalAndAtomicFailure(bool journalFull)
+        {
+            // 真正的Factory输入保留每个材料的修订，检查点Merged事实不可由Client合计值推算。
+            var catalog=Store(Define("organize.bag",ItemKind.Backpack,bagWidth:4,bagHeight:4),
+                Define("organize.material",ItemKind.Material)).Catalog;
+            Assert.That(catalog.TryGetRules("organize.material",out var rules),Is.True);
+            var entry=new OnlineOwnedAssetSnapshot
+            {
+                SchemaVersion=OnlineOwnedAssetSnapshot.CurrentSchemaVersion,RunId="run",PlayerId="player",ActorId=1,
+                InventoryId="inventory",InventoryVersion=9,CurrencyVersion=1,GameplayConfigHash=Hash,SelectedWandInstanceId="",
+                Items=new[]
+                {
+                    new OnlineOwnedItemSnapshot{InstanceId="bag",ContentId="organize.bag",Revision=2,LocationKind=4},
+                    new OnlineOwnedItemSnapshot{InstanceId="mat.a",ContentId="organize.material",Revision=4,LocationKind=1,
+                        ParentInstanceId="bag",Slot=-1,X=0,Y=2,MaterialState=new OnlineOwnedMaterialStateSnapshot{SchemaVersion=1,MaterialKey=rules.MaterialKey,Quantity=100}},
+                    new OnlineOwnedItemSnapshot{InstanceId="mat.b",ContentId="organize.material",Revision=8,LocationKind=1,
+                        ParentInstanceId="bag",Slot=-1,X=3,Y=2,MaterialState=new OnlineOwnedMaterialStateSnapshot{SchemaVersion=1,MaterialKey=rules.MaterialKey,Quantity=200}}
+                }
+            };
+            Assert.That(OnlineOwnedWorkspaceFactory.TryCreate(catalog,entry,Hash,out var workspace,out var error),Is.True,error);
+            using(workspace)
+            {
+                var journal=new OnlineRunItemRetirementJournal(1);
+                if(journalFull)
+                {
+                    Assert.That(journal.TryReserve(new[]{new OnlineItemRetirementSnapshot{InventoryId="other",InstanceId="old",
+                        ContentId="other",Revision=1,Reason=OnlineItemRetirementReason.Consumed}},out var occupied),Is.True);
+                    occupied.Commit();
+                }
+                Assert.That(workspace.ConfigureCheckpointJournal(journal),Is.True);
+                uint version=workspace.InventoryVersion;var command=Intent(workspace,1,18,"bag");
+                AssertFailure(Execute(workspace,command),journalFull?"Busy":"None");
+                Assert.That(journal.TryCapture(out var facts),Is.True);
+                Assert.That(facts.Length,Is.EqualTo(1));
+                if(journalFull)
+                {
+                    At(workspace.OwnershipStore,"mat.a",Bag(0,2));At(workspace.OwnershipStore,"mat.b",Bag(3,2));
+                    Assert.That(workspace.InventoryVersion,Is.EqualTo(version));Assert.That(facts[0].InstanceId,Is.EqualTo("old"));
+                }
+                else
+                {
+                    At(workspace.OwnershipStore,"mat.a",Bag(0,0));Assert.That(workspace.TryGetItem("mat.b",out _),Is.False);
+                    Assert.That(workspace.TryGetItem("mat.a",out var merged),Is.True);Assert.That(merged.Material.Quantity,Is.EqualTo(300));
+                    Assert.That(facts[0].InstanceId,Is.EqualTo("mat.b"));Assert.That(facts[0].Revision,Is.EqualTo(8));
+                    Assert.That(facts[0].Reason,Is.EqualTo(OnlineItemRetirementReason.Merged));
+                    Assert.That(workspace.TryCapturePresentation(7,1,1,out _),Is.True,"整理后完整Owner快照必须仍可导出。");
+                    uint committed=workspace.InventoryVersion;AssertFailure(Execute(workspace,command),"None");
+                    Assert.That(workspace.InventoryVersion,Is.EqualTo(committed));
+                    Assert.That(journal.TryCapture(out var replayed),Is.True);Assert.That(replayed.Length,Is.EqualTo(1));
+                }
+            }
+        }
+
         [Test] public void SelectUsesRealEquippedWandAndPreservesInventoryAndMana()
         {
             using var workspace = Create(); uint version = workspace.InventoryVersion;
@@ -179,7 +272,7 @@ namespace Game.Run.Tests
 
         [Test] public void CardInOwnedBackpackCanInstallUsingTheExistingProgramPlacementSemantics()
         {
-            var seed = new OnlineOwnedAssetSnapshot { SchemaVersion = OnlineOwnedAssetSnapshot.CurrentSchemaVersion,
+            var seed = new OnlineOwnedAssetSnapshot { SchemaVersion = OnlineOwnedAssetSnapshot.CurrentSchemaVersion, Gold = 0, CurrencyVersion = 1,
                 RunId = "run", PlayerId = "player", ActorId = 1, InventoryId = "inventory", InventoryVersion = 9,
                 GameplayConfigHash = Hash, SelectedWandInstanceId = "wand", Items = new[] {
                     new OnlineOwnedItemSnapshot { InstanceId = "wand", ContentId = "command.wand", Revision = 1,
@@ -269,9 +362,9 @@ namespace Game.Run.Tests
             Assert.That(finalState.CurrentMana, Is.EqualTo(65), "编辑备用杖不重建资源服务或补满Mana。");
         }
 
-        private OnlineOwnedWorkspace Create(bool secondCard = false, bool bag = false)
+        private OnlineOwnedWorkspace Create(bool secondCard = false, bool bag = false, bool bagCards = false)
         {
-            var items = new OnlineOwnedItemSnapshot[3 + (secondCard ? 1 : 0) + (bag ? 1 : 0)];
+            var items = new OnlineOwnedItemSnapshot[3 + (secondCard ? 1 : 0) + (bag ? 1 : 0) + (bagCards ? 2 : 0)];
             items[0] = new OnlineOwnedItemSnapshot { InstanceId = "wand", ContentId = "command.wand", Revision = 1,
                 LocationKind = 3, ParentInstanceId = "", UseTemplateWandStats = true };
             items[1] = new OnlineOwnedItemSnapshot { InstanceId = "wand2", ContentId = "command.wand", Revision = 1,
@@ -280,9 +373,18 @@ namespace Game.Run.Tests
                 LocationKind = 2, ParentInstanceId = "wand", RemainingCharges = 1 };
             if (secondCard) items[3] = new OnlineOwnedItemSnapshot { InstanceId = "card2", ContentId = "command.card", Revision = 1,
                 LocationKind = 2, ParentInstanceId = "wand2", RemainingCharges = 1 };
-            if (bag) items[items.Length - 1] = new OnlineOwnedItemSnapshot { InstanceId = "bag", ContentId = "command.bag", Revision = 1,
+            if (bag) items[3 + (secondCard ? 1 : 0)] = new OnlineOwnedItemSnapshot { InstanceId = "bag", ContentId = "command.bag", Revision = 1,
                 LocationKind = 4, ParentInstanceId = "" };
-            Assert.That(OnlineOwnedWorkspaceFactory.TryCreate(_catalog, new OnlineOwnedAssetSnapshot { SchemaVersion = OnlineOwnedAssetSnapshot.CurrentSchemaVersion,
+            if (bagCards)
+            {
+                // 两份卡从可信Entry进入真实Owner，使Revision表/资格/快照与正式链一致；
+                // 不在建好Owner后绕过其导入规则直接塞Store，避免伪造一次没有身份修订的资产。
+                items[items.Length-2]=new OnlineOwnedItemSnapshot { InstanceId="bag.card.a",ContentId="command.card",Revision=1,
+                    LocationKind=1,ParentInstanceId="bag",Slot=-1,X=0,Y=3,RemainingCharges=12 };
+                items[items.Length-1]=new OnlineOwnedItemSnapshot { InstanceId="bag.card.b",ContentId="command.card",Revision=1,
+                    LocationKind=1,ParentInstanceId="bag",Slot=-1,X=3,Y=3,RemainingCharges=7 };
+            }
+            Assert.That(OnlineOwnedWorkspaceFactory.TryCreate(_catalog, new OnlineOwnedAssetSnapshot { SchemaVersion = OnlineOwnedAssetSnapshot.CurrentSchemaVersion, Gold = 0, CurrencyVersion = 1,
                 RunId = "run", PlayerId = "player", ActorId = 1, InventoryId = "inventory", InventoryVersion = 9,
                 GameplayConfigHash = Hash, SelectedWandInstanceId = "wand", Items = items }, Hash, out var workspace, out var error), Is.True, error);
             return workspace;

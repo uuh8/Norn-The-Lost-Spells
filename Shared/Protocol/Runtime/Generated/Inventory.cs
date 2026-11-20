@@ -6141,7 +6141,7 @@ namespace Game.NetworkProtocol {
     public const int KindFieldNumber = 6;
     private uint kind_;
     /// <summary>
-    /// SelectWand=1、PlaceCard=2、SelectTool=3、CollectMaterial=4、PourContainer=5、BindTool=6、DropContainer=7、PickupContainer=8、ThrowContainer=9、ReleaseSolid=10、ConfigureSpellAttachment=11、MoveOwned=12、EquipWand=13、DropItem=14、PickupItem=15、BeginWandResearch=16、EndWandResearch=17；先验原uint防byte截断。
+    /// SelectWand=1、PlaceCard=2、SelectTool=3、CollectMaterial=4、PourContainer=5、BindTool=6、DropContainer=7、PickupContainer=8、ThrowContainer=9、ReleaseSolid=10、ConfigureSpellAttachment=11、MoveOwned=12、EquipWand=13、DropItem=14、PickupItem=15、BeginWandResearch=16、EndWandResearch=17、OrganizeBackpack=18（仅真实装备包ID与库存版本，其余字段中性）；先验原uint防byte截断。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]

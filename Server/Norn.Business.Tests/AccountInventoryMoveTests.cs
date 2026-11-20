@@ -111,6 +111,92 @@ public sealed class AccountInventoryMoveTests
     }
 
     [Fact,Trait("Category","DatabaseIntegration")]
+    public async Task AccountToolReplacementReturnsTheOriginalContainerToTheVacatedBagCells()
+    {
+        await using var f=await Fixture.Create();string incoming=await f.AddBottle(1);
+        await f.FillBackpackExcept(incoming);
+        int count=f.Profile.Items.Length;
+        var move=f.Move(incoming,8,"",0);
+        using var response=await f.Post(move);Assert.Equal(HttpStatusCode.OK,response.StatusCode);
+        Assert.Contains(f.Profile.Items,i=>i.InstanceId==incoming&&i.LocationKind==8&&i.Slot==0);
+        Assert.Contains(f.Profile.Items,i=>i.InstanceId==f.Bottle&&i.LocationKind==1&&i.ParentInstanceId==f.Bag&&i.X==0&&i.Y==0);
+        Assert.Equal(27UL,f.Profile.Items.Single(i=>i.InstanceId==f.Bottle).ContainerState.Components.Single().Quantity);
+        Assert.Equal(13UL,f.Profile.Items.Single(i=>i.InstanceId==incoming).ContainerState.Components.Single().Quantity);
+        Assert.Equal(count,f.Profile.Items.Length);Assert.Equal(f.InitialGold,f.Profile.Gold);
+        string receipt=await response.Content.ReadAsStringAsync(),state=await f.State();
+        using var replay=await f.Post(move);Assert.Equal(receipt,await replay.Content.ReadAsStringAsync());Assert.Equal(state,await f.State());
+    }
+
+    [Fact,Trait("Category","DatabaseIntegration")]
+    public async Task AccountToolToToolDragSwapsBothOriginalContainerInstances()
+    {
+        await using var f=await Fixture.Create();string incoming=await f.AddBottle(8,2);
+        using var response=await f.Post(f.Move(incoming,8,"",0));Assert.Equal(HttpStatusCode.OK,response.StatusCode);
+        Assert.Contains(f.Profile.Items,i=>i.InstanceId==incoming&&i.LocationKind==8&&i.Slot==0);
+        Assert.Contains(f.Profile.Items,i=>i.InstanceId==f.Bottle&&i.LocationKind==8&&i.Slot==2);
+        Assert.Equal(27UL,f.Profile.Items.Single(i=>i.InstanceId==f.Bottle).ContainerState.Components.Single().Quantity);
+        Assert.Equal(13UL,f.Profile.Items.Single(i=>i.InstanceId==incoming).ContainerState.Components.Single().Quantity);
+        Assert.Equal(5,f.Profile.Items.Length);
+    }
+
+    [Fact,Trait("Category","DatabaseIntegration")]
+    public async Task AccountToolReplacementWithNoReturnSpaceKeepsBothItemsAndNoReceipt()
+    {
+        await using var f=await Fixture.Create();string incoming=await f.AddBottle(0,0);
+        await f.FillBackpackExcept(null);string before=await f.State();
+        using var response=await f.Post(f.Move(incoming,8,"",0));Assert.Equal(HttpStatusCode.Conflict,response.StatusCode);
+        Assert.Equal(before,await f.State());await f.Refresh();
+        Assert.Contains(f.Profile.Items,i=>i.InstanceId==incoming&&i.LocationKind==0&&i.Slot==0);
+        Assert.Contains(f.Profile.Items,i=>i.InstanceId==f.Bottle&&i.LocationKind==8&&i.Slot==0);
+    }
+
+    [Fact,Trait("Category","DatabaseIntegration")]
+    public async Task AccountMaterialDragPartiallyMergesThenRetiresOnlyTheExhaustedSourceAndReplaysReceipts()
+    {
+        await using var f=await Fixture.Create();string[] ids=await f.AddMaterialFragments(true);
+        var target=f.Profile.Items.Single(i=>i.InstanceId==ids[0]);
+        ulong capacity=f.Factory.Manifest.Items.Single(i=>i.ContentId==target.ContentId).MaterialItemCapacityGmu;
+        await using(var db=new MySqlConnection(f.Factory.Connection))await db.ExecuteAsync(
+            "UPDATE ItemMaterialStates SET Quantity=@Amount WHERE InstanceId=@Id",new{Id=ids[0],Amount=capacity-1});
+        await f.Refresh();
+        var partial=f.Move(ids[2],1,f.Bag,-1,target.X,target.Y,target.QuarterTurns);
+        using var first=await f.Post(partial);Assert.Equal(HttpStatusCode.OK,first.StatusCode);
+        var receipt=(await first.Content.ReadFromJsonAsync<InventoryMoveReply>(OnlineFactory.Json))!;
+        Assert.Equal(1UL,receipt.Transferred);Assert.Equal(target.X,receipt.GridX);Assert.Equal(target.Y,receipt.GridY);
+        Assert.Equal(capacity,f.Profile.Items.Single(i=>i.InstanceId==ids[0]).MaterialState.Quantity);
+        Assert.Contains(f.Profile.Items,i=>i.InstanceId==ids[2]&&i.X==6&&i.Y==4&&i.MaterialState.Quantity==3);
+        string firstBody=await first.Content.ReadAsStringAsync(),firstState=await f.State();
+        using(var repeat=await f.Post(partial))Assert.Equal(firstBody,await repeat.Content.ReadAsStringAsync());
+        Assert.Equal(firstState,await f.State());
+        target=f.Profile.Items.Single(i=>i.InstanceId==ids[1]);
+        var finish=f.Move(ids[2],1,f.Bag,-1,target.X,target.Y,target.QuarterTurns);
+        using var last=await f.Post(finish);Assert.Equal(HttpStatusCode.OK,last.StatusCode);
+        Assert.Equal(3UL,(await last.Content.ReadFromJsonAsync<InventoryMoveReply>(OnlineFactory.Json))!.Transferred);
+        Assert.DoesNotContain(f.Profile.Items,i=>i.InstanceId==ids[2]);
+        Assert.Equal(6UL,f.Profile.Items.Single(i=>i.InstanceId==ids[1]).MaterialState.Quantity);
+        Assert.Equal(f.InitialGold,f.Profile.Gold);
+        await using(var db=new MySqlConnection(f.Factory.Connection))
+            Assert.Equal(ids[2],await db.QuerySingleAsync<string>("SELECT InstanceId FROM AccountItemRetirements WHERE OwnerCharacterId=@P",new{P=f.Profile.PlayerId}));
+        string finalBody=await last.Content.ReadAsStringAsync(),finalState=await f.State();
+        using(var replay=await f.Post(finish))Assert.Equal(finalBody,await replay.Content.ReadAsStringAsync());
+        Assert.Equal(finalState,await f.State());
+        Assert.Equal(HttpStatusCode.NotFound,(await f.Post(f.Move(ids[2],0))).StatusCode);Assert.Equal(finalState,await f.State());
+    }
+
+    [Fact,Trait("Category","DatabaseIntegration")]
+    public async Task AccountMaterialDragIntoAFullStackKeepsEveryQuantityAndCreatesNoReceipt()
+    {
+        await using var f=await Fixture.Create();string[] ids=await f.AddMaterialFragments();
+        var target=f.Profile.Items.Single(i=>i.InstanceId==ids[0]);
+        ulong capacity=f.Factory.Manifest.Items.Single(i=>i.ContentId==target.ContentId).MaterialItemCapacityGmu;
+        await using(var db=new MySqlConnection(f.Factory.Connection))await db.ExecuteAsync(
+            "UPDATE ItemMaterialStates SET Quantity=@Amount WHERE InstanceId=@Id",new{Id=ids[0],Amount=capacity});
+        await f.Refresh();string before=await f.State();
+        using var response=await f.Post(f.Move(ids[1],1,f.Bag,-1,target.X,target.Y,target.QuarterTurns));
+        Assert.Equal(HttpStatusCode.Conflict,response.StatusCode);Assert.Equal(before,await f.State());
+    }
+
+    [Fact,Trait("Category","DatabaseIntegration")]
     public async Task BackpackReplacementMovesAllChildCoordinatesAndStoresTheOldBagInTheVacatedSlot()
     {
         Contracts();await using var f=await Fixture.Create();string other=await f.AddBag(0);
@@ -265,7 +351,7 @@ public sealed class AccountInventoryMoveTests
         var organize=f.Move(f.Bag,4,"",0);Set(organize,"OperationKind",3);
         using var response=await f.Post(organize);Assert.Equal(HttpStatusCode.OK,response.StatusCode);
         string receipt=await response.Content.ReadAsStringAsync();
-        var remaining=Assert.Single(f.Profile.Items.Where(i=>ids.Contains(i.InstanceId)));
+        var remaining=Assert.Single(f.Profile.Items,i=>ids.Contains(i.InstanceId));
         Assert.Equal(ids[0],remaining.InstanceId);Assert.Equal(5UL,remaining.MaterialState.Quantity);
         Assert.Equal(0,remaining.X);Assert.Equal(0,remaining.Y);Assert.Equal(f.InitialGold,f.Profile.Gold);
         await using(var db=new MySqlConnection(f.Factory.Connection))
@@ -276,6 +362,20 @@ public sealed class AccountInventoryMoveTests
         using var replay=await f.Post(organize);Assert.Equal(receipt,await replay.Content.ReadAsStringAsync());
         string before=await f.State();Assert.Equal(HttpStatusCode.NotFound,(await f.Post(f.Move(ids[1],0))).StatusCode);
         Assert.Equal(before,await f.State());
+    }
+
+    [Fact,Trait("Category","DatabaseIntegration")]
+    public async Task AccountOrganizePacksTheMergedOriginalMaterialAtUpperLeftAndReplaysExactly()
+    {
+        await using var f=await Fixture.Create();string[] ids=await f.AddMaterialFragments();
+        var request=f.Move(f.Bag,4,"",0);Set(request,"OperationKind",3);
+        using var response=await f.Post(request);Assert.Equal(HttpStatusCode.OK,response.StatusCode);
+        string body=await response.Content.ReadAsStringAsync();
+        var material=Assert.Single(f.Profile.Items,i=>ids.Contains(i.InstanceId));
+        Assert.Equal(0,material.X);Assert.Equal(0,material.Y);
+        Assert.Equal(ids[0],material.InstanceId);Assert.Equal(5UL,material.MaterialState.Quantity);
+        uint version=f.Profile.Version;using var replay=await f.Post(request);
+        Assert.Equal(body,await replay.Content.ReadAsStringAsync());Assert.Equal(version,f.Profile.Version);
     }
 
     [Fact,Trait("Category","DatabaseIntegration")]
@@ -388,6 +488,39 @@ public sealed class AccountInventoryMoveTests
                 INSERT INTO ItemLocations(InstanceId,OwnerCharacterId,Area,Slot)VALUES(@Id,@Player,'Warehouse',@Slot)
                 """,new{Id=id,Player=Profile.PlayerId,Content=Profile.Items.Single(i=>i.InstanceId==Bag).ContentId,Slot=slot});await Refresh();return id;
         }
+        public async Task<string> AddBottle(int location,int slot=-1)
+        {
+            string id=Guid.NewGuid().ToString("N");var original=Profile.Items.Single(i=>i.InstanceId==Bottle);
+            byte key=original.ContainerState.Components[0].MaterialKey;
+            await using var db=new MySqlConnection(Factory.Connection);
+            await db.ExecuteAsync("""
+                INSERT INTO Items(InstanceId,OwnerCharacterId,ContentId,Revision,RemainingCharges,HasUnlimitedCharges)VALUES(@Id,@Player,@Content,1,0,FALSE);
+                INSERT INTO ItemLocations(InstanceId,OwnerCharacterId,Area,Slot,CombatLocationKind,ParentInstanceId)
+                  VALUES(@Id,@Player,@Area,@Slot,@Kind,@Parent);
+                INSERT INTO ItemContainerStates VALUES(@Id,1);
+                INSERT INTO ItemContainerComponents VALUES(@Id,@Key,13)
+                """,new{Id=id,Player=Profile.PlayerId,Content=original.ContentId,Area=location==0?"Warehouse":null,
+                    Slot=slot,Kind=location==0?(int?)null:location,Parent=location==1?Bag:null,Key=key});
+            await Refresh();return id;
+        }
+        public async Task FillBackpackExcept(string? occupiedId)
+        {
+            // 每个1×1物品占不同格，真实目录/HTTP继续验证整个布局；可选保留待装备瓶子的真实占格。
+            var bag=Factory.Manifest.Items.Single(i=>i.ContentId==Profile.Items.Single(p=>p.InstanceId==Bag).ContentId);
+            var filler=Factory.Manifest.Items.First(i=>i.Kind==0&&i.ShapeWidth==1&&i.ShapeHeight==1);
+            var occupied=occupiedId==null?null:Factory.Manifest.Items.Single(i=>i.ContentId==Profile.Items.Single(p=>p.InstanceId==occupiedId).ContentId);
+            await using var db=new MySqlConnection(Factory.Connection);
+            for(int y=0;y<bag.BackpackHeight;y++)for(int x=0;x<bag.BackpackWidth;x++)
+            {
+                if(occupied!=null&&occupied.OccupiedCells.Any(c=>c.X==x&&c.Y==y))continue;
+                await db.ExecuteAsync("""
+                    INSERT INTO Items(InstanceId,OwnerCharacterId,ContentId,Revision,RemainingCharges,HasUnlimitedCharges)VALUES(@Id,@Player,@Content,1,5,FALSE);
+                    INSERT INTO ItemLocations(InstanceId,OwnerCharacterId,Area,Slot,CombatLocationKind,ParentInstanceId,GridX,GridY)
+                      VALUES(@Id,@Player,NULL,-1,1,@Bag,@X,@Y)
+                    """,new{Id=Guid.NewGuid().ToString("N"),Player=Profile.PlayerId,Content=filler.ContentId,Bag,X=x,Y=y});
+            }
+            await Refresh();
+        }
         public async Task<string[]> AddMaterialFragments(bool extra=false)
         {
             string[] ids=Enumerable.Range(0,extra?3:2).Select(_=>Guid.NewGuid().ToString("N")).OrderBy(i=>i,StringComparer.Ordinal).ToArray();
@@ -428,7 +561,9 @@ public sealed class AccountInventoryMoveTests
             var wallet=await db.QueryAsync("SELECT * FROM Wallets WHERE CharacterId=@Player",new{Player=Profile.PlayerId});
             var versions=await db.QueryAsync("SELECT Version FROM Characters WHERE CharacterId=@Player",new{Player=Profile.PlayerId});
             var receipts=await db.QueryAsync("SELECT * FROM InventoryCommands WHERE CharacterId=@Player ORDER BY CommandId",new{Player=Profile.PlayerId});
-            return JsonSerializer.Serialize(new{items,places,wallet,versions,receipts},OnlineFactory.Json);
+            var materials=await db.QueryAsync("SELECT s.* FROM ItemMaterialStates s JOIN Items i ON i.InstanceId=s.InstanceId WHERE i.OwnerCharacterId=@Player ORDER BY s.InstanceId",new{Player=Profile.PlayerId});
+            var components=await db.QueryAsync("SELECT s.* FROM ItemContainerComponents s JOIN Items i ON i.InstanceId=s.InstanceId WHERE i.OwnerCharacterId=@Player ORDER BY s.InstanceId,s.MaterialKey",new{Player=Profile.PlayerId});
+            return JsonSerializer.Serialize(new{items,places,wallet,versions,receipts,materials,components},OnlineFactory.Json);
         }
         public async ValueTask DisposeAsync()
         {

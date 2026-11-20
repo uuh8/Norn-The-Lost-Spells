@@ -11,7 +11,9 @@ namespace Game.Core
         // 通用移动复用原库存位置与事务；保留旧命令编号/语义，不能将客户端拖放等同于资产已提交。
         MoveOwned = 12, EquipWand = 13, DropItem = 14, PickupItem = 15,
         // 研究开关是会话意图，没有虚构ItemId。DS核验原Home区域，原账本仍负责幂等与Epoch。
-        BeginWandResearch = 16, EndWandResearch = 17
+        BeginWandResearch = 16, EndWandResearch = 17,
+        // 整理只提交本人已装备背包的真实ID与库存版本；完整布局由DS复用库存Owner原子计算。
+        OrganizeBackpack = 18
     }
 
     /// <summary>显式编号是 Wire 合同。新失败原因只能追加，不能修改已有编号的业务含义。</summary>
@@ -74,6 +76,9 @@ namespace Game.Core
         public bool CanAdvance;
         public string WorldId;
         public Vector3 ActorPosition, TargetPosition;
+        /// <summary>DS从真实Actor与瞄准方向重算的喷口初速度；不是客户端可填写的Wire结果。</summary>
+        public bool HasInitialMotion;
+        public Vector3 InitialVelocity;
         /// <summary>仅DS按原投瓶规则重算的起点与初速度；Wire不接受客户端提交这两个权威结果。</summary>
         public Vector3 ThrowOrigin, ThrowVelocity;
         /// <summary>仅DS已预检地面模型使用的实际旋转；不是Wire字段，不授予客户端摆放世界模型的权限。</summary>

@@ -118,7 +118,8 @@ namespace Game.Multiplayer.Tests
             SetClient("_room", new RoomReply { RoomId = "room", RunId = "run", RoomEpoch = 1, Members = Array.Empty<RoomMemberReply>() });
             SetClient("_phase", OnlineRoomPhase.Connected);
             // 走真正Begin入口建立A的上下文；无连接/无HTTP，不造资产或启动网络。
-            typeof(OnlineRoomClient).GetMethod("BeginMemberExit", Private).Invoke(_client, null);
+            // Reflection不会应用C#可选参数；这里明确沿ESC退出路径，保留同账号收据门的真实测试。
+            typeof(OnlineRoomClient).GetMethod("BeginMemberExit", Private).Invoke(_client, new object[] { false });
             SetClient("_exitCommandId", Command); SetClient("_exitEpoch", 7u);
             accountView.SetValue(account, new OnlineProfileReply { PlayerId = currentPlayer, Version = 9 });
             var changed = new OnlineRunExitStatusChangedEvent { Status = (OnlineRunExitStatus)Status("Committed") };

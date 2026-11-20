@@ -46,6 +46,10 @@ namespace Game.Run.Tests
         private bool _cursor;
         private EditorWindow _previous;
         private readonly List<Object> _temporary = new List<Object>();
+        // 诊断输出独立于每例临时存档；截图/Profiler报告每轮保留，Cleanup只删除自己的测试存档。
+        private readonly string _evidencePath = "TestResults/UiAudit/SpellAttachmentPlayModeTests/" + DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffZ") + "-" + Guid.NewGuid().ToString("N");
+        private string EvidenceFile(string name)
+        { Directory.CreateDirectory(_evidencePath); return Path.Combine(_evidencePath, name); }
         [UnitySetUp] public IEnumerator Setup()
         {
             _time = Time.timeScale; _lock = Cursor.lockState; _cursor = Cursor.visible; Time.timeScale = 1;
@@ -215,7 +219,7 @@ namespace Game.Run.Tests
             _wizard.transform.position = new Vector3(0, .1f, -2.5f); camera.fieldOfView = 75;
             camera.transform.position = new Vector3(0, 6, -4); camera.transform.rotation = Quaternion.LookRotation(new Vector3(.25f, 0, .25f) - camera.transform.position);
             _previous = EditorWindow.focusedWindow; EditorWindow.GetWindow(Type.GetType("UnityEditor.GameView,UnityEditor")).Focus();
-            yield return new WaitForSecondsRealtime(.3f); const string output = "Temp/SinglePlayer/attachment-world.png";
+            yield return new WaitForSecondsRealtime(.3f); string output = EvidenceFile("attachment-world.png");
             yield return CaptureRenderedGameView(output);
             var texture = new Texture2D(2, 2);
             try
@@ -229,7 +233,7 @@ namespace Game.Run.Tests
             }
             finally { Object.Destroy(texture); }
             _ui.Open(); _ui.SelectItem(card); yield return null; yield return new WaitForSecondsRealtime(.2f);
-            const string panel = "Temp/SinglePlayer/attachment-ui.png";
+            string panel = EvidenceFile("attachment-ui.png");
             yield return CaptureRenderedGameView(panel);
         }
         private static IEnumerator CaptureRenderedGameView(string output)
@@ -283,8 +287,8 @@ namespace Game.Run.Tests
                 for (int i = 0; i < 60; i++) yield return null;
                 int last = UnityEditorInternal.ProfilerDriver.lastFrameIndex;
                 var report = CaptureProfile(first, last);
-                File.WriteAllText("Temp/SinglePlayer/attachment-profiler.json", JsonUtility.ToJson(report, true));
-                UnityEditorInternal.ProfilerDriver.SaveProfile("Temp/SinglePlayer/attachment-profiler.data");
+                File.WriteAllText(EvidenceFile("attachment-profiler.json"), JsonUtility.ToJson(report, true));
+                UnityEditorInternal.ProfilerDriver.SaveProfile(EvidenceFile("attachment-profiler.data"));
                 Assert.That(report.ValidFrames, Is.GreaterThanOrEqualTo(30));
                 Assert.That(report.Markers[0].Samples, Is.GreaterThan(0)); Assert.That(report.Markers[1].Samples, Is.GreaterThan(0));
                 for (int i = 0; i < report.Markers.Length; i++) Assert.That(report.Markers[i].GcBytes, Is.Zero, report.Markers[i].Name);

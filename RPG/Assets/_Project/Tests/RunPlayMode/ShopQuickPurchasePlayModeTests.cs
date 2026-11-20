@@ -16,7 +16,32 @@ namespace Game.Run.Tests
     public sealed class ShopQuickPurchasePlayModeTests : BackpackWorkspacePlayModeTests
     {
         protected override string ReviewPath => Review;
-        protected override string EvidencePath => "TestResults/SinglePlayer/M6-T7-PurchaseDialog";
+        // 每轮保留自己的截图和Profiler诊断，不覆盖M6已经交付的历史结果。
+        private readonly string _evidencePath = "TestResults/ShopQuickPurchase/" + System.DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffZ");
+        protected override string EvidencePath => _evidencePath;
+        protected override ItemCatalog CustomizeCatalog(ItemCatalog catalog)
+        {
+            string test = TestContext.CurrentContext.Test.Name;
+            if (test != nameof(QuickConfirmationRefreshesLimitsAndInvalidatesMissingContainer)
+                && test != nameof(QuickMaterialQuantityUsesOnlySelectedContainerCapacity)) return catalog;
+            // 正式瓶容量已增至15000GMU。这两项验证100已有量+50空容的边界，
+            // 必须显式冻结150容量夹具，不能让正式数值调整把测试悄悄变成钱包上限测试。
+            // 基类随后以同一clone Catalog创建容器、Profile及Repository，正式SO/存档不参与写入。
+            var clone = UnityEngine.Object.Instantiate(catalog); TemporaryAssets.Add(clone);
+            var bottle = AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/Containers/Definitions/Item_Container_Bottle.asset");
+            var definition = UnityEngine.Object.Instantiate(bottle); TemporaryAssets.Add(definition);
+            var fields = new SerializedObject(definition); fields.FindProperty("_containerCapacityGmu").longValue = 150;
+            fields.ApplyModifiedPropertiesWithoutUndo();
+            var data = new SerializedObject(clone); var definitions = data.FindProperty("_definitions"); bool replaced = false;
+            for (int i = 0; i < definitions.arraySize; i++)
+            {
+                var original = definitions.GetArrayElementAtIndex(i).objectReferenceValue as ItemDefinition;
+                if (original == null || original.ContentId != bottle.ContentId) continue;
+                definitions.GetArrayElementAtIndex(i).objectReferenceValue = definition; replaced = true;
+            }
+            Assert.That(replaced, Is.True, "容量边界测试必须使用基类创建b0/b1时查询的同一目录定义。");
+            data.ApplyModifiedPropertiesWithoutUndo(); return clone;
+        }
         protected override SinglePlayerProfile CustomizeProfile(SinglePlayerProfile profile, ItemCatalogIndex index)
         {
             // 仅快捷购买用例设置测试钱包；继承的背包验收保留其248金币前提。
@@ -341,9 +366,26 @@ namespace Game.Run.Tests
         {
             yield return OpenShop();
             Assert.That(Panel.Find("Shop_Left_商品与快捷购买/CartRegion_购买预览"), Is.Null);
-            var right = Panel.Find("Shop_Right_物品详情"); Assert.That(right.childCount, Is.EqualTo(1));
-            Assert.That(right.GetChild(0).name, Is.EqualTo("DetailsRegion_物品详情"));
-            Assert.That(Ref<Text>(Shop, "_details").text, Is.EqualTo("物品详情待后续开发"));
+            var right = Panel.Find("Shop_Right_物品详情"); Assert.That(right, Is.Not.Null);
+            var region = right.Find("DetailsRegion_物品详情"); var title = right.Find("Title_物品详细");
+            Assert.That(region, Is.Not.Null); Assert.That(title, Is.Not.Null);
+            Assert.That(title.GetComponent<Image>(), Is.Not.Null, "保留作者图片标题，不将标题误判为第二个功能区。");
+            // 当前正式与Review都保留图片标题。检查唯一详情功能区及允许列表，
+            // 仍拒绝退休的法术预览、购买设置、店主信息等子区，不放宽为任意子节点数量。
+            int detailRegions = 0;
+            for (int i = 0; i < right.childCount; i++)
+            {
+                var child = right.GetChild(i);
+                Assert.That(child == title || child == region, Is.True, "右栏出现未授权旧功能区：" + child.name);
+                if (child == region) detailRegions++;
+            }
+            Assert.That(detailRegions, Is.EqualTo(1));
+            var details = Ref<Text>(Shop, "_details");
+            Assert.That(details.transform.IsChildOf(region), Is.True, "正文应仍绑定唯一详情区。");
+            Assert.That(details.text, Does.Not.Contain("待后续开发"));
+            Offer(out var offer); Shop.SelectOffer(offer.OfferId);
+            Assert.That(details.text, Does.Contain("所选商品").And.Contain(offer.DisplayName));
+            Assert.That(details.text, Does.Contain("单价：" + offer.BuyPrice).And.Contain("剩余供货：" + offer.Stock));
             Assert.That(Ref<Toggle>(Shop, "_toBackpack"), Is.Null);
             Assert.That(Ref<Button>(Shop, "_buyButton").GetComponentInChildren<Text>().text, Is.EqualTo("购买物品"));
             var wallets=Panel.GetComponentsInChildren<WalletView>(true);

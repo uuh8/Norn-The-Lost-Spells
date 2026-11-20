@@ -9,7 +9,8 @@ namespace Game.Core
     }
 
     /// <summary>
-    /// 一个固定世界、固定Chunk的已安装版本记录。Chunk地址由拥有它的Replica Store绑定，不能跨Chunk复用。
+    /// 一个固定世界、固定Chunk的已安装版本记录。Chunk地址由拥有它的Replica Store绑定；
+    /// 普通退出/重连不能清版本，跨Chunk复用必须经过可信Owner显式退休旧Key的协议边界。
     /// 本类型只管理版本，不验证材料、页完整性、Checksum或连接身份，也不写材料数据、不发送ACK。
     /// 上层必须先完整验证候选并准备原子安装，再在同一主线程提交边界调用这里；
     /// 绝不能在收到Wire Header时就推进它，否则非法高版本会挡住后续合法数据。
@@ -26,6 +27,21 @@ namespace Game.Core
         {
             if (worldEpoch == 0) throw new ArgumentOutOfRangeException(nameof(worldEpoch));
             WorldEpoch = worldEpoch;
+        }
+
+        /// <summary>
+        /// 仅供可信缓存Owner在旧Key已经完成协议退休后，原位复用预分配版本对象；WorldEpoch不变。
+        /// 这不是普通Reset/重连API：调用前必须已验证当前连接的单调SubscriptionEpoch、可靠Leave，
+        /// 取消候选并释放旧Key全部只读数量，且保证旧生命周期/页不能再次到达该版本Owner。
+        /// 本类没有连接/订阅身份，无法自行证明这些前提，因此由Store/Assembler的退休守卫与协调器
+        /// 共同负责；收到Wire Header、普通Evict或ConnectionEpoch更新时绝不能直接调用。
+        /// 只清值、不创建新对象，使长期移动材料经过新Chunk时仍可复用固定容量工作区。
+        /// </summary>
+        public void ResetForTrustedKeyRetirement()
+        {
+            Generation = Revision = 0;
+            BaselineInstalled = false;
+            LastFailure = WorldReplicaRevisionFailure.None;
         }
 
         /// <summary>

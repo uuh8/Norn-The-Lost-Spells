@@ -129,6 +129,14 @@ namespace Game.Networking
                     && NeutralGround(value) && string.IsNullOrEmpty(value.AttachmentContainerId)
                     && value.AttachmentDose == 0 && !value.AttachmentEnabled && value.TargetLocationKind == 0 && !value.WholeStack;
             if (!Id(value.ItemId)) return false;
+            if (value.Kind == Core.OnlineInventoryCommandKind.OrganizeBackpack)
+                // 不接收客户端计算的布局、目标包、数量或射线。ItemId是待整理的真实装备包，
+                // 归属/准备事务/版本仍由DS判断；编解码双方只认可这一种中性字段形状。
+                return value.TargetSlot == 0 && string.IsNullOrEmpty(value.SourceWandId) && string.IsNullOrEmpty(value.TargetWandId)
+                    && value.SourceProgramRevision == 0 && value.TargetProgramRevision == 0 && !value.ToSpellStorage
+                    && value.TransferBudget == 0 && Zero(value.AimOrigin) && Zero(value.AimDirection) && NeutralGround(value)
+                    && string.IsNullOrEmpty(value.AttachmentContainerId) && value.AttachmentDose == 0 && !value.AttachmentEnabled
+                    && value.TargetLocationKind == 0 && !value.WholeStack;
             if ((uint)value.Kind >= 12 && (uint)value.Kind <= 15) return GeneralCommand(value);
             // 旧命令继续使用原来的位置表达。新增字段不能让相同Kind同时携带两套目的地/整堆语义。
             if (value.TargetLocationKind != 0 || value.WholeStack) return false;
@@ -331,7 +339,7 @@ namespace Game.Networking
                     if (!wide && value > uint.MaxValue) return false;
                     // Core枚举底层是byte，必须在转换前验证原uint，避免257截成SelectWand=1、
                     // 259..264会截成已知命令，256会截成Failure.None。只查Core枚举值会漏掉这些别名。
-                    if (field == 6 && (receipt ? value > 11 : value < 1 || value > 17)) return false;
+                    if (field == 6 && (receipt ? value > 11 : value < 1 || value > 18)) return false;
                     if (receipt && field == 8 && value > (uint)Core.MaterialTransferFailure.IncompatibleMaterial) return false;
                     if (!receipt && (field == 12 && value > 255 || (field == 13 || field == 26 || field == 29 || field == 31) && value > 1
                         || (field == 23 || field == 24) && value > 255 || field == 25 && value > 3 || field == 30 && value > 8)) return false;

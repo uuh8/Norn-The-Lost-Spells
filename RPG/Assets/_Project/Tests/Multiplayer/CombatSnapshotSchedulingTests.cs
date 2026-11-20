@@ -154,6 +154,7 @@ namespace Game.Multiplayer.Tests
                 var assets = new OnlineOwnedAssetSnapshot
                 {
                     SchemaVersion = OnlineOwnedAssetSnapshot.CurrentSchemaVersion, ActorId = 1, PlayerId = identity.PlayerId,
+                    Gold = 0, CurrencyVersion = 1, // Pump测试仍须使用明确存在的可信钱包事实。
                     RunId = identity.RunId, InventoryId = identity.RunId + "/" + identity.PlayerId,
                     InventoryVersion = 1, SelectedWandInstanceId = wandId, GameplayConfigHash = definition.GameplayConfigHash,
                     Items = new[]

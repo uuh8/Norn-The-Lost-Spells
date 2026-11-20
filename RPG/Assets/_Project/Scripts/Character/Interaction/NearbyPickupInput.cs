@@ -32,7 +32,9 @@ namespace Game.Character
         private bool CanUse=>_focused && Time.timeScale>0 && HasPickup && !(HubInteractInput.Current?.HasStation ?? false);
         private void Awake(){if(_pickup!=null)return;_pickup=new InputAction("PickupNearbyItem",InputActionType.Button,"<Keyboard>/f");_pickup.performed+=OnPickup;
             _scroll=new InputAction("SelectNearbyItem",InputActionType.Value,"<Mouse>/scroll");_scroll.performed+=OnScroll;}
-        private void OnEnable(){Awake();Current=this;_pickup?.Enable();_scroll?.Enable();
+        private void OnEnable(){Awake();Current=this;
+            // Driver/原Hub停用时可能错过回焦事件；启用边界重采，持续运行仍由Focus回调保留失焦拒绝。
+            _focused=Application.isFocused;_pickup?.Enable();_scroll?.Enable();
             if(!_onlineSubscribed){EventBus<NearbyPickupListChangedEvent>.Subscribe(OnOnlineList);_onlineSubscribed=true;}
             if(_online)ConfigureOnline(GetComponent<NearbyPickupController>());}
         private void OnDisable(){if(Current==this)Current=null;_pickup?.Disable();_scroll?.Disable();GameplayScrollCapture.Release(this);

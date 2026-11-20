@@ -25,7 +25,9 @@ namespace Game.NetworkProtocol
         // v14显式区分主动退出/最终死亡，并支持受信单人入场；旧端不能忽略终态原因或混用人数合同。
         // 研究会话快照、成功返回门姿态及F退出意图必须由同版Client/DS解释，禁止混接旧14程序。
         // v16补齐DS裁决的毒爆表现事实，旧端不认识Kind12，须配套构建与Manifest。
-        public const uint CurrentVersion = 16;
+        // v17接入DS原子整理背包意图；旧端会拒绝Kind18或让按钮无效，须配套Client/DS与Manifest。
+        // v18增加只读液体运动窗口Kind8；旧端会丢弃该语义，需同版Client/DS及业务清单。
+        public const uint CurrentVersion = 18;
         /// <summary>整个 HTTP Ping 请求体的最大字节数，不是所有未来消息的统一上限。</summary>
         public const int MaxPingPayloadBytes = 1024;
         /// <summary>Ping 文本的 UTF-8 字节预算；中文和 Emoji 不能按字符个数估算。</summary>

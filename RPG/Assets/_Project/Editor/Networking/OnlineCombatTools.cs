@@ -254,6 +254,19 @@ namespace Game.Project.Editor
             }
             if(!profile.Validate(out var error))throw new InvalidOperationException(error);
         }
+        /// <summary>
+        /// 兼容摘要的Runtime源码输入。规则源码按模块显式枚举，不能依赖Scene的MonoScript引用：
+        /// partial实现/纯C#规则未必是序列化依赖，GUID不变也不能说明裁决实现相同。
+        /// 与ComputeGameplayHash共用此唯一入口，让回归直接验证生产输入集合而不重载大Scene。
+        /// 仅Editor离线使用；UI/Rendering维持现有边界，Schema仍由原独立路径纳入。
+        /// </summary>
+        internal static IEnumerable<string> EnumerateGameplaySourceInputs()
+        {
+            foreach (string module in new[] { "Core", "Combat", "Skills", "Run", "Character", "Multiplayer", "Networking", "ElementField", "Materials" })
+                foreach (string file in Directory.EnumerateFiles("Assets/_Project/Scripts/" + module, "*.cs", SearchOption.AllDirectories))
+                    yield return file.Replace('\\', '/');
+        }
+
         private static string ComputeGameplayHash()
         {
             // 对原始 YAML 配置与相关 Prefab 源字节做 Hash，不使用平台相关的导入 Artifact Hash。
@@ -287,8 +300,7 @@ namespace Game.Project.Editor
                             || dependency.EndsWith(".anim", StringComparison.Ordinal) || dependency.EndsWith(".fbx", StringComparison.OrdinalIgnoreCase))
                         { paths.Add(dependency); if (File.Exists(dependency + ".meta")) paths.Add(dependency + ".meta"); }
             // Gameplay 代码版本也属于可兼容性的输入；同样配置但不同裁决实现不能进入同一副本。
-            foreach (string module in new[] { "Core", "Combat", "Skills", "Run", "Character", "Multiplayer", "Networking" })
-                foreach (string file in Directory.EnumerateFiles("Assets/_Project/Scripts/" + module, "*.cs", SearchOption.AllDirectories)) paths.Add(file.Replace('\\', '/'));
+            foreach (string source in EnumerateGameplaySourceInputs()) paths.Add(source);
             foreach (string schema in Directory.EnumerateFiles("../Shared/Protocol/Protos", "*.proto")) paths.Add(schema.Replace('\\', '/'));
             // 固定URP 17.3的TerrainLit声明了这个仅显示用BaseMapShader；Unity在Dedicated预检
             // 才把它加入GetDependencies，造成相同原始规则出现1818/1819两套输入。明确规范化

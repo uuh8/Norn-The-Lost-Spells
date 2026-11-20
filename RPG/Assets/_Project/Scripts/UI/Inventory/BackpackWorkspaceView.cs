@@ -28,7 +28,9 @@ namespace Game.UI
         public void Configure(Text capacity,Text wallet,ToolbeltView tools) { _capacity=capacity; _wallet=wallet; _tools=tools; }
         public void Refresh(SinglePlayerInventoryController controller,InventoryItemSnapshot[] items,int count,string bagId)
         {
-            _controller=controller; int cells=0,used=0;
+            _controller=controller;
+            ConfigureCapacityLayout(controller);
+            int cells=0,used=0;
             for (int i=0;i<count;i++)
             {
                 var item=items[i]; if (item.InstanceId==bagId) cells=item.Rules.BackpackWidth*item.Rules.BackpackHeight;
@@ -39,6 +41,24 @@ namespace Game.UI
             if (_capacity!=null) { _capacity.font=controller.UiFont; _capacity.text=cells==0?"未装备背包":"已占 "+used+" / "+cells+" 格"; }
             // 视图读取通用来源；线上绑定不会借用 Inspector 中保留的单机 Session。
             _tools?.Refresh(controller); _toolVersion=controller.PresentationSource?.ToolbeltReadOnly?.ConfigurationVersion??0; RefreshWallet();
+        }
+        private void ConfigureCapacityLayout(SinglePlayerInventoryController controller)
+        {
+            if (_capacity == null || _capacity.name != "BackpackRuntime_Capacity" || controller == null) return;
+            // 使用该 Controller 已接线的原网格，不能按名字扫描另一个 Canvas 的仓库/商店。
+            // 只有容量文字与 Viewport 同属原 BackpackRegion 时才接管这条旧 Runtime 顶行；
+            // 仓库/商店已使用各自背包预览 Caption，缺少 _capacity 时必须完全不改它们的布局。
+            var grid = controller.BackpackGridView;
+            var viewport = grid != null ? grid.transform.parent as RectTransform : null;
+            var label = _capacity.rectTransform;
+            if (viewport == null || label.parent != viewport.parent) return;
+            // 恢复 SinglePlayerHubAreaSetup 原先为容量文字预留的 32 参考单位顶行。
+            // 当前作者已把文字改成高 30、顶部 -2，正好占据该顶行；其 Rect 必须保留，
+            // 不能照抄旧工具的 24 高文字尺寸。只收回错误 stretch 到顶的内部 Viewport，
+            // 不重写 Prefab/Scene、不移动作者外框、不改变 CellSize 或真实背包容量。
+            var inset = viewport.offsetMax;
+            inset.y = Mathf.Min(inset.y, -32);
+            viewport.offsetMax = inset; // 已有更大的作者顶边留白保留，重复 Refresh 不累计位移。
         }
         private void Update()
         {

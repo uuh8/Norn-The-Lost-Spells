@@ -10,6 +10,9 @@ namespace Game.Rendering.Tests
     /// <summary>实际绘制生产 Splat Shader，读取 Pixel Coverage；不能只检查材质或 Shader 字符串。</summary>
     public sealed class GpuFireParcelSplatTests
     {
+        [SetUp]
+        public void PrepareEvidenceDirectory() => System.IO.Directory.CreateDirectory("Temp/ElementPerformance");
+
         [UnityTest]
         public IEnumerator UniformFlamesRemainVisibleAcrossFormerNearBoundary()
         {
@@ -171,7 +174,30 @@ namespace Game.Rendering.Tests
                     Graphics.ExecuteCommandBuffer(commands);
                 }
                 var read = AsyncGPUReadback.Request(_target,0,TextureFormat.RGBA32);
-                while (!read.done) yield return null;
+                // EditMode不会像Player持续推进渲染循环；与现有液体GPU夹具一样显式请求PlayerLoop。
+                // 独立deadline保留真实GPU挂起失败，不以提高180秒总超时或sleep掩盖它。
+                read.forcePlayerLoopUpdate=true;
+                // Editor无窗口重绘时，request更新不保证D3D12 command list已提交。
+                // Flush只提交本批命令；仍异步等待并检查原10秒deadline，不作为GPU计时结果。
+                GL.Flush();
+                var probe=new RenderingReadbackDiagnostics.Probe("fire-pixels");
+                double deadline=EditorApplication.timeSinceStartup+10;
+                try
+                {
+                    while (!read.done)
+                    {
+                        probe.Poll();
+                        // EditMode的测试步进与PlayerLoop并非一一对应。显式推进这个请求，
+                        // 保留原10秒deadline和真实hasError，不用同步GPU fence掩盖停滞。
+                        read.Update();
+                        if(read.done)break;
+                        EditorApplication.QueuePlayerLoopUpdate();
+                        Assert.That(EditorApplication.timeSinceStartup,Is.LessThan(deadline),
+                            "Fire pixel readback timed out: phase="+_phase+", pitch="+_pitch+", roll="+_roll+"; "+probe.State);
+                        yield return null;
+                    }
+                }
+                finally{probe.Save("phase="+_phase+",pitch="+_pitch+",roll="+_roll+",done="+read.done+",error="+read.hasError);}
                 Assert.That(read.hasError, Is.False);
                 Energy = 0;
                 int minX=128,minY=128,maxX=-1,maxY=-1;

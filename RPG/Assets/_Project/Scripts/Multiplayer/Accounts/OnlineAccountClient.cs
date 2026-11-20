@@ -20,11 +20,15 @@ namespace Game.Multiplayer
         private UnityWebRequest _request;
         private string _token;
         private bool _busy;
+        // Room HTTP与账户HTTP分别等待。菜单忙碌和未决恢复归属不能被Execute.finally提前清掉。
+        private bool _roomRecoveryPending, _roomRecoveryBusy;
+        // 本机Session代次只隔离异步HTTP，不替代服务器ConnectionEpoch；旧请求的401不能注销新登录。
+        private uint _sessionGeneration;
         private OnlineProfileReply _view;
         private bool _applicationLifetime;
         private long _expiresUnixMilliseconds;
         public static OnlineAccountClient ApplicationSession { get; private set; }
-        public bool Busy => _busy;
+        public bool Busy => _busy || _roomRecoveryBusy;
         // 本机到期检查只是UX；EnterHub/Profile/将来的JoinTicket仍由业务服校验真实Session。
         public bool Authenticated => !string.IsNullOrEmpty(_token) && DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() < _expiresUnixMilliseconds;
         public string LastStatus { get; private set; }
@@ -34,6 +38,13 @@ namespace Game.Multiplayer
         public void ConfigureApplicationSession(OnlineServiceProfile profile) { _profile = profile; _applicationLifetime = true; }
         internal string PlayerId => _view?.PlayerId;
         internal uint InventoryVersion => _view?.Version ?? 0;
+        internal uint SessionGeneration => _sessionGeneration;
+        internal bool HasActiveRun => _view != null && (_view.AssetsLocked || !string.IsNullOrEmpty(_view.ActiveRunId));
+        internal bool HasPendingAccountCommand => _accountInventoryPending != null || _accountShopPending != null;
+        internal void SetRoomRecoveryState(bool pending, bool busy, string status)
+        { _roomRecoveryPending = pending; _roomRecoveryBusy = busy; Publish(status, _busy); }
+        internal void InvalidateSessionIfCurrent(uint generation)
+        { if (_sessionGeneration == generation) InvalidateSession(); }
         internal UnityWebRequest CreateSessionRequest(string method, string path, string json)
         {
             if (!Authenticated || _manifest == null) throw new InvalidOperationException("SessionUnavailable");
@@ -41,7 +52,7 @@ namespace Game.Multiplayer
             return BusinessHttpClient.Create(_profile.BaseUrl, method, path, json, _token, _manifest.Hash);
         }
         internal void InvalidateSession()
-        { _token = null; _view = null; ClearAccountShopPresentation(); OnlineAccountInventoryHubScope.Clear(GetInstanceID()); Publish("登录已失效，请重新登录。", false); }
+        { _sessionGeneration++; _token = null; _view = null; ClearAccountShopPresentation(); OnlineAccountInventoryHubScope.Clear(GetInstanceID()); Publish("登录已失效，请重新登录。", false); }
 
         /// <summary>仅采用同Session退出收据后的Profile读回，不能用本地档或旧Profile替代本次确认。</summary>
         internal bool TryAdoptVerifiedHubProfile(OnlineProfileReply profile, uint minimumVersion, out string error)
@@ -132,7 +143,7 @@ namespace Game.Multiplayer
             EventBus<OnlineAccountShopTradeRequestedEvent>.Unsubscribe(OnAccountShopTrade);
             // Unity 停止 Coroutine 时不能靠猜测 finally 的触发时机管理 native Request；显式终止并 Dispose。
             _request?.Abort(); ReleaseRequest(); StopAllCoroutines();
-            _token = null; _view = null; _lastBody = null; _busy = false;
+            _sessionGeneration++; _token = null; _view = null; _lastBody = null; _busy = false;
             ClearAccountShopPresentation();
             OnlineAccountInventoryHubScope.Clear(GetInstanceID());
         }
@@ -142,7 +153,11 @@ namespace Game.Multiplayer
         private void OnRequest(OnlineLobbyRequestEvent request)
         {
             if (request.Action == OnlineLobbyAction.Observe) { Publish(LastStatus, _busy); return; }
-            if (_busy || _manifest == null) return;
+            if (Busy || _manifest == null) return;
+            // 未决恢复只允许原Enter重试；Session失效时保留Login，以便恢复原账号而不是永久锁死菜单。
+            if (_roomRecoveryPending && request.Action != OnlineLobbyAction.EnterHub
+                && !(request.Action == OnlineLobbyAction.Login && !Authenticated))
+            { Publish("原副本尚待确认，请恢复当前副本；不会切换账号或创建另一局。", false); return; }
             if ((_accountInventoryPending != null || _accountShopPending != null) && request.Action == OnlineLobbyAction.Move)
             { Publish("上一笔账号移动尚未确认，请先刷新恢复原请求。", false); return; }
             if (!Authenticated && request.Action != OnlineLobbyAction.Register && request.Action != OnlineLobbyAction.Login)
@@ -176,7 +191,7 @@ namespace Game.Multiplayer
                         else
                         {
                             OnlineAccountInventoryHubScope.Clear(GetInstanceID()); _view = null; ClearAccountShopPresentation();
-                            _token = login.Token; _expiresUnixMilliseconds = login.ExpiresUnixMilliseconds; yield return Refresh();
+                            _sessionGeneration++; _token = login.Token; _expiresUnixMilliseconds = login.ExpiresUnixMilliseconds; yield return Refresh();
                             // 401/重登不另造移动。新Session必须先读回同一个Player，再恢复原固定正文。
                             if (_lastSuccess && (_accountInventoryPending != null || _accountShopPending != null))
                                 yield return RestorePendingAccountCommand();
@@ -192,7 +207,13 @@ namespace Game.Multiplayer
                     yield return Refresh();
                     // 断网时即使旧Token尚未到期也不放行；必须本次真实Profile读取成功。
                     string hubError = null;
-                    if (_lastSuccess && TryBeginHubEntry(request.Destination, out hubError))
+                    if (_lastSuccess && (_roomRecoveryPending || HasActiveRun))
+                    {
+                        var rooms = GetComponent<OnlineRoomClient>();
+                        if (rooms == null || !rooms.TryBeginAccountRecovery(_view, request.RequestOwnerId, out hubError))
+                            Publish(hubError ?? "原副本恢复服务尚未就绪，请重试。", false);
+                    }
+                    else if (_lastSuccess && TryBeginHubEntry(request.Destination, out hubError))
                         EventBus<AccountHubEntryReadyEvent>.Publish(new AccountHubEntryReadyEvent
                         { TargetScene = request.Destination, RequestOwnerId = request.RequestOwnerId });
                     else if (_lastSuccess) Publish(hubError ?? "账号资产尚未就绪，暂不能进入据点。", false);
@@ -205,7 +226,7 @@ namespace Game.Multiplayer
                     break;
                 case OnlineLobbyAction.Logout:
                     yield return Send("DELETE", "/api/online/sessions/current", null);
-                    _token = null; _view = null; OnlineAccountInventoryHubScope.Clear(GetInstanceID());
+                    _sessionGeneration++; _token = null; _view = null; OnlineAccountInventoryHubScope.Clear(GetInstanceID());
                     ClearAccountShopPresentation();
                     Publish(_applicationLifetime ? "已注销，请重新登录。" : "已清除本机内存身份。", false); break;
             }
@@ -227,7 +248,7 @@ namespace Game.Multiplayer
             GameLog.Info("业务 HTTP 完成：" + status + " / " + _request.result, "OnlineAccounts");
             if (!_lastSuccess)
             {
-                if (status == 401) { _token = null; _view = null; ClearAccountShopPresentation(); OnlineAccountInventoryHubScope.Clear(GetInstanceID()); }
+                if (status == 401) InvalidateSession();
                 string code = null;
                 if (!string.IsNullOrEmpty(_lastBody))
                     try { code = JsonUtility.FromJson<OnlineErrorReply>(_lastBody)?.Code; } catch (ArgumentException) { }
@@ -243,7 +264,7 @@ namespace Game.Multiplayer
             try { profile = JsonUtility.FromJson<OnlineProfileReply>(_lastBody); } catch (ArgumentException) { }
             if (!TryAdoptRefreshedAccountProfile(profile, out var profileError))
             { _lastSuccess = false; Publish(profileError ?? "线上角色应答无效，未采用旧资产。", false); yield break; }
-            Publish(_applicationLifetime ? "登录已确认，可以进入据点。" : "线上角色已读取，物品位置由业务服确认。", false);
+            Publish(HasActiveRun ? "账号仍在副本中，请恢复当前副本。" : _applicationLifetime ? "登录已确认，可以进入据点。" : "线上角色已读取，物品位置由业务服确认。", false);
         }
 
         private bool TryAdoptRefreshedAccountProfile(OnlineProfileReply profile, out string error)
@@ -256,7 +277,8 @@ namespace Game.Multiplayer
                 error = "线上角色应答无效或内容不一致，请刷新重试。"; return false;
             }
             if (_accountInventoryPending != null && profile.PlayerId != _accountInventoryPending.Request.Intent.PlayerId
-                || _accountShopPending != null && profile.PlayerId != _accountShopPending.PlayerId)
+                || _accountShopPending != null && profile.PlayerId != _accountShopPending.PlayerId
+                || _roomRecoveryPending && GetComponent<OnlineRoomClient>() is OnlineRoomClient recovery && !recovery.IsRecoveryPlayer(profile.PlayerId))
             {
                 // 保留原候选但不把它发给另一账号，也不能让错误Session永久占据恢复入口。
                 InvalidateSession();
@@ -279,7 +301,9 @@ namespace Game.Multiplayer
             var items = _view == null ? Array.Empty<OnlineItemView>() : new OnlineItemView[_view.Items.Length];
             // 仓库与随身物同走已验证Profile；保留实例固定属性，不在账户展示层按模型重新生成。
             for (int i = 0; i < items.Length; i++) items[i] = OnlineOwnedAssetMapping.ToLobbyItem(_view.Items[i]);
-            EventBus<OnlineLobbyChangedEvent>.Publish(new OnlineLobbyChangedEvent { Busy = busy, Authenticated = Authenticated, Status = message,
+            EventBus<OnlineLobbyChangedEvent>.Publish(new OnlineLobbyChangedEvent { Busy = busy || _roomRecoveryBusy, Authenticated = Authenticated, Status = message,
+                HasActiveRun = HasActiveRun || _roomRecoveryPending, RecoveryPending = _roomRecoveryPending,
+                RecoveryMenuVisible = GetComponent<OnlineRoomClient>() is OnlineRoomClient rooms && rooms.RecoveryMenuVisible,
                 Username = _view?.Username, PlayerId = _view?.PlayerId, Version = _view?.Version ?? 0, Gold = _view?.Gold ?? 0, Items = items });
         }
         private static string ErrorMessage(string code, long status)

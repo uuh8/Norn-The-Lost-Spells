@@ -20,7 +20,9 @@ namespace Game.Run.Tests
     public sealed class HomeElementsPlayModeTests : BackpackWorkspacePlayModeTests
     {
         protected override string ReviewPath=>"Assets/_Project/Scenes/Tests/Hub/SinglePlayer_Home_ElementsReview.unity";
-        protected override string EvidencePath=>"TestResults/SinglePlayer/M6-T23-HomeElements";
+        // 派生fixture独立保留截图/Profiler，基类行为与历史M6证据均不改动。
+        private readonly string _evidenceDirectory=Path.Combine("TestResults/FullAuditPlayMode/HomeElements",Guid.NewGuid().ToString("N"));
+        protected override string EvidencePath=>_evidenceDirectory;
         private sealed class Source:IMaterialTransferSource
         {public bool TryReserve(MaterialAmount[] amounts,int count,out MaterialTransferFailure failure){failure=MaterialTransferFailure.None;return true;}public void Commit(){}public void Cancel(){}}
         private void Deposit(byte key,ulong quantity,Vector3 point,float radius=.3f)
@@ -107,12 +109,75 @@ namespace Game.Run.Tests
         [UnityTest]public IEnumerator HomeRunsCanonicalColdWaterToIceReaction()
         {
             var world=Find<ElementWorldRuntime>();world.SetSimulationPausedForDebug(true);Player.enabled=false;
+            Assert.That(world.ExecutionMode,Is.EqualTo(WorldExecutionMode.SinglePlayer));
+            var worldData=new SerializedObject(world);
+            var conversion=(MaterialConversionProfile)worldData.FindProperty("_conversionProfile").objectReferenceValue;
+            var worldProfile=(ElementWorldProfile)worldData.FindProperty("_profile").objectReferenceValue;
+            Assert.That(AssetDatabase.GetAssetPath(conversion),Is.EqualTo("Assets/_Project/ScriptableObjects/ElementField/Phases/MaterialConversions_Default.asset"),"必须检验Home实际生产配方，不能换成快速测试Profile。");
+            MaterialConversionRule freezing=default;bool foundFreezing=false;
+            for(int i=0;i<conversion.RuleCount;i++)
+            {
+                var rule=conversion.GetRule(i);
+                if(rule.Source==MaterialId.Water && rule.FirstProduct==MaterialId.Ice && rule.Condition==MaterialConversionCondition.Freezing && !rule.Disabled)
+                {freezing=rule;foundFreezing=true;break;}
+            }
+            Assert.That(foundFreezing,Is.True);Assert.That(world.ConversionLedger,Is.Not.Null);
             var zone=new GameObject("Canonical cold verification zone");SceneManager.MoveGameObjectToScene(zone,Scene);zone.SetActive(false);zone.transform.position=new Vector3(0,1,3);
             var environment=zone.AddComponent<MaterialEnvironmentAuthoring>();var data=new SerializedObject(environment);
             data.FindProperty("_world").objectReferenceValue=world;data.FindProperty("_temperature").floatValue=-20;data.FindProperty("_size").vector3Value=new Vector3(8,6,8);data.ApplyModifiedPropertiesWithoutUndo();zone.SetActive(true);
-            Deposit(1,1000,new Vector3(0,.3f,3),.3f);
-            for(int i=0;i<80&&world.FixedSolids.TotalQuantity==0;i++){world.TickForTests(.1f);yield return null;}
-            Assert.That(world.FixedSolids.TotalQuantity,Is.GreaterThan(0),"使用生产Conversion Profile的冷水结冰链路");
+            var cold=environment.Sample;Assert.That(MaterialConversionEvaluator.Matches(in freezing,in cold),Is.True);
+            const ulong waterInput=1000;
+            Assert.That(world.GridLiquids.TotalQuantity+world.FixedSolids.TotalQuantity+world.Gases.TotalQuantity,Is.Zero,"隔离Review应从空材料世界开始。");
+            Deposit(1,waterInput,new Vector3(0,.3f,3),.3f);
+            Assert.That(world.GridLiquids.TotalQuantity,Is.EqualTo(waterInput));
+            ulong consumedBefore=world.ConversionLedger.Consumed(MaterialId.Water),producedBefore=world.ConversionLedger.Produced(MaterialId.Ice);
+            float step=1f/worldProfile.TickRate;long startTick=world.WorldTick;
+            // Pause同时约束自动Update与显式测试入口。先用负控制锁住这个生产合同，不能为测试绕过冻结门。
+            Assert.That(world.TickForTests(step),Is.Zero);yield return null;
+            Assert.That(world.WorldTick,Is.EqualTo(startTick));
+            Assert.That(world.GridLiquids.TotalQuantity,Is.EqualTo(waterInput));
+            Assert.That(world.FixedSolids.TotalQuantity,Is.Zero);Assert.That(world.Gases.TotalQuantity,Is.Zero);
+            Assert.That(world.ConversionLedger.Consumed(MaterialId.Water),Is.EqualTo(consumedBefore));
+            Assert.That(world.ConversionLedger.Produced(MaterialId.Ice),Is.EqualTo(producedBefore));
+
+            // 生产扫描每Tick只访32粗格；8x6x8m冷区在0.5m格上有3072格，完整轮转约96 Tick。
+            // 冻结还要求整格纯水积足Credit。按全部1000 GMU/生产64 GMU/s留足信用时间，
+            // 再留最多每GMU一个候选的队列轮转与提交边界；这是功能推进预算，不是扩大墙钟timeout。
+            Vector3Int minimum=Vector3Int.FloorToInt((environment.Bounds.min-world.GridLiquids.Origin)/world.GridLiquids.CellSize);
+            Vector3Int maximum=Vector3Int.CeilToInt((environment.Bounds.max-world.GridLiquids.Origin)/world.GridLiquids.CellSize);
+            Vector3Int size=maximum-minimum;int cells=size.x*size.y*size.z;
+            int scanTicks=(cells+31)/32+1;
+            int creditTicks=Mathf.CeilToInt((float)waterInput/(freezing.InputGmuPerSecond*step));
+            int queueTicks=Mathf.CeilToInt(Mathf.Min((float)waterInput,conversion.MaximumCandidates)/conversion.CandidatesPerTick);
+            int maximumTicks=scanTicks+creditTicks+queueTicks+2,acceptedTicks=0;
+            for(int i=0;i<maximumTicks && world.FixedSolids.TotalQuantity==0;i++)
+            {
+                // 只同步推进一个明确的模拟步；yield之前恢复Pause，防自动Update偷偷贡献成功条件。
+                int advanced;
+                world.SetSimulationPausedForDebug(false);
+                try{advanced=world.TickForTests(step);}
+                finally{world.SetSimulationPausedForDebug(true);}
+                Assert.That(advanced,Is.EqualTo(1),"每次显式推进必须真正接受一个生产Tick。");acceptedTicks+=advanced;
+                Assert.That(world.WorldTick-startTick,Is.EqualTo((long)acceptedTicks));
+                yield return null;
+                Assert.That(world.WorldTick-startTick,Is.EqualTo((long)acceptedTicks),"等待渲染帧时Pause必须继续阻止自动模拟。");
+            }
+            ulong water=world.GridLiquids.TotalQuantity,ice=world.FixedSolids.TotalQuantity,gas=world.Gases.TotalQuantity;
+            ulong consumed=world.ConversionLedger.Consumed(MaterialId.Water)-consumedBefore;
+            ulong produced=world.ConversionLedger.Produced(MaterialId.Ice)-producedBefore;
+            string report="acceptedTicks="+acceptedTicks+"/"+maximumTicks+",scanTicks="+scanTicks+",creditTicks="+creditTicks+",queueTicks="+queueTicks
+                +",water="+water+",ice="+ice+",gas="+gas+",consumedWater="+consumed+",producedIce="+produced
+                +",pendingCandidates="+world.ConversionPendingCandidates+",processedLastTick="+world.ConversionProcessedLastTick
+                +",deferred="+world.ConversionDeferredTransactions+",overflows="+world.ConversionCandidateOverflows;
+            Directory.CreateDirectory(EvidencePath);File.WriteAllText(Path.Combine(EvidencePath,"home-cold-reaction.txt"),report);TestContext.WriteLine(report);
+            Assert.That(acceptedTicks,Is.GreaterThan(0));
+            Assert.That(ice,Is.GreaterThan(0),"使用生产Conversion Profile的冷水结冰链路；"+report);
+            Assert.That(consumed,Is.GreaterThan(0));Assert.That(produced,Is.EqualTo(ice));
+            Assert.That(consumed,Is.EqualTo(produced),"Water到Ice必须按生产1:1配方提交同一批GMU。");
+            Assert.That(water,Is.EqualTo(waterInput-consumed));Assert.That(gas,Is.Zero);
+            Assert.That(water+ice+gas,Is.EqualTo(waterInput),"真实三相Owner中的总量必须守恒。");
+            Assert.That(world.TryCaptureMaterialQuantityFamily(MaterialQuantityFamily.WaterBased,out var family),Is.True);
+            Assert.That(family.IsBalanced,Is.True);Assert.That(family.Pending+family.Vented+family.RuleConsumed+family.Exported,Is.Zero);
         }
         [UnityTest]public IEnumerator ProductionSolidGravityAndVolumeAimHaveNoScopedGcAfterWarmup()
         {

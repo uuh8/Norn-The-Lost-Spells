@@ -42,11 +42,12 @@ namespace Game.Rendering.Tests
                 Assert.That(resources.TriangleCounter.stride, Is.EqualTo(sizeof(uint)));
                 Assert.That(resources.OverflowCounter.stride, Is.EqualTo(sizeof(uint)));
                 Assert.That(resources.IndirectArguments.stride,
-                    Is.EqualTo(GraphicsBuffer.IndirectDrawArgs.size));
+                    Is.EqualTo(sizeof(uint)));
+                Assert.That(resources.IndirectArguments.count,Is.EqualTo(4));
                 Assert.That(
                     resources.IndirectArguments.target,
                     Is.EqualTo(GraphicsBuffer.Target.IndirectArguments),
-                    "Unity 6.3 的 IndirectArguments 已可绑定 RWByteAddressBuffer；Raw 组合会被 D3D11 拒绝。");
+                    "R32_UINT Typed UAV需要4个uint元素；Raw组合会被D3D11拒绝。");
                 Assert.That(resources.AnisotropyBuffer.stride, Is.EqualTo(64));
                 Assert.That(resources.AnisotropyBuffer.count, Is.EqualTo(ParticleCapacity));
 

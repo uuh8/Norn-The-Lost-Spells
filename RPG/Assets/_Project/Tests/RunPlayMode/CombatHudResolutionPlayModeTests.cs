@@ -22,7 +22,7 @@ namespace Game.Run.Tests
     /// </summary>
     public sealed class CombatHudResolutionPlayModeTests
     {
-        private const string EvidenceDirectory = "docs/superpowers/evidence/multiplayer/n4/movement-smoothing/followup";
+        private const string EvidenceDirectory = "TestResults/CombatHudResolution";
         private Scene _scene;
         private GameObject _fixtureRoot;
         private RectTransform _playerHealth, _boss, _bossName, _bossPhase, _stage, _notification, _held;
@@ -59,8 +59,11 @@ namespace Game.Run.Tests
 #else
             _view = new TemporaryFixedGameView();
             BuildIsolatedOriginalHud();
-            string evidence = Path.GetFullPath(Path.Combine(Application.dataPath, "..", EvidenceDirectory));
+            // 每次运行写自己的目录；回归测试不能覆盖旧阶段已经交付的截图和失败证据。
+            string evidence = Path.GetFullPath(Path.Combine(Application.dataPath, "..", EvidenceDirectory,
+                DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffZ")));
             Directory.CreateDirectory(evidence);
+            TestContext.WriteLine("HUD截图目录：" + evidence);
             File.WriteAllText(Path.Combine(evidence, "ui-layout-scope.txt"),
                 "Editor isolated original CombatHud Resource layout evidence.\n" +
                 "Game.* Adapters are disabled; there is no Actor, inventory session, network client or CombatPresentationHost lease.\n" +

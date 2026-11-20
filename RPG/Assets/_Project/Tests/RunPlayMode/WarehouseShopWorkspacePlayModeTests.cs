@@ -18,7 +18,9 @@ namespace Game.Run.Tests
     public sealed class WarehouseShopWorkspacePlayModeTests : BackpackWorkspacePlayModeTests
     {
         protected override string ReviewPath => Review;
-        protected override string EvidencePath => "TestResults/SinglePlayer/M6-T14-SlotAuthoring";
+        // 同一fixture的截图归入本轮目录，保留已有历史结果供对照。
+        private readonly string _evidencePath = "TestResults/WarehouseShop/" + DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffZ");
+        protected override string EvidencePath => _evidencePath;
         protected override ItemCatalog CustomizeCatalog(ItemCatalog catalog)
         {
             bool large = NUnit.Framework.TestContext.CurrentContext.Test.Name.StartsWith("LargeWarehouse");

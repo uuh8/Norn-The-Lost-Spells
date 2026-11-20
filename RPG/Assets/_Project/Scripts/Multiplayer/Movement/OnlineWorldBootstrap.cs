@@ -75,6 +75,7 @@ namespace Game.Multiplayer
 
         internal string MaterialRunId => _runId;
         internal string MaterialTransferWorldId => (_materialWorld as IOnlineMaterialTransferWorld)?.TransferWorldId;
+        internal IOnlineLiquidMotionWorld LiquidMotionWorld => _materialWorld as IOnlineLiquidMotionWorld;
         private WorldReplicationCoordinator _materialReplication;
         private bool _replicationPauseReported;
         private bool MaterialReplicationFaulted => IsAuthority && _materialReplication != null && _materialReplication.Faulted;
@@ -173,7 +174,15 @@ namespace Game.Multiplayer
                 _materialReplication = new WorldReplicationCoordinator(WorldEpoch, _combatDefinition.WireHash,
                     WorldReplicationCoordinator.DefaultChunks, WorldReplicationCoordinator.DefaultWords,
                     capture != null ? capture.Cells.Length : 65536, capture != null ? capture.Pending.Length : 1024,
-                    capture != null ? capture.InspectionBudget : 2000000, IsAuthority ? null : _materialWorld.ReplicaInstaller);
+                    capture != null ? capture.InspectionBudget : 2000000, IsAuthority ? null : _materialWorld.ReplicaInstaller,
+                    // 不同Chunk最多4份在途，同Key仍串行，只装完整原子快照。真实4Key×32格
+                    // 每10Hz窗口数量正文需约5KiB，旧18KB/s会持续落后，令Motion拿不到完整数量见证。
+                    // 生产显式使用64KiB/s、12KiB burst、每轮控制+数量共4页；旧构造的低预算不变。
+                    // 这是整个Peer共享的有界档位，不能按4条Flight各乘一份，也不改变权威/ACK语义。
+                    maximumInFlight:IsAuthority?4:1,
+                    quantityBytesPerSecond:WorldReplicationCoordinator.ProductionQuantityBytesPerSecond,
+                    quantityBurstBytes:WorldReplicationCoordinator.ProductionQuantityBurstBytes,
+                    maximumPagesPerRound:WorldReplicationCoordinator.ProductionQuantityPagesPerRound);
                 if (IsAuthority) _materialReplication.SetFaultHandler(SynchronizeMaterialLifecycle);
                 // 独立网络配置属于两端兼容输入；不能借单机活动半径隐式改变DS模拟，也不能缺失时静默全量发送。
                 var materialProfile=Resources.Load<OnlineWorldReplicationProfile>("Online/WorldReplicationProfile");
@@ -695,7 +704,12 @@ namespace Game.Multiplayer
                 {
                     if (!_materialReplication.Capture(material.ReplicationSource, material.CaptureBuffer))
                         SynchronizeMaterialLifecycle(); // 含回调未绑定的隔离Owner，失败当次也不留一帧写窗口。
-                    else CompleteRequestedRunCheckpoint(tick);
+                    else
+                    {
+                        // 数量提交是运动窗口的证据边界；表现捕获失败不得冻结玩法或影响checkpoint。
+                        if (_materialChannel != null) _materialChannel.CaptureLiquidMotion(material.CaptureBuffer);
+                        CompleteRequestedRunCheckpoint(tick);
+                    }
                 }
                 if (CanAdvance) CompleteMemberExitCaptures(tick);
             }

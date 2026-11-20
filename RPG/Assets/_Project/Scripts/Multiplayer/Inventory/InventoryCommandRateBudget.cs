@@ -62,6 +62,7 @@ namespace Game.Multiplayer
                 case OnlineInventoryCommandKind.PickupItem:
                 case OnlineInventoryCommandKind.BeginWandResearch:
                 case OnlineInventoryCommandKind.EndWandResearch:
+                case OnlineInventoryCommandKind.OrganizeBackpack:
                 case OnlineInventoryCommandKind.PickupContainer: budget = _discrete; break;
                 case OnlineInventoryCommandKind.CollectMaterial: budget = _collect; break;
                 case OnlineInventoryCommandKind.PourContainer: budget = _pour; break;

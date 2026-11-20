@@ -13,7 +13,7 @@ namespace Game.ElementField
     public sealed partial class LiquidWorldRuntime : MonoBehaviour, IFluidDepositSink, ILiquidSurfaceReadOnly,
         ILiquidMotionReadOnly, ILiquidWorldQueryReadOnly, ILiquidSurfaceLayerReadOnly,
         ILiquidStableSurfaceSnapshotReadOnly, ILiquidLayeredSurfaceReadOnly, ILiquidTransportReadOnly,
-        ILiquidPresentationReadOnly
+        ILiquidPresentationReadOnly,ILiquidPresentationDynamicsSource,ILiquidPresentationSolidSource
     {
         private static readonly ProfilerMarker PendingMarker =
             new ProfilerMarker("GridLiquid.PendingDeposits");
@@ -71,6 +71,7 @@ namespace Game.ElementField
         private LiquidLayerComposer _layers;
         private uint[] _layerQuantities;
         private LiquidTerrainSupportCache _terrain;
+        private ElementFieldSolidBaker _presentationSolidBaker;
         private LiquidTransportHistory _history;
         private Vector3 _recentPresentationDeposit;
         private float _recentPresentationDepositTime;
@@ -93,6 +94,8 @@ namespace Game.ElementField
         // Presentation的真实支撑读取不会消耗/预热Solver预算，避免相机和渲染负载影响Gameplay。
         public bool TryGetTerrainSupportForPresentation(Vector3Int cell,out LiquidTerrainSupport support)
         {support=default;return _terrain!=null && _terrain.TryGetForPresentation(cell,out support);}
+        public bool IsLogicalSolidForPresentation(Vector3Int cell)
+        {return _presentationSolidBaker!=null && _presentationSolidBaker.SampleMaterialSolidWorldCell(cell,_origin,_cellSize);}
         public float GetGameplayBaseHeight(Vector3Int cell) => (_terrain != null ? _terrain.BaseHeight(cell) : _origin.y + cell.y * _cellSize)+ResidueBaseHeight(cell);
         public float GetPresentationBaseHeight(Vector3Int cell)=>(_terrain!=null?_terrain.BaseHeightForPresentation(cell):_origin.y+cell.y*_cellSize)+ResidueBaseHeight(cell);
         internal LiquidCellPresentationSample ReadCurrentPresentation(Vector3Int cell, MaterialId material)
@@ -109,7 +112,8 @@ namespace Game.ElementField
                 offset=fall.HorizontalOffsetCells;offset.y=-fall.OffsetCells;
                 // 显示Warp只在Solver已经验证的自由距离内前推；不能穿进下一块Collider。
                 velocity=fall.HorizontalVelocityWorld;
-                velocity.y=-Mathf.Min(fall.Velocity,fall.SafeDistance/Mathf.Max(.001f,TransportInterval));
+                // Falling的速度是向下为正；喷口上扬时允许负值，同样按已验证净空限制Warp。
+                velocity.y=-Mathf.Sign(fall.Velocity)*Mathf.Min(Mathf.Abs(fall.Velocity),fall.SafeDistance/Mathf.Max(.001f,TransportInterval));
             }
             else if (_solver != null) _solver.TryGetGroundVelocity(cell, material, out velocity);
             return new LiquidCellPresentationSample(quantity, offset, velocity);
@@ -133,6 +137,9 @@ namespace Game.ElementField
         public bool TryGetPresentationSample(Vector3Int cell, MaterialId material, bool previous, out LiquidCellPresentationSample sample)
         { sample = previous && _history != null ? _history.ReadPrevious(cell, material) : ReadCurrentPresentation(cell, material); return sample.Quantity > 0; }
         public int CopyTransportChangedCells(Vector3Int[] destination) => _history != null ? _history.CopyChangedCells(destination) : 0;
+        // 与原单机ILiquidTransportReadOnly并行的只读网络出口；不让调用方访问可写History/Store。
+        internal bool TryCaptureSolverMotion(WorldLiquidMotionCaptureBuffer destination, WorldReplicaBuffer quantities) =>
+            _history != null && _history.TryCaptureMotion(destination, quantities);
         private StableLiquidRegionRuntime _stable;
         private StableLiquidRegionDetector _detector;
         private PendingDeposit[] _pending;
@@ -171,6 +178,8 @@ namespace Game.ElementField
         public ulong IgnitedStickyQuantity => _ignitedStickyQuantityGmu;
         internal void RecordStickyIgnition(uint quantity) => _ignitedStickyQuantityGmu += quantity;
         public float MotionHorizon => _solver != null ? _solver.MotionHorizon : .1f;
+        public float FallGravity=>_solver!=null?_solver.Gravity:0;
+        public float FallTerminalVelocity=>_solver!=null?_solver.TerminalVelocity:0;
         public bool TryGetFallingMotion(Vector3Int cell, MaterialId material,
             out LiquidFallingMotion motion)
         {
@@ -285,6 +294,8 @@ namespace Game.ElementField
                 _store.SetExternalOccupancy(_stable.OccupancyAt);
                 _store.SetDynamicOccupancyChangedCallback(_stable.OnDynamicOccupancyChanged);
                 _terrain = new LiquidTerrainSupportCache(solidBaker, _store, origin, _cellSize, _profile.MaximumActiveCells);
+                // 只保留既有Baker的只读入口；Collider尚未发布时仍由已提交材料事实提供接地资格。
+                _presentationSolidBaker=solidBaker;
                 _history = new LiquidTransportHistory(this, _profile.MaximumActiveCells, count);
                 _store.SetBeforeCellChanged(_history.CaptureBefore);
                 _solver = new LiquidFluxSolver(_store, _activity, _stable,
@@ -330,6 +341,9 @@ namespace Game.ElementField
                 || !float.IsFinite(request.SurfaceNormal.x)
                 || !float.IsFinite(request.SurfaceNormal.y)
                 || !float.IsFinite(request.SurfaceNormal.z)
+                || !float.IsFinite(request.InitialVelocity.x) || !float.IsFinite(request.InitialVelocity.y)
+                || !float.IsFinite(request.InitialVelocity.z) || !float.IsFinite(request.InitialVelocity.sqrMagnitude)
+                || request.InitialVelocity.sqrMagnitude>4096f
                 || _count == _pending.Length)
             {
                 _rejectedDeposits++;
@@ -392,6 +406,9 @@ namespace Game.ElementField
             // 同一 Tick 的四项成本分别显示在 Profiler，方便区别写入排队、
             // 静水出流、局部格求解和自动压缩；Marker.Auto 不创建托管对象。
             using (StableMarker.Auto()) _stable.Step(deltaTime);
+            // Pending注入和Stable出流先完成数量交接；网络表现以Solver开始时的Dynamic值为Previous，
+            // 原单机History仍保留整个Tick首次改写前的值，两者不能混用。
+            _history.PrepareSolverMotionBaseline();
             using (SolverMarker.Auto()) _solver.Step(_profile.MaximumCellsPerTick, deltaTime, sampleTime);
             // 先完成本 Tick 的局部 Solver，再判断分区是否安静，避免交接后立刻改写旧动态格。
             using (RecaptureMarker.Auto()) _stable.TryRecaptureQuietSector(
@@ -444,6 +461,7 @@ namespace Game.ElementField
         {
             ElementWriteRequest request = pending.Request;
             uint remaining = pending.Remaining;
+            bool initialMotion=request.InitialVelocity.sqrMagnitude>1e-8f;
             Vector3 correctedPosition = request.WorldPosition;
             if (request.SurfaceNormal.sqrMagnitude > .01f)
                 correctedPosition += request.SurfaceNormal.normalized * (_cellSize * .51f);
@@ -468,8 +486,10 @@ namespace Game.ElementField
                     Vector3Int cell = center + new Vector3Int(dx, y, dz);
                     // Stable Region 拥有整片湖的剩余容量。满的命中格仍可把新水计入
                     // 湖泊水位；先以单格 FreeCapacity 截断会让法术误留在 Pending。
-                    uint stableAccepted = _stable.TryDeposit(cell, request.MaterialKind,
-                        remaining - moved);
+                    // 显式带速度的写入仍归原Dynamic/Falling，不能直接压进Stable湖泊而吞掉飞行动量。
+                    // 运动槽不足时不先加数量：整份剩余Request留在Pending，之后仍携带同一个初速度重试。
+                    if(initialMotion && !_solver.CanAllocateInitialMotion(cell,request.MaterialKind))continue;
+                    uint stableAccepted = initialMotion?0:_stable.TryDeposit(cell, request.MaterialKind,remaining-moved);
                     if (stableAccepted > 0)
                     {
                         moved += stableAccepted;
@@ -479,7 +499,11 @@ namespace Game.ElementField
                     uint amount = Math.Min((uint)space, remaining - moved);
                     if (amount == 0) continue;
                     if (!_stable.TryPrepareMaterialContact(cell, request.MaterialKind)) continue;
-                    if (!_store.TryAdd(cell, request.MaterialKind, amount)) continue;
+                    if (!TryStageKnownBirth(cell,request.MaterialKind,amount,false,out var beforeBirth)) continue;
+                    if(initialMotion)_solver.CommitPreparedInitialMotion(cell,request.MaterialKind,request.InitialVelocity,amount);
+                    // Pending已经由原队列账本拥有；这里只记录本次实际落入Dynamic的amount，
+                    // 不能把尚未落地的remaining或Stable接收量当成已出生的动态水。
+                    PublishCommittedBirth(cell,request.MaterialKind,beforeBirth,amount);
                     moved += amount;
                     _activity.WakeNeighbors(cell);
                 }

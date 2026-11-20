@@ -54,6 +54,110 @@ namespace Game.Core.Tests
             b.Header=new WorldReplicaHeader(99,9,0,1); Assert.That(o.TryCaptureCommit(b),Is.False);
             Assert.That(o.TryCopyChunk(Key,words,out var after),Is.True); Assert.That(after.Revision,Is.EqualTo(current.Revision));
         }
+        [Test] public void ContiguousSameGenerationDeltaCoalescesToTheLatestCompleteAfterImage()
+        {
+            var owner = Owner(8); var source = Sample(); var firstWords = new uint[128];
+            Assert.That(owner.TryCaptureCommit(source), Is.True);
+            Assert.That(owner.TryCopyChunk(Key, firstWords, out var first), Is.True);
+            for (uint revision = 2; revision <= 4; revision++)
+            {
+                source.Cells[0] = new WorldMaterialCellSample(WorldMaterialDomain.Liquid,
+                    WorldMaterialStorage.Dynamic, new Vector3Int(-1, 0, 0), 2, revision * 10);
+                source.Header = new WorldReplicaHeader(revision, 1, 0, 1);
+                Assert.That(owner.TryCaptureCommit(source), Is.True);
+            }
+            var currentWords = new uint[128]; var deltaWords = new uint[128];
+            Assert.That(owner.TryCopyChunk(Key, currentWords, out var current), Is.True);
+            Assert.That(owner.TryCopyDelta(Key, first.Generation, first.Revision, deltaWords, out var merged), Is.True);
+            Assert.That(merged.Generation, Is.EqualTo(current.Generation)); Assert.That(merged.BaseRevision, Is.EqualTo(first.Revision));
+            Assert.That(merged.Revision, Is.EqualTo(current.Revision), "ACK R1时Owner已有R4，不能继续排队交付旧R2。");
+            Assert.That(merged.SnapshotId, Is.EqualTo(current.SnapshotId)); Assert.That(merged.ServerTick, Is.EqualTo(current.ServerTick));
+            Assert.That(merged.WordCount, Is.EqualTo(current.WordCount)); Assert.That(merged.Checksum, Is.EqualTo(current.Checksum));
+            for (int i = 0; i < merged.WordCount; i++) Assert.That(deltaWords[i], Is.EqualTo(currentWords[i]));
+            Assert.That(firstWords[first.WordCount - 1], Is.EqualTo(10), "合并不能改写早先借出的冻结正文。");
+        }
+
+        [Test] public void ContiguousDeltaCanCloseDirectlyAtTheActualTerminalTombstone()
+        {
+            var owner = Owner(8); var source = Sample(); var words = new uint[128];
+            Assert.That(owner.TryCaptureCommit(source), Is.True); Assert.That(owner.TryCopyChunk(Key, words, out var first), Is.True);
+            for (uint tick = 2; tick <= 3; tick++)
+            {
+                source.Cells[0] = new WorldMaterialCellSample(WorldMaterialDomain.Liquid,
+                    WorldMaterialStorage.Dynamic, new Vector3Int(-1, 0, 0), 2, tick * 10);
+                source.Header = new WorldReplicaHeader(tick, 1, 0, 1); Assert.That(owner.TryCaptureCommit(source), Is.True);
+            }
+            source.Header = new WorldReplicaHeader(4, 0, 0, 1); Assert.That(owner.TryCaptureCommit(source), Is.True);
+            Assert.That(owner.TryGetCurrentHeader(Key, out var terminal), Is.True);
+            Assert.That(owner.TryCopyDelta(Key, first.Generation, first.Revision, words, out var merged), Is.True);
+            Assert.That(merged.IsResident, Is.False); Assert.That(merged.BaseRevision, Is.EqualTo(first.Revision));
+            Assert.That(merged.Generation, Is.EqualTo(terminal.Generation)); Assert.That(merged.Revision, Is.EqualTo(terminal.Revision));
+            Assert.That(merged.SnapshotId, Is.EqualTo(terminal.SnapshotId)); Assert.That(merged.ServerTick, Is.EqualTo(terminal.ServerTick));
+            Assert.That(merged.WordCount, Is.Zero); Assert.That(merged.Checksum, Is.EqualTo(2166136261u));
+        }
+
+        [Test] public void CoalescedDeltaReplacesAllCellsInsteadOfOnlyTheLastChangedCell()
+        {
+            var owner = Owner(8); var source = Sample();
+            source.Cells[1] = new WorldMaterialCellSample(WorldMaterialDomain.Liquid,
+                WorldMaterialStorage.Dynamic, new Vector3Int(-2, 0, 0), 2, 11);
+            source.Header = new WorldReplicaHeader(1, 2, 0, 1);
+            var words = new uint[128]; Assert.That(owner.TryCaptureCommit(source), Is.True);
+            Assert.That(owner.TryCopyChunk(Key, words, out var first), Is.True);
+            source.Cells[0] = new WorldMaterialCellSample(WorldMaterialDomain.Liquid,
+                WorldMaterialStorage.Dynamic, new Vector3Int(-1, 0, 0), 2, 20);
+            source.Header = new WorldReplicaHeader(2, 2, 0, 1); Assert.That(owner.TryCaptureCommit(source), Is.True);
+            source.Cells[0] = new WorldMaterialCellSample(WorldMaterialDomain.Liquid,
+                WorldMaterialStorage.Dynamic, new Vector3Int(-2, 0, 0), 2, 31);
+            source.Cells[1] = new WorldMaterialCellSample(WorldMaterialDomain.Liquid,
+                WorldMaterialStorage.Dynamic, new Vector3Int(-3, 0, 0), 2, 41);
+            source.Header = new WorldReplicaHeader(3, 2, 0, 1); Assert.That(owner.TryCaptureCommit(source), Is.True);
+            Assert.That(owner.TryCopyDelta(Key, first.Generation, first.Revision, words, out var merged), Is.True);
+            Assert.That(merged.Revision, Is.EqualTo(3)); Assert.That(merged.BaseRevision, Is.EqualTo(1));
+            var decoded = new WorldReplicaBuffer(8, 4, 4096);
+            Assert.That(WorldChunkPayloadCodec.TryDecode(words, merged.WordCount, Key, merged.ServerTick, decoded), Is.True);
+            Assert.That(decoded.Header.CellCount, Is.EqualTo(2));
+            Assert.That(decoded.Cells[0].Cell, Is.EqualTo(new Vector3Int(-3, 0, 0))); Assert.That(decoded.Cells[0].Quantity, Is.EqualTo(41));
+            Assert.That(decoded.Cells[1].Cell, Is.EqualTo(new Vector3Int(-2, 0, 0))); Assert.That(decoded.Cells[1].Quantity, Is.EqualTo(31));
+        }
+
+        [Test] public void CoalescedAfterImageChecksItsActualDestinationSizeBeforeCopyingAnything()
+        {
+            var owner = Owner(8); var source = Sample(); var first = new uint[128];
+            Assert.That(owner.TryCaptureCommit(source), Is.True); Assert.That(owner.TryCopyChunk(Key, first, out var original), Is.True);
+            source.Cells[0] = new WorldMaterialCellSample(WorldMaterialDomain.Liquid,
+                WorldMaterialStorage.Dynamic, new Vector3Int(-1, 0, 0), 2, 20);
+            source.Header = new WorldReplicaHeader(2, 1, 0, 1); Assert.That(owner.TryCaptureCommit(source), Is.True);
+            source.Cells[1] = new WorldMaterialCellSample(WorldMaterialDomain.Liquid,
+                WorldMaterialStorage.Dynamic, new Vector3Int(-2, 0, 0), 2, 30);
+            source.Header = new WorldReplicaHeader(3, 2, 0, 1); Assert.That(owner.TryCaptureCommit(source), Is.True);
+            var small = new uint[18]; for (int i = 0; i < small.Length; i++) small[i] = 123;
+            Assert.That(owner.TryCopyDelta(Key, original.Generation, original.Revision, small, out _), Is.False);
+            Assert.That(owner.LastFailure, Is.EqualTo(WorldCommitOwnerFailure.DestinationCapacity));
+            foreach (uint word in small) Assert.That(word, Is.EqualTo(123));
+        }
+
+        [Test] public void CoalescedDeltaKeepsTheKeyCommitStampAfterAnUnrelatedGlobalCommit()
+        {
+            var owner = Owner(8); var source = Sample(); var words = new uint[128];
+            Assert.That(owner.TryCaptureCommit(source), Is.True); Assert.That(owner.TryCopyChunk(Key, words, out var original), Is.True);
+            for (uint tick = 2; tick <= 4; tick++)
+            {
+                source.Cells[0] = new WorldMaterialCellSample(WorldMaterialDomain.Liquid,
+                    WorldMaterialStorage.Dynamic, new Vector3Int(-1, 0, 0), 2, tick * 10);
+                source.Header = new WorldReplicaHeader(tick, 1, 0, 1); Assert.That(owner.TryCaptureCommit(source), Is.True);
+            }
+            Assert.That(owner.TryGetCurrentHeader(Key, out var actualCommit), Is.True);
+            source.Cells[1] = new WorldMaterialCellSample(WorldMaterialDomain.Liquid,
+                WorldMaterialStorage.Dynamic, new Vector3Int(5, 0, 0), 2, 70);
+            source.Header = new WorldReplicaHeader(5, 2, 0, 1); Assert.That(owner.TryCaptureCommit(source), Is.True);
+            Assert.That(owner.CommitSequence, Is.GreaterThan(actualCommit.SnapshotId));
+            Assert.That(owner.TryCopyDelta(Key, original.Generation, original.Revision, words, out var merged), Is.True);
+            Assert.That(merged.Revision, Is.EqualTo(actualCommit.Revision)); Assert.That(merged.BaseRevision, Is.EqualTo(original.Revision));
+            Assert.That(merged.SnapshotId, Is.EqualTo(actualCommit.SnapshotId)); Assert.That(merged.ServerTick, Is.EqualTo(actualCommit.ServerTick));
+            Assert.That(merged.Checksum, Is.EqualTo(actualCommit.Checksum));
+        }
+
         [Test] public void GeometryAndPendingChangesAreRealCommits()
         {
             var o=Owner(); var b=Sample(); var w=new uint[128]; Assert.That(o.TryCaptureCommit(b),Is.True);
@@ -103,6 +207,123 @@ namespace Game.Core.Tests
             var o=Owner();var b=Sample();var w=new uint[128];Assert.That(o.TryCaptureCommit(b),Is.True);Assert.That(o.TryCopyChunk(Key,w,out var h),Is.True);
             var destination=new WorldReplicaBuffer(8,4,4096);destination.Header=new WorldReplicaHeader(77,0,0,0);
             w[17]=0;Assert.That(WorldChunkPayloadCodec.TryDecode(w,h.WordCount,Key,1,destination),Is.False);Assert.That(destination.Header.WorldTick,Is.EqualTo(77));
+        }
+        [Test] public void RetiringInactiveChunkCompactsLastPayloadWithoutChangingCommittedFacts()
+        {
+            var o = new WorldReplicationCommitOwner(7, 3, 8, 4, 16, 128, 100000);
+            var b = Sample();
+            var movedKey = new WorldChunkKey(WorldMaterialDomain.Liquid, 1, 0, 0);
+            b.Cells[1] = new WorldMaterialCellSample(WorldMaterialDomain.Liquid, WorldMaterialStorage.Dynamic,
+                new Vector3Int(4, 0, 0), 2, 23);
+            b.Header = new WorldReplicaHeader(1, 2, 0, 1);
+            Assert.That(o.TryCaptureCommit(b), Is.True);
+            var frozen = new uint[128];
+            Assert.That(o.TryCopyChunk(Key, frozen, out var original), Is.True);
+            b.Cells[0] = b.Cells[1]; b.Header = new WorldReplicaHeader(2, 1, 0, 1);
+            Assert.That(o.TryCaptureCommit(b), Is.True);
+            Assert.That(o.TryCopyChunk(movedKey, frozen, out var movedBefore), Is.True);
+            var frozenBefore = (uint[])frozen.Clone();
+            ulong sequence = o.CommitSequence, history = o.HistoryRecordsWritten;
+
+            // 协调器先完成 Peer/Leave 栅栏，Core 只执行独立的已提交 metadata 退休。
+            // 它不能把末槽的真实数量、Generation 或 payload 身份留在旧数组索引。
+            Assert.That(Retire(o, 1, out int movedFrom), Is.True);
+            Assert.That(movedFrom, Is.EqualTo(2)); Assert.That(o.ChunkCount, Is.EqualTo(2));
+            Assert.That(o.GetChunkHeader(1).Key, Is.EqualTo(movedKey));
+            Assert.That(o.TryCopyChunk(movedKey, frozen, out var movedAfter), Is.True);
+            Assert.That(movedAfter.Generation, Is.EqualTo(movedBefore.Generation));
+            Assert.That(movedAfter.Revision, Is.EqualTo(movedBefore.Revision));
+            Assert.That(movedAfter.Checksum, Is.EqualTo(movedBefore.Checksum));
+            CollectionAssert.AreEqual(frozenBefore, frozen);
+            Assert.That(o.CommitSequence, Is.EqualTo(sequence));
+            Assert.That(o.HistoryRecordsWritten, Is.EqualTo(history));
+            Assert.That(o.LastCapturedWorldTick, Is.EqualTo(2));
+            Assert.That(o.TryCopyChunk(Key, frozen, out _), Is.False);
+            Assert.That(o.TryCopyDelta(Key, original.Generation, original.Revision, frozen, out _), Is.False,
+                "旧 tombstone 仍可能在 ring 内，但退休地址已不可作为当前 Delta 来源。");
+        }
+        [Test] public void RetiredTraversalReusesBoundedSlotsAndPreservesLiquidQuantity()
+        {
+            var o = new WorldReplicationCommitOwner(7, 3, 8, 4, 16, 128, 100000);
+            var b = Sample(19); var words = new uint[128];
+            var decoded = new WorldReplicaBuffer(8, 4, 4096);
+            Assert.That(o.TryCaptureCommit(b), Is.True);
+            Assert.That(o.TryCopyChunk(Key, words, out var first), Is.True);
+            var previous = Key;
+            for (int step = 1; step <= 20; step++)
+            {
+                var next = new WorldChunkKey(WorldMaterialDomain.Liquid, -1, -step, 0);
+                b.Cells[0] = new WorldMaterialCellSample(WorldMaterialDomain.Liquid, WorldMaterialStorage.Dynamic,
+                    new Vector3Int(-1, -4 * step, 0), 2, 19);
+                b.Header = new WorldReplicaHeader(step + 1, 1, 0, 1);
+                Assert.That(o.TryCaptureCommit(b), Is.True, "单份液体穿越新地址不应耗尽已退休槽。");
+                int inactive = Index(o, previous);
+                Assert.That(inactive, Is.GreaterThanOrEqualTo(0));
+                Assert.That(Retire(o, inactive, out _), Is.True);
+                Assert.That(o.ChunkCount, Is.EqualTo(2));
+                Assert.That(o.TryCopyChunk(next, words, out var current), Is.True);
+                Assert.That(WorldChunkPayloadCodec.TryDecode(words, current.WordCount, next, current.ServerTick, decoded), Is.True);
+                Assert.That(decoded.Header.CellCount, Is.EqualTo(1));
+                Assert.That(decoded.Cells[0].Quantity, Is.EqualTo(19)); previous = next;
+            }
+            b.Cells[0] = new WorldMaterialCellSample(WorldMaterialDomain.Liquid, WorldMaterialStorage.Dynamic,
+                new Vector3Int(-1, 0, 0), 2, 19);
+            b.Header = new WorldReplicaHeader(22, 1, 0, 1);
+            Assert.That(o.TryCaptureCommit(b), Is.True);
+            Assert.That(o.TryCopyChunk(Key, words, out var recreated), Is.True);
+            Assert.That(recreated.Generation, Is.GreaterThan(first.Generation));
+            Assert.That(o.TryCopyDelta(Key, first.Generation, first.Revision, words, out _), Is.False);
+        }
+        [Test] public void FailedCaptureNeverRetiresTombstoneAsAnImplicitSideEffect()
+        {
+            var o = new WorldReplicationCommitOwner(7, 3, 8, 4, 16, 128, 100000);
+            var b = Sample();
+            b.Cells[1] = new WorldMaterialCellSample(WorldMaterialDomain.Liquid, WorldMaterialStorage.Dynamic,
+                new Vector3Int(4, 0, 0), 2, 23);
+            b.Header = new WorldReplicaHeader(1, 2, 0, 1); Assert.That(o.TryCaptureCommit(b), Is.True);
+            b.Cells[0] = b.Cells[1]; b.Header = new WorldReplicaHeader(2, 1, 0, 1);
+            Assert.That(o.TryCaptureCommit(b), Is.True);
+            ulong sequence = o.CommitSequence, history = o.HistoryRecordsWritten;
+            var tombstone = o.GetChunkHeader(1);
+            b.Cells[1] = new WorldMaterialCellSample(WorldMaterialDomain.Liquid, WorldMaterialStorage.Dynamic,
+                new Vector3Int(8, 0, 0), 2, 7);
+            b.Header = new WorldReplicaHeader(3, 2, 0, 1);
+            Assert.That(o.TryCaptureCommit(b), Is.False);
+            Assert.That(o.LastFailure, Is.EqualTo(WorldCommitOwnerFailure.Capacity));
+            Assert.That(o.ChunkCount, Is.EqualTo(3)); Assert.That(o.GetChunkHeader(1), Is.EqualTo(tombstone));
+            Assert.That(o.CommitSequence, Is.EqualTo(sequence)); Assert.That(o.HistoryRecordsWritten, Is.EqualTo(history));
+            Assert.That(o.LastCapturedWorldTick, Is.EqualTo(2));
+            Assert.That(Retire(o, 1, out _), Is.True);
+            Assert.That(o.TryCaptureCommit(b), Is.True);
+        }
+        [Test] public void ResidentAndInvalidRetirementRejectWithoutChangingPublishedState()
+        {
+            var o = Owner(); var b = Sample(); Assert.That(o.TryCaptureCommit(b), Is.True);
+            ulong sequence = o.CommitSequence, history = o.HistoryRecordsWritten;
+            var first = o.GetChunkHeader(0); var second = o.GetChunkHeader(1);
+            foreach (int invalid in new[] { -1, 0, 1, 2 })
+            {
+                Assert.That(Retire(o, invalid, out int movedFrom), Is.False);
+                Assert.That(movedFrom, Is.EqualTo(-1)); Assert.That(o.ChunkCount, Is.EqualTo(2));
+                Assert.That(o.GetChunkHeader(0), Is.EqualTo(first)); Assert.That(o.GetChunkHeader(1), Is.EqualTo(second));
+                Assert.That(o.CommitSequence, Is.EqualTo(sequence)); Assert.That(o.HistoryRecordsWritten, Is.EqualTo(history));
+            }
+            b.Header = new WorldReplicaHeader(2, 0, 0, 1); Assert.That(o.TryCaptureCommit(b), Is.True);
+            Assert.That(Retire(o, 1, out int lastMove), Is.True); Assert.That(lastMove, Is.EqualTo(-1));
+        }
+        private static int Index(WorldReplicationCommitOwner owner, WorldChunkKey key)
+        {
+            for (int i = 0; i < owner.ChunkCount; i++) if (owner.GetChunkHeader(i).Key == key) return i;
+            return -1;
+        }
+        private static bool Retire(WorldReplicationCommitOwner owner, int index, out int movedFromIndex)
+        {
+            // 缺少新 API 应形成可读 RED，而不是阻止整套 Unity 测试编译。
+            var method = typeof(WorldReplicationCommitOwner).GetMethod("TryRetireInactiveChunk",
+                new[] { typeof(int), typeof(int).MakeByRefType() });
+            Assert.That(method, Is.Not.Null, "缺少带末槽搬动结果的显式 Chunk 退休 API。");
+            object[] arguments = { index, -1 };
+            bool result = (bool)method.Invoke(owner, arguments); movedFromIndex = (int)arguments[1]; return result;
         }
         [Test] public void WarmCommitFreezeAndAssemblyHaveZeroPositivelyCalibratedAllocationEvents()
         {

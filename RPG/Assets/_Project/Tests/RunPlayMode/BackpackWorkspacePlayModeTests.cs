@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using Game.Character;
 using Game.Core;
 using Game.Skills;
@@ -34,16 +35,79 @@ namespace Game.Run.Tests
         protected Mouse Mouse;
         private InputTestFixture _input;
         private bool _background;
+        private object _originalInputManager;
+        private PropertyInfo _managerActionsProperty;
+        private InputActionAsset _originalManagerActions;
+        private bool _actionRuntimeCaptured;
+        private readonly List<InputActionAsset> _sharedInputAssets=new List<InputActionAsset>();
+        private readonly HashSet<InputAction> _originalEnabledActions=new HashSet<InputAction>();
         protected readonly List<UnityEngine.Object> TemporaryAssets=new List<UnityEngine.Object>();
         [UnitySetUp] public IEnumerator Setup()
         {
             _background=Application.runInBackground;Application.runInBackground=true;Time.timeScale=1;
+            CaptureAndReleaseSharedActionRuntime();
             _input=new InputTestFixture();_input.Setup();Keyboard=InputSystem.AddDevice<Keyboard>();Mouse=InputSystem.AddDevice<Mouse>();
             EditorWindow.GetWindow(Type.GetType("UnityEditor.GameView,UnityEditor")).Focus();
             SceneManager.sceneLoaded+=Loaded;
             Scene=EditorSceneManager.LoadSceneInPlayMode(ReviewPath,new LoadSceneParameters(UseSingleScene?LoadSceneMode.Single:LoadSceneMode.Additive));
             yield return null;yield return null;yield return null;SceneManager.sceneLoaded-=Loaded;
             Assert.That(Session.ReadOnly,Is.Not.Null);Assert.That(Backpack,Is.Not.Null);
+        }
+        private void CaptureAndReleaseSharedActionRuntime()
+        {
+            // InputTestFixture切换全局InputManager，但共享.asset仍可能持有上一runtime解析的Controls。
+            // deviceId在新runtime可复用；旧Control会读到新buffer却收不到新device的cache失效通知。
+            // 与OnlineShared夹具相同：在旧runtime有效时只Dispose非序列化ActionMap状态，然后重解析。
+            var managerField=typeof(InputSystem).GetField("s_Manager",BindingFlags.Static|BindingFlags.NonPublic);
+            Assert.That(managerField,Is.Not.Null,"Input System升级后必须重新核对fixture恢复边界。");
+            _originalInputManager=managerField.GetValue(null);
+            Assert.That(_originalInputManager,Is.Not.Null);
+            _managerActionsProperty=_originalInputManager.GetType().GetProperty("actions");
+            Assert.That(_managerActionsProperty,Is.Not.Null);
+            _originalManagerActions=InputSystem.actions;
+            EditorBuildSettings.TryGetConfigObject("com.unity.input.settings.actions",out InputActionAsset projectActions);
+            Assert.That(_originalManagerActions==null || _originalManagerActions==projectActions,Is.True,
+                "夹具不能抢占其他调用方临时替换的项目Actions。");
+            _sharedInputAssets.Clear();_originalEnabledActions.Clear();
+            if(projectActions!=null)_sharedInputAssets.Add(projectActions);
+            // Review自己依赖的Inventory/Trading/Wands输入资产也跨Scene复用；不枚举/清空全项目Actions。
+            // AssetDatabase依赖只用于Editor测试读取，既不改变bindings/reference，也不保存正式资源。
+            foreach(string path in AssetDatabase.GetDependencies(ReviewPath,true))
+            {
+                if(!path.StartsWith("Assets/_Project/ScriptableObjects/Input/",StringComparison.Ordinal))continue;
+                var asset=AssetDatabase.LoadAssetAtPath<InputActionAsset>(path);
+                if(asset!=null && !_sharedInputAssets.Contains(asset))_sharedInputAssets.Add(asset);
+            }
+            foreach(var asset in _sharedInputAssets)
+                foreach(var action in asset)if(action.enabled)_originalEnabledActions.Add(action);
+            _actionRuntimeCaptured=true;
+            foreach(var asset in _sharedInputAssets)
+            {
+                asset.Disable();
+                foreach(var map in asset.actionMaps)map.Dispose();
+            }
+        }
+        private void RestoreSharedActionRuntime()
+        {
+            if(!_actionRuntimeCaptured)return;
+            try
+            {
+                var manager=typeof(InputSystem).GetField("s_Manager",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);
+                Assert.That(manager,Is.SameAs(_originalInputManager),"先Restore旧InputManager，再恢复共享Actions。");
+                // InputSystem公共actions setter会改项目配置且不允许PlayMode；这里只恢复原manager的内存引用。
+                if(!ReferenceEquals(InputSystem.actions,_originalManagerActions))
+                    _managerActionsProperty.SetValue(manager,_originalManagerActions);
+                foreach(var asset in _sharedInputAssets)if(asset!=null)asset.Disable();
+                foreach(var action in _originalEnabledActions)action.Enable();
+                foreach(var asset in _sharedInputAssets)if(asset!=null)
+                    foreach(var action in asset)Assert.That(action.enabled,Is.EqualTo(_originalEnabledActions.Contains(action)),action.name);
+                Assert.That(InputSystem.actions,Is.SameAs(_originalManagerActions));
+            }
+            finally
+            {
+                _actionRuntimeCaptured=false;_sharedInputAssets.Clear();_originalEnabledActions.Clear();
+                _originalInputManager=null;_managerActionsProperty=null;_originalManagerActions=null;
+            }
         }
         private void Loaded(Scene scene,LoadSceneMode mode)
         {
@@ -131,7 +195,25 @@ namespace Game.Run.Tests
                 ToolSlot=slot,ItemId=id,ExpectedVersion=Session.ToolbeltReadOnly.ConfigurationVersion});
             Assert.That(Session.ToolbeltReadOnly.TryGetBinding(slot,out var actual),Is.True);Assert.That(actual,Is.EqualTo(id));
         }
-        protected void Keys(params Key[] keys){InputSystem.QueueStateEvent(Keyboard,new KeyboardState(keys));InputSystem.Update();}
+        protected void Keys(params Key[] keys)
+        {
+            AssertSharedActionDevicesBelongToCurrentRuntime();
+            InputSystem.QueueStateEvent(Keyboard,new KeyboardState(keys));InputSystem.Update();
+        }
+        private static void AssertSharedActionDevicesBelongToCurrentRuntime()
+        {
+            // 只读取引用身份，不调用Control.ReadValue，不修改cache/check开关或静默清理坏状态。
+            // 同一deviceId可在InputTestFixture重置后复用，必须比较实际对象，不能只比数字ID。
+            foreach(var reference in Resources.FindObjectsOfTypeAll<InputActionReference>())
+            {
+                string path=AssetDatabase.GetAssetPath(reference);
+                if(!path.StartsWith("Assets/_Project/ScriptableObjects/Input/",StringComparison.Ordinal))continue;
+                var action=reference.action;if(action==null || !action.enabled)continue;
+                foreach(var control in action.controls)
+                    Assert.That(InputSystem.GetDeviceById(control.device.deviceId),Is.SameAs(control.device),
+                        "共享Action仍引用旧InputManager设备："+path+" / "+action.name+" / "+control.path);
+            }
+        }
         protected void Click(bool down){InputSystem.QueueStateEvent(Mouse,new MouseState{buttons=down?(ushort)1:(ushort)0});InputSystem.Update();}
         protected void MoveToExperiment()
         {
@@ -370,7 +452,7 @@ namespace Game.Run.Tests
                     yield return SceneManager.UnloadSceneAsync(Scene);
                 }
             }
-            finally { try{_input?.TearDown();}finally{_input=null;Application.runInBackground=_background;Time.timeScale=1;
+            finally { try{try{_input?.TearDown();}finally{RestoreSharedActionRuntime();}}finally{_input=null;Application.runInBackground=_background;Time.timeScale=1;
                 foreach(var asset in TemporaryAssets)UnityEngine.Object.Destroy(asset);TemporaryAssets.Clear();} }
             yield return null;
         }

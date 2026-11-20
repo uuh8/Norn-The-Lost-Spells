@@ -67,6 +67,22 @@ namespace Game.Run
         public ulong ActorId { get; }
         public string InventoryId { get; }
         public uint InventoryVersion => _profile.Items.Version;
+        /// <summary>
+        /// Driver 与领域层共用同一个只读分类，避免外层允许“拾取”、内层却把装备/插卡一起开放。
+        /// 这是动作忙门的窄例外，不是客户端资格；实际命令仍通过原身份、版本与地面事务。
+        /// </summary>
+        public bool IsGroundStoragePickup(in OnlineInventoryCommandIntent intent)
+            => !_disposed && _groundItems != null && _groundItems.IsStoragePickup(this, intent);
+        /// <summary>
+        /// 只复制当前库存拒绝门，不调用Synchronize/Collect/Cancel，不为了诊断改变资源或票据。
+        /// 已销毁Owner返回未捕获值；调用方不能把默认的false/0当成可继续移动物品的许可。
+        /// </summary>
+        public OnlineInventoryBusyDiagnostic CaptureInventoryBusyDiagnostic()
+            => _disposed ? default : new OnlineInventoryBusyDiagnostic(_profile.RaidActionsFrozen,
+                _profile.Items.IsResourceBusy, _casts.IsPending, _casts.ActiveReservations);
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        public string DescribeCastReservations() => _disposed ? "Disposed" : _casts.DescribeReservations();
+#endif
         public uint SelectionVersion => _selectionVersion;
         public long Gold => _profile.Currency;
         public uint CurrencyVersion => _currencyVersion;
@@ -619,7 +635,8 @@ namespace Game.Run
             uint before = InventoryVersion;
             var result = _casts.Execute(request);
             if (before != InventoryVersion)
-                EventBus<InventoryChangedEvent>.Publish(new InventoryChangedEvent { InventoryId = InventoryId, Version = InventoryVersion });
+                // 事务结果已确定。通知失败不能截走 Complete 收据，使 Caster 错把已支付的一发回滚。
+                EventBus<InventoryChangedEvent>.PublishFact(new InventoryChangedEvent { InventoryId = InventoryId, Version = InventoryVersion });
             return result;
         }
 
@@ -702,7 +719,9 @@ namespace Game.Run
             {
                 if (IsResearchCommand(intent.Kind)) failure = ApplyResearchSessionCommand(intent);
                 else if (ResearchOpen && !IsResearchStructuralCommand(intent.Kind)) failure = OnlineInventoryCommandFailure.Busy;
-                else if (_isPeacefulPractice && (RequiresResearchEditAccess(intent) || ResearchOpen && IsResearchStructuralCommand(intent.Kind))
+                // 紧凑Tab背包与副本共用原库存权限，不要求先进入研究台。只有已打开的研究会话
+                // 才继续检查其可信空间资格；物品归属、程序/库存版本及预约忙门仍由原事务核验。
+                else if (_isPeacefulPractice && ResearchOpen && IsResearchStructuralCommand(intent.Kind)
                     && (!ResearchOpen || _homeResearchAccess == null || !_homeResearchAccess())) failure = OnlineInventoryCommandFailure.NotOwned;
                 else failure = ApplyInventoryCommand(intent, context, out transferred, out transferFailure);
             }
@@ -730,9 +749,15 @@ namespace Game.Run
                 && (intent.TransferBudget != 0 || !Zero(intent.AimOrigin) || !Zero(intent.AimDirection)))
                 return OnlineInventoryCommandFailure.InvalidInput;
             if (intent.ExpectedInventoryVersion != InventoryVersion) return OnlineInventoryCommandFailure.StaleVersion;
-            if (_profile.RaidActionsFrozen || _profile.Items.IsResourceBusy || _casts.IsPending || _casts.ActiveReservations > 0)
+            // Prepare 期间 Store 持有候选表，任何拾取都必须拒绝，否则后续 Complete 会覆盖新资产。
+            // 已提交票据只持有冻结 Graph/输出寿命；另一件地面物品进入包/专区不改旧程序和供料瓶，
+            // 不应等到整个 Trigger/Projectile 生命周期结束。旧物移动、装备、插卡继续沿原忙门。
+            if (_profile.RaidActionsFrozen || _profile.Items.IsResourceBusy || _casts.IsPending
+                || _casts.ActiveReservations > 0 && !IsGroundStoragePickup(intent))
                 return OnlineInventoryCommandFailure.Busy;
             _wands.Synchronize();
+            // 整理仅携带本人真实包ID，候选布局由DS调用共用算法生成；不接受Client上传布局。
+            if (intent.Kind == OnlineInventoryCommandKind.OrganizeBackpack) return OrganizeInventoryBackpack(intent);
             bool genericGround = intent.Kind == OnlineInventoryCommandKind.DropItem || intent.Kind == OnlineInventoryCommandKind.PickupItem;
             bool groundCommand = genericGround || intent.Kind == OnlineInventoryCommandKind.DropContainer || intent.Kind == OnlineInventoryCommandKind.PickupContainer;
             if (genericGround) return TransferGroundItem(intent, context, out transferred);
@@ -1124,6 +1149,7 @@ namespace Game.Run
                     InventoryId = InventoryId, WorldId = _containerWorldId, SourceId = _containerSourceId,
                     ItemId = intent.ItemId, RequestId = request, Budget = intent.TransferBudget, ExpectedVersion = intent.ExpectedInventoryVersion,
                     Kind = ContainerUseKind.Pour, ActorPosition = context.ActorPosition, TargetPosition = context.TargetPosition,
+                    HasInitialMotion=context.HasInitialMotion,InitialVelocity=context.InitialVelocity,
                     Radius = ContainsGas(container) ? _gasDepositRadius : _pourRadius
                 });
                 transferFailure = result.Transfer.Failure; transferred = result.Success ? result.Transfer.Transferred : 0;
@@ -1264,7 +1290,8 @@ namespace Game.Run
         {
             // 未命中 InventoryId 的服务不回复；否则另一名玩家的拒绝收据会抢先结束同步请求。
             if (_disposed || request.InventoryId != InventoryId) return;
-            EventBus<CastResourceResultEvent>.Publish(Execute(request));
+            // Execute 本身仍可失败；只有它返回后的确定收据采用异常隔离投递。
+            EventBus<CastResourceResultEvent>.PublishFact(Execute(request));
         }
         private void OnWandSelected(WandSelectionRequestedEvent request)
         {

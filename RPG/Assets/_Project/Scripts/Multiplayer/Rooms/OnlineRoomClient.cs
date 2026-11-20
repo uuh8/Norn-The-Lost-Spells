@@ -51,7 +51,16 @@ namespace Game.Multiplayer
             EventBus<OnlineRoomRequestEvent>.Subscribe(OnCommand);
             EventBus<OnlineRunExitStatusChangedEvent>.Subscribe(OnMemberExitStatus);
             EventBus<OnlineReturnPortalRequestedEvent>.Subscribe(OnReturnPortal);
-            if (_routine == null && _exitRequested && !_exitHubReady && _room != null)
+            if (_routine == null && HasAccountRecovery)
+            {
+                if (_account != null && _account.Authenticated && IsRecoveryPlayer(_account.PlayerId))
+                {
+                    _originalBackground = Application.runInBackground; Application.runInBackground = true;
+                    BeginRecoveryAttempt(); _routine = StartCoroutine(RecoverAccountRoom());
+                }
+                else _account?.SetRoomRecoveryState(true, false, "原副本恢复已暂停，请登录原账号后重试。");
+            }
+            else if (_routine == null && _exitRequested && !ExitNavigationReady && _room != null)
             {
                 _originalBackground = Application.runInBackground; Application.runInBackground = true;
                 _routine = StartCoroutine(ResumePendingMemberExit());
@@ -68,15 +77,22 @@ namespace Game.Multiplayer
             // 应用退出不跨网络等待DELETE；Open大厅由90秒Presence过期回收，运行中由DS Lease裁决。
             // 临时停用时保留尚未确认退出的Replica World；连接已停止，CanAdvance=false。
             // 这样Enable后可查询/原重连，不会留下_inConnectionScene=true却World永久stopped的死路。
-            if (!_exitRequested || _exitHubReady) { OnlineWorldBootstrap.ShutdownActive(); RestoreHub(); }
+            if (HasAccountRecovery)
+            {
+                // 冷恢复保留Player/Run/Room及未决receipt。原生Scene load不可取消，Enable继续等待同一操作。
+                _recoveryAttempt++; _busy = false; RestoreRecoveryMenu();
+                _account?.SetRoomRecoveryState(true, false, "原副本恢复已暂停，请登录原账号后重试。");
+            }
+            else if (!_exitRequested || ExitNavigationReady) { OnlineWorldBootstrap.ShutdownActive(); RestoreHub(); }
             if (_routine != null) Application.runInBackground = _originalBackground; _routine = null;
-            if (!_exitRequested || _exitHubReady) _room = null;
+            if (!HasAccountRecovery && (!_exitRequested || ExitNavigationReady)) _room = null;
         }
         private void OnMatch(DungeonMatchRequestedEvent request)
             => BeginPortalRoom(request.PortalId, request.DestinationKey, false);
         private void OnCommand(OnlineRoomRequestEvent request)
         {
             if (request.PortalId != _portal || _routine == null) return;
+            if (HasAccountRecovery && !_recoveryMenuSuspended && request.Action != OnlineRoomAction.Observe) return;
             if (request.Action == OnlineRoomAction.Observe) { Publish(); return; }
             if (request.Action == OnlineRoomAction.ExitRun || (request.Action == OnlineRoomAction.Cancel || request.Action == OnlineRoomAction.Disconnect)
                 && (_inConnectionScene || _phase == OnlineRoomPhase.Connected || _phase == OnlineRoomPhase.Disconnected))
@@ -202,10 +218,12 @@ namespace Game.Multiplayer
         }
         private IEnumerator Connect()
         {
+            uint attempt = _recoveryAttempt, session = _account.SessionGeneration;
             _phase = OnlineRoomPhase.Connecting; Status("副本已Ready，正在领取一次性入场票…");
             StopConnection(); yield return null; // Destroy延迟到帧末，等旧NetworkManager释放singleton再建新的。
+            if (HasAccountRecovery && !MatchesRecoveryAttempt(attempt, session)) yield break;
             yield return Send("POST", RoomPath("/ticket"), "{}");
-            if (!_success) yield break;
+            if (!_success || HasAccountRecovery && !MatchesRecoveryAttempt(attempt, session)) yield break;
             JoinTicketReply ticket;
             try { ticket = JsonUtility.FromJson<JoinTicketReply>(_body); } catch (ArgumentException) { _code = "InvalidTicketReply"; yield break; }
             _body = null; // 票只留在握手对象中，不写Client存档或UI视图。
@@ -218,17 +236,26 @@ namespace Game.Multiplayer
             if (root.GetComponent<MovementNetworkChannel>() == null) root.AddComponent<MovementNetworkChannel>();
             _manager.Configure(ticket.Port); _auth.ConfigureClient(ticket); _manager.StartClient();
             double deadline = Time.realtimeSinceStartupAsDouble + 12;
-            while (Time.realtimeSinceStartupAsDouble < deadline && NetworkClient.active && !_auth.ClientAuthenticated) yield return _connectionPoll;
+            while (Time.realtimeSinceStartupAsDouble < deadline && NetworkClient.active && _auth != null && !_auth.ClientAuthenticated)
+            {
+                yield return _connectionPoll;
+                if (HasAccountRecovery && !MatchesRecoveryAttempt(attempt, session)) { StopConnection(); yield break; }
+            }
+            if (_auth == null) { _code = "AdmissionFailed"; yield break; }
             if (!_auth.ClientAuthenticated || !NetworkClient.isConnected) { _code = "AdmissionFailed"; StopConnection(); }
             else if (_auth.ClientIdentity == null || !DungeonIdentityRules.Matches(_room.DungeonId, _auth.ClientIdentity.DungeonId))
             { _code = "AdmissionDungeonMismatch"; StopConnection(); }
+            else if (HasAccountRecovery && !RecoveryAdmissionMatches())
+            { _code = "AdmissionIdentityMismatch"; StopConnection(); }
         }
         private IEnumerator Connected()
         {
             // 认证后不再持续HTTP轮询大厅；KCP/副本Heartbeat负责连接，UI离散命令才创建业务请求。
             if (_exitRequested) { _exitServerObserved = false; _exitIntentAttempts = 0; _exitNextIntent = 0; }
-            while (!_exitHubReady)
+            while (!ExitNavigationReady)
             {
+                if (HasAccountRecovery && !RecoveryContextMatches())
+                { _command = OnlineRoomAction.Observe; PauseAccountRecovery("原副本会话已变化，请恢复原账号后重试。"); yield break; }
                 // Enable恢复或HTTP等待中换号都只保留原退出现场，不用B的Session查询/重连A的副本。
                 if (_exitRequested && !MatchesMemberExitPlayer())
                 { _command = OnlineRoomAction.Observe; ShowMemberExitAccountMismatch(); yield return _connectionPoll; continue; }
@@ -244,7 +271,9 @@ namespace Game.Multiplayer
                         yield return ResolveMemberExitReceipt();
                     if (_exitCommitted && _exitProfileAttempts < 3 && now >= _exitNextProfile)
                         yield return PrepareMemberExitHub();
-                    if (_exitHubReady) break;
+                    if (ExitNavigationReady) break;
+                    if (HasAccountRecovery && !_recoveryMenuSuspended && _exitCommitted && _exitProfileAttempts >= 3)
+                    { PauseAccountRecovery("退出已保存，但最新账号资产尚未确认，请重试恢复。"); yield break; }
                 }
                 if (_command == OnlineRoomAction.Reconnect && _phase == OnlineRoomPhase.Disconnected)
                 {
@@ -264,6 +293,7 @@ namespace Game.Multiplayer
                                 EventBus<DungeonOnlineEntryConfirmedEvent>.Publish(new DungeonOnlineEntryConfirmedEvent { PortalId = _portal });
                                 yield return EnterConnectionScene(); _inConnectionScene = true;
                             }
+                            if (HasAccountRecovery && !RecoveryContextMatches()) { StopConnection(); continue; }
                             _phase = OnlineRoomPhase.Connected;
                             if (_exitRequested) { _exitServerObserved = false; _exitIntentAttempts = 0; _exitNextIntent = 0; SendStableMemberExitIntent(); }
                             Status(_exitRequested ? "已重连，继续确认原退出请求。" : "已重新连接同一副本。");
@@ -287,20 +317,29 @@ namespace Game.Multiplayer
             _success = false; _body = _code = null; _httpStatus = 0;
             if (_account == null || !_account.Authenticated) { _code = "SessionUnavailable"; yield break; }
             _busy = true; Publish();
-            _http = _account.CreateSessionRequest(method, path, json);
+            uint session = _account.SessionGeneration, attempt = _recoveryAttempt;
+            bool recoveryRequest = HasAccountRecovery;
+            var request = _account.CreateSessionRequest(method, path, json); _http = request;
             GameLog.Info("房间HTTP：" + method + " " + path, "OnlineRooms"); // 不打印Header/请求体/票。
-            yield return _http.SendWebRequest(); _httpStatus = _http.responseCode; _success = _http.result == UnityWebRequest.Result.Success;
+            yield return request.SendWebRequest();
+            if (session != _account.SessionGeneration || recoveryRequest && !MatchesRecoveryAttempt(attempt, session))
+            {
+                request.Dispose(); if (_http == request) _http = null;
+                _busy = false; _code = "SessionChanged"; yield break;
+            }
+            _httpStatus = request.responseCode; _success = request.result == UnityWebRequest.Result.Success;
             GameLog.Info("房间HTTP完成：" + _httpStatus, "OnlineRooms");
-            _body = _http.downloadHandler.text;
+            _body = request.downloadHandler.text;
             if (!_success && !string.IsNullOrEmpty(_body))
                 try { _code = JsonUtility.FromJson<OnlineErrorReply>(_body)?.Code; } catch (ArgumentException) { _code = "InvalidReply"; }
-            _http.Dispose(); _http = null; _busy = false;
-            if (_httpStatus == 401) _account.InvalidateSession();
+            request.Dispose(); if (_http == request) _http = null; _busy = false;
+            if (_httpStatus == 401) _account.InvalidateSessionIfCurrent(session);
         }
         private bool ReadRoom()
         {
             RoomReply view;
             try { view = JsonUtility.FromJson<RoomReply>(_body); } catch (ArgumentException) { return false; }
+            if (HasAccountRecovery) return TryAcceptRecoveryRoom(view, out var released, out _) && !released;
             if (view == null || view.Members == null || view.Members.Length < 1 || view.Members.Length > 4 || string.IsNullOrEmpty(view.RoomId)) return false;
             if (!_singlePlayerEntry && view.SinglePlayer) return false;
             if (_singlePlayerEntry && (!view.SinglePlayer || view.Members.Length != 1 || _singleEntryCommand == null
@@ -327,7 +366,12 @@ namespace Game.Multiplayer
             if (_code == "BuildNotFound" || _code == "LaunchFailed") return "副本启动失败，资产已恢复，请稍后重试。";
             return _httpStatus == 0 && _code != "AdmissionFailed" ? "业务服不可达，请检查本机服务后重试。" : fallback;
         }
-        private void Status(string text) { _status = text; Publish(); }
+        private void Status(string text)
+        {
+            _status = text;
+            if (HasAccountRecovery) _account.SetRoomRecoveryState(true, true, text);
+            Publish();
+        }
         private void ReleaseChoice(bool close, string text)
         {
             _phase = OnlineRoomPhase.None; _busy = false; _status = text; Publish();
@@ -342,7 +386,10 @@ namespace Game.Multiplayer
             {
                 var m = _room.Members[i]; members[i] = new OnlineRoomMemberView(m.Username, m.PlayerId == _account.PlayerId, m.PlayerId == _room.LeaderPlayerId, m.Ready); allReady &= m.Ready;
             }
-            EventBus<OnlineRoomChangedEvent>.Publish(new OnlineRoomChangedEvent { PortalId = _portal, Phase = _phase, Busy = _busy, Status = _status, RoomId = _room?.RoomId,
+            // 菜单恢复等待与副本ESC互斥；已恢复菜单时不让常驻Dialog的Disconnected分支抢焦点。
+            var publishedPhase = HasAccountRecovery && !_recoveryMenuSuspended
+                && (_phase == OnlineRoomPhase.Disconnected || _phase == OnlineRoomPhase.Connected) ? OnlineRoomPhase.Error : _phase;
+            EventBus<OnlineRoomChangedEvent>.Publish(new OnlineRoomChangedEvent { PortalId = _portal, Phase = publishedPhase, Busy = _busy, Status = _status, RoomId = _room?.RoomId,
                 SinglePlayer = _singlePlayerEntry,
                 Members = members, SelfReady = SelfReady(), CanStart = _room != null && _room.State == "Open" && _room.LeaderPlayerId == _account.PlayerId && allReady,
                 ActorId = ActorId, ConnectionEpoch = ConnectionEpoch, Replies = Replies,
@@ -352,14 +399,20 @@ namespace Game.Multiplayer
         {
             // 暂存据点原Scene与激活位，防止在线往返丢失Scene Preview/尚未保存的单机整备。
             // 内存代价是N2连接期间保留Hub；不读取/上传这些单机对象，不让它们继续模拟。
-            SuspendHub(SceneManager.GetActiveScene());
+            uint attempt = _recoveryAttempt, session = _account.SessionGeneration;
+            if (HasAccountRecovery) SuspendRecoveryMenu(); else SuspendHub(SceneManager.GetActiveScene());
             Time.timeScale = 1; Cursor.lockState = CursorLockMode.None; Cursor.visible = true;
+            if (HasAccountRecovery && _connectionScene.IsValid() && _connectionScene.isLoaded)
+            { SceneManager.SetActiveScene(_connectionScene); yield break; }
 #if UNITY_EDITOR
             var operation = EditorSceneManager.LoadSceneAsyncInPlayMode(_profile.ConnectionScene, new LoadSceneParameters(LoadSceneMode.Additive));
 #else
             var operation = SceneManager.LoadSceneAsync(_profile.ConnectionScene, LoadSceneMode.Additive);
 #endif
+            if (HasAccountRecovery) _recoverySceneLoad = operation;
             if (operation != null) yield return operation;
+            if (HasAccountRecovery && !MatchesRecoveryAttempt(attempt, session)) yield break;
+            _recoverySceneLoad = null;
             _connectionScene = SceneManager.GetSceneByPath(_profile.ConnectionScene); if (_connectionScene.IsValid()) SceneManager.SetActiveScene(_connectionScene);
         }
         // Scene挂起只管理进程内对象的激活位；从异步场景加载中拆出，避免验证生命周期时连接网络或读取资产。

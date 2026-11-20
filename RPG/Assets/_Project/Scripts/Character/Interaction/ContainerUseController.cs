@@ -123,6 +123,15 @@ namespace Game.Character
         public void SubmitUse(ContainerUseKind kind, ulong budget, Vector3 target)
         {
             if (_session?.ReadOnly == null || _definition == null || Time.timeScale <= 0) return;
+            Vector3 initialVelocity=default;
+            if(kind==ContainerUseKind.Pour)
+            {
+                // 单机与DS共用喷口，轨迹末端只留作瞄准预览，真实液体从角色手前飞行。
+                var failure=OnlineContainerTrajectory.PrepareEmission(transform,
+                    _camera!=null?_camera.transform.forward:transform.forward,_definition.PourSpeed,_definition.PourLift,
+                    _trajectoryHits,out target,out initialVelocity);
+                if(failure!=MaterialTransferFailure.None){Reset();return;}
+            }
             string itemId = SelectedThrowableId;
             if (kind == ContainerUseKind.ReleaseSolid)
             {
@@ -138,7 +147,7 @@ namespace Game.Character
             { InventoryId = _session.ReadOnly.InventoryId, WorldId = _worldId, SourceId = _sourceId, ItemId = itemId,
                 Kind = kind, RequestId = ++_sequence, Budget = budget, ExpectedVersion = _session.ReadOnly.Version,
                 ActorPosition = transform.position, TargetPosition = target, Radius = kind==ContainerUseKind.Pour&&ContainsGas(itemId)?_definition.GasDepositRadius:_definition.DepositRadius,
-                ThrowVelocity = ThrowVelocity() });
+                ThrowVelocity = ThrowVelocity(),HasInitialMotion=kind==ContainerUseKind.Pour,InitialVelocity=initialVelocity });
         }
         private void OnPrepareThrow(ContainerThrownEvent command)
         {

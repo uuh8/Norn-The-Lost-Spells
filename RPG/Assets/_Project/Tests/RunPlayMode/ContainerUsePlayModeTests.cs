@@ -119,7 +119,7 @@ namespace Game.Run.Tests
             var assets = new OnlineOwnedAssetSnapshot
             {
                 SchemaVersion = OnlineOwnedAssetSnapshot.CurrentSchemaVersion, ActorId = 1, RunId = "real-world-transfer",
-                PlayerId = "real-world-owner", InventoryId = "real-world-owner-inventory", InventoryVersion = 1,
+                PlayerId = "real-world-owner", InventoryId = "real-world-owner-inventory", InventoryVersion = 1, CurrencyVersion = 1,
                 GameplayConfigHash = definition.GameplayConfigHash, SelectedWandInstanceId = wand,
                 Items = new[]
                 {
@@ -226,12 +226,15 @@ namespace Game.Run.Tests
             _use.SubmitUse(ContainerUseKind.Throw, 0, _collection.transform.position + Vector3.forward);
             yield return new WaitForSeconds(1); var projectile = Find<ThrownContainerProjectile>(); Assert.That(projectile.IsWaiting, Is.True);
             Vector3 point = projectile.transform.position; var liquid = _world.GetComponent<LiquidWorldRuntime>();
-            Vector3Int cell = Vector3Int.FloorToInt((point - liquid.Origin) / liquid.CellSize);
-            // 新投掷落点可能位于格边，必须填满整个投放球涉及的邻格；暂停Solver，防止预填水先流走。
+            // 生产Impact在容量拒绝后会把投放半径从0.75m有界扩到2m。
+            // 旧3×3×3仅填近邻，允许下一次合法重试落到外圈；那不是容量满时丢失在途物品。
+            // 此处填满最大投放球的包围盒，暂停Solver；不修改产品半径、重试或预算。
+            var minimum = Vector3Int.FloorToInt((point - Vector3.one * 2f - liquid.Origin) / liquid.CellSize);
+            var maximum = Vector3Int.FloorToInt((point + Vector3.one * 2f - liquid.Origin) / liquid.CellSize);
             _world.SetSimulationPausedForDebug(true); int filled = 0;
-            for (int z=-1;z<=1;z++) for(int y=-1;y<=1;y++) for(int x=-1;x<=1;x++)
+            for (int z=minimum.z;z<=maximum.z;z++) for(int y=minimum.y;y<=maximum.y;y++) for(int x=minimum.x;x<=maximum.x;x++)
             {
-                var target=cell+new Vector3Int(x,y,z); liquid.TryGetQuantity(target,MaterialId.Water,out uint water);liquid.TryGetQuantity(target,MaterialId.Poison,out uint poison);
+                var target=new Vector3Int(x,y,z); liquid.TryGetQuantity(target,MaterialId.Water,out uint water);liquid.TryGetQuantity(target,MaterialId.Poison,out uint poison);
                 uint free=(uint)liquid.CellCapacityGmu-water-poison;if(free>0&&liquid.TryAddInitial(target,MaterialId.Water,free))filled++;
             }
             Assert.That(filled,Is.GreaterThan(0));
@@ -262,8 +265,25 @@ namespace Game.Run.Tests
         }
         [UnityTest] public IEnumerator ReleasedMixedLiquidAndSolidAppearInActualGameView()
         {
-            Fill(); var poured = new Vector3(1.25f, .25f, .25f);
-            _use.SubmitUse(ContainerUseKind.Pour, 15, poured); Assert.That(_use.LastResult.Success, Is.True);
+            Fill(); var formerTarget = new Vector3(1.25f, .25f, .25f);
+            Vector3 emission=default;int emissions=0;bool committed=false;
+            Action<MaterialWorldDepositRequestedEvent> observe=command=>
+            {
+                var exchange=command.Exchange;if(exchange==null || !exchange.HasInitialMotion)return;
+                emissions++;emission=exchange.Position;committed=exchange.Handled && exchange.Failure==MaterialTransferFailure.None
+                    && exchange.Transferred==15 && exchange.InitialVelocity.sqrMagnitude>0;
+            };
+            EventBus<MaterialWorldDepositRequestedEvent>.Subscribe(observe);
+            try{_use.SubmitUse(ContainerUseKind.Pour,15,formerTarget);}
+            finally{EventBus<MaterialWorldDepositRequestedEvent>.Unsubscribe(observe);}
+            Assert.That(_use.LastResult.Success,Is.True);Assert.That(emissions,Is.EqualTo(1));Assert.That(committed,Is.True);
+            // 此Sandbox明确暂停Solver以隔离库存/显示验证。真实洒出现在从喷口生成，不能继续在旧预览落点找像素。
+            // 使用本次生产事务实际提交的位置，再核对原Store中的Poison量；没有在测试里重写喷口或抛物线公式。
+            var liquid=_world.GridLiquids;var emittedCell=Vector3Int.FloorToInt((emission-liquid.Origin)/liquid.CellSize);
+            Assert.That(liquid.TryGetQuantity(emittedCell,MaterialId.Poison,out uint emittedPoison),Is.True);
+            Assert.That(emittedPoison,Is.EqualTo(5));
+            Vector3 poured=liquid.Origin+((Vector3)emittedCell+Vector3.one*.5f)*liquid.CellSize;
+            Assert.That(Vector3.Distance(emission,formerTarget),Is.GreaterThan(.5f),"材料从实际喷口开始飞行，不能仍瞬移到旧目标。");
             _collection.transform.position = _supply.SolidSamplePosition + new Vector3(0, .5f, -.5f);
             _collection.SubmitSample(_supply.SolidSamplePosition, true, 200);
             var solid = new Vector3(.25f, .25f, 1.25f); _use.SubmitUse(ContainerUseKind.ReleaseSolid, 100, solid); Assert.That(_use.LastResult.Success, Is.True);

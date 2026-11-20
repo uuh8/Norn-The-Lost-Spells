@@ -3,6 +3,7 @@
 #pragma kernel SmoothVertices
 #pragma kernel FinishVertices
 #pragma kernel FinishNormals
+#pragma kernel FinishFlow
 #pragma kernel BuildFaces
 #pragma kernel FinishArguments
 #pragma kernel ClearCounters
@@ -88,7 +89,7 @@ float LocalField(uint page,int3 c,float3 q,out float3 gradient)
     {float value=LocalField(page,c,saturate((p-low)*_Resolution),gradient);p=clamp(p-gradient*value/max(1e-6,dot(gradient,gradient)),low,low+1.0/_Resolution);}
     LocalField(page,c,saturate((p-low)*_Resolution),gradient);
     v.normal=dot(gradient,gradient)>1e-10?-normalize(gradient):v.normal;
-    float swellWeight;CompressGroundProxy(p,v.normal,swellWeight);v.pad=asuint(swellWeight);
+    float swellWeight;CompressGroundProxy(p,v.normal,swellWeight);v.pad=PackSurfaceFlow(float4(swellWeight,0,0,0));
     float4 a,b;MaterialWeights(p,a,b);
     v.position=_OriginSize.xyz+p*_OriginSize.w;v.weights0=HalfPair(a.x,a.y);v.weights=uint3(HalfPair(a.z,a.w),HalfPair(b.x,b.y),HalfPair(b.z,b.w));_Vertices[tid.x]=v;
     // 第二次平滑已结束，复用PositionsB保存最终World Space位置，不新增GPU Buffer。
@@ -122,6 +123,15 @@ float3 QuadNormal(uint page,int3 c,int axis,uint vertexId)
     {int3 edge=c;edge[(axis+1)%3]+=u;edge[(axis+2)%3]+=w;normal+=QuadNormal(page,edge,axis,tid.x);}
     if(dot(normal,normal)>1e-16)vertex.normal=normalize(normal);
     _Vertices[tid.x]=vertex;
+}
+// 细节在几何和Normal完成后独立读取，不与MaterialWeights共用复杂线程私有缓存。
+[numthreads(64,1,1)]void FinishFlow(uint3 tid:SV_DispatchThreadID)
+{
+    uint slots=_CubeSide*_CubeSide*_CubeSide;if(tid.x>=slots*_OwnerCount)return;
+    uint page=tid.x/slots;if(!UpdatePage(page) || (_OwnerKeys[page].w&1073741824)!=0)return;
+    PrepareAlpha(page);SurfaceVertex vertex=_Vertices[tid.x];if(vertex.valid<=0)return;
+    float3 flow=SurfaceFlow((vertex.position-_OriginSize.xyz)/_OriginSize.w);
+    vertex.pad=(vertex.pad&255u)|(PackSurfaceFlow(float4(0,flow))&0xffffff00u);_Vertices[tid.x]=vertex;
 }
 void Face(uint page,int3 c,int axis)
 {

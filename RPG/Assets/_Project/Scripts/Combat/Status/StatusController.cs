@@ -520,8 +520,8 @@ namespace Game.Combat
 
         private void EnsureVfx(StatusKind kind)
         {
-            // VFX 只在状态首次激活时 Instantiate；不会在每个 Tick 重复创建。
-            if (_replicaPresentationRetired) return;
+            // DS保留状态、反应与DoT裁决，只跳过纯表现Instantiate；单机和Replica仍沿既有状态生命周期显示。
+            if (_execution.Mode == CombatExecutionMode.Authority || _replicaPresentationRetired) return;
             int index = ToIndex(kind);
             if (_vfxInstances[index] != null)
                 return;

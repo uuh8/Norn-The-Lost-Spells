@@ -29,6 +29,10 @@ namespace Game.Rendering
         private float _clock;
         private int _tick;
         private uint _injected;
+        private ulong _collected,_beforeCollection,_afterCollection;
+        private int _pourRequests;
+        private readonly ElementChunkKey[] _collectionKeys=new ElementChunkKey[64];
+        private ushort[] _collectionQuantities;
         public int Tick=>_tick;
         public bool CanCapture=>_renderer!=null && !_renderer.IsPresentationPending;
         public void SetOpaque(bool value)=>_renderer.SetValidationOpaque(value);
@@ -49,6 +53,9 @@ namespace Game.Rendering
             var original=AssetDatabase.LoadAssetAtPath<LiquidWorldProfile>("Assets/_Project/ScriptableObjects/ElementField/Liquids/LiquidWorldProfile_P7_DemoRun_Grid.asset");
             bool lakes=kind.StartsWith("lake",StringComparison.Ordinal);
             bool wide=kind=="wide" || kind=="wide-cpu" || kind=="air-wide",platform=kind=="platform";
+            bool airFall=kind.StartsWith("air-fall",StringComparison.Ordinal);
+            bool groundFlow=kind=="ground-flow" || kind=="collection";
+            bool pourStream=kind=="pour-stream";
             _profile=Instantiate(original);JsonUtility.FromJsonOverwrite("{\"_maximumChunks\":64,\"_maximumActiveCells\":2048,\"_maximumCellsPerTick\":256,\"_maximumStableRegions\":8,\"_maximumStableRegionCells\":4096,\"_maximumStableSurfacePatches\":512,\"_enableAutoStableDetection\":false}",_profile);
             _behaviors=new LiquidBehaviorProfile[original.MaterialCount];
             for(int i=0;i<_behaviors.Length;i++){_behaviors[i]=Instantiate(original.GetMaterial(i));if(kind=="same" || kind=="contact")typeof(LiquidBehaviorProfile).GetField("_relativeDensity",Fields).SetValue(_behaviors[i],1f);}
@@ -65,6 +72,7 @@ namespace Game.Rendering
             }
             if(lakes){floor.transform.position=origin+new Vector3(19,-.25f,9);floor.transform.localScale=new Vector3(42,.5f,22);Physics.SyncTransforms();}
             if(wide || platform){floor.transform.position=origin+new Vector3(3,-.25f,3);floor.transform.localScale=new Vector3(12,.5f,12);}
+            if(pourStream){floor.transform.position=origin+new Vector3(4,-.25f,2);floor.transform.localScale=new Vector3(16,.5f,12);}
             if(platform)
             {
                 _receiver=GameObject.CreatePrimitive(PrimitiveType.Cube);_receiver.name="Temporary Overflow Platform";
@@ -80,7 +88,27 @@ namespace Game.Rendering
             _renderProfile=Instantiate(renderOriginal);
             if(kind=="bulk-calibrated")JsonUtility.FromJsonOverwrite("{\"_cartoonCrownStrength\":0.15}",_renderProfile);
             _renderer=gameObject.AddComponent<GridLiquidFieldSurfaceRenderer>();_renderer.ConfigureForValidation(_source,_renderProfile);
-            if(lakes)
+            if(pourStream)
+            {
+                // 初始第0份先进入真实Pending；之后按固定Tick继续排入同一路径，
+                // 不用TryAddInitial在空中堆一串静态格子假装喷射，也不提前把量放在地面落点。
+                EnqueuePourStream();
+            }
+            else if(airFall)
+            {
+                // 与历史air-wide静态截图不同：wake=true进入真实Solver，随后每0.1s推进，
+                // GPU每帧仍消费原History。这一组专门观察空中下落、跨格与接地展开。
+                var material=kind=="air-fall-sticky"?MaterialId.Sticky:MaterialId.Water;
+                for(int y=10;y<12;y++)for(int z=3;z<5;z++)for(int x=3;x<5;x++)
+                {if(!_source.TryAddInitial(new Vector3Int(x,y,z),material,255,true))throw new InvalidOperationException("动态空中夹具注入失败。");_injected+=255;}
+            }
+            else if(groundFlow)
+            {
+                for(int z=2;z<6;z++)for(int x=2;x<6;x++)
+                {if(!_source.TryAddInitial(new Vector3Int(x,0,z),MaterialId.Water,128,true))throw new InvalidOperationException("动态地面夹具注入失败。");_injected+=128;}
+                _collectionQuantities=new ushort[_source.ChunkSize*_source.ChunkSize*_source.ChunkSize*_source.MaterialCount];
+            }
+            else if(lakes)
             {
                 var footprint=new bool[16*16];int wet=0;
                 for(int z=0;z<16;z++)for(int x=0;x<16;x++)if((x-7.5f)*(x-7.5f)+(z-7.5f)*(z-7.5f)<56.25f){footprint[x+16*z]=true;wet++;}
@@ -142,6 +170,19 @@ namespace Game.Rendering
             if(toe){center=origin+new Vector3(3+2*Mathf.Cos(angle*Mathf.Deg2Rad),.3f,1.75f);cameraObject.transform.position=center+new Vector3(3.5f,1.7f,-3.8f);cameraObject.transform.LookAt(center);_camera.fieldOfView=40;}
             if(lakes){center=origin+new Vector3(19,1.5f,9);cameraObject.transform.position=center+new Vector3(-18,28,-28);cameraObject.transform.LookAt(center);_camera.fieldOfView=55;}
             if(wide || platform){center=origin+new Vector3(3,platform?1:kind=="air-wide"?2.2f:.25f,3);cameraObject.transform.position=center+new Vector3(-6,2.4f,-7);cameraObject.transform.LookAt(center);_camera.fieldOfView=45;}
+            if(airFall)
+            {
+                // 初始格为Y=10/11、CellSize=.5m，液团顶端约6m。镜头同时容纳这段高度与地板，
+                // 再留出速度拉伸/表面核的边距；不能只拍到被裁掉一半的水便算“有像素”。
+                center=origin+new Vector3(2,3,2);
+                cameraObject.transform.position=center+new Vector3(-6,2,-7.5f);cameraObject.transform.LookAt(center);_camera.fieldOfView=45;
+            }
+            if(pourStream)
+            {
+                // 同一固定镜头包含喷口、(4,2,0)m/s的抛射段与地面摊开区。
+                center=origin+new Vector3(4,1.8f,2.25f);
+                cameraObject.transform.position=center+new Vector3(-6,2.5f,-8);cameraObject.transform.LookAt(center);_camera.fieldOfView=45;
+            }
             _target=new RenderTexture(1280,720,24,RenderTextureFormat.ARGB32);_target.Create();_camera.targetTexture=_target;_camera.enabled=true;
             if(kind=="thin-cpu" || kind=="wide-cpu")JsonUtility.FromJsonOverwrite("{\"_fineViews\":0}",_renderProfile);
         }
@@ -159,7 +200,37 @@ namespace Game.Rendering
             if(_kind=="platform" && _source.TryAddInitial(_inlet,MaterialId.Water,510,true))_injected+=510;
             if((_kind.StartsWith("slope",StringComparison.Ordinal) || _kind.StartsWith("join",StringComparison.Ordinal)) && _tick%3==0 && _injected<6120 && _source.TryAddInitial(_inlet,MaterialId.Water,170,true))_injected+=170;
             if(_kind=="lake-contact" && _tick==15 && _source.TryAddInitial(_inlet,MaterialId.Poison,510,true))_injected+=510;
+            if(_kind=="collection" && _tick==12)CollectHalfForPresentation();
+            if(_kind=="pour-stream" && _tick<=20 && _tick%2==0)EnqueuePourStream();
             _source.Step(.1f);
+        }
+        private void EnqueuePourStream()
+        {
+            const ushort amount=256;
+            var request=new ElementWriteRequest(_source.Origin+new Vector3(1.25f,3.25f,2.25f),
+                MaterialId.Water,amount,.12f,false,new Vector3(4,2,0));
+            if(!_source.TryEnqueueDeposit(in request))throw new InvalidOperationException("持续洒出夹具的真实Pending注入被拒绝。");
+            _injected+=amount;_pourRequests++;
+        }
+        private void CollectHalfForPresentation()
+        {
+            // 此夹具验证收量后GPU壳失效，不替代F输入/库存权限验收；使用真实TryConsume，
+            // 不直接改Renderer样本。固定Key快照避免移除最后一格时迭代器变化。
+            _beforeCollection=_source.TotalQuantity;
+            int count=_source.CopyLiquidChunkKeys(_collectionKeys),k=_source.ChunkSize;
+            int materialSlot=-1;for(int m=0;m<_source.MaterialCount;m++)if(_source.GetLiquidMaterial(m)==MaterialId.Water){materialSlot=m;break;}
+            if(materialSlot<0)throw new InvalidOperationException("采集夹具缺少Water材料。");
+            for(int page=0;page<count && page<_collectionKeys.Length;page++)
+            {
+                var key=_collectionKeys[page];_source.CopyPresentationChunkQuantities(key,_collectionQuantities);
+                for(int i=0;i<k*k*k;i++)
+                {
+                    var cell=new Vector3Int(key.X*k+i%k,key.Y*k+i/k%k,key.Z*k+i/(k*k));
+                    uint amount=(uint)(_collectionQuantities[i*_source.MaterialCount+materialSlot]/2);
+                    if(amount>0 && _source.TryConsume(cell,MaterialId.Water,amount))_collected+=amount;
+                }
+            }
+            _afterCollection=_source.TotalQuantity;
         }
         public void Capture(string suffix="")
         {
@@ -168,7 +239,7 @@ namespace Game.Rendering
             File.WriteAllBytes("Temp/ElementPerformance/continuous-lab-"+_kind+suffix+".png",texture.EncodeToPNG());RenderTexture.active=previous;DestroyImmediate(texture);
             var data=new SerializedObject(_renderer);
             var result=new Result{Utc=DateTime.UtcNow.ToString("O"),Case=_kind,Ready=_renderer.IsReady,CpuFallback=_renderer.CpuFallback,Overflow=data.FindProperty("_capacityOverflow").boolValue,
-                Injected=_injected,Quantity=_source.TotalQuantity,GpuBytes=_renderer.GpuAllocatedBytes,GcBytes=data.FindProperty("_gcBytes").longValue,Pages=_renderer.SurfacePages,Tick=_tick,
+                Injected=_injected,Quantity=_source.TotalQuantity,Collected=_collected,BeforeCollection=_beforeCollection,AfterCollection=_afterCollection,GpuBytes=_renderer.GpuAllocatedBytes,GcBytes=data.FindProperty("_gcBytes").longValue,Pages=_renderer.SurfacePages,Tick=_tick,
                 CaptureMs=data.FindProperty("_captureMilliseconds").floatValue,Alpha=_renderer.InterpolationAlpha,Device=SystemInfo.graphicsDeviceName,TimeScale=Time.timeScale,CrownStrength=_renderProfile.CartoonCrownStrength,VolumeScale=_renderProfile.CartoonVolumeScale};
             result.StableQuantity=_source.StableQuantity;result.StableRegions=_source.StableRegionCount;result.ActiveCells=_source.ActiveCellCount;result.ResidentChunks=_source.ResidentChunkCount;
             result.DisplayLagMs=data.FindProperty("_displayLagMilliseconds").floatValue;result.FallbackReason=_renderer.FallbackReason;
@@ -264,7 +335,7 @@ namespace Game.Rendering
         }
         [Serializable]private sealed class Input{public Vector3Int Cell;public bool Previous,Ground,Solid;public uint Quantity;public Vector4 Terrain;public Vector3 Offset,Velocity;public float Scale;}
         [Serializable]private sealed class FieldProbe{public Vector3 Position;public float Cpu,Gpu;}
-        [Serializable]private sealed class Result{public string Utc,Case,Device,FallbackReason;public bool Ready,CpuFallback,Overflow,SupportValid;public uint Injected;public ulong Quantity,StableQuantity,ReceivedOnFloor;public long GpuBytes,GcBytes;public int Pages,Tick,StableRegions,ActiveCells,ResidentChunks,PaletteCount,DropPaletteCount,CpuPaletteCount,SmallDrops,Subdivision,Triangles,CpuBuildFrames;public Vector4[] Palette,DropPalette,CpuPalette;public float CaptureMs,Alpha,DisplayLagMs,TimeScale,CrownStrength,VolumeScale,MaximumFieldError;public double FieldMeshVolume,CpuBuildMs;public Vector3 SupportNormal,MeshMinimum,MeshMaximum;public Input[] Inputs;public FieldProbe[] FieldSlice;}
+        [Serializable]private sealed class Result{public string Utc,Case,Device,FallbackReason;public bool Ready,CpuFallback,Overflow,SupportValid;public uint Injected;public ulong Quantity,StableQuantity,ReceivedOnFloor,Collected,BeforeCollection,AfterCollection;public long GpuBytes,GcBytes;public int Pages,Tick,StableRegions,ActiveCells,ResidentChunks,PaletteCount,DropPaletteCount,CpuPaletteCount,SmallDrops,Subdivision,Triangles,CpuBuildFrames;public Vector4[] Palette,DropPalette,CpuPalette;public float CaptureMs,Alpha,DisplayLagMs,TimeScale,CrownStrength,VolumeScale,MaximumFieldError;public double FieldMeshVolume,CpuBuildMs;public Vector3 SupportNormal,MeshMinimum,MeshMaximum;public Input[] Inputs;public FieldProbe[] FieldSlice;}
     }
 }
 

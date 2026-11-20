@@ -217,6 +217,31 @@ namespace Game.Run
             Version++; return OnlineInventoryCommandFailure.None;
         }
 
+        /// <summary>
+        /// 仅分类“另一件地面物品进入现有收纳空间”，不授予拾取权限，也不准备/取消任何资源。
+        /// 已提交的法术 Graph 可以等待命中很久；这段寿命不应独占整个背包。真正的 Prepare 锁、
+        /// 版本、距离、WorldOwner、占格和资格仍由原 Pickup/双 Store 事务裁决。
+        /// 特别排除自动装备背包及插卡/换装备：它们会改变当前施法依赖，不能沿此例外放行。
+        /// </summary>
+        internal bool IsStoragePickup(OnlineOwnedWorkspace owner, in OnlineInventoryCommandIntent intent)
+        {
+            if (_disposed || owner == null || (intent.Kind != OnlineInventoryCommandKind.PickupItem
+                && intent.Kind != OnlineInventoryCommandKind.PickupContainer) || string.IsNullOrEmpty(intent.ItemId)
+                || !_store.TryGet(intent.ItemId, out var item) || !_store.Catalog.TryGetRules(item.ContentId, out var rules)
+                || item.EntryBoundBackpack || rules.Kind == ItemKind.Backpack) return false;
+            bool generic = intent.Kind == OnlineInventoryCommandKind.PickupItem;
+            if (!generic && rules.Kind != ItemKind.Container && rules.Kind != ItemKind.Material) return false;
+            // 普通法术 F 沿原规则优先进入自己的专区；专区满时仍由原算法尝试包内空位。
+            if (intent.AutoPlace && rules.Kind == ItemKind.Spell) return true;
+            if (generic && !intent.AutoPlace && intent.TargetLocationKind == (int)ItemLocationKind.SpellStorage)
+                return rules.Kind == ItemKind.Spell;
+            foreach (var entry in owner.OwnershipStore)
+                if (entry.Location.Kind == ItemLocationKind.EquippedBackpack && entry.Location.OwnerId == owner.PlayerId)
+                    return intent.AutoPlace || intent.TargetBackpackId == entry.Item.InstanceId
+                        && intent.TargetLocationKind == (generic ? (int)ItemLocationKind.Backpack : 0);
+            return false;
+        }
+
         public OnlineInventoryCommandFailure Pickup(OnlineOwnedWorkspace owner, in OnlineInventoryCommandIntent intent, Vector3 actorPosition)
             => Pickup(owner, intent, actorPosition, out _);
 

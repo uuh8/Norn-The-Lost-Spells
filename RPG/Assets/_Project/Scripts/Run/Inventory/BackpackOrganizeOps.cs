@@ -38,6 +38,9 @@ namespace Game.Run
             foreach(var group in groups)
             {
                 bool placed=false;
+                // 屏幕左上对应网格(0,0)：先填当前行左侧，再向右、向下一行寻找合法空位。
+                // 同一原点先试原朝向；分类/ContentId的稳定排序让同类连续入位，宽物仍按真实占格检测。
+                // 只改候选布局；任何物品放不下都保留原库存，不产生半次整理或资源丢失。
                 for(int y=0;y<bagRules.BackpackHeight&&!placed;y++)for(int x=0;x<bagRules.BackpackWidth&&!placed;x++)for(int turn=0;turn<4&&!placed;turn++)
                 {
                     int rotation=(group.First.Location.QuarterTurns+turn)%4;

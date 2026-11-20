@@ -777,12 +777,27 @@ namespace Game.Project.Editor
         private static bool IsOwnedObject(string name) => name == "WorldItemSpawnPoint" || name == "WorldItemPickup" ||
             name == "WorldCurrencyPickup" || name == "SpellRewardPickup" || name == "DungeonFinalRewardPickup";
         private static bool AllowedWorld(MonoBehaviour value) => value is ArenaGate || value is OnlineDungeonWorldBindings || value is OnlineHomeWorldBindings ||
-            value is OnlineDungeonReturnBindings || IsControlledReturnPresentation(value) || value is OnlineDungeonEnvironment || value is NavMeshSurface || value is NavMeshModifier || value is NavMeshModifierVolume ||
+            value is OnlineDungeonReturnBindings || IsControlledReturnPresentation(value) || IsControlledPortalBillboard(value)
+            || value is OnlineDungeonEnvironment || value is NavMeshSurface || value is NavMeshModifier || value is NavMeshModifierVolume ||
             value is Volume || value is UniversalAdditionalLightData || value is OnlineMaterialWorldBinding ||
             value is ElementWorldRuntime || value is ElementFieldSolidBaker || value is ElementWorldExposureSystem ||
             value is LiquidWorldRuntime || value is FixedSolidWorldRuntime || value is GasWorldRuntime ||
             value is MaterialEnvironmentAuthoring || value is ContainerDepositAdapter || value is MaterialInventoryTransferAdapter ||
             IsMaterialRenderer(value.GetType().FullName) || value.GetType().FullName == "Game.Rendering.ReactionBurstVisualController";
+
+        private static bool IsControlledPortalBillboard(MonoBehaviour value)
+        {
+            // 不能因为Billboard是表现脚本就全图放行；仅允许原返回门下不含Collider的视觉后代。
+            // 明确排除门根自身，防止朝相机旋转时连带改变Box权限、动态门权威Pose或传送落点。
+            if (!(value is WorldSpaceLabelBillboard) || value.GetComponentsInChildren<Collider>(true).Length != 0) return false;
+            var home = value.GetComponentInParent<OnlineHomeWorldBindings>(true);
+            if (home != null && IsPortalVisualChild(value.transform, home.ReturnPortalTransform)) return true;
+            var dungeon = value.GetComponentInParent<OnlineDungeonReturnBindings>(true);
+            return dungeon != null && IsPortalVisualChild(value.transform, dungeon.PortalTransform);
+        }
+
+        private static bool IsPortalVisualChild(Transform visual, Transform portal)
+            => portal != null && visual != portal && visual.IsChildOf(portal);
 
         private static bool IsMaterialRenderer(string name) => name == "Game.Rendering.GridLiquidFieldSurfaceRenderer"
             || name == "Game.Rendering.LiquidSurfaceRenderer" || name == "Game.Rendering.StableLiquidSurfaceRenderer"

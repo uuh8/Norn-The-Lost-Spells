@@ -36,6 +36,7 @@ namespace Game.UI
         private bool _onlineEnabled, _onlineHasReceipt, _displayedHasAttachment, _displayedAttachmentEnabled;
         private string _displayedAttachmentContainer;
         private ulong _displayedAttachmentDose;
+        private const string AccountAttachmentHelp = "据点仅展示已确认的供料配置；请进入实验场，在背包中设置或清除法术附着。";
         /// <summary>
         /// 线上必须沿原Controller的显式Source；空Source也不能借保留的Hub Session冒充线上资产。
         /// 单机仍允许原场景直接装配_session，不改变原配置/供料事件链。
@@ -122,7 +123,12 @@ namespace Game.UI
             _displayedAttachmentContainer = _displayedHasAttachment ? item.Attachment.ContainerId : null;
             _displayedAttachmentDose = _displayedHasAttachment ? item.Attachment.Dose : 0;
             _displayedAttachmentEnabled = _displayedHasAttachment && item.Attachment.Enabled;
-            _apply.interactable = _clear.interactable = card;
+            // 账号Hub没有附着编辑HTTP命令；只读Profile可展示设置，却不能借旧Session写入。
+            // 明确区分“有卡可看”和“当前上下文可编辑”，保留实验场DS的原配置入口。
+            bool accountHub = source is IAccountInventoryCommandContext;
+            _apply.interactable = _clear.interactable = card && !accountHub;
+            _sources.interactable = _dose.interactable = !accountHub;
+            if (accountHub) _feedback.text = AccountAttachmentHelp;
             _description.text = !card ? "在法杖或仓库中点击一份产出法术，再设置供料。"
                 : item.DisplayName + (item.Attachment == null ? " · 附着关闭" : " · 每次产出请求 " + item.Attachment.Dose + " GMU") + "\n不足则部分附着；空瓶或失效来源仍可施基础法术。";
             _description.font = _feedback.font = _inventory.UiFont;
@@ -139,6 +145,7 @@ namespace Game.UI
         public void Submit(string card, string source, ulong dose, bool enabled)
         {
             if (Source is IOnlineInventoryCommandContext) { SubmitOnline(card, source, dose, enabled); return; }
+            if (Source is IAccountInventoryCommandContext) { _feedback.text = AccountAttachmentHelp; return; }
             if (_inventory != null && _inventory.PresentationIsReadOnly) return;
             var read = _session?.ReadOnly; if (read == null) return;
             EventBus<SpellAttachmentRequestedEvent>.Publish(new SpellAttachmentRequestedEvent { InventoryId = read.InventoryId,

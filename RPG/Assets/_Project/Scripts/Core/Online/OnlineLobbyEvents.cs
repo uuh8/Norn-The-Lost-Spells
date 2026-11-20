@@ -66,6 +66,10 @@ namespace Game.Core
     public struct OnlineLobbyChangedEvent : IGameEvent
     {
         public bool Busy, Authenticated;
+        // 只读导航状态，不包含Run资产或授予进入权；实际恢复仍由账户/房间Owner执行。
+        public bool HasActiveRun, RecoveryPending;
+        // 主菜单实际拥有导航时抑制常驻副本Dialog；Observe重放此值，不把Busy或资产锁当作输入焦点。
+        public bool RecoveryMenuVisible;
         public string Status, Username, PlayerId;
         public uint Version;
         public long Gold;

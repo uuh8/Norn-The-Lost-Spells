@@ -13,7 +13,9 @@ namespace Game.Run.Tests
     /// <summary>作者外框保持不动；动态槽必须在内框内居中，横滚不能丢掉真实容量。</summary>
     public sealed class InventoryTrayLayoutPlayModeTests : BackpackWorkspacePlayModeTests
     {
-        protected override string EvidencePath=>"TestResults/SinglePlayer/M6-T16-LayoutPerformance";
+        // 每轮独立保留截图/Profiler证据，不能覆盖历史阶段结果；不改变Profile或测试断言。
+        private readonly string _evidencePath = "TestResults/UiAudit/InventoryTrayLayoutPlayModeTests/" + System.DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffZ") + "-" + System.Guid.NewGuid().ToString("N");
+        protected override string EvidencePath => _evidencePath;
         private static T Ref<T>(Object target,string field) where T:Object=>new SerializedObject(target).FindProperty(field).objectReferenceValue as T;
         private void EnterWarehouse()
         {var area=Ref<HubAreaVolume>(Find<HubInteractionController>(),"_warehouseArea");Player.CharacterController.enabled=false;Player.enabled=false;Player.transform.position=area.Center;Physics.SyncTransforms();}
@@ -22,7 +24,9 @@ namespace Game.Run.Tests
             EnterWarehouse();Warehouse.OpenWarehouse();yield return null;
             var view=Warehouse.GetComponentInChildren<WandInventoryView>();var stats=Ref<Text>(view,"_stats");
             Assert.That(stats.text,Does.Not.Contain("\n"),"所有现有属性横排，由 Text 根据可用宽度自然换行");
-            foreach(var value in new[]{"Mana","冷却","保护","恢复","蓝耗"})Assert.That(stats.text,Does.Contain(value));
+            // M6-T20已明确取消保护数量，改为区分本次解释器蓝耗与槽内合计；仍验证横排与完整资源信息。
+            foreach(var value in new[]{"Mana","冷却","恢复","本次预估蓝耗","槽内合计"})Assert.That(stats.text,Does.Contain(value));
+            Assert.That(stats.text,Does.Not.Contain("保护"));
             Assert.That(Warehouse.GetComponentsInChildren<ToolbeltSlotView>(true),Is.Empty,"不能恢复作者删除的独立道具栏");
             yield return new WaitForEndOfFrame();Capture("warehouse-horizontal-stats.png");
         }

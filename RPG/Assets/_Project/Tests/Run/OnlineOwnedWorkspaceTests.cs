@@ -2373,6 +2373,53 @@ namespace Game.Run.Tests
             Assert.That(Property<bool>(owner, "ResearchOpen"), Is.False); Assert.That(owner.InventoryVersion, Is.EqualTo(7));
         }
 
+        [TestCase(false)] [TestCase(true)]
+        public void ClosedHomeBackpackCanMoveItsOwnSpellOutAndBackWithoutOpeningResearch(bool bindResearchOutside)
+        {
+            var owner = Create(Seed(12));
+            if (bindResearchOutside) ConfigureResearch(owner, () => false);
+            var before = State(owner);
+            var remove = new OnlineInventoryCommandIntent
+            {
+                CommandId = 1, ConnectionEpoch = 7, ExpectedInventoryVersion = owner.InventoryVersion,
+                Kind = OnlineInventoryCommandKind.PlaceCard, ItemId = "card", SourceWandId = "wand",
+                SourceProgramRevision = (uint)before.Program.Revision, ToSpellStorage = true, TargetSlot = 1
+            };
+            var removed = owner.ExecuteInventoryCommand(remove);
+            Assert.That(removed.Success, Is.True, "紧凑背包编辑自己的卡不要求先打开研究台：" + removed.Failure);
+            var afterRemove = State(owner);
+            var insert = new OnlineInventoryCommandIntent
+            {
+                CommandId = 2, ConnectionEpoch = 7, ExpectedInventoryVersion = owner.InventoryVersion,
+                Kind = OnlineInventoryCommandKind.PlaceCard, ItemId = "card", TargetWandId = "wand",
+                TargetProgramRevision = (uint)afterRemove.Program.Revision, TargetSlot = 2
+            };
+            var inserted = owner.ExecuteInventoryCommand(insert);
+            Assert.That(inserted.Success, Is.True, inserted.Failure.ToString());
+            Assert.That(owner.TryGetItem("card", out var card), Is.True);
+            Assert.That(card.RemainingCharges, Is.EqualTo(12));
+            Assert.That(State(owner).Mana, Is.EqualTo(before.Mana));
+            Assert.That(owner.ResearchOpen, Is.False, "普通背包编辑不能偷偷开启研究会话或暂停世界。");
+            Assert.That(owner.WorldActionsAllowed, Is.True);
+        }
+
+        [Test]
+        public void ClosedHomeBackpackStillRejectsStaleVersionAndForeignSpell()
+        {
+            var owner = Create(Seed()); ConfigureResearch(owner, () => false);
+            var move = new OnlineInventoryCommandIntent
+            {
+                CommandId = 1, ConnectionEpoch = 7, ExpectedInventoryVersion = owner.InventoryVersion + 1,
+                Kind = OnlineInventoryCommandKind.PlaceCard, ItemId = "card", SourceWandId = "wand",
+                SourceProgramRevision = (uint)State(owner).Program.Revision, ToSpellStorage = true, TargetSlot = 1
+            };
+            Assert.That(owner.ExecuteInventoryCommand(move).Failure, Is.EqualTo(OnlineInventoryCommandFailure.StaleVersion));
+            move.CommandId = 2; move.ExpectedInventoryVersion = owner.InventoryVersion; move.ItemId = "another-player-card";
+            Assert.That(owner.ExecuteInventoryCommand(move).Failure, Is.EqualTo(OnlineInventoryCommandFailure.NotOwned));
+            Assert.That(owner.InventoryVersion, Is.EqualTo(7));
+            Assert.That(owner.TryGetItem("card", out var card), Is.True); Assert.That(card.RemainingCharges, Is.EqualTo(10));
+        }
+
         [Test] public void OpenResearchBlocksWorldMutationButKeepsOriginalStructuralCardEditing()
         {
             var owner = Create(Seed()); bool inside = true; ConfigureResearch(owner, () => inside);

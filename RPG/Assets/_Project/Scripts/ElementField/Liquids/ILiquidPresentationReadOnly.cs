@@ -21,4 +21,14 @@ namespace Game.ElementField
         float GetPresentationBaseHeight(Vector3Int cell);
         bool TryGetRecentPresentationDeposit(out Vector3 position);
     }
+
+    /// <summary>
+    /// 可选的只读材料占据事实。环境Collider的粗格OR只表示“可能碰到边缘”，不能证明格中心有地板；
+    /// 真实冰等整格材料则由数量定义阻挡，允许数量已提交而Collider尚未发布的窗口继续支撑液体。
+    /// 此能力不创建Collider、不唤醒Chunk、不推进模拟，也不把Rendering变成材料数量Owner。
+    /// </summary>
+    public interface ILiquidPresentationSolidSource
+    {
+        bool IsLogicalSolidForPresentation(Vector3Int cell);
+    }
 }

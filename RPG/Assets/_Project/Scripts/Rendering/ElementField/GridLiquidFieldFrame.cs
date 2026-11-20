@@ -26,10 +26,17 @@ namespace Game.Rendering
         private Vector3Int _querySpan,_lastCell;
         private int _lastIndex;
         private bool _queryReady,_lastCellReady;
-        // 同一粗格内的细节点/投影会反复查询同一个175格邻域。只缓存非空候选，
+        // 同一粗格内的细节点/投影会反复查询同一邻域（静水175格，快流按QueryReach扩展）。只缓存非空候选，
         // 保持原y/z/x及Previous/Current顺序；跳过空气不会改变浮点累加、密度或混色。
-        private readonly Vector3Int[] _queryCells=new Vector3Int[175];
-        private readonly byte[] _queryPhases=new byte[175];
+        // 合法Offset每轴最多4格，塑形水平内收最多再加1格；Warp长度≤6，
+        // 空中外壳横半径≤1.45×1.6=2.32，因此ceil(4+1+6+2.32)=14。
+        // 只预留最大候选容量，正常遍历仍取逐轴QueryReach，静水仍是2/3/2。
+        private const int MaximumQueryReach=14;
+        private const int MaximumQuerySide=MaximumQueryReach*2+1;
+        private const int MaximumQueryCells=MaximumQuerySide*MaximumQuerySide*MaximumQuerySide;
+        private readonly Vector3Int[] _queryCells=new Vector3Int[MaximumQueryCells];
+        private readonly byte[] _queryPhases=new byte[MaximumQueryCells];
+        internal Vector3Int QueryReach {get;private set;}=new Vector3Int(2,3,2);
         private Vector3Int _queryCenter;
         private bool _queryCellsReady;
 #if UNITY_EDITOR
@@ -81,13 +88,19 @@ namespace Game.Rendering
         { _fallingRows=new int[Math.Max(1,capacity)]; }
         private readonly Body[] _bodies;
         private readonly float[] _domes;
+        private readonly float[] _materialSurfaceTension=new float[8];
+        private bool _useMaterialSurfaceTension;
+        private bool _useGroundContactCaps;
+        private int _groundContactReservations;
         private struct Body
         {
             public int Count,Quantity,MaximumFreeQuantity,MaximumQuantity;
             public Vector2 Moment,Center;
             public Vector4 Extents;
-            public float Scale,Height,EffectiveCount,HeightWeight,MeanFill;
+            public float Scale,Height,EffectiveCount,HeightWeight,MeanFill,TensionWeight,DomeStrength;
+            public bool HasGround;
             public bool HasStable;
+            public bool FlatContact,ContactCap;
         }
         public readonly int[] Groups = new int[8];
         public readonly MaterialId[] Materials;
@@ -106,7 +119,12 @@ namespace Game.Rendering
         public int GroupCount => _source.DensityGroupCount;
         public float CrownStrength { get; }
         public float CartoonVolumeScale {get;}
-        public float Interval => Mathf.Max(.001f, _source.TransportInterval);
+        // Interval属于这份Packed快照。CPU分帧期间Source可安装新窗口，不能让旧位置/速度改用新dt。
+        public float Interval { get; private set; }
+        public float FallGravity { get; private set; }
+        public float FallTerminalVelocity { get; private set; }
+        public ulong PlaybackWindowId { get; private set; }
+        public uint PlaybackRevision { get; private set; }
         private int K => _source.ChunkSize;
         public int ChunkEdge=>K;
         private int Cells => K * K * K;
@@ -117,7 +135,8 @@ namespace Game.Rendering
             _snapshotOnly=snapshotOnly;
             CrownStrength=Mathf.Clamp01(crownStrength);
             CartoonVolumeScale=Mathf.Lerp(1,Mathf.Clamp(cartoonVolumeScale,1,2.5f),Mathf.SmoothStep(0,1,Mathf.InverseLerp(.15f,.8f,CrownStrength)));
-            _source = source; _pages = new Dictionary<ElementChunkKey, int>(inputCapacity);
+            _source = source; Interval = Mathf.Max(.001f, source.TransportInterval);
+            _pages = new Dictionary<ElementChunkKey, int>(inputCapacity);
             // CPU宽核会反复读取同一湿格；按快照缓存数量加权姿态，避免每节点反复Half解码。
             // 空行不入表，满表则直接计算；固定容量在初始化预留，不能在回退热路径扩容。
             _maximumRowMotion=Mathf.Max(128,Mathf.Min(131072,source.MaximumActiveTransportCells*2));
@@ -152,6 +171,14 @@ namespace Game.Rendering
             _currentPatches = new StableLiquidSurfacePatch[_previousPatches.Length];
         }
         public int GetGroup(int materialSlot) => Groups[materialSlot];
+        internal void ConfigureMaterialSurfaceTension(GridLiquidFieldRenderProfile profile)
+        {
+            // 装配时冻结显示参数，CPU分帧构建不重读可变Profile；不为每帧创建配置数组。
+            _useMaterialSurfaceTension=profile!=null && profile.UseMaterialSurfaceTension;
+            _useGroundContactCaps=profile!=null && profile.UseGroundContactCaps;
+            if(_useGroundContactCaps)GridLiquidGroundContactShape.Warm();
+            for(int i=0;i<MaterialCount;i++)_materialSurfaceTension[i]=profile!=null?profile.GetSurfaceTension(Materials[i]):0;
+        }
         public static ElementChunkKey Key(Vector3Int c, int k) => new ElementChunkKey(GridLiquidFieldGpuLayout.FloorDiv(c.x, k),
             GridLiquidFieldGpuLayout.FloorDiv(c.y, k), GridLiquidFieldGpuLayout.FloorDiv(c.z, k));
         private int Index(Vector3Int c)
@@ -172,7 +199,7 @@ namespace Game.Rendering
         {
             // 一个场采样点最多涉及12个Chunk，和GPU一样先缓存页槽。
             // 随后数百次邻格读取只做整数寻址；同格的材料/地形/支撑复用最后一个地址。
-            var c=Vector3Int.FloorToInt((p-Origin)/CellSize);var min=Key(c-new Vector3Int(2,3,2),K);var max=Key(c+new Vector3Int(2,3,2),K);
+            var c=Vector3Int.FloorToInt((p-Origin)/CellSize);var min=Key(c-QueryReach,K);var max=Key(c+QueryReach,K);
             var span=new Vector3Int(max.X-min.X+1,max.Y-min.Y+1,max.Z-min.Z+1);
             if(span.x*span.y*span.z>_querySlots.Length)_queryReady=false;
             else if(!_queryReady || !min.Equals(_queryMinimum) || span!=_querySpan)
@@ -183,7 +210,7 @@ namespace Game.Rendering
             }
             if(_queryCellsReady && c==_queryCenter)return;
             _queryCellsReady=true;_queryCenter=c;QueryCellCount=0;
-            for(int y=c.y-3;y<=c.y+3;y++)for(int z=c.z-2;z<=c.z+2;z++)for(int x=c.x-2;x<=c.x+2;x++)
+            for(int y=c.y-QueryReach.y;y<=c.y+QueryReach.y;y++)for(int z=c.z-QueryReach.z;z<=c.z+QueryReach.z;z++)for(int x=c.x-QueryReach.x;x<=c.x+QueryReach.x;x++)
             {
                 var cell=new Vector3Int(x,y,z);int index=Index(cell);if(index<0)continue;
                 int row=index*MaterialCount;byte phases=0;
@@ -227,12 +254,19 @@ namespace Game.Rendering
         {int i=Index(c);return i>=0 && ((previous?Previous:Current)[i*MaterialCount].QuantityFlags&2097152u)!=0;}
         internal bool StableInput(Vector3Int c,bool previous)
         {int i=Index(c);return i>=0 && ((previous?Previous:Current)[i*MaterialCount].QuantityFlags&4194304u)!=0;}
+        // 高圆冠档的bit3不再编码低档Crown，复用它保存靠固体的自由行约束。
+        // 约束在Capture时冻结，后续CPU构建不会向已经推进的活世界查询Collider。
+        internal bool AllowsAirStretch(Vector3Int c,bool previous)
+        {int i=Index(c);return i>=0 && ((previous?Previous:Current)[i*MaterialCount].QuantityFlags&524288u)==0;}
         private Vector3Int CellAt(int index)
         {var key=Keys[index/Cells];int local=index%Cells;return new Vector3Int(key.X*K+local%K,key.Y*K+local/K%K,key.Z*K+local/(K*K));}
         private int FindBody(int index)
         {int root=index;while(_parents[root]!=root)root=_parents[root];while(index!=root){int next=_parents[index];_parents[index]=root;index=next;}return root;}
         private bool SupportsConnect(int a,int b,Vector3Int delta,GridLiquidPackedCell[] data)
         {
+            // 自然档把自由液舌与接地水面分别塑形：两者仍属于同一个GMU世界，
+            // 只是不能把地面的低张力横向铺展套给空中截面，或把空气长柱的圆冠抬到水滩上。
+            if(_useMaterialSurfaceTension && ((data[a*MaterialCount].QuantityFlags^data[b*MaterialCount].QuantityFlags)&65536u)!=0)return false;
             if((data[a*MaterialCount].QuantityFlags&65536u)==0 || (data[b*MaterialCount].QuantityFlags&65536u)==0)return true;
             Vector4 ta=Terrains[a],tb=Terrains[b];
             // 比较两平面在中点的高度：同一陡坡跨整数Y行可以连接，上下独立平台保持分开。
@@ -340,6 +374,19 @@ namespace Game.Rendering
                 int root=FindBody(i);var motion=ReadRowMotionAtIndex(i,previous);int q=(int)motion.Quantity;
                 var c=CellAt(i);Vector2 p=new Vector2(c.x+.5f,c.z+.5f)+new Vector2(motion.OffsetCells.x,motion.OffsetCells.z);
                 ref var b=ref _bodies[root];b.Moment+=p*q;b.Quantity+=q;
+                uint inputFlags=data[i*MaterialCount].QuantityFlags;var plane=Terrains[i];
+                bool flat=(inputFlags&196608u)==196608u && Mathf.Abs(plane.x)<.0001f && Mathf.Abs(plane.z)<.0001f && plane.y>.9999f;
+                if(b.Count==0)b.FlatContact=flat;
+                else b.FlatContact&=flat && Mathf.Abs(plane.w-Terrains[root].w)<.0001f;
+                // Dome归一化尚未开始，暂借HeightWeight记录本体最大只读Warp半径；后面归零。
+                // 不能只检查静止球冠脚印，否则有横向速度的两相位仍可能把新实例推过邻墙。
+                if(_useGroundContactCaps && flat)b.HeightWeight=Mathf.Max(b.HeightWeight,Mathf.Min(6,motion.VelocityWorld.magnitude*Interval/CellSize));
+                // 同一行另一相位仍有自由液体时不改其模式，保留既有落地/离地过渡。
+                var other=previous?Current:Previous;uint otherFlags=other[i*MaterialCount].QuantityFlags;
+                if((otherFlags&65536u)==0)for(int material=0;material<MaterialCount;material++)if((other[i*MaterialCount+material].QuantityFlags&65535u)!=0)b.FlatContact=false;
+                b.HasGround|=(data[i*MaterialCount].QuantityFlags&65536u)!=0;
+                if(_useMaterialSurfaceTension)for(int material=0;material<MaterialCount;material++)
+                    b.TensionWeight+=(data[i*MaterialCount+material].QuantityFlags&65535u)*_materialSurfaceTension[material];
                 b.HasStable|=(data[i*MaterialCount].QuantityFlags&4194304u)!=0;
                 b.MaximumQuantity=Mathf.Max(b.MaximumQuantity,q);
                 if((data[i*MaterialCount].QuantityFlags&65536u)==0)b.MaximumFreeQuantity=Mathf.Max(b.MaximumFreeQuantity,q);
@@ -362,15 +409,27 @@ namespace Game.Rendering
                 b.MeanFill=fill;
                 // 天然湖泊由Stable水位控制；动态大水团不能仅因跨度/总量较大就退出塑形。
                 // XY收拢仍限制在1格内，避免用扩大175邻格搜索范围换取厚度。
-                float art=b.HasStable?0:1;
-                float scale=Mathf.Sqrt(fill/Mathf.Max(fill,GridLiquidFieldSampler.MapHeight(fill,CrownStrength)));
+                bool naturalGround=_useMaterialSurfaceTension && b.HasGround;
+                float tension=naturalGround?b.TensionWeight/Mathf.Max(1,b.Quantity):1;
+                float art=b.HasStable?0:tension;
+                // 自然地面水不再以四次根为目标高度收缩到一小团；只把少量视觉张力
+                // 插入旧圆冠曲线，水≈1倍footprint、黏液仍适度聚团，真实量不变。
+                float scale=Mathf.Sqrt(fill/Mathf.Max(fill,GridLiquidFieldSampler.MapHeight(fill,_useMaterialSurfaceTension?.8f:CrownStrength)));
                 float reach=Mathf.Max(Mathf.Max(b.Center.x-b.Extents.x,b.Extents.z-b.Center.x),Mathf.Max(b.Center.y-b.Extents.y,b.Extents.w-b.Center.y));
                 scale=Mathf.Max(.4f,Mathf.Max(scale,Mathf.Max(1-1/Mathf.Max(1,reach),Mathf.Sqrt((float)b.MaximumFreeQuantity/(Capacity*1.25f)))));
                 b.Scale=Mathf.RoundToInt(Mathf.Lerp(1,Mathf.Min(1,scale),art)*255)/255f;
+                b.DomeStrength=naturalGround?tension:1;
                 float physical=fill/(b.Scale*b.Scale)*(1+.15f*Mathf.Clamp01((1-b.Scale)/.6f));
                 // 额外艺术高度最多0.8格。合并深液柱不能机械乘1.8后越过纵向3行查询范围；
                 // 深柱也收回宏观Dome，保留真实主体高度与全部GMU，浅液团共用明确的显示倍率。
                 b.Height=b.HasStable?physical:Mathf.Min(physical*CartoonVolumeScale,physical+Mathf.Min(.8f,CartoonVolumeScale-1));
+                // 只在已有实例预算预留成功后排除连续场。此时仍只是Frame副本；Store每格量、
+                // History、碰撞与ACK不变。大池/深水/Stable/坡面保持原场，不把整张地图聚成水球。
+                if(_useGroundContactCaps && UsesFallingDrops && b.FlatContact && !b.HasStable && b.Count<=4 && b.Quantity<=65535
+                    && fill<.7f && b.Extents.z-b.Extents.x<=1.01f && b.Extents.w-b.Extents.y<=1.01f
+                    && _fallingRowCount+_groundContactReservations<_fallingRows.Length && ContactCapHasClearance(in b,Terrains[i].w,b.HeightWeight))
+                {b.ContactCap=true;_groundContactReservations++;}
+                b.HeightWeight=0;
             }
             // 宽水团增加整个主体的圆冠，而不是只卷起最外侧一条边。
             // 数量加权归一化使鼓起中心和低肩互相补偿，不能让加一个Dome再次增加整团体积。
@@ -392,11 +451,55 @@ namespace Game.Rendering
                     // 避免极小尾格与富液格在重分配时把整个圆冠拉成一排起伏台阶。
                     bool uniform=(old.QuantityFlags&65536u)!=0 && !b.HasStable;
                     if(uniform)pose.y=b.Height*_domes[i]*b.Quantity/Mathf.Max(1,b.HeightWeight);
-                    data[i*MaterialCount+m]=GridLiquidPackedCell.Pack(new LiquidCellPresentationSample(s.Quantity,offset:pose,velocity:s.VelocityWorld),(old.QuantityFlags>>16)&71u);
+                    data[i*MaterialCount+m]=GridLiquidPackedCell.Pack(new LiquidCellPresentationSample(s.Quantity,offset:pose,velocity:s.VelocityWorld),(old.QuantityFlags>>16)&79u);
                     data[i*MaterialCount+m].QuantityFlags|=metadata|(uniform?2097152u:0u);
                 }
             }
+            FoldGroundContactBodies(data,workRows);
             _lastCellReady=false;
+        }
+        private void FoldGroundContactBodies(GridLiquidPackedCell[] data,int workRows)
+        {
+            // 小连通体合成一份既有实例；不是一格一滴。先按GMU合并材料与真实速度，再放到
+            // 原数量加权质心。只清本Frame同相位的子行，Previous/Current仍分别保留独立数量。
+            for(int work=0;work<workRows;work++)
+            {
+                int i=BodyRow(work);if(_parents[i]<0)continue;int root=FindBody(i);
+                if(i==root || !_bodies[root].ContactCap)continue;
+                for(int material=0;material<MaterialCount;material++)
+                {
+                    var a=data[root*MaterialCount+material].Decode();var b=data[i*MaterialCount+material].Decode();uint quantity=a.Quantity+b.Quantity;
+                    if(quantity>0)data[root*MaterialCount+material]=GridLiquidPackedCell.Pack(new LiquidCellPresentationSample(quantity,Vector3.zero,(a.VelocityWorld*a.Quantity+b.VelocityWorld*b.Quantity)/quantity),0);
+                    data[i*MaterialCount+material]=default;
+                }
+            }
+            for(int work=0;work<workRows;work++)
+            {
+                int root=BodyRow(work);if(_parents[root]<0 || !_bodies[root].ContactCap)continue;
+                var body=_bodies[root];var cell=CellAt(root);int code=Mathf.RoundToInt(Mathf.Clamp01(body.TensionWeight/Mathf.Max(1,body.Quantity))*255);
+                uint flags=135u|((uint)code<<8); // Ground/Solid/动态来源/实例 + 8bit材料接触角；不是field Scale。
+                Vector3 offset=new Vector3(body.Center.x-cell.x-.5f,0,body.Center.y-cell.z-.5f);
+                for(int material=0;material<MaterialCount;material++)
+                {var row=data[root*MaterialCount+material].Decode();data[root*MaterialCount+material]=GridLiquidPackedCell.Pack(new LiquidCellPresentationSample(row.Quantity,offset,row.VelocityWorld),flags);}
+            }
+        }
+        private bool ContactCapHasClearance(in Body body,float floor,float warp)
+        {
+            int code=Mathf.RoundToInt(Mathf.Clamp01(body.TensionWeight/Mathf.Max(1,body.Quantity))*255)+1;
+            float radius=GridLiquidGroundContactShape.Radius(body.Quantity*CellSize*CellSize*CellSize*CartoonVolumeScale/Capacity,code);
+            float k=GridLiquidGroundContactShape.HeightRatio(code),foot=radius*Mathf.Sqrt(k*(2-k))/CellSize+warp+.05f;
+            int minX=Mathf.FloorToInt(body.Center.x-foot),maxX=Mathf.FloorToInt(body.Center.x+foot);
+            int minZ=Mathf.FloorToInt(body.Center.y-foot),maxZ=Mathf.FloorToInt(body.Center.y+foot);
+            int minY=Mathf.FloorToInt((floor-Origin.y)/CellSize+.0001f),maxY=Mathf.FloorToInt((floor-Origin.y+radius*k)/CellSize);
+            // 固定最多7×7×3个只读格。极端可信参数/高速需要更宽域时保原Field，不能无界扫描。
+            if(maxX-minX>6 || maxZ-minZ>6 || maxY-minY>2)return false;
+            for(int y=minY;y<=maxY;y++)for(int z=minZ;z<=maxZ;z++)for(int x=minX;x<=maxX;x++)
+            {
+                float dx=Mathf.Max(x-body.Center.x,Mathf.Max(0,body.Center.x-x-1)),dz=Mathf.Max(z-body.Center.y,Mathf.Max(0,body.Center.y-z-1));
+                if(dx*dx+dz*dz>foot*foot)continue;
+                if(_source.IsSolidForSurface(new Vector3Int(x,y,z)))return false;
+            }
+            return true;
         }
         private int BodyRow(int work)=>_sparseBodyRows?_bodyRows[work]:work;
         private int ShapeRow(int work)=>_sparseShapeRows?_shapeRows[work]:work;
@@ -409,7 +512,8 @@ namespace Game.Rendering
             float crown=Mathf.Max(0,1-.5f*r2);
             float wide=Mathf.SmoothStep(0,1,Mathf.InverseLerp(4,8,Mathf.Max(body.Extents.z-body.Extents.x,body.Extents.w-body.Extents.y)));
             float shape=Mathf.Lerp(Mathf.Max(.55f,1.3f-.3f*r2),.25f+1.35f*crown*crown,wide);
-            return body.MeanFill<=.5f?shape:Mathf.Lerp(shape,1,Mathf.SmoothStep(0,1,Mathf.InverseLerp(.5f,1,body.MeanFill)));
+            shape=body.MeanFill<=.5f?shape:Mathf.Lerp(shape,1,Mathf.SmoothStep(0,1,Mathf.InverseLerp(.5f,1,body.MeanFill)));
+            return Mathf.Lerp(1,shape,body.DomeStrength);
         }
         private void RebuildShapedBounds()
         {
@@ -424,24 +528,45 @@ namespace Game.Rendering
                 var motion=ReadRowMotionAtIndex(i,phase==0);amount=motion.Quantity;
                 float q=amount;Vector3 offset=motion.OffsetCells,velocity=motion.VelocityWorld;var c=CellAt(i);uint flags=data[i*MaterialCount].QuantityFlags;
                 bool ground=(flags&65536u)!=0;float scale=(flags&1048576u)!=0?Mathf.Max(.4f,(flags>>24)/255f):1;
-                Vector3 start=(Vector3)c+Vector3.one*.5f+offset,end=start+Vector3.ClampMagnitude(velocity*(Interval*(phase==0?1:-1))/CellSize,3);
-                Vector3 min=Vector3.Min(start,end),max=Vector3.Max(start,end);float radius=GridLiquidFieldSampler.KernelRadius*scale;
+                float gravity=GridLiquidFlightInterpolation.Gravity(Terrains[i],ground);
+                Vector3 start=(Vector3)c+Vector3.one*.5f+offset,end=start+GridLiquidFlightInterpolation.WarpCells(velocity,gravity,Interval,phase==0?1:-1,CellSize);
+                Vector3 axes=!ground && (flags&524288u)==0?GridLiquidFlowPresentation.AirAxes(velocity,Interval,CellSize):Vector3.one;
+                Vector3 min=Vector3.Min(start,end),max=Vector3.Max(start,end);float radiusX=GridLiquidFieldSampler.KernelRadius*scale*axes.x,radiusZ=GridLiquidFieldSampler.KernelRadius*scale*axes.z;
                 Vector4 terrain=Terrains[i];Vector2 slope=ground?new Vector2(-terrain.x,-terrain.z)/Mathf.Max(.25f,terrain.y):Vector2.zero;
                 float real=(flags&2097152u)!=0?offset.y:q/Capacity/(scale*scale)*(1+.15f*Mathf.Clamp01((1-scale)/.6f))*((flags&4194304u)!=0?1:CartoonVolumeScale);
+                if(!ground)real*=axes.y;
                 // Bounds按最终收拢姿态重算；旧的未收拢圆核会多分配许多空页，挤掉r3预算。
                 // 用r2代理作为保守上界，包含两个Warp端点、坡面高差、隐藏底壳和一个细格Halo。
                 float proxy=Mathf.Max(.8f*(1+Mathf.Abs(slope.x)+Mathf.Abs(slope.y)),real);
                 // Bounds须覆盖采样代理，而不只是压回后的真实厚度；陡坡仍使用厚代理。
                 if(ground && slope.sqrMagnitude<.0625f)proxy=Mathf.Max(1.6f,real);
                 if(!ground)proxy=Mathf.Max(1.6f,real);
+                if(!ground)ExpandMotionQuery(offset,velocity,new Vector3(radiusX,proxy*.5f,radiusZ));
                 float f0=ground?(terrain.w-Origin.y)/CellSize+Vector2.Dot(slope,new Vector2(start.x-c.x-.5f,start.z-c.z-.5f)):start.y-proxy*.5f;
                 float f1=ground?(terrain.w-Origin.y)/CellSize+Vector2.Dot(slope,new Vector2(end.x-c.x-.5f,end.z-c.z-.5f)):end.y-proxy*.5f;
-                float reach=radius*(Mathf.Abs(slope.x)+Mathf.Abs(slope.y));
-                min.x-=radius+.25f;min.z-=radius+.25f;max.x+=radius+.25f;max.z+=radius+.25f;
-                min.y=Mathf.Min(f0,f1)-reach-.25f-.02f/CellSize;max.y=Mathf.Max(f0,f1)+reach+proxy+.25f;
+                float reach=radiusX*Mathf.Abs(slope.x)+radiusZ*Mathf.Abs(slope.y);
+                min.x-=radiusX+.25f;min.z-=radiusZ+.25f;max.x+=radiusX+.25f;max.z+=radiusZ+.25f;
+                // 二阶轨迹可能在窗口内越过上升顶点；两个端点包围盒额外覆盖0.5*g*dt²的保守余量。
+                float accelerationPad=Mathf.Min(GridLiquidFlightInterpolation.MaximumWarpCells,.5f*gravity*Interval*Interval/CellSize);
+                min.y=Mathf.Min(f0,f1)-reach-.25f-.02f/CellSize-accelerationPad;max.y=Mathf.Max(f0,f1)+reach+proxy+.25f+accelerationPad;
                 int page=i/Cells;var box=new Bounds((min+max)*.5f,max-min);
                 if(_hasBounds[page])_bounds[page].Encapsulate(box);else{_bounds[page]=box;_hasBounds[page]=true;}
             }
+        }
+        private void ExpandMotionQuery(Vector3 offset,Vector3 velocity,Vector3 margin)
+        {
+            // 查询范围由已冻结的Offset、同一有界Warp及外壳半径决定。只扩大Bounds而仍
+            // 扫描旧175格会漏掉高速喷流的Previous端，形成方形裁断；静水仍保留2/3/2。
+            Vector3 warp=velocity*(Interval/CellSize);
+            float limit=GridLiquidFlightInterpolation.MaximumWarpCells;
+            float accelerationPad=Mathf.Min(limit,.5f*FallGravity*Interval*Interval/CellSize);
+            // 先逐轴取绝对上界，再限制到位移球半径。不能先Clamp速度整向量：
+            // 极端上抛中重力抵消Y位移后，实际X位移可能比那个提前缩短的X分量更大。
+            warp=new Vector3(Mathf.Min(limit,Mathf.Abs(warp.x)),Mathf.Min(limit,Mathf.Abs(warp.y)+accelerationPad),Mathf.Min(limit,Mathf.Abs(warp.z)));
+            var old=QueryReach;
+            QueryReach=new Vector3Int(Mathf.Max(old.x,Mathf.Min(MaximumQueryReach,Mathf.CeilToInt(Mathf.Abs(offset.x)+warp.x+margin.x))),
+                Mathf.Max(old.y,Mathf.Min(MaximumQueryReach,Mathf.CeilToInt(Mathf.Abs(offset.y)+warp.y+margin.y))),
+                Mathf.Max(old.z,Mathf.Min(MaximumQueryReach,Mathf.CeilToInt(Mathf.Abs(offset.z)+warp.z+margin.z))));
         }
         private bool Add(ElementChunkKey key, bool owner)
         {
@@ -498,12 +623,20 @@ namespace Game.Rendering
         public void Capture(MaterialPresentationView view=null)
         {
             if(_snapshotOnly)throw new InvalidOperationException("CPU snapshot must copy a committed shaped frame.");
+            var playback = _source as ILiquidPresentationPlaybackSource;
+            PlaybackRevision = playback != null ? playback.PresentationRevision : 0;
+            PlaybackWindowId = playback != null ? playback.PresentationWindowId : 0;
+            Interval = Mathf.Max(.001f, _source.TransportInterval);
+            float sourceGravity=(_source as ILiquidPresentationDynamicsSource)?.FallGravity??0;
+            FallGravity=float.IsFinite(sourceGravity)?Mathf.Max(0,sourceGravity):0;
+            float terminal=(_source as ILiquidPresentationDynamicsSource)?.FallTerminalVelocity??0;
+            FallTerminalVelocity=float.IsFinite(terminal)?Mathf.Max(0,terminal):0;
             _rowMotion.Clear();
             _wetRowCount=0;_sparseShapeRows=false;
             _queryReady=_lastCellReady=_queryCellsReady=false;
             var swap = _previousPatches; _previousPatches = _currentPatches; _currentPatches = swap;
             _previousPatchCount = _currentPatchCount; _currentPatchCount = _source.CopyAllStableSurfacePatches(_currentPatches);
-            _pages.Clear();_ownerSet.Clear();Array.Clear(_hasBounds,0,_hasBounds.Length); Count = OwnerCount = 0; Overflow = Animated = false;
+            _pages.Clear();_ownerSet.Clear();Array.Clear(_hasBounds,0,_hasBounds.Length); Count = OwnerCount = 0; Overflow = Animated = false;QueryReach=new Vector3Int(2,3,2);
             Epoch = _source.TransportEpoch;
             int live = _source.CopyLiquidChunkKeys(_sourceKeys);
             SelectionSignature=ViewSignature(view);CulledSourcePages=0;
@@ -613,16 +746,46 @@ namespace Game.Rendering
                         if(_wetRowCount<_shapeRows.Length)_shapeRows[_wetRowCount]=index;
                         _wetRowCount++;
                     }
-                    bool supported = total > 0 && (_source.IsSolidForSurface(c + Vector3Int.down) || _source.GetTotalFill(c + Vector3Int.down) >= .999f);
+                    Vector3Int below=c+Vector3Int.down;
+                    bool solidBelow=_source.IsSolidForSurface(below);
+                    LiquidTerrainSupport support=default;
+                    bool solidSupport=(total>0 || oldTotal>0) && solidBelow && _source.TryGetTerrainSupportForPresentation(c,out support);
+                    // 粗Solid只保证碰撞保守，不能证明格中心存在平面。坡沿外Raycast失败时继续按自由液体显示，
+                    // 否则默认cell底高会制造悬空水平薄板，并让顶/底闭壳法线在一条Triangle上反向。
+                    // 逻辑冰等材料保留数量先于Collider的合法支撑；旧只读夹具无此能力时保留原fallback合同。
+                    bool logicalSolid=solidBelow && (!(_source is ILiquidPresentationSolidSource logical) || logical.IsLogicalSolidForPresentation(below));
+                    bool resolvedSolid=solidSupport || logicalSolid;
+                    bool supported = total > 0 && (resolvedSolid || _source.GetTotalFill(below) >= .999f);
                     // Stable虚拟边界格也有支撑；其底部由稀疏Patch/固定纵向格定义。
                     uint stableBelow=0;for(int m=0;m<MaterialCount;m++)stableBelow+=StableQuantity(c+Vector3Int.down,Materials[m],false);
                     supported |= total > 0 && stableBelow >= Capacity;
-                    bool oldSupported = oldTotal > 0 && (supported || _source.IsSolidForSurface(c + Vector3Int.down));
+                    bool oldSupported = oldTotal > 0 && (supported || resolvedSolid);
                     Vector4 terrain = new Vector4(0, 1, 0, Origin.y + c.y * CellSize);
-                    LiquidTerrainSupport support=default;
-                    bool solidSupport=(supported || oldSupported) && _source.TryGetTerrainSupportForPresentation(c, out support);
                     if (solidSupport) terrain = new Vector4(support.Normal.x, support.Normal.y, support.Normal.z, support.Height);
                     else if (supported || oldSupported) terrain.w = _source.GetPresentationBaseHeight(c);
+                    bool adjacentSolid=(!supported || !oldSupported) &&
+                        (_source.IsSolidForSurface(c+Vector3Int.left) || _source.IsSolidForSurface(c+Vector3Int.right) ||
+                         _source.IsSolidForSurface(c+Vector3Int.up) || _source.IsSolidForSurface(c+Vector3Int.down) ||
+                         _source.IsSolidForSurface(c+Vector3Int.forward) || _source.IsSolidForSurface(c+Vector3Int.back));
+                    bool blockStretch=CrownStrength>.15f && adjacentSolid;
+                    // 自由行不读取Terrain Normal，复用其Y通道为负重力标记，保持现有GPU stride。
+                    // 有支撑或邻近固体的行仍保留真实Normal/旧安全路径；不能让二阶修正越过地板或墙。
+                    if(!supported && !oldSupported && !adjacentSolid && FallGravity>0)
+                    {
+                        float rowGravity=FallGravity;
+                        var a=ReadRowMotionAtIndex(index,true);var b=ReadRowMotionAtIndex(index,false);
+                        if(a.Quantity>0 && b.Quantity>0)
+                        {
+                            // 同格两端可以直接量出实际加速度；恒速/冻结样本不会被再施加重力。
+                            rowGravity=Mathf.Clamp((a.VelocityWorld.y-b.VelocityWorld.y)/Interval,0,FallGravity);
+                        }
+                        else if(FallTerminalVelocity>0 && Mathf.Max(-a.VelocityWorld.y,-b.VelocityWorld.y)>=FallTerminalVelocity-FallGravity*Interval-.001f)
+                        {
+                            // 跨格只保有一个端点，临近终速时无法证明整Tick仍有g；保守采用原线性路径。
+                            rowGravity=0;
+                        }
+                        if(rowGravity>0)terrain.y=-rowGravity;
+                    }
                     Terrains[index] = terrain;
                     for (int m = 0; m < MaterialCount; m++)
                     {
@@ -633,6 +796,7 @@ namespace Game.Rendering
                         // 满格液体能支撑上层数量，但不属于Collider；压缩外壳时只能约束真实地板。
                         if(solidSupport){Current[index*MaterialCount+m].QuantityFlags|=131072u;Previous[index*MaterialCount+m].QuantityFlags|=131072u;}
                         Current[index*MaterialCount+m].QuantityFlags|=262144u;Previous[index*MaterialCount+m].QuantityFlags|=262144u;
+                        if(blockStretch){Current[index*MaterialCount+m].QuantityFlags|=524288u;Previous[index*MaterialCount+m].QuantityFlags|=524288u;}
                         // 所有数量都保留在统一场中；自由液体也不分配独立圆球Draw路径。
                     }
                     // 圆冠模式会按最终收拢形状重算Bounds；旧姿态Bounds随后被全部清除，无需先做一遍。
@@ -644,12 +808,14 @@ namespace Game.Rendering
                             Vector3 offset=Vector3.zero,velocity=Vector3.zero;
                             for(int m=0;m<MaterialCount;m++){var sample=(phase==0?Previous:Current)[index*MaterialCount+m].Decode();offset+=sample.OffsetCells*sample.Quantity;velocity+=sample.VelocityWorld*sample.Quantity;}
                             offset/=amount;velocity/=amount;
-                            Vector3 start=(Vector3)c+Vector3.one*.5f+offset,end=start+Vector3.ClampMagnitude(velocity*(Interval*(phase==0?1:-1))/CellSize,3);
                             bool ground=phase==0?oldSupported:supported;
+                            float gravity=GridLiquidFlightInterpolation.Gravity(terrain,ground);
+                            Vector3 start=(Vector3)c+Vector3.one*.5f+offset,end=start+GridLiquidFlightInterpolation.WarpCells(velocity,gravity,Interval,phase==0?1:-1,CellSize);
                             float floor=(terrain.w-Origin.y)/CellSize,slope=1.45f*(Mathf.Abs(terrain.x)+Mathf.Abs(terrain.z))/Mathf.Max(.25f,terrain.y);
                             Vector3 min=Vector3.Min(start,end),max=Vector3.Max(start,end);
                             if(ground){min.y=floor+Mathf.Min(offset.y,offset.y+end.y-start.y)-slope;max.y=floor+Mathf.Max(offset.y,offset.y+end.y-start.y)+slope+MapHeightForBounds(amount/Capacity);min.x-=1.45f;min.z-=1.45f;max.x+=1.45f;max.z+=1.45f;min.y-=.7f;max.y+=.7f;}
-                            else{min-=Vector3.one*1.3f;max+=Vector3.one*1.3f;}
+                            else{min-=Vector3.one*1.3f;max+=Vector3.one*1.3f;
+                                float pad=Mathf.Min(GridLiquidFlightInterpolation.MaximumWarpCells,.5f*gravity*Interval*Interval/CellSize);min.y-=pad;max.y+=pad;ExpandMotionQuery(offset,velocity,Vector3.one*1.3f);}
                             var box=new Bounds((min+max)*.5f,max-min);if(_hasBounds[page])_bounds[page].Encapsulate(box);else{_bounds[page]=box;_hasBounds[page]=true;}
                         }
                     }
@@ -662,7 +828,7 @@ namespace Game.Rendering
 #if UNITY_EDITOR
                 _sparseShapeRows&=!_validationFullRowScan;
 #endif
-                using(CrownMarker.Auto()){MergeSupportedColumns(Previous);MergeSupportedColumns(Current);RebuildFallingRows();ShapeBodies(Previous);ShapeBodies(Current);}
+                using(CrownMarker.Auto()){MergeSupportedColumns(Previous);MergeSupportedColumns(Current);RebuildFallingRows();ShapeBodies(Previous);ShapeBodies(Current);AppendGroundContactRows();}
                 // 原始姿态已被共同圆冠改写；清掉该批缓存，再由Bounds预热最终姿态给CPU宽核复用。
                 _rowMotion.Clear();
                 using(BoundsMarker.Auto())RebuildShapedBounds();
@@ -706,7 +872,7 @@ namespace Game.Rendering
         }
         private void RebuildFallingRows()
         {
-            _fallingRowCount=0;if(!UsesFallingDrops)return;
+            _fallingRowCount=0;_groundContactReservations=0;if(!UsesFallingDrops)return;
             int rows=ShapeWorkRows;
             // 复用 Capture 已收集的湿格索引；多块静止水和空气不能因几滴雨水新增全世界逐格扫描。
             for(int work=0;work<rows;work++)for(int m=0;m<MaterialCount;m++)
@@ -744,6 +910,17 @@ namespace Game.Rendering
             }
             return true;
         }
+        private void AppendGroundContactRows()
+        {
+            // SelectGpuDomain按page/row升序用双指针压紧，不能把低页cap接到高页air后面。
+            // 两相位湿行本身按原线性地址收集，重建union仍O(wetRows)，无Sort、分配或空气全扫。
+            _fallingRowCount=0;
+            for(int work=0;work<ShapeWorkRows;work++)
+            {
+                int row=ShapeRow(work);uint a=Previous[row*MaterialCount].QuantityFlags,b=Current[row*MaterialCount].QuantityFlags;
+                if(((a|b)&SmallAirFlag)!=0)_fallingRows[_fallingRowCount++]=row;
+            }
+        }
         internal int CopyFallingDrops(float alpha,GridLiquidSmallDrop[] destination)
         {
             alpha=Mathf.Clamp01(alpha);int count=0;
@@ -778,10 +955,20 @@ namespace Game.Rendering
             var a=old?ReadRowMotionAtIndex(index,true):default;var b=now?ReadRowMotionAtIndex(index,false):default;
             Vector3 center=(Vector3)CellAt(index)+Vector3.one*.5f;
             var motion=new GridLiquidFallingMotion{PreviousCenter=Origin+(center+a.OffsetCells)*CellSize,CurrentCenter=Origin+(center+b.OffsetCells)*CellSize,
-                PreviousVelocity=a.VelocityWorld,CurrentVelocity=b.VelocityWorld};
+                PreviousVelocity=a.VelocityWorld,CurrentVelocity=b.VelocityWorld,
+                PreviousGravity=Terrains[index].y<0?-Terrains[index].y:0,CurrentGravity=Terrains[index].y<0?-Terrains[index].y:0};
+            bool oldContact=old && (Previous[index*MaterialCount].QuantityFlags&65536u)!=0,nowContact=now && (Current[index*MaterialCount].QuantityFlags&65536u)!=0;
+            uint oldTotal=0,nowTotal=0;
+            for(int m=0;m<MaterialCount;m++){if(old)oldTotal+=Previous[index*MaterialCount+m].QuantityFlags&65535u;if(now)nowTotal+=Current[index*MaterialCount+m].QuantityFlags&65535u;}
+            if(oldContact){motion.PreviousCenter.y=Terrains[index].w;motion.PreviousTotal=oldTotal;motion.PreviousContactCode=(Previous[index*MaterialCount].QuantityFlags>>24)+1;}
+            if(nowContact){motion.CurrentCenter.y=Terrains[index].w;motion.CurrentTotal=nowTotal;motion.CurrentContactCode=(Current[index*MaterialCount].QuantityFlags>>24)+1;}
             for(int m=0;m<MaterialCount;m++)
             {
                 uint previous=old?(Previous[index*MaterialCount+m].QuantityFlags&65535u):0,current=now?(Current[index*MaterialCount+m].QuantityFlags&65535u):0;
+                // 自由滴仍是<=8的无损byte数量。接地聚合体只把显示配色转成原UNorm8，
+                // 独立Total无损保留真实GMU；Radius不从有舍入误差的颜色权重反推数量。
+                if(oldContact)previous=(uint)Mathf.RoundToInt(previous*255f/Mathf.Max(1,oldTotal));
+                if(nowContact)current=(uint)Mathf.RoundToInt(current*255f/Mathf.Max(1,nowTotal));
                 if(m<4){motion.Previous0|=previous<<(m*8);motion.Current0|=current<<(m*8);}
                 else{motion.Previous1|=previous<<((m-4)*8);motion.Current1|=current<<((m-4)*8);}
             }
@@ -829,6 +1016,9 @@ namespace Game.Rendering
         {
             // CPU构建保有不可变快照；近处GPU下一Tick可以继续读取新世界，互不阻塞。
             Count=source.Count;OwnerCount=source.OwnerCount;Overflow=source.Overflow;Animated=source.Animated;Epoch=source.Epoch;
+            Interval=source.Interval;FallGravity=source.FallGravity;FallTerminalVelocity=source.FallTerminalVelocity;PlaybackWindowId=source.PlaybackWindowId;PlaybackRevision=source.PlaybackRevision;
+            QueryReach=source.QueryReach;
+            _useMaterialSurfaceTension=source._useMaterialSurfaceTension;_useGroundContactCaps=source._useGroundContactCaps;Array.Copy(source._materialSurfaceTension,_materialSurfaceTension,_materialSurfaceTension.Length);
             SelectionSignature=source.SelectionSignature;CulledSourcePages=source.CulledSourcePages;
             _previousPatchCount=source._previousPatchCount;_currentPatchCount=source._currentPatchCount;
             Array.Copy(source._previousPatches,_previousPatches,_previousPatchCount);Array.Copy(source._currentPatches,_currentPatches,_currentPatchCount);
@@ -842,7 +1032,8 @@ namespace Game.Rendering
         }
         public void SelectGpuDomain(int inputCapacity,int outputCapacity)
         {
-            Array.Clear(_gpuInputs,0,Count);int inputs=0,owners=0,halo=Mathf.CeilToInt(5f/K);
+            int reach=Mathf.Max(QueryReach.x,Mathf.Max(QueryReach.y,QueryReach.z));
+            Array.Clear(_gpuInputs,0,Count);int inputs=0,owners=0,halo=Mathf.CeilToInt((reach+2f)/K);
             for(int i=0;i<OwnerCount && owners<outputCapacity;i++)
             {
                 var key=Owners[i];int added=0;

@@ -205,6 +205,11 @@ namespace Game.Multiplayer
             try { profile = JsonUtility.FromJson<OnlineProfileReply>(_body); }
             catch (ArgumentException) { yield break; }
             if (profile == null || profile.PlayerId != _exitPlayerId) { ShowMemberExitAccountMismatch(); yield break; }
+            if (HasAccountRecovery)
+            {
+                if (!RecoveryContextMatches()) { ShowMemberExitAccountMismatch(); yield break; }
+                yield return PrepareMemberExitMenu(profile); yield break;
+            }
             if (!_suspendedHub.IsValid() || !_suspendedHub.isLoaded)
             {
                 if (_inConnectionScene) { Status("物资已保存，但原据点场景已不可用；不会激活其他场景或旧资产。"); yield break; }
@@ -230,6 +235,7 @@ namespace Game.Multiplayer
         {
             _exitCommandId = _exitPayloadHash = _exitFailure = _exitPlayerId = null; _exitEpoch = _exitCommittedVersion = 0;
             _exitCommitted = _exitHubReady = _exitRequested = _exitResolveRequested = _exitHubRestored = false;
+            _exitMenuReady = false;
             _exitReceiptAbsent = _exitServerObserved = false;
             _exitActor = 0; _exitQueries = _exitProfileAttempts = _exitIntentAttempts = 0; _exitNextQuery = _exitNextProfile = _exitNextIntent = 0;
             _exitPhase = OnlineRunExitPhase.None;

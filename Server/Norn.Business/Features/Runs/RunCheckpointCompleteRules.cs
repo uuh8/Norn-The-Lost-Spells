@@ -60,7 +60,9 @@ internal static class RunCheckpointCompleteRules
             || value.LostMaterials == null || value.LostMaterials.Length > (value.SchemaVersion == OnlineRunAssetCheckpoint.CompleteSchemaVersion
                 ? OnlineRunAssetCheckpoint.MaximumLostMaterials : OnlineRunAssetCheckpoint.MaximumMembers * 8 * 2)
             || value.LostMaterials.Any(l => l == null) || value.Members == null
-            || value.Members.Any(m => m == null || m.Wands == null || m.Wands.Length > 3 || m.Wands.Any(w => w == null)
+            // 资源事实覆盖全部持有法杖，包内备用杖也保留真实Mana/CD；三个装备位不是持有物上限。
+            // 仍先用既有物品硬上界拒绝超额正文，后续按本成员真实Wand ID精确校验，不能借此扩容资产。
+            || value.Members.Any(m => m == null || m.Wands == null || m.Wands.Length > OnlineOwnedAssetSnapshot.MaximumItems || m.Wands.Any(w => w == null)
                 || m.SpellUses == null || m.SpellUses.Length > OnlineOwnedAssetSnapshot.MaximumItems || m.SpellUses.Any(s => s == null))) throw Failure();
     }
 
@@ -99,11 +101,13 @@ internal static class RunCheckpointCompleteRules
             var wands = new HashSet<string>(StringComparer.Ordinal);
             foreach (var wand in member.Wands)
             {
-                if (!items.TryGetValue(wand.InstanceId ?? "", out var item) || item.LocationKind != 3 || !wands.Add(wand.InstanceId!)
+                // 前置OwnedCombatAssetRules已验证物品位置/父包；这里校验本Owner的真实种类与唯一资源项。
+                // 收包不会补满Mana或清CD，不能为了通过检查点而删掉备用杖的资源事实。
+                if (!items.TryGetValue(wand.InstanceId ?? "", out var item) || content.RequireItem(item.ContentId).Kind != 1 || !wands.Add(wand.InstanceId!)
                     || wand.ProgramRevision == 0 || !NonNegative(wand.CurrentMana) || !NonNegative(wand.CooldownRemaining)
                     || !item.UseTemplateWandStats && item.WandStats != null && wand.CurrentMana > item.WandStats.MaxMana) throw Failure();
             }
-            if (wands.Count != items.Values.Count(i => i.LocationKind == 3)) throw Failure();
+            if (wands.Count != items.Values.Count(i => content.RequireItem(i.ContentId).Kind == 1)) throw Failure();
             var cards = new HashSet<string>(StringComparer.Ordinal);
             foreach (var card in member.SpellUses)
                 if (!items.TryGetValue(card.InstanceId ?? "", out var item) || content.RequireItem(item.ContentId).Kind != 0 || !cards.Add(card.InstanceId!)) throw Failure();

@@ -10,6 +10,9 @@ namespace Game.Core
         public uint ExpectedVersion;
         public ContainerUseKind Kind;
         public Vector3 ActorPosition, TargetPosition, ThrowVelocity;
+        /// <summary>本机可信容器入口提供的喷口运动；默认false仍表示原命中点静态投放，不能由Wire授予。</summary>
+        public bool HasInitialMotion;
+        public Vector3 InitialVelocity;
         public float Radius;
     }
     public struct ContainerUseResultEvent : IGameEvent
@@ -30,6 +33,9 @@ namespace Game.Core
     {
         public string WorldId;
         public Vector3 Position;
+        /// <summary>只给GridLiquid的既有Dynamic/Falling追加动量；GMU仍由原Source/World事务一次性交接。</summary>
+        public bool HasInitialMotion;
+        public Vector3 InitialVelocity;
         public float Radius;
         public MaterialAmount[] Amounts;
         public int Count;

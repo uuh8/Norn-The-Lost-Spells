@@ -144,8 +144,8 @@ namespace Game.UI
             if (!view.Active) { _onlineFrozen = false; ClearNotification(); return; }
             if (_onlineFrozen == view.Frozen) return; // MenuOpen 等视图变化不反复刷新文字/启动 Coroutine。
             _onlineFrozen = view.Frozen;
-            if (_onlineFrozen) ShowNotification("连接暂时中断，战斗已暂停；Esc打开联机菜单", null, true);
-            else ShowNotification("连接已恢复", null);
+            if (_onlineFrozen) ShowNotification("副本暂时暂停；Esc打开联机菜单", null, true);
+            else ShowNotification("副本已恢复", null);
         }
 
         private bool HasOnlineNotificationSource() => _hasPresentationOverride && _notificationWorldSceneHandle != 0 &&

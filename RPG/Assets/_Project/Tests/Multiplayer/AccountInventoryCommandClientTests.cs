@@ -148,6 +148,93 @@ namespace Game.Multiplayer.Tests
             var args = new object[] { reply, profile, null }; return (bool)method.Invoke(_client, args);
         }
 
+        [TestCase(1ul, 3ul, 7ul)]
+        [TestCase(4ul, 0ul, 10ul)]
+        public void MaterialMoveReceiptConfirmsRealPartialOrFullMergeWithoutRequiringSourceAtTarget(ulong transferred, ulong remainder, ulong target)
+        {
+            ConfigureMaterialMove();
+            var receipt = MaterialMoveReceipt(transferred);
+            var profile = MaterialProfile(8, remainder, target);
+            Assert.That(Confirm(receipt, profile), Is.True,
+                "同背包并堆须核对目标增加与源余量；完整并堆后源ID已退休，不能要求源ID仍占目标格。");
+            Assert.That(Pending(), Is.Null);
+            Assert.That(OnlineAccountInventoryHubScope.TryCopyForScene(_root.scene.handle, out var installed), Is.True);
+            Assert.That(installed.Version, Is.EqualTo(8));
+            Assert.That(installed.Items.Length, Is.EqualTo(remainder == 0 ? 3 : 4));
+            Assert.That(Confirm(receipt, profile), Is.False, "已完成回执没有新的pending，不得重复发放或二次应用数量。");
+            Assert.That(OnlineAccountInventoryHubScope.TryCopyForScene(_root.scene.handle, out var again), Is.True);
+            Assert.That(again.Items.Length, Is.EqualTo(installed.Items.Length));
+        }
+
+        [TestCase("missing-destination-increment")]
+        [TestCase("incremented-unrelated-stack")]
+        [TestCase("source-reappeared")]
+        [TestCase("remainder-moved")]
+        [TestCase("wrong-material")]
+        [TestCase("receipt-exceeds-source")]
+        public void MaterialMoveKeepsTheOriginalPendingWhenQuantityOrIdentityEvidenceDoesNotMatch(string defect)
+        {
+            ConfigureMaterialMove();var pending = Pending();
+            var receipt = MaterialMoveReceipt(defect == "remainder-moved" ? 1ul : 4ul);
+            var profile = MaterialProfile(8, defect == "remainder-moved" ? 3ul : 0ul, defect == "remainder-moved" ? 7ul : 10ul);
+            if (defect == "missing-destination-increment") profile.Items[1].MaterialState.Quantity = 6;
+            if (defect == "incremented-unrelated-stack")
+            { profile.Items[1].MaterialState.Quantity = 6; profile.Items[2].MaterialState.Quantity = 24; }
+            if (defect == "source-reappeared") profile = MaterialProfile(8, 4, 10);
+            if (defect == "remainder-moved") profile.Items[3].X = 7;
+            if (defect == "wrong-material") profile.Items[1].MaterialState.MaterialKey = 8;
+            if (defect == "receipt-exceeds-source") receipt.Transferred = 5;
+            Assert.That(Confirm(receipt, profile), Is.False);
+            Assert.That(Pending(), Is.SameAs(pending), "失败只能保留原固定CommandId，不可用不完整数量证据清pending。");
+            Assert.That(OnlineAccountInventoryHubScope.TryCopyForScene(_root.scene.handle, out var installed), Is.True);
+            Assert.That(installed.Version, Is.EqualTo(7));
+        }
+
+        private const string MaterialBag = "55555555555555555555555555555555";
+        private const string MaterialTarget = "66666666666666666666666666666666";
+        private const string MaterialUnrelated = "77777777777777777777777777777777";
+        private void ConfigureMaterialMove()
+        {
+            ResetFixtureScope();var before = MaterialProfile(7, 4, 6);SetClient("_view", before);
+            var snapshot = Snapshot();
+            snapshot.Items = new Game.Core.OnlineOwnedItemSnapshot[before.Items.Length];
+            for (int i = 0; i < before.Items.Length; i++)
+            {
+                var item = before.Items[i];
+                snapshot.Items[i] = new Game.Core.OnlineOwnedItemSnapshot { InstanceId = item.InstanceId, ContentId = item.ContentId,
+                    Revision = item.Revision, LocationKind = item.LocationKind, ParentInstanceId = item.ParentInstanceId,
+                    Slot = item.Slot, X = item.X, Y = item.Y,
+                    MaterialState = item.MaterialState == null ? null : new Game.Core.OnlineOwnedMaterialStateSnapshot
+                        { SchemaVersion = 1, MaterialKey = 1, Quantity = item.MaterialState.Quantity } };
+            }
+            Assert.That(OnlineAccountInventoryHubScope.TryPublish(_client.GetInstanceID(), snapshot, out var error), Is.True, error);
+            Assert.That(OnlineAccountInventoryHubScope.TryRequireScene(_client.GetInstanceID(), _root.scene.handle, out error), Is.True, error);
+            Assert.That(Capture(new OnlineAccountInventoryCommandRequestedEvent { CallerId = 31,
+                Intent = new OnlineAccountInventoryCommandIntent { CommandId = Command, PlayerId = Player,
+                    SceneHandle = _root.scene.handle, ExpectedVersion = 7, Kind = OnlineAccountInventoryCommandKind.Move,
+                    ItemId = Item, TargetLocationKind = 1, TargetParentInstanceId = MaterialBag, TargetSlot = -1,
+                    GridX = 3, GridY = 0, WorldOwnerId = "" } }), Is.True);
+        }
+        private OnlineProfileReply MaterialProfile(uint version, ulong source, ulong target)
+        {
+            var profile = Profile(version);
+            profile.Items = new OnlineItemReply[source == 0 ? 3 : 4];
+            profile.Items[0] = new OnlineItemReply { InstanceId = MaterialBag, ContentId = "existing-bag", Revision = version,
+                LocationKind = 4, ParentInstanceId = "", Slot = 0 };
+            profile.Items[1] = MaterialItem(MaterialTarget, version, 3, target);
+            profile.Items[2] = MaterialItem(MaterialUnrelated, version, 6, 20);
+            if (source != 0) profile.Items[3] = MaterialItem(Item, version, 0, source);
+            return profile;
+        }
+        private static OnlineItemReply MaterialItem(string id, uint version, int x, ulong quantity) => new OnlineItemReply
+        { InstanceId = id, ContentId = "existing-material", Revision = version, LocationKind = 1, ParentInstanceId = MaterialBag,
+            Slot = -1, X = x, MaterialState = new Game.NetworkProtocol.OnlineOwnedMaterialStateSnapshot
+                { SchemaVersion = 1, MaterialKey = 1, Quantity = quantity } };
+        private static InventoryMoveReply MaterialMoveReceipt(ulong transferred) => new InventoryMoveReply
+        { CommandId = Command, InstanceId = Item, CommittedVersion = 8, OperationKind = 1,
+            TargetLocationKind = 1, TargetParentInstanceId = MaterialBag, Slot = -1, GridX = 3,
+            Transferred = transferred, WorldOwnerId = "", WorldPose = null };
+
         [Test] public void PrivateHubDropFreezesRealPoseAndRequiresMatchingWorldProfileBeforeCommit()
         {
             // 原Move不能携带Unity inline空姿态壳；真实编码器必须给业务一个JSON null。

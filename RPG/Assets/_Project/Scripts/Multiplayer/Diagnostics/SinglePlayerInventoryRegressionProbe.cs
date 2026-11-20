@@ -9,6 +9,8 @@ using Game.Core;
 using Game.Networking;
 using Game.NetworkProtocol;
 using Mirror;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 #endif
 
 namespace Game.Multiplayer
@@ -21,11 +23,15 @@ namespace Game.Multiplayer
     public sealed class SinglePlayerInventoryRegressionProbe : MonoBehaviour
     {
 #if (DEVELOPMENT_BUILD || UNITY_EDITOR) && !UNITY_SERVER
-        [Serializable] private sealed class Config { public string Output, Command; }
+        [Serializable] private sealed class Config { public string Output, Command; public bool AllowSyntheticKeyboard, AllowSyntheticPointer, AllowSyntheticMovement; }
         [Serializable] private sealed class Command
         {
             public string Action, ItemId, TargetKind, TargetId;
             public int TargetSlot;
+            public string Key;
+            public bool Pressed;
+            public float DurationSeconds;
+            public Vector2 PointerPosition;
             public IntentJson Intent;
         }
 
@@ -87,6 +93,8 @@ namespace Game.Multiplayer
             public uint ConnectionEpoch, ProgramRevision, ObservedInventoryVersion;
             public string WandInstanceId, Result, Failure;
             public Vector3 ClaimedOrigin, AimPoint;
+            public int CallerId;
+            public string Source, ReceiptSource;
         }
         [Serializable] private sealed class ExitJson
         {
@@ -103,6 +111,15 @@ namespace Game.Multiplayer
             public ReceiptJson LastOnlineCommandReceipt;
             public BadgeJson[] CardBadges;
             public RenderedBadgeJson[] RenderedCardBadges;
+            public UiPointerTargetJson BackpackGridTarget;
+        }
+        /// <summary>正式网格中的一个可见格，只提供真实屏幕坐标；是否被其他图形遮挡仍由原 EventSystem Raycast 验证。</summary>
+        [Serializable] private sealed class UiPointerTargetJson
+        {
+            public bool Available;
+            public Vector2 Point;
+            public string Path, OwnerId;
+            public int GridX, GridY;
         }
         [Serializable] private sealed class BadgeJson { public string ItemId, ExpectedCaption; }
         [Serializable] private sealed class RenderedBadgeJson
@@ -148,6 +165,27 @@ namespace Game.Multiplayer
             public ExitJson LastRunExitStatus;
             public UiJson Ui;
             public HeldHudJson HeldHud;
+            // 这里只报告 Input System 已处理的设备状态；QueueStateEvent 返回不代表 Action 或 Gameplay 已执行。
+            public bool SyntheticKeyboardAllowed, NearbyInputEnabled;
+            // 只有显式1Hz诊断报告读取；区分“设备存在”与“失焦被Input System临时禁用”。
+            // 不设置全局backgroundBehavior、不EnableDevice，也不改变正式玩家的focus/冻结资格。
+            public bool SyntheticKeyboardEnabled, SyntheticKeyboardCanRunInBackground, RunInBackground;
+            public string InputBackgroundBehavior;
+            public int SyntheticKeyboardDeviceId, NearbyPickupCount, NearbyFocusedPickupId;
+            public string SyntheticHeldKeys, NearbyFocusedItemId;
+            public string NearbyFocusedWorldOwner;
+            public Vector3 NearbyFocusedPosition;
+            public bool SyntheticPointerAllowed, SyntheticLeftPressed;
+            public int SyntheticPointerDeviceId, DriverCastCount, DriverReleasedCount, DriverRejectedCount, DriverReceiptProducedCount;
+            public Vector2 SyntheticPointerPosition;
+            public CastJson LastDriverCast;
+            public CastJson[] DriverCasts;
+            // 当前根观察与脉冲期间的观察分开保存；1Hz报告抵达时脉冲可能已结束，不能用零输入抹掉实际按键证据。
+            public bool MovementCaptured, SyntheticMovementAllowed, SyntheticMovePulseActive, SyntheticMoveActionObserved;
+            public uint InputSequence, SyntheticMovePulseSequence, SyntheticMoveCompletedSequence;
+            public string SyntheticMovePulseKey;
+            public float ViewYaw;
+            public PlayerMovementReadOnlyObservation MovementObservation, SyntheticMoveObservation;
         }
 
         private Config _config;
@@ -166,6 +204,22 @@ namespace Game.Multiplayer
         private string _lastAction, _lastActionStatus, _lastActionAtUtc;
         private const int MaximumJsonBytes = 65536;
         private const BindingFlags PublicInstance = BindingFlags.Instance | BindingFlags.Public;
+        private Keyboard _syntheticKeyboard;
+        private KeyboardState _syntheticState;
+        private const string SyntheticKeyLabels = "1234567890FG";
+        private Mouse _syntheticMouse;
+        private MouseState _syntheticMouseState;
+        private bool _syntheticMoveActive, _syntheticMoveReleaseQueued, _syntheticMoveActionObserved;
+        private double _syntheticMoveReleaseAt;
+        private uint _syntheticMoveSequence, _syntheticMoveCompleted;
+        private Key _syntheticMoveKey;
+        private string _syntheticMoveLabel;
+        private PlayerMovementReadOnlyObservation _syntheticMoveObservation;
+        // 连按时1Hz报告之间可以产生多次真实施法。固定环保存原Driver序号与逐命令收据，
+        // 不能只看最后一次Intent而丢失此前Released；这是冷诊断，不参与预测、扣费或发包。
+        private readonly CastJson[] _driverCasts = new CastJson[64];
+        private CastJson _lastDriverCast;
+        private int _driverCastCursor, _driverCastCount, _driverReleasedCount, _driverRejectedCount, _driverReceiptProducedCount;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Install()
@@ -202,11 +256,14 @@ namespace Game.Multiplayer
         }
         private void OnDisable()
         {
+            ReleaseSyntheticKeyboard();
+            ReleaseSyntheticPointer();
             EventBus<OnlineInventoryCommandRequestedEvent>.Unsubscribe(OnRequested);
             EventBus<OnlineInventoryCommandResultEvent>.Unsubscribe(OnReceipt);
             EventBus<OnlineDiagnosticSamplingEvent>.Unsubscribe(OnSampling);
             EventBus<OnlineRunExitStatusChangedEvent>.Unsubscribe(OnExitStatus);
-            if (_boundDriver != null) _boundDriver.IntentProduced -= OnPlayerCast;
+            if (_boundDriver != null)
+            { _boundDriver.IntentProduced -= OnPlayerCast; _boundDriver.ReceiptProduced -= OnPlayerReceipt; }
             if (_boundCombat != null) _boundCombat.FactReceived -= OnCastFact;
             _boundDriver = null; _boundCombat = null;
         }
@@ -223,6 +280,8 @@ namespace Game.Multiplayer
 
         private void Update()
         {
+            // 松键属于已授权有界输入的寿命，必须先于1Hz文件/Profiler节流；即使暂停报告也不能留下长按W。
+            ProgressSyntheticMove(Time.realtimeSinceStartupAsDouble);
             // 文件观察、Reflection、值副本和JSON都限定在1Hz冷路径；正式测量窗口完全停用。
             if (_config == null || _sampling || WorldReplicationTimingTrace.Active != null || Time.realtimeSinceStartupAsDouble < _next) return;
             _next = Time.realtimeSinceStartupAsDouble + 1;
@@ -262,16 +321,24 @@ namespace Game.Multiplayer
             var identity = auth != null && auth.ClientAuthenticated ? auth.ClientIdentity : null;
             if (!ReferenceEquals(identity, _identity))
             {
+                ReleaseSyntheticKeyboard();
+                ReleaseSyntheticPointer();
                 _identity = identity; _castSequence = 0; _playerCastObserved = false;
                 _lastInventoryIntent = null; _lastInventoryReceipt = null; _lastInventoryCaller = 0; _lastCast = null;
+                ClearDriverCasts();
             }
             var world = OnlineWorldBootstrap.Active;
             var driver = world != null && world.LocalPlayer != null ? world.LocalPlayer.GetComponent<OnlineCastDriver>() : null;
             if (_boundDriver != driver)
             {
-                if (_boundDriver != null) _boundDriver.IntentProduced -= OnPlayerCast;
+                ReleaseSyntheticKeyboard();
+                ReleaseSyntheticPointer();
+                ClearDriverCasts();
+                if (_boundDriver != null)
+                { _boundDriver.IntentProduced -= OnPlayerCast; _boundDriver.ReceiptProduced -= OnPlayerReceipt; }
                 _boundDriver = driver;
-                if (_boundDriver != null) _boundDriver.IntentProduced += OnPlayerCast;
+                if (_boundDriver != null)
+                { _boundDriver.IntentProduced += OnPlayerCast; _boundDriver.ReceiptProduced += OnPlayerReceipt; }
             }
             var combat = manager != null ? manager.GetComponent<CombatNetworkChannel>() : null;
             if (_boundCombat == combat) return;
@@ -296,15 +363,56 @@ namespace Game.Multiplayer
         {
             // Probe序号只能用于无人操作的独立诊断进程。观察到原Driver发包后停止Probe施法，
             // 不反射读取/改写Driver序号，也不通过抢占高位ID破坏正常客户端的单调命令空间。
-            if (_identity != null && value.ConnectionEpoch == _identity.ConnectionEpoch) _playerCastObserved = true;
+            if (_identity == null || value.ConnectionEpoch != _identity.ConnectionEpoch || value.CommandId == 0) return;
+            _playerCastObserved = true;
+            _lastDriverCast = new CastJson { CommandId = value.CommandId, ConnectionEpoch = value.ConnectionEpoch,
+                WandInstanceId = value.WandInstanceId, ProgramRevision = value.ProgramRevision,
+                ClaimedOrigin = value.ClaimedOrigin, AimPoint = value.AimPoint, Result = "IntentProduced", Failure = string.Empty,
+                CallerId = _boundDriver != null ? _boundDriver.GetInstanceID() : 0, Source = "Driver.IntentProduced",
+                ObservedInventoryVersion = _boundDriver != null ? _boundDriver.ClientInventoryVersion : 0 };
+            _driverCasts[_driverCastCursor] = _lastDriverCast;
+            _driverCastCursor = (_driverCastCursor + 1) % _driverCasts.Length;
+            _driverCastCount++;
+        }
+        private void OnPlayerReceipt(OnlineCastReceipt value)
+        {
+            // 当前Client的ApplyReceipt不会发布ReceiptProduced；该事件计数必须如实为0。
+            // 实际DS回执从下面FactReceived关联，不能改Driver行为或伪造此事件来填诊断。
+            if (_identity == null || value.ActorId != _identity.ActorId || value.ConnectionEpoch != _identity.ConnectionEpoch) return;
+            _driverReceiptProducedCount++;
+            CaptureDriverReceipt(value.CommandId, value.ConnectionEpoch, value.Result, value.Failure, "Driver.ReceiptProduced");
+        }
+        private void CaptureDriverReceipt(ulong command, uint epoch, OnlineCastResult result, OnlineCastFailure failure, string source)
+        {
+            for (int i = 0; i < _driverCasts.Length; i++)
+            {
+                var entry = _driverCasts[i];
+                if (entry == null || entry.CommandId != command || entry.ConnectionEpoch != epoch) continue;
+                // 同一terminal fact重发不增加通过次数，也不能被迟到Queued倒退。
+                if (entry.Result == "Released" || entry.Result == "Rejected") return;
+                entry.Result = result.ToString(); entry.Failure = failure.ToString(); entry.ReceiptSource = source;
+                if (result == OnlineCastResult.Released) _driverReleasedCount++;
+                else if (result == OnlineCastResult.Rejected) _driverRejectedCount++;
+                return;
+            }
+        }
+        private void ClearDriverCasts()
+        {
+            Array.Clear(_driverCasts, 0, _driverCasts.Length); _lastDriverCast = null;
+            _driverCastCursor = _driverCastCount = _driverReleasedCount = _driverRejectedCount = _driverReceiptProducedCount = 0;
         }
         private void OnCastFact(CombatFactMessage value)
         {
-            if (_identity == null || _lastCast == null || value.Kind != 2 || value.ActorId != _identity.ActorId
-                || value.ConnectionEpoch != _identity.ConnectionEpoch || value.CommandId != _lastCast.CommandId) return;
+            if (_identity == null || value.Kind != 2 || value.ActorId != _identity.ActorId
+                || value.ConnectionEpoch != _identity.ConnectionEpoch) return;
             // Protobuf消息会池化复用；这里只拷贝匹配的基础值，不持有消息对象。
-            _lastCast.Result = ((OnlineCastResult)value.Result).ToString();
-            _lastCast.Failure = ((OnlineCastFailure)value.Phase).ToString();
+            if (_lastCast != null && value.CommandId == _lastCast.CommandId)
+            {
+                _lastCast.Result = ((OnlineCastResult)value.Result).ToString();
+                _lastCast.Failure = ((OnlineCastFailure)value.Phase).ToString();
+            }
+            CaptureDriverReceipt(value.CommandId, value.ConnectionEpoch, (OnlineCastResult)value.Result,
+                (OnlineCastFailure)value.Phase, "CombatNetworkChannel.FactReceived");
         }
 
         private string Execute(Command command)
@@ -312,9 +420,17 @@ namespace Game.Multiplayer
             if (command == null) return "Rejected: empty command";
             if (command.Action == "report") return "ReportRequested";
             if (command.Action != "inventory" && command.Action != "cast" && command.Action != "container-throw" && command.Action != "ui-open" && command.Action != "ui-close"
-                && command.Action != "ui-drag" && command.Action != "exit")
+                && command.Action != "ui-drag" && command.Action != "exit" && command.Action != "synthetic-key" && command.Action != "synthetic-pointer"
+                && command.Action != "synthetic-move" && command.Action != "synthetic-pointer-at" && command.Action != "ui-organize")
                 return "Rejected: Action is outside the explicit whitelist";
+            // Mouse场景从配置开始便独占原Driver命令序号；绝不先Probe施法再切鼠标混用同一Epoch。
+            if (command.Action == "cast" && _config != null && _config.AllowSyntheticPointer)
+                return "Rejected: pointer diagnostics must use the original Driver command sequence exclusively";
             if (!TryLiveContext(out var world, out var driver, out var inventory)) return "Rejected: current authenticated Client inventory is not ready";
+            if (command.Action == "synthetic-key") return QueueSyntheticKey(command.Key, command.Pressed);
+            if (command.Action == "synthetic-pointer") return QueueSyntheticPointer(command.Key, command.Pressed);
+            if (command.Action == "synthetic-move") return QueueSyntheticMove(command.Key, command.DurationSeconds);
+            if (command.Action == "synthetic-pointer-at") return QueueSyntheticPointerAt(command.Key, command.PointerPosition, command.Pressed);
             if (command.Action == "container-throw")
             {
                 // 只复用实际本机角色的共享镜头与正式Driver意图入口。诊断不构造飞行速度/原点，
@@ -343,7 +459,7 @@ namespace Game.Multiplayer
             {
                 if (command.Intent == null) return "Rejected: inventory requires Intent";
                 var intent = command.Intent.Value();
-                if ((byte)intent.Kind < (byte)OnlineInventoryCommandKind.SelectWand || (byte)intent.Kind > (byte)OnlineInventoryCommandKind.EndWandResearch)
+                if ((byte)intent.Kind < (byte)OnlineInventoryCommandKind.SelectWand || (byte)intent.Kind > (byte)OnlineInventoryCommandKind.OrganizeBackpack)
                     return "Rejected: unknown inventory Kind";
                 if (intent.Kind == OnlineInventoryCommandKind.SelectTool || intent.Kind == OnlineInventoryCommandKind.SelectWand)
                 {
@@ -400,6 +516,13 @@ namespace Game.Multiplayer
                 Invoke(controller, "OpenBackpack", null);
                 return Read<bool>(controller, "IsOpen") ? "OriginalUiOpened" : "Rejected: original Controller did not open";
             }
+            if (command.Action == "ui-organize")
+            {
+                // 诊断只调用同一公开按钮回调，真实包ID/版本仍由已安装Source读取；不代算布局或直接写Store。
+                if (!Read<bool>(controller, "IsOpen")) return "Rejected: open the original UI before organizing";
+                Invoke(controller, "OrganizeBackpack", null);
+                return "OriginalOrganizeButtonInvoked: inspect matching receipt and installed Owner";
+            }
             if (!Read<bool>(controller, "IsOpen")) return "Rejected: open the original UI before ui-drag";
             if (string.IsNullOrWhiteSpace(command.ItemId)) return "Rejected: ui-drag requires a real ItemId";
             PrepareUiTarget(command, out string submitMethod, out var submitArguments);
@@ -426,6 +549,149 @@ namespace Game.Multiplayer
                 && inventory.ActorId == _identity.ActorId && inventory.ConnectionEpoch == _identity.ConnectionEpoch;
         }
 
+        /// <summary>
+        /// 显式诊断配置才可创建本 Probe 独占设备。仅向正常 PlayerLoop 排队真实 Input System 状态，
+        /// 不重入 InputSystem.Update、不调用 Driver 请求；菜单/焦点/Frozen 仍由正式输入和 World 裁决。
+        /// 持键必须由下一条 release 命令解除，不能让 1Hz 报告时钟替代 Gameplay 输入边沿。
+        /// </summary>
+        private string QueueSyntheticKey(string label, bool pressed)
+        {
+            if (_config == null || !_config.AllowSyntheticKeyboard) return "Rejected: synthetic keyboard is not explicitly enabled";
+            if (label != "Tab" && (label == null || label.Length != 1 || SyntheticKeyLabels.IndexOf(label[0]) < 0))
+                return "Rejected: key is outside the explicit synthetic keyboard whitelist";
+            if (_syntheticKeyboard == null || !_syntheticKeyboard.added)
+            {
+                _syntheticKeyboard = InputSystem.AddDevice<Keyboard>();
+                _syntheticState = default;
+            }
+            _syntheticState.Set(label == "Tab" ? Key.Tab : SyntheticKey(label[0]), pressed);
+            InputSystem.QueueStateEvent(_syntheticKeyboard, _syntheticState);
+            return "QueuedSyntheticKey:" + label + (pressed ? ":down" : ":up");
+        }
+        /// <summary>
+        /// 移动只开放独立opt-in的单个WASD短脉冲，保留旧synthetic-key持键合同与白名单。
+        /// 0.05–1秒使外部1Hz观察仍可按实际位置小步收敛；本层不寻路、不设角色位置、不改Movement门。
+        /// 同时最多一个脉冲，重叠请求拒绝且不续期，避免控制文件延迟把有限输入变成永久长按。
+        /// </summary>
+        private string QueueSyntheticMove(string label, float duration)
+        {
+            if (_config == null || !_config.AllowSyntheticKeyboard || !_config.AllowSyntheticMovement)
+                return "Rejected: synthetic movement is not explicitly enabled";
+            if (label == null || label.Length != 1 || "WASD".IndexOf(label[0]) < 0
+                || !float.IsFinite(duration) || duration < .05f || duration > 1f)
+                return "Rejected: movement requires one WASD key and a finite duration from 0.05 to 1 second";
+            if (_syntheticMoveActive || _syntheticMoveSequence == uint.MaxValue)
+                return "Rejected: previous movement pulse is unfinished or sequence is exhausted";
+            if (_syntheticKeyboard == null || !_syntheticKeyboard.added)
+            { _syntheticKeyboard = InputSystem.AddDevice<Keyboard>(); _syntheticState = default; }
+            _syntheticMoveLabel = label;
+            _syntheticMoveKey = label == "W" ? Key.W : label == "A" ? Key.A : label == "S" ? Key.S : Key.D;
+            _syntheticMoveSequence++; _syntheticMoveActive = true; _syntheticMoveReleaseQueued = false;
+            _syntheticMoveActionObserved = false; _syntheticMoveObservation = default;
+            _syntheticMoveReleaseAt = Time.realtimeSinceStartupAsDouble + duration;
+            _syntheticState.Set(_syntheticMoveKey, true);
+            InputSystem.QueueStateEvent(_syntheticKeyboard, _syntheticState);
+            return "QueuedSyntheticMove:" + label;
+        }
+        /// <summary>
+        /// 每帧只在有限脉冲存活时复制原角色的只读观察。绝不调用会消费边沿的SampleInput。
+        /// 到期排KeyUp后还需等下一次正常InputSystem更新，报告完成序号才说明设备实际松开；
+        /// 角色是否移动另由Client/DS真实根位置确认，不能由此计数器授予成功。
+        /// </summary>
+        private void ProgressSyntheticMove(double now)
+        {
+            if (!_syntheticMoveActive) return;
+            if (_syntheticKeyboard == null || !_syntheticKeyboard.added)
+            { _syntheticMoveActive = false; return; }
+            if (_syntheticMoveReleaseQueued)
+            {
+                if (!_syntheticKeyboard[_syntheticMoveKey].isPressed)
+                { _syntheticMoveCompleted = _syntheticMoveSequence; _syntheticMoveActive = false; }
+                return;
+            }
+            var world = OnlineWorldBootstrap.Active;
+            if (_syntheticKeyboard[_syntheticMoveKey].isPressed && world != null && world.LocalPlayer != null)
+            {
+                var observation = world.LocalPlayer.CaptureReadOnlyObservation();
+                Vector2 expected = _syntheticMoveKey == Key.W ? Vector2.up : _syntheticMoveKey == Key.S ? Vector2.down
+                    : _syntheticMoveKey == Key.A ? Vector2.left : Vector2.right;
+                if (Vector2.Dot(observation.MoveActionValue, expected) > .5f)
+                { _syntheticMoveActionObserved = true; _syntheticMoveObservation = observation; }
+            }
+            if (now < _syntheticMoveReleaseAt) return;
+            _syntheticState.Set(_syntheticMoveKey, false);
+            InputSystem.QueueStateEvent(_syntheticKeyboard, _syntheticState);
+            _syntheticMoveReleaseQueued = true;
+        }
+        /// <summary>
+        /// 只有本次私有配置显式允许，才创建独占Mouse。仅固定屏幕中心与左键状态，
+        /// 不写角色/瞄准/相机，不调用Wizard、Driver或InputSystem.Update；正式焦点/菜单门不变。
+        /// 中心位置只给原UI/鼠标一致输入，不声称覆盖硬件鼠标或任意指针Raycast操作。
+        /// </summary>
+        private string QueueSyntheticPointer(string button, bool pressed)
+            => QueueSyntheticPointerAt(button, new Vector2(Screen.width * .5f, Screen.height * .5f), pressed);
+
+        /// <summary>
+        /// 原中心施法诊断与显式UI坐标共用一个自有Mouse。坐标必须位于当前真实Screen内，
+        /// 仅排position/button，delta保持零，因此不会为了拖UI暗改相机yaw或替玩家施放瞄准法术。
+        /// 原InputSystemUIInputModule自行Raycast并派发pointer/drag/drop；这里不调用任何UI Handler。
+        /// </summary>
+        private string QueueSyntheticPointerAt(string button, Vector2 position, bool pressed)
+        {
+            if (_config == null || !_config.AllowSyntheticPointer) return "Rejected: synthetic pointer is not explicitly enabled";
+            if (button != "leftButton") return "Rejected: button is outside the explicit synthetic pointer whitelist";
+            if (!float.IsFinite(position.x) || !float.IsFinite(position.y) || position.x < 0 || position.y < 0
+                || position.x >= Screen.width || position.y >= Screen.height)
+                return "Rejected: pointer position is outside the current Screen";
+            if (_castSequence != 0) return "Rejected: Probe cast and original mouse Driver sequences cannot be mixed";
+            if (_syntheticMouse == null || !_syntheticMouse.added) _syntheticMouse = InputSystem.AddDevice<Mouse>();
+            _syntheticMouseState = new MouseState { position = position }
+                .WithButton(MouseButton.Left, pressed);
+            InputSystem.QueueStateEvent(_syntheticMouse, _syntheticMouseState);
+            return "QueuedSyntheticPointer:" + button + (pressed ? ":down" : ":up");
+        }
+        private void ReleaseSyntheticPointer()
+        {
+            if (_syntheticMouse != null && _syntheticMouse.added) InputSystem.RemoveDevice(_syntheticMouse);
+            _syntheticMouse = null; _syntheticMouseState = default;
+        }
+        private static Key SyntheticKey(char label)
+        {
+            switch (label)
+            {
+                case '1': return Key.Digit1; case '2': return Key.Digit2; case '3': return Key.Digit3;
+                case '4': return Key.Digit4; case '5': return Key.Digit5; case '6': return Key.Digit6;
+                case '7': return Key.Digit7; case '8': return Key.Digit8; case '9': return Key.Digit9;
+                case '0': return Key.Digit0; case 'F': return Key.F; case 'G': return Key.G;
+                default: throw new ArgumentOutOfRangeException(nameof(label));
+            }
+        }
+        private void ReleaseSyntheticKeyboard()
+        {
+            // 设备由本实例独占；绝不 ResetDevice 或枚举移除用户硬件/其它诊断设备。
+            if (_syntheticKeyboard != null && _syntheticKeyboard.added) InputSystem.RemoveDevice(_syntheticKeyboard);
+            _syntheticKeyboard = null; _syntheticState = default;
+            _syntheticMoveActive = _syntheticMoveReleaseQueued = _syntheticMoveActionObserved = false;
+            _syntheticMoveSequence = _syntheticMoveCompleted = 0; _syntheticMoveReleaseAt = 0;
+            _syntheticMoveLabel = null; _syntheticMoveObservation = default;
+        }
+        private string ProcessedSyntheticKeys()
+        {
+            if (_syntheticKeyboard == null || !_syntheticKeyboard.added) return string.Empty;
+            string keys = string.Empty;
+            // 仅1Hz冷诊断分配短字符串；读取已处理的Keyboard，不用排队缓存冒充PlayerLoop已消费。
+            for (int i = 0; i < SyntheticKeyLabels.Length; i++)
+                if (_syntheticKeyboard[SyntheticKey(SyntheticKeyLabels[i])].isPressed)
+                    keys += (keys.Length == 0 ? string.Empty : ",") + SyntheticKeyLabels[i];
+            if (_syntheticKeyboard.tabKey.isPressed) keys += (keys.Length == 0 ? string.Empty : ",") + "Tab";
+            foreach (char label in "WASD")
+            {
+                Key key = label == 'W' ? Key.W : label == 'A' ? Key.A : label == 'S' ? Key.S : Key.D;
+                if (_syntheticKeyboard[key].isPressed) keys += (keys.Length == 0 ? string.Empty : ",") + label;
+            }
+            return keys;
+        }
+
         private Report Capture()
         {
             var world = OnlineWorldBootstrap.Active; var manager = NetworkManager.singleton as RoomNetworkManager;
@@ -437,6 +703,23 @@ namespace Game.Multiplayer
                 Authenticated = _identity != null, NetworkServerActive = NetworkServer.active,
                 ActorId = _identity != null ? _identity.ActorId : 0, ConnectionEpoch = _identity != null ? _identity.ConnectionEpoch : 0,
                 Focused = Application.isFocused, TimeScale = Time.timeScale, CursorVisible = Cursor.visible,
+                SyntheticKeyboardAllowed = _config != null && _config.AllowSyntheticKeyboard,
+                SyntheticKeyboardDeviceId = _syntheticKeyboard != null && _syntheticKeyboard.added ? _syntheticKeyboard.deviceId : 0,
+                SyntheticKeyboardEnabled = _syntheticKeyboard != null && _syntheticKeyboard.added && _syntheticKeyboard.enabled,
+                SyntheticKeyboardCanRunInBackground = _syntheticKeyboard != null && _syntheticKeyboard.added && _syntheticKeyboard.canRunInBackground,
+                InputBackgroundBehavior = InputSystem.settings.backgroundBehavior.ToString(), RunInBackground = Application.runInBackground,
+                SyntheticHeldKeys = ProcessedSyntheticKeys(),
+                SyntheticPointerAllowed = _config != null && _config.AllowSyntheticPointer,
+                SyntheticPointerDeviceId = _syntheticMouse != null && _syntheticMouse.added ? _syntheticMouse.deviceId : 0,
+                SyntheticLeftPressed = _syntheticMouse != null && _syntheticMouse.added && _syntheticMouse.leftButton.isPressed,
+                SyntheticPointerPosition = _syntheticMouse != null && _syntheticMouse.added ? _syntheticMouse.position.ReadValue() : Vector2.zero,
+                SyntheticMovementAllowed = _config != null && _config.AllowSyntheticKeyboard && _config.AllowSyntheticMovement,
+                SyntheticMovePulseActive = _syntheticMoveActive, SyntheticMovePulseSequence = _syntheticMoveSequence,
+                SyntheticMoveCompletedSequence = _syntheticMoveCompleted, SyntheticMovePulseKey = _syntheticMoveLabel,
+                SyntheticMoveActionObserved = _syntheticMoveActionObserved, SyntheticMoveObservation = _syntheticMoveObservation,
+                LastDriverCast = _lastDriverCast, DriverCasts = _driverCasts, DriverCastCount = _driverCastCount,
+                DriverReleasedCount = _driverReleasedCount, DriverRejectedCount = _driverRejectedCount,
+                DriverReceiptProducedCount = _driverReceiptProducedCount,
                 CursorLockMode = Cursor.lockState.ToString(), PlayerCastObserved = _playerCastObserved, ProbeCastSequence = _castSequence,
                 LastAction = _lastAction, LastActionStatus = _lastActionStatus, LastActionAtUtc = _lastActionAtUtc,
                 LastInventoryIntent = _lastInventoryIntent, LastInventoryCallerId = _lastInventoryCaller,
@@ -457,7 +740,27 @@ namespace Game.Multiplayer
                 report.Scene = world.gameObject.scene.path; report.DungeonId = world.DungeonId; report.WorldEpoch = world.WorldEpoch;
                 report.WorldReady = world.WorldReady; report.MovementReady = world.MovementReady; report.Authority = world.IsAuthority;
                 report.CanAdvance = world.CanAdvance; report.Frozen = world.Frozen; report.Suppressed = world.LocalInputSuppressed;
-                report.ServerTick = world.ServerTick;
+                report.ServerTick = world.ServerTick; report.InputSequence = world.LastInputSequence;
+                if (world.LocalPlayer != null)
+                {
+                    report.MovementCaptured = true;
+                    report.MovementObservation = world.LocalPlayer.CaptureReadOnlyObservation();
+                    report.ViewYaw = world.LocalPlayer.CameraRoot != null ? world.LocalPlayer.CameraRoot.eulerAngles.y : world.LocalPlayer.transform.eulerAngles.y;
+                    var input = world.LocalPlayer.GetComponent<NearbyPickupInput>();
+                    report.NearbyInputEnabled = input != null && input.isActiveAndEnabled;
+                    Type nearbyType = FindType("Game.Run.NearbyPickupController");
+                    var nearby = nearbyType != null ? world.LocalPlayer.GetComponent(nearbyType) : null;
+                    if (nearby != null)
+                    {
+                        report.NearbyPickupCount = Read<int>(nearby, "Count");
+                        var focused = Read<object>(nearby, "FocusedPickup") as Component;
+                        if (focused != null)
+                        {
+                            report.NearbyFocusedPickupId = focused.GetInstanceID(); report.NearbyFocusedItemId = Read<string>(focused, "ItemId");
+                            report.NearbyFocusedPosition = focused.transform.position; report.NearbyFocusedWorldOwner = Read<string>(focused, "WorldOwner");
+                        }
+                    }
+                }
             }
             if (driver != null)
             {
@@ -584,6 +887,7 @@ namespace Game.Multiplayer
             object receipt = Read<object>(ui, "LastOnlineCommandReceipt");
             if (receipt is OnlineInventoryCommandReceipt value) report.LastOnlineCommandReceipt = ReceiptJson.Copy(value);
             report.RenderedCardBadges = CaptureRenderedBadges(ui);
+            report.BackpackGridTarget = CaptureBackpackGridTarget(ui);
             if (inventory == null || inventory.Cards == null) return;
             report.CardBadges = new BadgeJson[inventory.Cards.Length];
             for (int i = 0; i < report.CardBadges.Length; i++)
@@ -592,6 +896,35 @@ namespace Game.Multiplayer
                 report.CardBadges[i] = new BadgeJson { ItemId = id,
                     ExpectedCaption = item != null ? Invoke(ui, "SpellCountCaption", new[] { item }) as string : "<missing>" };
             }
+        }
+
+        /// <summary>
+        /// 只读原Controller已生成的真实包网格，提供固定(2,2)格中心用于有限Native回归。
+        /// 不借装备包图标冒充网格，也不创建格子/改滚动/刷新布局。可见Viewport与Screen只做几何预检，
+        /// 遮挡和真正的Drop Handler仍须由独立UI诊断记录的EventSystem首Raycast确认。
+        /// </summary>
+        private static UiPointerTargetJson CaptureBackpackGridTarget(Component ui)
+        {
+            var result = new UiPointerTargetJson { GridX = 2, GridY = 2 };
+            if (ui == null || !Read<bool>(ui, "IsOpen")) return result;
+            const BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic;
+            var grid = ui.GetType().GetField("_gridView", flags)?.GetValue(ui) as Component;
+            if (grid == null || !grid.gameObject.activeInHierarchy || !(grid.transform is RectTransform rect)
+                || !(rect.parent is RectTransform viewport)) return result;
+            float cell = Read<float>(grid, "CellSize");
+            if (!float.IsFinite(cell) || cell <= 0 || rect.rect.width < 3 * cell || rect.rect.height < 3 * cell) return result;
+            var canvas = grid.GetComponentInParent<Canvas>();
+            if (canvas == null || !canvas.isActiveAndEnabled) return result;
+            Camera camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+            Vector3 world = rect.TransformPoint(new Vector3(rect.rect.xMin + 2.5f * cell, rect.rect.yMax - 2.5f * cell, 0));
+            Vector2 point = RectTransformUtility.WorldToScreenPoint(camera, world);
+            if (!float.IsFinite(point.x) || !float.IsFinite(point.y) || point.x < 0 || point.x >= Screen.width
+                || point.y < 0 || point.y >= Screen.height || !RectTransformUtility.RectangleContainsScreenPoint(viewport, point, camera)) return result;
+            result.OwnerId = Read<string>(grid, "BackpackId");
+            if (string.IsNullOrEmpty(result.OwnerId)) return result;
+            result.Path = grid.name;
+            for (var parent = grid.transform.parent; parent != null; parent = parent.parent) result.Path = parent.name + "/" + result.Path;
+            result.Point = point; result.Available = true; return result;
         }
 
         private static RenderedBadgeJson[] CaptureRenderedBadges(Component ui)

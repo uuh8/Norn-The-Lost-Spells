@@ -1,0 +1,1575 @@
+{
+  "research_date": "2026-11-20",
+  "build_id": "17130612",
+  "game_version_hash": "9dbd52ced019a643169a2db02f46c77f8766c6e5",
+  "inputs": {
+    "noita_exe_bytes": 15460864,
+    "exe_sha256": "808d2a0ab51ea0b46e9ad2aeb3327a4b0ce3feae04f32ba26326bf585b5779bd",
+    "wak_bytes": 42467033,
+    "wak_sha256": "c95a0c01a55ec29267afef6bbec8a0cae0ba2b350638e2203674ed4dfb9227c3",
+    "wak_entries": 14745,
+    "materials_xml_bytes": 418728,
+    "materials_sha256": "122df34514edaf312e1a15a619b3d6a44d49ce605c929d5950c9051a57429d04"
+  },
+  "tools": {
+    "rea": "6.5.0",
+    "rizin": "0.9.1",
+    "emulator": "Unicorn 2.1.4",
+    "rea_identity_evidence_id": "ev_4c52d41c9928755f67a5a20abed5e7050673c828dd54a7a9d6ac4875d0ce028d"
+  },
+  "limits": [
+    "Material counts cover top-level entries of this one stock WAK XML; duplicate names are preserved.",
+    "The native windows are byte compared to the installed PE. They do not reconstruct the entire frame scheduler.",
+    "The 18 cases and six residue sweeps execute just two native predicates in isolation. They do not run a game, fluid scene or benchmark.",
+    "Norn architecture and suggested experiments are design proposals; this study did not run Norn or Noita as an application."
+  ],
+  "materials": {
+    "root_counts": {
+      "CellData": 224,
+      "CellDataChild": 244,
+      "Reaction": 325,
+      "ReqReaction": 5
+    },
+    "declaration_count": 468,
+    "unique_names": 466,
+    "duplicate_names": {
+      "rock_box2d": [
+        13247,
+        13468
+      ],
+      "meat_pumpkin": [
+        14206,
+        14355
+      ]
+    },
+    "child_reaction_inheritance": {
+      "1": 165,
+      "0": 23,
+      "unspecified": 56
+    },
+    "ordinary_reactions": {
+      "third_input": 32,
+      "third_output": 15,
+      "fast_explicit": {
+        "unspecified": 305,
+        "1": 13,
+        "0": 7
+      },
+      "cosmetic_particle": 11,
+      "entity": 5
+    },
+    "examples": [
+      {
+        "name": "fire",
+        "xml_lines": [
+          86,
+          107
+        ],
+        "explicit_fields": {
+          "cell_type": "fire",
+          "tags": "[fire],[hot]",
+          "wang_color": "7fFF6060",
+          "density": "1",
+          "liquid_sand": "0",
+          "liquid_gravity": "0.5",
+          "burnable": "0",
+          "on_fire": "1",
+          "requires_oxygen": "1",
+          "temperature_of_fire": "100"
+        }
+      },
+      {
+        "name": "spark",
+        "xml_lines": [
+          124,
+          139
+        ],
+        "explicit_fields": {
+          "cell_type": "fire",
+          "tags": "[fire],[hot]",
+          "wang_color": "7fff6024",
+          "density": "1",
+          "liquid_sand": "0",
+          "liquid_gravity": "0.5",
+          "burnable": "0",
+          "on_fire": "0",
+          "requires_oxygen": "1",
+          "temperature_of_fire": "0"
+        }
+      },
+      {
+        "name": "sand_static",
+        "xml_lines": [
+          357,
+          421
+        ],
+        "explicit_fields": {
+          "cell_type": "liquid",
+          "tags": "[static],[corrodible],[alchemy],[solid],[earth]",
+          "wang_color": "ff524f2d",
+          "density": "10",
+          "liquid_sand": "1",
+          "liquid_static": "1",
+          "liquid_gravity": "1.2",
+          "hp": "19000",
+          "durability": "10",
+          "burnable": "0",
+          "on_fire": "0",
+          "requires_oxygen": "1",
+          "temperature_of_fire": "10"
+        }
+      },
+      {
+        "name": "rock_static",
+        "xml_lines": [
+          793,
+          857
+        ],
+        "explicit_fields": {
+          "cell_type": "liquid",
+          "tags": "[static],[corrodible],[meltable_to_lava],[alchemy],[solid],[earth]",
+          "wang_color": "ff353923",
+          "density": "10",
+          "liquid_sand": "1",
+          "liquid_static": "1",
+          "solid_static_type": "1",
+          "liquid_gravity": "1.2",
+          "hp": "100000",
+          "durability": "10",
+          "burnable": "0",
+          "on_fire": "0"
+        }
+      },
+      {
+        "name": "rock_hard",
+        "xml_lines": [
+          1315,
+          1369
+        ],
+        "explicit_fields": {
+          "_parent": "rock_static",
+          "_inherit_reactions": "1",
+          "tags": "[static],[alchemy],[solid],[earth]",
+          "wang_color": "ff003344",
+          "hp": "200000"
+        }
+      },
+      {
+        "name": "templebrick_static",
+        "xml_lines": [
+          2191,
+          2253
+        ],
+        "explicit_fields": {
+          "_parent": "templerock_static",
+          "_inherit_reactions": "1",
+          "wang_color": "ff786C42",
+          "hp": "1000000"
+        }
+      },
+      {
+        "name": "glowstone",
+        "xml_lines": [
+          2958,
+          2972
+        ],
+        "explicit_fields": {
+          "_parent": "templerock_static",
+          "_inherit_reactions": "1",
+          "wang_color": "ffAAF06E",
+          "hp": "40000"
+        }
+      },
+      {
+        "name": "steel_static",
+        "xml_lines": [
+          3116,
+          3188
+        ],
+        "explicit_fields": {
+          "cell_type": "liquid",
+          "tags": "[static],[corrodible],[rust],[alchemy],[meltable_metal_generic],[solid],[earth]",
+          "wang_color": "ff404041",
+          "density": "10",
+          "liquid_sand": "1",
+          "liquid_static": "1",
+          "liquid_gravity": "1.2",
+          "hp": "130000",
+          "durability": "12",
+          "burnable": "0",
+          "on_fire": "0",
+          "electrical_conductivity": "1"
+        }
+      },
+      {
+        "name": "ice_static",
+        "xml_lines": [
+          3733,
+          3778
+        ],
+        "explicit_fields": {
+          "cell_type": "liquid",
+          "tags": "[static],[corrodible],[frozen],[meltable_to_water],[alchemy],[solid]",
+          "wang_color": "ffCFF7C8",
+          "density": "10",
+          "liquid_sand": "1",
+          "liquid_static": "1",
+          "liquid_gravity": "0.5",
+          "hp": "30000",
+          "burnable": "0",
+          "on_fire": "0",
+          "requires_oxygen": "1",
+          "convert_to_box2d_material": "ice_glass",
+          "temperature_of_fire": "10"
+        }
+      },
+      {
+        "name": "ice_glass",
+        "xml_lines": [
+          4195,
+          4226
+        ],
+        "explicit_fields": {
+          "cell_type": "solid",
+          "tags": "[box2d],[static],[meltable_to_water],[alchemy],[solid],[cold]",
+          "wang_color": "ffaedde3",
+          "density": "6",
+          "solid_static_type": "5",
+          "hp": "10000",
+          "burnable": "0",
+          "on_fire": "0",
+          "requires_oxygen": "0",
+          "warmth_melts_to_material": "water",
+          "solid_on_sleep_convert": "1",
+          "solid_break_to_type": "ice_static",
+          "temperature_of_fire": "10"
+        }
+      },
+      {
+        "name": "smoke",
+        "xml_lines": [
+          4898,
+          4915
+        ],
+        "explicit_fields": {
+          "cell_type": "gas",
+          "tags": "[gas]",
+          "wang_color": "7f848485",
+          "density": "1",
+          "liquid_sand": "0",
+          "liquid_gravity": "0.5",
+          "burnable": "0",
+          "on_fire": "0",
+          "requires_oxygen": "0",
+          "lifetime": "350",
+          "temperature_of_fire": "60"
+        }
+      },
+      {
+        "name": "steam",
+        "xml_lines": [
+          5002,
+          5019
+        ],
+        "explicit_fields": {
+          "cell_type": "gas",
+          "tags": "[gas]",
+          "wang_color": "7fc5c5ff",
+          "density": "1",
+          "liquid_sand": "0",
+          "liquid_gravity": "0.5",
+          "burnable": "0",
+          "on_fire": "0",
+          "requires_oxygen": "0",
+          "lifetime": "1000",
+          "temperature_of_fire": "60"
+        }
+      },
+      {
+        "name": "water",
+        "xml_lines": [
+          5602,
+          5635
+        ],
+        "explicit_fields": {
+          "cell_type": "liquid",
+          "tags": "[liquid],[corrodible],[freezable],[water],[liquid_common],[chaotic_transmutation]",
+          "wang_color": "902F554C",
+          "density": "4",
+          "liquid_sand": "0",
+          "liquid_gravity": "1.5",
+          "burnable": "0",
+          "on_fire": "0",
+          "requires_oxygen": "1",
+          "cold_freezes_to_material": "ice_static",
+          "warmth_melts_to_material": "steam",
+          "temperature_of_fire": "10"
+        }
+      },
+      {
+        "name": "oil",
+        "xml_lines": [
+          5854,
+          5888
+        ],
+        "explicit_fields": {
+          "cell_type": "liquid",
+          "tags": "[liquid],[burnable],[impure],[liquid_common],[chaotic_transmutation]",
+          "wang_color": "ff3B3B3C",
+          "density": "1",
+          "liquid_sand": "0",
+          "liquid_gravity": "0.5",
+          "burnable": "1",
+          "on_fire": "0",
+          "requires_oxygen": "1",
+          "electrical_conductivity": "0",
+          "temperature_of_fire": "95"
+        }
+      },
+      {
+        "name": "sand",
+        "xml_lines": [
+          8456,
+          8497
+        ],
+        "explicit_fields": {
+          "cell_type": "liquid",
+          "tags": "[sand_ground],[corrodible],[meltable_to_lava_fast],[alchemy],[chaotic_transmutation]",
+          "wang_color": "ffebcd00",
+          "density": "6",
+          "liquid_sand": "1",
+          "liquid_gravity": "0.9",
+          "hp": "800",
+          "durability": "4",
+          "burnable": "0",
+          "on_fire": "0",
+          "requires_oxygen": "1",
+          "temperature_of_fire": "10"
+        }
+      },
+      {
+        "name": "soil",
+        "xml_lines": [
+          8583,
+          8610
+        ],
+        "explicit_fields": {
+          "cell_type": "liquid",
+          "tags": "[sand_ground],[corrodible],[grows_grass],[meltable_to_lava],[alchemy],[solid]",
+          "wang_color": "ff36311e",
+          "density": "6",
+          "liquid_sand": "1",
+          "liquid_gravity": "0.5",
+          "liquid_viscosity": "75",
+          "liquid_sticks_to_ceiling": "50",
+          "hp": "2000",
+          "durability": "10",
+          "burnable": "0",
+          "on_fire": "0",
+          "requires_oxygen": "1",
+          "temperature_of_fire": "10"
+        }
+      },
+      {
+        "name": "lava",
+        "xml_lines": [
+          11632,
+          11676
+        ],
+        "explicit_fields": {
+          "cell_type": "liquid",
+          "tags": "[fire_lava],[liquid],[lava],[liquid_common],[chaotic_transmutation]",
+          "wang_color": "ffff6000",
+          "density": "6",
+          "liquid_sand": "0",
+          "liquid_gravity": "0.2",
+          "liquid_viscosity": "10",
+          "burnable": "0",
+          "on_fire": "0",
+          "always_ignites_damagemodel": "1",
+          "requires_oxygen": "0",
+          "cold_freezes_to_material": "lavarock_static",
+          "cold_freezes_to_dont_do_reverse_reaction": "1",
+          "temperature_of_fire": "90"
+        }
+      },
+      {
+        "name": "wood_player",
+        "xml_lines": [
+          11682,
+          11759
+        ],
+        "explicit_fields": {
+          "cell_type": "liquid",
+          "tags": "[static],[corrodible],[alchemy],[solid],[earth]",
+          "wang_color": "ff613e03",
+          "density": "6",
+          "liquid_sand": "1",
+          "liquid_static": "1",
+          "solid_static_type": "3",
+          "liquid_gravity": "1.0",
+          "hp": "2000",
+          "durability": "9",
+          "burnable": "1",
+          "on_fire": "0",
+          "requires_oxygen": "1",
+          "temperature_of_fire": "50"
+        }
+      },
+      {
+        "name": "wood",
+        "xml_lines": [
+          11857,
+          11930
+        ],
+        "explicit_fields": {
+          "cell_type": "solid",
+          "tags": "[box2d],[corrodible],[alchemy],[burnable],[solid],[earth]",
+          "wang_color": "ff613e00",
+          "density": "6",
+          "solid_static_type": "3",
+          "hp": "3000",
+          "durability": "9",
+          "burnable": "1",
+          "on_fire": "0",
+          "requires_oxygen": "1",
+          "temperature_of_fire": "50"
+        }
+      },
+      {
+        "name": "fungal_shift_particle_fx",
+        "xml_lines": [
+          14833,
+          14856
+        ],
+        "explicit_fields": {
+          "wang_color": "80c1dba5",
+          "is_just_particle_fx": "1"
+        }
+      }
+    ],
+    "reaction_examples": [
+      {
+        "type": "Reaction",
+        "xml_lines": [
+          14883,
+          14888
+        ],
+        "fields": {
+          "probability": "100",
+          "input_cell1": "cement",
+          "input_cell2": "water",
+          "output_cell1": "concrete_static",
+          "output_cell2": "air",
+          "req_lifetime": "600"
+        }
+      },
+      {
+        "type": "Reaction",
+        "xml_lines": [
+          14904,
+          14908
+        ],
+        "fields": {
+          "probability": "100",
+          "input_cell1": "water",
+          "input_cell2": "cement",
+          "output_cell1": "concrete_static",
+          "output_cell2": "air"
+        }
+      },
+      {
+        "type": "Reaction",
+        "xml_lines": [
+          14913,
+          14917
+        ],
+        "fields": {
+          "probability": "3",
+          "input_cell1": "steam",
+          "input_cell2": "[static]",
+          "output_cell1": "water",
+          "output_cell2": "[static]"
+        }
+      },
+      {
+        "type": "Reaction",
+        "xml_lines": [
+          14928,
+          14931
+        ],
+        "fields": {
+          "probability": "20",
+          "input_cell1": "[fire]",
+          "input_cell2": "water",
+          "output_cell1": "[fire]",
+          "output_cell2": "steam"
+        }
+      },
+      {
+        "type": "Reaction",
+        "xml_lines": [
+          14934,
+          14937
+        ],
+        "fields": {
+          "probability": "20",
+          "input_cell1": "[fire]",
+          "input_cell2": "snow",
+          "output_cell1": "[fire]",
+          "output_cell2": "steam"
+        }
+      },
+      {
+        "type": "Reaction",
+        "xml_lines": [
+          14961,
+          14964
+        ],
+        "fields": {
+          "probability": "80",
+          "input_cell1": "[fire]",
+          "input_cell2": "snow",
+          "output_cell1": "[fire]",
+          "output_cell2": "water"
+        }
+      },
+      {
+        "type": "Reaction",
+        "xml_lines": [
+          15026,
+          15029
+        ],
+        "fields": {
+          "probability": "4",
+          "input_cell1": "snow_sticky",
+          "input_cell2": "water",
+          "input_cell3": "air",
+          "output_cell1": "snow_sticky",
+          "output_cell2": "water_ice"
+        }
+      },
+      {
+        "type": "Reaction",
+        "xml_lines": [
+          15140,
+          15143
+        ],
+        "fields": {
+          "probability": "20",
+          "input_cell1": "[fire]",
+          "input_cell2": "water_salt",
+          "input_cell3": "water_salt",
+          "output_cell1": "[fire]",
+          "output_cell2": "salt",
+          "output_cell3": "steam"
+        }
+      },
+      {
+        "type": "Reaction",
+        "xml_lines": [
+          15219,
+          15225
+        ],
+        "fields": {
+          "probability": "50",
+          "input_cell1": "[acid]",
+          "input_cell2": "[corrodible]",
+          "output_cell1": "[acid]",
+          "output_cell2": "acid_gas",
+          "fast_reaction": "1",
+          "blob_radius1": "2",
+          "blob_radius2": "2"
+        }
+      },
+      {
+        "type": "Reaction",
+        "xml_lines": [
+          15306,
+          15313
+        ],
+        "fields": {
+          "probability": "80",
+          "input_cell1": "[lava]",
+          "input_cell2": "water",
+          "output_cell1": "rock_static",
+          "output_cell2": "steam",
+          "cosmetic_particle": "steam",
+          "blob_radius1": "6",
+          "blob_radius2": "3",
+          "blob_restrict_to_input_material1": "1",
+          "blob_restrict_to_input_material2": "1"
+        }
+      },
+      {
+        "type": "Reaction",
+        "xml_lines": [
+          15351,
+          15358
+        ],
+        "fields": {
+          "probability": "80",
+          "input_cell1": "[lava]",
+          "input_cell2": "sima",
+          "output_cell1": "rock_static",
+          "output_cell2": "fire",
+          "cosmetic_particle": "steam",
+          "blob_radius1": "6",
+          "blob_radius2": "3",
+          "blob_restrict_to_input_material1": "1",
+          "blob_restrict_to_input_material2": "1"
+        }
+      },
+      {
+        "type": "ReqReaction",
+        "xml_lines": [
+          15793,
+          15796
+        ],
+        "fields": {
+          "probability": "10",
+          "input_cell1": "[requires_air]",
+          "input_cell2": "air",
+          "output_cell1": "soil",
+          "output_cell2": "air"
+        }
+      },
+      {
+        "type": "ReqReaction",
+        "xml_lines": [
+          15798,
+          15802
+        ],
+        "fields": {
+          "probability": "10",
+          "input_cell1": "ceiling_plant_material",
+          "input_cell2": "air",
+          "output_cell1": "soil",
+          "output_cell2": "air",
+          "direction": "bottom"
+        }
+      },
+      {
+        "type": "ReqReaction",
+        "xml_lines": [
+          15805,
+          15808
+        ],
+        "fields": {
+          "probability": "1",
+          "input_cell1": "mushroom_seed",
+          "input_cell2": "air",
+          "output_cell1": "soil",
+          "output_cell2": "air"
+        }
+      },
+      {
+        "type": "ReqReaction",
+        "xml_lines": [
+          15810,
+          15813
+        ],
+        "fields": {
+          "probability": "1",
+          "input_cell1": "mushroom_giant_red",
+          "input_cell2": "air",
+          "output_cell1": "soil",
+          "output_cell2": "air"
+        }
+      },
+      {
+        "type": "ReqReaction",
+        "xml_lines": [
+          15815,
+          15818
+        ],
+        "fields": {
+          "probability": "1",
+          "input_cell1": "mushroom_giant_blue",
+          "input_cell2": "air",
+          "output_cell1": "soil",
+          "output_cell2": "air"
+        }
+      },
+      {
+        "type": "Reaction",
+        "xml_lines": [
+          16839,
+          16844
+        ],
+        "fields": {
+          "probability": "100",
+          "input_cell1": "shock_powder",
+          "input_cell2": "air",
+          "output_cell1": "air",
+          "output_cell2": "air",
+          "entity": "data/entities/misc/shock_powder.xml"
+        }
+      }
+    ]
+  },
+  "integration_assets": [
+    {
+      "path": "data/biome/coalmine.xml",
+      "lines": [
+        14,
+        72,
+        94,
+        116,
+        204
+      ],
+      "sha256": "fbcd698d599ef2e8daa27f52f7e186901508c218751a4bdda4828e50bb53ffac",
+      "topic": "Wang template and four named deposits"
+    },
+    {
+      "path": "data/biome_impl/static_tile/temples_common.lua",
+      "lines": [
+        378
+      ],
+      "sha256": "4905d932c73ed71cda672dc24c6cc7beacfa479cfae58bfb6777753d60a48d24",
+      "topic": "altar material image and display image"
+    },
+    {
+      "path": "data/scripts/buildings/oiltank_puzzle_init.lua",
+      "lines": [
+        14,
+        19
+      ],
+      "sha256": "e08fc46406809aeb419ebc847e88abf4c480ea2b3e256d42e0676274607d5c08",
+      "topic": "spawn world material and configure an area checker"
+    },
+    {
+      "path": "data/entities/projectiles/bomb.xml",
+      "lines": [
+        22,
+        27,
+        28,
+        41
+      ],
+      "sha256": "187f96d388a4818612c14afc26e70167512c88f215dcaa11b59b41e6df2fc0c9",
+      "topic": "radius, liquid protection, hole, durability threshold"
+    },
+    {
+      "path": "data/entities/projectiles/deck/black_hole.xml",
+      "lines": [
+        111,
+        112,
+        113,
+        114
+      ],
+      "sha256": "676e35ab163dc582381259cc33d1a4787b4ef89ac529fb8c51b5e7b1ed767fa3",
+      "topic": "consumer radius, filter tag and physics bodies"
+    },
+    {
+      "path": "data/entities/projectiles/deck/touch_water.xml",
+      "lines": [
+        5,
+        8,
+        11,
+        14,
+        16,
+        18,
+        21
+      ],
+      "sha256": "795c45d5269762da98b76a0dd20140382e081c8f3c6f994e919ad92226bab2d7",
+      "topic": "two area converters with separate limits"
+    },
+    {
+      "path": "data/entities/misc/material_converter_freeze.xml",
+      "lines": [
+        2,
+        3,
+        4,
+        8
+      ],
+      "sha256": "b9766d8d4bc97f38a4ea720de924802f4da3cc4a90de332066b78042bfc66b14",
+      "topic": "explicit freeze transformation map"
+    },
+    {
+      "path": "data/entities/misc/custom_cards/torch.xml",
+      "lines": [
+        198,
+        206
+      ],
+      "sha256": "758df469647ab29c3ee107af2b9e0868f8d510a8b2bc993c4a78c0e88489f88b",
+      "topic": "local heat conversion component"
+    },
+    {
+      "path": "data/entities/projectiles/deck/sea_water.xml",
+      "lines": [
+        3,
+        4,
+        5,
+        8,
+        10
+      ],
+      "sha256": "c5241199e76debc136274836b4c132b4bdc2223d8bd72711e9d36fe633543b49",
+      "topic": "area and spawn speed"
+    },
+    {
+      "path": "data/entities/items/pickup/potion.xml",
+      "lines": [
+        65,
+        68,
+        70,
+        71,
+        77,
+        82,
+        83,
+        84,
+        86
+      ],
+      "sha256": "f5cd1c108ce2234fafc0d0667cf4bccb8a4d19344deaeffd2806016103d64c67",
+      "topic": "container admission, spills, reactions and per-material quantities"
+    },
+    {
+      "path": "data/entities/items/pickup/powder_stash.xml",
+      "lines": [
+        62,
+        64,
+        65,
+        73,
+        76
+      ],
+      "sha256": "18497a23c5649783f5af80d71c9b56704a1e625b5951e6c1084c7882d3b9eaf5",
+      "topic": "powder admission and capacity"
+    },
+    {
+      "path": "data/entities/player_base.xml",
+      "lines": [
+        133,
+        136,
+        147,
+        148,
+        149
+      ],
+      "sha256": "a5f968f222ed471f8470fa0da76473bcbcb81d6bf05b7819e9d504d735570e2c",
+      "topic": "breathing and material-specific damage"
+    },
+    {
+      "path": "data/entities/props/physics_box_explosive.xml",
+      "lines": [
+        6,
+        9,
+        12,
+        46,
+        47
+      ],
+      "sha256": "34b46940568a33e72a20fbad99a3b937efca1e8109a6191f0c084bda9f817833",
+      "topic": "shape material and destruction trigger"
+    },
+    {
+      "path": "data/entities/props/physics_electricity_source.xml",
+      "lines": [
+        26,
+        27,
+        28
+      ],
+      "sha256": "0547d4bb09322780cfc0acff0f913ed0bcec1aa4166c960f63e667c7f75c28b6",
+      "topic": "electricity source"
+    },
+    {
+      "path": "data/entities/props/physics/trap_electricity.xml",
+      "lines": [
+        16,
+        26,
+        32
+      ],
+      "sha256": "f201e2616ef87909919d72dd55e23be1faffd47287a013a0d902ace39c72e527",
+      "topic": "electrical receiver and switched script"
+    },
+    {
+      "path": "data/entities/misc/shock_powder.xml",
+      "lines": [
+        2,
+        7,
+        9,
+        13,
+        14
+      ],
+      "sha256": "40937e17b8beb4ff0093062fd5bf1c21a21defcb51e46df8456d6f12659b694b",
+      "topic": "short-lived electrical entity"
+    },
+    {
+      "path": "data/magic_numbers.xml",
+      "lines": [
+        218
+      ],
+      "sha256": "daa8f52ffe8aef3375e46875e88fd073a459a57a335ef9e7c5cbdafc5ede254d",
+      "topic": "streaming target"
+    }
+  ],
+  "shipped_documentation": [
+    {
+      "path": "tools_modding/component_documentation.txt",
+      "lines": [
+        419,
+        736,
+        1576,
+        1632,
+        1633,
+        1634,
+        1641,
+        1898
+      ],
+      "sha256": "08c94c2dea03774c7cb6f54691a77bb204a15838527463efc37e8eebe7e3ee2b"
+    },
+    {
+      "path": "tools_modding/lua_api_documentation.txt",
+      "lines": [
+        109,
+        110,
+        111,
+        136,
+        163,
+        164,
+        165
+      ],
+      "sha256": "3d21c1f7ee137c57320592461a9c68d4123cc2a018d5b9ecad80076e239e137d"
+    }
+  ],
+  "altar_images": [
+    {
+      "path": "data/biome_impl/wand_altar.png",
+      "width": 20,
+      "height": 30,
+      "unique_colors": 4,
+      "sha256": "f4cefdd34ace68303f349d57a03f86ff6a5ae692b095b14f5315ae35ea427939",
+      "sample_counts": {
+        "ff786c42": 231,
+        "ffaaf06e": 24
+      }
+    },
+    {
+      "path": "data/biome_impl/wand_altar_visual.png",
+      "width": 20,
+      "height": 30,
+      "unique_colors": 8,
+      "sha256": "434e35d5e2ed2098d3713e965116827f7c6b147dccd03a136225582241c05222",
+      "sample_counts": {}
+    }
+  ],
+  "native": {
+    "load_sections": {
+      "start": "0x708482",
+      "end_exclusive": "0x7085e7",
+      "checked_instructions": 85,
+      "evidence_id": "ev_7c56f9550a079210f25d96cc884d00599c59ed169367312881b6691e8dcd2e39",
+      "raw_file": "rea_load_sections.json",
+      "rea_output_sha256": "ddb2a922aa1086d8441b94119a4fda0d4454caf17bb38e8ecc647c9ecbbb0594"
+    },
+    "regs": {
+      "start": "0x7eaeb7",
+      "end_exclusive": "0x7eaf40",
+      "checked_instructions": 48,
+      "evidence_id": "ev_3f20ce7306a5f03e4fb01bf8c1c76cef3bed0982334dd8b9c253295e20a55a7d",
+      "raw_file": "rea_regs.json",
+      "rea_output_sha256": "e5a6f5e34ab87b694043aeb0880e46719e1bdc29be98eda48930f8157164d19e"
+    },
+    "class_sand": {
+      "start": "0x7acb20",
+      "end_exclusive": "0x7ace77",
+      "checked_instructions": 201,
+      "evidence_id": "ev_11c94244bb33d1723c144cb1bdc95a5b4043d7dad34a5d7b328fff965bea4200",
+      "raw_file": "rea_class_sand.json",
+      "rea_output_sha256": "0204ff45f66ed69a0aa502664f6dc8d6198b4e58fff1556110f04d59a1738fec"
+    },
+    "class_liquid": {
+      "start": "0x7ac7c0",
+      "end_exclusive": "0x7acb17",
+      "checked_instructions": 201,
+      "evidence_id": "ev_e6bf73c3394eca49b2b1603ffcd8a8d3749cdaaf20001f08b0d9b7e956941a46",
+      "raw_file": "rea_class_liquid.json",
+      "rea_output_sha256": "34788f1de497a7b510a7f6d8193fa7d16c2d49918d5b89105aaf73b775a75b6f"
+    },
+    "class_gas": {
+      "start": "0x7ace80",
+      "end_exclusive": "0x7ad1d7",
+      "checked_instructions": 201,
+      "evidence_id": "ev_41576d321ab1656f2a4166b41bc222ed0dd239b9ac8b9f09c7913d988e2bab80",
+      "raw_file": "rea_class_gas.json",
+      "rea_output_sha256": "6ebd3631bd18a07a39dad933e7dae29a9313af097e2cc0f8c359b5bcaaff5806"
+    },
+    "select_materials": {
+      "start": "0x78d8d0",
+      "end_exclusive": "0x78d9f0",
+      "checked_instructions": 98,
+      "evidence_id": "ev_16867e266dd1361cec2692fce8cfac29c80c714a82f26edc5d6913b9dcbc7ee6",
+      "raw_file": "rea_select_materials.json",
+      "rea_output_sha256": "3c48a0cb4508d573efb4d61a9207ea7f8270b5861a393574a26c4c8fc8b6e854"
+    },
+    "fields_movement": {
+      "start": "0x6fbd3c",
+      "end_exclusive": "0x6fbf9c",
+      "checked_instructions": 173,
+      "evidence_id": "ev_ea51ed1d2210c13e4bcbc63c680e829a0cd7b9154306444c9141a3c30d5429c1",
+      "raw_file": "rea_fields_movement.json",
+      "rea_output_sha256": "49ab0ee173e3315307cda4123f567c6f443ba5bec881cc6009440d82e9d0975e"
+    },
+    "density_link": {
+      "start": "0x6fbace",
+      "end_exclusive": "0x6fbba2",
+      "checked_instructions": 60,
+      "evidence_id": "ev_80de265d7db1f68d25d48214c650f55cfd6f5cd52c79b1f022540be3ea4393ec",
+      "raw_file": "rea_density_link.json",
+      "rea_output_sha256": "5ffdd1d33a62228bc1cb63d28008fe6283e0f18bd1d3ff14c072ed19b117e1d2"
+    },
+    "fxflag": {
+      "start": "0x6ff55c",
+      "end_exclusive": "0x6ff60e",
+      "checked_instructions": 55,
+      "evidence_id": "ev_471304f310465cce585f2829fbebcc7f329bbf79be43b62b263ac38f3f24f323",
+      "raw_file": "rea_fxflag.json",
+      "rea_output_sha256": "f638943f47ca47a8f321fbc839b4a0bdb05259dfdc10d76e3458b9984dc4bb3c"
+    },
+    "descriptor_getter": {
+      "start": "0x4ac0d0",
+      "end_exclusive": "0x4ac0d4",
+      "checked_instructions": 2,
+      "evidence_id": "ev_eb336b7768c927b724ddb98853c0f6f09a9b01311d976ff249753b73c458a072",
+      "raw_file": "rea_descriptor_getter.json",
+      "rea_output_sha256": "17605ba8b1b3efb58c5b002b1c2c15d65fb277c2e8b6208368778f4f37a203e3"
+    },
+    "sand_method": {
+      "start": "0x70b110",
+      "end_exclusive": "0x70b11c",
+      "checked_instructions": 4,
+      "evidence_id": "ev_c7d7a1b2b58167d37f37881218e0d0ed95b0d370f2b7e3097dfbf6bb0ab12682",
+      "raw_file": "rea_sand_method.json",
+      "rea_output_sha256": "7d200fcd1a0d854dc200f221aef3c20540b4c082df9c9d1a701ebe2b9014b31a"
+    },
+    "cell_materialid_get": {
+      "start": "0x70f510",
+      "end_exclusive": "0x70f51f",
+      "checked_instructions": 7,
+      "evidence_id": "ev_c46ee7c0c583f2b4852a40ec6779a125232589d5597895f1a061d49d81be6477",
+      "raw_file": "rea_cell_materialid_get.json",
+      "rea_output_sha256": "7bed8fc87b4bad359d535607a2ac64bc02fda468d94acca126b908985569da9d"
+    },
+    "liquid_step": {
+      "start": "0x70c6e0",
+      "end_exclusive": "0x70cbf6",
+      "checked_instructions": 472,
+      "evidence_id": "ev_663e636a34d55b684d52487dc3ba9dab58a10d3e6766d130148874edd4a43b53",
+      "raw_file": "rea_liquid_step.json",
+      "rea_output_sha256": "357b3ed3fcf812752162623b9cfcbe04d5c33a8e6bc66a05c6a7a4055c1ea8e0"
+    },
+    "liquid_neighbor_path": {
+      "start": "0x70b2d0",
+      "end_exclusive": "0x70b498",
+      "checked_instructions": 163,
+      "evidence_id": "ev_b243a97ac0fec7bef541b29850c4dfa7b1ba33ec9df21bda971ec5eb37013a91",
+      "raw_file": "rea_liquid_neighbor_path.json",
+      "rea_output_sha256": "f9260d706e2d1d0ce1d27c77510f1de03cda42d29d4d98394b8e8207465db692"
+    },
+    "compare_heavy": {
+      "start": "0x70b1d0",
+      "end_exclusive": "0x70b2c8",
+      "checked_instructions": 93,
+      "evidence_id": "ev_81888e697d0e9c81ed543edb0e37829d866f3ea8dde07bde005f30272061dca2",
+      "raw_file": "rea_compare_heavy.json",
+      "rea_output_sha256": "71f50e5c4a9c083594f606b59220cb6d4de79a85326f9a07e4a93c0ccf9fb2a2"
+    },
+    "gas_step": {
+      "start": "0x70a670",
+      "end_exclusive": "0x70a80d",
+      "checked_instructions": 148,
+      "evidence_id": "ev_50bb4486d3a2e02fde3a3d76aba1dfdf891b913b18543b0b13618ef21b8b383a",
+      "raw_file": "rea_gas_step.json",
+      "rea_output_sha256": "61e5fcc623cfb16111d4c07b3cb733baba130e2146a627fcaf97aa01a3b69306"
+    },
+    "compare_light": {
+      "start": "0x70a5a0",
+      "end_exclusive": "0x70a66b",
+      "checked_instructions": 95,
+      "evidence_id": "ev_893231303c296d4889deb18b2609aeceaabce04c165f99a0f9ef8662037e5c7e",
+      "raw_file": "rea_compare_light.json",
+      "rea_output_sha256": "707bcae5622cc79b03e67d9a249ac3fc338cf8e4594fe333ad30125f8286f970"
+    },
+    "reaction_slots": {
+      "start": "0x70247f",
+      "end_exclusive": "0x702baf",
+      "checked_instructions": 508,
+      "evidence_id": "ev_0959c803fac5a8f5495c6d1e8e0cf6d56c7410b948adfe68eb9a9e06cd1d455f",
+      "raw_file": "rea_reaction_slots.json",
+      "rea_output_sha256": "2bb98d48550641804df9b89fe88aa00360b4bbaca3c86af5e9d3feaaefa3bcb5"
+    },
+    "dirty_area": {
+      "start": "0x728a90",
+      "end_exclusive": "0x728c3c",
+      "checked_instructions": 156,
+      "evidence_id": "ev_a996febff1f5c0dc570503e936cf7bdc0fd61cfb7a675c4c439182c72627a38e",
+      "raw_file": "rea_dirty_area.json",
+      "rea_output_sha256": "ddd5e85c53b035d4b6ab174655d1ca34df5b3549ebecdcc8e0b6847232341e5d"
+    },
+    "body_bridge": {
+      "start": "0x720cf0",
+      "end_exclusive": "0x720df5",
+      "checked_instructions": 74,
+      "evidence_id": "ev_ce7fce13d8307043d7acda8960f43347c7ec8d5913954ec360def793fa2e0d15",
+      "raw_file": "rea_body_bridge.json",
+      "rea_output_sha256": "1a0f2af17eaa1393fd61bfa552fa07ab8687d45f7e65f5da96dc4bf209347808"
+    },
+    "ray_bind": {
+      "start": "0x7eb501",
+      "end_exclusive": "0x7eb569",
+      "checked_instructions": 37,
+      "evidence_id": "ev_d716d739e1278a91c578bfb63fba4cb6821911d5d91ad7c4d0322c6fbe63edef",
+      "raw_file": "rea_ray_bind.json",
+      "rea_output_sha256": "0a4647d54d77d10654543c2c12fb21bdbcf206ecb48a2c18c56b0af0fc976020"
+    },
+    "particle_bind": {
+      "start": "0x7eb128",
+      "end_exclusive": "0x7eb13f",
+      "checked_instructions": 8,
+      "evidence_id": "ev_d92dfba78cd1f782bc4d5bd637ef358b2d7e6cde917df61813801bea960a13dc",
+      "raw_file": "rea_particle_bind.json",
+      "rea_output_sha256": "f62d7f224626fcd1a09ec8cb4d4e7ecfcc3069bd378b9672919310cf64b1afd6"
+    }
+  },
+  "runtime_class_evidence": {
+    "ICell": {
+      "descriptor": "0x11d393c",
+      "locator": "0x1060650",
+      "vtable": "0xfef78c"
+    },
+    "CLiquidCell": {
+      "descriptor": "0x11d9ac0",
+      "locator": "0x106057c",
+      "vtable": "0x100bb90"
+    },
+    "CGasCell": {
+      "descriptor": "0x11dd348",
+      "locator": "0x1056c5c",
+      "vtable": "0x1007bcc"
+    },
+    "CFireCell": {
+      "descriptor": "0x11d80c8",
+      "locator": "0x105ea18",
+      "vtable": "0x10096e0"
+    },
+    "CSolidCell": {
+      "descriptor": "0x11dfc18",
+      "locator": "0x1056108",
+      "vtable": "0xff8a6c"
+    },
+    "GridWorld": {
+      "descriptor": "0x11d78e8",
+      "locator": "0x105f818",
+      "vtable": "0x10013bc"
+    },
+    "GridWorldThreaded": {
+      "descriptor": "0x11df1b0",
+      "locator": "0x1057f2c",
+      "vtable": "0x1017b24"
+    }
+  },
+  "predicate_experiment": {
+    "scope": "Original predicate instruction bytes and original vtables, synthetic cell descriptors and random state; boolean eligibility only. Sweep selects one seed per residue; not a game sampling distribution.",
+    "original_entry_virtual_addresses": {
+      "liquid": "0x70b200",
+      "gas": "0x70a5a0"
+    },
+    "fixture_fields": [
+      "runtime_class",
+      "density",
+      "liquid_sand",
+      "synthetic_material_id"
+    ],
+    "fixtures": {
+      "sand": [
+        "CLiquidCell",
+        6,
+        1,
+        101
+      ],
+      "water": [
+        "CLiquidCell",
+        4,
+        0,
+        102
+      ],
+      "oil": [
+        "CLiquidCell",
+        1,
+        0,
+        103
+      ],
+      "same_weight_test_liquid": [
+        "CLiquidCell",
+        4,
+        0,
+        104
+      ],
+      "light_test_grain": [
+        "CLiquidCell",
+        2,
+        1,
+        105
+      ],
+      "steam": [
+        "CGasCell",
+        1,
+        0,
+        106
+      ],
+      "light_test_gas": [
+        "CGasCell",
+        0.5,
+        0,
+        107
+      ],
+      "dense_test_gas": [
+        "CGasCell",
+        2,
+        0,
+        108
+      ],
+      "body_solid": [
+        "CSolidCell",
+        0,
+        0,
+        109
+      ],
+      "fire": [
+        "CFireCell",
+        1,
+        0,
+        110
+      ]
+    },
+    "cases": [
+      {
+        "predicate": "liquid",
+        "source": "sand",
+        "neighbor": "empty",
+        "seed": 0,
+        "result": 1,
+        "expected": 1,
+        "rng_advanced": false
+      },
+      {
+        "predicate": "liquid",
+        "source": "sand",
+        "neighbor": "water",
+        "seed": 79,
+        "result": 1,
+        "expected": 1,
+        "rng_advanced": true
+      },
+      {
+        "predicate": "liquid",
+        "source": "sand",
+        "neighbor": "water",
+        "seed": 0,
+        "result": 0,
+        "expected": 0,
+        "rng_advanced": true
+      },
+      {
+        "predicate": "liquid",
+        "source": "water",
+        "neighbor": "sand",
+        "seed": 79,
+        "result": 0,
+        "expected": 0,
+        "rng_advanced": true
+      },
+      {
+        "predicate": "liquid",
+        "source": "water",
+        "neighbor": "oil",
+        "seed": 79,
+        "result": 1,
+        "expected": 1,
+        "rng_advanced": true
+      },
+      {
+        "predicate": "liquid",
+        "source": "oil",
+        "neighbor": "water",
+        "seed": 79,
+        "result": 0,
+        "expected": 0,
+        "rng_advanced": true
+      },
+      {
+        "predicate": "liquid",
+        "source": "water",
+        "neighbor": "same_weight_test_liquid",
+        "seed": 79,
+        "result": 0,
+        "expected": 0,
+        "rng_advanced": true
+      },
+      {
+        "predicate": "liquid",
+        "source": "sand",
+        "neighbor": "light_test_grain",
+        "seed": 79,
+        "result": 0,
+        "expected": 0,
+        "rng_advanced": true
+      },
+      {
+        "predicate": "liquid",
+        "source": "water",
+        "neighbor": "body_solid",
+        "seed": 79,
+        "result": 0,
+        "expected": 0,
+        "rng_advanced": true
+      },
+      {
+        "predicate": "liquid",
+        "source": "water",
+        "neighbor": "steam",
+        "seed": 0,
+        "result": 1,
+        "expected": 1,
+        "rng_advanced": false
+      },
+      {
+        "predicate": "liquid",
+        "source": "water",
+        "neighbor": "fire",
+        "seed": 0,
+        "result": 1,
+        "expected": 1,
+        "rng_advanced": false
+      },
+      {
+        "predicate": "gas",
+        "source": "steam",
+        "neighbor": "empty",
+        "seed": 0,
+        "result": 1,
+        "expected": 1,
+        "rng_advanced": false
+      },
+      {
+        "predicate": "gas",
+        "source": "steam",
+        "neighbor": "water",
+        "seed": 79,
+        "result": 0,
+        "expected": 0,
+        "rng_advanced": false
+      },
+      {
+        "predicate": "gas",
+        "source": "steam",
+        "neighbor": "body_solid",
+        "seed": 79,
+        "result": 0,
+        "expected": 0,
+        "rng_advanced": false
+      },
+      {
+        "predicate": "gas",
+        "source": "steam",
+        "neighbor": "dense_test_gas",
+        "seed": 79,
+        "result": 1,
+        "expected": 1,
+        "rng_advanced": true
+      },
+      {
+        "predicate": "gas",
+        "source": "dense_test_gas",
+        "neighbor": "steam",
+        "seed": 79,
+        "result": 0,
+        "expected": 0,
+        "rng_advanced": true
+      },
+      {
+        "predicate": "gas",
+        "source": "steam",
+        "neighbor": "dense_test_gas",
+        "seed": 0,
+        "result": 0,
+        "expected": 0,
+        "rng_advanced": true
+      },
+      {
+        "predicate": "gas",
+        "source": "steam",
+        "neighbor": "steam",
+        "seed": 79,
+        "result": 0,
+        "expected": 0,
+        "rng_advanced": false
+      }
+    ],
+    "seed_by_residue_0_through_100": [
+      81,
+      205,
+      20,
+      51,
+      175,
+      299,
+      21,
+      145,
+      269,
+      22,
+      115,
+      239,
+      23,
+      85,
+      209,
+      24,
+      55,
+      179,
+      303,
+      25,
+      149,
+      273,
+      26,
+      119,
+      243,
+      27,
+      58,
+      213,
+      337,
+      28,
+      183,
+      307,
+      29,
+      122,
+      277,
+      30,
+      92,
+      247,
+      0,
+      62,
+      186,
+      1,
+      32,
+      156,
+      311,
+      2,
+      126,
+      250,
+      3,
+      96,
+      220,
+      4,
+      66,
+      190,
+      5,
+      36,
+      160,
+      284,
+      6,
+      130,
+      254,
+      7,
+      100,
+      224,
+      8,
+      70,
+      194,
+      318,
+      9,
+      164,
+      288,
+      10,
+      134,
+      258,
+      11,
+      73,
+      228,
+      12,
+      43,
+      198,
+      322,
+      13,
+      137,
+      292,
+      14,
+      107,
+      262,
+      15,
+      77,
+      201,
+      16,
+      47,
+      171,
+      326,
+      17,
+      141,
+      296,
+      18,
+      111,
+      235,
+      19
+    ],
+    "one_case_per_residue": [
+      {
+        "predicate": "liquid",
+        "source": "sand",
+        "neighbor": "water",
+        "checked": 101,
+        "allowed": 26,
+        "allowed_remainder_interval": [
+          75,
+          100
+        ],
+        "rng_advanced": 101
+      },
+      {
+        "predicate": "liquid",
+        "source": "water",
+        "neighbor": "sand",
+        "checked": 101,
+        "allowed": 0,
+        "allowed_remainder_interval": [],
+        "rng_advanced": 101
+      },
+      {
+        "predicate": "liquid",
+        "source": "sand",
+        "neighbor": "light_test_grain",
+        "checked": 101,
+        "allowed": 0,
+        "allowed_remainder_interval": [],
+        "rng_advanced": 101
+      },
+      {
+        "predicate": "liquid",
+        "source": "sand",
+        "neighbor": "empty",
+        "checked": 101,
+        "allowed": 101,
+        "allowed_remainder_interval": [
+          0,
+          100
+        ],
+        "rng_advanced": 0
+      },
+      {
+        "predicate": "gas",
+        "source": "steam",
+        "neighbor": "dense_test_gas",
+        "checked": 101,
+        "allowed": 26,
+        "allowed_remainder_interval": [
+          75,
+          100
+        ],
+        "rng_advanced": 101
+      },
+      {
+        "predicate": "gas",
+        "source": "dense_test_gas",
+        "neighbor": "steam",
+        "checked": 101,
+        "allowed": 0,
+        "allowed_remainder_interval": [],
+        "rng_advanced": 101
+      }
+    ]
+  },
+  "local_raw_evidence": "C:\\Users\\zhy\\.codex\\visualizations\\2026\\11\\20\\01a1f843-88a1-7f81-a5a8-2e6c4521b8c9\\noita_material_study"
+}

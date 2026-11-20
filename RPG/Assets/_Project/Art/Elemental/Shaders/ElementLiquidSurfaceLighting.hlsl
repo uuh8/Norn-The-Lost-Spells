@@ -8,6 +8,7 @@
             #define _SURFACE_TYPE_TRANSPARENT 1
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareDepthTexture.hlsl"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/DeclareOpaqueTexture.hlsl"
             #include "ElementWaterCore.hlsl"
 
             CBUFFER_START(UnityPerMaterial)
@@ -41,6 +42,7 @@
                 // Mesh 落水插值也是材质参数，放在 UnityPerMaterial 中保留 SRP Batcher 兼容性。
                 float _LiquidMotionHorizon;
                 float _CartoonSwellAmplitude;
+                float _LiquidRefractionStrength;
 #ifdef ELEMENT_LIQUID_CONTINUOUS_PALETTE
                 // 所有液体绘制变体使用同一UnityPerMaterial布局，颜色不会随其他Draw的全局状态串色。
                 float4 _PaletteShallow[8],_PaletteDeep[8],_PaletteFresnel[8],_PaletteFoam[8],_PaletteAlpha[8],_PaletteSurface[8];
@@ -74,9 +76,22 @@
                 float4 shadowCoord : TEXCOORD2;
                 half fogFactor : TEXCOORD3;
                 half3 vertexSH : TEXCOORD4;
+                // 水平流速x/z与接地冲击强度；来自同一数量窗口，只影响表现。
+                float3 flowImpact : TEXCOORD7;
                 float4 positionCS : SV_POSITION;
                 UNITY_VERTEX_OUTPUT_STEREO
             };
+            float FlowNoise(float3 positionWS,float3 normalWS,float scale,float2 drift,float2 flow,out float3 gradient)
+            {
+                if(dot(flow,flow)<.0001)return ElementWaterTriplanarNoiseGradient(positionWS,normalWS,_VolumeWaveWorldScale,scale,drift*_Time.y,_TriplanarSharpness,gradient);
+                // 两个错开半周期的流向采样交替淡入，重置的那个相位权重恰为0，
+                // 避免长期平移纹理拉伸，也避免每次Tick重建让高光重新开始。
+                float phase=frac(_Time.y*.25),other=frac(phase+.5),blend=abs(phase*2-1);
+                float3 velocity=float3(flow.x,0,flow.y),ga,gb;
+                float a=ElementWaterTriplanarNoiseGradient(positionWS-velocity*(phase*4),normalWS,_VolumeWaveWorldScale,scale,drift*_Time.y,_TriplanarSharpness,ga);
+                float b=ElementWaterTriplanarNoiseGradient(positionWS-velocity*(other*4),normalWS,_VolumeWaveWorldScale,scale,drift*_Time.y,_TriplanarSharpness,gb);
+                gradient=lerp(ga,gb,blend);return lerp(a,b,blend);
+            }
 
             // 同一个外壳逐顶点携带数量权重；Palette参数化保留旧Shader入口，
             // 避免为每种液体重复画透明外壳，也不能在Fragment内改写CBUFFER。
@@ -166,10 +181,8 @@
                 float waveNoiseB;
                 float combinedNoise;
                 float3 gradientA,gradientB;
-                waveNoiseA=ElementWaterTriplanarNoiseGradient(input.positionWS,baseNormalWS,_VolumeWaveWorldScale,
-                    _WaveScaleA,_WaveSpeedA.xy*_Time.y,_TriplanarSharpness,gradientA);
-                waveNoiseB=ElementWaterTriplanarNoiseGradient(input.positionWS,baseNormalWS,_VolumeWaveWorldScale,
-                    _WaveScaleB,_WaveSpeedB.xy*_Time.y,_TriplanarSharpness,gradientB);
+                waveNoiseA=FlowNoise(input.positionWS,baseNormalWS,_WaveScaleA,_WaveSpeedA.xy,input.flowImpact.xy,gradientA);
+                waveNoiseB=FlowNoise(input.positionWS,baseNormalWS,_WaveScaleB,_WaveSpeedB.xy,input.flowImpact.xy,gradientB);
                 combinedNoise=saturate((waveNoiseA+waveNoiseB)*.5);
 
                 // 圆肩侧面优先保留几何法线，避免高频波纹把柔和轮廓照成锋利碎片。
@@ -208,7 +221,9 @@
                 float contactMask = 1.0 - saturate(
                     waterThickness / max(_FoamDistance, 0.0001));
                 float foamNoise = smoothstep(0.35, 0.70, combinedNoise);
-                float foamMask = saturate(contactMask * foamNoise * _FoamStrength);
+                // 接地时的下落速度只提高接触区域泡沫，空中水团不会无故变白；
+                // 原Depth接触泡沫仍保留，实际慢速黏液自然比高速水流产生更少冲击细节。
+                float foamMask = saturate(contactMask * (foamNoise * _FoamStrength + saturate(input.flowImpact.z)*(.4+.6*foamNoise)*.7));
                 half3 depthColor = lerp(palette.shallow.rgb, palette.deep.rgb, depthMask);
                 half3 fresnelColor = lerp(depthColor, palette.fresnel.rgb, fresnelMask);
                 half3 finalAlbedo = lerp(fresnelColor, palette.foam.rgb, foamMask);
@@ -248,6 +263,18 @@
 
                 half4 color = UniversalFragmentPBR(inputData, surfaceData);
                 color.rgb = MixFog(color.rgb, inputData.fogCoord);
+                if(_LiquidRefractionStrength>0)
+                {
+                    // 只有Renderer确认当前URP/Camera提供OpaqueTexture时才启用。
+                    // 在Alpha Blend中加上折射采样与原背景之差，保留原透明度；
+                    // 最终等价于背景被有界UV偏移替换，避免把SceneColor再次叠成发光层。
+                    float3 viewNormal=TransformWorldToViewDir(dynamicNormalWS);
+                    float2 refractedUV=saturate(screenUV+viewNormal.xy*_LiquidRefractionStrength*saturate(waterThickness/.5)*(1-fresnelMask)*(1-foamMask));
+                    float shiftedDepth=SampleSceneDepth(refractedUV);
+                    float shiftedEye=unity_OrthoParams.w==0?LinearEyeDepth(shiftedDepth,_ZBufferParams):LinearDepthToEyeDepth(shiftedDepth);
+                    if(shiftedEye<surfaceEyeDepth)refractedUV=screenUV;
+                    color.rgb+=(SampleSceneColor(refractedUV)-SampleSceneColor(screenUV))*(1-finalAlpha)/max(.05,finalAlpha);
+                }
                 color.a = _DebugForceOpaqueFragment>1.5f?1:finalAlpha;
                 color.a*=visibility;
                 return color;

@@ -19,7 +19,7 @@ using Object = UnityEngine.Object;
 
 namespace Game.Run.Tests
 {
-    public sealed class OwnedWandV2PlayModeTests
+    public sealed partial class OwnedWandV2PlayModeTests
     {
         private const string ScenePath = "Assets/_Project/Scenes/Tests/WandSandbox.unity";
         private const string DataPath = "Assets/_Project/Tests/Fixtures/Run/SinglePlayerWands/";
@@ -28,6 +28,8 @@ namespace Game.Run.Tests
         private SinglePlayerInventorySession _session; private OwnedWandCastAdapter _adapter;
         private WizardController _wizard; private SpellCaster _caster; private SpellDefinition _trigger;
         private InputTestFixture _input;private Mouse _mouse;private bool _background;
+        // 保留每轮真实持续输入的证据，不覆盖先前30秒记录。
+        private readonly string _evidenceDirectory = System.IO.Path.Combine("TestResults/FullAuditPlayMode/OwnedWandV2", Guid.NewGuid().ToString("N"));
         private bool Continuous=>TestContext.CurrentContext.Test.Name.StartsWith("Continuous");
         private static FieldInfo Field(Type type, string name) => type.GetField(name, BindingFlags.NonPublic | BindingFlags.Instance);
         [UnitySetUp] public IEnumerator Setup()
@@ -214,8 +216,8 @@ namespace Game.Run.Tests
             Assert.That(intervals[0],Is.GreaterThanOrEqualTo(configuredDelay-.002));
             // 本轮恢复真实起手，间隔包含ArrowSpawnTime前的动画时间；不能沿用“动画仅反馈”的<0.2秒断言。
             Assert.That(intervals[intervals.Count/2],Is.LessThan(configuredDelay+1.0),"按住必须跨多次动画持续释放，不能卡在某次起手。");
-            System.IO.Directory.CreateDirectory("Temp/Spells/Performance");
-            System.IO.File.WriteAllText("Temp/Spells/Performance/"+TestContext.CurrentContext.Test.Name+".txt",
+            System.IO.Directory.CreateDirectory(_evidenceDirectory);
+            System.IO.File.WriteAllText(System.IO.Path.Combine(_evidenceDirectory, TestContext.CurrentContext.Test.Name + ".txt"),
                 "Scope=Editor actual InputSystem held LMB 30 real seconds; existing WandSandbox, no Standalone claim\nConfigured="+configuredDelay+"\nShots="+shots.Count+"\nMedianInterval="+intervals[intervals.Count/2]+"\nP95FrameMs="+frames[(int)((frames.Count-1)*.95)]+"\nP99FrameMs="+frames[(int)((frames.Count-1)*.99)]);
         }
     }

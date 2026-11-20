@@ -20,7 +20,9 @@ namespace Game.ElementField
         private readonly MeshCollider[] _colliders;
         private readonly ElementChunkKey[] _keys, _boundKeys;
         private readonly uint[] _versions;
+        private readonly bool[] _bound;
         private readonly bool[] _blocking;
+        private readonly bool[] _partialVolume;
         private readonly Vector3Int[] _scratchCells;
         private readonly MaterialId[] _scratchMaterials;
         private readonly uint[] _scratchAmounts;
@@ -32,6 +34,15 @@ namespace Game.ElementField
         {
             int slots = Math.Min(store.MaximumChunks, profile.MaximumChunks);
             _blocking = GetBlocking(profile);
+            _partialVolume = new bool[256];
+            for (int i = 0; i < profile.MaterialCount; i++)
+            {
+                var material = profile.GetMaterial(i);
+                // 与Authority现有占据适配器保持同一支持边界，不能默许新partial材料却只在客户端抬高液面。
+                if (material.UsesPartialVolume && material.Material != MaterialId.DriedSlime)
+                    throw new ArgumentException("UsesPartialVolume 当前只支持固化粘液的体积占据。");
+                _partialVolume[(byte)material.Material] = material.UsesPartialVolume;
+            }
             // 一格Halo最多涉及27个原生Chunk，初始化时一次预留；绝不初始化FixedSolidWorldRuntime。
             _scratch = new FixedSolidVolumeStore(geometry.ChunkSize, 27, profile.CellCapacityGmu, Materials);
             _builder = new FixedSolidSurfaceBuilder(_scratch, Blocks, profile.MaximumNavigationBoxesPerChunk);
@@ -39,6 +50,7 @@ namespace Game.ElementField
             _scratchCells = new Vector3Int[cells]; _scratchMaterials = new MaterialId[cells]; _scratchAmounts = new uint[cells];
             _visual = new Mesh[slots]; _collision = new Mesh[slots]; _roots = new Transform[slots]; _colliders = new MeshCollider[slots];
             _keys = new ElementChunkKey[store.MaximumChunks]; _boundKeys = new ElementChunkKey[slots]; _versions = new uint[slots];
+            _bound = new bool[slots];
             for (int i = 0; i < slots; i++)
             {
                 var root = new GameObject("Replica Material Solid " + i); root.SetActive(false); root.layer = 8;
@@ -53,18 +65,76 @@ namespace Game.ElementField
         private static bool[] GetBlocking(FixedSolidWorldProfile profile)
         { var values = new bool[256]; for (int i = 0; i < profile.MaterialCount; i++) { var material = profile.GetMaterial(i); values[(byte)material.Material] = material.BlocksMovement; } return values; }
         private bool Blocks(MaterialId material) => _blocking[(byte)material];
+
+        // 通用HasBlockingVolume仍按真实高度采样；液体需要独立的整格墙/部分容量语义，不能借点查询放宽碰撞。
+        private bool BlocksWholeCell(Vector3Int cell)
+        {
+            for (int i = 0; i < Materials.Length; i++)
+            {
+                MaterialId material = Materials[i];
+                if (_blocking[(byte)material] && !_partialVolume[(byte)material]
+                    && TryGetQuantity(cell, material, out uint quantity) && quantity > 0) return true;
+            }
+            return false;
+        }
+
+        internal bool BlocksLiquidCell(Vector3 minimum, float size)
+        {
+            CoveredCells(minimum, size, out var min, out var max);
+            // 正式Profile的粗细比最多4，每个粗格至多64个细格；包含负坐标，端点采用半开区间。
+            for (int z = min.z; z <= max.z; z++) for (int y = min.y; y <= max.y; y++) for (int x = min.x; x <= max.x; x++)
+                if (BlocksWholeCell(new Vector3Int(x, y, z))) return true;
+            return false;
+        }
+
+        internal uint ReadLiquidPartialOccupancy(Vector3 minimum, float size, uint capacity)
+        {
+            CoveredCells(minimum, size, out var min, out var max);
+            ulong total = 0;
+            for (int z = min.z; z <= max.z; z++) for (int y = min.y; y <= max.y; y++) for (int x = min.x; x <= max.x; x++)
+                for (int m = 0; m < Materials.Length; m++)
+                    if (_partialVolume[(byte)Materials[m]] && TryGetQuantity(new Vector3Int(x, y, z), Materials[m], out uint quantity))
+                        total += quantity;
+            // 与Authority一样只投影GMU占据，不复制、消费或舍弃Store的真实材料数量。
+            return (uint)Math.Min((ulong)capacity, total);
+        }
+
+        internal bool IsWholeCellSupport(Vector3 hitPoint)
+            => BlocksWholeCell(Vector3Int.FloorToInt((hitPoint - Vector3.up * (Geometry.CellSize * .001f)
+                - Geometry.Origin) / Geometry.CellSize));
+
+        private void CoveredCells(Vector3 minimum, float size, out Vector3Int min, out Vector3Int max)
+        {
+            min = Vector3Int.FloorToInt((minimum - Geometry.Origin) / Geometry.CellSize);
+            max = Vector3Int.CeilToInt((minimum + Vector3.one * size - Geometry.Origin) / Geometry.CellSize) - Vector3Int.one;
+        }
         public void PresentOneChunk()
         {
             int count = Store.CopyChunkKeys(WorldMaterialDomain.Solid, _keys);
-            // 已离开Interest/已删除的碰撞立即停用，不等轮转重建；仅扫描配置的几何槽上限。
+            // CopyChunkKeys是紧凑列表，退出Interest会移动后续索引；几何槽必须绑定Key而非列表位置。
+            // 只退休真正离开的Key，保留其他Chunk已有的Collider/Mesh，避免一次退出制造多帧碰撞空洞。
             for (int i = 0; i < _roots.Length; i++)
-                if (i >= count) { _roots[i].gameObject.SetActive(false); _versions[i] = 0; }
-                else if (_versions[i] != 0 && !_boundKeys[i].Equals(_keys[i])) { _roots[i].gameObject.SetActive(false); _versions[i] = 0; }
-            int limit = Math.Min(count, _roots.Length);
-            for (int attempts = 0; attempts < limit; attempts++)
             {
-                int slot = _cursor % limit; _cursor = (slot + 1) % limit;
-                var key = _keys[slot]; uint version = NeighborhoodVersion(key);
+                if (!_bound[i] || Store.GetChunkVersion(WorldMaterialDomain.Solid, _boundKeys[i]) != 0) continue;
+                _roots[i].gameObject.SetActive(false); _versions[i] = 0; _bound[i] = false;
+                GeometryVersion++;
+            }
+            // 固定容量内线性查找，不创建Dictionary或临时集合；新Key只能占用空槽，不能挤走仍有效几何。
+            for (int i = 0; i < count; i++)
+            {
+                int free = -1; bool found = false;
+                for (int slot = 0; slot < _roots.Length; slot++)
+                {
+                    if (_bound[slot]) { if (_boundKeys[slot].Equals(_keys[i])) { found = true; break; } }
+                    else if (free < 0) free = slot;
+                }
+                if (!found && free >= 0) { _bound[free] = true; _boundKeys[free] = _keys[i]; }
+            }
+            for (int attempts = 0; attempts < _roots.Length; attempts++)
+            {
+                int slot = _cursor; _cursor = (slot + 1) % _roots.Length;
+                if (!_bound[slot]) continue;
+                var key = _boundKeys[slot]; uint version = NeighborhoodVersion(key);
                 if (_versions[slot] == version) continue;
                 Build(slot, key); _versions[slot] = version; GeometryVersion++; return;
             }
@@ -94,11 +164,14 @@ namespace Game.ElementField
                     _scratchCells[_scratchCount] = cell; _scratchMaterials[_scratchCount] = Materials[m]; _scratchAmounts[_scratchCount++] = quantity;
                 }
             }
+            // 复用Mesh前先解除旧Collider引用；Transform/重新激活也须先完成，最后才发布本次collision Mesh。
+            // 否则已停用槽重入时，visual可见但Unity的Collider生命周期会留下空sharedMesh。
+            _colliders[slot].sharedMesh = null;
+            _roots[slot].position = Geometry.Origin + new Vector3(key.X, key.Y, key.Z) * (ChunkSize * Geometry.CellSize);
             _builder.Build(key, Geometry.CellSize, false); Fill(_visual[slot]);
             _builder.Build(key, Geometry.CellSize, true); Fill(_collision[slot]);
-            _colliders[slot].sharedMesh = null; _colliders[slot].sharedMesh = _collision[slot].vertexCount > 0 ? _collision[slot] : null;
-            _roots[slot].position = Geometry.Origin + new Vector3(key.X, key.Y, key.Z) * (ChunkSize * Geometry.CellSize);
             _boundKeys[slot] = key; _roots[slot].gameObject.SetActive(_visual[slot].vertexCount > 0);
+            _colliders[slot].sharedMesh = _collision[slot].vertexCount > 0 ? _collision[slot] : null;
         }
         private void Fill(Mesh mesh)
         {

@@ -112,10 +112,25 @@ namespace Game.Project.Editor
         {
             OnlineSceneSetup.RequireCleanEditor();
             OnlineMovementTools.Verify();
-            CreateInventoryRegressionScene();
-            string stamp = DateTime.UtcNow.ToString("yyyyMMddTHHmmssZ");
-            OnlineBuildTools.Build(false, InventoryRegressionScenePath, "Builds/OnlineValidation/InventoryClient/" + stamp + "/NornInventoryClient.exe",
-                "inventory-client-verification-" + stamp);
+            // 验证Scene每次重建会重新分配Prefab实例ID；构建产物需要新装配，但用户已有的Scene不能因此
+            // 产生无意义dirty diff。按原始字节恢复，不能从Git还原（用户原本就可能有未提交改动）。
+            byte[] previous=System.IO.File.Exists(InventoryRegressionScenePath)
+                ?System.IO.File.ReadAllBytes(InventoryRegressionScenePath):null;
+            try
+            {
+                CreateInventoryRegressionScene();
+                string stamp = DateTime.UtcNow.ToString("yyyyMMddTHHmmssZ");
+                OnlineBuildTools.Build(false, InventoryRegressionScenePath, "Builds/OnlineValidation/InventoryClient/" + stamp + "/NornInventoryClient.exe",
+                    "inventory-client-verification-" + stamp);
+            }
+            finally
+            {
+                if(previous!=null)
+                {
+                    System.IO.File.WriteAllBytes(InventoryRegressionScenePath,previous);
+                    AssetDatabase.ImportAsset(InventoryRegressionScenePath,ImportAssetOptions.ForceSynchronousImport);
+                }
+            }
         }
 
         private static void CreateInventoryRegressionScene()

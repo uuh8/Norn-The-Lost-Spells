@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using Game.Character;
 using Game.Combat;
@@ -11,6 +12,7 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 namespace Game.Run.Tests
 {
@@ -215,6 +217,191 @@ namespace Game.Run.Tests
             yield return null;
         }
     }
+    /// <summary>
+    /// 只使用原门资源和临时Camera检查纯视觉接线。不进入账号/库存或真实转场，
+    /// 也不以转动Trigger来代替Billboard；返回许可仍调用原PortalInteractionRegistry。
+    /// </summary>
+    public sealed class PortalVisualBillboardPlayModeTests
+    {
+        private readonly List<Camera> _previousMainCameras = new List<Camera>();
+        private Scene _scene;
+        private Camera _camera;
+
+        [SetUp]
+        public void BeginIsolatedPortalView()
+        {
+            // Camera.main按激活和Tag选择。只在测试开始隔离已有主镜头，结束逐一恢复，
+            // 防止测试自己的Camera碰巧未被选中却误报门的朝向问题。
+            foreach (var camera in Object.FindObjectsByType<Camera>(FindObjectsSortMode.None))
+                if (camera.isActiveAndEnabled && camera.CompareTag("MainCamera"))
+                { _previousMainCameras.Add(camera); camera.enabled = false; }
+            _scene = SceneManager.CreateScene("PortalVisualBillboardFixture");
+            _camera = NewCamera("Portal test main camera");
+        }
+
+        [UnityTest]
+        public IEnumerator UnifiedDynamicPortalFacesCameraWithoutRotatingTriggerOrMovingItsVisualCenter()
+        {
+            var portal = NewDynamicPortal(out var visual);
+            var billboard = visual.GetComponent<WorldSpaceLabelBillboard>();
+            Assert.That(billboard, Is.Not.Null, "原统一门的动态实例必须自行接入共用纯视觉Billboard。");
+            Assert.That(portal.GetComponent<WorldSpaceLabelBillboard>(), Is.Null, "返回门逻辑根不能随Camera旋转。");
+            yield return CheckCameraOrbit(portal, visual);
+        }
+
+        [UnityTest]
+        public IEnumerator ExportedHomeReturnVisualFacesCameraWithoutChangingOriginalBoxPermission()
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Prefabs/World/Online/HomeWorld.prefab");
+            Assert.That(prefab, Is.Not.Null);
+            var source = prefab.GetComponent<OnlineHomeWorldBindings>();
+            Assert.That(source, Is.Not.Null);
+            var portal = Object.Instantiate(source.ReturnPortalTransform.gameObject);
+            SceneManager.MoveGameObjectToScene(portal, _scene);
+            var billboard = portal.GetComponentInChildren<WorldSpaceLabelBillboard>(true);
+            Assert.That(billboard, Is.Not.Null,
+                "实际交付的HomeWorld必须保留原视觉子根Billboard，不能只让Editor Preview通过。");
+            Assert.That(billboard.transform, Is.Not.SameAs(portal.transform));
+            Assert.That(portal.GetComponentInChildren<HomePortalPresentation>(true), Is.Null);
+            Assert.That(portal.GetComponentInChildren<HomePortal>(true), Is.Null);
+            yield return CheckCameraOrbit(portal, billboard.transform);
+        }
+
+        [UnityTest]
+        public IEnumerator PortalBillboardRebindsWhenTheOldMainCameraIsDisabled()
+        {
+            var portal = NewDynamicPortal(out var visual);
+            Assert.That(visual.GetComponent<WorldSpaceLabelBillboard>(), Is.Not.Null);
+            _camera.transform.position = visual.position + new Vector3(5, 2, 0);
+            _camera.transform.rotation = Quaternion.Euler(12, -35, 0);
+            yield return null;
+            AssertFacing(visual, _camera);
+            var old = _camera; old.enabled = false;
+            _camera = NewCamera("Replacement portal main camera");
+            _camera.transform.position = visual.position + new Vector3(-4, 3, 2);
+            _camera.transform.rotation = Quaternion.Euler(-10, 90, 0);
+            yield return null; yield return null;
+            AssertFacing(visual, _camera);
+            Assert.That(Quaternion.Angle(portal.transform.rotation, Quaternion.Euler(0, 37, 0)), Is.LessThan(.001f));
+        }
+
+        [UnityTest]
+        public IEnumerator ExistingWorldLabelsKeepScreenAlignmentByDefault()
+        {
+            var label = new GameObject("Existing world label"); SceneManager.MoveGameObjectToScene(label, _scene);
+            label.transform.position = new Vector3(1700, 10, 1700);
+            label.AddComponent<WorldSpaceLabelBillboard>();
+            _camera.transform.position = label.transform.position + new Vector3(5, 2, 1);
+            _camera.transform.rotation = Quaternion.Euler(16, 28, 7);
+            yield return null;
+            Assert.That(Quaternion.Angle(label.transform.rotation, _camera.transform.rotation), Is.LessThan(.001f),
+                "门使用朝相机位置的选项，原文字仍按Camera的屏幕平面对齐。");
+        }
+
+        [UnityTest]
+        public IEnumerator DynamicPortalDoesNotBillboardAConfiguredLogicRootOrColliderSubtree()
+        {
+            foreach (bool sameRoot in new[] { true, false })
+            {
+                var logic = new GameObject("Unsafe portal visual fixture"); logic.SetActive(false);
+                SceneManager.MoveGameObjectToScene(logic, _scene); logic.AddComponent<BoxCollider>();
+                Transform target = logic.transform;
+                if (!sameRoot)
+                {
+                    var visual = new GameObject("Visual subtree containing interaction geometry");
+                    visual.transform.SetParent(logic.transform, false); target = visual.transform;
+                    var nested = new GameObject("Nested interaction Collider"); nested.transform.SetParent(target, false);
+                    nested.AddComponent<BoxCollider>();
+                }
+                var controller = logic.AddComponent<PortalVfxController>();
+                var data = new SerializedObject(controller);
+                data.FindProperty("_visualRoot").objectReferenceValue = target; data.ApplyModifiedPropertiesWithoutUndo();
+                logic.SetActive(true); yield return null;
+                Assert.That(target.GetComponent<WorldSpaceLabelBillboard>(), Is.Null,
+                    "配置必须指向无Collider的独立视觉子树，不能为达到朝镜头效果转动交互几何。");
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator PortalBillboardKeepsItsPreviousRotationWhenCameraPassesThroughVisualCenter()
+        {
+            NewDynamicPortal(out var visual);
+            _camera.transform.position = visual.position + new Vector3(5, 2, 0);
+            yield return null;
+            AssertFacing(visual, _camera);
+            var before = visual.rotation;
+            _camera.transform.position = visual.position;
+            yield return null;
+            Assert.That(Quaternion.Angle(visual.rotation, before), Is.LessThan(.001f),
+                "零方向没有唯一朝向，必须保留上一帧，避免LookRotation错误或跳到identity。");
+        }
+
+        private GameObject NewDynamicPortal(out Transform visual)
+        {
+            var logic = new GameObject("Original return trigger fixture"); logic.SetActive(false);
+            SceneManager.MoveGameObjectToScene(logic, _scene);
+            logic.transform.SetPositionAndRotation(new Vector3(1700, 10, 1700), Quaternion.Euler(0, 37, 0));
+            var box = logic.AddComponent<BoxCollider>(); box.isTrigger = true;
+            box.center = Vector3.up * 1.25f; box.size = new Vector3(2, 3, 1);
+            var prefab = Resources.Load<GameObject>("SinglePlayer/UnifiedPortalVisual");
+            Assert.That(prefab, Is.Not.Null);
+            var instance = Object.Instantiate(prefab, logic.transform, false);
+            var controller = instance.GetComponent<PortalVfxController>();
+            Assert.That(controller, Is.Not.Null);
+            visual = new SerializedObject(controller).FindProperty("_visualRoot").objectReferenceValue as Transform;
+            Assert.That(visual, Is.Not.Null);
+            logic.SetActive(true);
+            return logic;
+        }
+
+        private IEnumerator CheckCameraOrbit(GameObject logic, Transform visual)
+        {
+            var box = logic.GetComponent<BoxCollider>(); Assert.That(box, Is.Not.Null);
+            Vector3 position = logic.transform.position, scale = logic.transform.localScale;
+            Quaternion rotation = logic.transform.rotation;
+            Vector3 center = visual.position, boxCenter = box.center, boxSize = box.size;
+            var actor = new GameObject("Portal permission observer"); SceneManager.MoveGameObjectToScene(actor, _scene);
+            var actorBox = actor.AddComponent<BoxCollider>(); actorBox.size = new Vector3(.4f, 1, .4f);
+            actor.transform.position = box.transform.TransformPoint(box.center);
+            Physics.SyncTransforms();
+            Assert.That(PortalInteractionRegistry.Contains(box, actorBox), Is.True);
+            foreach (var offset in new[] { new Vector3(5, 2, 0), new Vector3(0, 3, -5), new Vector3(-5, 1, 0) })
+            {
+                _camera.transform.position = center + offset;
+                // 故意不让Camera自身LookAt门，才能区分朝Camera位置与原文字screen-aligned模式。
+                _camera.transform.rotation = Quaternion.Euler(15, 23, 4);
+                yield return null; yield return null;
+                AssertFacing(visual, _camera);
+                Assert.That(logic.transform.position, Is.EqualTo(position));
+                Assert.That(logic.transform.localScale, Is.EqualTo(scale));
+                Assert.That(Quaternion.Angle(logic.transform.rotation, rotation), Is.LessThan(.001f));
+                Assert.That(Vector3.Distance(visual.position, center), Is.LessThan(.0001f));
+                Assert.That(box.center, Is.EqualTo(boxCenter)); Assert.That(box.size, Is.EqualTo(boxSize));
+                Physics.SyncTransforms();
+                Assert.That(PortalInteractionRegistry.Contains(box, actorBox), Is.True,
+                    "Billboard仅改视觉朝向，不能改变原Collider最近点交互许可。");
+            }
+        }
+
+        private static void AssertFacing(Transform visual, Camera camera)
+            => Assert.That(Vector3.Dot(visual.forward, (camera.transform.position - visual.position).normalized), Is.GreaterThan(.999f));
+
+        private Camera NewCamera(string name)
+        {
+            var node = new GameObject(name); SceneManager.MoveGameObjectToScene(node, _scene);
+            node.tag = "MainCamera";
+            return node.AddComponent<Camera>();
+        }
+
+        [UnityTearDown]
+        public IEnumerator EndIsolatedPortalView()
+        {
+            if (_scene.IsValid() && _scene.isLoaded) yield return SceneManager.UnloadSceneAsync(_scene);
+            foreach (var camera in _previousMainCameras) if (camera != null) camera.enabled = true;
+            _previousMainCameras.Clear();
+        }
+    }
+
     internal static class GameplayRepairChecks
     {
         internal static IEnumerator CheckFire(ElementWorldRuntime world,Vector3 actor)

@@ -90,6 +90,8 @@ namespace Game.Run
             if (request.InventoryId != _inventoryId || string.IsNullOrEmpty(request.SourceId) || string.IsNullOrEmpty(request.WorldId)
                 || request.RequestId == 0 || (request.Kind != ContainerUseKind.Throw && request.Budget == 0)
                 || !Finite(request.ActorPosition) || !Finite(request.TargetPosition) || !Finite(request.ThrowVelocity)
+                || request.HasInitialMotion && (!Finite(request.InitialVelocity) || request.InitialVelocity.sqrMagnitude > 4096f
+                    || (request.TargetPosition-request.ActorPosition).sqrMagnitude > 9f)
                 || !float.IsFinite(request.Radius) || request.Radius <= 0 || request.Radius > 1
                 // 旧3m限制只适用于近处放固体/投瓶发射点；撒料落点来自Camera的物理弧线。
                 // 世界Deposit仍校验实际区域/容量并预约来源，拒绝时不扣材料，不能用旧近距限制吞掉合法落点。
@@ -116,7 +118,8 @@ namespace Game.Run
                 if (count == 0) return Fail(result, MaterialTransferFailure.NoMaterial);
                 MaterialAmountOps.SplitBudget(_all, count, request.Budget, _amounts, _remainders, (int)(request.RequestId % 8));
                 _reservation.Configure(item, _profile.Items.Version);
-                result.Transfer.Failure = Deposit(request.WorldId, request.TargetPosition, request.Radius, count, out result.Transfer.Transferred);
+                result.Transfer.Failure = Deposit(request.WorldId, request.TargetPosition, request.Radius, count, out result.Transfer.Transferred,
+                    request.Kind==ContainerUseKind.Pour && request.HasInitialMotion,request.InitialVelocity);
                 result.Transfer.Version = _profile.Items.Version; result.Success = result.Transfer.Failure == MaterialTransferFailure.None;
                 return result;
             }
@@ -215,9 +218,12 @@ namespace Game.Run
             }
             finally { _reservation.Cancel(); _deposit.Source = null; _executing = false; }
         }
-        private MaterialTransferFailure Deposit(string world, Vector3 point, float radius, int count, out ulong quantity)
+        private MaterialTransferFailure Deposit(string world, Vector3 point, float radius, int count, out ulong quantity,
+            bool hasInitialMotion=false,Vector3 initialVelocity=default)
         {
             _deposit.WorldId = world; _deposit.Position = point; _deposit.Radius = radius; _deposit.Amounts = _amounts;
+            // Exchange重复使用：每一笔都显式覆盖运动字段，投瓶碰撞/放固体不能继承上一笔喷流的速度。
+            _deposit.HasInitialMotion=hasInitialMotion;_deposit.InitialVelocity=hasInitialMotion?initialVelocity:Vector3.zero;
             _deposit.Count = count; _deposit.Source = _reservation; _deposit.Handled = false; _deposit.Transferred = 0;
             _deposit.Failure = MaterialTransferFailure.None;
             EventBus<MaterialWorldDepositRequestedEvent>.Publish(new MaterialWorldDepositRequestedEvent { Exchange = _deposit });

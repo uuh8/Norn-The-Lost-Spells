@@ -22,6 +22,8 @@ namespace Game.Run.Tests
         private PlayerControllerBase _player;
         private uint _sequence;
         private float _maxY, _maxAngle, _maxSide;
+        // 每轮保存独立物理轨迹，保留历史失败，不改变测试世界或权威输入。
+        private readonly string _evidenceDirectory = Path.Combine("TestResults/FullAuditPlayMode/OnlineMovementPhysics", Guid.NewGuid().ToString("N"));
         [UnitySetUp] public IEnumerator SetUp()
         {
             _previous = SceneManager.GetActiveScene(); _scene = SceneManager.CreateScene("OnlineMovementPhysicsIsolation");
@@ -86,8 +88,8 @@ namespace Game.Run.Tests
         [Serializable] private sealed class Evidence { public string Case; public Vector3 End; public float MaximumY, MaximumAngle, MaximumSide; public uint Inputs; }
         private void Save(string name, Vector3? end = null)
         {
-            Directory.CreateDirectory("Temp/OnlineMovement");
-            File.WriteAllText("Temp/OnlineMovement/" + name + ".json", JsonUtility.ToJson(new Evidence
+            Directory.CreateDirectory(_evidenceDirectory);
+            File.WriteAllText(Path.Combine(_evidenceDirectory, name + ".json"), JsonUtility.ToJson(new Evidence
             { Case = name, End = end ?? _player.transform.position, MaximumY = _maxY, MaximumAngle = _maxAngle, MaximumSide = _maxSide, Inputs = _sequence }, true));
         }
         [UnityTearDown] public IEnumerator TearDown()

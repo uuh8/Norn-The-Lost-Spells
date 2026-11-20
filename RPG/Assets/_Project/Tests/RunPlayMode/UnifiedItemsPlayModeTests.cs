@@ -18,12 +18,29 @@ namespace Game.Run.Tests
     public sealed class UnifiedItemsPlayModeTests : BackpackWorkspacePlayModeTests
     {
         protected override string ReviewPath => "Assets/_Project/Scenes/Tests/Hub/SinglePlayer_Hub_UnifiedItemsReview.unity";
-        protected override string EvidencePath => "TestResults/SinglePlayer/M6-T10-PortalAim";
+        // 每轮独立保留截图/Profiler证据，不能覆盖历史阶段结果；不改变Profile或测试断言。
+        private readonly string _evidencePath = "TestResults/UiAudit/UnifiedItemsPlayModeTests/" + System.DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffZ") + "-" + System.Guid.NewGuid().ToString("N");
+        protected override string EvidencePath => _evidencePath;
         private Image Frame(int index)
         {
             var data = new SerializedObject(Find<HeldItemHud>());
             var icon = data.FindProperty("_cells").GetArrayElementAtIndex(index).FindPropertyRelative("Icon").objectReferenceValue as Image;
             return icon.transform.Find("Frame").GetComponent<Image>();
+        }
+        private static InventoryItemView ActiveGridItem(SinglePlayerInventoryController controller, string id)
+        {
+            InventoryItemView result = null;
+            foreach (var grid in controller.GetComponentsInChildren<InventoryGridView>())
+                foreach (var view in grid.GetComponentsInChildren<InventoryItemView>())
+                    if (view.Snapshot.InstanceId == id)
+                    { Assert.That(result, Is.Null, "同一背包实例不能重复显示：" + id); result = view; }
+            Assert.That(result, Is.Not.Null, "可见背包网格必须包含实际实例：" + id); return result;
+        }
+        private static PointerEventData LeftPointer(Component view)
+        {
+            var rect = (RectTransform)view.transform;
+            return new PointerEventData(EventSystem.current) { button = PointerEventData.InputButton.Left,
+                position = RectTransformUtility.WorldToScreenPoint(null, rect.TransformPoint(rect.rect.center)) };
         }
         [UnityTest] public IEnumerator SelectedSlotSwapsAuthorFrameSpriteAndKeepsBackgroundColors()
         {
@@ -130,9 +147,21 @@ namespace Game.Run.Tests
             yield return null;yield return null;
             Assert.That(PortalInteractionRegistry.TryGetNearest(Player.CharacterController,out var target), Is.True);
             Assert.That(target.InteractionLabel, Does.StartWith("F "));
-            var list = Find<NearbyPickupListView>(); var label = new SerializedObject(list).FindProperty("_stationLabel").objectReferenceValue as Text;
+            // 站点/传送门早已复用Entry池，不能读取已退役的_stationLabel特殊行。
+            var list = Find<NearbyPickupListView>(); Assert.That(list, Is.Not.Null);
+            var data = new SerializedObject(list);
+            var rows = data.FindProperty("_rows"); var labels = data.FindProperty("_labels");
+            Assert.That(rows.arraySize, Is.GreaterThan(0)); Assert.That(labels.arraySize, Is.EqualTo(rows.arraySize));
+            var firstRow = rows.GetArrayElementAtIndex(0).objectReferenceValue as GameObject;
+            var label = labels.GetArrayElementAtIndex(0).objectReferenceValue as Text;
+            Assert.That(list.Panel.gameObject.activeInHierarchy, Is.True); Assert.That(firstRow.activeInHierarchy, Is.True);
             Assert.That(label.gameObject.activeInHierarchy, Is.True); Assert.That(label.text, Is.EqualTo(target.InteractionLabel));
             yield return new WaitForEndOfFrame(); Capture("portal-ground-and-f-prompt.png");
+            // 打开Tab后统一列表必须隐藏，避免暂停期间仍覆盖背包；不能只验证数据字符串。
+            Backpack.OpenBackpack(); yield return null; yield return null;
+            Assert.That(Backpack.IsOpen, Is.True); Assert.That(list.Panel.gameObject.activeInHierarchy, Is.False);
+            Backpack.Close(); yield return null; yield return null;
+            Assert.That(label.gameObject.activeInHierarchy, Is.True); Assert.That(label.text, Is.EqualTo(target.InteractionLabel));
         }
         [UnityTest] public IEnumerator FOpensShopAndStationHasPriorityOverNearbyPickup()
         {
@@ -154,36 +183,60 @@ namespace Game.Run.Tests
             try { Find<MaterialCollectionController>().SubmitSample(Player.transform.position, false, 10); Assert.That(requests, Is.EqualTo(1)); Assert.That(itemId, Is.EqualTo("b0")); }
             finally { EventBus<MaterialTransferRequestedEvent>.Unsubscribe(observe); }
         }
-        [UnityTest] public IEnumerator MiddleEquipmentSlotSelectsTheBottleForConfirmedElementPurchase()
+        [UnityTest] public IEnumerator SelectedBottleRemainsPurchaseTargetAfterEquipping()
         {
-            Bind(0, "b0"); var hub = Find<HubInteractionController>();
+            var hub = Find<HubInteractionController>();
             var area = new SerializedObject(hub).FindProperty("_shopArea").objectReferenceValue as HubAreaVolume;
-            Player.enabled = false; Player.CharacterController.enabled = false; Player.transform.position = area.Center; Player.CharacterController.enabled = true; yield return null;
+            Player.enabled = false; Player.CharacterController.enabled = false; Player.transform.position = area.Center; Player.CharacterController.enabled = true; Physics.SyncTransforms(); yield return null;
             var shop = Find<ShopController>(); shop.Open(); yield return null;
             var embedded = new SerializedObject(shop).FindProperty("_embeddedInventory").objectReferenceValue as SinglePlayerInventoryController;
-            var tools = embedded.GetComponentInChildren<ToolbeltView>(true); Assert.That(tools, Is.Not.Null);
-            var cell = tools.GetComponentsInChildren<ToolbeltSlotView>()[0];
-            cell.OnPointerClick(new PointerEventData(EventSystem.current) { button = PointerEventData.InputButton.Left });
+            Assert.That(embedded, Is.Not.Null); Assert.That(shop.IsOpen, Is.True);
+            // 作者商店已移除道具行。使用真实中列选瓶，再到Tab现有装备槽装备同一实例；
+            // 重开后购买仍锁定该实例，既覆盖EquippedTool购买资格，也不为测试重建已删除的UI。
+            Canvas.ForceUpdateCanvases(); var card = ActiveGridItem(embedded, "b0");
+            uint version = Session.ReadOnly.Version; long initialMoney = Session.Currency;
+            var pointer = LeftPointer(card); card.OnPointerDown(pointer); card.OnPointerClick(pointer);
             Assert.That(shop.SelectedItemId, Is.EqualTo("b0"));
+            Assert.That(Session.ReadOnly.Version, Is.EqualTo(version), "只选中实例不能移动或修改资产");
+            shop.Close(); Backpack.OpenBackpack(); yield return null; Canvas.ForceUpdateCanvases();
+            var tools = Backpack.GetComponentInChildren<ToolbeltView>(); Assert.That(tools, Is.Not.Null);
+            ToolbeltSlotView cell = null;
+            foreach (var candidate in tools.GetComponentsInChildren<ToolbeltSlotView>()) if (candidate.ToolSlot == 0) cell = candidate;
+            Assert.That(cell, Is.Not.Null);
+            card = ActiveGridItem(Backpack, "b0"); pointer = LeftPointer(card);
+            card.OnPointerDown(pointer); card.OnBeginDrag(pointer); cell.OnDrop(LeftPointer(cell)); card.OnEndDrag(LeftPointer(cell));
+            yield return null;
+            Assert.That(Session.ToolbeltReadOnly.TryGetBinding(0, out var bound), Is.True); Assert.That(bound, Is.EqualTo("b0"));
+            Assert.That(Session.ReadOnly.TryGetView("b0", out var bottle), Is.True);
+            Assert.That(bottle.Location.Kind, Is.EqualTo(ItemLocationKind.EquippedTool)); Assert.That(bottle.ContainerTotal, Is.EqualTo(100));
+            Backpack.Close(); shop.Open(); yield return null;
+            Assert.That(shop.IsOpen, Is.True); Assert.That(shop.SelectedItemId, Is.EqualTo("b0"));
+            Assert.That(Session.Currency, Is.EqualTo(initialMoney), "选择、装备与重开商店都不能提前扣款");
             var offers = Find<SinglePlayerShopSession>().ReadOnly; ShopOfferSnapshot offer = default;
             int wandCards = 0;
             var offersRoot = (RectTransform)new SerializedObject(shop).FindProperty("_offersRoot").objectReferenceValue;
             for (int i = 0; i < offers.Count; i++) if (offers.GetOffer(i).Kind == ItemKind.Wand)
             {
-                var wand = offers.GetOffer(i); bool shown = false;
+                var wand = offers.GetOffer(i); int shown = 0;
                 foreach (var row in offersRoot.GetComponentsInChildren<ShopEntryView>()) if (row.OfferId == wand.OfferId)
-                { var art = row.transform.Find("OfferIcon")?.GetComponent<Image>(); Assert.That(art, Is.Not.Null); Assert.That(art.enabled, Is.True); Assert.That(art.sprite, Is.EqualTo(wand.Icon)); shown = true; }
-                Assert.That(shown, Is.True); wandCards++;
+                { var art = row.transform.Find("OfferIcon")?.GetComponent<Image>(); Assert.That(art, Is.Not.Null); Assert.That(art.enabled, Is.True); Assert.That(art.sprite, Is.EqualTo(wand.Icon)); shown++; }
+                Assert.That(shown, Is.EqualTo(1), "每个当前法杖报价必须恰好显示一张匹配图标的卡"); wandCards++;
             }
-            Assert.That(wandCards, Is.EqualTo(3));
+            // 当前目录还含V2法杖；逐项验证真实报价，不把旧目录的三件写成UI容量限制。
+            Assert.That(wandCards, Is.GreaterThan(0));
             for (int i = 0; i < offers.Count; i++) if (offers.GetOffer(i).MaterialKey == 1) { offer = offers.GetOffer(i); break; }
             Assert.That(offer.OfferId, Is.Not.Null); shop.SelectOffer(offer.OfferId); shop.Buy(); yield return null;
             var dialog = new SerializedObject(shop).FindProperty("_purchaseDialog").objectReferenceValue as ShopPurchaseDialog;
             Assert.That(dialog.IsOpen, Is.True); Assert.That(dialog.ContainerId, Is.EqualTo("b0"));
+            Assert.That(Session.Currency, Is.EqualTo(initialMoney), "购买确认之前不能扣款");
             long money = Session.Currency; dialog.SetQuantity(10);
             var confirm = new SerializedObject(dialog).FindProperty("_confirm").objectReferenceValue as Button; confirm.onClick.Invoke(); yield return null;
-            Assert.That(Session.ReadOnly.TryGetView("b0", out var bottle), Is.True); Assert.That(bottle.ContainerTotal, Is.EqualTo(110));
+            Assert.That(Session.ReadOnly.TryGetView("b0", out bottle), Is.True); Assert.That(bottle.ContainerTotal, Is.EqualTo(110));
             Assert.That(bottle.Location.Kind, Is.EqualTo(ItemLocationKind.EquippedTool)); Assert.That(Session.Currency, Is.EqualTo(money - offer.BuyPrice * 10));
+            Assert.That(Session.ToolbeltReadOnly.TryGetBinding(0, out bound), Is.True); Assert.That(bound, Is.EqualTo("b0"));
+            Assert.That(Session.ReadOnly.TryGetView("b1", out var otherBottle), Is.True);
+            Assert.That(otherBottle.ContainerTotal, Is.EqualTo(100), "未选中的瓶子不能收到材料");
+            Assert.That(otherBottle.Location.Kind, Is.EqualTo(ItemLocationKind.Backpack));
             yield return new WaitForEndOfFrame(); Capture("shop-equipped-bottle-purchase.png");
         }
         [UnityTest] public IEnumerator ThrownModelFlightHasNoScopedGcAfterWarmup()

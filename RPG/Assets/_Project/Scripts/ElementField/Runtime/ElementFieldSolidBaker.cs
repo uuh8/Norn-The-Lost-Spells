@@ -32,10 +32,20 @@ namespace Game.ElementField
         public bool SampleSolidWorldCell(Vector3Int cell, Vector3 origin, float size)
         {
             if (IsStaticSolidCell(cell, origin, size)) return true;
+            return SampleMaterialSolidWorldCell(cell,origin,size);
+        }
+
+        /// <summary>
+        /// 仅查询已经提交的整格材料事实，不查询环境Collider。Presentation必须把它与保守的环境OR分开：
+        /// 坡沿外的粗格可以与盒体相交，却没有真实水平支撑；逻辑冰则不能因Collider晚一帧而失去支撑。
+        /// 复用原粗细格映射与数量判据，不分配、不修改Solid Store，也不发布Physics几何。
+        /// </summary>
+        public bool SampleMaterialSolidWorldCell(Vector3Int cell,Vector3 origin,float size)
+        {
             if (_materialSolids == null || _materialSolids.TotalQuantity == 0 || _materialCellSize <= 0) return false;
             // Grid Liquid 可以使用更粗的格。中心点只能覆盖其中一个细格，会漏掉偏心冰块；
             // 对整个粗格覆盖的 World Cell 做 OR，保持保守阻挡。当前液体 ResolutionScale <= 4，
-            // 此循环最多检查 64 格，且只在 Terrain Cache 首次采样／局部失效时执行。
+            // 此循环最多检查64格；由Terrain Cache首次采样/失效或Presentation捕获湿行时调用，不逐节点执行。
             Vector3 minimum = origin + (Vector3)cell * size;
             Vector3 maximum = minimum + Vector3.one * size;
             Vector3Int min = Vector3Int.FloorToInt((minimum - _materialOrigin) / _materialCellSize);
@@ -47,6 +57,12 @@ namespace Game.ElementField
 
         /// <summary>只在支撑缓存首次使用/地形失效时调用；NonAlloc复用结果缓冲。</summary>
         public bool TrySampleLiquidSupport(Vector3 rayOrigin, float distance, out float height, out Vector3 normal)
+            => TrySampleLiquidSupport(rayOrigin, distance, out height, out normal, null);
+
+        // Replica不持有FixedSolid Owner；只注入已冻结的只读材料过滤器，不让Baker取得Replica写权限。
+        // 原有4参数入口保留Authority/静态地形语义，调用方预先缓存delegate，查询时不分配。
+        internal bool TrySampleLiquidSupport(Vector3 rayOrigin, float distance, out float height, out Vector3 normal,
+            System.Func<Vector3, bool> materialSupportFilter)
         {
             height = float.NegativeInfinity; normal = Vector3.up;
             int mask = _solidLayerMask.value | (_includeDefaultEnvironment ? 1 : 0);
@@ -57,13 +73,17 @@ namespace Game.ElementField
                 if (collider == null || collider.attachedRigidbody != null || collider is CharacterController
                     || HasStatusOwner(collider)
                     || hit.normal.y < .25f || hit.point.y <= height) continue;
-                if (collider.TryGetComponent<GeneratedMaterialSolidCollider>(out _) && _materialSolids != null)
+                if (collider.TryGetComponent<GeneratedMaterialSolidCollider>(out _))
                 {
+                    if (materialSupportFilter != null && !materialSupportFilter(hit.point)) continue;
                     // 部分残留的底面抬升已由 Liquid 的 GMU 占据计算。Raycast 再取它的 Collider
                     // 会把相同高度算两次；冰仍作为整格支撑，所以保留冰的真实接触平面。
-                    var materialCell=ElementWorldCoordinates.WorldToGlobalCell(hit.point-Vector3.up*(_materialCellSize*.001f),
-                        _materialOrigin,_materialCellSize);
-                    if (!_materialSolids.BlocksCell(materialCell)) continue;
+                    if (_materialSolids != null)
+                    {
+                        var materialCell=ElementWorldCoordinates.WorldToGlobalCell(hit.point-Vector3.up*(_materialCellSize*.001f),
+                            _materialOrigin,_materialCellSize);
+                        if (!_materialSolids.BlocksCell(materialCell)) continue;
+                    }
                 }
                 height = hit.point.y; normal = hit.normal;
             }

@@ -11,6 +11,21 @@ namespace Game.Rendering.Tests
 {
     public sealed class GridLiquidFieldFrameTests
     {
+        private string _evidenceDirectory;
+        [SetUp]
+        public void BeginEvidenceRun()
+        {
+            // 参数化用例也各有UTC+GUID，不能覆盖旧L427或同一轮另一配置的原始结果。
+            _evidenceDirectory=Path.Combine("TestResults","ElementPerformance",nameof(GridLiquidFieldFrameTests),
+                DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffffffZ",System.Globalization.CultureInfo.InvariantCulture)+"-"+Guid.NewGuid().ToString("N"));
+        }
+        private void SaveEvidence(string name,string json)
+        {
+            // 写入处自行保证目录存在；不会依赖其他fixture先运行，且位于原有测量窗口之外。
+            Directory.CreateDirectory(_evidenceDirectory);Directory.CreateDirectory("Temp/ElementPerformance");
+            File.WriteAllText(Path.Combine(_evidenceDirectory,name),json);
+            File.WriteAllText(Path.Combine("Temp/ElementPerformance",name),json);
+        }
         [TestCase(4096)]
         [TestCase(16)]
         public void SparseFrozenPoolsKeepPackedShapeAndQuantityWithZeroCaptureAllocation(int maximumActiveCells)
@@ -60,10 +75,8 @@ namespace Game.Rendering.Tests
                 Assert.That(PresentationSignature(frame),Is.EqualTo(signature),"静止输入的再次采集必须保留逐位相同的姿态、数量、地形和输出范围。");
                 Assert.That(source.TotalQuantity,Is.EqualTo(quantity));Assert.That(allocated,Is.Zero);
                 string report=maximumActiveCells==4096?"sparse-presentation-capture.json":"sparse-presentation-dense-fallback.json";
-                File.WriteAllText("Temp/ElementPerformance/"+report,JsonUtility.ToJson(new SparseCaptureReport
+                SaveEvidence(report,JsonUtility.ToJson(new SparseCaptureReport
                 {Utc=DateTime.UtcNow.ToString("O"),Signature=signature,Quantity=quantity,Pages=frame.Count,Owners=frame.OwnerCount,Overflow=frame.Overflow,AllocatedBytes=allocated,CaptureMilliseconds=times,FullScanMilliseconds=fullTimes},true));
-                Directory.CreateDirectory("Backups/ElementPerformance/L427");
-                File.Copy("Temp/ElementPerformance/"+report,"Backups/ElementPerformance/L427/"+report,true);
                 frame.SetValidationFullRowScan(true);frame.Capture();
                 Assert.That(PresentationSignature(frame),Is.EqualTo(signature),"完整扫描与稀疏扫描必须逐位相同，包括地形与Owner Bounds。");
                 if(maximumActiveCells==4096)
@@ -231,7 +244,7 @@ namespace Game.Rendering.Tests
                     readTimes[round]=time;readTotal+=time;
                 }
                 long allocated=GC.GetAllocatedBytesForCurrentThread()-gc;
-                File.WriteAllText("Temp/ElementPerformance/frozen-presentation-signature.json",JsonUtility.ToJson(new PackedSignatureReport
+                SaveEvidence("frozen-presentation-signature.json",JsonUtility.ToJson(new PackedSignatureReport
                 {Utc=DateTime.UtcNow.ToString("O"),Signature=signature,Quantity=source.TotalQuantity,Pages=frame.Count,Owners=frame.OwnerCount,
                  CaptureSamples=rounds*captures,CaptureMeanMs=captureTotal/(rounds*captures),CaptureRoundsMs=captureTimes,
                  QuantityReads=rounds*reads*cells.Length*materials.Length,QuantityReadMeanNs=readTotal*1e6/(rounds*reads*cells.Length*materials.Length),
@@ -273,7 +286,7 @@ namespace Game.Rendering.Tests
                 float maximumHeightChange=0,maximumNormalChange=0;
                 for(int i=0;i<cells.Length;i++)
                 {var after=frame.Terrain(cells[i]);maximumHeightChange=Mathf.Max(maximumHeightChange,Mathf.Abs(after.w-terrain[i].w));maximumNormalChange=Mathf.Max(maximumNormalChange,new Vector3(after.x-terrain[i].x,after.y-terrain[i].y,after.z-terrain[i].z).magnitude);}
-                File.WriteAllText("Temp/ElementPerformance/slope-cold-support.json",JsonUtility.ToJson(new ColdSupportReport{Utc=DateTime.UtcNow.ToString("O"),Quantity=source.TotalQuantity,FirstFallbacks=firstFallbacks,LastFallbacks=source.TerrainFallbackCount,MaximumHeightChange=maximumHeightChange,MaximumNormalChange=maximumNormalChange},true));
+                SaveEvidence("slope-cold-support.json",JsonUtility.ToJson(new ColdSupportReport{Utc=DateTime.UtcNow.ToString("O"),Quantity=source.TotalQuantity,FirstFallbacks=firstFallbacks,LastFallbacks=source.TerrainFallbackCount,MaximumHeightChange=maximumHeightChange,MaximumNormalChange=maximumNormalChange},true));
                 Assert.That(source.TotalQuantity,Is.EqualTo(32768UL));
                 Assert.That((int)typeof(LiquidTerrainSupportCache).GetField("_remaining",fields).GetValue(supportCache),Is.EqualTo(gameplayBudget),"只读显示查询不能消耗Solver的128次采样预算。");
                 Assert.That(((Dictionary<Vector3Int,LiquidTerrainSupport>)typeof(LiquidTerrainSupportCache).GetField("_cache",fields).GetValue(supportCache)).Count,Is.Zero,"Rendering不能提前预热Gameplay的支撑缓存。");
@@ -328,7 +341,7 @@ namespace Game.Rendering.Tests
                         if(changes.Count<20 && (sample.Quantity!=old.Quantity || Vector3.Distance(sample.OffsetCells,old.OffsetCells)>.001f))changes.Add(tick+"/"+item.Key+": q "+old.Quantity+"→"+sample.Quantity+", offset "+old.OffsetCells+"→"+sample.OffsetCells);
                     }
                 }
-                File.WriteAllText("Temp/ElementPerformance/slope-committed-snapshot.json",UnityEngine.JsonUtility.ToJson(new SlopeSnapshotReport{Utc=DateTime.UtcNow.ToString("O"),MaximumFieldDifference=maximumFieldDifference,QuantityChanges=quantityChanges,SupportChanges=supportChanges,PoseChanges=poseChanges,Changes=changes.ToArray()},true));
+                SaveEvidence("slope-committed-snapshot.json",UnityEngine.JsonUtility.ToJson(new SlopeSnapshotReport{Utc=DateTime.UtcNow.ToString("O"),MaximumFieldDifference=maximumFieldDifference,QuantityChanges=quantityChanges,SupportChanges=supportChanges,PoseChanges=poseChanges,Changes=changes.ToArray()},true));
                 Assert.That(quantityChanges,Is.Zero,"提交结果的数量不能在显示换相位时再次变化。");
                 Assert.That(supportChanges,Is.Zero,"Previous必须保留提交时支撑，不能使用下一Tick的地板/下层数量。");
                 Assert.That(maximumFieldDifference,Is.LessThan(.0001f),"坡脚同一提交快照切换Current→Previous时跳变："+maximumFieldDifference);

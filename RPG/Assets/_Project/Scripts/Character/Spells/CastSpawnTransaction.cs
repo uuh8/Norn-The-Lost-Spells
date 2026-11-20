@@ -25,13 +25,13 @@ namespace Game.Character
         { if (!_finished) _authorityHandles.Add(new PendingAuthorityHandle { Scheduler = scheduler, Handle = handle }); }
         internal void PublishOutput(in CombatOutputSpawnedEvent output)
         {
-            if (_finished) { if (_committed) EventBus<CombatOutputSpawnedEvent>.Publish(output); }
+            if (_finished) { if (_committed) EventBus<CombatOutputSpawnedEvent>.PublishFact(output); }
             else _combatOutputs.Add(output);
         }
         internal void PublishSound(in CombatCastSoundEvent sound)
         {
             // 声音与出生事实服从同一个资源提交边界；回滚的事务在未来 Payload 回调中也不能再发声。
-            if (_finished) { if (_committed) EventBus<CombatCastSoundEvent>.Publish(sound); }
+            if (_finished) { if (_committed) EventBus<CombatCastSoundEvent>.PublishFact(sound); }
             else _combatSounds.Add(sound);
         }
         internal void Complete()
@@ -40,9 +40,9 @@ namespace Game.Character
             for (int i=0;i<_outputs.Count;i++) _outputs[i].Context.ReportOutput(_outputs[i].Command);
             _outputs.Clear();
             // 网络出生事实在整个组合资源提交后才可见；失败路径从不发布这些暂存事实。
-            for (int i=0;i<_combatOutputs.Count;i++) EventBus<CombatOutputSpawnedEvent>.Publish(_combatOutputs[i]);
+            for (int i=0;i<_combatOutputs.Count;i++) EventBus<CombatOutputSpawnedEvent>.PublishFact(_combatOutputs[i]);
             _combatOutputs.Clear();
-            for (int i=0;i<_combatSounds.Count;i++) EventBus<CombatCastSoundEvent>.Publish(_combatSounds[i]);
+            for (int i=0;i<_combatSounds.Count;i++) EventBus<CombatCastSoundEvent>.PublishFact(_combatSounds[i]);
             _combatSounds.Clear();
         }
         internal void Rollback(MonoBehaviour owner)

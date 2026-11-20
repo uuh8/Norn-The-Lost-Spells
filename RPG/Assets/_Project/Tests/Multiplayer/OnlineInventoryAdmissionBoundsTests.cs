@@ -16,12 +16,20 @@ namespace Game.Multiplayer.Tests
         {
             var ready = new InstanceReadyReply { Members = new[]
             {
-                new InstanceEntryMember { ActorId = 1, Profile = new OnlineProfileReply { PlayerId = "a", ContentManifestHash = "hash", Items = new OnlineItemReply[count] } },
-                new InstanceEntryMember { ActorId = 2, Profile = new OnlineProfileReply { PlayerId = "b", ContentManifestHash = "hash" } }
+                new InstanceEntryMember { ActorId = 1, Profile = ProfileWithKnownWallet("a", count) },
+                new InstanceEntryMember { ActorId = 2, Profile = ProfileWithKnownWallet("b", 0) }
             }};
             if (accepted) Assert.That(new OnlineInventorySession(ready, "hash").MemberCount, Is.EqualTo(2));
             else Assert.Throws<ArgumentException>(() => new OnlineInventorySession(ready, "hash"));
         }
+
+        // 本组只隔离WholeProfile项数边界；正负例均具备相同合法钱包，超限不能因缺字段误通过。
+        private static OnlineProfileReply ProfileWithKnownWallet(string player, int count) => new OnlineProfileReply
+        {
+            PlayerId = player, ContentManifestHash = "hash", Items = new OnlineItemReply[count], Gold = 0,
+            CombatAssets = new OnlineOwnedAssetSnapshot
+                { SchemaVersion = OnlineOwnedAssetSnapshot.CurrentSchemaVersion, Gold = 0, CurrencyVersion = 1 }
+        };
 
         [TestCase(0, true)]
         [TestCase(24, true)]

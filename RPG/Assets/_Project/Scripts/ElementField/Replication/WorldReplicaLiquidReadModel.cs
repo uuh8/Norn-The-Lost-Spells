@@ -9,9 +9,9 @@ namespace Game.ElementField
     /// <summary>
     /// 复制数量到原液体表现的适配器。网络快照已把Stable/Dynamic规范化，因此全部数量作为只读占据，
     /// 不重新识别湖盆或执行出口规则。Renderer仍按原Density分层与同一Shader绘制。
-    /// 当前协议不含速度，Previous=Current：允许视觉逐帧塑形，不伪造客户端模拟速度。
+    /// 数量仍来自原Store；可选motion sidecar只在所有数量证据匹配后提供两相位，失效立即退回Current。
     /// </summary>
-    public sealed class WorldReplicaLiquidReadModel : ILiquidPresentationReadOnly
+    public sealed partial class WorldReplicaLiquidReadModel : ILiquidPresentationReadOnly,ILiquidPresentationDynamicsSource,ILiquidPresentationSolidSource
     {
         private readonly WorldReplicaStore _store;
         private readonly WorldGridGeometry _geometry;
@@ -19,7 +19,8 @@ namespace Game.ElementField
         private readonly uint[] _quantities;
         private readonly ElementFieldSolidBaker _baker;
         private readonly LiquidVolumeSettings _volume;
-        private readonly WorldReplicaVolumeReadModel _solids;
+        private readonly WorldReplicaSolidReadModel _solids;
+        private readonly Func<Vector3, bool> _materialSupportFilter;
         private readonly ElementChunkKey[] _keyScratch;
         private readonly int _transportCapacity;
         private readonly Dictionary<Vector3Int, bool> _staticSolids;
@@ -27,14 +28,20 @@ namespace Game.ElementField
         private readonly Vector3Int[] _terrainKeys, _supportKeys;
         private int _terrainNext, _supportNext, _terrainCount, _supportCount;
         private uint _solidVersion;
+        private readonly float _fallGravity;
+        private readonly float _fallTerminalVelocity;
         public WorldReplicaLiquidReadModel(WorldReplicaStore store, WorldGridGeometry geometry,
             LiquidWorldProfile profile, float worldCellSize, ElementFieldSolidBaker baker,
-            WorldReplicaVolumeReadModel solids = null)
+            WorldReplicaSolidReadModel solids = null)
         {
             if (store == null || profile == null || geometry.Domain != WorldMaterialDomain.Liquid) throw new ArgumentException();
             profile.Validate(); _volume = profile.CreateVolumeSettings(worldCellSize);
+            _fallGravity=profile.FallGravity;
+            _fallTerminalVelocity=profile.FallTerminalVelocity;
             if (!_volume.CellSize.Equals(geometry.CellSize)) throw new ArgumentException("Replica液体网格与可信Profile不一致。");
             _store = store; _geometry = geometry; _baker = baker; _solids = solids;
+            // 委托只在装配期捕获一次；缓存失效后的NonAlloc Raycast不临时创建closure或delegate。
+            _materialSupportFilter = solids != null ? solids.IsWholeCellSupport : (Func<Vector3, bool>)null;
             var materials = new MaterialId[profile.MaterialCount]; var densities = new float[profile.MaterialCount];
             for (int i = 0; i < materials.Length; i++) { materials[i] = profile.GetMaterial(i).Material; densities[i] = profile.GetMaterial(i).RelativeDensity; }
             _layers = new LiquidLayerComposer(materials, densities, _volume.CapacityGmu); _quantities = new uint[materials.Length];
@@ -44,6 +51,8 @@ namespace Game.ElementField
             _terrainKeys = new Vector3Int[terrainCapacity]; _supportKeys = new Vector3Int[terrainCapacity];
         }
         public bool IsFluidInitialized => true;
+        public float FallGravity=>_fallGravity;
+        public float FallTerminalVelocity=>_fallTerminalVelocity;
         public Vector3 Origin => _geometry.Origin;
         public float CellSize => _geometry.CellSize;
         public int ChunkSize => _geometry.ChunkSize;
@@ -52,13 +61,13 @@ namespace Game.ElementField
         public int MaximumStableRegions => 1;
         public int MaximumStableSurfacePatches => 1;
         public int MaximumStableRegionCells => _store.MaximumCells;
-        public int MaximumActiveTransportCells => _transportCapacity;
+        public int MaximumActiveTransportCells => Math.Max(_motionChangedCells.Length, _transportCapacity);
         public int ActiveCellCount => 0;
         public uint SurfaceVersion => unchecked(_store.DomainVersion(WorldMaterialDomain.Liquid)
-            + _store.DomainVersion(WorldMaterialDomain.Solid) + (_solids is WorldReplicaSolidReadModel solid ? solid.GeometryVersion : 0u));
+            + _store.DomainVersion(WorldMaterialDomain.Solid) + (_solids != null ? _solids.GeometryVersion : 0u));
         public uint DynamicSurfaceVersion => SurfaceVersion;
-        public uint TransportEpoch => SurfaceVersion;
-        public float TransportInterval => .1f;
+        public uint TransportEpoch => PresentationRevision;
+        public float TransportInterval { get { ValidatePublishedMotion(); return _hasMotion ? _motion.Interval : .1f; } }
         public ulong TotalQuantity => _store.TotalQuantity(WorldMaterialDomain.Liquid);
         public ulong PendingQuantity => _store.PendingQuantity(WorldMaterialDomain.Liquid);
         public int MaterialCount => _layers.MaterialCount;
@@ -97,7 +106,17 @@ namespace Game.ElementField
             => _store.HasMaterialInChunk(WorldMaterialDomain.Liquid, key, (byte)material);
         public uint GetDynamicSurfaceVersion(MaterialId material) => SurfaceVersion;
         public uint GetDynamicCandidateVersion(MaterialId material) => SurfaceVersion;
-        public uint GetSurfaceChunkVersion(ElementChunkKey key, MaterialId material) => _store.GetChunkVersion(WorldMaterialDomain.Liquid, key);
+        public uint GetSurfaceChunkVersion(ElementChunkKey key, MaterialId material)
+        {
+            // CPU Renderer会再比较chunk token；只更新全局SurfaceVersion仍可能沿用旧Mesh。
+            // 数量发布与延后Collider发布都影响底高。先沿现有全域失效边界确保正确，局部化需另测重建成本。
+            uint version = _store.GetChunkVersion(WorldMaterialDomain.Liquid, key);
+            unchecked
+            {
+                version = (version ^ _store.DomainVersion(WorldMaterialDomain.Solid)) * 16777619u;
+                return (version ^ (_solids != null ? _solids.GeometryVersion : 0u)) * 16777619u;
+            }
+        }
         public bool TryGetDynamicQuantity(Vector3Int cell, MaterialId material, out uint quantity) => TryGetQuantity(cell, material, out quantity);
         public bool TryGetStableSurfaceHeight(Vector3Int cell, MaterialId material, out float heightCells) { heightCells = 0; return false; }
         public uint GetStableSurfaceVersion(MaterialId material) => 0;
@@ -116,8 +135,11 @@ namespace Game.ElementField
                 _terrainKeys[_terrainNext] = cell; _terrainNext = (_terrainNext + 1) % _terrainKeys.Length; _staticSolids.Add(cell, solid);
             }
             if (solid) return true;
-            return _solids != null && _solids.HasBlockingVolume(Origin + ((Vector3)cell + Vector3.one * .5f) * CellSize);
+            return _solids != null && _solids.BlocksLiquidCell(Origin + (Vector3)cell * CellSize, CellSize);
         }
+        // 只读已安装数量，不等待分帧Collider重建；Replica不能从本入口取得模拟或资源写权限。
+        public bool IsLogicalSolidForPresentation(Vector3Int cell)
+            =>_solids!=null && _solids.BlocksLiquidCell(Origin+(Vector3)cell*CellSize,CellSize);
         public void CopyPresentationChunkQuantities(ElementChunkKey key, ushort[] destination)
         {
             int required = checked(ChunkSize * ChunkSize * ChunkSize * MaterialCount);
@@ -138,34 +160,61 @@ namespace Game.ElementField
             LiquidCellPresentationSample[] current, LiquidCellPresentationSample[] previous)
         {
             bool wet = false;
+            ValidatePublishedMotion();
             for (int m = 0; m < MaterialCount; m++)
-            { uint quantity = quantities[offset + m]; wet |= quantity > 0; current[m] = previous[m] = new LiquidCellPresentationSample(quantity, Vector3.zero, Vector3.zero); }
+            {
+                uint quantity = quantities[offset + m];
+                current[m] = previous[m] = new LiquidCellPresentationSample(quantity, Vector3.zero, Vector3.zero);
+                if (TryReadMotion(cell, GetLiquidMaterial(m), false, out var now)) current[m] = now;
+                if (TryReadMotion(cell, GetLiquidMaterial(m), true, out var old)) previous[m] = old;
+                wet |= current[m].Quantity > 0 || previous[m].Quantity > 0;
+            }
             return wet;
         }
         public bool TryGetPresentationSample(Vector3Int cell, MaterialId material, bool previous, out LiquidCellPresentationSample sample)
-        { bool found = TryGetQuantity(cell, material, out uint quantity); sample = new LiquidCellPresentationSample(quantity, Vector3.zero, Vector3.zero); return found; }
-        public int CopyTransportChangedCells(Vector3Int[] destination) => 0;
+        {
+            if (TryReadMotion(cell, material, previous, out sample)) return sample.Quantity > 0;
+            bool found = TryGetQuantity(cell, material, out uint quantity);
+            sample = new LiquidCellPresentationSample(quantity, Vector3.zero, Vector3.zero); return found;
+        }
+        public int CopyTransportChangedCells(Vector3Int[] destination) => CopyMotionChangedCells(destination);
         public float GetGameplayBaseHeight(Vector3Int cell) => GetPresentationBaseHeight(cell);
+        private uint ReadResidueOccupancy(Vector3Int cell) => _solids != null
+            ? _solids.ReadLiquidPartialOccupancy(Origin + (Vector3)cell * CellSize, CellSize, (uint)CellCapacityGmu)
+            : 0u;
+        private ulong ReadCombinedOccupancy(Vector3Int cell)
+        {
+            // 液柱连续性取决于全部占据，不能漏掉residue，也不能用近似fill阈值把差1 GMU当满格。
+            // GetTotalFill仍只描述液体自身；这里与Authority的OccupancyAt保持相同判满语义。
+            ulong total = ReadResidueOccupancy(cell);
+            for (int i = 0; i < MaterialCount; i++)
+            {
+                TryGetQuantity(cell, GetLiquidMaterial(i), out uint quantity);
+                total += quantity;
+            }
+            return total;
+        }
         public float GetPresentationBaseHeight(Vector3Int cell)
         {
+            float residue = ReadResidueOccupancy(cell) / (float)CellCapacityGmu * CellSize;
             Vector3Int floor = cell;
             for (int i = 0; i < 8; i++, floor += Vector3Int.down)
             {
-                if (TryGetTerrainSupportForPresentation(floor, out var support)) return support.Height + (cell.y - floor.y) * CellSize;
-                if (GetTotalFill(floor + Vector3Int.down) < .999f) break;
+                if (TryGetTerrainSupportForPresentation(floor, out var support)) return support.Height + (cell.y - floor.y) * CellSize + residue;
+                if (ReadCombinedOccupancy(floor + Vector3Int.down) < (ulong)CellCapacityGmu) break;
             }
-            return Origin.y + cell.y * CellSize;
+            return Origin.y + cell.y * CellSize + residue;
         }
         public bool TryGetTerrainSupport(Vector3Int cell, out LiquidTerrainSupport support) => TryGetTerrainSupportForPresentation(cell, out support);
         public bool TryGetTerrainSupportForPresentation(Vector3Int cell, out LiquidTerrainSupport support)
         {
             support = default;
-            uint version = unchecked(_store.DomainVersion(WorldMaterialDomain.Solid) + (_solids is WorldReplicaSolidReadModel solid ? solid.GeometryVersion : 0u));
+            uint version = unchecked(_store.DomainVersion(WorldMaterialDomain.Solid) + (_solids != null ? _solids.GeometryVersion : 0u));
             if (version != _solidVersion) { _solidVersion = version; _supports.Clear(); _supportCount = _supportNext = 0; }
             if (_baker == null || !IsSolidForSurface(cell + Vector3Int.down) || IsSolidForSurface(cell)) return false;
             if (_supports.TryGetValue(cell, out support)) return support.Valid;
             Vector3 ray = Origin + new Vector3(cell.x + .5f, cell.y + .25f, cell.z + .5f) * CellSize;
-            bool valid = _baker.TrySampleLiquidSupport(ray, CellSize * 4, out float height, out Vector3 normal);
+            bool valid = _baker.TrySampleLiquidSupport(ray, CellSize * 4, out float height, out Vector3 normal, _materialSupportFilter);
             support = new LiquidTerrainSupport(height, normal, valid);
             if (_supportCount == _supportKeys.Length) _supports.Remove(_supportKeys[_supportNext]); else _supportCount++;
             _supportKeys[_supportNext] = cell; _supportNext = (_supportNext + 1) % _supportKeys.Length; _supports.Add(cell, support);

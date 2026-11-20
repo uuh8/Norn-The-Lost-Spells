@@ -46,6 +46,8 @@ namespace Game.Rendering
         }
         public const float CoverageThreshold = .15f, KernelRadius = 1.45f;
         public float LastSwellWeight {get;private set;}
+        public Vector2 LastFlowVelocity {get;private set;}
+        public float LastImpact {get;private set;}
         public GridLiquidFieldSampler(IGridLiquidFieldSamples source,int subdivision=2) { _source = source;_snapshot=source as GridLiquidFieldFrame;_crownStrength=source is IGridLiquidCrownSamples crown?crown.CrownStrength:.15f;_shapeSource=_crownStrength>.15f?source as IGridLiquidShapeSamples:null;_cartoonVolumeScale=_snapshot?.CartoonVolumeScale??1; }
         // 校准档保留近似真实体积；美术档对少量水使用四次根，形成有明显侧壁的圆润液团。
         // 空格仍为空，满格/深湖回到真实水位。显示增厚不改变GMU，避免填槽/Gameplay被视觉反写。
@@ -104,10 +106,12 @@ namespace Game.Rendering
 #if UNITY_EDITOR
             candidates&=!_validationFullScan;
 #endif
-            int neighbors=candidates?_snapshot.QueryCellCount:175;
+            Vector3Int reach=_snapshot!=null?_snapshot.QueryReach:new Vector3Int(2,3,2);
+            int width=reach.x*2+1,depth=reach.z*2+1;
+            int neighbors=candidates?_snapshot.QueryCellCount:width*depth*(reach.y*2+1);
             for(int neighbor=0;neighbor<neighbors;neighbor++)
             {
-                var cell=candidates?_snapshot.QueryCell(neighbor):new Vector3Int(cx-2+neighbor%5,cy-3+neighbor/25,cz-2+neighbor/5%5);
+                var cell=candidates?_snapshot.QueryCell(neighbor):new Vector3Int(cx-reach.x+neighbor%width,cy-reach.y+neighbor/(width*depth),cz-reach.z+neighbor/width%depth);
                 int x=cell.x,y=cell.y,z=cell.z;
                 for(int phase=0;phase<2;phase++)
                 {
@@ -125,14 +129,17 @@ namespace Game.Rendering
                     if(q<=0)continue;
                     // 少量自由落水按真实 GMU 使用实例；不再给几滴水造一张 1.6 格高的采样代理。
                     if(_snapshot!=null && _snapshot.FallingDropRow(cell,previous))continue;
-                    Vector3 warp=Vector3.ClampMagnitude(velocity*(_source.Interval*(previous?alpha:alpha-1))/_source.CellSize,3);
+                    bool supported=_source.Supported(cell,previous);Vector4 terrain=_source.Terrain(cell);
+                    Vector3 warp=GridLiquidFlightInterpolation.WarpCells(velocity,GridLiquidFlightInterpolation.Gravity(terrain,supported),
+                        _source.Interval,previous?alpha:alpha-1,_source.CellSize);
                     Vector3 center=new Vector3(x+.5f,y+.5f,z+.5f)+offset+warp;
-                    bool supported=_source.Supported(cell,previous);
                     // 自由液体也用连续的圆肩体积场，形成液舌/液帘；不按格画圆形水珠。
                     if(!supported && !colors && !air)continue;
                     float scale=_shapeSource?.ShapeScale(cell,previous)??1;
-                    float dx=(at.x-center.x)/scale,dz=(at.z-center.z)/scale,k=Kernel(dx,dz,out Vector2 g)*mix;if(k<=0)continue;g*=mix/scale;
-                    Vector4 terrain=_source.Terrain(cell);Vector2 slope=supported?new Vector2(-terrain.x,-terrain.z)/Mathf.Max(.25f,terrain.y):Vector2.zero;
+                    Vector3 axes=!supported && _crownStrength>.15f && (_snapshot==null || _snapshot.AllowsAirStretch(cell,previous))?GridLiquidFlowPresentation.AirAxes(velocity,_source.Interval,_source.CellSize):Vector3.one;
+                    float scaleX=scale*axes.x,scaleZ=scale*axes.z;
+                    float dx=(at.x-center.x)/scaleX,dz=(at.z-center.z)/scaleZ,k=Kernel(dx,dz,out Vector2 g)*mix;if(k<=0)continue;g=new Vector2(g.x/scaleX,g.y/scaleZ)*mix;
+                    Vector2 slope=supported?new Vector2(-terrain.x,-terrain.z)/Mathf.Max(.25f,terrain.y):Vector2.zero;
                     // 支撑平面固定在Collider上。Kernel覆盖随运动前推，但落水History的
                     // 竖直速度/Offset不能把已支撑的真实地板一起搬动，否则子帧会露出地面窄缝。
                     float floor=supported?(terrain.w-_source.Origin.y)/_source.CellSize+slope.x*(at.x-x-.5f)+slope.y*(at.z-z-.5f):center.y-.5f;
@@ -148,7 +155,7 @@ namespace Game.Rendering
                     if(!supported && _crownStrength<=.15f)real=fill;
                     // 空中外壳必须以数量加权的真实中心对称生成。固定减半格会把少量液体
                     // 压在每个Y行的底部，形成多层薄片；这里与GPU/Bounds使用同一半厚度。
-                    if(!supported)floor=center.y-real*.5f;
+                    if(!supported){real*=axes.y;floor=center.y-real*.5f;}
                     if(uniform)
                     {
                         // 尾格的1 GMU不能和富液格提供相同轮廓覆盖，否则转移的一瞬间会新增整块面积。
@@ -166,7 +173,7 @@ namespace Game.Rendering
                     if(_shapeSource!=null && supported && slope.sqrMagnitude<.0625f)proxy=Mathf.Max(1.6f,real);
                     if(!supported)proxy=Mathf.Max(1.6f,real);
                     // 先按真实平面归组再累加；同一Y行也可能同时包含坡面和台阶，不能先平均它们。
-                    var contribution=new GroundPlane{Ground=supported,Solid=_source is IGridLiquidShapeSamples ground?ground.SolidSupported(cell,previous):supported,Coverage=k,Floor=k*floor,Real=k*real,Proxy=k*proxy,RimScale=k*scale,Slope=k*slope,
+                    var contribution=new GroundPlane{Ground=supported,Solid=_source is IGridLiquidShapeSamples ground?ground.SolidSupported(cell,previous):supported,Coverage=k,Floor=k*floor,Real=k*real,Proxy=k*proxy,RimScale=k*Mathf.Sqrt(scaleX*scaleZ),Slope=k*slope,
                         Gradient=g,FloorGradient=g*floor+k*slope,RealGradient=g*real,ProxyGradient=g*proxy};
                     int plane=AddPlane(contribution);
                     // 颜色只读数量，不需再次解码速度/Offset；各材料身份与Density组仍分别保留。
@@ -234,6 +241,7 @@ namespace Game.Rendering
         public void CompressGroundProxy(ref Vector3 position,ref Vector3 normal,float alpha)
         {
             LastSwellWeight=0;
+            LastFlowVelocity=Vector2.zero;LastImpact=0;
             GatherPlanes(position,alpha,-1,false,true);Vector3 p=(position-_source.Origin)/_source.CellSize;
             int chosen=-1;float best=float.PositiveInfinity;
             for(int i=0;i<_planeCount;i++)
@@ -308,6 +316,41 @@ namespace Game.Rendering
                 p-=supportNormal*inset;
             }
             position=_source.Origin+p*_source.CellSize;
+            if(_snapshot==null || _snapshot.Animated)ReadSurfaceFlow(position,alpha);
+        }
+        private void ReadSurfaceFlow(Vector3 position,float alpha)
+        {
+            // 流向只在最终Vertex读取，避免把32个额外float带入每个GPU Field节点。
+            // 与几何使用同一有界QueryReach；高速落水的Previous可能在两格以外。
+            Vector3 at=(position-_source.Origin)/_source.CellSize;
+            var center=new Vector3Int(Mathf.FloorToInt(at.x),Mathf.FloorToInt(at.y),Mathf.FloorToInt(at.z));
+            _snapshot?.PrepareQuery(position);Vector3Int reach=_snapshot!=null?_snapshot.QueryReach:new Vector3Int(2,3,2);
+            int width=reach.x*2+1,depth=reach.z*2+1;
+            int neighbors=_snapshot!=null?_snapshot.QueryCellCount:width*depth*(reach.y*2+1);
+            Vector3 flow=Vector3.zero;float total=0,impact=0,support=0;
+            for(int neighbor=0;neighbor<neighbors;neighbor++)
+            {
+                var cell=_snapshot!=null?_snapshot.QueryCell(neighbor):center+new Vector3Int(neighbor%width-reach.x,neighbor/(width*depth)-reach.y,neighbor/width%depth-reach.z);
+                for(int phase=0;phase<2;phase++)
+                {
+                    bool previous=phase==0;float mix=previous?1-alpha:alpha;if(mix<=0)continue;
+                    for(int m=0;m<_source.MaterialCount;m++)
+                    {
+                        var row=_source.Read(cell,m,previous);if(row.Quantity==0)continue;
+                        bool supported=_source.Supported(cell,previous);
+                        var pose=(Vector3)cell+Vector3.one*.5f+row.OffsetCells+GridLiquidFlightInterpolation.WarpCells(row.VelocityWorld,
+                            GridLiquidFlightInterpolation.Gravity(_source.Terrain(cell),supported),_source.Interval,previous?alpha:alpha-1,_source.CellSize);
+                        float weight=row.Quantity*mix/(1+4*(at-pose).sqrMagnitude);
+                        total+=weight;flow+=row.VelocityWorld*weight;
+                        // Previous在空中保有下落速度，Current已落地归零；统计同一
+                        // 完整窗口，再以实际支撑量门控冲击，不凭空补造Gameplay事件。
+                        impact+=Mathf.Clamp01(-row.VelocityWorld.y*.12f)*weight;
+                        if(supported && (!(_source is IGridLiquidShapeSamples shape) || shape.SolidSupported(cell,previous)))support+=weight;
+                    }
+                }
+            }
+            if(total<=0)return;flow/=total;
+            LastFlowVelocity=Vector2.ClampMagnitude(new Vector2(flow.x,flow.z),GridLiquidFlowPresentation.MaximumFlowSpeed);LastImpact=support>0?impact/total:0;
         }
         private static bool Compatible(in GroundPlane a,in GroundPlane b)
         {

@@ -201,8 +201,9 @@ namespace Game.Combat.Tests
             Assert.That(result.SecondProducedGmu, Is.EqualTo(102));
         }
 
-        [Test]
-        public void Evaluator_IgniteGooConsumesStickyAndProducesFireOnFireSide()
+        [TestCase(false)]
+        [TestCase(true)]
+        public void Evaluator_IgniteGooConsumesStickyAndProducesFireOnFireSide(bool stickyFirst)
         {
             var ignite = new IgniteGooTuning
             {
@@ -215,15 +216,21 @@ namespace Game.Combat.Tests
             };
             var tuning = new ElementReactionTuningSnapshot(
                 default, default, default, ignite, default, 0f, 0f);
-            var contact = new MaterialContactSnapshot(MaterialId.Fire, 100, MaterialId.Sticky, 100);
+            var contact = stickyFirst
+                ? new MaterialContactSnapshot(MaterialId.Sticky, 100, MaterialId.Fire, 100)
+                : new MaterialContactSnapshot(MaterialId.Fire, 100, MaterialId.Sticky, 100);
 
             Assert.That(ElementReactionEvaluator.TryEvaluateMaterialContact(
                 in contact, 1f, ElementReactionId.IgniteGoo, in tuning,
                 out MaterialReactionResult result), Is.True);
-            Assert.That(result.FirstConsumedGmu, Is.Zero);
-            Assert.That(result.SecondConsumedGmu, Is.EqualTo(51));
-            Assert.That(result.FirstProducedGmu, Is.EqualTo(77));
-            Assert.That(result.SecondProducedGmu, Is.Zero);
+            // 20 intensity/s映射到51 GMU Sticky；51×1.5=76.5按既有nearest-even规则为76。
+            // 使用独立字面期望，不在测试中再次调用RoundToInt，且交换First/Second不能交换材料责任。
+            Assert.That(result.FirstConsumedGmu, Is.EqualTo(stickyFirst ? 51 : 0));
+            Assert.That(result.SecondConsumedGmu, Is.EqualTo(stickyFirst ? 0 : 51));
+            Assert.That(result.FirstProducedGmu, Is.EqualTo(stickyFirst ? 0 : 76));
+            Assert.That(result.SecondProducedGmu, Is.EqualTo(stickyFirst ? 76 : 0));
+            Assert.That(result.FirstConsumedGmu + result.SecondConsumedGmu, Is.EqualTo(51));
+            Assert.That(result.FirstProducedGmu + result.SecondProducedGmu, Is.EqualTo(76));
         }
 
         [Test]

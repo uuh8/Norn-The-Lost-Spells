@@ -18,11 +18,11 @@ namespace Game.Multiplayer
         private void BeginPortalRoom(int portal, string destination, bool singlePlayer)
         {
             if (_routine != null) { Publish(); return; }
-            if (_exitRequested && !_exitHubReady) { Status("上次离局结果未确认，不能开始另一局。"); return; }
+            if (HasAccountRecovery || _exitRequested && !ExitNavigationReady) { Status("上次离局结果未确认，不能开始另一局。"); return; }
             _portal = portal;
             if (_account == null || !_account.Authenticated || _profile == null || !_profile.TryDungeon(destination, out var dungeon))
             { ReleaseChoice(false, "副本配置或登录无效，请重新登录后重试。"); return; }
-            bool resume = _singlePlayerEntry && _singleEntryPosted && _singleEntryBody != null && !_exitHubReady;
+            bool resume = _singlePlayerEntry && _singleEntryPosted && _singleEntryBody != null && !ExitNavigationReady;
             if (resume && (!singlePlayer || !SinglePlayerContextMatches() || _singleEntryCommand.DungeonId != dungeon))
             { ReleaseChoice(false, "原单人入场结果未确认，请用原账号与原入口恢复。"); return; }
             if (!resume && !_account.CanBeginServerRun(out var error)) { ReleaseChoice(false, error); return; }

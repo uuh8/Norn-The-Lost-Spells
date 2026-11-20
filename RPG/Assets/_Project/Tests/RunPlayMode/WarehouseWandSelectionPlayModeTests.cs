@@ -14,7 +14,9 @@ namespace Game.Run.Tests
     public sealed class WarehouseWandSelectionPlayModeTests : BackpackWorkspacePlayModeTests
     {
         protected override string ReviewPath => Review;
-        protected override string EvidencePath => "TestResults/SinglePlayer/M6-T2-WarehouseShop";
+        // 每轮独立保留截图/Profiler证据，不能覆盖历史阶段结果；不改变Profile或测试断言。
+        private readonly string _evidencePath = "TestResults/UiAudit/WarehouseWandSelectionPlayModeTests/" + System.DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffZ") + "-" + System.Guid.NewGuid().ToString("N");
+        protected override string EvidencePath => _evidencePath;
         private WandInventoryView OpenWarehouse()
         {
             foreach (var root in Scene.GetRootGameObjects()) foreach (var ui in root.GetComponentsInChildren<SinglePlayerInventoryController>(true))

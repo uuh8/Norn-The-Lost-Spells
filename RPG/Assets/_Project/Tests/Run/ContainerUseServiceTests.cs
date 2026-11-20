@@ -79,6 +79,33 @@ namespace Game.Run.Tests
                 Assert.That(item.Composition.Total, Is.EqualTo(150)); Assert.That(profile.Items.Version, Is.EqualTo(version)); Assert.That(profile.Items.IsResourceBusy, Is.False); }
             finally { EventBus<MaterialWorldDepositRequestedEvent>.Unsubscribe(handler); }
         }
+        [Test] public void PourCarriesNozzleVelocityThroughTheExistingAtomicDepositExchange()
+        {
+            var profile=Profile();var service=new ContainerUseService(profile,"inventory");
+            object boxed=Request(profile);
+            var flag=typeof(ContainerUseRequestedEvent).GetField("HasInitialMotion");
+            Assert.That(flag,Is.Not.Null,"真实洒出应复用原库存提交入口并传入可信初速度。");
+            flag.SetValue(boxed,true);
+            var velocity=new Vector3(8,2,0);
+            typeof(ContainerUseRequestedEvent).GetField("InitialVelocity").SetValue(boxed,velocity);
+            var request=(ContainerUseRequestedEvent)boxed;request.TargetPosition=new Vector3(.8f,1.2f,0);
+            int calls=0;
+            Action<MaterialWorldDepositRequestedEvent> handler=command=>
+            {
+                calls++;
+                Assert.That(typeof(MaterialDepositExchange).GetField("HasInitialMotion").GetValue(command.Exchange),Is.EqualTo(true));
+                Assert.That(typeof(MaterialDepositExchange).GetField("InitialVelocity").GetValue(command.Exchange),Is.EqualTo(velocity));
+                Assert.That(command.Exchange.Position,Is.EqualTo(request.TargetPosition));Accept(command);
+            };
+            EventBus<MaterialWorldDepositRequestedEvent>.Subscribe(handler);
+            try
+            {
+                Assert.That(service.Execute(request).Success,Is.True);Assert.That(calls,Is.EqualTo(1));
+                profile.Items.TryGet("bottle",out var item);Assert.That(item.Composition.Total,Is.EqualTo(120));
+                Assert.That(profile.Items.IsResourceBusy,Is.False);
+            }
+            finally{EventBus<MaterialWorldDepositRequestedEvent>.Unsubscribe(handler);}
+        }
         [Test] public void SolidPartialThenWholeReleaseKeepsIdentityAndRemovesExhaustedItem()
         {
             var profile = Profile(); var service = new ContainerUseService(profile, "inventory"); EventBus<MaterialWorldDepositRequestedEvent>.Subscribe(Accept);

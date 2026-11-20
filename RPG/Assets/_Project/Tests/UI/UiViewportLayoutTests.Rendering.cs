@@ -52,8 +52,11 @@ namespace Game.UI.Tests
             { canvas.renderMode = RenderMode.ScreenSpaceCamera; canvas.worldCamera = camera; canvas.planeDistance = 10; }
             var font = Font.CreateDynamicFontFromOSFont(new[] { "Microsoft YaHei", "SimSun", "Arial" }, 20);
             foreach (var label in root.GetComponentsInChildren<Text>(true)) label.font = font;
-            string directory = Path.GetFullPath("docs/superpowers/evidence/multiplayer/single-player-regression-20261107/ui-resolution");
+            // 每轮截图独立保存；重复回归不能覆盖此前人工验收或失败证据。
+            string directory = Path.GetFullPath(Path.Combine("TestResults/UiViewportLayout",
+                DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffZ")));
             Directory.CreateDirectory(directory);
+            TestContext.WriteLine("Viewport evidence: " + directory);
             root.SetActive(true);
             try
             {

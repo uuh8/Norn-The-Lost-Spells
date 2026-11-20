@@ -20,7 +20,9 @@ namespace Game.Run.Tests
     {
         private const string Home="Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Home.unity";
         protected override string ReviewPath=>"Assets/_Project/Scenes/Tests/Hub/SinglePlayer_Hub_HomeReview.unity";
-        protected override string EvidencePath=>"TestResults/SinglePlayer/M6-T22-HomeGround";
+        // 派生fixture独立保留截图/Profiler，基类行为与历史M6证据均不改动。
+        private readonly string _evidenceDirectory=Path.Combine("TestResults/FullAuditPlayMode/HomeScene",Guid.NewGuid().ToString("N"));
+        protected override string EvidencePath=>_evidenceDirectory;
         private void Warp(HomePortal gate)
         {
             Player.enabled=false;Player.CharacterController.enabled=false;Player.transform.position=gate.transform.position+Vector3.up*.1f;

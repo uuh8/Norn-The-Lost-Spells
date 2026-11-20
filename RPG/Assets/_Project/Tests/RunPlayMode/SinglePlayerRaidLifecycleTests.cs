@@ -37,6 +37,8 @@ namespace Game.Run.Tests
         private HealthComponent _health;
         private RaidFaultFiles _files;
         private string _directory,_card,_hubCard;
+        // 证据与临时Profile分离；保留本轮截图/Profiler，不覆盖历史结果或随Profile清理。
+        private readonly string _evidenceDirectory=Path.Combine("TestResults/FullAuditPlayMode/RaidLifecycle",Guid.NewGuid().ToString("N"));
         private float _time;private bool _cursor;private CursorLockMode _lock;private EditorWindow _window;
         private bool _reload;
         private InputTestFixture _isolatedInput;
@@ -63,7 +65,8 @@ namespace Game.Run.Tests
                 var expanded=new List<ItemDefinition>(copies);
                 foreach(var copy in copies)if(copy.Kind==ItemKind.Backpack)
                 {var data=new SerializedObject(copy);data.FindProperty("_backpackWidth").intValue=8;data.FindProperty("_backpackHeight").intValue=8;data.ApplyModifiedPropertiesWithoutUndo();}
-                foreach(string key in new[]{"Food/Pumpkin","Herb/Herb_Flower_01","Container/Container_02"})
+                // 使用已迁移的正式路径，仍是下方投放用例声明的同三个ContentId；不替换物品或修改SO。
+                foreach(string key in new[]{"Food/Item_Food_Pumpkin","Herb/Item_Herb_Flower_01","Containers/Item_Container_02"})
                     expanded.Add(AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/_Project/ScriptableObjects/Items/"+key+".asset"));
                 Field(typeof(ItemCatalog),"_definitions").SetValue(_catalog,expanded.ToArray());
             }
@@ -287,12 +290,13 @@ namespace Game.Run.Tests
         }
         [UnityTest]public IEnumerator ActualPreparationGameViewShowsProtectionAndDepartureControls()
         {
+            Directory.CreateDirectory(_evidenceDirectory);
             _ui.Open();_ui.SelectItem(_card);yield return null;_view.Protect();Canvas.ForceUpdateCanvases();yield return null;
-            ScreenCapture.CaptureScreenshot("Temp/SinglePlayer/raid-preparation.png");yield return new WaitForSecondsRealtime(.3f);
-            Assert.That(File.Exists("Temp/SinglePlayer/raid-preparation.png"),Is.True);
+            ScreenCapture.CaptureScreenshot(Path.Combine(_evidenceDirectory,"raid-preparation.png"));yield return new WaitForSecondsRealtime(.3f);
+            Assert.That(File.Exists(Path.Combine(_evidenceDirectory,"raid-preparation.png")),Is.True);
             _ui.Close();yield return Begin(false);yield return Collect();
-            ScreenCapture.CaptureScreenshot("Temp/SinglePlayer/raid-world.png");yield return new WaitForSecondsRealtime(.3f);
-            Assert.That(File.Exists("Temp/SinglePlayer/raid-world.png"),Is.True);_view.Abandon();yield return WaitHub();
+            ScreenCapture.CaptureScreenshot(Path.Combine(_evidenceDirectory,"raid-world.png"));yield return new WaitForSecondsRealtime(.3f);
+            Assert.That(File.Exists(Path.Combine(_evidenceDirectory,"raid-world.png")),Is.True);_view.Abandon();yield return WaitHub();
         }
         [UnityTest]public IEnumerator ProfilerRecordsRaidTickWithoutHotAllocAndRealCheckpointCost()
         {
@@ -311,8 +315,9 @@ namespace Game.Run.Tests
                 yield return null;yield return null;
                 var checkpoint=Measure(first,UnityEditorInternal.ProfilerDriver.lastFrameIndex,"Norn.Raid.Checkpoint");
                 Assert.That(checkpoint.Samples,Is.GreaterThan(0),"记录真正扣次后的文件提交，不以空Marker充当I/O证据。");
-                File.WriteAllText("Temp/SinglePlayer/raid-profiler.json",JsonUtility.ToJson(new RaidProfileReport{Utc=DateTime.UtcNow.ToString("O"),Scope="Editor/TestRunner; actual graybox, authored solver paused; 60 idle frames and real owned-cast checkpoint; no GPU/whole-world performance claim",Idle=idle,Checkpoint=checkpoint},true));
-                UnityEditorInternal.ProfilerDriver.SaveProfile("Temp/SinglePlayer/raid-profiler.data");
+                Directory.CreateDirectory(_evidenceDirectory);
+                File.WriteAllText(Path.Combine(_evidenceDirectory,"raid-profiler.json"),JsonUtility.ToJson(new RaidProfileReport{Utc=DateTime.UtcNow.ToString("O"),Scope="Editor/TestRunner; actual graybox, authored solver paused; 60 idle frames and real owned-cast checkpoint; no GPU/whole-world performance claim",Idle=idle,Checkpoint=checkpoint},true));
+                UnityEditorInternal.ProfilerDriver.SaveProfile(Path.Combine(_evidenceDirectory,"raid-profiler.data"));
             }
             finally{UnityEditorInternal.ProfilerDriver.enabled=recording;UnityEditorInternal.ProfilerDriver.SetAreaEnabled(UnityEngine.Profiling.ProfilerArea.CPU,cpu);}
             _view.Abandon();yield return WaitHub();

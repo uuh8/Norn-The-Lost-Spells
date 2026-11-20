@@ -15,6 +15,7 @@ public static class RunCheckpointWorldRules
         var keys = new Dictionary<(uint, int, int, int), OnlineRunAssetCheckpointChunk>();
         var geometries = new Dictionary<uint, uint[]>();
         var queues = new HashSet<(uint, uint)>();
+        int residentCount = 0;
         foreach (var chunk in world.Chunks)
         {
             if (chunk == null || chunk.Domain > 3 || chunk.WorldEpoch != world.WorldEpoch || chunk.SnapshotId == 0
@@ -29,6 +30,9 @@ public static class RunCheckpointWorldRules
                 if (chunk.WordCount != 0 || chunk.Checksum != 2166136261) throw Failure();
                 continue;
             }
+            // 总头部预算还容纳上一业务Head的删除连续性证据，不能借这部分零payload额度
+            // 扩大当前材料世界。真实resident仍服从原128地址上限，且照常完整校验正文。
+            if (++residentCount > OnlineRunAssetCheckpoint.MaximumCurrentWorldKeys) throw Failure();
             ValidatePayload(chunk, geometries, queues);
         }
         if (previous == null) return;
@@ -36,7 +40,16 @@ public static class RunCheckpointWorldRules
             || world.CommitSequence < previous.CommitSequence || world.WorldTick < previous.WorldTick || previous.Chunks == null) throw Failure();
         foreach (var old in previous.Chunks)
         {
-            if (old == null || !keys.TryGetValue(Key(old), out var current) || current.Generation < old.Generation
+            if (old == null) throw Failure();
+            if (!keys.TryGetValue(Key(old), out var current))
+            {
+                // 业务已持久确认上一Head中的空删除头，下一Head才允许省略这一历史地址。
+                // 不能拿网络Peer ACK、metadata退休或本次快照没看到Key，替代业务层已确认的删除事实：
+                // old仍为resident时，DS必须先导出明确tombstone并读回确认，否则继续拒绝漏报真实量。
+                if (old.IsResident) throw Failure();
+                continue;
+            }
+            if (current.Generation < old.Generation
                 || current.Generation == old.Generation && current.Revision < old.Revision) throw Failure();
             if (current.Generation == old.Generation && current.Revision == old.Revision)
             {

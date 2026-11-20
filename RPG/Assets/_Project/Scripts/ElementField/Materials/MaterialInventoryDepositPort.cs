@@ -11,6 +11,9 @@ namespace Game.ElementField
     {
         private const int MaximumEntries = 512, MaximumVisited = 8192;
         private readonly MaterialConversionPlacement[] _journal = new MaterialConversionPlacement[MaximumEntries];
+        // 与原Placement同索引的固定scratch；只在成功Source.Commit后交给History。
+        // 失败/Undo从不注册出生，不能让未扣瓶的一次尝试获得特殊连续播放资格。
+        private readonly LiquidCellPresentationSample[] _birthPrevious=new LiquidCellPresentationSample[MaximumEntries];
         private readonly ElementWorldRuntime _world;
         private int _count, _visited;
         private static readonly ProfilerMarker Marker = new ProfilerMarker("Norn.MaterialTransfer.Deposit");
@@ -57,6 +60,7 @@ namespace Game.ElementField
             if (_world == null || !_world.CanAcceptWorldWrites) return MaterialTransferFailure.WorldUnavailable;
             if (exchange.Source == null || exchange.Amounts == null || exchange.Count <= 0 || exchange.Count > 8
                 || exchange.Count > exchange.Amounts.Length || !Finite(exchange.Position) || !float.IsFinite(exchange.Radius)
+                || exchange.HasInitialMotion && (!Finite(exchange.InitialVelocity) || exchange.InitialVelocity.sqrMagnitude>4096f)
                 || exchange.Radius <= 0 || exchange.Radius > 2) return MaterialTransferFailure.InvalidRequest;
             ushort seen = 0; ulong total = 0;
             for (int i = 0; i < exchange.Count; i++)
@@ -74,6 +78,14 @@ namespace Game.ElementField
                     : _world.Gases == null || !_world.Gases.IsMaterialInitialized) return MaterialTransferFailure.WorldUnavailable;
             }
             if (total == 0) return MaterialTransferFailure.NoMaterial;
+            if(exchange.HasInitialMotion && _world.InventoryLiquid!=null)
+                for(int i=0;i<exchange.Count;i++)
+                    if(exchange.Amounts[i].Quantity>0 && Backend((MaterialId)exchange.Amounts[i].MaterialKey)==MaterialSimulationBackendKind.GridLiquid)
+                    {
+                        // 喷口中心若已在墙或满格中，不能用邻格搜索绕过障碍；失败时材料仍完整留在瓶中。
+                        if(!_world.InventoryLiquid.CanPrepareInjectionOrigin(exchange.Position))return MaterialTransferFailure.Capacity;
+                        break;
+                    }
             if (!exchange.Source.TryReserve(exchange.Amounts, exchange.Count, out var failure)) return failure;
             _world.RetainInventoryDepositActivity(exchange.Position,exchange.Radius);
             _world.FixedSolids?.BeginConversionGeometry();
@@ -93,7 +105,36 @@ namespace Game.ElementField
                     valid = _world.TryPrepareMaterialTopologyChange(address.Cell, true);
             }
             if (!valid) { Undo(); return MaterialTransferFailure.GeometryRejected; }
+            if(exchange.HasInitialMotion)
+            {
+                // 先证明全部新运动行都能进入固定容量字典，再扣库存；世界锁排除了期间另一笔注入。
+                // Undo只撤暂存数量，不曾改变旧速度。Commit后不会再走一个“失败就丢速度”的分支。
+                int needed=0;
+                for(int i=0;i<_count;i++)
+                {
+                    var address=_journal[i].Address;
+                    if(Backend(address.Material)!=MaterialSimulationBackendKind.GridLiquid)continue;
+                    if(!_world.InventoryLiquid.CanPrepareInjectionMotion(address.Cell,address.Material,out bool newSlot))
+                    {Undo();return MaterialTransferFailure.Capacity;}
+                    if(newSlot)needed++;
+                }
+                if(needed>0 && (_world.InventoryLiquid==null || needed>_world.InventoryLiquid.AvailableInjectionMotionSlots))
+                {Undo();return MaterialTransferFailure.Capacity;}
+            }
             exchange.Source.Commit();
+            if(exchange.HasInitialMotion)
+                for(int i=0;i<_count;i++)
+                {
+                    var placement=_journal[i];var address=placement.Address;
+                    if(Backend(address.Material)==MaterialSimulationBackendKind.GridLiquid)
+                        _world.InventoryLiquid.PublishInjectionMotion(address.Cell,address.Material,exchange.InitialVelocity,placement.Quantity);
+                }
+            for(int i=0;i<_count;i++)
+            {
+                var placement=_journal[i];var address=placement.Address;
+                if(Backend(address.Material)==MaterialSimulationBackendKind.GridLiquid)
+                    _world.InventoryLiquid.PublishCommittedBirth(address.Cell,address.Material,_birthPrevious[i],placement.Quantity);
+            }
             for (int i = 0; i < exchange.Count; i++)
                 _world.RecordInventoryImport((MaterialId)exchange.Amounts[i].MaterialKey, exchange.Amounts[i].Quantity);
             _world.FixedSolids?.PublishConversionGeometry();
@@ -157,16 +198,16 @@ namespace Game.ElementField
                 default: return false;
             }
             uint amount = (uint)Math.Min(free, remaining); if (amount == 0) return false;
-            bool success;
+            bool success;LiquidCellPresentationSample before=default;
             switch (Backend(material))
             {
-                case MaterialSimulationBackendKind.GridLiquid: success = _world.InventoryLiquid.StageConversionAdd(cell, material, amount); break;
+                case MaterialSimulationBackendKind.GridLiquid: success = _world.InventoryLiquid.StageInventoryBirth(cell, material, amount,out before); break;
                 case MaterialSimulationBackendKind.FixedSolid: success = _world.FixedSolids.StageConversionAdd(cell, material, amount); break;
                 case MaterialSimulationBackendKind.GridGas: success = _world.Gases.StageConversionAdd(cell, material, amount); break;
                 default: return false;
             }
             if (!success) return false;
-            _journal[_count++] = new MaterialConversionPlacement(cell, material, amount); placed = amount; return true;
+            _birthPrevious[_count]=before;_journal[_count++] = new MaterialConversionPlacement(cell, material, amount); placed = amount; return true;
         }
         private void Undo()
         {

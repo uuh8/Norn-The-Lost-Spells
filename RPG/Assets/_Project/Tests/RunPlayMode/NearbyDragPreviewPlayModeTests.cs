@@ -13,7 +13,9 @@ namespace Game.Run.Tests
 {
     public sealed class NearbyDragPreviewPlayModeTests : BackpackWorkspacePlayModeTests
     {
-        protected override string EvidencePath => "TestResults/SinglePlayer/M6-T18-Dungeon";
+        // 每轮独立保留截图/Profiler证据，不能覆盖历史阶段结果；不改变Profile或测试断言。
+        private readonly string _evidencePath = "TestResults/UiAudit/NearbyDragPreviewPlayModeTests/" + System.DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffZ") + "-" + System.Guid.NewGuid().ToString("N");
+        protected override string EvidencePath => _evidencePath;
 
         [UnityTest]
         public IEnumerator NearbyDragUsesGreenCellsAndCancelRestoresAuthorColor()

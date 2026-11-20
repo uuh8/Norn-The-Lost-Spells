@@ -105,6 +105,7 @@ namespace Game.Run.Tests
             fixtureScene.name = "AccountEntry_Prearm_" + Guid.NewGuid().ToString("N");
             var root = new GameObject("Inactive first account Hub"); root.SetActive(false);
             UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(root, fixtureScene);
+            SinglePlayerInventorySession session = null;
             try
             {
                 const int owner = 26037;
@@ -112,7 +113,7 @@ namespace Game.Run.Tests
                 Assert.That(fixtureScene.name, Does.StartWith("AccountEntry_Prearm_"));
                 Assert.That(TryArm(owner, fixtureScene.name), Is.True);
                 // 先arm再创建Session，模拟新Scene自己的Awake/OnEnable，不从旧档取得任何资产或规则。
-                var session = root.AddComponent<SinglePlayerInventorySession>();
+                session = root.AddComponent<SinglePlayerInventorySession>();
                 Assert.That(session.AccountInventoryReadOnly, Is.True);
                 typeof(SinglePlayerInventorySession).GetMethod("OnEnable", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(session, null);
                 Assert.That(session.ReadOnly, Is.Null);
@@ -124,6 +125,10 @@ namespace Game.Run.Tests
             }
             finally
             {
+                // never-active对象不会由Unity自动配对OnDisable；本夹具手动启用了订阅，必须自己成对释放。
+                // 仅退订当前Session，不能Clear全局EventBus误删仍有效的其他观察者。
+                if (session != null) typeof(SinglePlayerInventorySession)
+                    .GetMethod("OnDisable", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(session, null);
                 UnityEngine.Object.DestroyImmediate(root);
                 if (fixtureScene.IsValid()) UnityEditor.SceneManagement.EditorSceneManager.ClosePreviewScene(fixtureScene);
                 ResetHubScope();
@@ -142,6 +147,51 @@ namespace Game.Run.Tests
             }
             finally { ResetHubScope(); }
         }
+
+        [TestCase(false, false, false, "进入据点", true, true)]
+        [TestCase(true, false, false, "恢复当前副本", true, true)]
+        [TestCase(true, true, false, "恢复当前副本", true, false)]
+        [TestCase(true, true, true, "恢复当前副本", false, false)]
+        public void ExistingEnterButtonShowsRecoveryAndKeepsOneCommandOwner(bool activeRun, bool pending, bool busy,
+            string label, bool canEnter, bool canLogout)
+        {
+            var root = new GameObject("Inactive account recovery menu"); root.SetActive(false);
+            try
+            {
+                var menu = root.AddComponent<AccountMenuController>();
+                foreach (var name in new[] { "_username", "_password" })
+                    SetMenuField(menu, name, AddMenuControl<UnityEngine.UI.InputField>(root, name));
+                foreach (var name in new[] { "_register", "_login", "_enter", "_logout", "_settings", "_quit" })
+                {
+                    var button = AddMenuControl<UnityEngine.UI.Button>(root, name); SetMenuField(menu, name, button);
+                    var text = AddMenuControl<UnityEngine.UI.Text>(button.gameObject, "Label"); text.text = "旧进入文字";
+                }
+                SetMenuField(menu, "_status", AddMenuControl<UnityEngine.UI.Text>(root, "Status"));
+                SetMenuField(menu, "_identity", AddMenuControl<UnityEngine.UI.Text>(root, "Identity"));
+                object view = new OnlineLobbyChangedEvent { Authenticated = true, Busy = busy, Username = "test" };
+                foreach (var pair in new[] { new System.Collections.Generic.KeyValuePair<string, bool>("HasActiveRun", activeRun),
+                    new System.Collections.Generic.KeyValuePair<string, bool>("RecoveryPending", pending) })
+                {
+                    var field = typeof(OnlineLobbyChangedEvent).GetField(pair.Key);
+                    Assert.That(field, Is.Not.Null, "主菜单必须获得只读恢复状态，不能靠错误字符串判断流程。");
+                    field.SetValue(view, pair.Value);
+                }
+                typeof(AccountMenuController).GetMethod("OnChanged", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(menu, new[] { view });
+                var enter = (UnityEngine.UI.Button)typeof(AccountMenuController).GetField("_enter", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(menu);
+                var logout = (UnityEngine.UI.Button)typeof(AccountMenuController).GetField("_logout", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(menu);
+                Assert.That(enter.GetComponentInChildren<UnityEngine.UI.Text>(true).text, Is.EqualTo(label));
+                Assert.That(enter.interactable, Is.EqualTo(canEnter));
+                Assert.That(logout.interactable, Is.EqualTo(canLogout));
+            }
+            finally { Object.DestroyImmediate(root); }
+        }
+        private static T AddMenuControl<T>(GameObject parent, string name) where T : Component
+        {
+            var root = new GameObject(name, typeof(RectTransform)); root.transform.SetParent(parent.transform, false);
+            return root.AddComponent<T>();
+        }
+        private static void SetMenuField(AccountMenuController target, string name, object value)
+            => typeof(AccountMenuController).GetField(name, BindingFlags.Instance | BindingFlags.NonPublic).SetValue(target, value);
 
         private static bool TryArm(int owner, string target)
         {

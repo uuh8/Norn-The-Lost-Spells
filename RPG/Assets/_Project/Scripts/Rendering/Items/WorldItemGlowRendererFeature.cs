@@ -15,6 +15,8 @@ namespace Game.Rendering
         private static readonly Unity.Profiling.ProfilerMarker FrustumMarker=new Unity.Profiling.ProfilerMarker("Norn.ItemGlow.Frustum");
         public override void Create()
         {
+            // 使用既有 Profile 接通所有真实地面代理；不要让副本依赖已被挂起的 Hub Binder。
+            WorldItemHighlightBinding.PrepareProfile(Profile);
             CoreUtils.Destroy(_material);
             if(GlowShader==null)GlowShader=Shader.Find("Hidden/Norn/ItemPickupGlow");
             if(GlowShader==null)return;
@@ -24,6 +26,9 @@ namespace Game.Rendering
         public override void AddRenderPasses(ScriptableRenderer renderer,ref RenderingData data)
         {
             using var scope=FrustumMarker.Auto();
+            // Renderer 可能在 EditMode 已 Create 并被复用。必须在 ActiveCount==0 早退之前
+            // 安装首批排队来源，否则“没有高亮就不准备、高亮又等待准备”会永远互相阻塞。
+            WorldItemHighlightBinding.PrepareProfile(Profile);
             if(_material==null || Profile==null || WorldItemHighlight.ActiveCount==0 || data.cameraData.renderType==CameraRenderType.Overlay
                 || data.cameraData.cameraType!=CameraType.Game && data.cameraData.cameraType!=CameraType.SceneView)return;
             GeometryUtility.CalculateFrustumPlanes(data.cameraData.camera,_planes);

@@ -115,6 +115,7 @@ namespace Game.ElementField
 
         private void OnEnable()
         {
+            if (_runtime != null) _runtime.RegisterExposure(this);
             // 清空旧计时；首份有效液体 Snapshot 可提前触发，缺省路径仍等待完整 interval。
             _elapsed = 0f;
             _hasAppliedExposure = false;
@@ -144,6 +145,7 @@ namespace Game.ElementField
 
         private void OnDisable()
         {
+            if (_runtime != null) _runtime.UnregisterExposure(this);
             // 只清除本 Adapter 的临时引用与工作区；已提交的持续状态交由 StatusController 的 hold/decay 规则收口。
             ClearPreviousTargets();
             _elapsed = 0f;
@@ -165,6 +167,26 @@ namespace Game.ElementField
         /// 通过 while 补齐应发生的采样轮次，使单位时间内的状态施加量不依赖帧率。
         /// </summary>
         public void TickExposure(float deltaTime)
+        {
+            // Render时钟仅属于单机。Authority由Runtime验过serverTick后统一驱动，公开旧入口不能额外加剂量。
+            if (_runtime == null || _runtime.ExecutionMode != WorldExecutionMode.SinglePlayer)
+            {
+                if (!CanApplyExposure) _elapsed = 0f;
+                return;
+            }
+            AdvanceExposureClock(deltaTime);
+        }
+
+        internal void TickAuthorityExposure(float deltaTime)
+        {
+            if (_runtime != null && _runtime.ExecutionMode == WorldExecutionMode.Authority && isActiveAndEnabled)
+                AdvanceExposureClock(deltaTime);
+        }
+
+        // Frozen/Debug暂停只撤销未提交时间；已经施加的Status仍由Combat Owner管理。
+        internal void ResetAuthorityExposureClock() => _elapsed = 0f;
+
+        private void AdvanceExposureClock(float deltaTime)
         {
             if (!CanApplyExposure)
             {
@@ -209,7 +231,7 @@ namespace Game.ElementField
             }
         }
 
-        // Exposure有独立Update/公开Tick入口，不能只借上层AuthorityTick是否运行推断写权限。
+        // 同一轮Status通知可同步冻结世界，不能只借进入AuthorityTick时的资格推断后续写权限。
         // Replica只读；Authority挂起或任意模式材料故障均不能让残留可查询Store继续施加状态。
         // 单机空间暂停与Debug暂停的既有实验行为不在本次网络保护中改写。
         private bool CanApplyExposure => _runtime != null && _runtime.IsInitialized

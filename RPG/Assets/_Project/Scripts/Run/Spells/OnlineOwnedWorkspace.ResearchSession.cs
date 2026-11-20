@@ -29,11 +29,8 @@ namespace Game.Run
         private static bool IsResearchStructuralCommand(OnlineInventoryCommandKind kind)
             => kind == OnlineInventoryCommandKind.PlaceCard || kind == OnlineInventoryCommandKind.MoveOwned
                 || kind == OnlineInventoryCommandKind.EquipWand || kind == OnlineInventoryCommandKind.ConfigureSpellAttachment
-                || kind == OnlineInventoryCommandKind.SelectWand || kind == OnlineInventoryCommandKind.SelectTool || kind == OnlineInventoryCommandKind.BindTool;
-        private bool RequiresResearchEditAccess(in OnlineInventoryCommandIntent intent)
-            => intent.Kind == OnlineInventoryCommandKind.PlaceCard || intent.Kind == OnlineInventoryCommandKind.ConfigureSpellAttachment
-                || intent.Kind == OnlineInventoryCommandKind.MoveOwned && (intent.TargetLocationKind == (int)ItemLocationKind.WandSlot
-                    || _profile.Items.TryGetLocation(intent.ItemId, out var source) && source.Kind == ItemLocationKind.WandSlot);
+                || kind == OnlineInventoryCommandKind.SelectWand || kind == OnlineInventoryCommandKind.SelectTool || kind == OnlineInventoryCommandKind.BindTool
+                || kind == OnlineInventoryCommandKind.OrganizeBackpack;
         private OnlineInventoryCommandFailure ApplyResearchSessionCommand(in OnlineInventoryCommandIntent intent)
         {
             if (!_isPeacefulPractice || !NeutralResearch(intent)) return OnlineInventoryCommandFailure.InvalidInput;

@@ -36,6 +36,13 @@ namespace Game.Core
         /// <summary>真实进入payload历史ring的变更记录数；Capture/空提交/Tick均不能冒充日志覆盖。</summary>
         public ulong HistoryRecordsWritten {get;private set;}
         public int HistoryCapacity=>_history.Length;
+        public ulong RetiredGenerationFloor=>_journal.RetiredGenerationFloor;
+        /// <summary>只读当前仍可寻址的完整Header，不分配payload，也不修改最近Capture失败证据。</summary>
+        public bool TryGetCurrentHeader(WorldChunkKey key,out WorldChunkPayloadHeader header)
+        {
+            for(int i=0;i<_count;i++)if(_keys[i]==key){header=_headers[i];return true;}
+            header=default;return false;
+        }
         public WorldCommitOwnerFailure LastFailure {get;private set;}
 
         public WorldReplicationCommitOwner(ulong epoch,int chunkCapacity,int cellCapacity,int pendingCapacity,int historyCapacity,int maxWordsPerChunk,int inspectionBudget)
@@ -52,6 +59,38 @@ namespace Game.Core
         { var a=new uint[slots][];for(int i=0;i<slots;i++)a[i]=new uint[words];return a; }
         public WorldChunkPayloadHeader GetChunkHeader(int index)
         {if(index<0 || index>=_count)throw new ArgumentOutOfRangeException(nameof(index));return _headers[index];}
+
+        /// <summary>
+        /// 可信Coordinator已撤销此Key全部订阅/冻结引用并将Leave排入可靠通道后，显式退休非resident槽。
+        /// Capture不会自动调用此方法，也不会以metadata紧张为由偷删tombstone或真实材料数量。
+        /// 成功时以旧末槽压缩index；movedFromIndex返回旧末槽索引，无搬动时为-1，供Coordinator同步搬动
+        /// per-Peer订阅/ACK/游标。它们必须在同一主线程边界完成，不能跨帧观察一半的新索引。
+        /// Journal完成非resident、Generation溢出和扫描预算预检后，下面只交换预分配缓冲与值；
+        /// 失败不改公开payload/序号/历史，成功也不伪造一次材料Commit或推进采样Tick。
+        /// </summary>
+        public bool TryRetireInactiveChunk(int index, out int movedFromIndex)
+        {
+            movedFromIndex = -1;
+            if ((uint)index >= (uint)_count || _headers[index].IsResident)
+                return Reject(WorldCommitOwnerFailure.InvalidInput);
+            if (!_journal.TryRetireInactiveChunk(_keys[index])) return Reject(WorldCommitOwnerFailure.Journal);
+
+            int last = _count - 1;
+            if (index != last)
+            {
+                _keys[index] = _keys[last]; _headers[index] = _headers[last];
+                _candidateKeys[index] = _candidateKeys[last];
+                _counts[index] = _counts[last]; _active[index] = _active[last];
+                // uint[]归池而不清零：Header/有效前缀决定可读范围，下一次Capture会覆盖候选。
+                // 交换两个数组引用能保留末槽payload，不分配/复制最大Chunk缓冲。
+                uint[] published = _published[index]; _published[index] = _published[last]; _published[last] = published;
+                uint[] candidate = _candidate[index]; _candidate[index] = _candidate[last]; _candidate[last] = candidate;
+                movedFromIndex = last;
+            }
+            _keys[last] = _candidateKeys[last] = default; _headers[last] = default;
+            _counts[last] = 0; _active[last] = false;
+            _count = last; LastFailure = WorldCommitOwnerFailure.None; return true;
+        }
 
         /// <summary>Source调用已结束且库存事务栅栏释放后执行；失败保持全部公开数据与版本不变。</summary>
         public bool TryCaptureCommit(WorldReplicaBuffer source)
@@ -189,12 +228,35 @@ namespace Game.Core
             }
             return Reject(WorldCommitOwnerFailure.BaselineRequired);
         }
-        /// <summary>只找恰好依赖客户端当前版本的一条完整替换记录；被覆盖/换代时明确重新Baseline。</summary>
+        /// <summary>
+        /// 从客户端已ACK的Base沿同Key/同Generation完整历史闭合到当前Revision，再交付当前完整替换正文。
+        /// 每条记录保存after-image而非稀疏操作，因此连续中间版无需逐次发包/等ACK；Base仍严格为客户端
+        /// 已安装版本，不能把“当前正文可读”误当作历史依赖已证明。缺链、旧窗口或换代仍要求Baseline。
+        /// SnapshotId/ServerTick取该Key最后真实提交头，不重封装成后来无关Key推进的global采样序号。
+        /// 只扫固定history ring并复制一块当前payload，不改历史、数量、发送预算或在途冻结快照。
+        /// </summary>
         public bool TryCopyDelta(WorldChunkKey key,ulong generation,ulong baseRevision,uint[] destination,out WorldChunkPayloadHeader header)
         {
             header=default;
+            // Ring保留完整已提交历史，但退休后不再有当前地址；同Key重建也已经换代。
+            // 先确认当前可寻址生命周期，避免旧ACK/调用者绕过Coordinator而冻结退休或旧代payload。
+            int slot=-1;
+            for(int i=0;i<_count;i++)if(_keys[i]==key){slot=i;break;}
+            if(slot<0 || baseRevision==0 || _headers[slot].Generation!=generation
+                || baseRevision>=_headers[slot].Revision)return Reject(WorldCommitOwnerFailure.BaselineRequired);
+            var current=_headers[slot];ulong reached=baseRevision;
             for(int i=0;i<_historyCount;i++)
-            {int at=(_historyHead+i)%_history.Length;var h=_historyHeaders[at];if(h.Key==key && h.Generation==generation && h.BaseRevision==baseRevision && baseRevision!=0)return Copy(h,_history[at],destination,out header);}
+            {
+                int at=(_historyHead+i)%_history.Length;var h=_historyHeaders[at];
+                if(h.Key!=key || h.Generation!=generation || h.BaseRevision!=reached || h.Revision<=reached)continue;
+                reached=h.Revision;
+                if(reached!=current.Revision)continue;
+                // 当前after-image与当前真实提交头是同一份已发布事实；只把依赖Base合并为已ACK版。
+                // Copy先检查最终完整正文长度，容量不足不泄漏早先某个较小旧版本或部分数组。
+                var merged=new WorldChunkPayloadHeader(current.WorldEpoch,current.SnapshotId,current.Key,
+                    current.Generation,baseRevision,current.Revision,current.ServerTick,current.WordCount,current.Checksum,current.IsResident);
+                return Copy(merged,_published[slot],destination,out header);
+            }
             return Reject(WorldCommitOwnerFailure.BaselineRequired);
         }
         private bool Copy(WorldChunkPayloadHeader h,uint[] source,uint[] destination,out WorldChunkPayloadHeader header)

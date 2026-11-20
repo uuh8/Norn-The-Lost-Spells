@@ -34,6 +34,8 @@ namespace Game.UI
         [SerializeField] private bool _warehouseOnly;
         [SerializeField] private SinglePlayerInventoryController _embeddedInventory;
         [SerializeField] private bool _quickPurchase, _detailsPlaceholder;
+        // 浅色纸面正文使用深棕墨色；只用于作者单一详情区，不改变旧布局及其他Label样式。
+        private static readonly Color PaperDetailsInk = new Color32(61, 39, 22, 255);
         [SerializeField] private ShopQuickPurchasePopup _quickPurchasePopup;
         [SerializeField] private ShopPurchaseDialog _purchaseDialog;
         private string _statusText = "", _purchaseRequest;
@@ -78,6 +80,9 @@ namespace Game.UI
         private IInventoryReadOnly InventoryRead => InventorySource?.ReadOnly;
         private void SynchronizeEmbeddedSource()
         {
+            // 输入配置与账号Source是两个独立装配步骤。本地/账号商店都复用原Rotate binding，
+            // embedded自己管理克隆，不能因省去Tab/Esc所有权而连物品旋转也一起丢掉。
+            _embeddedInventory?.ConfigureEmbeddedInput(_inventoryUi);
             if (_embeddedInventory == null || _inventory == null || !_inventory.AccountInventoryReadOnly) return;
             var source = InventorySource;
             if (!_embeddedInventory.PresentationIsReadOnly || !ReferenceEquals(_embeddedInventory.PresentationSource, source))
@@ -159,7 +164,7 @@ namespace Game.UI
             {
                 _panel.SetActive(true);_open=true;_pause?.RequestPause(RunPauseReason.Shop);_inventoryUi?.Close();
                 SynchronizeEmbeddedSource(); HideAfter(_offerViews, 0); HideAfter(_ownedViews, 0); SetButtons(false, false, false);
-                SetStatus(_shop.Message??"商店初始化尚未完成。");return;
+                ShowUnavailableDetails(); SetStatus(_shop.Message??"商店初始化尚未完成。");return;
             }
             _pause?.RequestPause(RunPauseReason.Shop);_inventoryUi?.Close();_panel.SetActive(true);_open=true;
             SynchronizeEmbeddedSource();
@@ -178,18 +183,18 @@ namespace Game.UI
                 _accountPresentationDirty = false; SynchronizeEmbeddedSource();
                 SetStatus(_shop.Message);
                 if (_shop.ReadOnly != null && InventoryRead != null) Refresh();
-                else { HideAfter(_offerViews, 0); HideAfter(_ownedViews, 0); SetButtons(false, false, false); }
+                else { HideAfter(_offerViews, 0); HideAfter(_ownedViews, 0); SetButtons(false, false, false); ShowUnavailableDetails(); }
             }
             if (_shop.IsAccountSession && !_shop.AccountPanelAvailable) { Close(); return; }
-            if(_shop.ReadOnly==null)return;
+            if(_shop.ReadOnly==null){SetButtons(false,false,false);ShowUnavailableDetails();return;}
             if(!_shop.CanTrade)
             {
                 if (_shop.IsAccountSession && _shop.AccountPanelAvailable)
-                { SetButtons(false, false, false); return; }
+                { SetButtons(false, false, false); ShowUnavailableDetails(); return; }
                 Close();return;
             }
             var inventory = InventoryRead;
-            if (inventory == null) { SetButtons(false, false, false); return; }
+            if (inventory == null) { SetButtons(false, false, false); ShowUnavailableDetails(); return; }
             if(_inventoryVersion==inventory.Version && _shopVersion==_shop.ReadOnly.Version && _available==_shop.CanTrade)return;
             // 只有资产版本或阶段变化才刷新；字符串/列表分配是离散UI操作，稳定帧不重新生成。
             Refresh();
@@ -206,7 +211,8 @@ namespace Game.UI
         public void SelectOwned(string id){if(Confirming)return;_quickPurchasePopup?.Hide();_itemId=id;if(!_quickPurchase)_offerId=null;RefreshDetails();ExplainMaterialTarget();}
         private void Refresh()
         {
-            var shop=_shop.ReadOnly;var inventory=InventoryRead;if(shop==null || inventory==null)return;
+            var shop=_shop.ReadOnly;var inventory=InventoryRead;
+            if(shop==null || inventory==null){SetButtons(false,false,false);ShowUnavailableDetails();return;}
             _quickPurchasePopup?.Hide();
             _inventoryVersion=inventory.Version;_shopVersion=shop.Version;_available=_shop.CanTrade;
             if(_summary!=null)_summary.text=_quickPurchase?"收购额度："+shop.RemainingBudget+" · 补货还需 "+shop.ProgressUntilRefresh+" 次成功冒险\n普通商品先入背包，放不下自动入仓。":
@@ -259,15 +265,16 @@ namespace Game.UI
         private void RefreshDetails()
         {
             bool buy=false,sell=false,material=false;var shop=_shop.ReadOnly;
-            if(shop==null)return;
+            if(shop==null){SetButtons(false,false,false);ShowUnavailableDetails();return;}
             if (_detailsPlaceholder)
             {
+                _details.color = PaperDetailsInk;
                 bool continuous = TrySelectedOffer(_offerId, out var selected) && selected.IsMaterial;
                 buy = _offerId != null && TrySelectedOffer(_offerId, out selected) && selected.Stock > 0;
                 if(_quickPurchase && continuous)buy=buy && TryMaterialTarget(selected,out _,out _);
                 if (_itemId != null && InventoryRead != null && InventoryRead.TryGetView(_itemId, out var owned))
                 { sell = owned.Kind != ItemKind.Material && !owned.EntryBoundBackpack; material = owned.Kind == ItemKind.Container || owned.Kind == ItemKind.Material; }
-                _details.text = "物品详情待后续开发";
+                _details.text = DescribeCurrentSelection();
                 if(_containers!=null)_containers.gameObject.SetActive(!_quickPurchase && continuous);
                 SetButtons(buy, sell, material);
                 RefreshSelection(); return;
@@ -285,6 +292,79 @@ namespace Game.UI
             if(_quickPurchase && TrySelectedOffer(_offerId,out var quickOffer) && quickOffer.IsMaterial)buy=buy && TryMaterialTarget(quickOffer,out _,out _);
             SetButtons(buy, sell, material);
             RefreshSelection();
+        }
+        private void ShowUnavailableDetails()
+        {
+            // Source可在没有点击的帧异步消失。及时撤下旧账号的名称/数量，
+            // 不能仅禁止交易而把上一份资产继续显示成当前事实；常量赋值不产生每帧格式化。
+            if (_details != null)
+            {
+                if (_detailsPlaceholder) _details.color = PaperDetailsInk;
+                _details.text = "商品或物品信息暂不可用，请等待账号数据更新。";
+            }
+        }
+        /// <summary>
+        /// 作者单一纸面区域的简短只读信息。商品报价与真实实例是独立选择，
+        /// 购买材料时必须同时看见报价和所选容器；这里只读当前Source，不改变交易资格或资产。
+        /// 仅随原离散RefreshDetails调用构造文字，稳定Update不重复分配。
+        /// </summary>
+        private string DescribeCurrentSelection()
+        {
+            var text = new System.Text.StringBuilder(192);
+            if (TrySelectedOffer(_offerId, out var offer))
+            {
+                text.Append("所选商品\n").Append(offer.DisplayName)
+                    .Append("\n单价：").Append(offer.BuyPrice).Append(offer.IsMaterial ? " / GMU" : " / 份")
+                    .Append("\n剩余供货：").Append(offer.Stock);
+                if (offer.IsSpell)
+                    text.Append("\n到手状态：").Append(offer.Unlimited
+                        ? offer.IsQualification ? "无限入局" : "无限使用"
+                        : offer.InitialCharges + (offer.IsQualification ? " 次入局" : " 次施法"));
+            }
+            if (_itemId != null)
+            {
+                if (text.Length != 0) text.Append("\n\n");
+                text.Append("持有物品\n");
+                var inventory = InventoryRead;
+                if (inventory == null || !inventory.TryGetView(_itemId, out var item))
+                    text.Append("当前物品信息暂不可用。");
+                else
+                {
+                    text.Append(item.DisplayName).Append("\n位置：").Append(DetailsLocation(item.Location.Kind));
+                    if (item.Kind == ItemKind.Spell)
+                        text.Append('\n').Append(item.HasUnlimitedCharges
+                            ? item.IsQualificationSpell ? "无限入局" : "无限使用"
+                            : (item.IsQualificationSpell ? "剩余入局：" : "剩余施法：") + item.RemainingCharges + " 次");
+                    else if (item.Kind == ItemKind.Container)
+                        text.Append("\n储量：").Append(item.ContainerTotal).Append(" / ").Append(item.ContainerCapacity).Append(" GMU");
+                    else if (item.Kind == ItemKind.Backpack)
+                        text.Append("\n内部尺寸：").Append(item.Rules.BackpackWidth).Append(" × ").Append(item.Rules.BackpackHeight);
+                    else if (item.Kind == ItemKind.Material)
+                        text.Append("\n材料数量：").Append(item.MaterialQuantity).Append(" GMU");
+                    else if (item.Kind == ItemKind.Wand)
+                        text.Append("\n右键查看法杖固定属性。");
+                    if (item.EntryBoundBackpack) text.Append("\n账号基础背包 · 禁止出售");
+                    else if (item.IsStarterEquipment) text.Append("\n免费基础装备 · 禁止出售");
+                }
+            }
+            return text.Length == 0
+                ? "选择左侧商品查看报价；选择持有物品查看详情。\n\nF 区域交互 · Tab 背包 · Esc 关闭"
+                : text.ToString();
+        }
+        private static string DetailsLocation(ItemLocationKind kind)
+        {
+            switch (kind)
+            {
+                case ItemLocationKind.Warehouse: return "仓库";
+                case ItemLocationKind.Backpack: return "携带背包";
+                case ItemLocationKind.SpellStorage: return "随身法术专区";
+                case ItemLocationKind.WandSlot: return "法杖程序";
+                case ItemLocationKind.EquippedWand: return "法杖装备位";
+                case ItemLocationKind.EquippedBackpack: return "背包装备位";
+                case ItemLocationKind.EquippedTool: return "工具装备位";
+                case ItemLocationKind.WorldItem: return "附近地面";
+                default: return "当前资产";
+            }
         }
         private void SetButtons(bool buy, bool sell, bool material)
         {

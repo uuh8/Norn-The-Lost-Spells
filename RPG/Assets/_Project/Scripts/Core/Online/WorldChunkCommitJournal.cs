@@ -43,8 +43,8 @@ namespace Game.Core
     }
 
     /// <summary>
-    /// 某个地址最后一次提交的生命周期。IsResident=false是必须保留的tombstone，
-    /// 不是未使用的metadata槽；后续Create从此Generation继续，避免旧网络包污染重建Chunk。
+    /// 某个地址最后一次提交的生命周期。IsResident=false是仍受订阅/在途引用保护的tombstone，
+    /// 不是可被Capture直接复用的空槽；未显式退休时后续Create从此Generation继续。
     /// </summary>
     public readonly struct WorldChunkVersionState
     {
@@ -84,8 +84,9 @@ namespace Game.Core
     /// 固定世界的有界Chunk版本账本。仅拥有版本元数据与整批日志，不读取或提交真实材料Store。
     /// 上层必须在世界所属主线程的提交边界调用：本类不加锁、不调用事件、不允许并发修改输入数组。
     ///
-    /// Metadata地址槽不回收：即使日志早已覆盖，tombstone仍保留旧Generation。日志允许覆盖，
-    /// 但只淘汰完整CommitSequence；落后读者必须重新Baseline，不能拿残余半批猜测状态。
+    /// 普通提交不会回收Metadata：即使日志早已覆盖，tombstone仍保留旧Generation。
+    /// 可信装配层撤销全部订阅/在途引用后，才可单独退休非resident地址，并把Generation下界抬高，
+    /// 保证未来忘记过的地址不能回到旧生命。日志仍只淘汰完整CommitSequence；落后读者必须重新Baseline。
     /// 所有数组仅在构造时分配。预检使用复用scratch，检查通过后才统一写metadata、ring和全局序号。
     /// </summary>
     public sealed class WorldChunkCommitJournal
@@ -97,6 +98,11 @@ namespace Game.Core
         private readonly WorldChunkCommitRecord[] _records;
         private readonly int _inspectionBudget;
         private int _stateCount, _recordHead, _recordCount;
+        // 下界记住所有已退休生命周期。新地址可以共用该值，因为完整身份还包含WorldEpoch和Key；
+        // 只有同一Key的旧代不能重用。未退休地址继续原来的Generation+1，不受其他Key退休影响。
+        private ulong _generationFloor = 1;
+        /// <summary>退休生命周期形成的可信重建下界；检查点只读它，不把历史空地址重新放回运行时槽。</summary>
+        public ulong RetiredGenerationFloor => _generationFloor;
 
         public ulong WorldEpoch { get; }
         public ulong CommitSequence { get; private set; }
@@ -169,7 +175,7 @@ namespace Game.Core
                         return Reject(WorldChunkJournalFailure.MetadataCapacity);
                     // 仅预约连续空槽，不提前修改_stateCount；不同新Key不能预约同一个槽。
                     slot = newStateCount++;
-                    generation = revision = 1; baseRevision = 0;
+                    generation = _generationFloor; revision = 1; baseRevision = 0;
                 }
                 else
                 {
@@ -224,6 +230,38 @@ namespace Game.Core
             _stateCount = newStateCount;
             _recordHead = nextHead; _recordCount = nextCount;
             HistoryFloorSequence = nextFloor; CommitSequence = nextSequence;
+            return Accept();
+        }
+
+        /// <summary>
+        /// 可信协调器已关闭该地址所有Peer订阅、排入可靠Leave并撤销在途引用后，显式退休tombstone。
+        /// Journal只验证本层的非resident/版本/预算条件，不拥有网络ACK，调用本API本身不授予退休资格。
+        /// 退休是独立的已提交metadata操作：不夹进TryCommit预检、不改CommitSequence或历史批次。
+        /// 先预检再压缩末槽，并把新地址Generation下界抬到该旧代之后；失败不改地址、下界或历史。
+        /// </summary>
+        public bool TryRetireInactiveChunk(WorldChunkKey key)
+        {
+            if (!ValidKey(key)) return Reject(WorldChunkJournalFailure.InvalidInput);
+            int budget = _inspectionBudget, slot = -1;
+            for (int i = 0; i < _stateCount; i++)
+            {
+                if (!Inspect(ref budget)) return false;
+                if (_states[i].Key != key) continue;
+                slot = i; break;
+            }
+            if (slot < 0) return Reject(WorldChunkJournalFailure.InvalidInput);
+            WorldChunkVersionState previous = _states[slot];
+            if (previous.IsResident) return Reject(WorldChunkJournalFailure.InvalidTransition);
+            if (previous.Generation == ulong.MaxValue) return Reject(WorldChunkJournalFailure.VersionExhausted);
+            ulong nextFloor = Math.Max(_generationFloor, previous.Generation + 1);
+
+            // 以下仅固定数组和值赋值，不调用外部逻辑。历史中的旧Key/Generation仍是已发生的事实，
+            // 保持整批可读；上层payload Owner另行阻止把退休/旧代记录当作当前Delta复制。
+            int last = _stateCount - 1;
+            if (slot != last) _states[slot] = _states[last];
+            _states[last] = default;
+            _stateCount = last;
+            _generationFloor = nextFloor;
             return Accept();
         }
 

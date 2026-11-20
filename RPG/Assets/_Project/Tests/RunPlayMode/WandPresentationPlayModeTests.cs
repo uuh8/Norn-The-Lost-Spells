@@ -13,7 +13,9 @@ namespace Game.Run.Tests
     /// <summary>真实三格法杖经过同一拖拽仲裁；目录仍是一格，装备图与参数分区避免相互遮挡。</summary>
     public sealed class WandPresentationPlayModeTests : BackpackWorkspacePlayModeTests
     {
-        protected override string EvidencePath => "TestResults/SinglePlayer/M6-T12-WandTerminalMenu";
+        // 每轮独立保留截图/Profiler证据，不能覆盖历史阶段结果；不改变Profile或测试断言。
+        private readonly string _evidencePath = "TestResults/UiAudit/WandPresentationPlayModeTests/" + System.DateTime.UtcNow.ToString("yyyyMMddTHHmmssfffZ") + "-" + System.Guid.NewGuid().ToString("N");
+        protected override string EvidencePath => _evidencePath;
         private static T Ref<T>(Object target,string field) where T:Object => (T)new SerializedObject(target).FindProperty(field).objectReferenceValue;
         [UnityTest] public IEnumerator WholeWandRegionIncludesBackgroundEmptySlotAndOccupiedSpell()
         {
@@ -109,13 +111,23 @@ namespace Game.Run.Tests
         {
             MoveToStation("_shopArea");
             var shop=Find<ShopController>();shop.Open();yield return null;Canvas.ForceUpdateCanvases();
-            var offers=Ref<RectTransform>(shop,"_offersRoot");int wands=0;
-            foreach(var view in offers.GetComponentsInChildren<ShopEntryView>())
+            var offers=Ref<RectTransform>(shop,"_offersRoot");var views=offers.GetComponentsInChildren<ShopEntryView>();
+            var read=Find<SinglePlayerShopSession>().ReadOnly;int expectedWands=0;
+            // 正式报价已加入V2法杖。以真实Kind而非图像长宽比识别法杖，并逐一验证，
+            // 不能把新增报价误判成重复UI，也不能跳过错误使用方形图标的法杖。
+            for(int i=0;i<read.Count;i++)
             {
-                var icon=view.transform.Find("OfferIcon")?.GetComponent<Image>();if(icon==null || icon.sprite==null || icon.sprite.rect.width/icon.sprite.rect.height<=2)continue;
-                wands++;Assert.That(icon.rectTransform.anchorMin.y,Is.GreaterThan(.5f));
+                var offer=read.GetOffer(i);if(offer.Kind!=ItemKind.Wand)continue;expectedWands++;
+                ShopEntryView view=null;int matches=0;
+                foreach(var candidate in views)if(candidate.OfferId==offer.OfferId){view=candidate;matches++;}
+                Assert.That(matches,Is.EqualTo(1),"每个真实法杖报价只能对应一张商品卡："+offer.DisplayName);
+                var icon=view.transform.Find("OfferIcon")?.GetComponent<Image>();
+                Assert.That(icon,Is.Not.Null);Assert.That(icon.sprite,Is.Not.Null);
+                Assert.That(icon.sprite.rect.width/icon.sprite.rect.height,Is.GreaterThan(2));
+                Assert.That(icon.rectTransform.anchorMin.y,Is.GreaterThan(.5f));
+                Assert.That(Ref<Text>(view,"_label").rectTransform.anchorMax.y,Is.LessThanOrEqualTo(icon.rectTransform.anchorMin.y));
             }
-            Assert.That(wands,Is.EqualTo(3));yield return new WaitForEndOfFrame();Capture("shop-wide-wands.png");
+            Assert.That(expectedWands,Is.GreaterThan(0));yield return new WaitForEndOfFrame();Capture("shop-wide-wands.png");
         }
         private void MoveToStation(string field)
         {

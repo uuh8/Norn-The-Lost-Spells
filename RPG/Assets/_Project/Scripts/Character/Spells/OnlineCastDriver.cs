@@ -36,6 +36,23 @@ namespace Game.Character
     }
 
     /// <summary>
+    /// JsonUtility报告所需的独立值副本；Core合同保持readonly，不能把序列化需求反向变成Owner写入口。
+    /// Captured=false表示未知，字段为0/false不表示Authority允许该次操作。
+    /// </summary>
+    [Serializable]
+    public struct OnlineCastInventoryOwnerBusyDiagnostic
+    {
+        public bool Captured, RaidActionsFrozen, ItemsResourceBusy, CastPending;
+        public int ActiveReservations;
+        internal OnlineCastInventoryOwnerBusyDiagnostic(in OnlineInventoryBusyDiagnostic source)
+        {
+            Captured = source.Captured; RaidActionsFrozen = source.RaidActionsFrozen;
+            ItemsResourceBusy = source.ItemsResourceBusy; CastPending = source.CastPending;
+            ActiveReservations = source.ActiveReservations;
+        }
+    }
+
+    /// <summary>
     /// 诊断区分“本次观察Tick”和确实取得的完整库存Snapshot Tick，避免把较新观察时刻
     /// 冒充服务器资源事实的原始时间。所有数组/对象只在显式稀疏报告时创建，不接入Tick。
     /// </summary>
@@ -51,6 +68,11 @@ namespace Game.Character
         // 空手是合法Owner事实；此标志为false时，下面的0不是某根已选法杖的Mana/CD读数。
         public bool SelectedWandResourcesAvailable;
         public float Mana, CooldownRemaining;
+        // 只有存活Authority Driver可捕获这些门；Client/静态库存DTO都明确标记不可用。
+        // QueueRemaining保留原始倒计时值；Queued=false后它可能仍为正数，不能单独据此判忙。
+        public bool DriverBusyCaptured, TimelineActive, Queued;
+        public float QueueRemaining;
+        public OnlineCastInventoryOwnerBusyDiagnostic OwnerBusy;
         public int TotalItemCount;
         public OnlineCastInventoryItemDiagnostic[] Items = Array.Empty<OnlineCastInventoryItemDiagnostic>();
         public OnlineCastInventoryCardDiagnostic[] Cards = Array.Empty<OnlineCastInventoryCardDiagnostic>();
@@ -304,6 +326,7 @@ namespace Game.Character
             snapshot = new OnlineCastInventoryDiagnosticSnapshot
             {
                 SourceKind = "InstalledClientSource", ActorId = _actor, ConnectionEpoch = _epoch,
+                DriverBusyCaptured = false, OwnerBusy = default,
                 ProbeSampleTick = probeSampleTick, ActualSnapshotTickAvailable = false,
                 InstalledSnapshotSequence = _inventoryReplica.SnapshotSequence,
                 InventoryVersion = source.ReadOnly.Version, ResourceVersion = wands.ResourceVersion,
@@ -314,6 +337,23 @@ namespace Game.Character
                 Mana = hasSelectedWand ? selected.CurrentMana : 0, CooldownRemaining = hasSelectedWand ? selected.CooldownRemaining : 0, Cards = cards,
                 TotalItemCount = instances.Length, Items = instances
             };
+            return true;
+        }
+
+        /// <summary>
+        /// 同一次离散采样中读取真实Driver与Owner门，再沿既有库存导出生成值副本。
+        /// probeSampleTick由Authority调用方提供；不推进模拟或正式发送序列，不从Entry补资源。
+        /// 静态TryFromAuthoritySnapshot只有库存DTO，无法推断这些门，故只能在本入口补齐。
+        /// </summary>
+        public bool TryCaptureAuthorityInventoryDiagnostic(uint probeSampleTick, out OnlineCastInventoryDiagnosticSnapshot snapshot)
+        {
+            snapshot = null;
+            if (!_authority || _workspace == null || _epoch == 0
+                || !TryCaptureInventory(_epoch, 1ul, probeSampleTick, out var source)
+                || !OnlineCastInventoryDiagnosticSnapshot.TryFromAuthoritySnapshot(source, probeSampleTick, out snapshot)) return false;
+            snapshot.DriverBusyCaptured = true;
+            snapshot.TimelineActive = _timeline.IsActive; snapshot.Queued = _queued; snapshot.QueueRemaining = _queueRemaining;
+            snapshot.OwnerBusy = new OnlineCastInventoryOwnerBusyDiagnostic(_workspace.CaptureInventoryBusyDiagnostic());
             return true;
         }
 
@@ -355,11 +395,30 @@ namespace Game.Character
         public OnlineInventoryCommandReceipt ExecuteInventoryCommand(in OnlineInventoryCommandIntent intent,
             OnlineInventoryCommandFailure forcedFailure = OnlineInventoryCommandFailure.None)
         {
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            // 只读账本判断是否原结果重放；不能重复日志后再用当前门重新解释历史Busy。
+            // Release构建不做额外扫描；Development DS无需开启PlayerResourceProbe也能留下离散拒绝证据。
+            bool recorded = _workspace != null && _workspace.TryGetRecordedInventoryCommand(intent, out _);
+#endif
+            var receipt = ExecuteInventoryCommandCore(intent, forcedFailure);
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+            if (receipt.Failure == OnlineInventoryCommandFailure.Busy && !recorded)
+                LogInventoryBusyDiagnostic(intent, forcedFailure);
+#endif
+            return receipt;
+        }
+
+        private OnlineInventoryCommandReceipt ExecuteInventoryCommandCore(in OnlineInventoryCommandIntent intent,
+            OnlineInventoryCommandFailure forcedFailure)
+        {
             if (!_authority || _workspace == null || intent.ConnectionEpoch != _epoch)
                 return new OnlineInventoryCommandReceipt { CommandId = intent.CommandId, ConnectionEpoch = intent.ConnectionEpoch,
                     InventoryVersion = OwnedInventoryVersion, Failure = OnlineInventoryCommandFailure.NotReady };
             if (!_connected || _wizard.Health == null || !_wizard.Health.IsAlive) forcedFailure = OnlineInventoryCommandFailure.NotReady;
-            else if (forcedFailure == OnlineInventoryCommandFailure.None && (_timeline.IsActive || _queued))
+            // 起手/排队不会持有 Store 的 Prepare 候选；被动收纳不改当前程序。真正 Prepare 锁仍由
+            // Workspace 拒绝，旧物移动/装备编辑仍等动作结束，不能把所有拾取一并锁到施法寿命末尾。
+            else if (forcedFailure == OnlineInventoryCommandFailure.None && (_timeline.IsActive || _queued)
+                && !_workspace.IsGroundStoragePickup(intent))
                 forcedFailure = OnlineInventoryCommandFailure.Busy;
             if (forcedFailure != OnlineInventoryCommandFailure.None)
                 return _workspace.RejectInventoryCommand(intent, forcedFailure);
@@ -376,6 +435,21 @@ namespace Game.Character
             }
             return _workspace.ExecuteInventoryCommand(intent);
         }
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        private void LogInventoryBusyDiagnostic(in OnlineInventoryCommandIntent intent, OnlineInventoryCommandFailure forcedFailure)
+        {
+            var owner = _workspace != null ? _workspace.CaptureInventoryBusyDiagnostic() : default;
+            // 记录这一拒绝时刻的各门原值；全false可能来自共享Ground/外部强制门，不伪造某把锁为根因。
+            // 不打印PlayerId/InventoryId/凭据或请求任意字符串，只保留Actor、命令编号、枚举与状态。
+            GameLog.Warn($"库存Busy Actor={_actor} Epoch={_epoch} Command={intent.CommandId} Kind={intent.Kind} "
+                + $"Tick={_world?.CurrentTick ?? _lastTick} TimelineActive={_timeline.IsActive} Queued={_queued} QueueRemaining={_queueRemaining} "
+                + $"OwnerCaptured={owner.Captured} RaidActionsFrozen={owner.RaidActionsFrozen} ItemsResourceBusy={owner.ItemsResourceBusy} "
+                + $"CastPending={owner.CastPending} ActiveReservations={owner.ActiveReservations} "
+                + $"ResearchOpen={_workspace != null && _workspace.ResearchOpen} ForcedFailure={forcedFailure} "
+                + $"Reservations={_workspace?.DescribeCastReservations() ?? "Unavailable"}", "OnlineInventoryBusy");
+        }
+#endif
 
         /// <summary>DS显式绑定正式材料Adapter共有的WorldId；同配置重复调用无副作用，坏配置不回退默认值。</summary>
         public bool ConfigureContainerWorld(string worldId)
@@ -591,9 +665,14 @@ namespace Game.Character
                         context.PreparationFailure = MaterialTransferFailure.InvalidRequest;
                     return context;
                 }
-                context.PreparationFailure = intent.Kind == OnlineInventoryCommandKind.CollectMaterial
-                    ? PrepareCollectionTarget(intent, item.Composition.AllowedMaterials, out context.TargetPosition)
-                    : PreparePourTarget(intent.AimDirection.normalized, out context.TargetPosition);
+                if(intent.Kind==OnlineInventoryCommandKind.CollectMaterial)
+                    context.PreparationFailure=PrepareCollectionTarget(intent,item.Composition.AllowedMaterials,out context.TargetPosition);
+                else
+                {
+                    context.PreparationFailure=OnlineContainerTrajectory.PrepareEmission(transform,intent.AimDirection,
+                        _containerPourSpeed,_containerPourLift,_containerTrajectoryHits,out context.TargetPosition,out context.InitialVelocity);
+                    context.HasInitialMotion=context.PreparationFailure==MaterialTransferFailure.None;
+                }
                 return context;
             }
             finally { _preparingContainer = false; }
@@ -929,8 +1008,11 @@ namespace Game.Character
         }
         public void StepPrediction(float deltaTime, uint tick, bool suppressed)
         {
-            if (_authority || !_clientOwner || !Ready) return;
+            if (_authority || !_clientOwner) return;
+            // World 的通用输入门先于施法资格同步：空手/仅持工具仍需在回焦或关闭界面后恢复选择。
+            // 若先按 Ready 返回，失焦留下的 blocked 会等不到解锁；后面的 Ready 继续禁止无程序施法。
             SetBlocked(suppressed);
+            if (!Ready) return;
             if (ResearchPaused) { CancelPending(); _waitRelease = true; return; }
             if (ClientToolSelected || !_focused || _applicationPaused || !Application.isFocused || Time.timeScale <= 0)
             {

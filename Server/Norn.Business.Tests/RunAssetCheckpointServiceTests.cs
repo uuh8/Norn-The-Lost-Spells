@@ -17,6 +17,69 @@ namespace Norn.Business.Tests;
 /// <summary>由主线程集中运行的真实隔离MySQL测试；保留Items不变，不能据此宣称ESC保存已经完成。</summary>
 public sealed class RunAssetCheckpointServiceTests
 {
+    [Theory, Trait("Category", "DatabaseIntegration")]
+    [InlineData(1)]
+    [InlineData(4)]
+    public async Task OwnedWandsInBackpackSurviveHttpCheckpointAndServiceRecreation(int ownedWands)
+    {
+        await using var f = await Fixture.Create();
+        string before = await f.AssetState(); var first = Complete(f.Current());
+        var member = first.Members[0]; var original = Assert.Single(member.Wands);
+        original.CurrentMana = 12.25f; original.CooldownRemaining = .375f; original.ProgramRevision = 7;
+        await f.Save(first);
+        var checkpoint = Clone(first); checkpoint.CheckpointId = Guid.NewGuid().ToString("N"); checkpoint.Sequence = 2;
+        member = checkpoint.Members[0];
+        var wand = member.Assets.Items.Single(i => i.InstanceId == original.InstanceId);
+        var bag = member.Assets.Items.Single(i => i.LocationKind == 4);
+        Assert.DoesNotContain(member.Assets.Items, i => i.LocationKind == 1);
+        var shape = f.Factory.Manifest.Items.Single(i => i.ContentId == wand.ContentId);
+        var bagShape = f.Factory.Manifest.Items.Single(i => i.ContentId == bag.ContentId);
+        Assert.True(shape.ShapeWidth <= bagShape.BackpackWidth && shape.ShapeHeight * ownedWands <= bagShape.BackpackHeight,
+            "本夹具需要正式背包容纳四行真实法杖，不能靠非法重叠触发无关RED。");
+        wand.LocationKind = 1; wand.ParentInstanceId = bag.InstanceId; wand.Slot = -1; wand.X = wand.Y = wand.QuarterTurns = 0;
+        wand.Revision++; member.Assets.InventoryVersion++; member.Assets.SelectedWandInstanceId = "";
+        for (int i = 1; i < ownedWands; i++)
+        {
+            // 新ID只属于可信DS候选；原服务仍验证全局不存在、父链和空间，再写独立Journal。
+            var extra = JsonSerializer.Deserialize<OnlineOwnedItemSnapshot>(JsonSerializer.Serialize(wand, OnlineFactory.Json), OnlineFactory.Json)!;
+            extra.InstanceId = Guid.NewGuid().ToString("N"); extra.Revision = 1; extra.Y = i * shape.ShapeHeight;
+            member.Assets.Items = [.. member.Assets.Items, extra];
+            member.Wands = [.. member.Wands, new() { InstanceId = extra.InstanceId,
+                ProgramRevision = (uint)i + 7, CurrentMana = i + .25f, CooldownRemaining = i + .125f }];
+        }
+        var response = await InstanceRequest(f, "POST", "/checkpoints", f.Grant.Secret!, JsonSerializer.SerializeToUtf8Bytes(checkpoint, OnlineFactory.Json));
+        Assert.Equal(200, response.Response.StatusCode);
+        // 通过正式HTTP提交后重新创建Service并读完整Head；不能只拿200或Receipt证明资源保真。
+        var head = await f.NewService().ReadHeadAsync(checkpoint.InstanceId, f.Grant.Secret!, checkpoint.RoomEpoch, default);
+        Assert.True(head.IsComplete); Assert.Equal(2UL, head.Receipt.Sequence); Assert.False(head.Checkpoint.World.CanRestoreAuthorityRules);
+        var stored = head.Checkpoint.Members.Single(m => m.PlayerId == member.PlayerId);
+        Assert.Equal(ownedWands, stored.Wands.Length);
+        foreach (var resource in member.Wands)
+        {
+            var actual = Assert.Single(stored.Wands.Where(w => w.InstanceId == resource.InstanceId));
+            Assert.Equal(resource.ProgramRevision, actual.ProgramRevision); Assert.Equal(resource.CurrentMana, actual.CurrentMana);
+            Assert.Equal(resource.CooldownRemaining, actual.CooldownRemaining);
+            var item = Assert.Single(stored.Assets.Items.Where(i => i.InstanceId == resource.InstanceId));
+            Assert.Equal(1, item.LocationKind); Assert.Equal(bag.InstanceId, item.ParentInstanceId);
+        }
+        var replay = await InstanceRequest(f, "POST", "/checkpoints", f.Grant.Secret!, JsonSerializer.SerializeToUtf8Bytes(checkpoint, OnlineFactory.Json));
+        Assert.Equal(200, replay.Response.StatusCode);
+        var found = await f.NewService().FindAsync(checkpoint.InstanceId, f.Grant.Secret!, checkpoint.RoomEpoch, checkpoint.CheckpointId, default);
+        Assert.Equal(head.Receipt.PayloadHash, found.PayloadHash); Assert.Equal(before, await f.AssetState());
+    }
+
+    [Fact, Trait("Category", "DatabaseIntegration")]
+    public async Task OwnedWandResourceCannotReferenceAnotherCheckpointMembersWand()
+    {
+        await using var f = await Fixture.Create(); var first = Complete(f.Current()); var saved = await f.Save(first);
+        var candidate = Clone(first); candidate.CheckpointId = Guid.NewGuid().ToString("N"); candidate.Sequence = 2;
+        candidate.Members[0].Wands[0].InstanceId = candidate.Members[1].Wands[0].InstanceId;
+        var failure = await Assert.ThrowsAsync<OnlineFailure>(() => f.Save(candidate));
+        Assert.Equal("RunCheckpointCompleteInvalid", failure.Code);
+        var head = await f.NewService().ReadHeadAsync(first.InstanceId, f.Grant.Secret!, first.RoomEpoch, default);
+        Assert.Equal(saved.PayloadHash, head.Receipt.PayloadHash); Assert.Equal(1UL, head.Receipt.Sequence);
+    }
+
     [Fact, Trait("Category", "DatabaseIntegration")]
     public async Task SaveStoresCheckpointAndReceiptButLeavesAllRealAssetsAndLeasesUntouched()
     {
@@ -349,6 +412,25 @@ public sealed class RunAssetCheckpointServiceTests
             // 外部Kestrel桥在第一次Services访问前选择真实监听；多个Run共用Host，但各自只清理自己的Run。
             bool ownsFactory = factory == null;
             factory ??= new OnlineFactory(instances: true);
+            // 本夹具验证Checkpoint的HTTP/MySQL事务，不验证全Schema的实例容量。Test Schema保留历史失败
+            // 实例的ActivePort，而OnlineFactory刻意关闭Supervisor，不能为了准备本用例去回收旧Run/租约。
+            // 先访问Services完成测试Host/迁移，再经Factory已经校验的Test连接只读计数。每个用例仅新增
+            // 一个实例（程序集禁止跨Fixture并行），只给此Host的真实DI Options预留baseline+1；外部共用
+            // Kestrel也使用同一个Options对象。生产默认、容量专项Host和历史表行均不变。
+            var instanceOptions = factory.Services.GetRequiredService<OnlineOptions>().Instances;
+            await using (var capacityDb = new MySqlConnection(factory.Connection))
+            {
+                int baseline = await capacityDb.ExecuteScalarAsync<int>(
+                    "SELECT COUNT(DISTINCT ActivePort) FROM ServerInstances WHERE ActivePort IS NOT NULL");
+                long requiredCapacity = Math.Max(instanceOptions.MaximumInstances, (long)baseline + 1);
+                if (requiredCapacity > 32)
+                {
+                    if (ownsFactory) await factory.DisposeAsync();
+                    throw new InvalidOperationException("测试Schema保留的活动实例已无合法Checkpoint测试额度；上限32，未创建新Run或清理历史租约。");
+                }
+                instanceOptions.MaximumInstances = (int)requiredCapacity;
+                instanceOptions.Validate();
+            }
             var run = await RoomInstanceTests.Reserve(factory); var instances = factory.Services.GetRequiredService<RoomInstanceService>();
             var grant = await instances.AllocateAsync(run.Run, default);
             using var process = Process.GetCurrentProcess();

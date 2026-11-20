@@ -42,9 +42,14 @@ namespace Game.UI
         private static void Command(AccountMenuCommand command) => EventBus<AccountMenuCommandEvent>.Publish(new AccountMenuCommandEvent { Command = command });
         private void OnChanged(OnlineLobbyChangedEvent view)
         {
-            _register.interactable = _login.interactable = !view.Busy && !view.Authenticated;
+            _register.interactable = !view.Busy && !view.Authenticated && !view.RecoveryPending;
+            _login.interactable = !view.Busy && !view.Authenticated;
             _username.interactable = _password.interactable = !view.Busy && !view.Authenticated;
-            _enter.interactable = _logout.interactable = !view.Busy && view.Authenticated;
+            _enter.interactable = !view.Busy && view.Authenticated;
+            _logout.interactable = !view.Busy && view.Authenticated && !view.RecoveryPending;
+            // 复用已有按钮/导航命令，不增加第二个入口或序列化Prefab字段。
+            var enterLabel = _enter.GetComponentInChildren<Text>(true);
+            if (enterLabel != null) enterLabel.text = view.HasActiveRun ? "恢复当前副本" : "进入据点";
             if (view.Authenticated) _password.text = string.Empty;
             _identity.text = view.Authenticated ? "已登录：" + view.Username : "请先登录，单机与匹配均需要账号。";
             _status.text = view.Status ?? "进入据点后，在副本传送门选择单机或匹配。";

@@ -501,6 +501,226 @@ namespace Game.UI.Tests
             Assert.That(tab.IsOpen, Is.False); Assert.That(_localWrites, Is.Zero);
         }
 
+        [TestCase(false, false)]
+        [TestCase(false, true)]
+        [TestCase(true, false)]
+        [TestCase(true, true)]
+        public void AuditMaterialTargetDropUsesTargetRotationWhileEmptyGridKeepsGhost(bool accountHub, bool dropOnMaterial)
+        {
+            _includeSolidDefinition = true;
+            if (accountHub) UseAccountCommandSource(); else UseContainerBindingSource();
+            var snapshot = ContainerBindingSnapshot(9, 2);
+            var assets = (OnlineOwnedAssetSnapshot)Get(snapshot, "Assets");
+            var items = new List<OnlineOwnedItemSnapshot>(accountHub ? _accountCommandSnapshot.Items : assets.Items);
+            var source = new OnlineOwnedItemSnapshot { InstanceId = "merge-source", ContentId = "ui.online.ice", Revision = 1,
+                LocationKind = 1, ParentInstanceId = "bag", Slot = -1, X = 3, Y = 1, QuarterTurns = 1 };
+            var target = new OnlineOwnedItemSnapshot { InstanceId = "merge-target", ContentId = "ui.online.ice", Revision = 1,
+                LocationKind = 1, ParentInstanceId = "bag", Slot = -1, X = 4, Y = 1, QuarterTurns = 3 };
+            Set(source, "MaterialState", SolidState(256)); Set(target, "MaterialState", SolidState(700));
+            items.Add(source); items.Add(target);
+            int foreignRequests = 0;
+            if (accountHub)
+            {
+                _accountCommandSnapshot.Items = items.ToArray(); RebindAccountCommandSource(9); CaptureAccountRequests();
+            }
+            else
+            {
+                assets.Items = items.ToArray(); InstallContainerBindingSnapshot(snapshot); CaptureRequests();
+                Subscribe(typeof(OnlineAccountInventoryCommandRequestedEvent), _ => foreignRequests++);
+            }
+
+            // 真实1x1材料也保存朝向。抓起后再旋转，使源朝向、Ghost朝向、目标朝向三者不同；
+            // 点击已有堆请求并堆，空格请求摆放，两种动作不能共用同一朝向来源。
+            Begin("merge-source"); Assert.That(_ui.IsDragging, Is.True); _ui.RotateDrag();
+            Assert.That(Get(_ui, "_turns"), Is.EqualTo(2));
+            if (dropOnMaterial)
+                _ui.GetType().GetMethod("DropOnItem").Invoke(_ui, new[] { ReadView("merge-target"), (object)Vector2.zero, null });
+            else _ui.SubmitToBackpack(6, 2, "bag");
+
+            Assert.That(_requests, Is.EqualTo(1)); Assert.That(_ui.IsDragging, Is.False);
+            var intent = Get(_request, "Intent");
+            Assert.That(Get(intent, "Kind").ToString(), Is.EqualTo(accountHub ? "Move" : "MoveOwned"));
+            Assert.That(Get(intent, "ItemId"), Is.EqualTo("merge-source"));
+            Assert.That(Get(intent, accountHub ? "ExpectedVersion" : "ExpectedInventoryVersion"), Is.EqualTo(9u));
+            Assert.That(Get(intent, accountHub ? "TargetParentInstanceId" : "TargetBackpackId"), Is.EqualTo("bag"));
+            Assert.That(Get(intent, "GridX"), Is.EqualTo(dropOnMaterial ? 4 : 6));
+            Assert.That(Get(intent, "GridY"), Is.EqualTo(dropOnMaterial ? 1 : 2));
+            Assert.That(Get(intent, "QuarterTurns"), Is.EqualTo(dropOnMaterial ? 3 : 2),
+                "目标堆必须使用其完整位置；空格摆放则保留玩家旋转后的Ghost朝向。");
+            Assert.That(Get(ReadView("merge-source"), "MaterialQuantity"), Is.EqualTo(256ul));
+            Assert.That(Get(ReadView("merge-target"), "MaterialQuantity"), Is.EqualTo(700ul));
+            Assert.That(Get(Get(ReadView("merge-source"), "Location"), "QuarterTurns"), Is.EqualTo(1));
+            Assert.That(InventoryVersion(), Is.EqualTo(9u));
+            Assert.That(_localWrites, Is.Zero); Assert.That(_accountDsRequests, Is.Zero); Assert.That(foreignRequests, Is.Zero);
+        }
+
+        [TestCase(false, false)]
+        [TestCase(false, true)]
+        [TestCase(true, false)]
+        [TestCase(true, true)]
+        public void AuditAccountWarehouseClickSelectsConcreteGroupedInstanceWithoutWriting(bool wand, bool embedded)
+        {
+            UseAccountCommandSource(); CaptureAccountRequests(); CaptureLocalToolWrites();
+            var items = new List<OnlineOwnedItemSnapshot>(_accountCommandSnapshot.Items);
+            for (int i = 0; i < 2; i++) items.Add(new OnlineOwnedItemSnapshot
+            {
+                InstanceId = "grouped." + i, ContentId = wand ? "ui.online.wand" : "ui.online.spell", Revision = 1,
+                LocationKind = 0, Slot = i + 2, RemainingCharges = wand ? 0 : i == 0 ? 4 : 19,
+                WandStats = wand ? new OnlineOwnedWandStatsSnapshot { MaxMana = i == 0 ? 41 : 97,
+                    ManaRegenPerSecond = 3, BaseCastDelay = .2f, BaseReloadTime = .5f, ProgramCapacity = 2, BaseDraws = 1 } : null
+            });
+            _accountCommandSnapshot.Items = items.ToArray(); RebindAccountCommandSource(9);
+            Set(_ui, "_embedded", embedded);
+            // 测试保留原Controller的轻量无Prefab装配；填入由真实ReadOnly复制的列表，和Refresh的输入一致。
+            var visible = CopyInventoryItems(); Set(_ui, "_items", visible); Set(_ui, "_count", visible.Length);
+            string selectedByConsumer = null; _ui.SelectionChanged += id => selectedByConsumer = id;
+            _ui.SelectItem("grouped.0"); _ui.ClickItem("grouped.0");
+            Assert.That(_ui.SelectedItemId, Is.EqualTo("grouped.1"), "同种真实实例必须可轮换，账号只读来源不能拦截纯展示选择。");
+            Assert.That(selectedByConsumer, Is.EqualTo("grouped.1"), "商店等消费者必须收到同一具体实例选择。");
+            Assert.That(_requests, Is.Zero); Assert.That(_localWrites, Is.Zero); Assert.That(_accountDsRequests, Is.Zero);
+            Assert.That(InventoryVersion(), Is.EqualTo(9u));
+            if (wand) Assert.That(Get(Get(ReadView("grouped.1"), "FixedWandStats"), "MaxMana"), Is.EqualTo(97f));
+            else Assert.That(Get(ReadView("grouped.1"), "RemainingCharges"), Is.EqualTo(19));
+            Begin(_ui.SelectedItemId); Submit(wand ? "EquippedWand" : "SpellStorage", wand ? "player" : null, 1);
+            Assert.That(_requests, Is.EqualTo(1));
+            Assert.That(((OnlineAccountInventoryCommandRequestedEvent)_request).Intent.ItemId, Is.EqualTo("grouped.1"));
+            Assert.That(Get(Get(ReadView("grouped.1"), "Location"), "Kind").ToString(), Is.EqualTo("Warehouse"));
+        }
+
+        [Test]
+        public void AuditEmbeddedShopUsesActualRotateBindingAndReleasesOnlyItsInputOwner()
+        {
+            UseAccountCommandSource(); var shopSession = CreateAccountShopFixture();
+            var keyboard = InputSystem.AddDevice<Keyboard>();
+            var original = AssetDatabase.LoadAssetAtPath<InputActionReference>("Assets/_Project/ScriptableObjects/Input/Inventory/Action_Rotate.asset");
+            var actions = Track(Object.Instantiate(original.action.actionMap.asset));
+            var reference = Track(InputActionReference.Create(actions.FindAction(original.action.id.ToString(), true)));
+            Set(_ui, "_rotateAction", reference); reference.action.Enable();
+            var embeddedRoot = Track(new GameObject("Original embedded inventory")); embeddedRoot.SetActive(false);
+            var embedded = embeddedRoot.AddComponent<SinglePlayerInventoryController>(); Set(embedded, "_embedded", true);
+            Invoke(embedded, "OnEnable"); _nearbyLifecycles.Add(embedded);
+            var shopRoot = Track(new GameObject("Original shop input owner")); shopRoot.SetActive(false);
+            var shop = shopRoot.AddComponent<ShopController>(); Invoke(shop, "Awake");
+            Set(shop, "_shop", shopSession); Set(shop, "_inventory", Get(_ui, "_session")); Set(shop, "_inventoryUi", _ui);
+            Set(shop, "_embeddedInventory", embedded); Set(shop, "_panel", Track(new GameObject("Shop panel")));
+            Subscribe(typeof(OnlineAccountShopOpenRequestedEvent), _ => { }); // 原异步等待态仍可操作已确认库存。
+            shop.Open(); Assert.That(embedded.IsOpen, Is.True);
+            embedded.GetType().GetMethod("BeginDrag").Invoke(embedded, new[] { ReadView("ordinary"), (object)Vector2.zero,
+                null, false, default(Vector2Int), -1, null, null, 0f });
+            Assert.That(embedded.IsDragging, Is.True); Assert.That(Get(embedded, "_turns"), Is.EqualTo(0));
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.R)); InputSystem.Update();
+            Assert.That(Get(embedded, "_turns"), Is.EqualTo(1), "商店使用真实R事件旋转Ghost，不通过测试直接调用RotateDrag。");
+            Assert.That(shop.IsOpen, Is.True); Assert.That(_ui.IsOpen, Is.False);
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState()); InputSystem.Update(); shop.Close();
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.R)); InputSystem.Update();
+            Assert.That(Get(embedded, "_turns"), Is.EqualTo(1)); Assert.That(embedded.IsDragging, Is.False);
+            Invoke(embedded, "OnDisable");
+            Assert.That(reference.action.enabled, Is.True, "embedded关闭不能Disable由Tab/仓库持有的原Action。");
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState()); InputSystem.Update();
+            reference.action.ApplyBindingOverride("<Keyboard>/t");
+            Invoke(embedded, "OnEnable"); shop.Open();
+            embedded.GetType().GetMethod("BeginDrag").Invoke(embedded, new[] { ReadView("ordinary"), (object)Vector2.zero,
+                null, false, default(Vector2Int), -1, null, null, 0f });
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.R)); InputSystem.Update();
+            Assert.That(Get(embedded, "_turns"), Is.EqualTo(0), "重开应取原binding最新override，不能硬编码R。");
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.T)); InputSystem.Update();
+            Assert.That(Get(embedded, "_turns"), Is.EqualTo(1), "关闭重开后不丢回调、不重复注册，真实override仍可用。");
+            Invoke(embedded, "OnDestroy");
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState()); InputSystem.Update();
+            InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.T)); InputSystem.Update();
+            Assert.That(Get(embedded, "_turns"), Is.EqualTo(1), "Destroy必须解除克隆输入回调。");
+            Assert.That(reference.action.enabled, Is.True);
+            Assert.That(_localWrites, Is.Zero); Assert.That(InventoryVersion(), Is.EqualTo(9u));
+        }
+
+        [Test]
+        public void AuditAccountAttachmentShowsUnsupportedContextAndCannotSubmitWrites()
+        {
+            _attachmentEmitterDefinition = true; UseAccountCommandSource();
+            var view = CreateAttachmentView(); CaptureAccountRequests(); CaptureLocalAttachmentWrites();
+            Assert.That(((Button)Get(view, "_apply")).interactable, Is.False, "账号Hub尚无附着编辑命令，不能显示可执行按钮。");
+            Assert.That(((Button)Get(view, "_clear")).interactable, Is.False);
+            Assert.That(view.Feedback, Does.Contain("实验场"), "玩家应知道可在哪个现有场景设置供料。");
+            view.Submit("card", "bag-bottle", 10, true); view.Clear();
+            Assert.That(view.Feedback, Does.Contain("实验场"), "直接调用也应反馈上下文能力，而非静默return。");
+            Assert.That(_requests, Is.Zero); Assert.That(_accountDsRequests, Is.Zero); Assert.That(_localWrites, Is.Zero);
+            Assert.That(Get(ReadView("card"), "Attachment"), Is.Null); Assert.That(InventoryVersion(), Is.EqualTo(9u));
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void AuditNearbyArrangementTracksAccountIdentityInsteadOfProfileObject(bool changePlayer)
+        {
+            UseAccountCommandSource();
+            var ground = new OnlineOwnedItemSnapshot { InstanceId = "ground-bottle", ContentId = "ui.online.bottle", Revision = 1,
+                LocationKind = 5, Slot = -1, ContainerState = new OnlineOwnedContainerStateSnapshot
+                { SchemaVersion = 1, Components = Array.Empty<OnlineOwnedMaterialAmountSnapshot>() } };
+            var items = new List<OnlineOwnedItemSnapshot>(_accountCommandSnapshot.Items) { ground };
+            _accountCommandSnapshot.Items = items.ToArray();
+            _accountCommandSnapshot.WorldItems = new[] { new OnlineAccountWorldItemSnapshot
+            { InstanceId = ground.InstanceId, WorldOwnerId = "11111111111111111111111111111111",
+                Pose = new OnlineAccountWorldItemPose { SceneKey = "test.hub", WorldSceneKey = "test.hub", PositionX = .5f, RotationW = 1, PoseKind = 1 } } };
+            RebindAccountCommandSource(9);
+            var actor = _accountWarehouseActor;
+            var nearby = actor.gameObject.AddComponent(Type("Game.Run.NearbyPickupController")); _nearbyLifecycles.Add(nearby);
+            var proxyRoot = Track(new GameObject("Account ground layout proxy"));
+            var proxy = proxyRoot.AddComponent(Type("Game.Run.WorldItemPickup"));
+            BindAccountLayoutSource(nearby, proxy, actor);
+            var viewportRoot = Track(new GameObject("Nearby layout viewport", typeof(RectTransform), typeof(ScrollRect)));
+            viewportRoot.SetActive(false); var viewport = (RectTransform)viewportRoot.transform; viewport.sizeDelta = new Vector2(512, 256);
+            var contentRoot = new GameObject("Nearby layout content", typeof(RectTransform)); contentRoot.transform.SetParent(viewport, false);
+            var content = (RectTransform)contentRoot.transform; content.anchorMin = content.anchorMax = content.pivot = new Vector2(0, 1);
+            var scroll = viewportRoot.GetComponent<ScrollRect>(); scroll.viewport = viewport; scroll.content = content;
+            var grid = contentRoot.AddComponent<NearbyItemGridView>();
+            var styles = Track(ScriptableObject.CreateInstance<InventorySlotPrefabs>()); Set(_ui, "_slotPrefabs", styles); Set(_ui, "_stylesResolved", true);
+            var templateRoot = Track(new GameObject("Nearby test item", typeof(RectTransform), typeof(Image))); templateRoot.SetActive(false);
+            var template = templateRoot.AddComponent<InventoryItemView>();
+            Set(template, "_label", AttachmentControl<Text>(templateRoot.transform, "Label")); Set(template, "_icon", AttachmentControl<Image>(templateRoot.transform, "Icon"));
+            RefreshAccountLayout(grid, template, nearby);
+            ReadAccountLayoutPlacement(grid, ground.InstanceId);
+            var shape = Get(Get(ReadView(ground.InstanceId), "Rules"), "Shape");
+            var placement = Activator.CreateInstance(Type("Game.Run.GridPlacement"), 5, 7, 1);
+            typeof(NearbyItemGridView).GetMethod("MoveItem").Invoke(grid, new[] { ground.InstanceId, shape, placement });
+            // 同一个有效地面实例跨完整Profile安装；旧Source会Dispose，缓存不能靠读取旧对象身份自证。
+            if (changePlayer) _accountCommandSnapshot.PlayerId = "other-player";
+            _accountCommandSnapshot.Version = 10; RebindAccountCommandSource(10);
+            if (changePlayer) ResetOwnedAccountScope();
+            Assert.That(OnlineAccountInventoryHubScope.TryPublish(_ui.GetInstanceID(), _accountCommandSnapshot, out var error), Is.True, error);
+            Assert.That(OnlineAccountInventoryHubScope.TryRequireScene(_ui.GetInstanceID(), _ui.gameObject.scene.handle, out error), Is.True, error);
+            BindAccountLayoutSource(nearby, proxy, actor); RefreshAccountLayout(grid, template, nearby);
+            var retained = ReadAccountLayoutPlacement(grid, ground.InstanceId);
+            Assert.That(Get(retained, "X"), Is.EqualTo(changePlayer ? 0 : 5));
+            Assert.That(Get(retained, "Y"), Is.EqualTo(changePlayer ? 0 : 7));
+            Assert.That(Get(retained, "QuarterTurns"), Is.EqualTo(changePlayer ? 0 : 1));
+            Assert.That(_localWrites, Is.Zero);
+        }
+
+        private Array CopyInventoryItems()
+        {
+            var items = Array.CreateInstance(Type("Game.Run.InventoryItemSnapshot"), (int)Get(_read, "Count"));
+            Assert.That(Type("Game.Run.IInventoryReadOnly").GetMethod("CopyItemsTo").Invoke(_read, new object[] { items }), Is.EqualTo(items.Length));
+            return items;
+        }
+        private void BindAccountLayoutSource(Component nearby, Component proxy, Transform actor)
+        {
+            _source.GetType().GetMethod("BindGroundContext", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(_source, new object[] { actor, "test.hub" });
+            nearby.GetType().GetMethod("ConfigureAccount").Invoke(nearby, new[] { _source, (object)actor });
+            Assert.That((bool)proxy.GetType().GetMethod("BindAccount").Invoke(proxy, new[] { _source, "ground-bottle", (object)actor }), Is.True);
+            nearby.GetType().GetMethod("RefreshCandidates").Invoke(nearby, null);
+            Assert.That(Get(nearby, "Count"), Is.EqualTo(1));
+        }
+        private void RefreshAccountLayout(NearbyItemGridView grid, InventoryItemView template, Component nearby)
+        {
+            var items = CopyInventoryItems();
+            typeof(NearbyItemGridView).GetMethod("Refresh").Invoke(grid, new object[] { _ui, template, items, items.Length, nearby });
+        }
+        private static object ReadAccountLayoutPlacement(NearbyItemGridView grid, string id)
+        {
+            var args = new object[] { id, null };
+            Assert.That((bool)typeof(NearbyItemGridView).GetMethod("TryPlacement").Invoke(grid, args), Is.True);
+            return args[1];
+        }
+
         [TestCase(true)]
         [TestCase(false)]
         public void AccountHeldHudShowsConfirmedWandIdentityAndSelectionWithoutInventingResources(bool explicitScopeBinding)

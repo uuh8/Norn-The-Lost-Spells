@@ -8,10 +8,11 @@ namespace Game.ElementField
     /// <summary>
     /// 客户端只读数量缓存；不拥有Solver、反应、库存Port或时钟。
     /// 每Chunk预分配两个独立数据块，安装只检查/复制该Chunk，最后交换引用，不扫描或复制全世界。
-    /// 同Epoch内保留tombstone元数据。总Cell/Pending容量和每块word容量同时生效，超限保留旧值。
+    /// 普通退出在同Epoch内保留tombstone元数据；可信协调器隔离旧订阅后可显式退休已释放的Key。
+    /// 总Cell/Pending容量和每块word容量同时生效，超限保留旧值。
     /// 所有调用在Unity主线程串行完成；网络线程不能直接读写本对象。
     /// </summary>
-    public sealed class WorldReplicaStore : IWorldChunkPayloadInstaller, IWorldChunkPayloadInterestSink
+    public sealed class WorldReplicaStore : IWorldChunkPayloadInstaller, IWorldChunkPayloadInterestSink, IWorldChunkPayloadRetirementSink
     {
         private sealed class Chunk
         {
@@ -44,6 +45,9 @@ namespace Game.ElementField
         private readonly int[] _domainChunkLimits = { int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue };
         private readonly int[] _domainChunks = new int[4];
         private int _slots, _cells, _pending;
+        // 安装通常没有外部回调；仍把异常与重入变成明确生命周期栅栏，不能在半次安装后退休/复用槽。
+        // 意外异常继续抛给Assembler锁存InstallerFaulted，Store自身也拒绝后续写/释放，防止绕过Owner。
+        private bool _installing, _faulted;
         private readonly int _cellCapacity, _pendingCapacity;
         public ulong WorldEpoch { get; }
         public uint PresentationVersion { get; private set; } = 1;
@@ -89,6 +93,14 @@ namespace Game.ElementField
         bool IWorldChunkPayloadInstaller.TryInstall(WorldChunkPayloadHeader header, uint[] words, int count)
             => TryInstall(header, words, count);
         public bool TryInstall(in WorldChunkPayloadHeader header, uint[] words, int count)
+        {
+            if (_installing || _faulted) return false;
+            _installing = true;
+            try { return TryInstallCore(header, words, count); }
+            catch { _faulted = true; throw; }
+            finally { _installing = false; }
+        }
+        private bool TryInstallCore(in WorldChunkPayloadHeader header, uint[] words, int count)
         {
             if (header.WorldEpoch != WorldEpoch || header.SnapshotId == 0 || header.Generation == 0 ||
                 header.Revision == 0 || header.ServerTick < 0 || header.WordCount != count ||
@@ -188,6 +200,20 @@ namespace Game.ElementField
             return true;
         }
 
+        /// <summary>
+        /// 读取已发布的数量身份，包括真实权威tombstone。表现sidecar需要证明跨Chunk迁移的源页
+        /// 确已清空；普通TryGetInstalledChunkHeader只返回可见resident页，false不能冒充删除证明。
+        /// Interested=false且Header仍resident表示本地Interest驱逐，必须与真实tombstone区分。
+        /// 未知/已退休Key返回false；这里不改变订阅、版本、数量或ACK。
+        /// </summary>
+        public bool TryGetPublishedChunkFact(WorldChunkKey key, out WorldChunkPayloadHeader header, out bool interested)
+        {
+            header = default; interested = false;
+            if (_faulted || !_indices.TryGetValue(key, out int index)) return false;
+            var chunk = _chunks[index]; header = chunk.Header; interested = chunk.Interested;
+            return header.WorldEpoch == WorldEpoch && header.Generation != 0 && header.Revision != 0;
+        }
+
         public bool TryGetQuantity(WorldMaterialDomain domain, Vector3Int cell, byte material, out uint quantity)
         {
             quantity = 0;
@@ -224,6 +250,7 @@ namespace Game.ElementField
         /// </summary>
         public bool TryEvictInterest(WorldChunkKey key)
         {
+            if (_installing || _faulted) return false;
             int slot = Find(key);
             if (slot < 0 || PresentationVersion == uint.MaxValue) return false;
             var chunk = _chunks[slot];
@@ -233,6 +260,39 @@ namespace Game.ElementField
             for (int i = 0; i < chunk.PendingCount; i++) _pendingTotals[d] -= chunk.Pending[i].Remaining;
             _cells -= chunk.Count; _domainCells[d] -= chunk.Count; _pending -= chunk.PendingCount; _domainChunks[d]--;
             chunk.Count = chunk.PendingCount = 0; chunk.Interested = false; chunk.PresentationVersion++;
+            PresentationVersion++; _versions[d]++;
+            return true;
+        }
+
+        /// <summary>
+        /// 可信协调器已验证旧订阅代次/可靠Leave并执行Evict后，归还该Key的元数据槽。
+        /// 本Store不解析连接或Wire生命周期；不能让普通退出隐式退休，否则旧Enter/页会绕过已清除
+        /// 的Generation/Revision。活跃数量、Pending、安装中和故障态一律拒绝，不删除任何真实量。
+        /// 有效前缀通过交换末槽压紧：连同Chunk对象及其数组一起移动，只改末Key字典索引，
+        /// 不复制/扫描全世界、不新建数组，也不改变被移动Chunk的内容或presentation version。
+        /// 空的退休对象在池尾原位清Header/版本，后续新Key从完整Baseline开始。
+        /// </summary>
+        public bool TryRetireInterest(WorldChunkKey key)
+        {
+            if (_installing || _faulted || PresentationVersion == uint.MaxValue) return false;
+            int slot = Find(key);
+            if (slot < 0) return false;
+            var retired = _chunks[slot];
+            if (retired.Interested || retired.Count != 0 || retired.PendingCount != 0) return false;
+            int d = (int)key.Domain, last = _slots - 1;
+            // 以上全部是预检；下方只有固定数组/既有Dictionary节点和值操作，没有回调或失败分支。
+            _indices.Remove(key);
+            if (slot != last)
+            {
+                var movedKey = _keys[last];
+                _chunks[slot] = _chunks[last]; _keys[slot] = movedKey;
+                _indices[movedKey] = slot;
+            }
+            _chunks[last] = retired; _keys[last] = default; _slots = last;
+            retired.Header = default; retired.PresentationVersion = 0;
+            retired.Version.ResetForTrustedKeyRetirement();
+            // Evict已经减过全部只读数量/Resident计数；退休不能再次扣量。
+            // 仍推进本域和全局脏版本，让依赖槽/Key集合的Rendering及时移除旧地址。
             PresentationVersion++; _versions[d]++;
             return true;
         }
