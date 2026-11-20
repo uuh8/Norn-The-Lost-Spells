@@ -9,14 +9,14 @@ namespace Game.Core
         public byte MaterialKey;
         public ulong Quantity;
         public MaterialAmount(byte key, ulong quantity) { MaterialKey = key; Quantity = quantity; }
-        // 旧联机资产与协议固定接受 1..8，不能因为本地容器增加种类而放宽旧快照校验。
-        private const int WireInventoryMask = 0x1fe;
-        public static bool IsKnown(byte key) => key >= 1 && key <= 8;
-        public static bool IsValidWireInventoryMask(int mask) => mask > 0 && (mask & ~WireInventoryMask) == 0;
+        // v19 对单机库存、网络快照、业务结算使用同一材料集合。既有 1..8 的编号和组合原样保留。
+        public static bool IsKnown(byte key) => IsLocalInventoryMaterial(key);
+        public static bool IsValidWireInventoryMask(int mask) => IsValidLocalInventoryMask(mask);
         // 新的 9/10 是可挖地形，只表示占据；11/12 是可计 GMU 的沙和油。Core 使用合同编号以保持无上层依赖。
         public const byte LastLocalInventoryKey = 12;
-        public const int LocalInventoryMask = WireInventoryMask | (1 << 11) | (1 << 12);
+        public const int LocalInventoryMask = 0x1fe | (1 << 11) | (1 << 12);
         public const int MaximumComponents = 8;
+        public const int InventoryMaterialCount = 10;
         public static bool IsLocalInventoryMaterial(byte key) => key <= LastLocalInventoryKey && (LocalInventoryMask & (1 << key)) != 0;
         public static bool IsValidLocalInventoryMask(int mask) => mask > 0 && (mask & ~LocalInventoryMask) == 0;
     }

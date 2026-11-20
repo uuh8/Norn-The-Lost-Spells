@@ -3,6 +3,8 @@ Shader "Game/Elemental/Cartoon Liquid"
     Properties
     {
         _CartoonSwellAmplitude("Cartoon Swell Height (m)",Range(0,.08))=.025
+        [HideInInspector] _CellularMotionClock("Cellular Motion Clock", Float) = 0
+        [HideInInspector] _CellularMotionRate("Cellular Motion Rate", Float) = 0
         _ShallowColor("Body Color", Color) = (0.12,0.72,0.75,1)
         _DeepColor("Shade Color", Color) = (0.035,0.32,0.40,1)
         _FresnelColor("Rim Color", Color) = (0.38,0.92,0.87,1)
@@ -32,9 +34,9 @@ Shader "Game/Elemental/Cartoon Liquid"
             CBUFFER_START(UnityPerMaterial)
                 half4 _ShallowColor, _DeepColor, _FresnelColor;
                 float _CartoonWaveScale, _CartoonWaveStrength, _CartoonGloss, _CartoonRippleLight;
-                float _CartoonSwellAmplitude;
+                float _CartoonSwellAmplitude, _CellularMotionClock, _CellularMotionRate;
             CBUFFER_END
-            struct Attributes { float3 positionOS : POSITION; float3 normalOS : NORMAL; };
+            struct Attributes { float3 positionOS : POSITION; float3 normalOS : NORMAL; float4 arrival : TEXCOORD3; };
             struct Varyings
             {
                 float4 positionCS : SV_POSITION;
@@ -46,7 +48,8 @@ Shader "Game/Elemental/Cartoon Liquid"
             {
                 Varyings o;
                 // Chunk-local -> World -> Clip：波纹固定在世界坐标，换 Mesh 不重置纹理相位。
-                o.positionWS = TransformObjectToWorld(input.positionOS);
+                float remaining = saturate((input.arrival.w - _CellularMotionClock) * _CellularMotionRate);
+                o.positionWS = TransformObjectToWorld(input.positionOS + input.arrival.xyz * remaining);
                 o.normalWS = TransformObjectToWorldNormal(input.normalOS);
                 float mask=saturate(o.normalWS.y);mask*=mask;
                 float a=dot(o.positionWS.xz,float2(1.1,.75))+_Time.y*.8;

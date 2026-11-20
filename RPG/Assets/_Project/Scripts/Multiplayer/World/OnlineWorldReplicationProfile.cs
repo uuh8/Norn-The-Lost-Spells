@@ -1,12 +1,13 @@
 using Game.Core;
+using Game.NetworkProtocol;
 using UnityEngine;
 
 namespace Game.Multiplayer
 {
     /// <summary>
-    /// 只配置联机材料复制的每连接发送窗口。窗口按DS权威玩家所在的参考块对齐，
+    /// 配置联机材料复制的每连接发送窗口及可持久化 Cellular 世界目录。窗口按DS权威玩家所在的参考块对齐，
     /// 与其相交的材料原生Chunk整块同步；它不修改单机配置，也不停止窗口外的DS模拟。
-    /// 只保存参考块边长和半径，避免另存世界尺寸后产生两份互相漂移的数据。
+    /// 目录上限按实际改动的原生块计数；地图原始岩土和未动作者湖不各占一个网络块。
     /// </summary>
     [CreateAssetMenu(menuName = "Norn/Online/World Replication Profile")]
     public sealed class OnlineWorldReplicationProfile : ScriptableObject
@@ -17,10 +18,17 @@ namespace Game.Multiplayer
         [SerializeField, Min(0)] private int _radiusXZChunks = 10;
         [Tooltip("Y轴两侧邻接参考块数量。初值3配合2m边长，包含玩家所在块共14m。")]
         [SerializeField, Min(0)] private int _radiusYChunks = 3;
+        [Tooltip("单个 Cellular 世界持久块目录容量，含几何锚点和待退休块。正文按需分配；同一玩家仅收到 Interest 内的页。")]
+        [SerializeField, Range(1, OnlineRunAssetCheckpoint.MaximumCurrentWorldKeys)]
+        private int _cellularWorldChunkLimit = OnlineRunAssetCheckpoint.MaximumCurrentWorldKeys;
+        [Tooltip("短期 Delta 版本链保留的全世界变更头数。连接越过该窗口时重新获取当前完整 Baseline。")]
+        [SerializeField, Range(1,OnlineRunAssetCheckpoint.MaximumWorldKeys)] private int _cellularHistoryRecords = 1024;
 
         public float ReferenceChunkWorldSize => _referenceChunkWorldSize;
         public int RadiusXZChunks => _radiusXZChunks;
         public int RadiusYChunks => _radiusYChunks;
+        public int CellularWorldChunkLimit => _cellularWorldChunkLimit;
+        public int CellularHistoryRecords => _cellularHistoryRecords;
 
         /// <summary>
         /// Inspector约束不能拦截损坏或旧序列化数据，因此Bootstrap仍须显式验证。
@@ -29,6 +37,12 @@ namespace Game.Multiplayer
         /// </summary>
         public bool Validate(out string error)
         {
+            if (_cellularWorldChunkLimit < 1 || _cellularWorldChunkLimit > OnlineRunAssetCheckpoint.MaximumCurrentWorldKeys ||
+                _cellularHistoryRecords < 1 || _cellularHistoryRecords > OnlineRunAssetCheckpoint.MaximumWorldKeys)
+            {
+                error = "联机 Cellular 目录容量或 Delta 历史条数超出复制 Profile 的合法预算。";
+                return false;
+            }
             if (!WorldInterestCoordinator.TryBuildReferenceBounds(Vector3.zero, Vector3.zero,
                     _referenceChunkWorldSize, _radiusXZChunks, _radiusYChunks, out _))
             {

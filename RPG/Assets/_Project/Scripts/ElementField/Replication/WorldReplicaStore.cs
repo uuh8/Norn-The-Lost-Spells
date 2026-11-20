@@ -7,7 +7,7 @@ namespace Game.ElementField
 {
     /// <summary>
     /// 客户端只读数量缓存；不拥有Solver、反应、库存Port或时钟。
-    /// 每Chunk预分配两个独立数据块，安装只检查/复制该Chunk，最后交换引用，不扫描或复制全世界。
+    /// 已订阅的Chunk按实收数量扩展当前/候选缓冲，安装只检查该Chunk，最后交换引用。
     /// 普通退出在同Epoch内保留tombstone元数据；可信协调器隔离旧订阅后可显式退休已释放的Key。
     /// 总Cell/Pending容量和每块word容量同时生效，超限保留旧值。
     /// 所有调用在Unity主线程串行完成；网络线程不能直接读写本对象。
@@ -23,10 +23,10 @@ namespace Game.ElementField
             internal WorldChunkPayloadHeader Header;
             internal uint PresentationVersion;
             internal bool Interested;
-            internal Chunk(ulong epoch, int cells, int pending)
+            internal Chunk(ulong epoch)
             {
-                Current = new WorldMaterialCellSample[cells]; Candidate = new WorldMaterialCellSample[cells];
-                Pending = new WorldPendingDepositSample[pending]; CandidatePending = new WorldPendingDepositSample[pending];
+                Current = Candidate = Array.Empty<WorldMaterialCellSample>();
+                Pending = CandidatePending = Array.Empty<WorldPendingDepositSample>();
                 Version = new WorldReplicaRevisionState(epoch);
             }
         }
@@ -34,16 +34,19 @@ namespace Game.ElementField
         private readonly WorldChunkKey[] _keys;
         private readonly Dictionary<WorldChunkKey, int> _indices;
         private readonly WorldReplicaBuffer _decode;
-        private readonly WorldGridGeometry[] _geometry = new WorldGridGeometry[4];
-        private readonly bool[] _hasGeometry = new bool[4];
-        private readonly uint[] _versions = { 1, 1, 1, 1 };
-        private readonly ulong[] _totals = new ulong[4], _pendingTotals = new ulong[4];
-        private readonly int[] _domainCells = new int[4];
-        private readonly uint[] _capacity = { uint.MaxValue, uint.MaxValue, uint.MaxValue, uint.MaxValue };
-        private readonly bool[,] _supported = new bool[4, 256];
-        private readonly bool[] _hasMaterialConfiguration = new bool[4], _singleMaterial = new bool[4];
-        private readonly int[] _domainChunkLimits = { int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue };
-        private readonly int[] _domainChunks = new int[4];
+        private const int DomainCount = (int)WorldMaterialDomain.Cellular + 1;
+        private readonly WorldGridGeometry[] _geometry = new WorldGridGeometry[DomainCount];
+        private readonly bool[] _hasGeometry = new bool[DomainCount];
+        private readonly uint[] _versions = { 1, 1, 1, 1, 1 };
+        private readonly ulong[] _totals = new ulong[DomainCount], _pendingTotals = new ulong[DomainCount];
+        private readonly int[] _domainCells = new int[DomainCount];
+        private readonly uint[] _capacity = { uint.MaxValue, uint.MaxValue, uint.MaxValue, uint.MaxValue, uint.MaxValue };
+        private readonly bool[,] _supported = new bool[DomainCount, 256];
+        private readonly bool[] _hasMaterialConfiguration = new bool[DomainCount], _singleMaterial = new bool[DomainCount];
+        private readonly int[] _domainChunkLimits = { int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue };
+        private readonly int[] _domainChunks = new int[DomainCount];
+        private readonly WorldReplicaRevisionState _candidateVersion;
+        private WorldReplicaCellularReadModel _cellular;
         private int _slots, _cells, _pending;
         // 安装通常没有外部回调；仍把异常与重入变成明确生命周期栅栏，不能在半次安装后退休/复用槽。
         // 意外异常继续抛给Assembler锁存InstallerFaulted，Store自身也拒绝后续写/释放，防止绕过Owner。
@@ -61,11 +64,17 @@ namespace Game.ElementField
                 throw new ArgumentOutOfRangeException(nameof(chunkCapacity));
             WorldEpoch = epoch; _cellCapacity = cellCapacity; _pendingCapacity = pendingCapacity;
             _chunks = new Chunk[chunkCapacity]; _keys = new WorldChunkKey[chunkCapacity];
-            _indices = new Dictionary<WorldChunkKey, int>(chunkCapacity);
+            _candidateVersion = new WorldReplicaRevisionState(epoch);
+            _indices = new Dictionary<WorldChunkKey, int>(Math.Min(chunkCapacity,32));
             int blockCells = Math.Min(cellCapacity, (maxWords - 11) / WorldChunkPayloadCodec.CellWords);
             int blockPending = Math.Min(pendingCapacity, (maxWords - 11) / WorldChunkPayloadCodec.PendingWords);
-            for (int i = 0; i < chunkCapacity; i++) _chunks[i] = new Chunk(epoch, blockCells, blockPending);
             _decode = new WorldReplicaBuffer(blockCells, blockPending, maxWords);
+        }
+        internal void BindCellular(WorldReplicaCellularReadModel cellular)
+        {
+            if (_slots != 0 || _cellular != null || cellular == null || !ConfigureGeometry(cellular.Geometry))
+                throw new InvalidOperationException("Cellular Replica 只能在安装第一块前绑定可信地图。");
+            _cellular = cellular;
         }
         /// <summary>激活Renderer前由可信场景固定Geometry；网络候选只能与它一致，不能重新解释旧Cell。</summary>
         public bool ConfigureGeometry(in WorldGridGeometry geometry)
@@ -78,14 +87,14 @@ namespace Game.ElementField
         public bool TryGetGeometry(WorldMaterialDomain domain, out WorldGridGeometry geometry)
         {
             geometry = default; int d = (int)domain;
-            if (d < 0 || d > 3 || !_hasGeometry[d]) return false;
+            if ((uint)d >= DomainCount || !_hasGeometry[d]) return false;
             geometry = _geometry[d]; return true;
         }
         /// <summary>只读视图也必须拒绝超出可信Profile的数量/身份，不能等到ushort上传或Mesh创建才截断/抛错。</summary>
         public bool ConfigureMaterials(WorldMaterialDomain domain, uint capacity, byte[] materials, bool singleMaterial = false, int maximumChunks = int.MaxValue)
         {
             int d = (int)domain;
-            if (d < 0 || d > 3 || capacity == 0 || maximumChunks < 1 || materials == null || materials.Length == 0 || _hasMaterialConfiguration[d] || _domainCells[d] != 0) return false;
+            if ((uint)d >= DomainCount || capacity == 0 || maximumChunks < 1 || materials == null || materials.Length == 0 || _hasMaterialConfiguration[d] || _domainCells[d] != 0) return false;
             for (int i = 0; i < materials.Length; i++) if (materials[i] == 0) return false;
             for (int i = 0; i < materials.Length; i++) _supported[d, materials[i]] = true;
             _capacity[d] = capacity; _singleMaterial[d] = singleMaterial; _hasMaterialConfiguration[d] = true; _domainChunkLimits[d] = maximumChunks; return true;
@@ -104,11 +113,13 @@ namespace Game.ElementField
         {
             if (header.WorldEpoch != WorldEpoch || header.SnapshotId == 0 || header.Generation == 0 ||
                 header.Revision == 0 || header.ServerTick < 0 || header.WordCount != count ||
-                (byte)header.Key.Domain > 3 || PresentationVersion == uint.MaxValue) return false;
+                (byte)header.Key.Domain >= DomainCount || PresentationVersion == uint.MaxValue) return false;
+            bool cellular = header.Key.Domain == WorldMaterialDomain.Cellular;
+            if (cellular && _cellular == null || _cellular != null && !cellular && header.Key.Domain != WorldMaterialDomain.LegacyCell) return false;
             int slot = Find(header.Key), d = (int)header.Key.Domain;
             if (slot < 0 && _slots == _chunks.Length) return false;
             int target = slot < 0 ? _slots : slot;
-            Chunk chunk = _chunks[target];
+            Chunk chunk = _chunks[target] ?? (_chunks[target] = new Chunk(WorldEpoch));
             if (slot >= 0 && !chunk.Header.IsResident && header.IsResident
                 && header.Generation <= chunk.Header.Generation) return false;
             if (slot >= 0 && chunk.Header.IsResident && !chunk.Interested && header.BaseRevision != 0) return false;
@@ -150,10 +161,27 @@ namespace Game.ElementField
             if (_domainChunks[d] + residentDelta > _domainChunkLimits[d]) return false;
 
             ulong oldTotal = 0, newTotal = 0, oldPending = 0, newPending = 0;
+            // 同一个接收槽反复进出 Interest 时复用已见峰值；远方首访从真实占据/待写数量开始。
+            if(incomingCells>chunk.Candidate.Length)
+                chunk.Candidate=new WorldMaterialCellSample[(int)Math.Min(_decode.Cells.Length,Math.Max(incomingCells,2L*chunk.Candidate.Length))];
+            if(incomingPending>chunk.CandidatePending.Length)
+                chunk.CandidatePending=new WorldPendingDepositSample[(int)Math.Min(_decode.Pending.Length,Math.Max(incomingPending,2L*chunk.CandidatePending.Length))];
             for (int i = 0; i < chunk.Count; i++) oldTotal += chunk.Current[i].Quantity;
             for (int i = 0; i < chunk.PendingCount; i++) oldPending += chunk.Pending[i].Remaining;
             for (int i = 0; i < incomingCells; i++) { chunk.Candidate[i] = _decode.Cells[i]; newTotal += _decode.Cells[i].Quantity; }
             for (int i = 0; i < incomingPending; i++) { chunk.CandidatePending[i] = _decode.Pending[i]; newPending += _decode.Pending[i].Remaining; }
+            if (cellular)
+            {
+                // 在改变 Unity 碰撞/数量投影之前用同一个版本状态机预演，过期 Delta 不会触及场景。
+                _candidateVersion.ResetForTrustedKeyRetirement();
+                if (chunk.Version.BaselineInstalled)
+                    _candidateVersion.TryAcceptBaselineVersion(WorldEpoch, chunk.Version.Generation, chunk.Version.Revision);
+                bool validVersion = header.BaseRevision == 0
+                    ? _candidateVersion.TryAcceptBaselineVersion(WorldEpoch, header.Generation, header.Revision)
+                    : _candidateVersion.TryAcceptDeltaVersion(WorldEpoch, header.Generation, header.BaseRevision, header.Revision);
+                if (!validVersion || !_cellular.Prepare(header.Key, _decode, header.IsResident, _decode.InspectionBudget)) return false;
+                _cellular.Publish(header.Key);
+            }
             bool accepted = header.BaseRevision == 0
                 ? chunk.Version.TryAcceptBaselineVersion(header.WorldEpoch, header.Generation, header.Revision)
                 : chunk.Version.TryAcceptDeltaVersion(header.WorldEpoch, header.Generation, header.BaseRevision, header.Revision);
@@ -217,6 +245,8 @@ namespace Game.ElementField
         public bool TryGetQuantity(WorldMaterialDomain domain, Vector3Int cell, byte material, out uint quantity)
         {
             quantity = 0;
+            if (domain == WorldMaterialDomain.Cellular)
+                return _cellular != null && _cellular.TryGetQuantity(cell, (Game.Materials.MaterialId)material, out quantity, out _);
             if (!TryGetGeometry(domain, out var geometry)) return false;
             int slot = Find(WorldChunkPayloadCodec.CellKey(domain, cell, geometry.ChunkSize));
             if (slot < 0) return false;
@@ -255,6 +285,14 @@ namespace Game.ElementField
             if (slot < 0 || PresentationVersion == uint.MaxValue) return false;
             var chunk = _chunks[slot];
             if (!chunk.Interested) return true;
+            if (key.Domain == WorldMaterialDomain.Cellular)
+            {
+                if (_cellular == null || !_cellular.Prepare(key, null, false, _decode.InspectionBudget)) return false;
+                _installing = true;
+                try { _cellular.Publish(key); }
+                catch { _faulted = true; throw; }
+                finally { _installing = false; }
+            }
             int d = (int)key.Domain;
             for (int i = 0; i < chunk.Count; i++) _totals[d] -= chunk.Current[i].Quantity;
             for (int i = 0; i < chunk.PendingCount; i++) _pendingTotals[d] -= chunk.Pending[i].Remaining;
@@ -344,6 +382,7 @@ namespace Game.ElementField
         private int Find(WorldChunkKey key)
             => _indices.TryGetValue(key, out int slot) ? slot : -1;
         private static bool Same(in WorldGridGeometry a, in WorldGridGeometry b) => a.Domain == b.Domain && a.GridId == b.GridId &&
-            a.Origin.Equals(b.Origin) && a.CellSize.Equals(b.CellSize) && a.ChunkSize == b.ChunkSize;
+            a.Origin.Equals(b.Origin) && a.CellSize.Equals(b.CellSize) && a.ChunkSize == b.ChunkSize &&
+            a.BaseVersion == b.BaseVersion && a.CellCapacity == b.CellCapacity;
     }
 }

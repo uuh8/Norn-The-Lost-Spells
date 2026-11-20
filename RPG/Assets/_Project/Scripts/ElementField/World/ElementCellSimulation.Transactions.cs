@@ -213,7 +213,14 @@ namespace Game.ElementField
                 }
                 if (_changedSet.Add(edit.Cell)) _changed.Enqueue(edit.Cell);
             }
-            for (int i = 0; i < _editCount; i++) if (_edits[i].Changed) WakeNeighbors(_edits[i].Cell);
+            for (int i = 0; i < _editCount; i++) if (_edits[i].Changed)
+            {
+                ref Edit edit = ref _edits[i];
+                if (edit.Before.Steam != edit.After.Steam || edit.Before.Vapor != edit.After.Vapor)
+                    _gasEnvironment?.Observe(edit.Cell, in edit.Before, in edit.After);
+                WakeNeighbors(edit.Cell);
+            }
+            _gasEnvironment?.FinishEdits();
             return true;
         }
 
@@ -238,6 +245,7 @@ namespace Game.ElementField
             RemoveSleepingLiquid(index);
             ref Slot slot = ref _slots[index];
             _indices.Remove(slot.Coordinate);
+            _impulses.Remove(slot.Coordinate);
             int last = _residents[--_residentCount];
             _residents[slot.ResidentIndex] = last;
             _slots[last].ResidentIndex = slot.ResidentIndex;

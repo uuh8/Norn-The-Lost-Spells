@@ -14,7 +14,7 @@ namespace Game.Core.Tests
             object buffer = Activator.CreateInstance(type, 8, 4, 100);
             Assert.That(((Array)type.GetProperty("Cells").GetValue(buffer)).Length, Is.EqualTo(8));
             Assert.That(((Array)type.GetProperty("Pending").GetValue(buffer)).Length, Is.EqualTo(4));
-            Assert.That(((Array)type.GetProperty("Geometries").GetValue(buffer)).Length, Is.EqualTo(4));
+            Assert.That(((Array)type.GetProperty("Geometries").GetValue(buffer)).Length, Is.EqualTo(5));
             object header = type.GetProperty("Header").GetValue(buffer);
             Assert.That((bool)header.GetType().GetProperty("CanRestoreAuthorityRules").GetValue(header), Is.False);
         }

@@ -484,6 +484,7 @@ namespace Game.EditorTools
             ConfigureFluidRuntime(fluid, simulationProfile, colliderRoot, interestPoint,
                 new Vector3(24f, 12f, 24f));
             ConfigureWorld(world, worldProfile, interestPoint, fluid, bridge);
+            CellularMapContentSetup.Apply(world, "p7", scene.path);
             ConfigureBridge(bridge, fluid, world);
             ConfigureExposure(exposure, bridge);
             ConfigureSurfaceRenderer(renderer, fluid, world, renderProfile, material);

@@ -12,7 +12,7 @@ namespace Game.Core
     [Serializable]
     public sealed class OnlineExitedMemberLossSnapshot
     {
-        public const int MaximumMaterialsPerSource = 8;
+        public const int MaximumMaterialsPerSource = MaterialAmount.InventoryMaterialCount;
         public string RunId = "", PlayerId = "";
         public ulong ActorId;
         public OnlineOwnedMaterialAmountSnapshot[] ContainerLost = Array.Empty<OnlineOwnedMaterialAmountSnapshot>();
@@ -42,7 +42,7 @@ namespace Game.Core
             for (int i = 0; i < source.Length; i++)
             {
                 var value = source[i];
-                if (value == null || value.MaterialKey < 1 || value.MaterialKey > MaximumMaterialsPerSource || value.Quantity == 0) return false;
+                if (value == null || !MaterialAmount.IsKnown(value.MaterialKey) || value.Quantity == 0) return false;
                 uint bit = 1u << value.MaterialKey;
                 if ((seen & bit) != 0) return false;
                 seen |= bit;

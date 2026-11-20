@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Game.Core;
 using Game.NetworkProtocol;
 
@@ -10,12 +11,11 @@ namespace Game.Multiplayer
         // 不能对比此刻live Owner，也不能把仅捕获/POST过的候选当成已确认事实。
         // 两个对象都只由本类持有；对外DTO另做深拷贝，调用方排序/后续修改不污染确认锚点。
         private OnlineRunAssetCheckpointWorld _lastOfferedCheckpointWorld, _currentConfirmedWorld;
-        // 只观察“上一确认Head仍为resident”与“最新offered仍为resident”的并集，每份最多128个。
-        // 不按世界曾经过的Key积累日志；读回期间的真实退休头保留在固定256槽中，Offer/Confirm后按Key裁剪。
-        private readonly WorldChunkKey[] _checkpointRetirementKeys = new WorldChunkKey[OnlineRunAssetCheckpoint.MaximumWorldKeys];
-        private readonly WorldChunkPayloadHeader[] _checkpointRetirementHeaders = new WorldChunkPayloadHeader[OnlineRunAssetCheckpoint.MaximumWorldKeys];
-        private int _checkpointRetirementWatchCount;
-        internal int CheckpointRetirementWatchCount => _checkpointRetirementWatchCount;
+        // 只追踪最近已确认与已提供的两个 Head。字典在实际捕获时增长，Replica 不为权威上限预付内存。
+        private Dictionary<WorldChunkKey,WorldChunkPayloadHeader> _checkpointWatch = new Dictionary<WorldChunkKey,WorldChunkPayloadHeader>();
+        private Dictionary<WorldChunkKey,WorldChunkPayloadHeader> _nextCheckpointWatch = new Dictionary<WorldChunkKey,WorldChunkPayloadHeader>();
+        private readonly Dictionary<WorldChunkKey,int> _confirmationRows = new Dictionary<WorldChunkKey,int>();
+        internal int CheckpointRetirementWatchCount => _checkpointWatch.Count;
 
         /// <summary>
         /// 同一Authority安全边界的离散深拷贝。逐当前原生Key读完整已发布payload；
@@ -25,8 +25,8 @@ namespace Game.Multiplayer
         public bool TryCaptureCheckpoint(string worldId, out OnlineRunAssetCheckpointWorld snapshot)
         {
             snapshot = null;
-            if (_stopped || Faulted || _owner == null || string.IsNullOrWhiteSpace(worldId) || worldId.Length > 256
-                || _owner.LastCapturedWorldTick < 0 || _owner.ChunkCount > OnlineRunAssetCheckpoint.MaximumCurrentWorldKeys
+            if (_stopped || Faulted || _owner == null || string.IsNullOrWhiteSpace(worldId) || worldId.Length > 128
+                || _owner.LastCapturedWorldTick < 0 || _owner.ChunkCount > OnlineRunAssetCheckpoint.MaximumWorldKeys
                 || _lastOfferedCheckpointWorld != null && _lastOfferedCheckpointWorld.WorldId != worldId)
                 return false;
             long tick = _owner.LastCapturedWorldTick;
@@ -47,7 +47,19 @@ namespace Game.Multiplayer
                 }
             }
             if (count + proofs > OnlineRunAssetCheckpoint.MaximumWorldKeys) return false;
+            int resident=0;
+            long minimumBytes=0;
+            for(int i=0;i<count;i++)
+            {
+                var header=_owner.GetChunkHeader(i);
+                if(header.IsResident && ++resident>OnlineRunAssetCheckpoint.MaximumCurrentWorldKeys)return false;
+                // 每个十进制 uint 至少一个数字及相邻逗号或边界。先检查全体表头，
+                // 明显超 64 MiB 的世界在分配任何深拷贝数组之前整笔拒绝。
+                minimumBytes+=(long)header.WordCount*2;
+                if(minimumBytes>OnlineRunAssetCheckpoint.MaximumPayloadBytes)return false;
+            }
             var chunks = new OnlineRunAssetCheckpointChunk[count + proofs];
+            long wordTextBytes=0;
             for (int i = 0; i < count; i++)
             {
                 var current = _owner.GetChunkHeader(i);
@@ -55,12 +67,15 @@ namespace Game.Multiplayer
                     || !current.IsResident && current.WordCount != 0 || current.WordCount > _maxWords
                     || current.WordCount > OnlineRunAssetCheckpoint.MaximumWordsPerChunk) return false;
                 // 数组归本候选所有；后续材料变化或发送分页都不能改写已经准备提交的正文。
-                var words = new uint[current.WordCount];
+                var words = current.WordCount==0?Array.Empty<uint>():new uint[current.WordCount];
                 if (!_owner.TryCopyChunk(current.Key, words, out var header) || header.WorldEpoch != WorldEpoch
                     || header.SnapshotId != sequence || header.ServerTick != tick || header.BaseRevision != 0
                     || header.WordCount != words.Length
                     || header.IsResident && !WorldChunkPayloadCodec.Validate(words, words.Length, header.Key)
                     || WorldChunkPayloadCodec.ComputeChecksum(words, words.Length) != header.Checksum) return false;
+                // 在还未深拷贝完整快照前核对实际 Words 数字长度。完整 DTO 包括其它资产和头部，
+                // 最终仍由 InstanceCheckpointJson 与业务端逐字节验证整个 UTF-8 正文。
+                if (!OnlineRunAssetCheckpoint.TryBudgetWorldWords(words, ref wordTextBytes)) return false;
                 chunks[i] = new OnlineRunAssetCheckpointChunk
                 {
                     Domain = (uint)header.Key.Domain, X = header.Key.X, Y = header.Key.Y, Z = header.Key.Z,
@@ -110,14 +125,12 @@ namespace Game.Multiplayer
         internal bool RecordCheckpointRetirement(WorldChunkPayloadHeader terminal)
         {
             if (_stopped || Faulted || _owner == null || terminal.WorldEpoch != WorldEpoch || terminal.IsResident
-                || (byte)terminal.Key.Domain > (byte)WorldMaterialDomain.Gas || terminal.Generation == 0
+                || (byte)terminal.Key.Domain > (byte)WorldMaterialDomain.Cellular || terminal.Generation == 0
                 || terminal.Revision == 0 || terminal.BaseRevision >= terminal.Revision || terminal.SnapshotId == 0
                 || terminal.SnapshotId > _owner.CommitSequence || terminal.ServerTick < 0
                 || terminal.ServerTick > _owner.LastCapturedWorldTick || terminal.WordCount != 0 || terminal.Checksum != 2166136261u
                 || terminal.Generation >= _owner.RetiredGenerationFloor || _owner.TryGetCurrentHeader(terminal.Key, out _)) return false;
-            int slot = CheckpointRetirementIndex(terminal.Key);
-            if (slot < 0) return true;
-            var recorded = _checkpointRetirementHeaders[slot];
+            if (!_checkpointWatch.TryGetValue(terminal.Key,out var recorded)) return true;
             if (recorded.Generation != 0)
             {
                 if (terminal.Generation < recorded.Generation || terminal.Generation == recorded.Generation
@@ -126,16 +139,15 @@ namespace Game.Multiplayer
                     return terminal.Equals(recorded);
                 if (terminal.SnapshotId <= recorded.SnapshotId || terminal.ServerTick < recorded.ServerTick) return false;
             }
-            _checkpointRetirementHeaders[slot] = terminal;
+            _checkpointWatch[terminal.Key] = terminal;
             return true;
         }
 
         private bool TryGetCheckpointRetirement(OnlineRunAssetCheckpointChunk old, ulong currentSequence,
             long currentTick, out WorldChunkPayloadHeader terminal)
         {
-            terminal = default; int slot = CheckpointRetirementIndex(CheckpointKey(old));
-            if (slot < 0) return false;
-            var recorded = _checkpointRetirementHeaders[slot];
+            terminal = default;
+            if (!_checkpointWatch.TryGetValue(CheckpointKey(old), out var recorded)) return false;
             if (recorded.Generation == 0 || recorded.WorldEpoch != WorldEpoch || recorded.IsResident
                 || recorded.Generation < old.Generation || recorded.Generation == old.Generation && recorded.Revision <= old.Revision
                 || recorded.SnapshotId <= old.SnapshotId || recorded.SnapshotId > currentSequence
@@ -144,36 +156,12 @@ namespace Game.Multiplayer
             terminal = recorded; return true;
         }
 
-        private int CheckpointRetirementIndex(WorldChunkKey key)
-        {
-            for (int i = 0; i < _checkpointRetirementWatchCount; i++)
-                if (_checkpointRetirementKeys[i] == key) return i;
-            return -1;
-        }
-
-        private static bool CheckpointWatchesResident(OnlineRunAssetCheckpointWorld world, WorldChunkKey key)
-        {
-            if (world == null) return false;
-            foreach (var chunk in world.Chunks)
-                if (chunk.IsResident && CheckpointKey(chunk) == key) return true;
-            return false;
-        }
-
         private void RebuildCheckpointRetirementWatch()
         {
-            // 先移除两个Head都不再需要的Key，交换末槽时同时保留其真实witness。
-            // 这两个私有Head均由本类合法捕获：每份resident<=128，因此并集<=256，下面不会扩容。
-            for (int i = _checkpointRetirementWatchCount - 1; i >= 0; i--)
-            {
-                var key = _checkpointRetirementKeys[i];
-                if (CheckpointWatchesResident(_currentConfirmedWorld, key) || CheckpointWatchesResident(_lastOfferedCheckpointWorld, key)) continue;
-                int last = --_checkpointRetirementWatchCount;
-                _checkpointRetirementKeys[i] = _checkpointRetirementKeys[last];
-                _checkpointRetirementHeaders[i] = _checkpointRetirementHeaders[last];
-                _checkpointRetirementKeys[last] = default; _checkpointRetirementHeaders[last] = default;
-            }
+            _nextCheckpointWatch.Clear();
             AddCheckpointResidentWatch(_currentConfirmedWorld);
             AddCheckpointResidentWatch(_lastOfferedCheckpointWorld);
+            var previous=_checkpointWatch;_checkpointWatch=_nextCheckpointWatch;_nextCheckpointWatch=previous;
         }
 
         private void AddCheckpointResidentWatch(OnlineRunAssetCheckpointWorld world)
@@ -183,9 +171,9 @@ namespace Game.Multiplayer
             {
                 if (!chunk.IsResident) continue;
                 var key = CheckpointKey(chunk);
-                if (CheckpointRetirementIndex(key) >= 0) continue;
-                _checkpointRetirementKeys[_checkpointRetirementWatchCount] = key;
-                _checkpointRetirementHeaders[_checkpointRetirementWatchCount++] = default;
+                if (_nextCheckpointWatch.ContainsKey(key)) continue;
+                _checkpointWatch.TryGetValue(key,out var witness);
+                _nextCheckpointWatch.Add(key,witness);
             }
         }
 
@@ -216,7 +204,7 @@ namespace Game.Multiplayer
             var chunks = new OnlineRunAssetCheckpointChunk[source.Chunks.Length];
             for (int i = 0; i < chunks.Length; i++)
             {
-                var chunk = source.Chunks[i]; var words = new uint[chunk.Words.Length];
+                var chunk = source.Chunks[i]; var words = chunk.Words.Length==0?Array.Empty<uint>():new uint[chunk.Words.Length];
                 Array.Copy(chunk.Words, words, words.Length);
                 chunks[i] = new OnlineRunAssetCheckpointChunk
                 {
@@ -233,26 +221,25 @@ namespace Game.Multiplayer
             };
         }
 
-        private static bool SameCheckpointWorld(OnlineRunAssetCheckpointWorld expected, OnlineRunAssetCheckpointWorld actual)
+        private bool SameCheckpointWorld(OnlineRunAssetCheckpointWorld expected, OnlineRunAssetCheckpointWorld actual)
         {
             if (expected.WorldId != actual.WorldId || expected.WorldEpoch != actual.WorldEpoch
                 || expected.CommitSequence != actual.CommitSequence || expected.WorldTick != actual.WorldTick
                 || expected.CanRestoreAuthorityRules != actual.CanRestoreAuthorityRules || actual.Chunks == null
                 || expected.Chunks.Length != actual.Chunks.Length || actual.Chunks.Length > OnlineRunAssetCheckpoint.MaximumWorldKeys)
                 return false;
-            // 每份最多256行，离散HTTP确认时按Key有界比对；不依赖调用方顺序，不分配临时Dictionary。
+            // 全世界数千块的读回可重新排序。每个 Key 在索引中只能配对一次，保持线性匹配。
+            _confirmationRows.Clear();
+            for(int index=0;index<expected.Chunks.Length;index++) _confirmationRows.Add(CheckpointKey(expected.Chunks[index]),index);
             for (int i = 0; i < actual.Chunks.Length; i++)
             {
                 var chunk = actual.Chunks[i];
-                if (chunk == null || chunk.Domain > (uint)WorldMaterialDomain.Gas || chunk.Words == null
+                if (chunk == null || chunk.Domain > (uint)WorldMaterialDomain.Cellular || chunk.Words == null
                     || chunk.WordCount != chunk.Words.Length) return false;
                 var key = CheckpointKey(chunk);
-                for (int previous = 0; previous < i; previous++)
-                    if (CheckpointKey(actual.Chunks[previous]) == key) return false;
-                OnlineRunAssetCheckpointChunk found = null;
-                foreach (var candidate in expected.Chunks)
-                    if (CheckpointKey(candidate) == key) { found = candidate; break; }
-                if (found == null || found.WorldEpoch != chunk.WorldEpoch || found.SnapshotId != chunk.SnapshotId
+                if (!_confirmationRows.TryGetValue(key,out int position) || !_confirmationRows.Remove(key)) return false;
+                var found=expected.Chunks[position];
+                if (found.WorldEpoch != chunk.WorldEpoch || found.SnapshotId != chunk.SnapshotId
                     || found.Generation != chunk.Generation || found.BaseRevision != chunk.BaseRevision
                     || found.Revision != chunk.Revision || found.ServerTick != chunk.ServerTick
                     || found.WordCount != chunk.WordCount || found.Checksum != chunk.Checksum || found.IsResident != chunk.IsResident)

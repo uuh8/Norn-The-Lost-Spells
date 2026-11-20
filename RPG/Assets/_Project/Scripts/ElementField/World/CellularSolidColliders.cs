@@ -76,7 +76,7 @@ namespace Game.ElementField
                 page.Root.SetActive(false);
                 _pages.Remove(key);
                 if (_spare.Count < 8) _spare.Push(page);
-                else Object.Destroy(page.Root);
+                else DestroyPage(page.Root);
             }
             _dirty.Clear();
             Physics.SyncTransforms();
@@ -119,11 +119,17 @@ namespace Game.ElementField
 
         public void Dispose()
         {
-            foreach (var page in _pages.Values) { page.Root.SetActive(false); Object.Destroy(page.Root); }
-            foreach (var page in _spare) Object.Destroy(page.Root);
+            foreach (var page in _pages.Values) { page.Root.SetActive(false); DestroyPage(page.Root); }
+            foreach (var page in _spare) DestroyPage(page.Root);
             _pages.Clear();
             _spare.Clear();
             _dirty.Clear();
+        }
+
+        private static void DestroyPage(GameObject root)
+        {
+            if (Application.isPlaying) Object.Destroy(root);
+            else Object.DestroyImmediate(root);
         }
     }
 }

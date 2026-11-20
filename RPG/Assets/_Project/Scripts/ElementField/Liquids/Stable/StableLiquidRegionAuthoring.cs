@@ -26,7 +26,40 @@ namespace Game.ElementField
 
         public int RegionId => _regionId;
         public LiquidWorldRuntime Liquids => _liquids;
+        internal ElementWorldRuntime MigrationWorld { get; set; }
         public Bounds AuthoringBounds => _boundsCollider != null ? _boundsCollider.bounds : _worldBounds;
+
+        internal void ReadForMigration(CellularInitialContents plan)
+        {
+            // 曲线沿用原关卡的阶梯、库容以及整笔填充量。依赖邻墙/动态闸门的水库保留原水位求解器。
+            if (_deriveBottomFromSolid || _deriveFootprintFromSolid || _boundsCollider != null &&
+                (!_boundsCollider.isTrigger || !IsAxisAligned(_boundsCollider.transform)))
+                throw new System.InvalidOperationException("该旧湖依赖 Collider 岸线、变深底面或无效旋转。");
+            if (!float.IsFinite(_initialFill) || _initialFill < 0 || _initialFill > 1 || !plan.AllowsStable(_material))
+                throw new System.InvalidOperationException("旧湖填充量或材料稳定资格无效。");
+            Bounds bounds = _boundsCollider == null ? _worldBounds : AxisAlignedBounds(_boundsCollider);
+            var box = plan.CoarseBounds(bounds);
+            int step = _stepRiseCells > 0 ? Mathf.Clamp(box.xMin + Mathf.RoundToInt(box.size.x * _stepStartFraction), box.xMin, box.xMax) : box.xMax;
+            var curve = new LiquidCapacityCurve(box.min, box.max, step, _stepRiseCells, plan.Volume.CapacityGmu);
+            ulong total = (ulong)System.Math.Round(curve.Capacity * (double)_initialFill);
+            ulong inspected = 0;
+            foreach (var cell in box.allPositionsWithin)
+            {
+                uint amount = curve.QuantityAt(cell, total); inspected += amount;
+                plan.Add(cell, _material, amount, true);
+            }
+            if (inspected != total) throw new System.InvalidOperationException("旧湖容量曲线不能完整还原实际 GMU。");
+        }
+
+        // inactive 在线 prefab 上 Collider.bounds 为空，因此从已检查过的轴向 Box 重建同一个世界范围。
+        private static Bounds AxisAlignedBounds(BoxCollider box)
+        {
+            Transform t = box.transform;
+            Vector3 x = t.TransformVector(Vector3.right * box.size.x), y = t.TransformVector(Vector3.up * box.size.y),
+                z = t.TransformVector(Vector3.forward * box.size.z);
+            return new Bounds(t.TransformPoint(box.center), new Vector3(Mathf.Abs(x.x)+Mathf.Abs(y.x)+Mathf.Abs(z.x),
+                Mathf.Abs(x.y)+Mathf.Abs(y.y)+Mathf.Abs(z.y), Mathf.Abs(x.z)+Mathf.Abs(y.z)+Mathf.Abs(z.z)));
+        }
 
         private void OnDrawGizmosSelected()
         {
@@ -40,6 +73,7 @@ namespace Game.ElementField
         private void Start()
         {
             _regionId = -1;
+            if (ElementWorldRuntime.IsReplicaAuthor(_liquids) || MigrationWorld != null && MigrationWorld.OwnsImportedAuthor(this)) return;
             if (_liquids == null || !_liquids.IsFluidInitialized
                 || !_liquids.AllowsStableRegion(_material))
             {

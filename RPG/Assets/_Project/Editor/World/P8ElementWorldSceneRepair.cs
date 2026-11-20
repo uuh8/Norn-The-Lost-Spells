@@ -96,6 +96,7 @@ namespace Game.EditorTools
                     EditorUtility.CopySerialized(Single<GpuFireParcelRenderer>(p7),fire);
                     Bind(fire,"_worldRuntime",target);Bind(fire,"_interestCenter",interest);fire.enabled=true;
                     EditorUtility.CopySerialized(Single<ReactionBurstVisualController>(p7),Single<ReactionBurstVisualController>(p8));
+                    CellularMapContentSetup.Apply(target,"p8",P8);
                     EditorSceneManager.MarkSceneDirty(p8);
                 }
                 result.AuditFailures=GridLiquidP7CutoverAudit.RunScene(p8,Audit);

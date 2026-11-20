@@ -18,10 +18,12 @@ namespace Game.ElementField
         private int _outletId = -1;
         private Vector3Int _target;
         public bool IsOpen { get; private set; }
+        internal StableLiquidRegionAuthoring Source => _source;
 
         private void Start()
         {
             LiquidWorldRuntime liquids = _source != null ? _source.Liquids : null;
+            if (ElementWorldRuntime.IsReplicaAuthor(liquids)) return;
             if (liquids == null || _source.RegionId < 0
                 || _outletCenter == null || _receivingCell == null)
             {

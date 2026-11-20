@@ -50,17 +50,19 @@ namespace Game.ElementField
             finally { _opening = false; }
         }
 
-        public bool TryReclaimFull(Vector3Int cell, ElementCellSimulation simulation)
-            => TryReclaimFull(cell, simulation, out _);
+        public bool TryReclaimFull(Vector3Int cell, ElementCellSimulation simulation) =>
+            simulation != null && simulation.TryGetOccupiedCell(cell, out var material, out uint amount) &&
+            amount == CellCapacity && ElementCellMaterialRules.Motion(material) == ElementCellMotion.Liquid &&
+            TryArchiveSettled(cell, simulation, out _);
 
-        private bool TryReclaimFull(Vector3Int cell, ElementCellSimulation simulation, out bool retry)
+        internal bool TryArchiveSettled(Vector3Int cell, ElementCellSimulation simulation, out bool retry)
         {
             retry = false;
             if (simulation == null || simulation.CellCapacity != CellCapacity || _pendingCount != 0 ||
                 _opening) return false;
             if (!simulation.TryGetOccupiedCell(cell, out MaterialId material, out uint quantity) ||
-                ElementCellMaterialRules.Motion(material) != ElementCellMotion.Liquid || quantity != CellCapacity ||
-                simulation.HasSolidAt(cell) || _totals[(byte)material] > ulong.MaxValue - quantity ||
+                !CanArchive(material, quantity) || simulation.TryGetQuantity(cell, MaterialId.Steam, out _) ||
+                simulation.TryGetQuantity(cell, MaterialId.ToxicVapor, out _) || _totals[(byte)material] > ulong.MaxValue - quantity ||
                 NeedsDynamic(cell, material, quantity, simulation)) return false;
             int region = FindRegion(cell);
             if (region >= 0 && (Read(region, cell) != 0 || region < _regions.Length && GetRegion(region).Material != material)) return false;
@@ -71,6 +73,13 @@ namespace Game.ElementField
             if (region < 0 || GetRegion(region).Material != material) region = ClaimCold(cell, material, region);
             Set(region, cell, 0, quantity);
             return true;
+        }
+
+        private bool CanArchive(MaterialId material, uint quantity)
+        {
+            var motion = ElementCellMaterialRules.Motion(material);
+            return motion == ElementCellMotion.Liquid ||
+                material == MaterialId.Sand || material == MaterialId.Ice || material == MaterialId.DriedSlime && quantity == CellCapacity;
         }
 
         public uint GetLocalFreeCapacity(Vector3Int cell, MaterialId material)

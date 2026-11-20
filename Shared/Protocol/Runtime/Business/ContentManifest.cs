@@ -98,8 +98,8 @@ namespace Game.NetworkProtocol
                 item.BackpackWidth < 1 || item.BackpackWidth > 64 || item.BackpackHeight < 1 || item.BackpackHeight > 64 ||
                 item.WandProgramCapacity < 1 || item.WandProgramCapacity > 32 ||
                 item.ContainerCapacityGmu == 0 || item.MaterialItemCapacityGmu == 0 ||
-                item.ContainerMaterialsMask == 0 || (item.ContainerMaterialsMask & ~0x1fe) != 0 ||
-                item.MaterialKey < 1 || item.MaterialKey > 8 || item.OccupiedCells == null ||
+                item.ContainerMaterialsMask == 0 || (item.ContainerMaterialsMask & ~OwnedMaterialKey.Mask) != 0 ||
+                !OwnedMaterialKey.IsKnown(item.MaterialKey) || item.OccupiedCells == null ||
                 item.OccupiedCells.Length < 1 || item.OccupiedCells.Length > item.ShapeWidth * item.ShapeHeight)
                 throw new ArgumentException("Manifest 空间或容器规则非法。 ");
             var cells = new List<ContentShapeCell>(item.OccupiedCells);

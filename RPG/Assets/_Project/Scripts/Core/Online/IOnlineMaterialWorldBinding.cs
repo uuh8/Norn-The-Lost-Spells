@@ -8,6 +8,13 @@ namespace Game.Core
         string TransferWorldId { get; }
     }
 
+    /// <summary>正式地图激活前由同一网络 Profile 注入 Cellular 持久块目录预算，两端使用同一上限。</summary>
+    public interface IOnlineCellularDirectoryBinding
+    {
+        bool UsesCellularReplication { get; }
+        bool TrySetCellularDirectoryLimit(int maximumChunks);
+    }
+
     /// <summary>
     /// 正式副本的材料场景装配边界。Multiplayer只看Core合同，不向上依赖ElementField或Rendering。
     /// 调用方必须先保持整棵世界Root inactive，完成TryConfigure，再激活Root；Awake发生后不能改所有权。

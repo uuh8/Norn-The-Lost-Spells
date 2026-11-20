@@ -38,7 +38,7 @@ internal static class RunMemberExitRules
                 : copy.Reason is not (OnlineRunMemberExitReason.VoluntaryExit or OnlineRunMemberExitReason.FinalDeath)
                     ||copy.FinalRetiredItems==null||copy.FinalRetiredItems.Length>(current && copy.PracticeSessionScope is { Length: > 0 }
                         ? HomePracticeAssets.MaximumItems : OnlineOwnedAssetSnapshot.MaximumItems)
-                    ||copy.FinalDeathLostMaterials==null||copy.FinalDeathLostMaterials.Length>8
+                    ||copy.FinalDeathLostMaterials==null||copy.FinalDeathLostMaterials.Length>OwnedMaterialKey.DistinctCount
                     ||copy.FinalRetiredItems.Any(i=>i==null)||copy.FinalDeathLostMaterials.Any(i=>i==null))) throw Invalid();
         if (!current)
         {

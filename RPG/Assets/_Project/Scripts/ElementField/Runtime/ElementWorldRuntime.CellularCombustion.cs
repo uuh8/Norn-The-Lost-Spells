@@ -24,6 +24,7 @@ namespace Game.ElementField
 
         private void InitializeCellularCombustion()
         {
+            InitializeCellularAbsorption();
             _cellularCanIgnite = OwnsCellularMaterial(MaterialId.Sticky)
                 && _materialReactions.TryResolve(MaterialId.Fire, MaterialId.Sticky, out var ignite) && ignite == ElementReactionId.IgniteGoo;
             if (_cellularCanIgnite) _cellularIgnition = _profile.IgniteGoo;
@@ -42,6 +43,10 @@ namespace Game.ElementField
 
         private void ClearCellularCombustion()
         {
+            _absorbQueue = null;
+            _absorbSet = null;
+            _absorbPlacements = null;
+            _absorbRecoveryRemaining = 0;
             _cellularCanIgnite = false;
             _cellularToxicProcesses = null;
             _cellularToxicResults = null;
@@ -93,6 +98,7 @@ namespace Game.ElementField
             if (TryStageCellularFuel(cell, MaterialId.Sticky, used, out bool resting))
             {
                 if (resting) RestingLiquids.CommitStaged();
+                ConversionLedger?.RecordExplicitConsumption(MaterialId.Sticky, used);
                 return true;
             }
             var rollback = new ElementCellDeltaRequest(cell, MaterialId.Fire, (byte)produced);
@@ -153,6 +159,7 @@ namespace Game.ElementField
                 hasResting |= fuel.Resting;
             }
             if (hasResting) RestingLiquids.CommitStaged();
+            ConversionLedger?.RecordExplicitConsumption(MaterialId.Poison, (uint)consumed);
             // 同 Tick 另一个反应可能先取走重叠九格的燃料。只按本笔已经提交的数量发一次原有 Damage / VFX 事实。
             Vector3 position = _origin + ((Vector3)reaction.LiquidCell + Vector3.one * .5f) * _profile.CellSize;
             var damage = new WorldReactionDamageCommand(ElementReactionId.ToxicCombustion, position,

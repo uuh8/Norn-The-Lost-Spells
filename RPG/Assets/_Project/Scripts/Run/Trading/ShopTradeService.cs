@@ -69,8 +69,9 @@ namespace Game.Run
             string id=request.Kind==ShopTradeKind.BuyMaterial?request.ContainerId:request.ItemInstanceId;
             original.Items.TryGet(id,out var before);next.Items.TryGet(id,out var after);
             var moved=new List<MaterialAmount>(8);
-            for(byte key=1;key<=8;key++)
+            for(byte key=1;key<=MaterialAmount.LastLocalInventoryKey;key++)
             {
+                if (!MaterialAmount.IsKnown(key)) continue;
                 ulong a=before?.Composition?.GetQuantity(key)??(before?.Material?.MaterialKey==key?before.Material.Quantity:0);
                 ulong b=after?.Composition?.GetQuantity(key)??(after?.Material?.MaterialKey==key?after.Material.Quantity:0);
                 ulong quantity=a>b?a-b:b-a;if(quantity>0)moved.Add(new MaterialAmount(key,quantity));

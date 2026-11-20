@@ -19,6 +19,90 @@ namespace Game.Core.Tests
             => new WorldReplicationCommitOwner(7, 8, 8, 4, history, words, 100000);
         private static readonly WorldChunkKey Key = new WorldChunkKey(WorldMaterialDomain.Liquid, -1, 0, 0);
 
+        [Test]
+        public void SparseCellularDirectoryKeeps4096BaselinesAndAllocatesOnlyActualPayloads()
+        {
+            const int limit=4096, chunkSize=8;
+            const WorldMaterialDomain domain=WorldMaterialDomain.Cellular;
+            var owner=new WorldReplicationCommitOwner(7,limit,1,0,64,16384,2000000);
+            var source=new WorldReplicaBuffer(1,0,2000000,limit,1);
+            source.Geometries[0]=new WorldGridGeometry(domain,Vector3.zero,.25f,chunkSize,125,16);
+            for(int x=1;x<limit;x++)
+                source.Spans[x-1]=new WorldCellularSpan(WorldCellularSpanKind.Terrain,
+                    new BoundsInt(new Vector3Int(x*chunkSize,0,0),Vector3Int.one),0,0,0);
+            source.Header=new WorldReplicaHeader(1,0,0,1,limit-1);
+            Assert.That(owner.PayloadCapacityWords,Is.Zero);
+            Assert.That(owner.TryCaptureCommit(source),Is.True,owner.LastFailure.ToString());
+            Assert.That(owner.ChunkCount,Is.EqualTo(limit));
+            // 15 个几何头字 + 每处 10 个跨度字。这个断言可发现按 16384 字为每个地址预分配的回归。
+            Assert.That(owner.PayloadCapacityWords,Is.LessThan(32L*limit));
+            var far=new WorldChunkKey(domain,limit-1,0,0);
+            var near=new WorldChunkKey(domain,1,0,0);
+            var words=new uint[64];
+            Assert.That(owner.TryCopyChunk(far,words,out var distant),Is.True);
+            Assert.That(WorldChunkPayloadCodec.ReadSpan(words,WorldChunkPayloadCodec.SpanOffset(words)).Cells.position.x,
+                Is.EqualTo((limit-1)*chunkSize));
+            Assert.That(owner.TryCopyChunk(near,words,out var first),Is.True);
+
+            var nearCell=new BoundsInt(new Vector3Int(chunkSize,0,0),Vector3Int.one);
+            source.Spans[0]=new WorldCellularSpan(WorldCellularSpanKind.Terrain,nearCell,10,0,0);
+            source.ChangedChunks[0]=near;source.Header=new WorldReplicaHeader(2,0,0,1,1);
+            Assert.That(owner.TryCaptureChangedChunks(source,1),Is.True);
+            Assert.That(owner.TryCopyDelta(near,first.Generation,first.Revision,words,out var delta),Is.True);
+            Assert.That(delta.Revision,Is.EqualTo(first.Revision+1));
+            Assert.That(owner.TryGetCurrentHeader(far,out var unchanged),Is.True);
+            Assert.That(unchanged.Revision,Is.EqualTo(distant.Revision));
+            Assert.That(unchanged.Checksum,Is.EqualTo(distant.Checksum));
+
+            source.ChangedChunks[0]=new WorldChunkKey(domain,limit,0,0);
+            source.Spans[0]=new WorldCellularSpan(WorldCellularSpanKind.Terrain,
+                new BoundsInt(new Vector3Int(limit*chunkSize,0,0),Vector3Int.one),0,0,0);
+            Assert.That(owner.TryCaptureChangedChunks(source,1),Is.False);
+            Assert.That(owner.LastFailure,Is.EqualTo(WorldCommitOwnerFailure.Capacity));
+            Assert.That(owner.ChunkCount,Is.EqualTo(limit));
+            Assert.That(owner.TryCopyChunk(far,words,out var retained),Is.True);
+            Assert.That(retained.Checksum,Is.EqualTo(distant.Checksum));
+        }
+
+        [Test]
+        public void CellularSpansRetryTicksAndLocalRetirementRoundTripWithoutChangingRemoteRevision()
+        {
+            const WorldMaterialDomain domain = WorldMaterialDomain.Cellular;
+            const long retryTick = (1L << 35) + 7;
+            var source = new WorldReplicaBuffer(8, 2, 4096);
+            source.Geometries[0] = new WorldGridGeometry(domain, Vector3.zero, 1, 4, 123, 16);
+            source.Cells[0] = new WorldMaterialCellSample(domain, WorldMaterialStorage.Resident, Vector3Int.zero, 1, 9);
+            source.Cells[1] = new WorldMaterialCellSample(domain, WorldMaterialStorage.Resident, Vector3Int.zero, 7, 7);
+            source.Pending[0] = new WorldPendingDepositSample(domain, 0, 12, Vector3.zero, 5, 0, false,
+                Vector3.zero, Vector3.up, 5, 0, 0, retryTick);
+            var here = new BoundsInt(Vector3Int.zero, Vector3Int.one);
+            source.Spans[0] = new WorldCellularSpan(WorldCellularSpanKind.AuthoredLiquid, here, 1, 16, 0);
+            source.Spans[1] = new WorldCellularSpan(WorldCellularSpanKind.Terrain, here, 0, 0, 0);
+            source.Spans[2] = new WorldCellularSpan(WorldCellularSpanKind.ColdMaterial,
+                new BoundsInt(new Vector3Int(-4,0,0),new Vector3Int(4,4,4)), 11, 0, 16);
+            source.Header = new WorldReplicaHeader(2,2,1,1,3);
+            var owner = Owner(); var words = new uint[128];
+            Assert.That(owner.TryCaptureCommit(source), Is.True);
+            var origin = new WorldChunkKey(domain,0,0,0); var remote = new WorldChunkKey(domain,-1,0,0);
+            Assert.That(owner.TryCopyChunk(origin,words,out var first),Is.True);
+            var decoded = new WorldReplicaBuffer(8,2,4096);
+            Assert.That(WorldChunkPayloadCodec.TryDecode(words,first.WordCount,origin,2,decoded),Is.True);
+            Assert.That(decoded.Geometries[0].BaseVersion,Is.EqualTo(123ul));
+            Assert.That(decoded.Pending[0].RetryTick,Is.EqualTo(retryTick));
+            Assert.That(decoded.Spans[1].OriginalQuantity,Is.EqualTo(16u));
+            Assert.That(decoded.Spans[1].Quantity,Is.EqualTo(0u));
+
+            source.Header = new WorldReplicaHeader(3,0,0,1);
+            source.ChangedChunks[0] = remote;
+            Assert.That(owner.TryCaptureChangedChunks(source,1),Is.True);
+            Assert.That(owner.TryCopyChunk(remote,words,out var retired) && !retired.IsResident,Is.True);
+            Assert.That(owner.TryCopyChunk(origin,words,out var same),Is.True);
+            Assert.That(same.Checksum,Is.EqualTo(first.Checksum));
+            Assert.That(same.Revision,Is.EqualTo(first.Revision));
+            source.Geometries[0] = new WorldGridGeometry(domain,Vector3.zero,1,4,124,16);
+            Assert.That(owner.TryCaptureChangedChunks(source,1),Is.False);
+        }
+
         [Test] public void StorageTransferDoesNotAdvanceRevisionButQuantityDoes()
         {
             var o = Owner(); var b = Sample(); var words = new uint[128];

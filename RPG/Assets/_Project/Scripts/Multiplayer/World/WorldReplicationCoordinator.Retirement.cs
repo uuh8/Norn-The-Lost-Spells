@@ -38,7 +38,7 @@ namespace Game.Multiplayer
         {
             if(!IsAuthority || _stopped || Faulted)return false;
             // 借出的消息尚未完成预算/发送时，不搬任何共享索引。
-            if(_preparedSlot>=0)return true;
+            if(_preparedSlot>=0 || _owner.InactiveChunkCount==0)return true;
             for(int index=_owner.ChunkCount-1;index>=0;index--)
             {
                 var header=_owner.GetChunkHeader(index);if(header.IsResident)continue;
@@ -101,10 +101,12 @@ namespace Game.Multiplayer
             }
             if(!assembler.TryRetireReleasedKey())return Fail("Replica assembler metadata retirement rejected");
             int last=--_slots;
+            _clientIndices.Remove(key);
             RetiredKeys++;
             if(slot!=last)
             {
                 _assemblers[slot]=_assemblers[last];_assemblers[last]=assembler;
+                _clientIndices[_assemblers[slot].Key]=slot;
                 _incoming[slot]=_incoming[last];_clientSubscriptions[slot]=_clientSubscriptions[last];
                 _incomingEpoch[slot]=_incomingEpoch[last];_clientActive[slot]=_clientActive[last];
                 _needsBaseline[slot]=_needsBaseline[last];

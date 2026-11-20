@@ -30,6 +30,15 @@ namespace Game.ElementField
         [Tooltip("固定地层的材质。留空时使用 Unity 基本几何的默认材质。")]
         [SerializeField] private Material _rockSurface, _soilSurface;
         [SerializeField, Range(0, 31)] private int _terrainLayer;
+        [Tooltip("新世界表面与雾材质的构建引用；确保 Native Client 的 Shader Variant 能随地图打包。")]
+        [SerializeField] private Material _liquidSurface, _solidSurface, _gasVolume;
+        public Material LiquidSurface => _liquidSurface;
+        public Material SolidSurface => _solidSurface;
+        public Material GasVolume => _gasVolume;
+
+        [Tooltip("陨石等破坏性命中的最低强度，分别用于固定岩石和泥土。显式挖掘命令由其工具自行授权。")]
+        [SerializeField, Min(0f)] private float _rockImpactResistance = 16f, _soilImpactResistance = 4f;
+        internal float ImpactResistance(MaterialId material) => material == MaterialId.Soil ? _soilImpactResistance : _rockImpactResistance;
 
         internal int Capacity => _capacityPerCell;
         internal int MaximumCells => _maximumOccupiedCells;

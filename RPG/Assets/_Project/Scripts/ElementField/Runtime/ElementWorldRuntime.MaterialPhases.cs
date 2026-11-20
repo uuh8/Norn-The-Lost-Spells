@@ -35,13 +35,21 @@ namespace Game.ElementField
             if (_executionMode == Game.Core.WorldExecutionMode.Replica)
             {
                 if (_replicaStore == null) return false;
+                if (_replicaCellular != null)
+                {
+                    return CellularRestingLiquids != null && CellularRestingLiquids.TryGetCell(cell, out var cold, out _)
+                        && ElementCellMaterialRules.Motion(cold) == ElementCellMotion.Liquid
+                        || _replicaCellular.TryGetContents(cell, out var primary, out _, out var steam, out var toxic)
+                        && (steam != 0 || toxic != 0 || ElementCellMaterialRules.Motion(primary) == ElementCellMotion.Liquid);
+                }
                 // 两个域均已按坐标排序。取一个已安装的组分即可判占据，无需逐材料猜测身份。
                 return _replicaStore.TryGetFirstCell(Game.Core.WorldMaterialDomain.Gas, cell, out _)
                     || _replicaStore.TryGetFirstCell(Game.Core.WorldMaterialDomain.Liquid,
                         _replicaVolumeSettings.WorldCellToLiquidCell(cell), out _);
             }
             if (CellularSimulation != null) return CellularSimulation.HasFluidOrGasAt(cell)
-                || RestingLiquids != null && RestingLiquids.TryGetCell(cell, out _, out _);
+                || RestingLiquids != null && RestingLiquids.TryGetCell(cell, out var cold, out _)
+                && ElementCellMaterialRules.Motion(cold) == ElementCellMotion.Liquid;
             if (_gasRuntime != null)
                 for (int i = 0; i < _gasRuntime.MaterialCount; i++)
                 {

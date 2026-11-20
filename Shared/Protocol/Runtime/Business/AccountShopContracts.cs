@@ -54,7 +54,7 @@ namespace Game.NetworkProtocol
                     throw new ArgumentException("商店报价重复、缺失或数值非法。");
                 if (offer.MaterialKey != 0)
                 {
-                    if (offer.MaterialKey > 8 || (materials & (1 << offer.MaterialKey)) != 0 || !string.IsNullOrEmpty(offer.ContentId))
+                    if (!OwnedMaterialKey.IsKnown(offer.MaterialKey) || (materials & (1 << offer.MaterialKey)) != 0 || !string.IsNullOrEmpty(offer.ContentId))
                         throw new ArgumentException("材料报价必须具有唯一材料身份，不能夹带物品 ContentId。");
                     materials |= (ushort)(1 << offer.MaterialKey);
                 }

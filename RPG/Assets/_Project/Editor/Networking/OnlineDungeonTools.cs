@@ -782,7 +782,9 @@ namespace Game.Project.Editor
             value is Volume || value is UniversalAdditionalLightData || value is OnlineMaterialWorldBinding ||
             value is ElementWorldRuntime || value is ElementFieldSolidBaker || value is ElementWorldExposureSystem ||
             value is LiquidWorldRuntime || value is FixedSolidWorldRuntime || value is GasWorldRuntime ||
-            value is MaterialEnvironmentAuthoring || value is ContainerDepositAdapter || value is MaterialInventoryTransferAdapter ||
+            value is MaterialEnvironmentAuthoring || value is ElementWorldInitialDeposit || value is GridLiquidInitialVolume ||
+            value is StableLiquidRegionAuthoring || value is StableLiquidOutletAuthoring || value is StableLiquidStaticCellAuthoring ||
+            value is ContainerDepositAdapter || value is MaterialInventoryTransferAdapter ||
             IsMaterialRenderer(value.GetType().FullName) || value.GetType().FullName == "Game.Rendering.ReactionBurstVisualController";
 
         private static bool IsControlledPortalBillboard(MonoBehaviour value)
@@ -803,7 +805,7 @@ namespace Game.Project.Editor
             || name == "Game.Rendering.LiquidSurfaceRenderer" || name == "Game.Rendering.StableLiquidSurfaceRenderer"
             || name == "Game.Rendering.FixedSolidSurfaceRenderer" || name == "Game.Rendering.GasFieldVolumeRenderer"
             || name == "Game.Rendering.ElementWorldWaterRenderer" || name == "Game.Rendering.ElementWorldFireRenderer"
-            || name == "Game.Rendering.GpuFireParcelRenderer";
+            || name == "Game.Rendering.GpuFireParcelRenderer" || name == "Game.Rendering.CellularMaterialRenderer";
 
         /// <summary>
         /// Preview只创建内存Profile，绝不修改源Scene/原SO或保存新Asset。沿用原材料Root、位置、三相分辨率、
@@ -814,7 +816,14 @@ namespace Game.Project.Editor
         {
             var worlds = preview.Root.GetComponentsInChildren<ElementWorldRuntime>(true);
             if (worlds.Length != 1) throw new InvalidOperationException("正式地图必须有唯一材料Root。");
+            Game.EditorTools.CellularMapContentSetup.Apply(worlds[0], preview.Id, preview.Path, preview.Root);
             var world = worlds[0]; var data = new SerializedObject(world);
+            foreach (var seed in preview.Root.GetComponentsInChildren<ElementWorldInitialDeposit>(true))
+            {
+                var author = new SerializedObject(seed);
+                author.FindProperty("_world").objectReferenceValue = world;
+                author.ApplyModifiedPropertiesWithoutUndo();
+            }
             var source = data.FindProperty("_profile").objectReferenceValue as ElementWorldProfile;
             if (source == null) throw new InvalidOperationException("原材料世界缺少Profile。");
             var profile = CloneMaterialProfile(preview, source); var config = new SerializedObject(profile);

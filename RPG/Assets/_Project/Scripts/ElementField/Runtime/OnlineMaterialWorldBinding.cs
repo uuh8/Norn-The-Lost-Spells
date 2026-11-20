@@ -12,7 +12,7 @@ namespace Game.ElementField
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class OnlineMaterialWorldBinding : MonoBehaviour, IOnlineMaterialWorldBinding, IOnlineMaterialTransferWorld,
-        IOnlineLiquidMotionWorld
+        IOnlineLiquidMotionWorld, IOnlineCellularDirectoryBinding
     {
         [SerializeField] private ElementWorldRuntime _world;
         [Header("Bounded replication workspace - target-machine validation required")]
@@ -24,6 +24,13 @@ namespace Game.ElementField
         private bool _configured, _detached, _configurationFaulted;
         private WorldExecutionMode _mode;
         private ulong _epoch;
+        private int _cellularChunks;
+        public bool UsesCellularReplication => _world != null && _world.UsesCellularWorld;
+        public bool TrySetCellularDirectoryLimit(int maximumChunks)
+        {
+            if (maximumChunks < 1 || _configured || _detached || gameObject.activeInHierarchy) return false;
+            _cellularChunks = maximumChunks; return true;
+        }
         private string _transferWorldId;
         // 离散装配读取原Adapter的同一ID，避免Multiplayer硬编码第二个WorldId或反向依赖ElementField。
         public string TransferWorldId => _configured && !_detached ? _transferWorldId : null;
@@ -77,15 +84,19 @@ namespace Game.ElementField
                 {
                     _world.ConfigureExecutionMode(mode);
                     _source = new WorldReplicationSource(_world);
-                    _motionSource = new WorldLiquidMotionSource(_world);
-                    _buffer = new WorldReplicaBuffer(_captureCells, _capturePending, _inspectionBudget);
+                    // Cellular 的数量/地形/归档已在同一原生 Chunk 提交，旧粗液体运动 sidecar 没有对应 Solver。
+                    if (!_world.UsesCellularWorld) _motionSource = new WorldLiquidMotionSource(_world);
+                    _buffer = _world.UsesCellularWorld && _cellularChunks>0
+                        ? new WorldReplicaBuffer(_captureCells,_capturePending,_inspectionBudget,-1,_cellularChunks)
+                        : new WorldReplicaBuffer(_captureCells, _capturePending, _inspectionBudget);
                     foreach (var exposure in GetComponentsInChildren<ElementWorldExposureSystem>(true)) exposure.enabled = true;
                     // Renderer脚本已剥除，保留CPU MeshCollider；静态关卡的Renderer不属于材料子树，不在这里改动。
                     foreach (var renderer in _world.GetComponentsInChildren<Renderer>(true)) renderer.enabled = false;
                 }
                 else
                 {
-                    _replica = new WorldReplicaStore(epoch, _replicaChunks, _captureCells, _capturePending, _maximumChunkWords);
+                    int chunks=_world.UsesCellularWorld && _cellularChunks>0 ? _cellularChunks : _replicaChunks;
+                    _replica = new WorldReplicaStore(epoch, chunks, _captureCells, _capturePending, _maximumChunkWords);
                     _world.ConfigureReplica(_replica);
                     // ConfigureReplica先读取三相可信Profile建立readmodel，再删除数量Owner，避免留下可被误调用的写对象。
                     StripOwners(mode, true);

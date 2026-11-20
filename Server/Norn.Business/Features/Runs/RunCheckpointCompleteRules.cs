@@ -165,7 +165,7 @@ internal static class RunCheckpointCompleteRules
             RequireLossOwner(lost.PlayerId, lost.ActorId, owners, context.ExitedActors);
             if (lost.Source is not (OnlineRunAssetCheckpointLostMaterial.ContainerTransitSource or OnlineRunAssetCheckpointLostMaterial.SpellOutputSource
                     or OnlineRunAssetCheckpointLostMaterial.FinalDeathSource)
-                || lost.MaterialKey is < 1 or > 8 || !losses.TryAdd((lost.PlayerId, lost.Source, lost.MaterialKey), lost.Quantity)) throw Failure();
+                || !OwnedMaterialKey.IsKnown(lost.MaterialKey) || !losses.TryAdd((lost.PlayerId, lost.Source, lost.MaterialKey), lost.Quantity)) throw Failure();
             if (lost.Source == OnlineRunAssetCheckpointLostMaterial.FinalDeathSource
                 && (!context.ExitedActors.TryGetValue(lost.PlayerId, out ulong deadActor) || deadActor != lost.ActorId
                     || !context.FinalDeathLosses.TryGetValue(lost.PlayerId, out var destroyed)
@@ -204,7 +204,7 @@ internal static class RunCheckpointCompleteRules
         ushort keys = 0; ulong total = 0;
         foreach (var part in parts)
         {
-            if (part == null || part.MaterialKey is < 1 or > 8 || part.Quantity == 0 || (keys & (1 << part.MaterialKey)) != 0) throw Failure();
+            if (part == null || !OwnedMaterialKey.IsKnown(part.MaterialKey) || part.Quantity == 0 || (keys & (1 << part.MaterialKey)) != 0) throw Failure();
             keys |= (ushort)(1 << part.MaterialKey);
             try { total = checked(total + part.Quantity); } catch (OverflowException) { throw Failure(); }
         }

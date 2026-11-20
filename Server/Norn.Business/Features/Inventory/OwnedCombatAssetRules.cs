@@ -133,7 +133,7 @@ public static class OwnedCombatAssetRules
         ulong total = 0;
         foreach (var part in state.Components)
         {
-            if (part == null || part.MaterialKey is < 1 or > 8 || part.Quantity == 0 ||
+            if (part == null || !OwnedMaterialKey.IsKnown(part.MaterialKey) || part.Quantity == 0 ||
                 (seen & (1 << part.MaterialKey)) != 0 || (definition.ContainerMaterialsMask & (1 << part.MaterialKey)) == 0)
                 throw new OnlineFailure(409, "InvalidCombatContainer");
             seen |= (ushort)(1 << part.MaterialKey);
@@ -186,7 +186,7 @@ public static class OwnedCombatAssetRules
             if (state != null) throw new OnlineFailure(409, "InvalidCombatAsset");
             return;
         }
-        if (state == null || state.SchemaVersion != 1 || state.MaterialKey is < 1 or > 8
+        if (state == null || state.SchemaVersion != 1 || !OwnedMaterialKey.IsKnown(state.MaterialKey)
             || state.MaterialKey != definition.MaterialKey || state.Quantity == 0 || state.Quantity > definition.MaterialItemCapacityGmu)
             throw new OnlineFailure(409, "InvalidCombatMaterial");
     }

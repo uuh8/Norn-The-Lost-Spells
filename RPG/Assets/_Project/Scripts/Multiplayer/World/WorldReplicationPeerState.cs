@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Game.Core;
 
 namespace Game.Multiplayer
@@ -27,6 +28,7 @@ namespace Game.Multiplayer
         }
         private readonly Flight[] _flights;
         private readonly WorldChunkKey[] _keys;
+        private readonly Dictionary<WorldChunkKey,int> _indices;
         private readonly ulong[] _generations,_revisions;
         private readonly int _pageWords;
         private readonly double _bytesPerSecond,_burst;
@@ -73,6 +75,7 @@ namespace Game.Multiplayer
             if(maximumPagesPerRound<1 || maximumPagesPerRound>8)throw new ArgumentOutOfRangeException(nameof(maximumPagesPerRound));
             MaximumPagesPerRound=maximumPagesPerRound;
             _keys=new WorldChunkKey[chunks];_generations=new ulong[chunks];_revisions=new ulong[chunks];
+            _indices=new Dictionary<WorldChunkKey,int>(Math.Min(chunks,32));
             // 仅构造时分配固定payload缓冲。热路径不创建集合、复制整世界或按ACK速度扩容队列。
             _flights=new Flight[maximumInFlight];for(int i=0;i<_flights.Length;i++)_flights[i]=new Flight(maxWords);
             _pageWords=pageWords;_bytesPerSecond=bytesPerSecond;_burst=burst;_tokens=burst;
@@ -80,6 +83,7 @@ namespace Game.Multiplayer
         public void Reset(int connectionId,uint epoch)
         {
             ConnectionId=connectionId;ConnectionEpoch=epoch;_slots=0;_inFlightCount=0;_selectedFlight=_nextSendFlight=0;PagesSentThisRound=0;
+            _indices.Clear();
             _tokens=_burst;_lastRefill=double.NaN;LastFreezeKind=WorldReplicationFreezeKind.None;
             for(int i=0;i<_flights.Length;i++)
             {var flight=_flights[i];flight.Active=false;flight.Cursor=0;flight.Header=default;flight.Kind=WorldReplicationFreezeKind.None;flight.LastSend=0;}
@@ -97,7 +101,8 @@ namespace Game.Multiplayer
             if(_inFlightCount==_flights.Length || FindFlight(key)>=0 || owner==null || ConnectionEpoch==0 || !double.IsFinite(now))return false;
             int free=0;while(_flights[free].Active)free++;
             var flight=_flights[free];
-            if(!owner.TryCopyChunk(key,flight.Frozen,out var current))return false;
+            // 扫描已安装列表时只读轻量 Header；真正入选本轮的 Key 才复制一次冻结正文。
+            if(!owner.TryGetCurrentHeader(key,out var current))return false;
             int slot=Find(key);
             if(slot>=0 && _generations[slot]==current.Generation && _revisions[slot]==current.Revision)return false;
             if(slot<0)
@@ -122,6 +127,7 @@ namespace Game.Multiplayer
                     reason=WorldReplicationFreezeKind.HistoryGapBaseline;
                 }
             }
+            else if(!owner.TryCopyChunk(key,flight.Frozen,out current))return false;
             flight.Header=current;flight.Cursor=0;flight.Active=true;flight.LastSend=now;flight.Kind=reason;
             _selectedFlight=free;_inFlightCount++;LastFreezeKind=reason;return true;
         }
@@ -165,7 +171,7 @@ namespace Game.Multiplayer
             var flight=_flights[pending];if(flight.Cursor!=Pages(flight))return false;
             var h=flight.Header;
             if(key!=h.Key || generation!=h.Generation || revision!=h.Revision || snapshotId!=h.SnapshotId || checksum!=h.Checksum)return false;
-            int slot=Find(key);if(slot<0){if(_slots==_keys.Length)return false;slot=_slots++;_keys[slot]=key;}
+            int slot=Find(key);if(slot<0){if(_slots==_keys.Length)return false;slot=_slots++;_keys[slot]=key;_indices.Add(key,slot);}
             _generations[slot]=generation;_revisions[slot]=revision;ReleaseFlight(pending);return true;
         }
         public bool RestartTimedOutTransfer(double now,double timeout)
@@ -197,13 +203,14 @@ namespace Game.Multiplayer
             if(HasPendingFor(key))return false;
             int slot=Find(key);if(slot<0)return true;
             int last=--_slots;
-            if(slot!=last){_keys[slot]=_keys[last];_generations[slot]=_generations[last];_revisions[slot]=_revisions[last];}
+            _indices.Remove(key);
+            if(slot!=last){_keys[slot]=_keys[last];_generations[slot]=_generations[last];_revisions[slot]=_revisions[last];_indices[_keys[slot]]=slot;}
             _keys[last]=default;_generations[last]=_revisions[last]=0;return true;
         }
         private void ReleaseFlight(int index)
         {_flights[index].Active=false;_flights[index].Cursor=0;_inFlightCount--;}
         private int FindFlight(WorldChunkKey key)
         {for(int i=0;i<_flights.Length;i++)if(_flights[i].Active && _flights[i].Header.Key==key)return i;return -1;}
-        private int Find(WorldChunkKey key){for(int i=0;i<_slots;i++)if(_keys[i]==key)return i;return -1;}
+        private int Find(WorldChunkKey key)=>_indices.TryGetValue(key,out int index)?index:-1;
     }
 }

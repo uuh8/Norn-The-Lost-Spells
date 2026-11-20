@@ -13,7 +13,7 @@ namespace Game.Rendering
     /// 网格缓存按渲染页划分，可以独立于 Solver Chunk；固定岩层与碰撞由 ElementField 的提交结果维护。
     /// </summary>
     [DisallowMultipleComponent, RequireComponent(typeof(ElementWorldRuntime))]
-    public sealed class CellularMaterialRenderer : MonoBehaviour
+    public sealed partial class CellularMaterialRenderer : MonoBehaviour
     {
         private const int PageShift = 3;
         internal const int PageSize = 1 << PageShift;
@@ -21,6 +21,13 @@ namespace Game.Rendering
         private const int TextureCells = TextureSize * TextureSize * TextureSize;
         private const int RetainedEmptyPages = 8;
         private const float GasBlendSeconds = .3f;
+        private static readonly int MotionClock = Shader.PropertyToID("_CellularMotionClock");
+        private static readonly int MotionRate = Shader.PropertyToID("_CellularMotionRate");
+        private readonly Dictionary<Vector3Int, Sample> _departures = new Dictionary<Vector3Int, Sample>(1024);
+        private int _departureFrame = -1;
+        private float MotionDuration => Mathf.Clamp(_world.CellularTickDuration, .025f, .25f);
+        internal static readonly Vector3Int[] Faces = { Vector3Int.down, Vector3Int.up, Vector3Int.left, Vector3Int.right,
+            Vector3Int.back, Vector3Int.forward };
         [SerializeField] private Material _liquidSurface;
         [SerializeField] private Material _solidSurface;
         [SerializeField] private Material _gasVolume;
@@ -30,7 +37,8 @@ namespace Game.Rendering
         {
             internal MaterialId Material;
             internal uint Quantity, Steam, Toxic;
-            internal int PageIndex;
+            internal int PageIndex, ArrivalFrame;
+            internal float ArrivalTime;
             internal bool Resting;
             internal bool HasGas => Steam != 0 || Toxic != 0;
             internal bool IsEmpty => Quantity == 0 && !HasGas;
@@ -41,7 +49,7 @@ namespace Game.Rendering
             internal readonly List<Vector3Int> Cells = new List<Vector3Int>(4);
             internal ElementChunkKey Key;
             internal int SurfaceCells, GasCells;
-            internal bool SurfaceDirty, GasDirty, Queued, HasSurface, HasGasTexture;
+            internal bool SurfaceDirty, GasDirty, HasSurface, HasGasTexture;
             internal float GasBlendStart;
             internal Mesh Surface;
             internal Texture3D GasTexture;
@@ -52,7 +60,8 @@ namespace Game.Rendering
         private readonly Dictionary<ElementChunkKey, Page> _pages = new Dictionary<ElementChunkKey, Page>();
         private readonly Dictionary<Vector3Int, Sample> _samples = new Dictionary<Vector3Int, Sample>();
         private readonly Stack<Page> _empty = new Stack<Page>(RetainedEmptyPages);
-        private readonly Queue<Page> _dirty = new Queue<Page>();
+        private readonly List<Page> _visiblePages = new List<Page>(64);
+        private int _rebuildCursor;
         private readonly Plane[] _frustum = new Plane[6];
         private readonly Color32[] _gasPixels = new Color32[TextureCells];
         private readonly CellularMaterialSurfaceMesh _mesher = new CellularMaterialSurfaceMesh();
@@ -78,7 +87,11 @@ namespace Game.Rendering
             _observedWorld = null;
             RenderPipelineManager.beginCameraRendering -= ObserveWorld;
             RenderPipelineManager.beginCameraRendering += ObserveWorld;
+            ElementWorldRuntime.CellularReplicaPresentationReady -= ObserveReplica;
+            ElementWorldRuntime.CellularReplicaPresentationReady += ObserveReplica;
         }
+
+        private static void ObserveReplica(ElementWorldRuntime world) => AttachToWorld(world);
 
         private static void ObserveWorld(ScriptableRenderContext context, Camera camera)
         {
@@ -90,7 +103,7 @@ namespace Game.Rendering
 
         internal static bool AttachToWorld(ElementWorldRuntime world)
         {
-            if (world == null || world.ExecutionMode != WorldExecutionMode.SinglePlayer || !world.UsesCellularWorld)
+            if (world == null || world.ExecutionMode == WorldExecutionMode.Authority || !world.UsesCellularWorld)
                 return false;
             if (!world.TryGetComponent<CellularMaterialRenderer>(out _))
                 world.gameObject.AddComponent<CellularMaterialRenderer>();
@@ -106,13 +119,17 @@ namespace Game.Rendering
         private void TryBind()
         {
             if (_bound || _world == null || !_world.isActiveAndEnabled || !_world.IsInitialized
-                || !_world.UsesCellularWorld || _world.ExecutionMode != WorldExecutionMode.SinglePlayer
+                || !_world.UsesCellularWorld || _world.ExecutionMode == WorldExecutionMode.Authority
                 || _world.CellularCellCapacity == 0) return;
 
-            _liquid = ResolveMaterial(_liquidSurface, "Game/Elemental/Cartoon Liquid", true, out _ownsLiquid);
-            _solid = ResolveMaterial(_solidSurface, "Game/Materials/FixedSolid", true, out _ownsSolid);
+            var definition = _world.CellularDefinition;
+            var liquidTemplate = _liquidSurface != null ? _liquidSurface : definition?.LiquidSurface;
+            var solidTemplate = _solidSurface != null ? _solidSurface : definition?.SolidSurface;
+            _liquid = ResolveMaterial(liquidTemplate, "Game/Elemental/Cartoon Liquid", true, out _ownsLiquid);
+            _solid = ResolveMaterial(solidTemplate, "Game/Materials/FixedSolid", true, out _ownsSolid);
             var volumeRenderer = GetComponent<GasFieldVolumeRenderer>();
             var gasTemplate = _gasVolume != null || volumeRenderer == null ? _gasVolume : volumeRenderer.SharedVolumeMaterial;
+            if (gasTemplate == null) gasTemplate = definition?.GasVolume;
             _gas = ResolveMaterial(gasTemplate, "Game/Materials/RealGasVolume", false, out _ownsGas);
             if (_liquid == null || _solid == null || _gas == null)
                 GameLog.Error("细格材质或 Shader 缺失；请在 CellularMaterialRenderer 指定液体、固体与 RealGasVolume 材质。", "Rendering");
@@ -157,9 +174,19 @@ namespace Game.Rendering
                 page = _empty.Count != 0 ? _empty.Pop() : new Page();
                 page.Key = key;
                 _pages.Add(key, page);
+                IndexPage(key, true);
             }
             _samples.TryGetValue(cell, out var old);
             bool surfaceChanged = old.Material != sample.Material || old.Quantity != sample.Quantity;
+            if (surfaceChanged && old.Quantity != 0 && ElementCellMaterialRules.Motion(old.Material) == ElementCellMotion.Liquid &&
+                _world.CellularRestingLiquids?.TryGetCell(cell, out _, out _) != true)
+            {
+                if (_departureFrame != Time.frameCount) { _departures.Clear(); _departureFrame = Time.frameCount; }
+                if (_departures.Count < 1024) _departures[cell] = old;
+            }
+            if (sample.Quantity != 0 && old.Quantity == 0)
+            { sample.ArrivalFrame = Time.frameCount; sample.ArrivalTime = Time.time; }
+            else { sample.ArrivalFrame = old.ArrivalFrame; sample.ArrivalTime = old.ArrivalTime; }
             bool gasChanged = old.Steam != sample.Steam || old.Toxic != sample.Toxic;
             if (!surfaceChanged && !gasChanged)
             {
@@ -200,6 +227,7 @@ namespace Game.Rendering
             }
             if (surfaceChanged || restingChanged || gasChanged)
                 MarkNeighborPages(cell, key, surfaceChanged || restingChanged, gasChanged);
+            if (page.Cells.Count == 0) ReleasePage(page);
         }
 
         private void MarkNeighborPages(Vector3Int cell, ElementChunkKey key, bool surfaceChanged, bool gasChanged)
@@ -214,9 +242,6 @@ namespace Game.Rendering
                         {
                             neighbor.SurfaceDirty |= surfaceChanged;
                             neighbor.GasDirty |= gasChanged;
-                            if (neighbor.Queued) continue;
-                            neighbor.Queued = true;
-                            _dirty.Enqueue(neighbor);
                         }
         }
 
@@ -278,6 +303,34 @@ namespace Game.Rendering
             }
         }
 
+        // 两个相邻的已提交样本，恰有一处同材同量消失和一处出现时，可连续显示独立水滴。
+        // 采样模糊、Interest 切换或多滴分流不补造轨迹。已经完成的插值由 Shader 自动归零。
+        internal Vector4 DropletArrival(Vector3Int cell, Sample arrival)
+        {
+            if (_departureFrame != arrival.ArrivalFrame || _departures.Count == 0 ||
+                Time.time - arrival.ArrivalTime >= MotionDuration) return default;
+            Vector3Int source = default;
+            int matches = 0;
+            foreach (var face in Faces)
+            {
+                var neighbor = cell + face;
+                if (OffsetWrapped(cell, face, neighbor) || !_departures.TryGetValue(neighbor, out var previous)
+                    || previous.Material != arrival.Material || previous.Quantity != arrival.Quantity || Read(neighbor).Quantity != 0) continue;
+                source = neighbor;
+                if (++matches > 1) return default;
+            }
+            if (matches != 1) return default;
+            foreach (var face in Faces)
+            {
+                var other = source + face;
+                if (other == cell || OffsetWrapped(source, face, other)) continue;
+                var next = Read(other);
+                if (next.Material == arrival.Material && next.Quantity == arrival.Quantity && next.ArrivalFrame == arrival.ArrivalFrame) return default;
+            }
+            var delta = source - cell;
+            return new Vector4(delta.x, delta.y, delta.z, arrival.ArrivalTime + MotionDuration);
+        }
+
         private static int PreviousPage(int value) => (value == int.MinValue ? value : value - 1) >> PageShift;
 
         private void SeedPage(Page page, BoundsInt bounds, HashSet<Vector3Int> touching)
@@ -305,26 +358,25 @@ namespace Game.Rendering
             _resting.Refresh(_world.CellularRestingLiquids, this);
             float meters = _world.CellSize * PageSize;
             int limit = Mathf.Max(1, _maximumPageRebuildsPerFrame);
-            int queued = _dirty.Count;
-            for (int i = 0, rebuilt = 0; i < queued && rebuilt < limit; i++)
+            CollectVisiblePages(meters);
+            for (int i = 0, rebuilt = 0; i < _visiblePages.Count && rebuilt < limit; i++)
             {
-                var page = _dirty.Dequeue();
-                if (page.SurfaceCells == 0 && page.GasCells == 0)
-                {
-                    ReleasePage(page);
-                    continue;
-                }
-                if (!IsVisible(page, meters)) { _dirty.Enqueue(page); continue; }
-                page.Queued = false;
+                if (_rebuildCursor >= _visiblePages.Count) _rebuildCursor = 0;
+                var page = _visiblePages[_rebuildCursor++];
+                if (!page.SurfaceDirty && !page.GasDirty) continue;
                 if (page.SurfaceDirty) RebuildSurface(page);
                 if (page.GasDirty) RebuildGas(page);
                 page.SurfaceDirty = page.GasDirty = false;
                 rebuilt++;
             }
-            _resting.Draw(_world, _camera, _frustum, _liquid, _surfaceProperties, gameObject.layer, this);
-            foreach (var page in _pages.Values)
+            for (int slot = 0; slot < CellularMaterialSurfaceMesh.LiquidSlots; slot++)
             {
-                if (!IsVisible(page, meters)) continue;
+                _surfaceProperties[slot].SetFloat(MotionClock, Time.time);
+                _surfaceProperties[slot].SetFloat(MotionRate, 1f / MotionDuration);
+            }
+            _resting.Draw(_world, _camera, _frustum, _liquid, _solid, _surfaceProperties, gameObject.layer, this, limit);
+            foreach (var page in _visiblePages)
+            {
                 Vector3 position = Position(page, meters);
                 if (page.SurfaceCells > 0 && page.HasSurface)
                 {
@@ -355,7 +407,7 @@ namespace Game.Rendering
             => _world.Origin + new Vector3(page.Key.X, page.Key.Y, page.Key.Z) * meters;
 
         private bool IsVisible(Page page, float meters)
-            => GeometryUtility.TestPlanesAABB(_frustum, new Bounds(Position(page, meters) + Vector3.one * (.5f * meters), Vector3.one * meters));
+            => GeometryUtility.TestPlanesAABB(_frustum, new Bounds(Position(page, meters) + Vector3.one * (.5f * meters), Vector3.one * (meters + 2f * _world.CellSize)));
 
         private void RebuildSurface(Page page)
         {
@@ -406,7 +458,8 @@ namespace Game.Rendering
         private void ReleasePage(Page page)
         {
             _pages.Remove(page.Key);
-            page.Queued = page.SurfaceDirty = page.GasDirty = page.HasSurface = page.HasGasTexture = false;
+            IndexPage(page.Key, false);
+            page.SurfaceDirty = page.GasDirty = page.HasSurface = page.HasGasTexture = false;
             if (_empty.Count < RetainedEmptyPages) _empty.Push(page);
             else DestroyPage(page);
         }
@@ -421,8 +474,10 @@ namespace Game.Rendering
         {
             if (_bound && _world != null) _world.CellularContentsChanged -= RefreshCell;
             _bound = false;
-            _dirty.Clear();
+            _visiblePages.Clear();
+            ClearPageIndex();
             _samples.Clear();
+            _departures.Clear(); _departureFrame = -1;
             _resting.Clear();
             foreach (var page in _pages.Values) DestroyPage(page);
             _pages.Clear();

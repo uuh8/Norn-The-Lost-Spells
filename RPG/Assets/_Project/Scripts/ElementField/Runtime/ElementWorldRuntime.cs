@@ -169,6 +169,7 @@ namespace Game.ElementField
             if (_executionMode == WorldExecutionMode.Replica)
             {
                 EnableReplicaPresentationInterest();
+                if (_replicaCellular != null) CellularReplicaPresentationReady?.Invoke(this);
                 return;
             }
             if (!IsInitialized && !TryInitialize())
@@ -183,12 +184,15 @@ namespace Game.ElementField
                     "Another Element Runtime already owns the scene write sink.",
                     "ElementField");
                 enabled = false;
+                return;
             }
+            if (CellularSimulation != null) EventBus<TerrainImpactEvent>.Subscribe(OnTerrainImpact);
             EnableActivitySources();
         }
 
         private void OnDisable()
         {
+            EventBus<TerrainImpactEvent>.Unsubscribe(OnTerrainImpact);
             DisableReplicaPresentationInterest();
             DisableActivitySources();
             ElementRuntimeRegistry.Unregister(this);
@@ -196,7 +200,7 @@ namespace Game.ElementField
 
         private void Update()
         {
-            if (_executionMode == WorldExecutionMode.Replica) { _replicaSolids?.PresentOneChunk(); return; }
+            if (_executionMode == WorldExecutionMode.Replica) { _replicaSolids?.PresentOneChunk(); PublishReplicaCellularPresentation(); return; }
             // 只有时间 Owner 可以覆盖该次推进的诊断。Authority 的外部 Step 可能先于本 Update 执行，
             // 若先清零再判 mode，会让真实推进数取决于 Script Execution Order。
             if (_executionMode != WorldExecutionMode.SinglePlayer) return;
@@ -233,8 +237,12 @@ namespace Game.ElementField
         public bool TryEnqueueWrite(in ElementWriteRequest request)
         {
             if (OwnsCellularMaterial(request.MaterialKind))
-                return CanAcceptWorldWrites && !IsWorldStepInProgress && ValidCellularWrite(in request)
-                    && RetainWriteActivity(in request) && _writeQueue.TryEnqueue(in request);
+                {
+                if (!CanAcceptWorldWrites || IsWorldStepInProgress || !ValidCellularWrite(in request)
+                    || !RetainWriteActivity(in request) || !_writeQueue.TryEnqueue(in request)) return false;
+                NotifyExternalMaterialInjection(request.MaterialKind, request.TotalAmount);
+                return true;
+            }
             // Reserve/Commit/Cancel 会同步调用外部实现，期间不允许另一条入队改变同一个数量世界。
             // 内部 Stage/Undo 不经此门，仍由持有事务所有权的 Port 完成原有提交或回滚流程。
             return CanAcceptWorldWrites && !IsMaterialTransactionInProgress
@@ -327,6 +335,7 @@ namespace Game.ElementField
 
         public bool IsSolid(Vector3Int globalCell)
         {
+            if (_replicaCellular != null) return IsMaterialCellBlocked(globalCell);
             if (CellularSimulation != null)
                 return IsCellularBlockingCell(globalCell) || IsEnvironmentBlockedForCells(globalCell);
             if (_executionMode == WorldExecutionMode.Replica) return _solidBaker != null && _solidBaker.SampleEnvironmentSolidWorldCell(globalCell, _origin, CellSize)
@@ -384,6 +393,8 @@ namespace Game.ElementField
             if (_executionMode == WorldExecutionMode.Replica)
             {
                 if (TryGetReplicaLegacyCell(globalCell, out var legacy) && legacy.MaterialKind == material) { amount = legacy.Amount; return true; }
+                if (_replicaCellular != null && _replicaCellular.TryGetQuantity(globalCell, material, out var quantity, out _))
+                { amount = (byte)Math.Max(1UL, (ulong)quantity * 255 / _replicaCellular.Geometry.CellCapacity); return true; }
                 if (_replicaSolids != null && _replicaSolids.TryGetAmount(globalCell, material, out amount)) return true;
                 if (_replicaGases != null && _replicaGases.TryGetAmount(globalCell, material, out amount)) return true;
                 if (_replicaLiquids != null && _replicaLiquids.TryGetAmount(_replicaVolumeSettings.WorldCellToLiquidCell(globalCell), material, out amount)) return true;
@@ -446,9 +457,9 @@ namespace Game.ElementField
                 return false;
             }
             if (_executionMode == WorldExecutionMode.Authority
-                && _profile.WaterSimulationMode != WaterSimulationMode.GridLiquid)
+                && !UsesCellularWorld && _profile.WaterSimulationMode != WaterSimulationMode.GridLiquid)
             {
-                GameLog.Error("Authority requires an explicit CPU GridLiquid profile; hardware fallback is not authority configuration.", "ElementField");
+                GameLog.Error("Authority requires an explicit CPU Cellular or GridLiquid profile; hardware fallback is not authority configuration.", "ElementField");
                 return false;
             }
             if (_profile.MaterialCatalog == null
@@ -661,7 +672,7 @@ namespace Game.ElementField
                 _materialQuery = new MaterialStateQueryRouter(finalRoutes, this,
                     _liquidOccupancy, _gridLiquidRuntime, _fixedSolidRuntime, _gasRuntime);
                 if (UsesCellularWorld) InitializeCellularCombustion();
-                else InitializeMaterialConversions();
+                InitializeMaterialConversions();
                 IsInitialized = true;
 
                 RefreshInterestChunk();
@@ -671,6 +682,16 @@ namespace Game.ElementField
             catch (Exception exception)
             {
                 DisposeCellularWorld();
+                if (exception is ContentMigrationException && _selectedContentProfile != null)
+                {
+                    // 此时路由与 IsInitialized 尚未发布，临时 Owner 随 Dispose 一起释放。
+                    // 保留作者数据让原 Grid 后端的 Start 完成一次注入，不会把半笔迁移带进回退世界。
+                    _selectedContentProfile = null;
+                    _mapSources = null;
+                    _initialContents = null;
+                    GameLog.Warn($"地图 {_cellularMapContentId} 使用原材料后端：{exception.Message}", "ElementField");
+                    return TryInitialize();
+                }
                 GameLog.Error(
                     $"ElementWorldRuntime initialization failed: {exception.Message}",
                     "ElementField");
@@ -814,7 +835,7 @@ namespace Game.ElementField
                     in _settings);
             }
             simulationStats.ProcessedWrites = writeStats.ProcessedWrites;
-            _conversionScheduler?.Step(_tickInterval);
+            if (CellularSimulation == null) _conversionScheduler?.Step(_tickInterval);
             simulationStats.RejectedWrites = writeStats.RejectedWrites;
             _lastStats = simulationStats;
             _processedWriteCount += (uint)simulationStats.ProcessedWrites;
@@ -840,6 +861,8 @@ namespace Game.ElementField
         private void OnDestroy()
         {
             DisposeCellularWorld();
+            _replicaCellular = null;
+            _replicaCellNotices.Clear(); _replicaTerrainNotices.Clear();
             DisableReplicaPresentationInterest();
             _replicaSolids?.Dispose();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

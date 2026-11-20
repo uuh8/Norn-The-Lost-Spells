@@ -13,6 +13,10 @@ namespace Game.ElementField
         private struct Candidate
         { internal MaterialConversionAddress Address; internal double Credit, LastTime, Cooldown; internal int Rule, Epoch; }
         private readonly ElementWorldRuntime _world;
+        private readonly ElementCellSimulation _cells;
+        private uint CellCapacity => _cells != null ? _cells.CellCapacity : (uint)_liquid.CellCapacityGmu;
+        private bool Read(MaterialConversionAddress address, out uint quantity) => _cells != null
+            ? _world.TryGetCellularQuantity(address.Cell, address.Material, out quantity) : _port.Read(address, out quantity);
         private readonly LiquidWorldRuntime _liquid;
         private readonly FixedSolidWorldRuntime _solid;
         private readonly GasWorldRuntime _gas;
@@ -26,6 +30,7 @@ namespace Game.ElementField
         private readonly ElementWorldActivityRegions _previousDomain=new ElementWorldActivityRegions();
         private readonly MaterialEnvironmentAuthoring[] _environments=new MaterialEnvironmentAuthoring[64];
         private readonly bool[] _ambientLiquidCandidates=new bool[256];
+        private readonly bool[] _enabledSource = new bool[256];
         private int _ambientLiquidCount;
         private int _head,_tail,_count,_freeCount,_environmentCount,_zoneCursor,_zoneCell,_epoch,_commits,_solidCommits;
         private int _idleSearchRemaining=64;
@@ -33,7 +38,7 @@ namespace Game.ElementField
         private bool _domainWasNull=true;
         private bool _recover, _recoverAgain;
         private int _recoveryBackend, _recoveryCursor;
-        internal MaterialWorldQuantityLedger Ledger { get; }=new MaterialWorldQuantityLedger();
+        internal MaterialWorldQuantityLedger Ledger { get; }
         internal uint CandidateOverflows { get; private set; }
         internal uint DeferredTransactions { get; private set; }
         internal int ProcessedLastTick { get; private set; }
@@ -41,19 +46,24 @@ namespace Game.ElementField
         internal MaterialConversionScheduler(ElementWorldRuntime world, LiquidWorldRuntime liquid, FixedSolidWorldRuntime solid, GasWorldRuntime gas, MaterialConversionProfile profile)
         {
             _world=world; _liquid=liquid; _solid=solid; _gas=gas; _profile=profile;
+            _cells = world.CellularSimulation;
+            Ledger = world.CellularLedger ?? new MaterialWorldQuantityLedger();
             var ambient=new MaterialEnvironmentSample(profile.AmbientTemperature,profile.AmbientDryness);
             for(int i=0;i<profile.RuleCount;i++)
             {
                 var rule=profile.GetRule(i);
-                if(liquid.Supports(rule.Source) && MaterialConversionEvaluator.Matches(in rule,in ambient) && !_ambientLiquidCandidates[(byte)rule.Source])
+                if (!rule.Disabled) _enabledSource[(byte)rule.Source] = true;
+                if((_cells != null || liquid.Supports(rule.Source)) && MaterialConversionEvaluator.Matches(in rule,in ambient) && !_ambientLiquidCandidates[(byte)rule.Source])
                 { _ambientLiquidCandidates[(byte)rule.Source]=true; _ambientLiquidCount++; }
             }
-            _port=new MaterialConversionWorldPort(world,liquid,solid,gas);
-            _transaction=new MaterialConversionTransaction(_port,Ledger);
+
             int capacity=profile.MaximumCandidates;
             _candidates=new Candidate[capacity]; _queue=new int[capacity]; _free=new int[capacity];
             _indices=new Dictionary<MaterialConversionAddress,int>(capacity);
             for(int i=0;i<capacity;i++) _free[_freeCount++]=capacity-1-i;
+            if (_cells != null) return;
+            _port=new MaterialConversionWorldPort(world,liquid,solid,gas);
+            _transaction=new MaterialConversionTransaction(_port,Ledger);
             liquid.SetConversionObserver(NotifyLiquid); solid.SetConversionObserver(NotifySolid); gas.SetConversionObserver(NotifyGas);
             liquid.SetMaterialSolidOccupancy(solid);
             liquid.SetConversionAccounting(Ledger.RecordExternal,Ledger.RecordExplicitConsumption);
@@ -66,6 +76,24 @@ namespace Game.ElementField
                 Ledger.RecordExternal(material,liquid.MaterialQuantity(material)+liquid.PendingMaterialQuantity(material)
                     +solid.MaterialQuantity(material)+solid.PendingMaterialQuantity(material)+gas.MaterialQuantity(material)+gas.PendingMaterialQuantity(material));
             }
+        }
+        internal void ObserveCellular(Vector3Int cell, bool explicitCondition = false)
+        {
+            if (!explicitCondition && _ambientLiquidCount == 0) return;
+            if (!_world.TryGetCellularContents(cell, out var bulk, out _, out var steam, out var vapor))
+            {
+                if (_world.RestingLiquids.TryGetCell(cell, out var resting, out _)) ObservePresent(cell, resting, explicitCondition);
+                return;
+            }
+            ObservePresent(cell, bulk, explicitCondition);
+            if (steam > 0) ObservePresent(cell, MaterialId.Steam, explicitCondition);
+            if (vapor > 0) ObservePresent(cell, MaterialId.ToxicVapor, explicitCondition);
+        }
+        private void ObservePresent(Vector3Int cell, MaterialId material, bool explicitCondition)
+        {
+            if (material == MaterialId.Empty) return;
+            if (_ambientLiquidCandidates[(byte)material] || explicitCondition && _enabledSource[(byte)material])
+                Enqueue(new MaterialConversionAddress(cell, material));
         }
         internal void NotifyLiquid(Vector3Int cell)
         {
@@ -135,6 +163,13 @@ namespace Game.ElementField
         {
             for(int i=0;i<count;i++)
             {
+                if (_cells != null)
+                {
+                    ObserveCellular(samples[i].GlobalCell, true);
+                    foreach (var face in ElementCellSimulation.Faces)
+                        if (ElementCellSimulation.Offset(samples[i].GlobalCell, face, out var adjacent)) ObserveCellular(adjacent, true);
+                    continue;
+                }
                 var cell=_liquid.WorldCellToLiquidCell(samples[i].GlobalCell);
                 Enqueue(new MaterialConversionAddress(cell,MaterialId.Water));
                 Enqueue(new MaterialConversionAddress(cell,MaterialId.Sticky));
@@ -149,7 +184,7 @@ namespace Game.ElementField
             {
                 int index=_queue[_head]; _head=(_head+1)%_queue.Length; _count--;
                 Candidate candidate=_candidates[index]; ProcessedLastTick++;
-                if(!_port.Read(candidate.Address,out uint quantity)) { Release(index); continue; }
+                if(!Read(candidate.Address,out uint quantity)) { Release(index); continue; }
                 bool active=_world.IsConversionAddressActive(candidate.Address);
                 // 域改变或冻结时丢弃墙钟差值，保留已累计的 Credit/Cooldown；回来不补算离开的时间。
                 double elapsed=active && candidate.Epoch==_epoch?Math.Min(.5,Math.Max(0,_clock-candidate.LastTime)):active?deltaTime:0;
@@ -161,7 +196,7 @@ namespace Game.ElementField
                 for(int r=0;r<_profile.RuleCount;r++)
                 {
                     var rule=_profile.GetRule(r);
-                    if(rule.Source!=candidate.Address.Material || rule.Condition==MaterialConversionCondition.Volatile && !_liquid.IsVolatile(rule.Source)) continue;
+                    if(rule.Source!=candidate.Address.Material || rule.Condition==MaterialConversionCondition.Volatile && _cells == null && !_liquid.IsVolatile(rule.Source)) continue;
                     if(MaterialConversionEvaluator.Matches(in rule,in environment)) { ruleIndex=r; break; }
                 }
                 if(candidate.Rule!=ruleIndex) { candidate.Credit=0; candidate.Rule=ruleIndex; }
@@ -177,18 +212,18 @@ namespace Game.ElementField
                 {
                     var rule=_profile.GetRule(ruleIndex);
                     double rate=Math.Max(rule.InputGmuPerSecond,quantity*(double)rule.InputFractionPerSecond);
-                    candidate.Credit=Math.Min(_liquid.CellCapacityGmu*2d,candidate.Credit+elapsed*rate);
+                    candidate.Credit=Math.Min(CellCapacity*2d,candidate.Credit+elapsed*rate);
                     uint batches=MaterialConversionEvaluator.Batches(in rule,quantity,candidate.Credit);
-                    uint minimum=Math.Min(Math.Max(1u,rule.MinimumInputGmu),(uint)_liquid.CellCapacityGmu);
+                    uint minimum=Math.Min(Math.Max(1u,rule.MinimumInputGmu),CellCapacity);
                     // 小量信用保留在候选中，尚未消费 Steam。完整尾批可低于门槛，避免永久残余。
                     // 这只改变提交粒度，不隐藏已存在的水，也不把冷凝水瞬移到地板。
                     if((ulong)batches*rule.InputUnits<minimum && batches!=quantity/rule.InputUnits) batches=0;
                     bool freeze=rule.FirstProduct==MaterialId.Ice;
                     // 粗液体格采用保守阻挡；积足冻结量后提交整个纯水格，不能在剩余液体内插入冰墙。
                     if(freeze && ((ulong)batches*rule.InputUnits<quantity || quantity%rule.InputUnits!=0
-                        || _liquid.ConversionOccupancy(candidate.Address.Cell)!=quantity)) batches=0;
+                        || _cells == null && _liquid.ConversionOccupancy(candidate.Address.Cell)!=quantity)) batches=0;
                     if(freeze && batches>0) batches=quantity/rule.InputUnits;
-                    if(_port.Backend(rule.FirstProduct)==MaterialSimulationBackendKind.GridLiquid)
+                    if(_cells == null && _port.Backend(rule.FirstProduct)==MaterialSimulationBackendKind.GridLiquid)
                         batches=Math.Min(batches,(uint)_liquid.CellCapacityGmu/rule.InputUnits);
                     uint consume=batches*rule.InputUnits;
                     if(consume>0 && TryConvert(candidate.Address,consume,in rule,out int targetCount))
@@ -197,7 +232,7 @@ namespace Game.ElementField
                         for(int n=0;n<targetCount;n++) SetCooldown(_placements[n].Address,rule.CooldownSeconds);
                     }
                 }
-                if(_port.Read(candidate.Address,out _)) { _candidates[index]=candidate; Push(index); } else Release(index);
+                if(Read(candidate.Address,out _)) { _candidates[index]=candidate; Push(index); } else Release(index);
             }
             RecoverOverflow();
         }
@@ -206,6 +241,13 @@ namespace Game.ElementField
             // 只有通知溢出才启用恢复游标；固定最多 128 槽/Tick，不反复重置而饿死后半段材料。
             for(int scan=0;scan<128 && _recover && _freeCount>0;scan++)
             {
+                if (_cells != null)
+                {
+                    if (_recoveryCursor >= _cells.OccupiedCellCount)
+                    { _recoveryCursor=0; _recover=_recoverAgain; _recoverAgain=false; continue; }
+                    if (_cells.TryGetOccupiedCoordinate(_recoveryCursor++, out var occupied)) ObserveCellular(occupied);
+                    continue;
+                }
                 int limit=_recoveryBackend==0?_gas.ResidentCellCount:_recoveryBackend==1?(_ambientLiquidCount>0?_liquid.ConversionSlotCount:0):_solid.ResidentCellCount;
                 if(_recoveryCursor>=limit)
                 {
@@ -237,6 +279,16 @@ namespace Game.ElementField
             bool solid=rule.FirstProduct==MaterialId.Ice || rule.FirstProduct==MaterialId.DriedSlime || source.Material==MaterialId.Ice;
             if(solid && _solidCommits>=1) return false;
             uint batches=consume/rule.InputUnits;
+            if (_cells != null)
+            {
+                if (_world.RestingLiquids.TryGetCell(source.Cell, out _, out _)
+                    && !_world.RestingLiquids.TryMaterialize(source.Cell, _cells)) return false;
+                if (!_cells.TryReact(source, in rule, batches, _placements, Ledger, out count))
+                { DeferredTransactions++; return false; }
+                if (!reaction) _commits++;
+                if (solid) _solidCommits++;
+                return true;
+            }
             if(!BuildProducts(source,rule.FirstProduct,batches*rule.FirstUnits,ref count)) return false;
             if(rule.SecondUnits>0 && !BuildProducts(source,rule.SecondProduct,batches*rule.SecondUnits,ref count)) return false;
             if(!_transaction.TryPrepare(source,consume,_placements,count,batches*rule.DissipatedUnits) || !_transaction.Commit()) { DeferredTransactions++; return false; }
@@ -293,7 +345,7 @@ namespace Game.ElementField
         }
         private Vector3 Position(MaterialConversionAddress address)
         {
-            if(_port.Backend(address.Material)==MaterialSimulationBackendKind.GridLiquid)
+            if(_cells == null && _port.Backend(address.Material)==MaterialSimulationBackendKind.GridLiquid)
                 return new Vector3(_liquid.Origin.x+(address.Cell.x+.5f)*_liquid.CellSize,
                     _liquid.GetGameplayBaseHeight(address.Cell)+_world.ConversionCellSize*.25f,
                     _liquid.Origin.z+(address.Cell.z+.5f)*_liquid.CellSize);
@@ -325,12 +377,15 @@ namespace Game.ElementField
                 _zoneCursor%=_environmentCount;
                 var zone=_environments[_zoneCursor];
                 if(zone==null || !zone.isActiveAndEnabled) { _zoneCursor++; _zoneCell=0; continue; }
-                Vector3Int min=Vector3Int.FloorToInt((zone.Bounds.min-_liquid.Origin)/_liquid.CellSize);
-                Vector3Int max=Vector3Int.CeilToInt((zone.Bounds.max-_liquid.Origin)/_liquid.CellSize);
+                Vector3 origin = _cells != null ? _world.ConversionOrigin : _liquid.Origin;
+                float edge = _cells != null ? _world.ConversionCellSize : _liquid.CellSize;
+                Vector3Int min=Vector3Int.FloorToInt((zone.Bounds.min-origin)/edge);
+                Vector3Int max=Vector3Int.CeilToInt((zone.Bounds.max-origin)/edge);
                 Vector3Int size=max-min; long cells=(long)size.x*size.y*size.z;
                 if(cells<=0 || _zoneCell>=cells) { _zoneCell=0; _zoneCursor++; continue; }
                 int offset=_zoneCell++;
                 Vector3Int cell=min+new Vector3Int(offset%size.x,offset/size.x%size.y,offset/(size.x*size.y));
+                if (_cells != null) { ObserveCellular(cell, true); continue; }
                 var water=new MaterialConversionAddress(cell,MaterialId.Water);
                 var sticky=new MaterialConversionAddress(cell,MaterialId.Sticky);
                 var poison=new MaterialConversionAddress(cell,MaterialId.Poison);

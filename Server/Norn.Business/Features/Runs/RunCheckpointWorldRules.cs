@@ -4,7 +4,7 @@ using Norn.Business.Infrastructure;
 namespace Norn.Business.Features.Runs;
 
 /// <summary>原canonical uint布局的业务中立校验；不引用Unity，也不把Checksum当作领域合法性。</summary>
-public static class RunCheckpointWorldRules
+public static partial class RunCheckpointWorldRules
 {
     public static void Require(OnlineRunAssetCheckpointWorld? world, OnlineRunAssetCheckpointWorld? previous = null)
     {
@@ -16,13 +16,15 @@ public static class RunCheckpointWorldRules
         var geometries = new Dictionary<uint, uint[]>();
         var queues = new HashSet<(uint, uint)>();
         int residentCount = 0;
+        long wordTextBytes = 0;
         foreach (var chunk in world.Chunks)
         {
-            if (chunk == null || chunk.Domain > 3 || chunk.WorldEpoch != world.WorldEpoch || chunk.SnapshotId == 0
+            if (chunk == null || chunk.Domain > 4 || chunk.WorldEpoch != world.WorldEpoch || chunk.SnapshotId == 0
                 || chunk.SnapshotId > world.CommitSequence || chunk.Generation == 0 || chunk.Revision == 0
                 || chunk.BaseRevision >= chunk.Revision || chunk.ServerTick < 0 || chunk.ServerTick > world.WorldTick
                 || chunk.Words == null || chunk.WordCount != chunk.Words.Length || chunk.WordCount < 0
                 || chunk.WordCount > OnlineRunAssetCheckpoint.MaximumWordsPerChunk
+                || !OnlineRunAssetCheckpoint.TryBudgetWorldWords(chunk.Words, ref wordTextBytes)
                 || !keys.TryAdd(Key(chunk), chunk) || Checksum(chunk.Words) != chunk.Checksum) throw Failure();
             if (!chunk.IsResident)
             {
@@ -31,13 +33,19 @@ public static class RunCheckpointWorldRules
                 continue;
             }
             // 总头部预算还容纳上一业务Head的删除连续性证据，不能借这部分零payload额度
-            // 扩大当前材料世界。真实resident仍服从原128地址上限，且照常完整校验正文。
+            // 扩大当前材料世界。真实 resident 仍服从独立的世界地址上限，且照常完整校验正文。
             if (++residentCount > OnlineRunAssetCheckpoint.MaximumCurrentWorldKeys) throw Failure();
             ValidatePayload(chunk, geometries, queues);
         }
+        // 新域总保留零号身份块。缺少基底正文时不能只靠远处分块或 tombstone 建立世界身份。
+        if (keys.Keys.Any(k => k.Item1 == 4) && (!keys.TryGetValue((4,0,0,0), out var anchor) || !anchor.IsResident)) throw Failure();
         if (previous == null) return;
         if (world.WorldId != previous.WorldId || world.WorldEpoch != previous.WorldEpoch
             || world.CommitSequence < previous.CommitSequence || world.WorldTick < previous.WorldTick || previous.Chunks == null) throw Failure();
+        var oldAnchor = Array.Find(previous.Chunks, c => c != null && c.Domain == 4 && c.X == 0 && c.Y == 0 && c.Z == 0);
+        if (previous.Chunks.Length != 0 && ((oldAnchor != null) != geometries.ContainsKey(4)
+            || oldAnchor != null && (!oldAnchor.IsResident || oldAnchor.Words == null || oldAnchor.Words.Length < 15 ||
+                !oldAnchor.Words.AsSpan(4,10).SequenceEqual(geometries[4])))) throw Failure();
         foreach (var old in previous.Chunks)
         {
             if (old == null) throw Failure();
@@ -70,14 +78,16 @@ public static class RunCheckpointWorldRules
     private static void ValidatePayload(OnlineRunAssetCheckpointChunk c, Dictionary<uint, uint[]> geometries, HashSet<(uint, uint)> queues)
     {
         uint[] w = c.Words;
-        if (w.Length < 11 || w[0] != 0x4E355731 || w[3] != 1 || w[1] > int.MaxValue || w[2] > int.MaxValue
-            || 11L + w[1] * 7L + w[2] * 18L != w.Length || w[4] != c.Domain || w[5] != c.Domain
+        bool cellular = c.Domain == 4;
+        int prefix = cellular ? 15 : 11, stride = cellular ? 20 : 18, geometryLength = cellular ? 10 : 7;
+        if (w.Length < prefix || w[0] != (cellular ? 0x4E355732u : 0x4E355731u) || w[3] != 1 || w[1] > int.MaxValue || w[2] > int.MaxValue
+            || prefix + w[1] * 7L + w[2] * (long)stride + (cellular ? w[14] * 10L : 0) != w.Length || w[4] != c.Domain || w[5] != c.Domain
             || !Finite(w[6]) || !Finite(w[7]) || !Finite(w[8]) || !Finite(w[9]) || Float(w[9]) <= 0
-            || w[10] == 0 || w[10] > int.MaxValue) throw Failure();
+            || w[10] == 0 || w[10] > int.MaxValue || cellular && ((w[11] | w[12]) == 0 || w[13] is 0 or > int.MaxValue)) throw Failure();
         if (geometries.TryGetValue(c.Domain, out var geometry))
-        { for (int g = 0; g < 7; g++) if (geometry[g] != w[g + 4]) throw Failure(); }
-        else geometries.Add(c.Domain, w.AsSpan(4, 7).ToArray());
-        int size = (int)w[10], offset = 11;
+        { for (int g = 0; g < geometryLength; g++) if (geometry[g] != w[g + 4]) throw Failure(); }
+        else geometries.Add(c.Domain, w.AsSpan(4, geometryLength).ToArray());
+        int size = (int)w[10], offset = prefix;
         (int X, int Y, int Z, uint Material)? last = null;
         for (uint cell = 0; cell < w[1]; cell++, offset += 7)
         {
@@ -90,7 +100,7 @@ public static class RunCheckpointWorldRules
             last = point;
         }
         long lastQueue = -1;
-        for (uint pending = 0; pending < w[2]; pending++, offset += 18)
+        for (uint pending = 0; pending < w[2]; pending++, offset += stride)
         {
             uint index = w[offset + 1];
             if (w[offset] != c.Domain || index > int.MaxValue || index <= lastQueue || !queues.Add((c.Domain, index))
@@ -98,9 +108,11 @@ public static class RunCheckpointWorldRules
                 || w[offset + 15] > w[offset + 6] || w[offset + 16] > int.MaxValue
                 || !Vector(w, offset + 3) || !Vector(w, offset + 9) || !Vector(w, offset + 12)
                 || !Finite(w[offset + 7]) || Float(w[offset + 7]) < 0
-                || !PositionMatches(w, offset + 3, c, size)) throw Failure();
+                || !PositionMatches(w, offset + 3, c, size)
+                || cellular && (w[offset+2]>12 || w[offset+6]!=w[offset+15] || w[offset+16]!=0 || w[offset+17]!=0 || w[offset+19]>int.MaxValue)) throw Failure();
             lastQueue = index;
         }
+        if (cellular) ValidateCellular(c, offset);
     }
 
     private static bool PositionMatches(uint[] words, int index, OnlineRunAssetCheckpointChunk c, int size)

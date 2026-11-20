@@ -285,6 +285,9 @@ namespace Game.Networking.Tests
             var page = Identity(6);
             SetSubscription(page, 23);
             page.Domain = 4;
+            Assert.True(Encode(page, out _));
+            Assert.True(Decode(page.ToByteArray(), out _));
+            page.Domain = 5;
             Assert.False(Encode(page, out _));
             Assert.False(Decode(page.ToByteArray(), out _));
         }

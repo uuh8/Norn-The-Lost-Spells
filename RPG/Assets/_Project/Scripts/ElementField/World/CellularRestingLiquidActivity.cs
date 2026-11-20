@@ -55,6 +55,8 @@ namespace Game.ElementField
             Enqueue(cell);
             for (int i = 0; i < Neighbors.Length; i++) if (Neighbor(cell, Neighbors[i], out var n)) Enqueue(n);
             // 沙的目标可以在斜下方。只通知面邻居会让架在台阶上的沙看见一块永不开放的静水。
+            if (Neighbor(cell, Vector3Int.up, out var above))
+                for (int i = 1; i <= 4; i++) if (Neighbor(above, Neighbors[i], out var grain)) Enqueue(grain);
             if (Neighbor(cell, Vector3Int.down, out var below))
                 for (int i = 1; i <= 4; i++) if (Neighbor(below, Neighbors[i], out var diagonal)) Enqueue(diagonal);
         }
@@ -85,7 +87,7 @@ namespace Game.ElementField
         {
             if (simulation == null || simulation.CellCapacity != CellCapacity || _pendingCount != 0 || budget <= 0) return 0;
             int visited = 0;
-            // 只取本轮开始前真正休眠的满格；预算失败放回候选尾，不会一帧反复审批同一格。
+            // 只取本轮开始前进入休眠的候选格；预算失败放回候选尾，不会一帧反复审批同一格。
             int sleepBudget = simulation.SleepingLiquidCandidateCount;
             while (visited < budget && (_work.Count != 0 || _scanning || sleepBudget > 0))
             {
@@ -94,7 +96,7 @@ namespace Game.ElementField
                     _preferSleep = false;
                     if (!simulation.TryTakeSleepingLiquid(out Vector3Int sleeping)) { sleepBudget = 0; continue; }
                     sleepBudget--;
-                    TryReclaimFull(sleeping, simulation, out bool retryArchive);
+                    TryArchiveSettled(sleeping, simulation, out bool retryArchive);
                     if (retryArchive) simulation.QueueSleepingLiquid(sleeping);
                     visited++;
                     continue;
@@ -114,7 +116,7 @@ namespace Game.ElementField
                     uint amount = Read(region, cell);
                     if (amount == 0)
                     {
-                        TryReclaimFull(cell, simulation, out bool retry);
+                        TryArchiveSettled(cell, simulation, out bool retry);
                         if (retry) Defer(cell);
                     }
                     else if (NeedsDynamic(cell, mat, amount, simulation) && !TryMaterialize(cell, simulation)) Defer(cell);
@@ -128,6 +130,20 @@ namespace Game.ElementField
 
         private bool NeedsDynamic(Vector3Int cell, MaterialId material, uint amount, ElementCellSimulation simulation)
         {
+            var motionHere = ElementCellMaterialRules.Motion(material);
+            // 固定冰没有重力。松沙则要同时看正下、侧方通道和斜下落点；冷页里的沙和正在下落的沙遵守同一规则。
+            if (motionHere == ElementCellMotion.Fixed) return material == MaterialId.DriedSlime && amount < CellCapacity;
+            if (motionHere == ElementCellMotion.Grain)
+            {
+                if (Neighbor(cell, Vector3Int.down, out var below) && GrainCanEnter(below, material, simulation)) return true;
+                for (int i = 1; i <= 4; i++)
+                {
+                    if (!Neighbor(cell, Neighbors[i], out var side) || TryGetCell(side, out _, out _) || simulation.HasSolidAt(side)) continue;
+                    if (simulation.TryGetOccupiedCell(side, out var passage, out _) && ElementCellMaterialRules.Motion(passage) != ElementCellMotion.Gas) continue;
+                    if (Neighbor(side, Vector3Int.down, out var target) && GrainCanEnter(target, material, simulation)) return true;
+                }
+                return false;
+            }
             for (int i = 0; i < Neighbors.Length; i++)
             {
                 if (!Neighbor(cell, Neighbors[i], out var n)) continue;
@@ -163,6 +179,14 @@ namespace Game.ElementField
                 else if (i == 0 && simulation.CanDisplaceRestingLiquid(material, neighborMaterial)) return true;
             }
             return false;
+        }
+
+        private bool GrainCanEnter(Vector3Int cell, MaterialId grain, ElementCellSimulation simulation)
+        {
+            if (TryGetCell(cell, out var material, out _)) return simulation.CanDisplaceRestingLiquid(grain, material);
+            if (simulation.HasSolidAt(cell)) return false;
+            return !simulation.TryGetOccupiedCell(cell, out material, out _) || ElementCellMaterialRules.Motion(material) == ElementCellMotion.Gas ||
+                simulation.CanDisplaceRestingLiquid(grain, material);
         }
 
         private static bool HasDiagonalGrain(Vector3Int passage, MaterialId liquid, ElementCellSimulation simulation)

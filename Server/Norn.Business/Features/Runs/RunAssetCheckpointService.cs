@@ -379,12 +379,12 @@ public sealed class RunAssetCheckpointService(RoomTransactions transactions, Roo
             else
             {
                 if (receipt.Reason is not (OnlineRunMemberExitReason.VoluntaryExit or OnlineRunMemberExitReason.FinalDeath)
-                    || receipt.FinalRetiredItems == null || receipt.FinalDeathLostMaterials == null || receipt.FinalDeathLostMaterials.Length > 8)
+                    || receipt.FinalRetiredItems == null || receipt.FinalDeathLostMaterials == null || receipt.FinalDeathLostMaterials.Length > OwnedMaterialKey.DistinctCount)
                     throw Failure("RunCheckpointMemberMismatch");
                 ushort keys = 0;
                 foreach (var part in receipt.FinalDeathLostMaterials)
                 {
-                    if (part == null || part.MaterialKey is < 1 or > 8 || part.Quantity == 0 || (keys & (1 << part.MaterialKey)) != 0)
+                    if (part == null || !OwnedMaterialKey.IsKnown(part.MaterialKey) || part.Quantity == 0 || (keys & (1 << part.MaterialKey)) != 0)
                         throw Failure("RunCheckpointMemberMismatch");
                     keys |= (ushort)(1 << part.MaterialKey);
                 }
@@ -571,6 +571,9 @@ public sealed class RunAssetCheckpointService(RoomTransactions transactions, Roo
             var value = JsonSerializer.Deserialize<OnlineRunAssetCheckpoint>(head.PayloadJson, ContentManifestValidator.Json)
                 ?? throw Failure("RunCheckpointHeadInvalid");
             RunCheckpointCompleteRules.RequireShape(value); _ = CandidateIds(value); Normalize(value);
+            // 恢复读取也使用当前可识别版本的材料合同。持久层的正文 Hash 证明内容未变，
+            // 不能替代显式空、真实 GMU、基底、Pending 与原生 Chunk 属域的检查。
+            if (OnlineRunAssetCheckpoint.HasWorldFacts(value.SchemaVersion)) RunCheckpointWorldRules.Require(value.World);
             string canonical = CanonicalJson(value);
             if (value.InstanceId != head.InstanceId || value.RunId != head.RunId || value.RoomEpoch != head.RoomEpoch
                 || value.Sequence != head.Sequence || value.CheckpointId != head.CheckpointId

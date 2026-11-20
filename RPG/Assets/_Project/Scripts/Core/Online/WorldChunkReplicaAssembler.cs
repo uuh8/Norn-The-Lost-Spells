@@ -18,7 +18,7 @@ namespace Game.Core
         private uint[] _published,_staging;
         private readonly bool[] _received;
         private readonly WorldReplicaRevisionState _version;
-        private readonly int _pageWords;
+        private readonly int _pageWords, _wordLimit;
         private readonly long _timeoutTicks;
         private readonly IWorldChunkPayloadInstaller _installer;
         private bool _installing;
@@ -49,7 +49,7 @@ namespace Game.Core
         {
             if(connectionEpoch==0 || maxWords<=0 || maxPages<=0 || pageWords<=0 || timeoutTicks<=0)throw new ArgumentOutOfRangeException(nameof(maxWords));
             _version=new WorldReplicaRevisionState(worldEpoch);Key=key;ConnectionEpoch=connectionEpoch;
-            _published=new uint[maxWords];_staging=new uint[maxWords];_received=new bool[maxPages];_pageWords=pageWords;_timeoutTicks=timeoutTicks;
+            _published=_staging=Array.Empty<uint>();_received=new bool[maxPages];_pageWords=pageWords;_wordLimit=maxWords;_timeoutTicks=timeoutTicks;
             _installer=installer;
         }
         public uint GetWord(int index)
@@ -106,7 +106,7 @@ namespace Game.Core
             if(_installing)return Reject(WorldReplicaAssemblyFailure.Installing);
             if(Installed)return Reject(WorldReplicaAssemblyFailure.WrongIdentity);
             if(HasPending)return Reject(WorldReplicaAssemblyFailure.PendingBusy);
-            if((byte)key.Domain>(byte)WorldMaterialDomain.Gas)return Reject(WorldReplicaAssemblyFailure.WrongIdentity);
+            if((byte)key.Domain>(byte)WorldMaterialDomain.Cellular)return Reject(WorldReplicaAssemblyFailure.WrongIdentity);
             Key=key;_interestReleased=false;return Accept();
         }
 
@@ -135,7 +135,7 @@ namespace Game.Core
                 || (!header.IsResident && header.WordCount!=0) || (header.IsResident && header.WordCount<11)
                 || (header.BaseRevision!=0 && header.Revision<=header.BaseRevision))return Reject(WorldReplicaAssemblyFailure.InvalidHeader);
             int pages=header.WordCount==0?1:1+(header.WordCount-1)/_pageWords;
-            if(header.WordCount>_staging.Length || pages>_received.Length)return Reject(WorldReplicaAssemblyFailure.Capacity);
+            if(header.WordCount>_wordLimit || pages>_received.Length)return Reject(WorldReplicaAssemblyFailure.Capacity);
             if(HasPending)
             {
                 // 同一合法Begin重发幂等，但绝不延长TTL；任意新ID需先显式取消旧请求。
@@ -143,6 +143,9 @@ namespace Game.Core
                 return Reject(WorldReplicaAssemblyFailure.PendingBusy);
             }
             if(!VersionAllowed(header))return false;
+            // 已认证且版本合法的头才按正文申请 staging。大量仅有稀疏地形覆盖的块不预付最大分页缓冲。
+            if(header.WordCount>_staging.Length)
+                _staging=new uint[(int)Math.Min(_wordLimit,Math.Max(header.WordCount,2L*_staging.Length))];
             for(int i=0;i<pages;i++)_received[i]=false;
             _pending=header;_pageCount=pages;_receivedCount=0;_startTick=nowTick;HasPending=true;_interestReleased=false;return Accept();
         }

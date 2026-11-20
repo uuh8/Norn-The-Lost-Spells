@@ -14,7 +14,8 @@ namespace Game.ElementField
         private ElementCellWorldProfile _cellDefinition;
         internal ElementCellSimulation CellularSimulation { get; private set; }
         internal CellularRestingLiquidStore RestingLiquids { get; private set; }
-        public ICellularRestingLiquidReadOnly CellularRestingLiquids => RestingLiquids;
+        public ICellularRestingLiquidReadOnly CellularRestingLiquids => _replicaCellular != null
+            ? (_replicaCellular.Verified ? _replicaCellular.Resting : null) : RestingLiquids;
         private struct DepositCell
         {
             internal Vector3Int Cell;
@@ -36,26 +37,30 @@ namespace Game.ElementField
         public event Action<Vector3Int> CellularContentsChanged;
         public event Action<Vector3Int> TerrainMaterialChanged;
 
-        public bool UsesCellularWorld => IsInitialized ? CellularSimulation != null
-            : _profile != null && _profile.CellularWorld != null;
-        public uint CellularCellCapacity => CellularSimulation?.CellCapacity ?? 0;
-        public int CellularOccupiedCount => CellularSimulation?.OccupiedCellCount ?? 0;
+        public bool UsesCellularWorld => IsInitialized ? CellularSimulation != null || _replicaCellular != null
+            : ResolveCellularContentProfile() != null;
+        public uint CellularCellCapacity => _replicaCellular?.Geometry.CellCapacity ?? CellularSimulation?.CellCapacity ?? 0;
+        public int CellularOccupiedCount => _replicaCellular?.OccupiedCount ?? CellularSimulation?.OccupiedCellCount ?? 0;
         public int CellularActiveCount => CellularSimulation?.ActiveCellCount ?? 0;
+        public ElementCellWorldProfile CellularDefinition => _cellDefinition;
+        public float CellularTickDuration => _profile != null && _profile.TickRate > 0f ? 1f / _profile.TickRate : .1f;
         public int CellularCellsProcessedLastTick { get; private set; }
         public int RestingCellsProcessedLastTick { get; private set; }
         public int DeferredCellularWritesLastTick { get; private set; }
         public ulong TerrainRevision { get; private set; }
-        public MaterialId GetTerrainMaterial(Vector3Int worldCell) => _cellularTerrain?.Get(worldCell) ?? MaterialId.Empty;
+        public MaterialId GetTerrainMaterial(Vector3Int worldCell) => _replicaCellular != null && !_replicaCellular.Verified
+            ? MaterialId.Empty : _cellularTerrain?.Get(worldCell) ?? MaterialId.Empty;
 
         private void InitializeCellularWorld()
         {
-            _cellDefinition = _profile.CellularWorld;
+            _cellDefinition = ResolveCellularContentProfile();
             if (_cellDefinition.WorkBudget < 1 || _cellDefinition.RestingBudget < 1 || _cellDefinition.RestingQueueCapacity < 1 ||
                 _cellDefinition.MaximumCells < 1 || _cellDefinition.Capacity < 1 || _cellDefinition.DepositBudget < 1)
                 throw new InvalidOperationException("元胞世界的每步预算、驻留量和格容量必须为正。");
-            _cellularTerrain = new ElementTerrainVolume(_cellDefinition, transform, _profile.CellSize, _profile.ChunkSize);
+            _cellularTerrain = CreateCellularTerrain(_cellDefinition);
+            _cellularTerrain.ShowGeometry(true);
             _solidBaker.SetEditableTerrain(_cellularTerrain, IsCellularBlockingCell);
-            var regions = _cellDefinition.RestingRegions;
+            var regions = ResolveCellularRestingRegions(_cellDefinition);
             RestingLiquids = new CellularRestingLiquidStore(regions, (uint)_cellDefinition.Capacity, _cellDefinition.RestingQueueCapacity);
             for (int i = 0; i < RestingLiquids.RegionCount; i++)
             {
@@ -64,7 +69,7 @@ namespace Game.ElementField
                 Vector3 mid = _origin + (Vector3)box.min * _profile.CellSize + span * .5f;
                 if (_cellularTerrain.IntersectsSolid(box)
                     || _solidBaker.HasSceneObstacle(mid, span * .5f - Vector3.one * (_profile.CellSize * .01f)))
-                    throw new InvalidOperationException($"静水区域 {i} 与地形或静态 Collider 重叠。");
+                    throw new ContentMigrationException($"静水区域 {i} 与地形或静态 Collider 重叠。");
             }
             int cacheSize = Math.Min(_cellDefinition.MaximumCells, 32768);
             _sceneObstacles = new Dictionary<Vector3Int, bool>(cacheSize);
@@ -74,16 +79,20 @@ namespace Game.ElementField
             _sceneChunkKeys = new ElementChunkKey[chunkCacheSize];
             CellularSimulation = new ElementCellSimulation(_cellDefinition.Capacity, _cellDefinition.MaximumCells,
                 IsBlockedForDynamicMaterial, _cellDefinition.Transport);
+            InitializeCellularGas();
             _cellularCollisions = new CellularSolidColliders(transform, _profile.CellSize, _profile.ChunkSize, _cellDefinition.TerrainLayer);
             _depositCells = new DepositCell[_cellDefinition.DepositBudget];
             int noticeCapacity = (int)Math.Min(16384L, 7L * _cellDefinition.WorkBudget + _cellDefinition.RestingBudget);
             _cellPublications = new List<Vector3Int>(noticeCapacity);
             _publicationSet = new HashSet<Vector3Int>(noticeCapacity);
+            InstallMigratedDynamicContents();
         }
 
         private void DisposeCellularWorld()
         {
             ClearCellularCombustion();
+            _conversionScheduler = null;
+            CellularLedger = null;
             if (_solidBaker != null) _solidBaker.SetEditableTerrain(null);
             _cellularTerrain?.Dispose();
             _cellularCollisions?.Dispose();
@@ -107,6 +116,7 @@ namespace Game.ElementField
         public bool TryGetCellularContents(Vector3Int cell, out MaterialId primary, out uint primaryAmount,
             out uint steam, out uint toxicVapor)
         {
+            if (_replicaCellular != null) return _replicaCellular.TryGetContents(cell, out primary, out primaryAmount, out steam, out toxicVapor);
             primary = MaterialId.Empty;
             primaryAmount = steam = toxicVapor = 0;
             if (CellularSimulation == null || !CellularSimulation.TryGetOccupiedCell(cell, out primary, out primaryAmount)) return false;
@@ -119,14 +129,19 @@ namespace Game.ElementField
         public void VisitCellularOccupiedCells(Action<Vector3Int> visitor)
         {
             if (visitor == null) throw new ArgumentNullException(nameof(visitor));
+            if (_replicaCellular != null) { _replicaCellular.VisitOccupied(visitor); return; }
             if (CellularSimulation == null) return;
             for (int i = 0; i < CellularSimulation.OccupiedCellCount; i++)
                 if (CellularSimulation.TryGetOccupiedCoordinate(i, out Vector3Int cell)) visitor(cell);
         }
 
-        internal bool IsCellularBlockingCell(Vector3Int cell) =>
-            CellularSimulation != null && CellularSimulation.TryGetOccupiedCell(cell, out var material, out _)
-            && ElementCellMaterialRules.OccupiesWholeCell(material);
+        internal bool IsCellularBlockingCell(Vector3Int cell)
+        {
+            if (_replicaCellular != null) return _replicaCellular.BlocksCell(cell);
+            return CellularSimulation != null && (CellularSimulation.TryGetOccupiedCell(cell, out var material, out _)
+                || RestingLiquids != null && RestingLiquids.TryGetCell(cell, out material, out _))
+                && ElementCellMaterialRules.OccupiesWholeCell(material);
+        }
 
         private bool IsBlockedForDynamicMaterial(Vector3Int cell) => IsEnvironmentBlockedForCells(cell)
             || RestingLiquids != null && RestingLiquids.BlocksSimulation(cell);
@@ -185,6 +200,7 @@ namespace Game.ElementField
                     || TryGetCell(cell, out var old) && !old.IsEmpty)) return false;
                 if (!TryPrepareMaterialTopologyChange(cell, material != MaterialId.Empty) || !_cellularTerrain.TrySet(cell, material)) return false;
                 TerrainRevision++;
+                RecordCellularNetworkCell(cell);
                 NotifyMaterialTopologyChanged(cell);
                 TerrainMaterialChanged?.Invoke(cell);
                 return true;
@@ -198,13 +214,22 @@ namespace Game.ElementField
         public bool TryExcavateTerrain(RaycastHit hit, out MaterialId removed)
         {
             removed = MaterialId.Empty;
-            if (hit.collider == null || _cellularTerrain == null || !_cellularTerrain.OwnsCollider(hit.collider)) return false;
-            var cell = ElementWorldCoordinates.WorldToGlobalCell(hit.point - hit.normal * (_profile.CellSize * .001f),
-                _origin, _profile.CellSize);
+            if (hit.collider == null || _cellularTerrain == null ||
+                !TryResolveExcavationCell(hit.collider, hit.point, hit.normal, out var cell)) return false;
             MaterialId material = GetTerrainMaterial(cell);
             if (material == MaterialId.Empty || !TrySetTerrainMaterial(cell, MaterialId.Empty)) return false;
             removed = material;
             return true;
+        }
+
+        private void OnTerrainImpact(TerrainImpactEvent impact)
+        {
+            if (!CanAcceptWorldWrites || impact.Surface == null || _cellDefinition == null ||
+                !float.IsFinite(impact.Power) || !(impact.Power > 0f) ||
+                !TryResolveExcavationCell(impact.Surface, impact.Point, impact.Normal, out var cell)) return;
+            MaterialId previous = GetTerrainMaterial(cell);
+            if (previous != MaterialId.Empty && impact.Power >= _cellDefinition.ImpactResistance(previous))
+                TrySetTerrainMaterial(cell, MaterialId.Empty);
         }
 
         /// <summary>权威单格命令供法术/工具使用，数量完整接收。库存调用自己的预约端口以保留回滚边界。</summary>
@@ -221,7 +246,9 @@ namespace Game.ElementField
             try
             {
                 bool changed;
-                if (RestingLiquids != null && RestingLiquids.TryGetCell(cell, out var ownerMaterial, out _))
+                if (deposit && ElementCellMaterialRules.Motion(material) == ElementCellMotion.Gas)
+                    changed = TryDepositIntoWorkingCell(cell, material, quantity);
+                else if (RestingLiquids != null && RestingLiquids.TryGetCell(cell, out var ownerMaterial, out _))
                 {
                     if (ownerMaterial != material) return false;
                     changed = deposit ? RestingLiquids.TryStageAdd(cell, material, quantity)
@@ -230,7 +257,12 @@ namespace Game.ElementField
                 }
                 else changed = deposit ? CellularSimulation.TryDeposit(cell, material, quantity)
                     : CellularSimulation.TryRemove(cell, material, quantity);
-                if (changed) PublishCellularChanges();
+                if (changed)
+                {
+                    if (deposit) NotifyExternalMaterialInjection(material, quantity);
+                    else ConversionLedger?.RecordExplicitConsumption(material, quantity);
+                    PublishCellularChanges();
+                }
                 return changed;
             }
             catch { MarkMaterialTransactionFaulted(); throw; }
@@ -239,6 +271,8 @@ namespace Game.ElementField
 
         private bool ValidCellularWrite(in ElementWriteRequest request)
         {
+            Vector3 velocity = request.InitialVelocity;
+            if (!float.IsFinite(velocity.x) || !float.IsFinite(velocity.y) || !float.IsFinite(velocity.z)) return false;
             Vector3 position = request.WorldPosition;
             if (request.TotalAmount == 0 || !float.IsFinite(position.x) || !float.IsFinite(position.y) ||
                 !float.IsFinite(position.z) || !float.IsFinite(request.Radius) || request.Radius < 0 ||
@@ -248,12 +282,30 @@ namespace Game.ElementField
             return PlanVolumeDeposit(in request, lo, hi, true, out _, out _);
         }
 
-        private uint AvailableForDeposit(Vector3Int cell, MaterialId material, bool mayDisplaceGas, out bool resting)
+        internal uint AvailableForDeposit(Vector3Int cell, MaterialId material, bool mayDisplaceGas, out bool resting)
         {
-            resting = RestingLiquids.TryGetCell(cell, out _, out _);
-            if (resting) return RestingLiquids.GetLocalFreeCapacity(cell, material);
+            resting = RestingLiquids.TryGetCell(cell, out var bulk, out uint occupied);
+            if (resting)
+            {
+                if (ElementCellMaterialRules.Motion(material) != ElementCellMotion.Gas)
+                    return RestingLiquids.GetLocalFreeCapacity(cell, material);
+                resting = false;
+                return ElementCellMaterialRules.OccupiesWholeCell(bulk) || CellularSimulation.FreeResidentSlots == 0
+                    ? 0 : CellularCellCapacity - occupied;
+            }
             return mayDisplaceGas ? CellularSimulation.GetFreeCapacity(cell, material)
                 : CellularSimulation.GetLocalFreeCapacity(cell, material);
+        }
+
+        // 部分液体上方的空气仍属于同一格。只有写入真实气体时才展开该格；
+        // 数量转移先成功，气体再按剩余容积入账，两步间始终只有一个主材 Owner。
+        internal bool TryDepositIntoWorkingCell(Vector3Int cell, MaterialId material, uint quantity)
+        {
+            if (RestingLiquids.TryGetCell(cell, out var bulk, out var occupied) &&
+                (ElementCellMaterialRules.Motion(material) != ElementCellMotion.Gas ||
+                 ElementCellMaterialRules.OccupiesWholeCell(bulk) || quantity > CellularCellCapacity - occupied ||
+                 !RestingLiquids.TryMaterialize(cell, CellularSimulation))) return false;
+            return CellularSimulation.TryDeposit(cell, material, quantity);
         }
 
         private bool TryGetDepositBounds(in ElementWriteRequest r, out Vector3Int lo, out Vector3Int hi)
@@ -276,10 +328,15 @@ namespace Game.ElementField
             if (!TryGetDepositBounds(in request, out var lo, out var hi)) return false;
             if (request.Radius == 0)
             {
-                if (RestingLiquids == null || !RestingLiquids.TryGetCell(lo, out _, out _))
-                    return CellularSimulation.TryDeposit(lo, request.MaterialKind, request.TotalAmount);
+                if (ElementCellMaterialRules.Motion(request.MaterialKind) == ElementCellMotion.Gas || !RestingLiquids.TryGetCell(lo, out _, out _))
+                {
+                    if (!TryDepositIntoWorkingCell(lo, request.MaterialKind, request.TotalAmount)) return false;
+                    PublishCellularImpulse(lo, request.MaterialKind, request.TotalAmount, request.InitialVelocity);
+                    return true;
+                }
                 if (!RestingLiquids.TryStageAdd(lo, request.MaterialKind, request.TotalAmount)) return false;
                 RestingLiquids.CommitStaged();
+                PublishCellularImpulse(lo, request.MaterialKind, request.TotalAmount, request.InitialVelocity);
                 return true;
             }
             if (!PlanVolumeDeposit(in request, lo, hi, false, out int count, out double weights)) return false;
@@ -305,7 +362,7 @@ namespace Game.ElementField
                 var entry = _depositCells[i];
                 if (entry.Added == 0) continue;
                 bool accepted = entry.Resting ? RestingLiquids.TryStageAdd(entry.Cell, request.MaterialKind, entry.Added)
-                    : CellularSimulation.TryDeposit(entry.Cell, request.MaterialKind, entry.Added);
+                    : TryDepositIntoWorkingCell(entry.Cell, request.MaterialKind, entry.Added);
                 if (accepted) { hasStagedResting |= entry.Resting; continue; }
                 if (hasStagedResting) RestingLiquids.CancelStaged();
                 for (int j = i - 1; j >= 0; j--)
@@ -317,7 +374,19 @@ namespace Game.ElementField
                 return false;
             }
             if (hasStagedResting) RestingLiquids.CommitStaged();
+            if (request.InitialVelocity != Vector3.zero)
+                for (int i = 0; i < count; i++)
+                    PublishCellularImpulse(_depositCells[i].Cell, request.MaterialKind, _depositCells[i].Added, request.InitialVelocity);
             return true;
+        }
+
+        internal void PublishCellularImpulse(Vector3Int cell, MaterialId material, uint quantity, Vector3 velocity)
+        {
+            var motion = ElementCellMaterialRules.Motion(material);
+            if (velocity == Vector3.zero || quantity == 0 || motion != ElementCellMotion.Liquid && motion != ElementCellMotion.Grain) return;
+            if (RestingLiquids.TryGetQuantity(cell, material, out _) && !RestingLiquids.TryMaterialize(cell, CellularSimulation)) return;
+            float scale = _tickInterval / _profile.CellSize;
+            CellularSimulation.GiveImpulse(cell, material, quantity, velocity * scale, 9.81f * _tickInterval * scale);
         }
 
         private bool PlanVolumeDeposit(in ElementWriteRequest request, Vector3Int lo, Vector3Int hi,
@@ -363,7 +432,11 @@ namespace Game.ElementField
         {
             RestingCellsProcessedLastTick = RestingLiquids.Step(_cellDefinition.RestingBudget, CellularSimulation);
             ProcessCellularFireContacts();
+            ProcessCellularAbsorption();
+            BeginCellularGasTick();
             CellularCellsProcessedLastTick = CellularSimulation.Step(_cellDefinition.WorkBudget);
+            CellularSimulation.StepGasDilution();
+            _conversionScheduler?.Step(_tickInterval);
             PrepareCellularChanges();
         }
 
@@ -375,6 +448,7 @@ namespace Game.ElementField
             int count = CollectGridFireReactionSamples();
             if (_materialReactions.TryResolve(MaterialId.Fire, MaterialId.Water, out var rule) && rule == ElementReactionId.Extinguish)
                 ProcessCellularExtinguish(count, rule);
+            _conversionScheduler?.ObserveFire(_fireReactionSamples, count);
             StepCellularCombustion(_fireReactionSamples, count);
         }
 
@@ -421,9 +495,6 @@ namespace Game.ElementField
             while (CellularSimulation.TryDequeueChanged(out var cell))
             {
                 RestingLiquids?.WakeNeighbors(cell);
-                bool solid = IsCellularBlockingCell(cell);
-                if (_cellularCollisions.Set(cell, solid) && TryResolveResidentCell(cell, out var chunk, out var local))
-                    chunk.Grid.SetSolid(local, solid || IsEnvironmentBlockedForCells(cell));
                 if (_publicationSet.Add(cell)) _cellPublications.Add(cell);
             }
             if (RestingLiquids != null)
@@ -432,12 +503,24 @@ namespace Game.ElementField
                     CellularSimulation.WakeNeighbors(restingCell);
                     if (_publicationSet.Add(restingCell)) _cellPublications.Add(restingCell);
                 }
+            foreach (var changed in _cellPublications)
+            {
+                bool solid = IsCellularBlockingCell(changed);
+                if (_cellularCollisions.Set(changed, solid) && TryResolveResidentCell(changed, out var chunk, out var local))
+                    chunk.Grid.SetSolid(local, solid || IsEnvironmentBlockedForCells(changed));
+            }
             _cellularCollisions.Commit();
+            if (_absorbQueue != null && (CellularSimulation.GetTotalQuantity(MaterialId.Sticky) != 0 ||
+                RestingLiquids.GetTotalQuantity(MaterialId.Sticky) != 0))
+                foreach (var changed in _cellPublications) DiscoverCellularAbsorption(changed);
+            if (_conversionScheduler != null)
+                foreach (var changed in _cellPublications) _conversionScheduler.ObserveCellular(changed);
         }
 
         // Fire Solver 也要先走完本步再允许观察者读结果；碰撞更新提前为 Solver 提供准确边界。
         private void NotifyCellularObservers()
         {
+            RecordCellularNetworkBatch(_cellPublications);
             if (CellularContentsChanged != null)
                 foreach (var cell in _cellPublications) CellularContentsChanged.Invoke(cell);
         }

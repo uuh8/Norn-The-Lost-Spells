@@ -92,6 +92,14 @@ namespace Game.ElementField
 
             if (_executionMode == WorldExecutionMode.Replica)
             {
+                if (_replicaCellular != null)
+                {
+                    capacity = _replicaCellular.Geometry.CellCapacity;
+                    if (!_replicaCellular.TryGetQuantity(worldCell, material, out quantity, out bool resting)) return false;
+                    source = resting && ElementCellMaterialRules.Motion(material) == ElementCellMotion.Liquid
+                        ? ElementWorldMaterialSource.RestingLiquid : ElementWorldMaterialSource.Cellular;
+                    return true;
+                }
                 // Replica 无 Simulation Route/写 Owner。只读已安装的各域数据，不能回落到本机 Solver。
                 if (_replicaSolids != null && _replicaSolids.TryGetQuantity(worldCell, material, out quantity))
                 { source = ElementWorldMaterialSource.FixedSolid; capacity = _replicaSolids.CellCapacity; return true; }
@@ -109,7 +117,8 @@ namespace Game.ElementField
                 capacity = CellularCellCapacity;
                 if (RestingLiquids != null && RestingLiquids.TryGetQuantity(worldCell, material, out quantity))
                 {
-                    source = ElementWorldMaterialSource.RestingLiquid;
+                    source = ElementCellMaterialRules.Motion(material) == ElementCellMotion.Liquid
+                        ? ElementWorldMaterialSource.RestingLiquid : ElementWorldMaterialSource.Cellular;
                     return true;
                 }
                 source = ElementWorldMaterialSource.Cellular;

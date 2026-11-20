@@ -109,9 +109,14 @@ namespace Game.ElementField
             if (!exchange.Source.TryReserve(exchange.Amounts, exchange.Count, out var failure)) return failure;
             _world.RetainInventoryDepositActivity(exchange.Position,exchange.Radius);
             _world.InventorySolids?.BeginConversionGeometry();
+            // 元胞气体先取得局部剩余容积，后续主材只用无需挤气的空间。
+            // 这使同一瓶的水与蒸汽可以落入一格，无需在已经暂存冷页扣增时再展开它。
+            int passes = _world.CellularSimulation == null || exchange.Count == 1 ? 1 : 2;
+            for (int pass = 0; pass < passes; pass++)
             for (int i = 0; i < exchange.Count; i++)
             {
                 var amount = exchange.Amounts[i]; if (amount.Quantity == 0) continue;
+                if (passes == 2 && (ElementCellMaterialRules.Motion((MaterialId)amount.MaterialKey) == ElementCellMotion.Gas) != (pass == 0)) continue;
                 failure = StageComponent((MaterialId)amount.MaterialKey, amount.Quantity, exchange.Position, exchange.Radius);
                 if (failure != MaterialTransferFailure.None) { Undo(); return failure; }
             }
@@ -149,6 +154,8 @@ namespace Game.ElementField
                     var placement=_journal[i];var address=placement.Address;
                     if(Backend(address.Material)==MaterialSimulationBackendKind.GridLiquid)
                         _world.InventoryLiquid.PublishInjectionMotion(address.Cell,address.Material,exchange.InitialVelocity,placement.Quantity);
+                    else if (Backend(address.Material) == MaterialSimulationBackendKind.Cellular)
+                        _world.PublishCellularImpulse(address.Cell, address.Material, placement.Quantity, exchange.InitialVelocity);
                 }
             for(int i=0;i<_count;i++)
             {
@@ -233,7 +240,7 @@ namespace Game.ElementField
             {
                 case MaterialSimulationBackendKind.Cellular:
                     success = resting ? _world.RestingLiquids.TryStageAdd(cell, material, amount)
-                        : _world.CellularSimulation.TryDeposit(cell, material, amount);
+                        : _world.TryDepositIntoWorkingCell(cell, material, amount);
                     break;
                 case MaterialSimulationBackendKind.GridLiquid: success = _world.InventoryLiquid.StageInventoryBirth(cell, material, amount,out before); break;
                 case MaterialSimulationBackendKind.FixedSolid: success = _world.InventorySolids.StageConversionAdd(cell, material, amount); break;
@@ -248,9 +255,7 @@ namespace Game.ElementField
         private uint CellularDepositCapacity(Vector3Int cell, MaterialId material, out bool resting)
         {
             // 静水部分满格仍由原区域持有，不能在同一基础格新建一份 CA 库存。已交接的空格归动态 Owner。
-            var store = _world.RestingLiquids;
-            resting = store != null && store.TryGetCell(cell, out _, out _);
-            return resting ? store.GetLocalFreeCapacity(cell, material) : _world.CellularSimulation.GetLocalFreeCapacity(cell, material);
+            return _world.AvailableForDeposit(cell, material, false, out resting);
         }
         private void Undo()
         {

@@ -63,7 +63,7 @@ namespace Game.Networking
                 || snapshot.Assets == null || snapshot.Assets.SchemaVersion != OnlineOwnedAssetSnapshot.CurrentSchemaVersion
                 || snapshot.Reason < OnlineRunMemberExitReason.VoluntaryExit || snapshot.Reason > OnlineRunMemberExitReason.FinalDeath
                 || snapshot.FinalRetiredItems == null || snapshot.FinalRetiredItems.Length > OnlineOwnedAssetSnapshot.MaximumItems
-                || snapshot.FinalDeathLostMaterials == null || snapshot.FinalDeathLostMaterials.Length > 8
+                || snapshot.FinalDeathLostMaterials == null || snapshot.FinalDeathLostMaterials.Length > Game.NetworkProtocol.OwnedMaterialKey.DistinctCount
                 || snapshot.PracticeGroundItems == null || snapshot.PracticeGroundItems.Length > OnlineOwnedAssetSnapshot.MaximumItems + 24
                 || snapshot.Reason == OnlineRunMemberExitReason.VoluntaryExit
                     && (snapshot.FinalDeathLostMaterials.Length != 0 || snapshot.FinalRetiredItems.Length != 0

@@ -29,6 +29,8 @@ namespace Game.ElementField
         public int ChunkSize { get; }
         public int CellCount => _grid.CellCount;
         public bool HasAnyElement => _nonEmptyCellCount > 0;
+        // 离散写可以在 Solver 提交本网格脏版本之前完成。网络增量同时观察直接写和已提交模拟版本。
+        internal ulong DirectWriteVersion { get; private set; }
         internal int NonEmptyCellCount => _nonEmptyCellCount;
         internal int UnchangedSimulationTicks => _unchangedSimulationTicks;
         internal bool RequiresSimulation => _requiresSimulation;
@@ -69,6 +71,7 @@ namespace Game.ElementField
 
             // 将“有种类但 Amount=0”一类中间无效值规范成真正的 Empty，避免休眠回收判断被脏数据干扰。
             _grid.SetCell(localCell, isEmpty ? default : cell);
+            DirectWriteVersion++;
 
             // SetCell 是离散写入口；任何真实数据变化都必须撤销此前的“稳定”判断。
             // LastRelevantTick 仍由拥有世界 Tick 的调用方更新，避免数据容器自行猜测时间。

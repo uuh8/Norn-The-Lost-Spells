@@ -18,10 +18,13 @@ namespace Game.ElementField
         private void AdvanceCell(Vector3Int cell)
         {
             Contents initial = Read(cell);
-            switch (ElementCellMaterialRules.Motion(initial.Bulk))
+            if (!AdvanceImpulse(cell, initial.Bulk))
             {
-                case ElementCellMotion.Grain: AdvanceGrain(cell, initial.Bulk); break;
-                case ElementCellMotion.Liquid: AdvanceLiquid(cell, initial.Bulk); break;
+                switch (ElementCellMaterialRules.Motion(initial.Bulk))
+                {
+                    case ElementCellMotion.Grain: AdvanceGrain(cell, initial.Bulk); break;
+                    case ElementCellMotion.Liquid: AdvanceLiquid(cell, initial.Bulk); break;
+                }
             }
             if (initial.Steam > 0)
             {
@@ -119,6 +122,7 @@ namespace Game.ElementField
 
         private void AdvanceGas(Vector3Int cell, MaterialId material)
         {
+            if (_gasEnvironment != null) { _gasEnvironment.Advance(cell, material); return; }
             int first = FirstSide(cell);
             for (int i = 0; i < Faces.Length; i++)
             {

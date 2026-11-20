@@ -281,7 +281,7 @@ namespace Game.Networking
 
         private static bool Material(Core.OnlineOwnedMaterialStateSnapshot state)
             // Schema独立于OwnedSchema2；0不是可补默认值。Quantity直接保留uint64，不经过float或capacity。
-            => state.SchemaVersion == 1 && state.MaterialKey >= 1 && state.MaterialKey <= 8 && state.Quantity > 0;
+            => state.SchemaVersion == 1 && OwnedMaterialKey.IsKnown(state.MaterialKey) && state.Quantity > 0;
 
         private static bool Attachment(Core.OnlineOwnedSpellAttachmentStateSnapshot state)
             // 来源已离包或消失仍保留设置；这里只验格式，不把来源存在性误当成快照安装资格。
@@ -295,7 +295,7 @@ namespace Game.Networking
             for (int i = 0; i < state.Components.Length; i++)
             {
                 var amount = state.Components[i];
-                if (amount == null || amount.MaterialKey < 1 || amount.MaterialKey > 8 || amount.Quantity == 0
+                if (amount == null || !OwnedMaterialKey.IsKnown(amount.MaterialKey) || amount.Quantity == 0
                     || (seen & 1 << amount.MaterialKey) != 0) return false;
                 // Quantity为真实整数GMU；不能经过uint32/float截断。各key合法也不代表总量不会溢出。
                 try { total = checked(total + amount.Quantity); }
@@ -720,10 +720,10 @@ namespace Game.Networking
                     if (kind == MessageKind.Root && field == 14) { if (number > 1) return false; researchOpen = number == 1; }
                     if (kind == MessageKind.Root && field == 15) researchVersion = (uint)number;
                     // Wire的key是uint32，Core用byte；先检查域再收窄，防257截成合法key1。
-                    if (kind == MessageKind.MaterialAmount && field == 1 && (number < 1 || number > 8)) return false;
+                    if (kind == MessageKind.MaterialAmount && field == 1 && !OwnedMaterialKey.IsKnown(number)) return false;
                     // 固体叶节点三个标量均显式且非零：在Parser前拒绝旧Schema、key窄化及空量。
                     if (kind == MessageKind.MaterialState && (field == 1 && number != 1
-                        || field == 2 && (number < 1 || number > 8) || field == 3 && number == 0)) return false;
+                        || field == 2 && !OwnedMaterialKey.IsKnown(number) || field == 3 && number == 0)) return false;
                     if (kind == MessageKind.AttachmentState && (field == 1 && number != 1 || field == 3 && number == 0)) return false;
                     bool boolean = kind == MessageKind.Item && (field == 11 || field == 12 || field == 17)
                         || kind == MessageKind.Stats && field == 8 || kind == MessageKind.SpellUse && field == 2

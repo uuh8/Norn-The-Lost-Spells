@@ -15,6 +15,8 @@ namespace Game.Rendering
         private const int Size = CellularMaterialRenderer.PageSize;
         private readonly List<Vector3> _vertices = new List<Vector3>(Size * Size * Size * 8);
         private readonly List<Vector3> _normals = new List<Vector3>(Size * Size * Size * 8);
+        private readonly List<Vector4> _arrivals = new List<Vector4>(Size * Size * Size * 8);
+        private Vector4 _currentArrival;
         private readonly List<Color32> _materialIds = new List<Color32>(Size * Size * Size * 8);
         private readonly List<int>[] _indices = new List<int>[SlotCount];
         private CellularMaterialRenderer _source;
@@ -73,7 +75,7 @@ namespace Game.Rendering
             _source = source;
             _capacity = capacity;
             _edgePage = CellularMaterialRenderer.IsCoordinateEdge(key);
-            _vertices.Clear(); _normals.Clear(); _materialIds.Clear();
+            _vertices.Clear(); _normals.Clear(); _materialIds.Clear(); _arrivals.Clear();
             for (int slot = 0; slot < SlotCount; slot++) _indices[slot].Clear();
             var origin = new Vector3Int(key.X, key.Y, key.Z) * Size;
             for (int i = 0; i < cells.Count; i++)
@@ -81,7 +83,9 @@ namespace Game.Rendering
                 var cell = cells[i];
                 var sample = _source.Read(cell);
                 if (sample.Quantity == 0) continue;
+                _currentArrival = default;
                 AddCell(cell, cell - origin, sample);
+                while (_arrivals.Count < _vertices.Count) _arrivals.Add(_currentArrival);
                 // FixedSolid Shader 使用 COLOR.r 的原始 ID 区分冰面和粗糙残留。共享同一 Mesh 的液体忽略此通道。
                 var vertexMaterial = new Color32((byte)sample.Material, 0, 0, 255);
                 while (_materialIds.Count < _vertices.Count) _materialIds.Add(vertexMaterial);
@@ -90,9 +94,10 @@ namespace Game.Rendering
             mesh.SetVertices(_vertices);
             mesh.SetNormals(_normals);
             mesh.SetColors(_materialIds);
+            mesh.SetUVs(3, _arrivals);
             mesh.subMeshCount = SlotCount;
             for (int slot = 0; slot < SlotCount; slot++) mesh.SetTriangles(_indices[slot], slot, false);
-            mesh.bounds = new Bounds(Vector3.one * (.5f * Size), Vector3.one * Size);
+            mesh.bounds = new Bounds(Vector3.one * (.5f * Size), Vector3.one * (Size + 2));
             _source = null;
         }
 
@@ -103,6 +108,7 @@ namespace Game.Rendering
             Vector3 x = Vector3.right, z = Vector3.forward, up = Vector3.up;
             if (slot < LiquidSlots && (ulong)sample.Quantity * 4 <= _capacity && IsIsolated(cell))
             {
+                _currentArrival = _source.DropletArrival(cell, sample);
                 AddDroplet(slot, p, sample.Quantity / (float)_capacity);
                 return;
             }

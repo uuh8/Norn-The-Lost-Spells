@@ -15,9 +15,27 @@ namespace Game.ElementField
         [SerializeField] private Bounds _worldBounds = new Bounds(Vector3.zero, Vector3.one);
         [SerializeField, Range(0.01f, 1f)] private float _fill = 1f;
         [SerializeField] private bool _startActive;
+        internal LiquidWorldRuntime Owner => _liquids;
+        internal ElementWorldRuntime MigrationWorld { get; set; }
+        internal void ReadForMigration(CellularInitialContents plan)
+        {
+            if (!float.IsFinite(_fill) || _fill < 0 || _fill > 1) throw new System.InvalidOperationException("旧液体填充比例无效。");
+            var bounds = plan.CoarseBounds(_worldBounds);
+            foreach (var cell in bounds.allPositionsWithin)
+            {
+                float size = plan.Volume.CellSize;
+                Vector3 minimum = plan.Origin + (Vector3)cell * size;
+                Vector3 overlap = Vector3.Max(Vector3.zero, Vector3.Min(_worldBounds.max, minimum + Vector3.one * size)
+                    - Vector3.Max(_worldBounds.min, minimum));
+                uint quantity = (uint)Mathf.RoundToInt(plan.Volume.CapacityGmu * _fill *
+                    (overlap.x * overlap.y * overlap.z / (size * size * size)));
+                plan.Add(cell, _material, quantity, !_startActive);
+            }
+        }
 
         private void Start()
         {
+            if (ElementWorldRuntime.IsReplicaAuthor(_liquids) || MigrationWorld != null && MigrationWorld.OwnsImportedAuthor(this)) return;
             if (_liquids == null || !_liquids.IsFluidInitialized)
             {
                 GameLog.Error("Grid Liquid Initial Volume 缺少已初始化液体世界。", "ElementField");

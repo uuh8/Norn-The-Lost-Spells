@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Game.Core;
 using Game.Materials;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -31,6 +32,7 @@ namespace Game.ElementField
             internal BoundsInt Bounds;
             internal Region A, B;
             internal Node Content;
+            internal MaterialId BaseMaterial;
         }
 
         private readonly ElementCellWorldProfile _profile;
@@ -39,11 +41,15 @@ namespace Game.ElementField
         private readonly Region _index;
         private readonly int _editChunkSize;
         private readonly Dictionary<ElementChunkKey, Region> _extraRegions = new Dictionary<ElementChunkKey, Region>();
+        // 仅登记偏离作者基底的格，恢复到初值即移除；整片未改动岩层无需逐格进入 N5。
+        private readonly Dictionary<Vector3Int, MaterialId> _overrides = new Dictionary<Vector3Int, MaterialId>();
         private readonly GameObject _geometryRoot;
+        private readonly CellularMapTerrain _map;
         private readonly List<GameObject> _created = new List<GameObject>();
         private readonly List<GameObject> _retired = new List<GameObject>();
 
-        internal ElementTerrainVolume(ElementCellWorldProfile profile, Transform parent, float size, int editChunkSize)
+        internal ElementTerrainVolume(ElementCellWorldProfile profile, Transform parent, float size, int editChunkSize,
+            CellularMapTerrain.Source[] mapSources = null)
         {
             _profile = profile;
             _origin = parent.position;
@@ -59,7 +65,7 @@ namespace Game.ElementField
                     throw new ArgumentException($"Invalid cellular terrain region {i}.");
                 // 要求整数端点与联合包围盒可表示。负坐标采用同样的半开区间。
                 checked { _ = box.xMin + box.size.x; _ = box.yMin + box.size.y; _ = box.zMin + box.size.z; }
-                regions[i] = new Region { Bounds = box, Content = new Node(box, item.Material) };
+                regions[i] = new Region { Bounds = box, Content = new Node(box, item.Material), BaseMaterial = item.Material };
             }
             _index = regions.Length == 0 ? null : BuildIndex(regions, 0, regions.Length);
             foreach (Region region in regions)
@@ -68,6 +74,8 @@ namespace Game.ElementField
             _geometryRoot = new GameObject("Material Terrain");
             _geometryRoot.transform.SetParent(parent, false);
             _geometryRoot.SetActive(false);
+            if (mapSources != null && mapSources.Length != 0)
+                _map = new CellularMapTerrain(mapSources, _geometryRoot.transform, size, profile);
             try
             {
                 foreach (Region region in regions)
@@ -124,6 +132,9 @@ namespace Game.ElementField
 
         internal MaterialId Get(Vector3Int cell)
         {
+            if (_overrides.TryGetValue(cell, out var edited)) return edited;
+            MaterialId mapped = _map?.GetBase(cell) ?? MaterialId.Empty;
+            if (mapped != MaterialId.Empty) return mapped;
             Region owner = Find(_index, cell);
             if (owner == null && _extraRegions.Count != 0)
             {
@@ -131,6 +142,25 @@ namespace Game.ElementField
                 _extraRegions.TryGetValue(key, out owner);
             }
             return owner == null ? MaterialId.Empty : Read(owner.Content, cell);
+        }
+
+        internal MaterialId GetBase(Vector3Int cell) => Find(_index, cell)?.BaseMaterial ?? (_map?.GetBase(cell) ?? MaterialId.Empty);
+        internal bool TryGetNetworkOverride(Vector3Int cell, out MaterialId material) => _overrides.TryGetValue(cell, out material);
+        internal void ShowGeometry(bool visible)
+        {
+            _geometryRoot.SetActive(visible);
+            _map?.Show(visible);
+        }
+
+        internal bool CaptureOverrides(ref WorldCaptureWriter writer, int chunkSize)
+        {
+            foreach (var pair in _overrides)
+            {
+                if (!writer.Inspect()) return false;
+                if (!writer.Span(WorldCellularSpanKind.Terrain, new BoundsInt(pair.Key, Vector3Int.one), (byte)pair.Value,
+                    0, 0, chunkSize)) return false;
+            }
+            return true;
         }
 
         private static int LongAxis(Vector3Int size) =>
@@ -173,7 +203,7 @@ namespace Game.ElementField
                 go.transform.localScale = (Vector3)leaf.Box.size * _size;
                 return go;
             }
-            catch { go.SetActive(false); Object.Destroy(go); throw; }
+            catch { go.SetActive(false); CellularMapTerrain.ReleaseObject(go); throw; }
         }
 
         // 准备成功前逻辑根仍是旧树。复用节点直接跳过，挖一个格子的代价取决于树深度。
@@ -195,6 +225,14 @@ namespace Game.ElementField
 
         internal bool TrySet(Vector3Int cell, MaterialId material)
         {
+            MaterialId mapped = _map?.GetBase(cell) ?? MaterialId.Empty;
+            if (mapped != MaterialId.Empty)
+            {
+                if (Get(cell) == material || !_map.TryEdit(cell, material)) return false;
+                if (material == mapped) _overrides.Remove(cell);
+                else _overrides[cell] = material;
+                return true;
+            }
             var owner = Find(_index, cell);
             bool extra = owner == null;
             ElementChunkKey key = default;
@@ -218,6 +256,8 @@ namespace Game.ElementField
                 foreach (var go in _created) go.SetActive(true);
                 Physics.SyncTransforms();
                 owner.Content = next;
+                if (material == owner.BaseMaterial) _overrides.Remove(cell);
+                else _overrides[cell] = material;
                 if (extra)
                 {
                     if (next.Leaf && next.Material == MaterialId.Empty) _extraRegions.Remove(key);
@@ -226,18 +266,19 @@ namespace Game.ElementField
             }
             catch
             {
-                foreach (var go in _created) { go.SetActive(false); Object.Destroy(go); }
+                foreach (var go in _created) { go.SetActive(false); CellularMapTerrain.ReleaseObject(go); }
                 foreach (var go in _retired) go.SetActive(true);
                 Physics.SyncTransforms();
                 throw;
             }
             finally { _created.Clear(); if (owner.Content != next) _retired.Clear(); }
-            foreach (var go in _retired) Object.Destroy(go);
+            foreach (var go in _retired) CellularMapTerrain.ReleaseObject(go);
             _retired.Clear();
             return true;
         }
 
-        internal bool OwnsCollider(Collider hit) => _geometryRoot != null && hit.transform.parent == _geometryRoot.transform;
+        internal bool OwnsCollider(Collider hit) => hit != null && ((_geometryRoot != null && hit.transform.IsChildOf(_geometryRoot.transform))
+            || _map != null && _map.OwnsCollider(hit));
 
         // 粗格查询覆盖完整半开体积。静止巨大岩层命中一个叶节点即可，洞内会精确走到编辑叶。
         internal bool IntersectsSolid(Vector3 minimum, Vector3 size)
@@ -250,6 +291,7 @@ namespace Game.ElementField
         internal bool IntersectsSolid(BoundsInt box)
         {
             if (ContainsSolid(_index, box)) return true;
+            if (_map != null && _map.Intersects(box)) return true;
             if (_extraRegions.Count == 0) return false;
             ElementWorldCoordinates.GlobalCellToChunkAndLocal(box.min, _editChunkSize, out var a, out _);
             ElementWorldCoordinates.GlobalCellToChunkAndLocal(box.max - Vector3Int.one, _editChunkSize, out var b, out _);
@@ -270,9 +312,10 @@ namespace Game.ElementField
 
         public void Dispose()
         {
+            _map?.Dispose();
             if (_geometryRoot == null) return;
             _geometryRoot.SetActive(false);
-            Object.Destroy(_geometryRoot);
+            CellularMapTerrain.ReleaseObject(_geometryRoot);
         }
     }
 }

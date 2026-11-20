@@ -19,17 +19,33 @@ namespace Game.NetworkProtocol
             || schemaVersion == CompleteSchemaVersion;
         public const int MaximumCoins = 12;
         public const int MaximumPayloadBytes = 64 * 1024 * 1024;
+        /// <summary>累计紧凑 JSON 内 uint 数组的正文明文下界。剩余 DTO 字段由最终 UTF-8 编码一并计费。</summary>
+        public static bool TryBudgetWorldWords(uint[] words, ref long usedBytes)
+        {
+            if (words == null || usedBytes < 0 || usedBytes > MaximumPayloadBytes ||
+                (long)words.Length * 2 > MaximumPayloadBytes - usedBytes) return false;
+            long total = usedBytes;
+            foreach (uint word in words)
+            {
+                // 至少一位数字；每项多计一个逗号或数组边界。因此小整数也不能按 0 字节传输。
+                total += 2;
+                for (uint digits = word; digits >= 10; digits /= 10) total++;
+            }
+            if (total > MaximumPayloadBytes) return false;
+            usedBytes = total;
+            return true;
+        }
         // 仅由既有wire预算推导的保守数量门；不把Item容量或已落地输出槽误用为供料准备阶段玩法上限。
         public const int MaximumMaterialOutputs = MaximumPayloadBytes / 64;
         public const int MaximumMembers = 4;
-        public const int MaximumLostMaterials = MaximumMembers * 3 * 8;
+        public const int MaximumLostMaterials = MaximumMembers * 3 * OwnedMaterialKey.DistinctCount;
         // 对齐原地面快照的 4×4096 预算，不能把分页/单条命令的128收据误当作地面容量。
         public const int MaximumGroundItems = MaximumMembers * OnlineOwnedAssetSnapshot.MaximumItems;
         public const int MaximumActiveItems = MaximumMembers * OnlineOwnedAssetSnapshot.MaximumItems + MaximumGroundItems;
         public const int MaximumRetiredItems = MaximumActiveItems;
-        // 运行时当前地址预算仍为128；检查点还可能需要替上一份已确认Head的resident地址
-        // 写一次空tombstone，之后才能忘记。额外128仅容纳零payload连续性证据，不扩大活世界容量。
-        public const int MaximumCurrentWorldKeys = 128;
+        // 整个权威世界的持久化预算独立于一名玩家的 Interest；另一倍仅给上一已确认 Head 的退休证明。
+        // 每块页上限与整个检查点的 64 MiB UTF-8 正文上限仍同时生效。
+        public const int MaximumCurrentWorldKeys = 4096;
         public const int MaximumWorldKeys = MaximumCurrentWorldKeys * 2;
         public const int MaximumWordsPerChunk = 32768;
         public const int MaximumFlightsPerMember = 8;

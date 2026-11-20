@@ -274,7 +274,7 @@ namespace Game.Multiplayer
             ushort seen = 0;
             foreach (var amount in source)
             {
-                if (amount == null || amount.MaterialKey < 1 || amount.MaterialKey > 8) return false;
+                if (amount == null || !MaterialAmount.IsKnown(amount.MaterialKey)) return false;
                 int bit = 1 << amount.MaterialKey;
                 if ((seen & bit) != 0) return false;
                 seen |= (ushort)bit;
@@ -284,10 +284,10 @@ namespace Game.Multiplayer
         private static bool Losses(string playerId, ulong actorId, OnlineOwnedMaterialAmountSnapshot[] source,
             string kind, List<Shared.OnlineRunAssetCheckpointLostMaterial> result)
         {
-            if (source.Length > 8) return false;
+            if (source.Length > OnlineExitedMemberLossSnapshot.MaximumMaterialsPerSource) return false;
             for (int i = 0; i < source.Length; i++)
             {
-                var amount = source[i]; if (amount == null || amount.MaterialKey < 1 || amount.MaterialKey > 8) return false;
+                var amount = source[i]; if (amount == null || !MaterialAmount.IsKnown(amount.MaterialKey)) return false;
                 if (amount.Quantity != 0) result.Add(new Shared.OnlineRunAssetCheckpointLostMaterial { PlayerId = playerId,
                     ActorId = actorId, Source = kind, MaterialKey = amount.MaterialKey, Quantity = amount.Quantity });
             }

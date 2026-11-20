@@ -128,7 +128,7 @@ namespace Game.Core
 
         private static bool Valid(in WorldMaterialCellSample value)
         {
-            if ((byte)value.Domain > (byte)WorldMaterialDomain.Gas || value.GridId != (byte)value.Domain
+            if ((byte)value.Domain > (byte)WorldMaterialDomain.Cellular || value.GridId != (byte)value.Domain
                 || value.MaterialId == 0) return false;
             if (value.Domain == WorldMaterialDomain.Liquid)
                 return value.Storage == WorldMaterialStorage.Dynamic || value.Storage == WorldMaterialStorage.Stable;

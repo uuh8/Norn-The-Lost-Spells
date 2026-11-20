@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Game.Core;
 using Game.Networking;
 using Game.NetworkProtocol;
@@ -19,17 +20,24 @@ namespace Game.Multiplayer
         public const double ProductionQuantityBytesPerSecond=64*1024, ProductionQuantityBurstBytes=12*1024;
         public const int ProductionQuantityPagesPerRound=4;
         private readonly WorldReplicationCommitOwner _owner;
+        private IWorldReplicationSource _committedSource;
+        private WorldReplicaBuffer _committedBuffer;
         private readonly WorldReplicationPeerState[] _peers;
         private readonly bool[] _active=new bool[4];
         private readonly int[] _cursor=new int[4],_resyncCount=new int[4];
         private readonly double[] _resyncWindow=new double[4];
         private readonly WorldChunkReplicaAssembler[] _assemblers;
+        private readonly Dictionary<WorldChunkKey,int> _clientIndices;
+        private readonly IWorldChunkPayloadInstaller _installer;
         private readonly WorldChunkPayloadHeader[] _incoming;
         private readonly IWorldChunkPayloadInterestSink _interestSink;
         private readonly IWorldChunkPayloadRetirementSink _retirementSink;
         private readonly WorldInterestCoordinator _interest=new WorldInterestCoordinator();
-        private readonly WorldGridGeometry[] _geometry=new WorldGridGeometry[4];
-        private readonly bool[] _hasGeometry=new bool[4];
+        private readonly bool[] _interestCompared=new bool[4];
+        private readonly Bounds[] _comparedBounds=new Bounds[4];
+        private readonly ulong[] _comparedSequence=new ulong[4];
+        private readonly WorldGridGeometry[] _geometry=new WorldGridGeometry[5];
+        private readonly bool[] _hasGeometry=new bool[5];
         private struct Subscription { internal bool Known,Desired,Announced,AnnouncementKnown;internal ulong Epoch,AnnouncedEpoch,PendingEpoch; }
         // Owner退休空Key时会交换末槽；共同退休边界同步搬动这些索引，不按探索历史无限追加。
         private readonly Subscription[,] _subscriptions;
@@ -110,16 +118,21 @@ namespace Game.Multiplayer
         /// 仍共享同一Peer的实际编码字节额度。有限burst只吸收短时排队，不能绕过长期速率。
         /// </summary>
         public WorldReplicationCoordinator(ulong epoch,ulong hash,int chunks,int maxWords,int cells,int pending,int inspections,IWorldChunkPayloadInstaller installer,int maximumInFlight,double quantityBytesPerSecond,double quantityBurstBytes,int maximumPagesPerRound)
+            :this(epoch,hash,chunks,maxWords,cells,pending,inspections,installer,maximumInFlight,quantityBytesPerSecond,quantityBurstBytes,maximumPagesPerRound,chunks){ }
+
+        /// <summary>房间目录按实际世界变化持久保留。Delta 的短期历史按变更条数独立设定，缺口由当前 Baseline 恢复。</summary>
+        public WorldReplicationCoordinator(ulong epoch,ulong hash,int chunks,int maxWords,int cells,int pending,int inspections,IWorldChunkPayloadInstaller installer,int maximumInFlight,double quantityBytesPerSecond,double quantityBurstBytes,int maximumPagesPerRound,int historyRecords)
         {
             if(epoch==0 || hash==0 || chunks<1 || maxWords<11 || maxWords>WorldPageCodec.MaxWords)throw new ArgumentOutOfRangeException(nameof(epoch));
             if(maximumInFlight<1 || maximumInFlight>4)throw new ArgumentOutOfRangeException(nameof(maximumInFlight));
+            if(historyRecords<1)throw new ArgumentOutOfRangeException(nameof(historyRecords));
             if(!double.IsFinite(quantityBytesPerSecond) || quantityBytesPerSecond<=0)throw new ArgumentOutOfRangeException(nameof(quantityBytesPerSecond));
             if(!double.IsFinite(quantityBurstBytes) || quantityBurstBytes<=0)throw new ArgumentOutOfRangeException(nameof(quantityBurstBytes));
             if(maximumPagesPerRound<1 || maximumPagesPerRound>8)throw new ArgumentOutOfRangeException(nameof(maximumPagesPerRound));
             WorldEpoch=epoch;GameplayHash=hash;_maxWords=maxWords;QuantityPagesPerRound=maximumPagesPerRound;
             if(installer==null)
             {
-                _owner=new WorldReplicationCommitOwner(epoch,chunks,cells,pending,chunks,maxWords,inspections);
+                _owner=new WorldReplicationCommitOwner(epoch,chunks,cells,pending,historyRecords,maxWords,inspections);
                 _subscriptions=new Subscription[4,chunks];_peerAckHeaders=new WorldReplicationChunkStamp[4,chunks];
                 _liquidMotionRetainUntil=new double[4,chunks];
                 _peers=new WorldReplicationPeerState[4];
@@ -128,14 +141,13 @@ namespace Game.Multiplayer
             else
             {
                 _assemblers=new WorldChunkReplicaAssembler[chunks];_incoming=new WorldChunkPayloadHeader[chunks];
+                _installer=installer;_clientIndices=new Dictionary<WorldChunkKey,int>(Math.Min(chunks,32));
                 _interestSink=installer as IWorldChunkPayloadInterestSink;
                 if(_interestSink==null)throw new ArgumentException("正式Replica Installer必须支持Interest缓存释放。",nameof(installer));
                 _retirementSink=installer as IWorldChunkPayloadRetirementSink;
                 if(_retirementSink==null)throw new ArgumentException("正式Replica Installer必须支持可信订阅退休。",nameof(installer));
                 _clientSubscriptions=new ulong[chunks];_incomingEpoch=new ulong[chunks];
                 _clientActive=new bool[chunks];_needsBaseline=new bool[chunks];
-                int pages=1+(maxWords-1)/WorldPageCodec.PageWords;
-                for(int i=0;i<chunks;i++)_assemblers[i]=new WorldChunkReplicaAssembler(epoch,default,1,maxWords,pages,WorldPageCodec.PageWords,15000,installer);
             }
         }
         private static WorldPageMessage WarmMessage()
@@ -146,8 +158,21 @@ namespace Game.Multiplayer
         {
             if(!IsAuthority || _stopped || Faulted)return false;
             if(source==null || buffer==null)return Fail("MissingCaptureSource");
-            if(!source.TryCapture(buffer,out var failure))return Fail("Source:"+failure);
-            if(!_owner.TryCaptureCommit(buffer))return Fail("Commit:"+_owner.LastFailure);
+            bool unchanged=ReferenceEquals(source,_committedSource) && ReferenceEquals(buffer,_committedBuffer) &&
+                source is IWorldUnchangedReplicationSource quiet && quiet.TryAdvanceUnchangedCapture(buffer);
+            if(unchanged)
+            {
+                if(!_owner.TryAdvanceUnchangedCapture(buffer.Header.WorldTick))return Fail("Commit:"+_owner.LastFailure);
+            }
+            else
+            {
+                int changed=0;WorldCaptureFailure failure=WorldCaptureFailure.None;
+                bool partial=ReferenceEquals(source,_committedSource) && ReferenceEquals(buffer,_committedBuffer) &&
+                    source is IWorldCellularIncrementalSource incremental && incremental.TryCaptureChangedChunks(buffer,out changed,out failure);
+                if(failure!=WorldCaptureFailure.None || !partial && !source.TryCapture(buffer,out failure))return Fail("Source:"+failure);
+                if(!(partial?_owner.TryCaptureChangedChunks(buffer,changed):_owner.TryCaptureCommit(buffer)))return Fail("Commit:"+_owner.LastFailure);
+                _committedSource=source;_committedBuffer=buffer;
+            }
             // 仅提交成功后复制可信几何，绝不能把失败capture留下的候选几何用于网络判交。
             for(int i=0;i<buffer.Header.GeometryCount;i++){var g=buffer.Geometries[i];_geometry[(int)g.Domain]=g;_hasGeometry[(int)g.Domain]=true;}
             for(int slot=0;slot<4;slot++)if(_active[slot])RefreshSubscriptions(slot);
@@ -173,14 +198,20 @@ namespace Game.Multiplayer
         }
         private bool RefreshSubscriptions(int slot)
         {
-            var p=_peers[slot];if(!_interest.TryGetInterest(p.ConnectionId,p.ConnectionEpoch,out _))return true;
+            var p=_peers[slot];if(!_interest.TryGetInterest(p.ConnectionId,p.ConnectionEpoch,out var bounds))return true;
+            // 角色仍在同一参考窗口、世界未变且没有等待 ACK/延时释放的 tombstone 时，
+            // 本次 Capture/发送轮沿用原订阅，静止的整图编辑历史不会每帧重做 Bounds 判交。
+            if(_owner.InactiveChunkCount==0 && _interestCompared[slot] && _comparedSequence[slot]==_owner.CommitSequence &&
+                _comparedBounds[slot].Equals(bounds))return true;
             for(int i=0;i<_owner.ChunkCount;i++)
             {
                 var header=_owner.GetChunkHeader(i);var key=header.Key;int d=(int)key.Domain;
                 if(!_hasGeometry[d])return Fail("Missing committed chunk geometry");
                 var g=_geometry[d];float edge=g.CellSize*g.ChunkSize;
                 Vector3 min=g.Origin+new Vector3(key.X,key.Y,key.Z)*edge;
-                bool inside=_interest.Intersects(p.ConnectionId,p.ConnectionEpoch,new Bounds(min+Vector3.one*(edge*.5f),Vector3.one*edge));
+                // 远处玩家即使只看见原始基底，也必须先获得同一配置身份。其余块照常按权威位置订阅。
+                bool inside=key.Domain==WorldMaterialDomain.Cellular && key.X==0 && key.Y==0 && key.Z==0 ||
+                    _interest.Intersects(p.ConnectionId,p.ConnectionEpoch,new Bounds(min+Vector3.one*(edge*.5f),Vector3.one*edge));
                 ref var s=ref _subscriptions[slot,i];
                 // 删除仍需让已经订阅的Peer先安装精确tombstone；ACK后才排Leave。
                 // 从未发送过该地址的Peer没有旧量可清，不因一个历史空地址建立新订阅。
@@ -195,6 +226,7 @@ namespace Game.Multiplayer
                 s.PendingEpoch=0;
                 p.RequireBaseline(key);
             }
+            _comparedBounds[slot]=bounds;_comparedSequence[slot]=_owner.CommitSequence;_interestCompared[slot]=true;
             return true;
         }
         public bool BindPeer(int slot,int connectionId,uint epoch)
@@ -207,6 +239,7 @@ namespace Game.Multiplayer
             p.Reset(connectionId,epoch);_active[slot]=true;_cursor[slot]=0;_peerAcks[slot]=0;
             _nextSubscriptionEpoch[slot]=0;
             _lastPeerAck[slot]=default;
+            _interestCompared[slot]=false;
             for(int i=0;i<_subscriptions.GetLength(1);i++){_subscriptions[slot,i]=default;_peerAckHeaders[slot,i]=default;_liquidMotionRetainUntil[slot,i]=0;}
             _resyncCount[slot]=0;_resyncWindow[slot]=double.NaN;return true;
         }
@@ -287,7 +320,7 @@ namespace Game.Multiplayer
             ObservePeerTiming(slot,2,pageIndex);message=_outbound;return true;
         }
         private void Prepare(int slot,int index,uint kind,ulong epoch){_preparedSlot=slot;_preparedIndex=index;_preparedKind=kind;_preparedEpoch=epoch;}
-        private int OwnerIndex(WorldChunkKey key){for(int i=0;i<_owner.ChunkCount;i++)if(_owner.GetChunkHeader(i).Key==key)return i;return -1;}
+        private int OwnerIndex(WorldChunkKey key)=>_owner.IndexOf(key);
         private bool Sendable(int slot,int index){var s=_subscriptions[slot,index];return s.Known && s.Desired && s.Announced && s.AnnouncedEpoch==s.Epoch;}
         /// <summary>隔离诊断的迟到包重放也必须核对当前真实连接及已公布且仍有效的订阅，不借历史ACK授予资格。</summary>
         public bool IsCurrentPeerSubscription(int slot,int connectionId,uint connectionEpoch,WorldChunkKey key,ulong subscriptionEpoch)
@@ -357,15 +390,15 @@ namespace Game.Multiplayer
             for(int i=_slots-1;i>=0;i--)if(!RetireClientSlot(i))return false;
             for(int i=0;i<_assemblers.Length;i++)
             {
-                if(!_assemblers[i].ResetConnectionEpoch(epoch))return Fail("Replica connection reset rejected");
+                if(_assemblers[i]!=null && !_assemblers[i].ResetConnectionEpoch(epoch))return Fail("Replica connection reset rejected");
                 _clientActive[i]=false;_clientSubscriptions[i]=_incomingEpoch[i]=0;_needsBaseline[i]=true;
             }
             _clientEpoch=epoch;_clientControlFloor=0;return true;
         }
-        private int ClientIndex(WorldChunkKey key){for(int i=0;i<_slots;i++)if(_assemblers[i].Key==key)return i;return -1;}
+        private int ClientIndex(WorldChunkKey key)=>_clientIndices.TryGetValue(key,out int index)?index:-1;
         public bool ReceiveSubscription(WorldPageMessage message)
         {
-            if(IsAuthority || _stopped || Faulted || !Identity(message,_clientEpoch) || message.SubscriptionEpoch==0 || message.Domain>3 ||
+            if(IsAuthority || _stopped || Faulted || !Identity(message,_clientEpoch) || message.SubscriptionEpoch==0 || message.Domain>(uint)WorldMaterialDomain.Cellular ||
                 (message.Kind!=6 && message.Kind!=7) || message.SnapshotId!=0 || message.Generation!=0 || message.BaseRevision!=0 || message.Revision!=0 ||
                 message.PageIndex!=0 || message.PageCount!=0 || message.ServerTick!=0 || message.Checksum!=0 || message.WordOffset!=0 || message.TotalWords!=0 || message.Words.Count!=0)return Reject();
             var key=Key(message);int slot=ClientIndex(key);
@@ -377,7 +410,13 @@ namespace Game.Multiplayer
             if(slot<0)
             {
                 if(_slots==_assemblers.Length)return Fail("Replica subscription key capacity");
-                slot=_slots;if(!_assemblers[slot].TryBindUnusedKey(key))return Fail("Replica key binding rejected");_slots++;
+                slot=_slots;
+                // 初次进入视野才创建收件槽。旧槽退休后可复用，无需为房间每个远方洞提前创建分页器。
+                if(_assemblers[slot]==null)
+                    _assemblers[slot]=new WorldChunkReplicaAssembler(WorldEpoch,key,_clientEpoch,_maxWords,
+                        1+(_maxWords-1)/WorldPageCodec.PageWords,WorldPageCodec.PageWords,15000,_installer);
+                if(!_assemblers[slot].TryBindUnusedKey(key))return Fail("Replica key binding rejected");
+                _clientIndices.Add(key,slot);_slots++;
             }
             ulong current=_clientSubscriptions[slot];var a=_assemblers[slot];
             if(message.Kind==6)

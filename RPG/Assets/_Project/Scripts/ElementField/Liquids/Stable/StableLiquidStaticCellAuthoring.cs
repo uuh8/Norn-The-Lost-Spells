@@ -11,6 +11,7 @@ namespace Game.ElementField
     public sealed class StableLiquidStaticCellAuthoring : MonoBehaviour
     {
         [SerializeField] private LiquidWorldRuntime _liquids;
+        internal LiquidWorldRuntime Owner => _liquids;
         [SerializeField] private BoxCollider _obstacle;
         private Vector3Int _cell;
         private bool _ready;
@@ -18,6 +19,7 @@ namespace Game.ElementField
 
         private void Start()
         {
+            if (ElementWorldRuntime.IsReplicaAuthor(_liquids)) return;
             if (_liquids == null || !_liquids.IsFluidInitialized || _obstacle == null)
             {
                 GameLog.Error("单格地形开关缺少 Grid Liquid 或 BoxCollider。", "ElementField");

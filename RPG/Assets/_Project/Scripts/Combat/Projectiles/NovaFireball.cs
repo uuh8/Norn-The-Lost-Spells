@@ -76,6 +76,11 @@ namespace Game.Combat
                 // 爆炸与火场属于同次命中的产出事务；第二个预算失败时，第一个也不能留着等待自动首跳。
                 CancelSpawnedEffect(explosion); CancelSpawnedEffect(field); throw;
             }
+            // 直接命中的表面收到一次破坏事实。只有拥有该 Collider 的材料世界能裁决；
+            // 火场的周期伤害、特效和 Replica 回放都不会重复开洞。
+            if (collision != null && collision.contactCount != 0 && _explosionDamage > 0f)
+                EventBus<TerrainImpactEvent>.Publish(new TerrainImpactEvent(collision.collider,
+                    hitPoint, collision.GetContact(0).normal, _explosionDamage));
         }
 
         /// <summary>生成一个特效实例，若其上有 AreaDamage 则注入本陨石的阵营，按 lifetime 延时销毁。</summary>

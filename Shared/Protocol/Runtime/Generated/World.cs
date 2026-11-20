@@ -215,7 +215,7 @@ namespace Game.NetworkProtocol {
     public const int DomainFieldNumber = 7;
     private uint domain_;
     /// <summary>
-    /// 原生网格域，0=LegacyCell、1=Liquid、2=Solid、3=Gas。
+    /// 原生网格域，0=LegacyCell、1=Liquid、2=Solid、3=Gas、4=统一细格Cellular。
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]

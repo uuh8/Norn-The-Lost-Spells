@@ -25,12 +25,19 @@ namespace Game.ElementField
 
         public int Capacity => _buffer.Length;
         public int Count => _count;
+        internal ulong Revision { get; private set; }
         /// <summary>复制待写请求时保留FIFO与原队列，禁止用Dequeue/Requeue改变真实提交顺序。</summary>
         internal bool TryPeek(int index, out ElementWriteRequest request)
+            => TryPeek(index, out request, out _);
+
+        internal bool TryPeek(int index, out ElementWriteRequest request, out long retryTick)
         {
-            request = default;
+            request = default; retryTick = 0;
             if ((uint)index >= (uint)_count) return false;
-            request = _buffer[(_head + index) % _buffer.Length]; return true;
+            int slot = (_head + index) % _buffer.Length;
+            request = _buffer[slot];
+            if (_retryTicks != null) retryTick = _retryTicks[slot];
+            return true;
         }
 
         public bool TryEnqueue(in ElementWriteRequest request)
@@ -51,6 +58,7 @@ namespace Game.ElementField
             if (_retryTicks != null) _retryTicks[_tail] = retryTick;
             _tail = (_tail + 1) % _buffer.Length;
             _count++;
+            Revision++;
             return true;
         }
 
@@ -74,6 +82,7 @@ namespace Game.ElementField
             _buffer[_head] = default;
             _head = (_head + 1) % _buffer.Length;
             _count--;
+            Revision++;
             return true;
         }
 

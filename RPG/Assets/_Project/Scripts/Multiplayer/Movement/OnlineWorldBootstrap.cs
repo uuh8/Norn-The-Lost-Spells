@@ -37,6 +37,7 @@ namespace Game.Multiplayer
         private GameObject _worldContent;
         private string _runId;
         private IOnlineMaterialWorldBinding _materialWorld;
+        private OnlineWorldReplicationProfile _materialProfile;
         /// <summary>当前World生命期身份。DS创建、认证后告知Client；不取RoomEpoch/ConnectionEpoch或渲染版本。</summary>
         public ulong WorldEpoch { get; private set; }
         private bool _initializing;
@@ -171,8 +172,9 @@ namespace Game.Multiplayer
                 // 复制状态跟随 World，换连接/Manager 不重建已安装版本；无 Installer 的正式 Replica 禁止启动。
                 if (!IsAuthority && _materialWorld.ReplicaInstaller == null) throw new InvalidOperationException("Replica缺少原子Installer。");
                 var capture = _materialWorld.CaptureBuffer;
+                bool cellular=_materialWorld is IOnlineCellularDirectoryBinding cellularBinding && cellularBinding.UsesCellularReplication;
                 _materialReplication = new WorldReplicationCoordinator(WorldEpoch, _combatDefinition.WireHash,
-                    WorldReplicationCoordinator.DefaultChunks, WorldReplicationCoordinator.DefaultWords,
+                    cellular ? _materialProfile.CellularWorldChunkLimit : WorldReplicationCoordinator.DefaultChunks, WorldReplicationCoordinator.DefaultWords,
                     capture != null ? capture.Cells.Length : 65536, capture != null ? capture.Pending.Length : 1024,
                     capture != null ? capture.InspectionBudget : 2000000, IsAuthority ? null : _materialWorld.ReplicaInstaller,
                     // 不同Chunk最多4份在途，同Key仍串行，只装完整原子快照。真实4Key×32格
@@ -182,12 +184,12 @@ namespace Game.Multiplayer
                     maximumInFlight:IsAuthority?4:1,
                     quantityBytesPerSecond:WorldReplicationCoordinator.ProductionQuantityBytesPerSecond,
                     quantityBurstBytes:WorldReplicationCoordinator.ProductionQuantityBurstBytes,
-                    maximumPagesPerRound:WorldReplicationCoordinator.ProductionQuantityPagesPerRound);
+                    maximumPagesPerRound:WorldReplicationCoordinator.ProductionQuantityPagesPerRound,
+                    historyRecords:cellular ? _materialProfile.CellularHistoryRecords : WorldReplicationCoordinator.DefaultChunks);
                 if (IsAuthority) _materialReplication.SetFaultHandler(SynchronizeMaterialLifecycle);
                 // 独立网络配置属于两端兼容输入；不能借单机活动半径隐式改变DS模拟，也不能缺失时静默全量发送。
-                var materialProfile=Resources.Load<OnlineWorldReplicationProfile>("Online/WorldReplicationProfile");
-                if(materialProfile==null || !materialProfile.Validate(out _) || !_materialReplication.ConfigureInterest(
-                    materialProfile.ReferenceChunkWorldSize,materialProfile.RadiusXZChunks,materialProfile.RadiusYChunks))
+                if(!_materialReplication.ConfigureInterest(
+                    _materialProfile.ReferenceChunkWorldSize,_materialProfile.RadiusXZChunks,_materialProfile.RadiusYChunks))
                     throw new InvalidOperationException("缺少有效的独立联机材料Interest配置。");
                 _combatSimulation = new CombatSimulationWorld();
                 if (IsAuthority) _combatSimulation.ConfigureAuthorityWriteGate(() => CanAdvance);
@@ -223,6 +225,11 @@ namespace Game.Multiplayer
                     found = binding;
                 }
             if (found == null) throw new InvalidOperationException("正式地图缺少材料Binding，请重新导出CPU世界资源。");
+            _materialProfile=Resources.Load<OnlineWorldReplicationProfile>("Online/WorldReplicationProfile");
+            if(_materialProfile==null || !_materialProfile.Validate(out _))
+                throw new InvalidOperationException("联机材料复制 Profile 缺失或预算非法。");
+            if(found is IOnlineCellularDirectoryBinding directory && !directory.TrySetCellularDirectoryLimit(_materialProfile.CellularWorldChunkLimit))
+                throw new InvalidOperationException("无法在地图激活前配置 Cellular 世界目录容量。");
             // 失败也保留候选引用供StopWorld.Detach清理，不把半份配置当作原状退回单机。
             _materialWorld = found;
             if (!found.TryConfigure(IsAuthority ? WorldExecutionMode.Authority : WorldExecutionMode.Replica, worldEpoch))

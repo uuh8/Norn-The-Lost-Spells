@@ -44,7 +44,7 @@ namespace Game.Networking
         {
             if(m==null || !ProtocolCompatibility.IsSupported(m.ProtocolVersion) || m.GameplayHash==0
                 || m.ConnectionEpoch==0 || m.WorldEpoch==0 || m.Kind<1 || m.Kind>8
-                || m.Domain>3
+                || m.Domain>(uint)WorldMaterialDomain.Cellular
                 || m.Words.Count>PageWords)return false;
             // 运动是跨Chunk的完整表现窗口；每个anchor的数量/订阅身份在body内验证。
             // 外层不得伪造某一个Chunk的Revision，也不经过数量ACK/Resync或checkpoint。

@@ -36,7 +36,7 @@ public sealed class RunCheckpointWorldRulesTests
             case "epoch": world.WorldEpoch = 0; break;
             case "tick": world.WorldTick = -1; break;
             case "restore": world.CanRestoreAuthorityRules = true; break;
-            case "capacity": world.Chunks = new OnlineRunAssetCheckpointChunk[129]; break;
+            case "capacity": world.Chunks = new OnlineRunAssetCheckpointChunk[OnlineRunAssetCheckpoint.MaximumWorldKeys+1]; break;
             case "duplicate": world.Chunks = [chunk, Clone(chunk)]; break;
             case "checksum": chunk.Checksum++; break;
             case "word-count": chunk.WordCount--; break;
@@ -135,11 +135,29 @@ public sealed class RunCheckpointWorldRulesTests
     }
 
     [Fact]
+    public void FullResidentLimitIsIndependentOfPeerInterestAndStillAcceptsLegacyWords()
+    {
+        var world = Valid();
+        world.Chunks = Enumerable.Range(0, OnlineRunAssetCheckpoint.MaximumCurrentWorldKeys).Select(ResidentAt).ToArray();
+        RunCheckpointWorldRules.Require(world);
+    }
+
+    [Fact]
+    public void WorldWordBudgetUsesDecimalWireSizeAndDoesNotAdvanceOnRejection()
+    {
+        long bytes = OnlineRunAssetCheckpoint.MaximumPayloadBytes - 13;
+        Assert.True(OnlineRunAssetCheckpoint.TryBudgetWorldWords([0, uint.MaxValue], ref bytes));
+        Assert.Equal((long)OnlineRunAssetCheckpoint.MaximumPayloadBytes, bytes);
+        Assert.False(OnlineRunAssetCheckpoint.TryBudgetWorldWords([0], ref bytes));
+        Assert.Equal((long)OnlineRunAssetCheckpoint.MaximumPayloadBytes, bytes);
+    }
+
+    [Fact]
     public void AdditionalContinuityHeadersDoNotIncreaseTheResidentWorldLimit()
     {
         var world = Valid();
-        world.Chunks = Enumerable.Range(0, 129).Select(ResidentAt).ToArray();
-        // 头部预算扩到256只容纳零payload删除证据，当前resident容量仍为128。
+        world.Chunks = Enumerable.Range(0, OnlineRunAssetCheckpoint.MaximumCurrentWorldKeys+1).Select(ResidentAt).ToArray();
+        // 多出的一倍表头预算只容纳零 payload 的删除证据。
         Assert.Throws<OnlineFailure>(() => RunCheckpointWorldRules.Require(world));
     }
 
@@ -158,7 +176,7 @@ public sealed class RunCheckpointWorldRulesTests
     public void TotalHeadRowsRemainBoundedEvenWhenEveryExtraHeaderHasZeroPayload()
     {
         var world = Valid();
-        world.Chunks = [world.Chunks[0], .. Enumerable.Range(1, 256).Select(x =>
+        world.Chunks = [world.Chunks[0], .. Enumerable.Range(1, OnlineRunAssetCheckpoint.MaximumWorldKeys).Select(x =>
         {
             var tombstone = Tombstone(); tombstone.X = x; return tombstone;
         })];
@@ -174,12 +192,32 @@ public sealed class RunCheckpointWorldRulesTests
         return new() { WorldId = "material-world", WorldEpoch = 42, CommitSequence = 3, WorldTick = 5,
             CanRestoreAuthorityRules = false, Chunks = [chunk] };
     }
+
+    [Theory, InlineData(0), InlineData(1), InlineData(2), InlineData(3)]
+    public void CellularCheckpointRetainsRealAmountsAndRejectsConflictingOwnersOrBase(int defect)
+    {
+        var world = Valid(); var c = world.Chunks[0]; c.Domain = 4;
+        c.Words = [0x4E355732, 1, 0, 1, 4, 4, 0, 0, 0, Float(1), 16, 55, 0, 255, 3,
+            4,0,0,0,0,11,9,
+            1,0,0,0,1,1,1,0,0,0,
+            2,0,0,0,1,1,1,1,255,0,
+            3,1,0,0,4,4,4,5,0,128];
+        Refresh(c); RunCheckpointWorldRules.Require(world);
+        if (defect == 0) return;
+        var previous = Valid(); previous.Chunks = [Clone(c)];
+        world.CommitSequence = c.SnapshotId = 4; c.Revision++;
+        if (defect == 1) c.Words[11] = 56;       // 同一地图生命期不能换基底，即使另发了新的 Revision。
+        if (defect == 2) c.Words[31] = 1;        // 地形形状不能编码成假 GMU。
+        if (defect == 3) c.Words[41] = 128;      // 同一地址的静水与沙不能同时拥有正量。
+        Refresh(c);
+        Assert.Throws<OnlineFailure>(() => RunCheckpointWorldRules.Require(world,previous));
+    }
     private static OnlineRunAssetCheckpointChunk Tombstone() => new() { Domain = 1, X = 2, WorldEpoch = 42,
         SnapshotId = 2, Generation = 2, BaseRevision = 4, Revision = 5, ServerTick = 4, IsResident = false,
         Words = [], WordCount = 0, Checksum = 2166136261 };
     private static OnlineRunAssetCheckpointChunk ResidentAt(int x)
     {
-        var chunk = Clone(Valid().Chunks[0]);
+        var chunk = Valid().Chunks[0];
         chunk.X = x; chunk.Words[13] = unchecked((uint)(x * 16)); Refresh(chunk); return chunk;
     }
     private static OnlineRunAssetCheckpointWorld Next(ulong sequence, long tick)

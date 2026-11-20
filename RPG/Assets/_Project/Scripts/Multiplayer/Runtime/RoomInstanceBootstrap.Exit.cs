@@ -336,7 +336,7 @@ namespace Game.Multiplayer
             if (assets == null || assets.Items == null || assets.Items.Length > Game.NetworkProtocol.OnlineOwnedAssetSnapshot.MaximumItems) return false;
             var entries = new List<OnlineRunAssetCheckpointRetired>(assets.Items.Length);
             var ids = new HashSet<string>(StringComparer.Ordinal);
-            var quantities = new ulong[9];
+            var quantities = new ulong[MaterialAmount.LastLocalInventoryKey + 1];
             for (int i = 0; i < assets.Items.Length; i++)
             {
                 var item = assets.Items[i];
@@ -352,7 +352,7 @@ namespace Game.Multiplayer
                     uint seen = 0;
                     foreach (var amount in item.ContainerState.Components)
                     {
-                        if (amount == null || amount.MaterialKey < 1 || amount.MaterialKey > 8 || amount.Quantity == 0
+                        if (amount == null || !MaterialAmount.IsKnown(amount.MaterialKey) || amount.Quantity == 0
                             || (seen & (1u << amount.MaterialKey)) != 0 || !AddFinalDeathAmount(quantities, amount.MaterialKey, amount.Quantity)) return false;
                         seen |= 1u << amount.MaterialKey;
                     }
@@ -361,16 +361,16 @@ namespace Game.Multiplayer
                     || !AddFinalDeathAmount(quantities, item.MaterialState.MaterialKey, item.MaterialState.Quantity))) return false;
             }
             int count = 0;
-            for (int i = 1; i <= 8; i++) if (quantities[i] != 0) count++;
+            for (int i = 1; i < quantities.Length; i++) if (quantities[i] != 0) count++;
             var amounts = new Game.NetworkProtocol.OnlineOwnedMaterialAmountSnapshot[count];
             int at = 0;
-            for (byte i = 1; i <= 8; i++) if (quantities[i] != 0)
+            for (byte i = 1; i < quantities.Length; i++) if (quantities[i] != 0)
                 amounts[at++] = new Game.NetworkProtocol.OnlineOwnedMaterialAmountSnapshot { MaterialKey = i, Quantity = quantities[i] };
             retired = entries.ToArray(); lost = amounts; return true;
         }
         private static bool AddFinalDeathAmount(ulong[] quantities, byte key, ulong quantity)
         {
-            if (key < 1 || key > 8 || quantity == 0 || quantities[key] > ulong.MaxValue - quantity) return false;
+            if (!MaterialAmount.IsKnown(key) || quantity == 0 || quantities[key] > ulong.MaxValue - quantity) return false;
             quantities[key] += quantity; return true;
         }
         private static bool MatchesMemberExitReasonAndFacts(OnlineRunMemberExitRequest candidate, OnlineRunMemberExitReceipt receipt)
@@ -399,16 +399,16 @@ namespace Game.Multiplayer
                 facts.Remove(fact.InstanceId);
             }
             if (facts.Count != 0) return false;
-            var amounts = new ulong[9];
+            var amounts = new ulong[MaterialAmount.LastLocalInventoryKey + 1];
             foreach (var value in candidate.FinalDeathLostMaterials)
-                if (value == null || value.MaterialKey < 1 || value.MaterialKey > 8 || value.Quantity == 0
+                if (value == null || !MaterialAmount.IsKnown(value.MaterialKey) || value.Quantity == 0
                     || amounts[value.MaterialKey] != 0) return false;
                 else amounts[value.MaterialKey] = value.Quantity;
             foreach (var value in receipt.FinalDeathLostMaterials)
-                if (value == null || value.MaterialKey < 1 || value.MaterialKey > 8 || value.Quantity == 0
+                if (value == null || !MaterialAmount.IsKnown(value.MaterialKey) || value.Quantity == 0
                     || amounts[value.MaterialKey] != value.Quantity) return false;
                 else amounts[value.MaterialKey] = 0;
-            for (int i = 1; i <= 8; i++) if (amounts[i] != 0) return false;
+            for (int i = 1; i < amounts.Length; i++) if (amounts[i] != 0) return false;
             return true;
         }
 

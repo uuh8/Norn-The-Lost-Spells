@@ -8,6 +8,10 @@ namespace Game.ElementField
     public sealed partial class ElementWorldRuntime
     {
         private WorldReplicaStore _replicaStore;
+        private WorldReplicaCellularReadModel _replicaCellular;
+        public static event Action<ElementWorldRuntime> CellularReplicaPresentationReady;
+        private readonly System.Collections.Generic.HashSet<Vector3Int> _replicaCellNotices = new System.Collections.Generic.HashSet<Vector3Int>();
+        private readonly System.Collections.Generic.HashSet<Vector3Int> _replicaTerrainNotices = new System.Collections.Generic.HashSet<Vector3Int>();
         private WorldReplicaLiquidReadModel _replicaLiquids;
         private WorldReplicaSolidReadModel _replicaSolids;
         private WorldReplicaVolumeReadModel _replicaGases;
@@ -91,11 +95,38 @@ namespace Game.ElementField
             // 否则旧格式可以成功安装、回 ACK，但客户端洞口和障碍仍会从未编辑的 prefab 读出。
             if (!SupportsConfiguredOnlineReplication())
                 throw new NotSupportedException(CellularReplicationUnavailable);
-            if (store == null || _profile == null || _gridLiquidRuntime == null || _fixedSolidRuntime == null || _gasRuntime == null)
+            if (store == null || _profile == null)
                 throw new ArgumentException("Replica缺少可信材料世界配置。");
             if (IsInitialized || _initializationStarted || _replicaStore != null)
                 throw new InvalidOperationException("不能替换已初始化世界的所有权。");
             ConfigureExecutionMode(WorldExecutionMode.Replica);
+            if (UsesCellularWorld)
+            {
+                _origin = transform.position;
+                _solidBaker = GetComponent<ElementFieldSolidBaker>();
+                _cellDefinition = ResolveCellularContentProfile();
+                _cellularTerrain = CreateCellularTerrain(_cellDefinition);
+                try
+                {
+                    var geometry = new WorldGridGeometry(WorldMaterialDomain.Cellular, _origin, _profile.CellSize, _profile.ChunkSize,
+                        CellularBaseVersion, (uint)_cellDefinition.Capacity);
+                    if (!store.ConfigureGeometry(new WorldGridGeometry(WorldMaterialDomain.LegacyCell, _origin, _profile.CellSize, _profile.ChunkSize)) ||
+                        !store.ConfigureMaterials(WorldMaterialDomain.LegacyCell, 255, new[] { (byte)MaterialId.Fire }, true) ||
+                        !store.ConfigureMaterials(WorldMaterialDomain.Cellular, geometry.CellCapacity, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 11, 12 }))
+                        throw new ArgumentException("Replica 材料域或可信基底无效。");
+                    var resting = new CellularRestingLiquidStore(ResolveCellularRestingRegions(_cellDefinition), geometry.CellCapacity, _cellDefinition.RestingQueueCapacity);
+                    _cellularCollisions = new CellularSolidColliders(transform, geometry.CellSize, geometry.ChunkSize, _cellDefinition.TerrainLayer);
+                    _replicaCellular = new WorldReplicaCellularReadModel(this, geometry, _cellularTerrain, resting, _cellularCollisions);
+                    store.BindCellular(_replicaCellular);
+                    _replicaStore = store;
+                    _effectiveWaterSimulationMode = WaterSimulationMode.Cellular;
+                    IsInitialized = true;
+                }
+                catch { DisposeCellularWorld(); _replicaCellular = null; throw; }
+                return;
+            }
+            if (_gridLiquidRuntime == null || _fixedSolidRuntime == null || _gasRuntime == null)
+                throw new ArgumentException("Replica缺少三相世界配置。");
             var liquid = _gridLiquidRuntime.ConfigurationProfile;
             var solid = _fixedSolidRuntime.ConfigurationProfile;
             var gas = _gasRuntime.ConfigurationProfile;
@@ -130,10 +161,32 @@ namespace Game.ElementField
         {
             quantity = 0;
             if (_replicaStore == null) return false;
+            if (_replicaCellular != null) return _replicaCellular.TryGetQuantity(worldCell, material, out quantity, out _);
             if (_replicaStore.TryGetQuantity(WorldMaterialDomain.Solid, worldCell, (byte)material, out quantity)
                 || _replicaStore.TryGetQuantity(WorldMaterialDomain.Gas, worldCell, (byte)material, out quantity)) return true;
             // Runtime公共查询仍接受World细格；只读液体Renderer传native粗格，二者不能混用。
             return _replicaStore.TryGetQuantity(WorldMaterialDomain.Liquid, _replicaVolumeSettings.WorldCellToLiquidCell(worldCell), (byte)material, out quantity);
+        }
+
+        internal void EnqueueReplicaCellularPresentation(System.Collections.Generic.List<Vector3Int> cells,
+            System.Collections.Generic.List<Vector3Int> terrain)
+        {
+            foreach (var cell in cells) _replicaCellNotices.Add(cell);
+            foreach (var cell in terrain) _replicaTerrainNotices.Add(cell);
+            if (terrain.Count != 0) TerrainRevision++;
+        }
+
+        internal void AttachVerifiedCellularBase()
+        {
+            if (_solidBaker != null) _solidBaker.SetEditableTerrain(_cellularTerrain, IsCellularBlockingCell);
+        }
+
+        private void PublishReplicaCellularPresentation()
+        {
+            if (_replicaCellular == null) return;
+            foreach (var cell in _replicaTerrainNotices) TerrainMaterialChanged?.Invoke(cell);
+            foreach (var cell in _replicaCellNotices) CellularContentsChanged?.Invoke(cell);
+            _replicaTerrainNotices.Clear(); _replicaCellNotices.Clear();
         }
         private bool TryGetReplicaLegacyCell(Vector3Int position, out ElementCell cell)
         {

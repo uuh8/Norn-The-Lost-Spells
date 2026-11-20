@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Game.Core
 {
     /// <summary>独立原生网格域；LegacyCell的byte量（尤其Fire强度）不参与三相GMU求和。</summary>
-    public enum WorldMaterialDomain : byte { LegacyCell, Liquid, Solid, Gas }
+    public enum WorldMaterialDomain : byte { LegacyCell, Liquid, Solid, Gas, Cellular }
     public enum WorldMaterialStorage : byte { Resident, Dynamic, Stable }
     public enum WorldCaptureFailure : byte
     {
@@ -25,8 +25,27 @@ namespace Game.Core
         public readonly Vector3 Origin;
         public readonly float CellSize;
         public readonly int ChunkSize;
+        public readonly ulong BaseVersion;
+        public readonly uint CellCapacity;
         public WorldGridGeometry(WorldMaterialDomain domain, Vector3 origin, float cellSize, int chunkSize)
-        { Domain = domain; GridId = (byte)domain; Origin = origin; CellSize = cellSize; ChunkSize = chunkSize; }
+            : this(domain, origin, cellSize, chunkSize, 0, 0) { }
+        public WorldGridGeometry(WorldMaterialDomain domain, Vector3 origin, float cellSize, int chunkSize,
+            ulong baseVersion, uint cellCapacity)
+        { Domain = domain; GridId = (byte)domain; Origin = origin; CellSize = cellSize; ChunkSize = chunkSize;
+          BaseVersion = baseVersion; CellCapacity = cellCapacity; }
+    }
+
+    /// <summary>地形只有形状。作者液体记录相对可信基底的剩余量，后成静水从空地开始积累。</summary>
+    public enum WorldCellularSpanKind : byte { Terrain = 1, AuthoredLiquid = 2, ColdMaterial = 3, ColdLiquid = ColdMaterial }
+
+    public readonly struct WorldCellularSpan
+    {
+        public readonly WorldCellularSpanKind Kind;
+        public readonly BoundsInt Cells;
+        public readonly byte MaterialId;
+        public readonly uint OriginalQuantity, Quantity;
+        public WorldCellularSpan(WorldCellularSpanKind kind, BoundsInt cells, byte materialId, uint originalQuantity, uint quantity)
+        { Kind = kind; Cells = cells; MaterialId = materialId; OriginalQuantity = originalQuantity; Quantity = quantity; }
     }
 
     /// <summary>
@@ -62,14 +81,20 @@ namespace Game.Core
         public readonly uint Remaining;
         public readonly int Cursor;
         public readonly uint WaitingTicks;
+        public readonly long RetryTick;
         public WorldPendingDepositSample(WorldMaterialDomain domain, int queueIndex, byte materialId,
             Vector3 worldPosition, ushort totalAmount, float radius, bool useLinearFalloff,
             Vector3 initialVelocity, Vector3 surfaceNormal, uint remaining, int cursor, uint waitingTicks)
+            : this(domain,queueIndex,materialId,worldPosition,totalAmount,radius,useLinearFalloff,
+                initialVelocity,surfaceNormal,remaining,cursor,waitingTicks,0) { }
+        public WorldPendingDepositSample(WorldMaterialDomain domain, int queueIndex, byte materialId,
+            Vector3 worldPosition, ushort totalAmount, float radius, bool useLinearFalloff,
+            Vector3 initialVelocity, Vector3 surfaceNormal, uint remaining, int cursor, uint waitingTicks, long retryTick)
         {
             Domain = domain; QueueIndex = queueIndex; MaterialId = materialId; WorldPosition = worldPosition;
             TotalAmount = totalAmount; Radius = radius; UseLinearFalloff = useLinearFalloff;
             InitialVelocity = initialVelocity; SurfaceNormal = surfaceNormal; Remaining = remaining;
-            Cursor = cursor; WaitingTicks = waitingTicks;
+            Cursor = cursor; WaitingTicks = waitingTicks; RetryTick = retryTick;
         }
     }
 
@@ -80,10 +105,12 @@ namespace Game.Core
     public readonly struct WorldReplicaHeader
     {
         public readonly long WorldTick;
-        public readonly int CellCount, PendingCount, GeometryCount;
+        public readonly int CellCount, PendingCount, GeometryCount, SpanCount;
         public bool CanRestoreAuthorityRules => false;
         public WorldReplicaHeader(long worldTick, int cellCount, int pendingCount, int geometryCount)
-        { WorldTick = worldTick; CellCount = cellCount; PendingCount = pendingCount; GeometryCount = geometryCount; }
+            : this(worldTick,cellCount,pendingCount,geometryCount,0) { }
+        public WorldReplicaHeader(long worldTick, int cellCount, int pendingCount, int geometryCount, int spanCount)
+        { WorldTick = worldTick; CellCount = cellCount; PendingCount = pendingCount; GeometryCount = geometryCount; SpanCount = spanCount; }
     }
 
     /// <summary>
@@ -97,14 +124,20 @@ namespace Game.Core
         public WorldMaterialCellSample[] Cells { get; }
         public WorldPendingDepositSample[] Pending { get; }
         public WorldGridGeometry[] Geometries { get; }
+        public WorldCellularSpan[] Spans { get; }
+        public WorldChunkKey[] ChangedChunks { get; }
         public int InspectionBudget { get; }
         public WorldReplicaHeader Header { get; set; }
         public WorldReplicaBuffer(int cellCapacity, int pendingCapacity, int inspectionBudget)
+            : this(cellCapacity,pendingCapacity,inspectionBudget,-1) { }
+        public WorldReplicaBuffer(int cellCapacity, int pendingCapacity, int inspectionBudget, int spanCapacity, int changedChunkCapacity = 128)
         {
-            if (cellCapacity < 0 || pendingCapacity < 0 || inspectionBudget <= 0)
+            if (cellCapacity < 0 || pendingCapacity < 0 || inspectionBudget <= 0 || spanCapacity < -1 || changedChunkCapacity < 1)
                 throw new ArgumentOutOfRangeException(nameof(cellCapacity));
             Cells = new WorldMaterialCellSample[cellCapacity]; Pending = new WorldPendingDepositSample[pendingCapacity];
-            Geometries = new WorldGridGeometry[4]; InspectionBudget = inspectionBudget;
+            Spans = new WorldCellularSpan[spanCapacity < 0 ? cellCapacity : spanCapacity];
+            ChangedChunks = new WorldChunkKey[changedChunkCapacity];
+            Geometries = new WorldGridGeometry[5]; InspectionBudget = inspectionBudget;
         }
     }
 

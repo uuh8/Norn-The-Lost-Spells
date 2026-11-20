@@ -51,7 +51,7 @@ namespace Game.ElementField
 
         private static readonly Vector3Int[] Sides =
             { Vector3Int.right, Vector3Int.forward, Vector3Int.left, Vector3Int.back };
-        private static readonly Vector3Int[] Faces =
+        internal static readonly Vector3Int[] Faces =
             { Vector3Int.up, Vector3Int.down, Vector3Int.right, Vector3Int.forward, Vector3Int.left, Vector3Int.back };
 
         private readonly Func<Vector3Int, bool> _isBlocked;
@@ -81,6 +81,8 @@ namespace Game.ElementField
             _transport = ElementCellMaterialRules.Bake(transport);
             _slots = new Slot[maxCells];
             _indices = new Dictionary<Vector3Int, int>(maxCells);
+            _impulseLimit = Math.Min(maxCells, 1024);
+            _impulses = new Dictionary<Vector3Int, CellImpulse>(_impulseLimit);
             _residents = new int[maxCells];
             _freeSlots = new int[maxCells];
             for (int i = maxCells - 1; i >= 0; i--) _freeSlots[_freeCount++] = i;

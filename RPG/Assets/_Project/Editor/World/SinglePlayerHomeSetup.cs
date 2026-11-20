@@ -172,6 +172,8 @@ namespace Game.EditorTools
             var dataRun=new SerializedObject(run);dataRun.FindProperty("_hubEnvironment").arraySize=0;
             dataRun.FindProperty("_hubWorld").objectReferenceValue=Named(scene,"__ElementWorld");dataRun.ApplyModifiedPropertiesWithoutUndo();
             var test=Named(scene,"Test");if(test!=null)Remove(test,false);
+            var materialWorld=Find<Game.ElementField.ElementWorldRuntime>(scene);
+            if(materialWorld!=null)CellularMapContentSetup.Apply(materialWorld,"home",Home);
         }
         private static void EnableCameras(Scene scene,bool undo)
         {

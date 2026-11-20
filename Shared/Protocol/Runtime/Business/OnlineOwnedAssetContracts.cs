@@ -2,6 +2,14 @@ using System;
 
 namespace Game.NetworkProtocol
 {
+    /// <summary>与应用协议 v19 的数量资产身份一致。固定地形不能作为背包里的材料数量。</summary>
+    public static class OwnedMaterialKey
+    {
+        public const int Mask = 0x1fe | (1 << 11) | (1 << 12);
+        public const int DistinctCount = 10;
+        public static bool IsKnown(ulong key) => key <= 12 && (Mask & (1 << (int)key)) != 0;
+    }
+
     /// <summary>业务服冻结的真实携带闭包；装备、包内实例及其组分一并冻结，仓库不投影到副本。</summary>
     [Serializable] public sealed class OnlineOwnedAssetSnapshot
     {

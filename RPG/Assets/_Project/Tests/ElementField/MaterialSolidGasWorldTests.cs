@@ -7,6 +7,57 @@ namespace Game.ElementField.Tests
     public sealed class MaterialSolidGasWorldTests
     {
         [Test]
+        public void CellularWindMovesOneRealUnitAndOnlyTheMatchingVentConsumesIt()
+        {
+            var profile=ScriptableObject.CreateInstance<GasWorldProfile>();
+            try
+            {
+                GasSetting(profile,"_windVelocity",Vector3.right);
+                GasSetting(profile,"_materials",new[]{new GasMaterialBehavior {Material=MaterialId.ToxicVapor}});
+                var cells=new ElementCellSimulation(32,8,c=>c!=Vector3Int.zero && c!=Vector3Int.right);
+                cells.ConfigureGasEnvironment(profile,Vector3.zero,1,4,(p,m)=>p.x>1 && m==MaterialId.ToxicVapor?1:0,null);
+                Assert.That(cells.TryDeposit(Vector3Int.zero,MaterialId.ToxicVapor,1),Is.True);
+                for (int i=0;i<4;i++) { cells.BeginGasEnvironmentTick(.25f,null,true); cells.Step(8); cells.StepGasDilution(); }
+                Assert.That(cells.TryGetQuantity(Vector3Int.right,MaterialId.ToxicVapor,out uint moved) && moved==1,Is.True);
+                for (int i=0;i<4;i++) { cells.BeginGasEnvironmentTick(.25f,null,true); cells.Step(8); cells.StepGasDilution(); }
+                Assert.That(cells.VentedGasQuantity(MaterialId.ToxicVapor),Is.EqualTo(1ul));
+                Assert.That(cells.DissipatedGasQuantity(MaterialId.ToxicVapor),Is.Zero);
+            }
+            finally { Object.DestroyImmediate(profile); }
+        }
+
+        [Test]
+        public void CellularDilutionChecksMixedPeakAndRestartsDurationAfterLeavingSimulationArea()
+        {
+            var profile=ScriptableObject.CreateInstance<GasWorldProfile>();
+            try
+            {
+                GasSetting(profile,"_diluteMaximumCellGmu",1);
+                GasSetting(profile,"_diluteDelaySeconds",1f);
+                var cells=new ElementCellSimulation(32,8,c=>c!=Vector3Int.zero);
+                ulong consumed=0;
+                cells.ConfigureGasEnvironment(profile,Vector3.zero,1,4,null,(m,q)=>consumed+=q);
+                Assert.That(cells.TryDeposit(Vector3Int.zero,MaterialId.Steam,1),Is.True);
+                Assert.That(cells.TryDeposit(Vector3Int.zero,MaterialId.ToxicVapor,1),Is.True);
+                for (int i=0;i<8;i++) { cells.BeginGasEnvironmentTick(.25f,null,false); cells.Step(8); cells.StepGasDilution(); }
+                Assert.That(consumed,Is.Zero);
+                Assert.That(cells.TryRemove(Vector3Int.zero,MaterialId.ToxicVapor,1),Is.True);
+                for (int i=0;i<3;i++) { cells.BeginGasEnvironmentTick(.25f,null,false); cells.Step(8); cells.StepGasDilution(); }
+                var outside=new ElementWorldActivityRegions();
+                cells.BeginGasEnvironmentTick(2,outside,false); cells.Step(8); cells.StepGasDilution();
+                for (int i=0;i<4;i++) { cells.BeginGasEnvironmentTick(.25f,null,false); cells.Step(8); cells.StepGasDilution(); }
+                Assert.That(consumed,Is.Zero);
+                cells.BeginGasEnvironmentTick(.25f,null,false); cells.Step(8); cells.StepGasDilution();
+                Assert.That(consumed,Is.EqualTo(1ul));
+                Assert.That(cells.VentedGasQuantity(MaterialId.Steam),Is.Zero);
+            }
+            finally { Object.DestroyImmediate(profile); }
+        }
+
+        private static void GasSetting(GasWorldProfile profile,string field,object value) =>
+            typeof(GasWorldProfile).GetField(field,System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance).SetValue(profile,value);
+
+        [Test]
         public void ThinGasFirstMovementHasNoFixedPreferredFaceAndConservesQuantity()
         {
             var seen=new bool[6]; int directions=0;

@@ -25,7 +25,9 @@ namespace Game.ElementField
         private static readonly Color InvalidGizmoColor = new Color(1f, 0f, 1f, 0.9f);
 
         [Header("Initial Deposit")]
-        [Tooltip("关卡开始时预置的元素。P7 支持 Water、Fire 和 Poison；液体会路由到共享 GPU PBF Pool。")]
+        [Tooltip("有多个地图根或联网时显式指定本地图，Replica 的一次性作者源不会向其他世界写入。")]
+        [SerializeField] private ElementWorldRuntime _world;
+        [Tooltip("关卡开始时预置的材料，由本地图的正式路由决定可接受的种类。")]
         [SerializeField] private MaterialId _materialKind = MaterialId.Water;
 
         [Tooltip("向覆盖范围分配的元素总量；这是整次 Deposit 的总预算，不是每个 Cell 的数量。")]
@@ -53,7 +55,7 @@ namespace Game.ElementField
         {
             // ElementWorldRuntime 在 Awake/OnEnable 注册 Sink，所有组件的 Start 都发生在它们之后，
             // 因此这里无需延迟一帧，也不会因 Script Execution Order 产生偶发漏写。
-            if (_depositOnStart)
+            if (_depositOnStart && (_world == null || _world.ExecutionMode != WorldExecutionMode.Replica))
                 TryQueueDeposit();
         }
 
@@ -98,7 +100,8 @@ namespace Game.ElementField
                 return false;
             }
 
-            if (ElementRuntimeRegistry.ActiveSink == null)
+            if (_world != null && _world.ExecutionMode == WorldExecutionMode.Replica) return false;
+            if (_world == null && ElementRuntimeRegistry.ActiveSink == null)
             {
                 IssueDiagnosticOnce(
                     "Initial Deposit 未提交：场景中没有可用的 Element Write Sink。请检查 ElementWorldRuntime 是否启用并完成初始化。",
@@ -106,7 +109,7 @@ namespace Game.ElementField
                 return false;
             }
 
-            if (!ElementRuntimeRegistry.TryEnqueueWrite(in request))
+            if (!(_world != null ? _world.TryEnqueueWrite(in request) : ElementRuntimeRegistry.TryEnqueueWrite(in request)))
             {
                 // Registry 已保证不会偷偷创建第二套 Field。这里的常见原因是 Runtime 未初始化，
                 // 或 Max Pending Writes 已满；真正应用时的 Resident 上限拒绝仍记录在 Runtime LastStats。
@@ -175,8 +178,8 @@ namespace Game.ElementField
 
         private static bool IsSupportedMaterial(MaterialId materialKind)
         {
-            // MaterialId 使用连续稳定 byte 协议；真正的 Backend 支持性仍由 Runtime Route 判定。
-            return materialKind >= MaterialId.Water && materialKind <= MaterialId.Sticky;
+            return materialKind == MaterialId.Fire || (materialKind != MaterialId.Rock && materialKind != MaterialId.Soil
+                && ElementCellMaterialRules.Supports(materialKind));
         }
     }
 }

@@ -116,7 +116,7 @@ namespace Game.ElementField
                 var config=JsonUtility.FromJson<TimingConfig>(File.ReadAllText(configPath));
                 string directory=Path.GetDirectoryName(Path.GetFullPath(configPath));
                 if(config==null || config.Capacity<1 || config.Capacity>65536 || config.DurationMilliseconds<1000 || config.DurationMilliseconds>30000 ||
-                    config.Domain<0 || config.Domain>3 || !TimingSibling(config.Output,directory,".json") || !TimingSibling(config.Command,directory,".request") ||
+                    config.Domain<0 || config.Domain>(int)WorldMaterialDomain.Cellular || !TimingSibling(config.Output,directory,".json") || !TimingSibling(config.Command,directory,".request") ||
                     string.Equals(Path.GetFullPath(config.Output),Path.GetFullPath(configPath),StringComparison.OrdinalIgnoreCase) || File.Exists(config.Output))
                     throw new ArgumentException("Invalid timing bounds/output; preserve existing files");
                 var window=new TimingWindow(config);

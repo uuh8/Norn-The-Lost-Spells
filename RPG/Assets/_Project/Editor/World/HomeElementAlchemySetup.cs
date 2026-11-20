@@ -115,6 +115,7 @@ namespace Game.EditorTools
                     data.ApplyModifiedPropertiesWithoutUndo();
                 }
                 Bind(world,"_interestPoint",player);
+                CellularMapContentSetup.Apply(world,"home",Home);
                 Bind(world,"_gpuPbfFluidRuntime",null);Bind(world,"_fluidGameplayOccupancy",null);Bind(world,"_fluidChunkStreamingRuntime",null);
                 CopyPresentation<LiquidSurfaceRenderer>(source,target,world,go,undo);
                 CopyPresentation<StableLiquidSurfaceRenderer>(source,target,world,go,undo);

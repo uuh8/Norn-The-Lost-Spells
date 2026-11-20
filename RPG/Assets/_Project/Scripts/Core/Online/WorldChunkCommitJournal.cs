@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Game.Core
 {
@@ -97,6 +98,8 @@ namespace Game.Core
         private readonly int[] _preparedSlots;
         private readonly WorldChunkCommitRecord[] _records;
         private readonly int _inspectionBudget;
+        private readonly Dictionary<WorldChunkKey,int> _indices;
+        private readonly HashSet<WorldChunkKey> _batchKeys;
         private int _stateCount, _recordHead, _recordCount;
         // 下界记住所有已退休生命周期。新地址可以共用该值，因为完整身份还包含WorldEpoch和Key；
         // 只有同一Key的旧代不能重用。未退休地址继续原来的Generation+1，不受其他Key退休影响。
@@ -121,6 +124,8 @@ namespace Game.Core
             if (inspectionBudget <= 0) throw new ArgumentOutOfRangeException(nameof(inspectionBudget));
             WorldEpoch = worldEpoch; _inspectionBudget = inspectionBudget;
             _states = new WorldChunkVersionState[metadataCapacity];
+            _indices = new Dictionary<WorldChunkKey,int>(metadataCapacity);
+            _batchKeys = new HashSet<WorldChunkKey>(Math.Min(metadataCapacity,recordCapacity));
             _records = new WorldChunkCommitRecord[recordCapacity];
             _preparedStates = new WorldChunkVersionState[recordCapacity];
             _preparedRecords = new WorldChunkCommitRecord[recordCapacity];
@@ -130,8 +135,7 @@ namespace Game.Core
         /// <summary>
         /// 只提交数组的有效前缀。空前缀不改变任何版本，哪怕全局序号已经耗尽也仍是合法no-op。
         /// 一个批次先检查输入、重复、生命周期、容量、版本耗尽和整批淘汰工作量，再统一提交。
-        /// 扫描采用明确总预算，避免metadata查找或重复检测的嵌套循环在大配置下失控；
-        /// 不足时返回InspectionBudget，不能临时扩容或跳过检查。本类不宣称无条件O(1)查找。
+        /// 批内重复与已提交地址分别按完整Key索引，批次和历史覆盖仍在同一个预算内完成。
         /// </summary>
         public bool TryCommit(WorldChunkChange[] changes, int count)
         {
@@ -142,6 +146,7 @@ namespace Game.Core
             if (CommitSequence == ulong.MaxValue) return Reject(WorldChunkJournalFailure.VersionExhausted);
 
             int budget = _inspectionBudget;
+            _batchKeys.Clear();
             int newStateCount = _stateCount;
             ulong nextSequence = CommitSequence + 1; // 上面的MaxValue判断保证不会回绕。
             for (int i = 0; i < count; i++)
@@ -150,24 +155,12 @@ namespace Game.Core
                 WorldChunkChange change = changes[i];
                 if (!ValidKey(change.Key) || !ValidKind(change.Kind))
                     return Reject(WorldChunkJournalFailure.InvalidInput);
-                for (int earlier = 0; earlier < i; earlier++)
-                {
-                    if (!Inspect(ref budget)) return false;
-                    if (changes[earlier].Key.Equals(change.Key))
-                        return Reject(WorldChunkJournalFailure.DuplicateKey);
-                }
-
-                int slot = -1;
-                for (int candidate = 0; candidate < _stateCount; candidate++)
-                {
-                    if (!Inspect(ref budget)) return false;
-                    if (!_states[candidate].Key.Equals(change.Key)) continue;
-                    slot = candidate; break;
-                }
+                if (!_batchKeys.Add(change.Key)) return Reject(WorldChunkJournalFailure.DuplicateKey);
+                bool known = _indices.TryGetValue(change.Key,out int slot);
 
                 ulong generation, baseRevision, revision;
                 bool resident = change.Kind != WorldChunkChangeKind.Remove;
-                if (slot < 0)
+                if (!known)
                 {
                     if (change.Kind != WorldChunkChangeKind.Create)
                         return Reject(WorldChunkJournalFailure.InvalidTransition);
@@ -225,6 +218,7 @@ namespace Game.Core
             for (int i = 0; i < count; i++)
             {
                 _states[_preparedSlots[i]] = _preparedStates[i];
+                if (_preparedSlots[i] >= _stateCount) _indices.Add(_preparedStates[i].Key,_preparedSlots[i]);
                 _records[RingIndex(nextHead, nextCount)] = _preparedRecords[i]; nextCount++;
             }
             _stateCount = newStateCount;
@@ -242,14 +236,7 @@ namespace Game.Core
         public bool TryRetireInactiveChunk(WorldChunkKey key)
         {
             if (!ValidKey(key)) return Reject(WorldChunkJournalFailure.InvalidInput);
-            int budget = _inspectionBudget, slot = -1;
-            for (int i = 0; i < _stateCount; i++)
-            {
-                if (!Inspect(ref budget)) return false;
-                if (_states[i].Key != key) continue;
-                slot = i; break;
-            }
-            if (slot < 0) return Reject(WorldChunkJournalFailure.InvalidInput);
+            if (!_indices.TryGetValue(key,out int slot)) return Reject(WorldChunkJournalFailure.InvalidInput);
             WorldChunkVersionState previous = _states[slot];
             if (previous.IsResident) return Reject(WorldChunkJournalFailure.InvalidTransition);
             if (previous.Generation == ulong.MaxValue) return Reject(WorldChunkJournalFailure.VersionExhausted);
@@ -258,7 +245,8 @@ namespace Game.Core
             // 以下仅固定数组和值赋值，不调用外部逻辑。历史中的旧Key/Generation仍是已发生的事实，
             // 保持整批可读；上层payload Owner另行阻止把退休/旧代记录当作当前Delta复制。
             int last = _stateCount - 1;
-            if (slot != last) _states[slot] = _states[last];
+            _indices.Remove(key);
+            if (slot != last) { _states[slot] = _states[last]; _indices[_states[slot].Key]=slot; }
             _states[last] = default;
             _stateCount = last;
             _generationFloor = nextFloor;
@@ -274,11 +262,8 @@ namespace Game.Core
         {
             state = default;
             if (!ValidKey(key)) return Reject(WorldChunkJournalFailure.InvalidInput);
-            int budget = _inspectionBudget;
-            for (int i = 0; i < _stateCount; i++)
+            if (_indices.TryGetValue(key,out int i))
             {
-                if (!Inspect(ref budget)) return false;
-                if (!_states[i].Key.Equals(key)) continue;
                 state = _states[i]; return Accept();
             }
             LastFailure = WorldChunkJournalFailure.None;
@@ -322,7 +307,7 @@ namespace Game.Core
         }
         private bool Accept() { LastFailure = WorldChunkJournalFailure.None; return true; }
         private bool Reject(WorldChunkJournalFailure failure) { LastFailure = failure; return false; }
-        private static bool ValidKey(WorldChunkKey key) => (byte)key.Domain <= (byte)WorldMaterialDomain.Gas;
+        private static bool ValidKey(WorldChunkKey key) => (byte)key.Domain <= (byte)WorldMaterialDomain.Cellular;
         private static bool ValidKind(WorldChunkChangeKind kind) => kind == WorldChunkChangeKind.Create
             || kind == WorldChunkChangeKind.Update || kind == WorldChunkChangeKind.Remove;
         private int NextIndex(int index) => index == _records.Length - 1 ? 0 : index + 1;

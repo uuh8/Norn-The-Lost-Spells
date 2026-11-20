@@ -187,7 +187,7 @@ namespace Game.Multiplayer
                 && receipt.SchemaVersion != OnlineRunMemberExitRequest.LegacyFinalDeathSchemaVersion
                 || receipt.Reason < OnlineRunMemberExitReason.VoluntaryExit || receipt.Reason > OnlineRunMemberExitReason.FinalDeath
                 || receipt.FinalRetiredItems == null || receipt.FinalRetiredItems.Length > Game.NetworkProtocol.OnlineOwnedAssetSnapshot.MaximumItems
-                || receipt.FinalDeathLostMaterials == null || receipt.FinalDeathLostMaterials.Length > 8) return false;
+                || receipt.FinalDeathLostMaterials == null || receipt.FinalDeathLostMaterials.Length > Game.NetworkProtocol.OwnedMaterialKey.DistinctCount) return false;
             if (receipt.Reason == OnlineRunMemberExitReason.VoluntaryExit
                 && (receipt.FinalDeathLostMaterials.Length != 0 || receipt.FinalRetiredItems.Length != 0
                     && !(receipt.SchemaVersion == OnlineRunMemberExitRequest.CurrentSchemaVersion
