@@ -1,4 +1,5 @@
 using System.IO;
+using Game.ElementField;
 using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
@@ -20,6 +21,27 @@ namespace Game.Rendering.Tests
             "_DepthFadeDistance", "_DepthNoiseStrength", "_FresnelPower", "_Smoothness",
             "_FoamColor", "_FoamDistance", "_FoamStrength", "_FoamAlphaBoost"
         };
+
+        [Test]
+        public void ProductionCellularSurfaceProvidesVisibleMeshShadowAndCameraDepth()
+        {
+            // 从正式场景共用的 Profile 取材质，避免只检查了一个碰巧能在 Editor 中找到的 Shader。
+            var profile = AssetDatabase.LoadAssetAtPath<ElementCellWorldProfile>(
+                "Assets/_Project/ScriptableObjects/ElementField/CellularWorld.asset");
+            Assert.That(profile, Is.Not.Null);
+            var liquid = profile.LiquidSurface;
+            Assert.That(liquid, Is.Not.Null);
+            Assert.That(liquid.shader.name, Is.EqualTo("Game/Elemental/Cartoon Liquid"));
+            Assert.That(ShaderUtil.ShaderHasError(liquid.shader), Is.False);
+            Assert.That(liquid.FindPass("CartoonLiquidForward"), Is.GreaterThanOrEqualTo(0));
+            Assert.That(liquid.FindPass("ShadowCaster"), Is.GreaterThanOrEqualTo(0));
+            Assert.That(liquid.FindPass("DepthOnly"), Is.GreaterThanOrEqualTo(0));
+            Assert.That(liquid.FindPass("DepthNormals"), Is.GreaterThanOrEqualTo(0));
+            Assert.That(liquid.HasProperty("_SurfaceReflection"), Is.True);
+            Assert.That(profile.SolidSurface, Is.Not.Null);
+            Assert.That(ShaderUtil.ShaderHasError(profile.SolidSurface.shader), Is.False);
+            Assert.That(profile.SolidSurface.FindPass("DepthNormals"), Is.GreaterThanOrEqualTo(0));
+        }
 
         [Test]
         public void ElementWaterShaderExposesVolumeProjectionProperties()

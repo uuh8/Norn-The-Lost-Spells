@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Game.Materials;
 using UnityEngine;
 
 namespace Game.ElementField
@@ -9,7 +10,7 @@ namespace Game.ElementField
     {
         private sealed class Page
         {
-            internal readonly bool[] Cells;
+            internal readonly uint[] Cells;
             internal readonly List<BoxCollider>[] Rows;
             internal readonly Stack<BoxCollider> SpareBoxes = new Stack<BoxCollider>();
             internal readonly bool[] RowMarked;
@@ -19,7 +20,7 @@ namespace Game.ElementField
             internal int DirtyRowCount;
             internal Page(int size, Transform parent, int layer)
             {
-                Cells = new bool[checked(size * size * size)];
+                Cells = new uint[checked(size * size * size)];
                 Rows = new List<BoxCollider>[size * size];
                 RowMarked = new bool[Rows.Length];
                 DirtyRows = new int[Rows.Length];
@@ -36,16 +37,20 @@ namespace Game.ElementField
         private readonly Transform _parent;
         private readonly int _side, _layer;
         private readonly float _size;
+        private readonly uint _capacity;
 
-        internal CellularSolidColliders(Transform parent, float size, int side, int layer)
-        { _parent = parent; _size = size; _side = side; _layer = layer; }
+        internal CellularSolidColliders(Transform parent, float size, int side, int layer, uint capacity)
+        { _parent = parent; _size = size; _side = side; _layer = layer; _capacity = capacity; }
 
-        internal bool Set(Vector3Int cell, bool solid)
+        internal bool Set(Vector3Int cell, MaterialId material, uint quantity)
         {
+            // 整块岩石和冰沿用整格支撑。沙的规则仍能阻隔气体，但 Unity 的物理顶面要和玩家看到的沙量一致。
+            uint fill = quantity == 0 || !ElementCellMaterialRules.OccupiesWholeCell(material) ? 0
+                : material == MaterialId.Sand ? System.Math.Min(quantity, _capacity) : _capacity;
             ElementWorldCoordinates.GlobalCellToChunkAndLocal(cell, _side, out var key, out var local);
             if (!_pages.TryGetValue(key, out var page))
             {
-                if (!solid) return false;
+                if (fill == 0) return false;
                 page = _spare.Count > 0 ? _spare.Pop() : new Page(_side, _parent, _layer);
                 page.Root.transform.localPosition = new Vector3(key.X, key.Y, key.Z) * (_side * _size);
                 page.Root.SetActive(true);
@@ -53,9 +58,11 @@ namespace Game.ElementField
             }
             int row = local.y + _side * local.z;
             int index = local.x + _side * row;
-            if (page.Cells[index] == solid) return false;
-            page.Cells[index] = solid;
-            page.Count += solid ? 1 : -1;
+            uint previous = page.Cells[index];
+            if (previous == fill) return false;
+            page.Cells[index] = fill;
+            if (previous == 0) page.Count++;
+            else if (fill == 0) page.Count--;
             if (page.DirtyRowCount == 0) _dirty.Add(key);
             if (!page.RowMarked[row])
             {
@@ -93,15 +100,19 @@ namespace Game.ElementField
                 int used = 0;
                 for (int x = 0; x < _side;)
                 {
-                    if (!page.Cells[start + x]) { x++; continue; }
+                    uint fill = page.Cells[start + x];
+                    if (fill == 0) { x++; continue; }
                     int first = x++;
-                    while (x < _side && page.Cells[start + x]) x++;
+                    // 只有接触且等高的面能合并；两团未铺满格底的沙之间留有真实间距。
+                    if (!ElementCellMaterialRules.HasInsetGrainFootprint(fill, _capacity))
+                        while (x < _side && page.Cells[start + x] == fill) x++;
                     if (boxes == null) page.Rows[row] = boxes = new List<BoxCollider>(1);
                     if (used == boxes.Count)
                         boxes.Add(page.SpareBoxes.Count > 0 ? page.SpareBoxes.Pop() : page.Root.AddComponent<BoxCollider>());
                     BoxCollider box = boxes[used++];
-                    box.center = new Vector3((first + x) * .5f, y + .5f, z + .5f) * _size;
-                    box.size = new Vector3(x - first, 1f, 1f) * _size;
+                    var extent = ElementCellMaterialRules.GrainDimensions(fill, _capacity);
+                    box.center = new Vector3((first + x) * .5f, y + extent.y * .5f, z + .5f) * _size;
+                    box.size = new Vector3(x - first - 1 + extent.x, extent.y, extent.z) * _size;
                     box.enabled = true;
                 }
                 if (boxes == null) continue;

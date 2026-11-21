@@ -290,6 +290,7 @@ namespace Game.Diagnostics
         {
             if(_phase==Phase.Finished)return;
             _phase=Phase.Finished; _report.FinishedUtc=DateTime.UtcNow.ToString("O");
+            if (_bottleView) { FinishBottleView(error); return; }
             try
             {
                 _report.RealCameraRendered=_frames>0 && _report.MissedRendererFrames<_frames && !_report.BatchMode;

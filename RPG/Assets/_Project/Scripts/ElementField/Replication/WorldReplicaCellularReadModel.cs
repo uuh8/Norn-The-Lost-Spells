@@ -137,8 +137,7 @@ namespace Game.ElementField
                     RestingValue(cell, next, out var material, out uint quantity);
                     if (Resting.TryGetCell(cell, out var oldMaterial, out uint oldQuantity) &&
                         (oldMaterial != material || oldQuantity > quantity)) Resting.SetReplicaQuantity(cell, material, quantity < oldQuantity && oldMaterial == material ? quantity : 0);
-                    _solids.Set(cell, ElementCellMaterialRules.OccupiesWholeCell(next.Primary) ||
-                        quantity != 0 && ElementCellMaterialRules.OccupiesWholeCell(material));
+                    _solids.Set(cell, next.Amount != 0 ? next.Primary : material, next.Amount != 0 ? next.Amount : quantity);
                 }
                 foreach (var cell in _affected)
                 {
@@ -158,8 +157,7 @@ namespace Game.ElementField
                     if (_terrain.Get(cell) != terrain) _terrain.TrySet(cell, terrain);
                     RestingValue(cell, old, out var liquid, out uint count);
                     Resting.SetReplicaQuantity(cell, liquid, count);
-                    _solids.Set(cell, ElementCellMaterialRules.OccupiesWholeCell(old.Primary) ||
-                        count != 0 && ElementCellMaterialRules.OccupiesWholeCell(liquid));
+                    _solids.Set(cell, old.Amount != 0 ? old.Primary : liquid, old.Amount != 0 ? old.Amount : count);
                 }
                 _solids.Commit();
                 throw;

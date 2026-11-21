@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Game.Materials;
 using UnityEngine;
 
@@ -18,6 +19,98 @@ namespace Game.ElementField
 
         private readonly Edit[] _edits = new Edit[7];
         private int _editCount;
+
+        /// <summary>
+        /// 一个容器可能含几种主材和气体。每次试放只规划中心与六个面邻格，把成功的最终状态保存在
+        /// 本次交易的地址表中；后一组分看得到前一组分挤走的气，世界、冲量、气体计时与发布队列仍完全未动。
+        /// 表可由 Port 重用，最大行数受其 512 个 Placement 的七格邻域限制。
+        /// </summary>
+        internal sealed class InventoryDepositDraft
+        {
+            private readonly Dictionary<Vector3Int, Contents> _cells = new Dictionary<Vector3Int, Contents>();
+            private ElementCellSimulation _world;
+            private int _newResidents, _newChanges;
+
+            internal void Begin(ElementCellSimulation world)
+            {
+                Reset();
+                _world = world;
+            }
+
+            internal void Reset()
+            {
+                _world = null;
+                _cells.Clear();
+                _newResidents = _newChanges = 0;
+            }
+
+            internal bool Contains(Vector3Int cell) => _cells.ContainsKey(cell);
+            internal bool TryRead(Vector3Int cell, out Contents value) => _cells.TryGetValue(cell, out value);
+            internal Contents ReadForDeposit(Vector3Int cell) => TryRead(cell, out var value) ? value : _world.Read(cell);
+            internal uint FreeCapacity(Vector3Int cell, MaterialId material) => _world.GetFreeCapacity(cell, material, this);
+            internal bool CanExpandCold(Vector3Int cell) => _newResidents < _world.FreeResidentSlots &&
+                (_world._changedSet.Contains(cell) || _newChanges < _world._changeCapacity - _world._changed.Count);
+
+            // 静态 Owner 另行暂扣原量。只有 Source.Commit 成功才交接所有权，所以阀门处的
+            // 少量冷水与注入气可在同一格共存，失败时连冷区表示都保持原状。
+            internal void StageExpandedCold(Vector3Int cell, MaterialId bulk, uint before, MaterialId added, uint quantity)
+            {
+                var value = new Contents { Bulk = bulk, Amount = before };
+                value.Add(added, quantity);
+                Record(cell, value);
+            }
+
+            internal bool TryStage(Vector3Int cell, MaterialId material, uint amount)
+            {
+                if (!_world.FitsDeposit(cell, material, amount, this)) return false;
+                for (int i = 0; i < _world._editCount; i++)
+                {
+                    ref Edit edit = ref _world._edits[i];
+                    if (edit.Changed) Record(edit.Cell, edit.After);
+                }
+                return true;
+            }
+
+            internal bool FitsPlan()
+            {
+                int residents = _newResidents, changes = _newChanges;
+                for (int i = 0; i < _world._editCount; i++)
+                {
+                    ref Edit edit = ref _world._edits[i];
+                    if (!edit.Changed || Contains(edit.Cell)) continue;
+                    if (edit.Before.Empty) residents++;
+                    if (!_world._changedSet.Contains(edit.Cell)) changes++;
+                }
+                return residents <= _world.FreeResidentSlots && changes <= _world._changeCapacity - _world._changed.Count;
+            }
+
+            private void Record(Vector3Int cell, Contents value)
+            {
+                if (!_cells.ContainsKey(cell))
+                {
+                    if (_world.Read(cell).Empty) _newResidents++;
+                    if (!_world._changedSet.Contains(cell)) _newChanges++;
+                }
+                _cells[cell] = value;
+            }
+
+            internal void Publish()
+            {
+                // 整笔数量、驻留槽与唯一变更地址已在世界互斥内预检。直接发布净结果：
+                // 即使一个气团为几种材料退让多次，Observe 也只收到其交易前后的一次真实变化。
+                _world._editCount = 0;
+                foreach (var pair in _cells)
+                {
+                    _world._edits[_world.Stage(pair.Key)].After = pair.Value;
+                    if (_world._editCount == _world._edits.Length)
+                    {
+                        _world.PublishEdits();
+                        _world._editCount = 0;
+                    }
+                }
+                if (_world._editCount != 0) _world.PublishEdits();
+            }
+        }
 
         public bool TryDeposit(Vector3Int cell, MaterialId material, uint amount)
         {
@@ -50,21 +143,24 @@ namespace Game.ElementField
         }
 
         /// <summary>观察与投放共用一套预检。气体必须能从邻面退让，世界槽和未读取的变化记录也要有位置。</summary>
-        public uint GetFreeCapacity(Vector3Int cell, MaterialId material)
+        public uint GetFreeCapacity(Vector3Int cell, MaterialId material) => GetFreeCapacity(cell, material, null);
+
+        private uint GetFreeCapacity(Vector3Int cell, MaterialId material, InventoryDepositDraft draft)
         {
-            if (_stepping || !ElementCellMaterialRules.Supports(material) || Blocked(cell)) return 0;
-            Contents value = Read(cell);
+            if (_stepping || !ElementCellMaterialRules.Supports(material) ||
+                (draft == null || !draft.Contains(cell)) && Blocked(cell)) return 0;
+            Contents value = draft == null ? Read(cell) : draft.ReadForDeposit(cell);
             uint high;
             if (ElementCellMaterialRules.Motion(material) == ElementCellMotion.Gas) high = value.Free(CellCapacity);
             else if (value.Amount == 0 || value.Bulk == material) high = CellCapacity - value.Amount;
             else return 0;
-            if (high == 0 || PlanDeposit(cell, material, high) && CanCommit()) return high;
+            if (high == 0 || FitsDeposit(cell, material, high, draft)) return high;
             // 常见情况在上面一次即返回。只有接近占满／需要部分挤气时才二分确切的整数上限。
             uint low = 0;
             while (low < high)
             {
                 uint middle = low + (high - low + 1) / 2;
-                if (PlanDeposit(cell, material, middle) && CanCommit()) low = middle; else high = middle - 1;
+                if (FitsDeposit(cell, material, middle, draft)) low = middle; else high = middle - 1;
             }
             return low;
         }
@@ -88,13 +184,25 @@ namespace Game.ElementField
             return CanCommit() ? room : 0;
         }
 
-        private bool PlanDeposit(Vector3Int cell, MaterialId material, uint amount)
+        private bool FitsDeposit(Vector3Int cell, MaterialId material, uint amount, InventoryDepositDraft draft)
+            => PlanDeposit(cell, material, amount, draft) && (draft == null ? CanCommit() : draft.FitsPlan());
+
+        private bool PlanDeposit(Vector3Int cell, MaterialId material, uint amount, InventoryDepositDraft draft = null)
         {
             _editCount = 0;
-            return StageDeposit(Stage(cell), material, amount);
+            return StageDeposit(StageForDeposit(cell, draft), material, amount, draft);
         }
 
-        private bool StageDeposit(int center, MaterialId material, uint amount)
+        private int StageForDeposit(Vector3Int cell, InventoryDepositDraft draft)
+        {
+            int count = _editCount;
+            int index = Stage(cell);
+            if (draft != null && _editCount != count && draft.TryRead(cell, out Contents projected))
+                _edits[index].Before = _edits[index].After = projected;
+            return index;
+        }
+
+        private bool StageDeposit(int center, MaterialId material, uint amount, InventoryDepositDraft draft = null)
         {
             ref Contents value = ref _edits[center].After;
             if (ElementCellMaterialRules.Motion(material) == ElementCellMotion.Gas)
@@ -112,9 +220,10 @@ namespace Game.ElementField
             for (int pass = 0; pass < 2; pass++)
             for (int i = 0; i < Faces.Length; i++)
             {
-                if (!Offset(cell, Faces[i], out Vector3Int neighbor) || _indices.ContainsKey(neighbor) != (pass == 0) || Blocked(neighbor))
-                    continue;
-                MoveExcess(center, Stage(neighbor));
+                if (!Offset(cell, Faces[i], out Vector3Int neighbor)) continue;
+                bool projected = draft != null && draft.Contains(neighbor);
+                if ((projected || _indices.ContainsKey(neighbor)) != (pass == 0) || !projected && Blocked(neighbor)) continue;
+                MoveExcess(center, StageForDeposit(neighbor, draft));
                 if (Excess(in value) == 0) return true;
             }
             return false;
@@ -185,6 +294,12 @@ namespace Game.ElementField
                 if (_stepping) _retry = true;
                 return false;
             }
+            PublishEdits();
+            return true;
+        }
+
+        private void PublishEdits()
+        {
             PrepareResidentPages();
             for (int i = 0; i < _editCount; i++)
             {
@@ -226,7 +341,6 @@ namespace Game.ElementField
                 WakeNeighbors(edit.Cell);
             }
             _gasEnvironment?.FinishEdits();
-            return true;
         }
 
         private static void Spend(ref Contents available, in Edit edit, MaterialId material)

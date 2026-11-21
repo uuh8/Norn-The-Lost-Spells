@@ -195,6 +195,18 @@ namespace Game.ElementField
             if (motionHere == ElementCellMotion.Fixed) return material == MaterialId.DriedSlime && amount < CellCapacity;
             if (motionHere == ElementCellMotion.Grain)
             {
+                // 落到部分量砂上的同类颗粒必须先填实下格。即使下面的砂已经归档，
+                // 上方后来投放的一小批砂也应唤醒承接它的冷格，然后由动态事务一次转量。
+                if (amount < CellCapacity && Neighbor(cell, Vector3Int.up, out var above))
+                {
+                    if (TryGetCell(above, out var upperMaterial, out _) || simulation.TryGetOccupiedCell(above, out upperMaterial, out _))
+                    {
+                        if (upperMaterial == material) return true;
+                    }
+                    if (!simulation.HasSolidAt(above) && (upperMaterial == MaterialId.Empty ||
+                        ElementCellMaterialRules.Motion(upperMaterial) == ElementCellMotion.Gas) &&
+                        HasDiagonalGrain(above, material, amount, simulation)) return true;
+                }
                 if (Neighbor(cell, Vector3Int.down, out var below) && GrainCanEnter(below, material, simulation)) return true;
                 for (int i = 1; i <= 4; i++)
                 {
@@ -224,7 +236,7 @@ namespace Game.ElementField
                     if (simulation.CanDisplaceRestingLiquid(neighborMaterial, material) ||
                         amount < CellCapacity && neighborMaterial == material && neighborAmount != 0) return true;
                     if ((neighborMaterial == MaterialId.Empty || motion == ElementCellMotion.Gas) &&
-                        HasDiagonalGrain(n, material, simulation)) return true;
+                        HasDiagonalGrain(n, material, amount, simulation)) return true;
                     continue;
                 }
                 if (neighborMaterial == material)
@@ -234,7 +246,9 @@ namespace Game.ElementField
                 }
                 else if (neighborMaterial == MaterialId.Empty || motion == ElementCellMotion.Gas)
                 {
-                    if (i == 0 || amount > 1) return true;
+                    // 冷页复用动态格的干地铺展和边缘排水条件。否则边缘液滴会反复交接，
+                    // 或者台阶被挖空后真正能流走的薄层仍被记作静止。
+                    if (i == 0 || simulation.LateralDemand(material, amount, 0, n) != 0) return true;
                 }
                 else if (i == 0 && simulation.CanDisplaceRestingLiquid(material, neighborMaterial)) return true;
             }
@@ -243,19 +257,23 @@ namespace Game.ElementField
 
         private bool GrainCanEnter(Vector3Int cell, MaterialId grain, ElementCellSimulation simulation)
         {
-            if (TryGetCell(cell, out var material, out _)) return simulation.CanDisplaceRestingLiquid(grain, material);
+            if (TryGetCell(cell, out var material, out uint amount))
+                return material == grain ? amount < CellCapacity : simulation.CanDisplaceRestingLiquid(grain, material);
+            if (simulation.TryGetQuantity(cell, grain, out amount)) return amount < CellCapacity;
             if (simulation.HasSolidAt(cell)) return false;
             return !simulation.TryGetOccupiedCell(cell, out material, out _) || ElementCellMaterialRules.Motion(material) == ElementCellMotion.Gas ||
                 simulation.CanDisplaceRestingLiquid(grain, material);
         }
 
-        private static bool HasDiagonalGrain(Vector3Int passage, MaterialId liquid, ElementCellSimulation simulation)
+        private bool HasDiagonalGrain(Vector3Int passage, MaterialId bed, uint bedAmount, ElementCellSimulation simulation)
         {
             for (int i = 1; i <= 4; i++)
-                if (Neighbor(passage, Neighbors[i], out var source) &&
-                    simulation.TryGetOccupiedCell(source, out MaterialId material, out _) &&
-                    ElementCellMaterialRules.Motion(material) == ElementCellMotion.Grain &&
-                    simulation.CanDisplaceRestingLiquid(material, liquid)) return true;
+            {
+                if (!Neighbor(passage, Neighbors[i], out var source)) continue;
+                if (!simulation.TryGetOccupiedCell(source, out var material, out _)) continue;
+                if (ElementCellMaterialRules.Motion(material) == ElementCellMotion.Grain &&
+                    (material == bed && bedAmount < CellCapacity || simulation.CanDisplaceRestingLiquid(material, bed))) return true;
+            }
             return false;
         }
 

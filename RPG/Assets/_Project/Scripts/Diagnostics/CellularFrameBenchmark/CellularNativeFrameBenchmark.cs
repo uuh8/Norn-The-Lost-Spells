@@ -19,7 +19,7 @@ namespace Game.Diagnostics
     [DefaultExecutionOrder(28000)]
     public sealed partial class CellularNativeFrameBenchmark : MonoBehaviour
     {
-        private enum Phase { Prepare, Activate, Prefill, Warmup, Measure, Evidence, Finished }
+        private enum Phase { Prepare, Activate, Prefill, Warmup, Measure, Evidence, BottleView, Finished }
         private const string Option = "--norn-cellular-frame-benchmark";
         private const int MaxFrames = 65536, MaxTicks = 2048;
         private static readonly MaterialId[] Species = { MaterialId.Water, MaterialId.Sand, MaterialId.Steam };
@@ -56,6 +56,7 @@ namespace Game.Diagnostics
         private void Configure(string[] args, string path)
         {
             _path = Path.GetFullPath(path); Directory.CreateDirectory(Path.GetDirectoryName(_path));
+            _bottleView = Array.IndexOf(args, "--norn-cellular-bottle-view") >= 0;
             _report.Tier = Argument(args,"--norn-cellular-tier","medium").ToLowerInvariant();
             switch (_report.Tier)
             {
@@ -113,6 +114,7 @@ namespace Game.Diagnostics
                 {
                     case Phase.Prepare: Prepare(); break;
                     case Phase.Activate: if (Time.frameCount>=_activateAt) Activate(); break;
+                    case Phase.BottleView: UpdateBottleView(); break;
                     case Phase.Prefill:
                         int end=Math.Min(_report.SeedPlannedPerMaterial*3,_seedIndex+384);
                         for(;_seedIndex<end;_seedIndex++) Deposit(_seedIndex/3,_seedIndex%3,false);
@@ -186,6 +188,7 @@ namespace Game.Diagnostics
             _camera.allowDynamicResolution=false;
             var center=new Vector3(_ground.center.x,_ground.max.y,_ground.center.z);
             _camera.transform.position=center+new Vector3(0,44,-43); _camera.transform.LookAt(center+Vector3.up*5);
+            if (_bottleView) ConfigureBottleView(center);
             if(_report.RequestedWidth>0 && _report.RequestedHeight>0 && (Screen.width!=_report.RequestedWidth || Screen.height!=_report.RequestedHeight))
                 Screen.SetResolution(_report.RequestedWidth,_report.RequestedHeight,FullScreenMode.Windowed);
             _report.CameraPosition=_camera.transform.position; _report.CameraForward=_camera.transform.forward;
@@ -196,7 +199,7 @@ namespace Game.Diagnostics
             _report.ConfiguredResidentCellLimit=_configuredLimit=(int)cap.GetValue(_world.CellularDefinition);
             _renderer.NativeQuadrantCenter=Vector3Int.FloorToInt((center-_world.Origin)/_world.CellSize);
             if(Camera.main!=_camera) throw new InvalidOperationException("目标相机未取得 MainCamera。");
-            _phase=Phase.Prefill;
+            _phase=_bottleView ? Phase.BottleView : Phase.Prefill;
         }
 
         private void Deposit(int index,int type,bool feed)

@@ -12,7 +12,7 @@ namespace Game.ElementField
     public sealed partial class ElementCellSimulation : IMaterialQuantityReadOnly
     {
         // 只有四种液体中的一种或一个固体结构可以占主槽。两种气体独立计量，共享主槽余下的体积。
-        private struct Contents
+        internal struct Contents
         {
             public MaterialId Bulk;
             public uint Amount, Steam, Vapor;

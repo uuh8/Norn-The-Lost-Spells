@@ -115,7 +115,7 @@ namespace Game.ElementField
                         !store.ConfigureMaterials(WorldMaterialDomain.Cellular, geometry.CellCapacity, new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 11, 12 }))
                         throw new ArgumentException("Replica 材料域或可信基底无效。");
                     var resting = new CellularRestingLiquidStore(ResolveCellularRestingRegions(_cellDefinition), geometry.CellCapacity, _cellDefinition.RestingQueueCapacity);
-                    _cellularCollisions = new CellularSolidColliders(transform, geometry.CellSize, geometry.ChunkSize, _cellDefinition.TerrainLayer);
+                    _cellularCollisions = new CellularSolidColliders(transform, geometry.CellSize, geometry.ChunkSize, _cellDefinition.TerrainLayer, geometry.CellCapacity);
                     _replicaCellular = new WorldReplicaCellularReadModel(this, geometry, _cellularTerrain, resting, _cellularCollisions);
                     store.BindCellular(_replicaCellular);
                     _replicaStore = store;

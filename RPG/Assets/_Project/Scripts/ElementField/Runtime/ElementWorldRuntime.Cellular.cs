@@ -86,7 +86,7 @@ namespace Game.ElementField
                 IsBlockedForDynamicMaterial, _cellDefinition.Transport);
             CellularSimulation.BindRestingMaterials(RestingLiquids);
             InitializeCellularGas();
-            _cellularCollisions = new CellularSolidColliders(transform, _profile.CellSize, _profile.ChunkSize, _cellDefinition.TerrainLayer);
+            _cellularCollisions = new CellularSolidColliders(transform, _profile.CellSize, _profile.ChunkSize, _cellDefinition.TerrainLayer, CellularSimulation.CellCapacity);
             _depositCells = new DepositCell[_cellDefinition.DepositBudget];
             int noticeCapacity = (int)Math.Min(16384L, 7L * _cellDefinition.WorkBudget + _cellDefinition.RestingBudget);
             _cellPublications = new List<Vector3Int>(noticeCapacity);
@@ -361,10 +361,12 @@ namespace Game.ElementField
             return false;
         }
 
-        private bool HasOpenDepositPath(Vector3Int from, Vector3Int to)
+        internal bool HasOpenDepositPath(Vector3Int from, Vector3Int to, MaterialId inventoryMaterial = MaterialId.Empty)
         {
             // 沿六连通格单调接近候选，不允许斜向跨过墙角。每推进一步都减少 Manhattan
             // 距离，不会循环；出生时才检查，后续水流、粉末和气体仍由原有 Tick 预算推进。
+            bool inventory = inventoryMaterial != MaterialId.Empty;
+            if (inventory && IsDepositBarrier(from) && !TryGetCellularQuantity(from, inventoryMaterial, out _)) return false;
             while (from != to)
             {
                 Vector3Int d = to - from;
@@ -372,7 +374,8 @@ namespace Game.ElementField
                 if (x >= y && x >= z) from.x += Math.Sign(d.x);
                 else if (y >= z) from.y += Math.Sign(d.y);
                 else from.z += Math.Sign(d.z);
-                if (IsDepositBarrier(from)) return false;
+                // 容器目标格由实际容量预检，允许补满它原本已有的同类砂；中途的实体仍阻断路径。
+                if ((!inventory || from != to) && IsDepositBarrier(from)) return false;
             }
             return true;
         }
@@ -614,7 +617,11 @@ namespace Game.ElementField
                 }
             }
             foreach (var changed in _cellPublications)
-                _cellularCollisions.Set(changed, IsCellularBlockingCell(changed));
+            {
+                if (!CellularSimulation.TryGetOccupiedCell(changed, out var material, out uint amount) && RestingLiquids != null)
+                    RestingLiquids.TryGetCell(changed, out material, out amount);
+                _cellularCollisions.Set(changed, material, amount);
+            }
             _cellularCollisions.Commit();
             if (_absorbQueue != null)
             {

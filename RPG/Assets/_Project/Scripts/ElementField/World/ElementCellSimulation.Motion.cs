@@ -59,7 +59,8 @@ namespace Game.ElementField
         {
             uint quantity = Read(cell).Amount;
             if (quantity == 0 || Movable(cell, material) < quantity) return;
-            if (Offset(cell, Vector3Int.down, out Vector3Int below) && MoveBulk(cell, below, material, quantity, true)) return;
+            if (Offset(cell, Vector3Int.down, out Vector3Int below) &&
+                (MoveBulk(cell, below, material, quantity, true) || CanDescendIntoCold(below, material))) return;
 
             int first = FirstSide(cell);
             for (int i = 0; i < Sides.Length; i++)
@@ -76,20 +77,50 @@ namespace Game.ElementField
             uint available = Movable(cell, material);
             if (available == 0) return;
             uint down = Math.Min(available, _transport.FlowLimit(material, CellCapacity, true));
-            if (Offset(cell, Vector3Int.down, out Vector3Int below) && MoveBulk(cell, below, material, down, true)) return;
+            if (Offset(cell, Vector3Int.down, out Vector3Int below) &&
+                (MoveBulk(cell, below, material, down, true) || CanDescendIntoCold(below, material))) return;
 
             int first = FirstSide(cell);
-            uint budget = Math.Min(available, _transport.FlowLimit(material, CellCapacity, false));
+            uint sideLimit = _transport.FlowLimit(material, CellCapacity, false);
+            uint budget = Math.Min(available, sideLimit);
             for (int i = 0; i < Sides.Length && budget != 0; i++)
             {
                 if (!Offset(cell, Sides[(first + i) & 3], out Vector3Int target)) continue;
                 Contents destination = Read(target);
                 if (destination.Amount != 0 && destination.Bulk != material) continue;
-                uint sourceLevel = Read(cell).Quantity(material), targetLevel = destination.Amount;
-                if (sourceLevel <= targetLevel + 1) continue;
-                uint move = Math.Min(budget, (sourceLevel - targetLevel) / 2);
+                uint demand = LateralDemand(material, Read(cell).Amount, destination.Amount, target);
+                if (demand == 0) continue;
+                // 新润湿的格至少要收到这次可用的完整首批流量。避免先找平耗掉预算后，
+                // 仅因遍历顺序就在另一块干地丢下一两 GMU，留下与实际液量不相称的脚印。
+                if (destination.Amount == 0 && budget < Math.Min(Math.Min(available, sideLimit), demand)) continue;
+                uint move = Math.Min(budget, demand);
                 if (MoveBulk(cell, target, material, move, false)) budget -= move;
             }
+        }
+
+        internal uint LateralDemand(MaterialId material, uint sourceLevel, uint targetLevel, Vector3Int target)
+        {
+            if (sourceLevel <= targetLevel) return 0;
+            if (targetLevel != 0) return (sourceLevel - targetLevel) / 2;
+            // 湿格之间始终按实际液位找平。在平坦干地上则要有足够液量才能推进接触线，
+            // 否则一个水格在不停的整数二分后会污染大片平地，最终每格只剩一两个 GMU。
+            if (sourceLevel >= _transport.DrySpreadHead(material, CellCapacity) && sourceLevel > 1) return sourceLevel / 2;
+            // 低于铺展门槛的小水滴也能沿台阶边缘排走，包括最后一个 GMU。只检查正下邻格，
+            // 不搜索坡道或容器，因而每个活跃格的计算量仍有上界。
+            if (!Offset(target, Vector3Int.down, out var below)) return 0;
+            if (Blocked(below)) return CanDescendIntoCold(below, material) ? sourceLevel : 0;
+            Contents lower = Read(below);
+            return lower.Amount == 0 || lower.Bulk == material && lower.Amount < CellCapacity ||
+                CanDisplaceRestingLiquid(material, lower.Bulk) ? sourceLevel : 0;
+        }
+
+        // 下方的部分量床层可能正归冷区所有。真实空余量在交接前后相同，不能因为冷区本 Tick
+        // 的唤醒预算排在后面，就让本应向下填实的砂或水提前从侧面溢走。交接的提交会唤醒本格。
+        private bool CanDescendIntoCold(Vector3Int below, MaterialId material)
+        {
+            if (_restingMaterials == null || !Blocked(below) ||
+                !_restingMaterials.TryGetCell(below, out var lower, out uint amount)) return false;
+            return lower == material && amount < CellCapacity || CanDisplaceRestingLiquid(material, lower);
         }
 
         private bool MoveBulk(Vector3Int from, Vector3Int to, MaterialId material, uint requested, bool mayDisplace)
@@ -115,8 +146,8 @@ namespace Game.ElementField
             {
                 uint move = Math.Min(requested, CellCapacity - destination.Amount);
                 if (move == 0 || Movable(from, material) < move) return false;
-                // 两个已有沙格各是一个几何占据；即使按份收走了一部分，也不能沿重力互相穿过或合并。
-                if (ElementCellMaterialRules.Motion(material) == ElementCellMotion.Grain && destination.Amount != 0) return false;
+                // 同类砂先填实下层的余量。分批倒出的砂和一次性倒出的砂遵守同一容量，
+                // 下层装满后余量才留在上层或向斜下滚落。此处不影响异种主材的整格密度置换。
                 source.Remove(material, move);
                 destination.Add(material, move);
             }

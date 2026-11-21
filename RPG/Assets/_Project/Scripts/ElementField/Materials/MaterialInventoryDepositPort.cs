@@ -13,6 +13,8 @@ namespace Game.ElementField
         private readonly MaterialConversionPlacement[] _journal = new MaterialConversionPlacement[MaximumEntries];
         private readonly bool[] _restingEntries = new bool[MaximumEntries];
         private bool _hasStagedResting;
+        private ElementCellSimulation.InventoryDepositDraft _cellularDraft;
+        private bool _requiresCellularImpulse;
         // 与原Placement同索引的固定scratch；只在成功Source.Commit后交给History。
         // 失败/Undo从不注册出生，不能让未扣瓶的一次尝试获得特殊连续播放资格。
         private readonly LiquidCellPresentationSample[] _birthPrevious=new LiquidCellPresentationSample[MaximumEntries];
@@ -51,7 +53,7 @@ namespace Game.ElementField
                     // Exception.Data 的稀有异常路径允许分配；正常交易不访问 Data，也不增加热路径分配。
                     primary.Data["Norn.MaterialCleanupException"] = cleanup;
                 }
-                finally { _world.EndMaterialTransaction(); }
+                finally { _cellularDraft?.Reset(); _world.EndMaterialTransaction(); }
             }
         }
         private MaterialTransferFailure DepositCore(MaterialDepositExchange exchange, out ulong transferred)
@@ -86,6 +88,12 @@ namespace Game.ElementField
                     : _world.InventoryGases == null || !_world.InventoryGases.IsMaterialInitialized) return MaterialTransferFailure.WorldUnavailable;
             }
             if (total == 0) return MaterialTransferFailure.NoMaterial;
+            if (_world.CellularSimulation != null)
+            {
+                (_cellularDraft ??= new ElementCellSimulation.InventoryDepositDraft()).Begin(_world.CellularSimulation);
+                float toCellsPerTick = _world.CellularTickDuration / _world.ConversionCellSize;
+                _requiresCellularImpulse = exchange.HasInitialMotion && (exchange.InitialVelocity * toCellsPerTick).sqrMagnitude >= .01f;
+            }
             if (exchange.HasInitialMotion && _world.CellularSimulation != null)
             {
                 // 喷口命中整格墙/满格不能绕到其另一侧。旧 GridLiquid 的初速度合同继续由原 Owner 保有。
@@ -109,8 +117,7 @@ namespace Game.ElementField
             if (!exchange.Source.TryReserve(exchange.Amounts, exchange.Count, out var failure)) return failure;
             _world.RetainInventoryDepositActivity(exchange.Position,exchange.Radius);
             _world.InventorySolids?.BeginConversionGeometry();
-            // 元胞气体先取得局部剩余容积，后续主材只用无需挤气的空间。
-            // 这使同一瓶的水与蒸汽可以落入一格，无需在已经暂存冷页扣增时再展开它。
+            // 气体先占用剩余容积；后续主材能在同一草稿中让两种气体从喷口退到开放面邻格。
             int passes = _world.CellularSimulation == null || exchange.Count == 1 ? 1 : 2;
             for (int pass = 0; pass < passes; pass++)
             for (int i = 0; i < exchange.Count; i++)
@@ -134,10 +141,14 @@ namespace Game.ElementField
             {
                 // 先证明全部新运动行都能进入固定容量字典，再扣库存；世界锁排除了期间另一笔注入。
                 // Undo只撤暂存数量，不曾改变旧速度。Commit后不会再走一个“失败就丢速度”的分支。
-                int needed=0;
+                int needed=0, cellularNeeded=0;
                 for(int i=0;i<_count;i++)
                 {
                     var address=_journal[i].Address;
+                    if (_requiresCellularImpulse && Backend(address.Material) == MaterialSimulationBackendKind.Cellular &&
+                        (ElementCellMaterialRules.Motion(address.Material) == ElementCellMotion.Liquid ||
+                         ElementCellMaterialRules.Motion(address.Material) == ElementCellMotion.Grain) &&
+                        !_world.CellularSimulation.HasPendingImpulse(address.Cell)) cellularNeeded++;
                     if(Backend(address.Material)!=MaterialSimulationBackendKind.GridLiquid)continue;
                     if(!_world.InventoryLiquid.CanPrepareInjectionMotion(address.Cell,address.Material,out bool newSlot))
                     {Undo();return MaterialTransferFailure.Capacity;}
@@ -145,16 +156,27 @@ namespace Game.ElementField
                 }
                 if(needed>0 && (_world.InventoryLiquid==null || needed>_world.InventoryLiquid.AvailableInjectionMotionSlots))
                 {Undo();return MaterialTransferFailure.Capacity;}
+                if (cellularNeeded > 0 && cellularNeeded > _world.CellularSimulation.AvailableImpulseSlots)
+                { Undo(); return MaterialTransferFailure.Capacity; }
             }
-            exchange.Source.Commit();
+            try { exchange.Source.Commit(); }
+            catch (Exception primary)
+            {
+                // 外部库存抛错时其自身提交结果可能未知，外层仍锁住 Faulted；能确定的是本笔
+                // 世界写入尚未发布，取消所有已暂存的后端数据，不扰动旧材料与冲量。
+                try { Undo(); }
+                catch (Exception rollback) { primary.Data["Norn.MaterialRollbackException"] = rollback; }
+                throw;
+            }
             if (_hasStagedResting) _world.RestingLiquids.CommitStaged();
+            if (_world.CellularSimulation != null) _cellularDraft.Publish();
             if(exchange.HasInitialMotion)
                 for(int i=0;i<_count;i++)
                 {
                     var placement=_journal[i];var address=placement.Address;
                     if(Backend(address.Material)==MaterialSimulationBackendKind.GridLiquid)
                         _world.InventoryLiquid.PublishInjectionMotion(address.Cell,address.Material,exchange.InitialVelocity,placement.Quantity);
-                    else if (Backend(address.Material) == MaterialSimulationBackendKind.Cellular)
+                    else if (_requiresCellularImpulse && Backend(address.Material) == MaterialSimulationBackendKind.Cellular)
                         _world.PublishCellularImpulse(address.Cell, address.Material, placement.Quantity, exchange.InitialVelocity);
                 }
             for(int i=0;i<_count;i++)
@@ -202,6 +224,7 @@ namespace Game.ElementField
                 Vector3 closest = new Vector3(Mathf.Clamp(position.x, lower.x, lower.x + size),
                     Mathf.Clamp(position.y, lower.y, lower.y + size), Mathf.Clamp(position.z, lower.z, lower.z + size));
                 if ((closest - position).sqrMagnitude > radius * radius) continue;
+                if (Backend(material) == MaterialSimulationBackendKind.Cellular && !_world.HasOpenDepositPath(center, cell, material)) continue;
                 if (TryStage(cell, material, remaining, out placed)) remaining -= placed;
             }
             return remaining == 0 ? MaterialTransferFailure.None : MaterialTransferFailure.Capacity;
@@ -216,8 +239,6 @@ namespace Game.ElementField
             switch (Backend(material))
             {
                 case MaterialSimulationBackendKind.Cellular:
-                    // 这里是多组分暂存。若暂存时先把旧气体推入邻格，扣回本次量也恢复不了原来的气体位置。
-                    // 只使用无需挤走邻居的本格空间，其余量由同一个有界投放球继续寻找落点。
                     free = CellularDepositCapacity(cell, material, out resting); break;
                 case MaterialSimulationBackendKind.GridLiquid:
                     if (!_world.InventoryLiquid.PrepareConversionContact(cell, material)) return false;
@@ -239,8 +260,17 @@ namespace Game.ElementField
             switch (Backend(material))
             {
                 case MaterialSimulationBackendKind.Cellular:
-                    success = resting ? _world.RestingLiquids.TryStageAdd(cell, material, amount)
-                        : _world.TryDepositIntoWorkingCell(cell, material, amount);
+                    if (resting) success = _world.RestingLiquids.TryStageAdd(cell, material, amount);
+                    else if (!_cellularDraft.Contains(cell) && _world.RestingLiquids.TryGetCell(cell, out var coldMaterial, out uint coldAmount))
+                    {
+                        success = _world.RestingLiquids.TryStageRemove(cell, coldMaterial, coldAmount);
+                        if (success)
+                        {
+                            _cellularDraft.StageExpandedCold(cell, coldMaterial, coldAmount, material, amount);
+                            _hasStagedResting = true;
+                        }
+                    }
+                    else success = _cellularDraft.TryStage(cell, material, amount);
                     break;
                 case MaterialSimulationBackendKind.GridLiquid: success = _world.InventoryLiquid.StageInventoryBirth(cell, material, amount,out before); break;
                 case MaterialSimulationBackendKind.FixedSolid: success = _world.InventorySolids.StageConversionAdd(cell, material, amount); break;
@@ -254,8 +284,15 @@ namespace Game.ElementField
         }
         private uint CellularDepositCapacity(Vector3Int cell, MaterialId material, out bool resting)
         {
-            // 静水部分满格仍由原区域持有，不能在同一基础格新建一份 CA 库存。已交接的空格归动态 Owner。
-            return _world.AvailableForDeposit(cell, material, false, out resting);
+            resting = false;
+            if (_cellularDraft.Contains(cell) || !_world.RestingLiquids.TryGetCell(cell, out var bulk, out uint occupied))
+                return _cellularDraft.FreeCapacity(cell, material);
+            bool gas = ElementCellMaterialRules.Motion(material) == ElementCellMotion.Gas;
+            if (gas ? ElementCellMaterialRules.OccupiesWholeCell(bulk) : material != bulk) return 0;
+            if (gas || _requiresCellularImpulse)
+                return _cellularDraft.CanExpandCold(cell) ? _world.CellularCellCapacity - occupied : 0;
+            resting = true;
+            return _world.RestingLiquids.GetLocalFreeCapacity(cell, material);
         }
         private void Undo()
         {
@@ -267,8 +304,7 @@ namespace Game.ElementField
                 switch (Backend(target.Address.Material))
                 {
                     case MaterialSimulationBackendKind.Cellular:
-                        if (!_world.CellularSimulation.TryRemove(target.Address.Cell, target.Address.Material, target.Quantity))
-                            throw new InvalidOperationException("Cellular 投放事务无法撤销原格的暂存数量。");
+                        // 热区全部是未发布的草稿；舍弃后原有气体位置、稀释计时、移动队列和冲量都还在。
                         break;
                     case MaterialSimulationBackendKind.GridLiquid: _world.InventoryLiquid.UndoConversionAdd(target.Address.Cell, target.Address.Material, target.Quantity); break;
                     case MaterialSimulationBackendKind.FixedSolid:

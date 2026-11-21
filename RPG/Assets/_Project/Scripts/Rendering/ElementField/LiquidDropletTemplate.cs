@@ -8,6 +8,8 @@ namespace Game.Rendering
     {
         internal static readonly Vector3[] Vertices;
         internal static readonly int[] Indices;
+        internal static readonly Vector3[] DistantVertices;
+        internal static readonly int[] DistantIndices;
 
         static LiquidDropletTemplate()
         {
@@ -37,6 +39,7 @@ namespace Game.Rendering
                     next[at+9]=ab;next[at+10]=bc;next[at+11]=ca;
                 }
                 faces=next;
+                if (level == 0) { DistantVertices = vertices.ToArray(); DistantIndices = faces; }
             }
             Vertices=vertices.ToArray();Indices=faces;
         }

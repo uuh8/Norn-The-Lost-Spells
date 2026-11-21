@@ -20,6 +20,7 @@ namespace Game.ElementField
         private readonly int _impulseLimit;
         private readonly Dictionary<Vector3Int, CellImpulse> _impulses;
         internal bool HasPendingImpulse(Vector3Int cell) => _impulses.ContainsKey(cell);
+        internal int AvailableImpulseSlots => _impulseLimit - _impulses.Count;
 
         internal void GiveImpulse(Vector3Int cell, MaterialId material, uint amount, Vector3 velocity, float gravity)
         {

@@ -65,6 +65,7 @@ namespace Game.Rendering
             internal Dictionary<int, ushort> GasDensity;
             internal bool NativeWaiting; internal int NativeSeenFrame,NativeDirtyFrame; internal double NativeDirtyAt;
             internal int VisibleIndex, SurfaceSlots;
+            internal int ShoreLodMask;
             internal uint WaterIndices, SandIndices;
             internal bool Queued;
             internal long QueuedAt;
@@ -307,6 +308,60 @@ namespace Game.Rendering
             return sample;
         }
 
+        internal bool IsShoreWall(Vector3Int cell) => _world.IsInitialized && _world.IsSolid(cell);
+
+        internal CellularMaterialSurfaceMesh SurfaceMesher => _mesher;
+
+        // 用页坐标保存近景范围。角色附近至少 8m 保留完整岸线；没有角色的相机使用自身位置。
+        // 在同一页里移动不会令稳定的沙堆和水面反复重烘。
+        private bool _shoreLodReady;
+        private Vector3Int _shoreFocus;
+        private int _shoreRadius;
+        internal uint ShoreLodVersion { get; private set; }
+
+        private void UpdateShoreFocus(float pageMeters)
+        {
+            var actor = LocalActorPresentation.Actor;
+            bool hasActor = actor != null && actor.activeInHierarchy && actor.scene == gameObject.scene;
+            var focus = hasActor ? actor.transform.position : _camera.transform.position;
+            var next = Vector3Int.FloorToInt((focus - _world.Origin) / pageMeters);
+            // 原单机第三人称相机与角色可相距约 6m；无已绑定 Actor 时同时覆盖镜头到角色及角色周围 5m。
+            int radius = Mathf.Max(1, Mathf.CeilToInt((hasActor ? 8f : 12f) / pageMeters));
+            if (_shoreLodReady && _shoreFocus == next && _shoreRadius == radius) return;
+            _shoreLodReady = true; _shoreFocus = next; _shoreRadius = radius; ShoreLodVersion++;
+            foreach (var page in _visiblePages) UpdateShoreLod(page);
+        }
+
+        internal bool DetailedShoreAt(Vector3Int cell) => !_shoreLodReady ||
+            DetailedPage(cell.x >> PageShift, cell.y >> PageShift, cell.z >> PageShift);
+
+        private bool DetailedPage(int x, int y, int z) => Mathf.Abs(x - _shoreFocus.x) <= _shoreRadius &&
+            Mathf.Abs(y - _shoreFocus.y) <= _shoreRadius && Mathf.Abs(z - _shoreFocus.z) <= _shoreRadius;
+
+        internal bool DetailedShoreTouches(BoundsInt cells) => !_shoreLodReady ||
+            cells.xMin >> PageShift <= _shoreFocus.x + _shoreRadius && (cells.xMax - 1) >> PageShift >= _shoreFocus.x - _shoreRadius &&
+            cells.yMin >> PageShift <= _shoreFocus.y + _shoreRadius && (cells.yMax - 1) >> PageShift >= _shoreFocus.y - _shoreRadius &&
+            cells.zMin >> PageShift <= _shoreFocus.z + _shoreRadius && (cells.zMax - 1) >> PageShift >= _shoreFocus.z - _shoreRadius;
+
+        private void UpdateShoreLod(Page page)
+        {
+            var p = page.Key;
+            int mask = 0;
+            if (DetailedPage(p.X,p.Y,p.Z))
+            {
+                mask = 1;
+                if (DetailedPage(p.X-1,p.Y,p.Z)) mask |= 2;
+                if (DetailedPage(p.X+1,p.Y,p.Z)) mask |= 4;
+                if (DetailedPage(p.X,p.Y,p.Z-1)) mask |= 8;
+                if (DetailedPage(p.X,p.Y,p.Z+1)) mask |= 16;
+            }
+            if (page.ShoreLodMask == mask) return;
+            page.ShoreLodMask = mask;
+            if (page.WaterIndices == 0 && (page.SurfaceSlots & 15) == 0) return;
+            page.SurfaceDirty = true;
+            QueueVisibleDirty(page);
+        }
+
         internal void SeedRestingInterfaces(CellularRestingLiquidSurface target)
         {
             // 只在冷启动执行。之后每个显式细格与邻近静水区域的关联由提交事件 O(1) 次 BVH 查询维护。
@@ -408,6 +463,7 @@ namespace Game.Rendering
             long nativeStart = _frameStart;
             _resting.Refresh(_world.CellularRestingLiquids, this);
             float meters = _world.CellSize * PageSize;
+            UpdateShoreFocus(meters);
             int limit = Mathf.Max(1, _maximumPageRebuildsPerFrame);
             CollectVisiblePages(meters);
             if (CaptureNativeFrames) BeginNativeDraw();

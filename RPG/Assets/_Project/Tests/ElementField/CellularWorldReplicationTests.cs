@@ -187,7 +187,7 @@ namespace Game.ElementField.Tests
                 var simulation = new ElementCellSimulation((int)Capacity, 64, c => false);
                 Set(world, "<CellularSimulation>k__BackingField", simulation);
                 Set(world, "<RestingLiquids>k__BackingField", new CellularRestingLiquidStore(_cells.RestingRegions, Capacity, 16));
-                Set(world, "_cellularCollisions", new CellularSolidColliders(host.transform, 1, 4, 0));
+                Set(world, "_cellularCollisions", new CellularSolidColliders(host.transform, 1, 4, 0, Capacity));
                 Set(world, "_cellularTerrain", world.CreateCellularTerrain(_cells));
                 Set(world, "_cellPublications", new List<Vector3Int>());
                 Set(world, "_publicationSet", new HashSet<Vector3Int>());

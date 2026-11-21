@@ -91,6 +91,7 @@ namespace Game.Rendering
         private void AddVisiblePage(Page page)
         {
             page.Visible=true; page.VisibleIndex=_visiblePages.Count; _visiblePages.Add(page);
+            if (_shoreLodReady) UpdateShoreLod(page);
             QueueVisibleDirty(page);
         }
 

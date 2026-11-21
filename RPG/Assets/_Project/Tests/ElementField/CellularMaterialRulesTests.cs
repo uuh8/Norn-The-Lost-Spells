@@ -7,6 +7,134 @@ namespace Game.ElementField.Tests
     public sealed class CellularMaterialRulesTests
     {
         [Test]
+        public void SameHomeWaterDoseFillsDepthThenDrainsThroughAnOpenedBottomOutlet()
+        {
+            // 一根一格宽的槽接一个更低的出口。和截图同量的水在槽内必须积出四格多的真实水深；
+            // 开洞只唤醒局部邻格，水依靠重力和侧向输运进入下方空间。
+            bool outletOpen = false;
+            bool Wall(Vector3Int p)
+            {
+                if (p.x == 0 && p.z == 0 && p.y >= 0) return false;
+                if (outletOpen && p.x == 1 && p.z == 0 && p.y == 0) return false;
+                return p.x != 2 || p.z != 0 || p.y < -8 || p.y > 0;
+            }
+            var cells = new ElementCellSimulation(255, 64, Wall);
+            for (int i = 0; i < 5; i++)
+                Assert.That(cells.TryDeposit(Vector3Int.up * (5 + i), MaterialId.Water, i < 4 ? 255u : 12u), Is.True);
+            for (int i = 0; i < 100; i++) cells.Step(64);
+            Assert.That(cells.TryGetQuantity(Vector3Int.up * 4, MaterialId.Water, out var top), Is.True);
+            Assert.That(top, Is.EqualTo(12u));
+            outletOpen = true;
+            cells.WakeNeighbors(Vector3Int.right);
+            for (int i = 0; i < 200; i++) cells.Step(64);
+            Assert.That(cells.TryGetQuantity(new Vector3Int(2, -8, 0), MaterialId.Water, out var low), Is.True);
+            Assert.That(low, Is.EqualTo(255u));
+            Assert.That(cells.TryGetQuantity(Vector3Int.up * 4, MaterialId.Water, out _), Is.False);
+            Assert.That(cells.GetTotalQuantity(MaterialId.Water), Is.EqualTo(1032ul));
+        }
+
+        [TestCase(MaterialId.Water, 1032, 40)]
+        [TestCase(MaterialId.Poison, 298, 35)]
+        [TestCase(MaterialId.Sticky, 472, 65)]
+        [TestCase(MaterialId.Oil, 305, 20)]
+        public void HomeQuantityPouredOntoDryGroundSettlesWithoutSpreadingToTraceCells(
+            MaterialId material, int quantity, int minimumMeanGmu)
+        {
+            // 正式格 25 cm / 255 GMU。使用玩家 Home 中的四份实际数量，并让材料从空中自行落地。
+            var world = new ElementCellSimulation(255, 1024, p => p.y < 0);
+            int left = quantity;
+            for (int y = 4; left > 0; y++)
+            {
+                int portion = System.Math.Min(left, 255);
+                Assert.IsTrue(world.TryDeposit(new Vector3Int(0, y, 0), material, (uint)portion));
+                left -= portion;
+            }
+            for (int step = 0; step < 256 && world.ActiveCellCount != 0; step++) world.Step(1024);
+            Assert.Zero(world.ActiveCellCount);
+            Assert.AreEqual((ulong)quantity, world.GetTotalQuantity(material));
+            Assert.Greater(world.OccupiedCellCount, 1, "足量液体仍须沿地板向外铺展");
+            Assert.GreaterOrEqual(quantity / world.OccupiedCellCount, minimumMeanGmu);
+            for (int i = 0; i < world.OccupiedCellCount; i++)
+            {
+                Assert.IsTrue(world.TryGetOccupiedCoordinate(i, out var cell));
+                Assert.Zero(cell.y);
+            }
+            TestContext.WriteLine($"{material} {quantity} GMU, {world.OccupiedCellCount} columns, mean depth " +
+                $"{250d * quantity / (255d * world.OccupiedCellCount):F1} mm.");
+        }
+
+        [Test]
+        public void ExcavatingBesideASleepingOneGmuDropLetsItDrainOverTheEdge()
+        {
+            var lip = Vector3Int.right;
+            var sink = lip + Vector3Int.down;
+            var cold = new CellularRestingLiquidStore(null, 255, 128);
+            bool cut = false;
+            var world = new ElementCellSimulation(255, 32, p =>
+                cold.BlocksSimulation(p) || p != Vector3Int.zero && p != lip && !(cut && p == sink));
+            world.BindRestingMaterials(cold);
+            Assert.IsTrue(world.TryDeposit(Vector3Int.zero, MaterialId.Water, 1));
+            Assert.IsTrue(cold.TryArchiveSettled(Vector3Int.zero, world, out _));
+            cut = true;
+            cold.WakeNeighbors(sink);
+            for (int i = 0; i < 16; i++)
+            {
+                cold.Step(32, world);
+                world.Step(32);
+                while (world.TryDequeueChanged(out var moved)) cold.WakeNeighbors(moved);
+            }
+            Assert.IsTrue(world.TryGetQuantity(sink, MaterialId.Water, out uint remaining) ||
+                cold.TryGetQuantity(sink, MaterialId.Water, out remaining));
+            Assert.AreEqual(1u, remaining);
+        }
+
+        [Test]
+        public void FallingSandFirstFillsArchivedSandAndOnlyExcessStaysAbove()
+        {
+            var cold = new CellularRestingLiquidStore(null, 255, 128);
+            var world = new ElementCellSimulation(255, 32, p =>
+                cold.BlocksSimulation(p) || p != Vector3Int.zero && p != Vector3Int.up);
+            world.BindRestingMaterials(cold);
+            Assert.IsTrue(world.TryDeposit(Vector3Int.zero, MaterialId.Sand, 200));
+            Assert.IsTrue(cold.TryArchiveSettled(Vector3Int.zero, world, out _));
+            Assert.IsTrue(world.TryDeposit(Vector3Int.up, MaterialId.Sand, 100));
+            cold.WakeNeighbors(Vector3Int.up);
+            for (int step = 0; step < 32; step++)
+            {
+                cold.Step(64, world);
+                world.Step(64);
+                while (world.TryDequeueChanged(out var changed)) cold.WakeNeighbors(changed);
+            }
+            Assert.IsTrue(world.TryGetQuantity(Vector3Int.zero, MaterialId.Sand, out uint bottom) ||
+                cold.TryGetQuantity(Vector3Int.zero, MaterialId.Sand, out bottom));
+            Assert.IsTrue(world.TryGetQuantity(Vector3Int.up, MaterialId.Sand, out uint top) ||
+                cold.TryGetQuantity(Vector3Int.up, MaterialId.Sand, out top));
+            Assert.AreEqual(255u, bottom);
+            Assert.AreEqual(45u, top);
+        }
+
+        [Test]
+        public void GrainPileBuildsAboveFlatGroundAndSinksThroughWaterWithoutLosingMass()
+        {
+            var world = new ElementCellSimulation(255, 128, p => p.y < 0);
+            for (int y = 1; y <= 15; y++) Assert.IsTrue(world.TryDeposit(Vector3Int.up * y, MaterialId.Sand, 255));
+            for (int i = 0; i < 96 && world.ActiveCellCount > 0; i++) world.Step(128);
+            Assert.Zero(world.ActiveCellCount);
+            Assert.IsTrue(world.TryGetQuantity(Vector3Int.up, MaterialId.Sand, out _));
+            Assert.IsTrue(world.TryGetQuantity(Vector3Int.right, MaterialId.Sand, out _));
+            Assert.AreEqual(15UL * 255, world.GetTotalQuantity(MaterialId.Sand));
+
+            var tube = new ElementCellSimulation(255, 8, p => p != Vector3Int.zero && p != Vector3Int.up);
+            Assert.IsTrue(tube.TryDeposit(Vector3Int.zero, MaterialId.Water, 83));
+            Assert.IsTrue(tube.TryDeposit(Vector3Int.up, MaterialId.Sand, 17));
+            tube.Step(8);
+            Assert.IsTrue(tube.TryGetQuantity(Vector3Int.zero, MaterialId.Sand, out uint submerged));
+            Assert.AreEqual(17u, submerged);
+            Assert.IsTrue(tube.TryGetQuantity(Vector3Int.up, MaterialId.Water, out uint displaced));
+            Assert.AreEqual(83u, displaced);
+        }
+
+        [Test]
         public void NewlyFixedIceArchivesWithoutAnActiveTickAndStillCondensesAdjacentSteam()
         {
             var cold = new CellularRestingLiquidStore(null, 64, 16);

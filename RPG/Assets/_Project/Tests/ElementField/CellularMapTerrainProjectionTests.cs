@@ -8,6 +8,47 @@ namespace Game.ElementField.Tests
     public sealed class CellularMapTerrainProjectionTests
     {
         [Test]
+        public void PartialSandCollidesAtItsVisibleHeightAndOnlyTouchingGrainsMerge()
+        {
+            var root = new GameObject("Grain projection");
+            var geometry = new CellularSolidColliders(root.transform, .25f, 4, 0, 255);
+            try
+            {
+                var a = Vector3Int.left;
+                var b = a + Vector3Int.left;
+                geometry.Set(a, MaterialId.Sand, 1);
+                geometry.Set(b, MaterialId.Sand, 1);
+                geometry.Commit();
+                var boxes = root.GetComponentsInChildren<BoxCollider>();
+                Assert.That(boxes.Length, Is.EqualTo(2));
+                var size = boxes[0].size;
+                Assert.That(size.x * size.y * size.z, Is.EqualTo(.25f * .25f * .25f / 255).Within(1e-8f));
+                Assert.That(boxes[0].bounds.max.y, Is.EqualTo(size.y).Within(1e-5f));
+                geometry.Set(a, MaterialId.Sand, 128);
+                geometry.Set(b, MaterialId.Sand, 128);
+                geometry.Commit();
+                int enabled = 0;
+                foreach (var box in root.GetComponentsInChildren<BoxCollider>())
+                    if (box.enabled)
+                    {
+                        enabled++;
+                        Assert.That(box.size.x, Is.EqualTo(.5f).Within(1e-5f));
+                        Assert.That(box.bounds.max.y, Is.EqualTo(.25f * 128 / 255).Within(1e-5f));
+                    }
+                Assert.That(enabled, Is.EqualTo(1));
+                geometry.Set(a, MaterialId.Empty, 0);
+                geometry.Set(b, MaterialId.Empty, 0);
+                geometry.Commit();
+                Assert.That(root.GetComponentsInChildren<BoxCollider>(), Is.Empty);
+            }
+            finally
+            {
+                geometry.Dispose();
+                Object.DestroyImmediate(root);
+            }
+        }
+
+        [Test]
         public void FlatGroundSplitsOnlyTheHitBranchAndMergesItWhenRestored()
         {
             var ground = GameObject.CreatePrimitive(PrimitiveType.Cube);

@@ -44,6 +44,8 @@ namespace Game.Rendering
             internal Mesh Mesh;
             internal ulong Version;
             internal bool HasVersion, Queued, MeshDirty, Draw;
+            internal bool HasPartialLiquid, HadNearShore;
+            internal uint ShoreLodVersion;
         }
 
         private const int DeferredCellLimit = 8192;
@@ -58,7 +60,7 @@ namespace Game.Rendering
         private readonly List<Rect> _fragments = new List<Rect>();
         private readonly List<Vector3> _vertices = new List<Vector3>(), _normals = new List<Vector3>();
         private readonly List<int> _indices = new List<int>();
-        private readonly List<Color32> _solidIds = new List<Color32>();
+        private readonly List<Color32> _surfaceColors = new List<Color32>();
         private readonly Action<BoundsInt, uint> _visit;
         private readonly Action<int> _registerNeighbor, _queueRegion, _collectCandidate;
         private readonly Action<int, BoundsInt, BoundsInt> _layoutChange;
@@ -108,7 +110,7 @@ namespace Game.Rendering
             int center = _owner.FindRegionIndex(cell);
             bool restingChanged = center >= 0 && _regions[center].Version != _owner.GetRegionVersion(center);
             if (!explicitChanged && !restingChanged) return false;
-            // BVH 只定位本格与六个共享面。气体远离静水时仅一次点查询，近处修改不遍历世界区域表。
+            // 面和水面角点各有一格 Halo。只有数量/界面变化才通知邻区；气体单独变化仍只查中心。
             Track(center, cell, hasExplicitSurface);
             if (cell.x > int.MinValue) Track(_owner.FindRegionIndex(cell + Vector3Int.left), cell, hasExplicitSurface);
             if (cell.x < int.MaxValue) Track(_owner.FindRegionIndex(cell + Vector3Int.right), cell, hasExplicitSurface);
@@ -116,6 +118,16 @@ namespace Game.Rendering
             if (cell.y < int.MaxValue) Track(_owner.FindRegionIndex(cell + Vector3Int.up), cell, hasExplicitSurface);
             if (cell.z > int.MinValue) Track(_owner.FindRegionIndex(cell + Vector3Int.back), cell, hasExplicitSurface);
             if (cell.z < int.MaxValue) Track(_owner.FindRegionIndex(cell + Vector3Int.forward), cell, hasExplicitSurface);
+            for (int dz = -1; dz <= 1; dz += 2)
+            for (int dx = -1; dx <= 1; dx += 2)
+            {
+                var offset = new Vector3Int(dx, 0, dz);
+                var address = cell + offset;
+                if (CellularMaterialRenderer.OffsetWrapped(cell, offset, address)) continue;
+                int index = _owner.FindRegionIndex(address);
+                if (index >= 0 && ElementCellMaterialRules.Motion(_regions[index].Material) == ElementCellMotion.Liquid)
+                    QueueRegion(index);
+            }
             return restingChanged;
         }
 
@@ -197,11 +209,14 @@ namespace Game.Rendering
                 if (!state.HasVersion || version != state.Version)
                 {
                     state.Boxes.Clear();
+                    state.HasPartialLiquid = false;
                     if (state.Cells.size != Vector3Int.zero)
                     {
                         _collecting = state.Boxes;
-                        _collectingWholeCells = ElementCellMaterialRules.OccupiesWholeCell(state.Material);
+                        _collectingWholeCells = state.Material != MaterialId.Sand && ElementCellMaterialRules.OccupiesWholeCell(state.Material);
                         owner.VisitOccupiedBoxes(index, _visit);
+                        if (ElementCellMaterialRules.Motion(state.Material) == ElementCellMotion.Liquid)
+                            foreach (var box in state.Boxes) if (box.Amount < _capacity) { state.HasPartialLiquid = true; break; }
                     }
                     state.HasVersion = true; state.Version = version;
                 }
@@ -213,13 +228,18 @@ namespace Game.Rendering
 
         private void RegisterNeighbor(int index)
         {
-            foreach (var box in _regions[index].Boxes)
+            var region = _regions[index];
+            foreach (var box in region.Boxes)
+            {
+                // 格中央的沙团没有碰到水平邻格，在它上方也留有孔隙。相邻满盒应保留这一面的几何。
+                if (CellularMaterialSurfaceMesh.HasInsetSandFootprint(region.Material, box.Amount, _capacity)) continue;
                 for (int axis = 0; axis < 3; axis++)
                 {
                     var rect = Project(box, axis);
                     Register(axis, false, box.Edge(axis, false, _capacity), rect);
                     Register(axis, true, box.Edge(axis, true, _capacity), rect);
                 }
+            }
         }
 
         private void Build(Region state, CellularMaterialRenderer explicitCells)
@@ -235,17 +255,34 @@ namespace Game.Rendering
                 var sample = explicitCells.Read(cell);
                 if (sample.Quantity != 0) RegisterExplicitFacePlanes(cell, sample.Material, sample.Quantity, state.Material);
             }
-            _vertices.Clear(); _normals.Clear(); _indices.Clear();
+            _vertices.Clear(); _normals.Clear(); _indices.Clear(); _surfaceColors.Clear();
+            explicitCells.SurfaceMesher.EndColdRegion();
             foreach (var box in state.Boxes)
             {
-                if (TryBuildDroplet(state, box, explicitCells)) continue;
-                for (int axis = 0; axis < 3; axis++)
+                if (CellularMaterialSurfaceMesh.HasInsetSandFootprint(state.Material, box.Amount, _capacity))
+                {
+                    // 冷存储只合并满格与空格；部分量叶节点对应单格。归档/唤醒两边使用相同几何和底面遮挡。
+                    var cell = box.Cells.min;
+                    bool exposedBottom = cell.y == int.MinValue || CellularMaterialSurfaceMesh.FullFootprintHeight(
+                        explicitCells.ReadSurface(cell + Vector3Int.down), _capacity) < 1f;
+                    CellularMaterialSurfaceMesh.AppendInsetSand(cell - state.Cells.min, box.Amount, _capacity,
+                        exposedBottom, _vertices, _normals, _indices);
+                }
+                else if (box.Amount < _capacity && ElementCellMaterialRules.Motion(state.Material) == ElementCellMotion.Liquid)
+                {
+                    var sample = new CellularMaterialRenderer.Sample { Material = state.Material, Quantity = box.Amount, Resting = true };
+                    explicitCells.SurfaceMesher.AppendColdLiquid(box.Cells.min, state.Cells.min, explicitCells, _capacity,
+                        sample, _vertices, _normals, _indices);
+                }
+                else for (int axis = 0; axis < 3; axis++)
                 {
                     var rect = Project(box, axis);
                     EmitFace(state.Cells.min, axis, false, box.Edge(axis, false, _capacity), rect);
                     EmitFace(state.Cells.min, axis, true, box.Edge(axis, true, _capacity), rect);
                 }
+                CellularMaterialSurfaceMesh.AppendColors(_surfaceColors, _vertices, state.Material, box.Cells.yMin - state.Cells.yMin, box.Amount == _capacity);
             }
+            explicitCells.SurfaceMesher.EndColdRegion();
             if (_indices.Count == 0) return;
             if (state.Mesh == null)
             {
@@ -255,37 +292,10 @@ namespace Game.Rendering
             state.Mesh.Clear();
             state.Mesh.SetVertices(_vertices);
             state.Mesh.SetNormals(_normals);
-            if (ElementCellMaterialRules.Motion(state.Material) != ElementCellMotion.Liquid)
-            {
-                _solidIds.Clear();
-                var id = new Color32((byte)state.Material, 0, 0, 255);
-                for (int i = 0; i < _vertices.Count; i++) _solidIds.Add(id);
-                state.Mesh.SetColors(_solidIds);
-            }
+            state.Mesh.SetColors(_surfaceColors);
             state.Mesh.SetTriangles(_indices, 0, false);
             state.Mesh.bounds = new Bounds((Vector3)state.Cells.size * .5f, state.Cells.size);
             state.Draw = true;
-        }
-
-        private bool TryBuildDroplet(Region state, Box box, CellularMaterialRenderer explicitCells)
-        {
-            if ((ulong)box.Amount * 4 > _capacity || box.Cells.size != Vector3Int.one ||
-                ElementCellMaterialRules.Motion(state.Material) != ElementCellMotion.Liquid) return false;
-            var cell = box.Cells.min;
-            foreach (var face in CellularMaterialRenderer.Faces)
-            {
-                var neighbor = cell + face;
-                if (!CellularMaterialRenderer.OffsetWrapped(cell, face, neighbor) &&
-                    ElementCellMaterialRules.Motion(explicitCells.ReadSurface(neighbor).Material) == ElementCellMotion.Liquid) return false;
-            }
-            // 数量从活动格交还给冷页时仍用同一份液滴模板和半径，几何不会突然摊成薄片。
-            float radius = Mathf.Pow(box.Amount / (float)_capacity * (3f / (4f * Mathf.PI)), 1f / 3f);
-            Vector3 center = (Vector3)(cell - state.Cells.min) + new Vector3(.5f, radius, .5f);
-            int first = _vertices.Count;
-            foreach (var unit in LiquidDropletTemplate.Vertices)
-            { _vertices.Add(center + unit * radius); _normals.Add(unit); }
-            foreach (int index in LiquidDropletTemplate.Indices) _indices.Add(first + index);
-            return true;
         }
 
         private Rect Project(Box box, int axis)
@@ -307,8 +317,10 @@ namespace Game.Rendering
 
         private void RegisterExplicitFacePlanes(Vector3Int cell, MaterialId material, uint quantity, MaterialId restingMaterial)
         {
+            if (CellularMaterialSurfaceMesh.HasInsetSandFootprint(material, quantity, _capacity)) return;
             long x = cell.x, y = (long)cell.y * _capacity, z = cell.z;
-            long height = ElementCellMaterialRules.OccupiesWholeCell(material) ? _capacity : Math.Min(quantity, _capacity);
+            long height = material != MaterialId.Sand && ElementCellMaterialRules.OccupiesWholeCell(material)
+                ? _capacity : Math.Min(quantity, _capacity);
             var horizontal = new Rect(z, z + 1, x, x + 1);
             Register(1, false, y, horizontal);
             if (height == _capacity) Register(1, true, y + height, horizontal);
@@ -386,6 +398,12 @@ namespace Game.Rendering
                 int positionInList = start + i;
                 if (positionInList >= _visibleCandidates.Count) positionInList -= _visibleCandidates.Count;
                 var state = _regions[_visibleCandidates[positionInList]];
+                if (state.HasPartialLiquid && state.ShoreLodVersion != explicitCells.ShoreLodVersion)
+                {
+                    bool near = explicitCells.DetailedShoreTouches(state.Cells);
+                    state.MeshDirty |= near || state.HadNearShore;
+                    state.HadNearShore = near; state.ShoreLodVersion = explicitCells.ShoreLodVersion;
+                }
                 Material material = ElementCellMaterialRules.Motion(state.Material) == ElementCellMotion.Liquid ? liquid : solid;
                 if (state.Boxes.Count == 0 || material == null) continue;
                 Vector3 position = world.Origin + (Vector3)state.Cells.min * size;

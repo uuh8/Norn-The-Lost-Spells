@@ -29,6 +29,104 @@ namespace Game.ElementField.Tests
             public bool TryGetAmount(Vector3Int cell, MaterialId material, out byte amount)
             { amount = cell.y == Y ? Value : (byte)0; return amount > 0; }
         }
+
+        private sealed class BottleSource : IMaterialTransferSource
+        {
+            internal bool ThrowOnCommit, Committed, Reserved;
+            public bool TryReserve(MaterialAmount[] amounts, int count, out MaterialTransferFailure failure)
+            {
+                Reserved = true;
+                failure = MaterialTransferFailure.None;
+                return true;
+            }
+            public void Commit()
+            {
+                if (ThrowOnCommit) throw new System.InvalidOperationException("intentional bottle commit failure");
+                Committed = true;
+            }
+            public void Cancel() => Reserved = false;
+        }
+
+        [TestCase(false, false, false)]
+        [TestCase(true, false, false)]
+        [TestCase(false, true, false)]
+        [TestCase(false, false, true)]
+        public void MixedBottleAtAGasFilledNozzleMovesOnlyCommittedGasThroughAnOpenFace(
+            bool sealedNozzle, bool failLaterIngredient, bool failInventoryCommit)
+        {
+            var profile = AssetDatabase.LoadAssetAtPath<ElementWorldProfile>(
+                "Assets/_Project/ScriptableObjects/ElementField/ElementWorldProfile_Cellular.asset");
+            var host = new GameObject("Cellular bottle at gas-filled nozzle");
+            host.SetActive(false);
+            try
+            {
+                var world = host.AddComponent<ElementWorldRuntime>();
+                Set(world, "_profile", profile);
+                world.ConfigureExecutionMode(WorldExecutionMode.Authority);
+                host.SetActive(true);
+                if (!world.IsInitialized)
+                    Assert.IsTrue((bool)typeof(ElementWorldRuntime).GetMethod("TryInitialize", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(world, null));
+                var nozzle = new Vector3Int(201, 201, 201);
+                var outlet = nozzle + Vector3Int.up;
+                Assert.IsTrue(world.TryDepositCellular(nozzle, MaterialId.Steam, 19)); // 正式 Native 卡死时的数量。
+                Assert.IsTrue(world.TryDepositCellular(nozzle, MaterialId.ToxicVapor, 3));
+                foreach (var face in ElementCellSimulation.Faces)
+                    if (face != Vector3Int.up || sealedNozzle)
+                        Assert.IsTrue(world.TrySetTerrainMaterial(nozzle + face, MaterialId.Rock));
+                if (!sealedNozzle)
+                {
+                    Assert.IsTrue(world.TryDepositCellular(outlet, MaterialId.Water, 11));
+                    Assert.IsTrue(world.TryDepositCellular(outlet, MaterialId.Steam, 5));
+                    world.CellularSimulation.GiveImpulse(outlet, MaterialId.Water, 11, Vector3.right, 0);
+                }
+                var source = new BottleSource { ThrowOnCommit = failInventoryCommit };
+                var components = new[] { new MaterialAmount((byte)MaterialId.Sand, 33),
+                    new MaterialAmount((byte)MaterialId.Steam, 2), new MaterialAmount((byte)MaterialId.Oil, failLaterIngredient ? 300u : 0u) };
+                var pour = new MaterialDepositExchange { Position = world.Origin + ((Vector3)nozzle + Vector3.one * .5f) * profile.CellSize,
+                    Radius = .05f, HasInitialMotion = true, InitialVelocity = Vector3.right * 3, Amounts = components,
+                    Count = components.Length, Source = source };
+                var port = new MaterialInventoryDepositPort(world);
+                bool succeeds = !sealedNozzle && !failLaterIngredient && !failInventoryCommit;
+                if (failInventoryCommit)
+                {
+                    Assert.Throws<System.InvalidOperationException>(() => port.Deposit(pour, out _));
+                    Assert.IsTrue(world.IsSimulationFaulted);
+                }
+                else
+                {
+                    Assert.AreEqual(succeeds ? MaterialTransferFailure.None : MaterialTransferFailure.Capacity,
+                        port.Deposit(pour, out ulong quantity));
+                    Assert.AreEqual(succeeds ? 35UL : 0UL, quantity);
+                }
+                Assert.AreEqual(succeeds, source.Committed);
+                Assert.IsFalse(source.Reserved);
+                uint AmountAt(Vector3Int cell, MaterialId material)
+                    => world.CellularSimulation.TryGetQuantity(cell, material, out uint q) ? q : 0u;
+                Assert.AreEqual(succeeds ? 33u : 0u, AmountAt(nozzle, MaterialId.Sand));
+                Assert.AreEqual(succeeds ? 0u : 19u, AmountAt(nozzle, MaterialId.Steam));
+                Assert.AreEqual(succeeds ? 0u : 3u, AmountAt(nozzle, MaterialId.ToxicVapor));
+                Assert.AreEqual(succeeds, world.CellularSimulation.HasPendingImpulse(nozzle));
+                if (!sealedNozzle)
+                {
+                    Assert.AreEqual(succeeds ? 26u : 5u, AmountAt(outlet, MaterialId.Steam));
+                    Assert.AreEqual(succeeds ? 3u : 0u, AmountAt(outlet, MaterialId.ToxicVapor));
+                    Assert.AreEqual(11u, AmountAt(outlet, MaterialId.Water));
+                    Assert.IsTrue(world.CellularSimulation.HasPendingImpulse(outlet));
+                }
+                else
+                {
+                    // 投放球能碰到隔墙的空格。整杯超出中心容量时不能把余量凭空传到墙背面。
+                    Assert.IsTrue(world.TryRemoveCellular(nozzle, MaterialId.Steam, 19));
+                    Assert.IsTrue(world.TryRemoveCellular(nozzle, MaterialId.ToxicVapor, 3));
+                    pour.Radius = .7f;
+                    pour.Amounts = new[] { new MaterialAmount((byte)MaterialId.Sand, 300) };
+                    pour.Count = 1;
+                    Assert.AreEqual(MaterialTransferFailure.Capacity, port.Deposit(pour, out _));
+                    Assert.AreEqual(0UL, world.CellularSimulation.GetTotalQuantity(MaterialId.Sand));
+                }
+            }
+            finally { Object.DestroyImmediate(host); }
+        }
         [Test]
         public void PhaseWriteRoutesToSingleOwnerAndFailureNeverTouchesLegacyCells()
         {
