@@ -19,6 +19,19 @@ namespace Game.ElementField
                 _profile.CellSize > 0 && CellularBaseVersion != 0;
         }
 
+        internal int CellularCaptureRowLimit(int firstPage,int directoryCapacity,int maximumWords)
+        {
+            var cellular=ResolveCellularContentProfile();
+            if(cellular==null || _profile==null || directoryCapacity<=0)return firstPage;
+            // 每份动态细格至多主材与两种气体。Legacy 火在另一原生域独占一行，两种上限都来自同一正式地图。
+            // 单块正文与目录再提供独立上限。这里仅计算许可行数，后端溢出页按实际占用申请。
+            int perChunk=maximumWords/WorldChunkPayloadCodec.CellWords,edge=_profile.ChunkSize;
+            long legacyRows=(long)Mathf.Min(directoryCapacity,_profile.MaximumResidentChunks)*
+                (long)System.Math.Min(perChunk,(double)edge*edge*edge);
+            long rows=System.Math.Min(3L*cellular.MaximumCells+legacyRows,(long)directoryCapacity*perChunk);
+            return (int)System.Math.Max(firstPage,System.Math.Min(int.MaxValue,rows));
+        }
+
         private ulong _cellularBaseFingerprint;
         internal ulong CellularBaseVersion
         {

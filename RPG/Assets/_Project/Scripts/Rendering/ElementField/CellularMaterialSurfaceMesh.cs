@@ -19,9 +19,17 @@ namespace Game.Rendering
         private Vector4 _currentArrival;
         private readonly List<Color32> _materialIds = new List<Color32>(Size * Size * Size * 8);
         private readonly List<int>[] _indices = new List<int>[SlotCount];
+        internal int IndexCount(int slot) => _indices[slot].Count;
         private CellularMaterialRenderer _source;
         private uint _capacity;
         private bool _edgePage;
+        // 重烘一页时，多个角点、侧壁和顶部反复读取同一邻格。缓存仅属于当前同步 Build，
+        // 版本随每次 Build 前进，返回时不保留可被下一次世界提交读到的旧样本。
+        private const int HaloSize = Size + 2;
+        private readonly uint[] _sampleVersions = new uint[HaloSize * HaloSize * HaloSize];
+        private readonly CellularMaterialRenderer.Sample[] _halo = new CellularMaterialRenderer.Sample[HaloSize * HaloSize * HaloSize];
+        private Vector3Int _origin;
+        private uint _version;
 
         internal CellularMaterialSurfaceMesh()
         {
@@ -78,6 +86,12 @@ namespace Game.Rendering
             _vertices.Clear(); _normals.Clear(); _materialIds.Clear(); _arrivals.Clear();
             for (int slot = 0; slot < SlotCount; slot++) _indices[slot].Clear();
             var origin = new Vector3Int(key.X, key.Y, key.Z) * Size;
+            _origin = origin;
+            if (unchecked(++_version) == 0)
+            {
+                System.Array.Clear(_sampleVersions, 0, _sampleVersions.Length);
+                _version = 1;
+            }
             for (int i = 0; i < cells.Count; i++)
             {
                 var cell = cells[i];
@@ -133,7 +147,17 @@ namespace Game.Rendering
         {
             neighbor = cell + delta;
             if (_edgePage && CellularMaterialRenderer.OffsetWrapped(cell, delta, neighbor)) return default;
-            return _source.ReadSurface(neighbor);
+            int x = neighbor.x - _origin.x + 1, y = neighbor.y - _origin.y + 1, z = neighbor.z - _origin.z + 1;
+            // 邻页上的液体侧壁还可能向外再读一格。这些稀少的二层 Halo 直接走原采样。
+            if ((uint)x >= HaloSize || (uint)y >= HaloSize || (uint)z >= HaloSize)
+                return _source.ReadSurface(neighbor);
+            int index = x + HaloSize * (y + HaloSize * z);
+            if (_sampleVersions[index] != _version)
+            {
+                _sampleVersions[index] = _version;
+                _halo[index] = _source.ReadSurface(neighbor);
+            }
+            return _halo[index];
         }
 
         private bool IsIsolated(Vector3Int cell) => !HasLiquid(cell, Vector3Int.left) && !HasLiquid(cell, Vector3Int.right)

@@ -48,7 +48,7 @@ namespace Game.ElementField
             // 本同步调用内没有yield、事件或写入口；第二遍不能出现预检后状态变化。
             // Header最后发布，有效前缀外的旧值继续由caller保留，避免每次清空整个最大缓冲。
             destination.Header = new WorldReplicaHeader(_world.WorldTick, copy.CellCount, copy.PendingCount, copy.GeometryCount, copy.SpanCount);
-            if (_world.UsesCellularWorld) RememberCellularCapture(destination);
+            if (_world.UsesCellularWorld) RememberCellularCapture(destination,true);
             return true;
         }
     }
@@ -60,18 +60,22 @@ namespace Game.ElementField
     internal struct WorldCaptureWriter
     {
         private readonly WorldReplicaBuffer _buffer;
-        private readonly bool _copy;
+        private readonly bool _copy, _validate;
         private int _inspections;
         internal int CellCount, PendingCount, GeometryCount, SpanCount;
         internal WorldCaptureFailure Failure;
         internal WorldCaptureWriter(WorldReplicaBuffer buffer, bool copy)
+            : this(buffer,copy,!copy) { }
+        // 当目标是 Source 私有的可复用 staging 时，可以在同一遍访问中验证且写入。
+        // 首个失败仅污染私有候选；正式调用方的数据仍在通过全部校验后一次复制有效前缀。
+        internal WorldCaptureWriter(WorldReplicaBuffer buffer, bool copy,bool validate)
         {
-            _buffer = buffer; _copy = copy; _inspections = 0;
+            _buffer = buffer; _copy = copy; _validate=validate; _inspections = 0;
             CellCount = PendingCount = GeometryCount = SpanCount = 0; Failure = WorldCaptureFailure.None;
         }
         internal bool Inspect()
         {
-            if (!_copy && _inspections >= _buffer.InspectionBudget)
+            if (_validate && _inspections >= _buffer.InspectionBudget)
             { Failure = WorldCaptureFailure.InspectionBudget; return false; }
             _inspections++; return true;
         }
@@ -79,10 +83,10 @@ namespace Game.ElementField
             ulong baseVersion = 0, uint cellCapacity = 0)
         {
             if (!Inspect()) return false;
-            if (!_copy && (!float.IsFinite(origin.x) || !float.IsFinite(origin.y) || !float.IsFinite(origin.z)
+            if (_validate && (!float.IsFinite(origin.x) || !float.IsFinite(origin.y) || !float.IsFinite(origin.z)
                 || !float.IsFinite(size) || size <= 0 || chunkSize <= 0))
             { Failure = WorldCaptureFailure.InvalidGeometry; return false; }
-            if (!_copy && (GeometryCount >= _buffer.Geometries.Length ||
+            if (_validate && (GeometryCount >= _buffer.Geometries.Length ||
                 domain == WorldMaterialDomain.Cellular && (baseVersion == 0 || cellCapacity == 0)))
             { Failure = WorldCaptureFailure.InvalidGeometry; return false; }
             if (_copy) _buffer.Geometries[GeometryCount] = new WorldGridGeometry(domain, origin, size, chunkSize, baseVersion, cellCapacity);
@@ -91,9 +95,9 @@ namespace Game.ElementField
         internal bool Cell(WorldMaterialDomain domain, WorldMaterialStorage storage, Vector3Int cell, byte material, uint quantity)
         {
             if (quantity == 0) return true;
-            if (!_copy && CellCount >= _buffer.Cells.Length)
+            if (_validate && CellCount >= _buffer.MaximumCellRows)
             { Failure = WorldCaptureFailure.CellCapacity; return false; }
-            if (_copy) _buffer.Cells[CellCount] = new WorldMaterialCellSample(domain, storage, cell, material, quantity);
+            if (_copy) _buffer.WriteCellRow(CellCount,new WorldMaterialCellSample(domain, storage, cell, material, quantity));
             CellCount++; return true;
         }
         internal bool Span(WorldCellularSpanKind kind, BoundsInt cells, byte material, uint original, uint quantity, int chunkSize)
@@ -111,9 +115,9 @@ namespace Game.ElementField
                     {
                         xEnd = NextEdge(x, limit.x, chunkSize);
                         if (!Inspect()) return false;
-                        if (!_copy && SpanCount >= _buffer.Spans.Length) { Failure = WorldCaptureFailure.CellCapacity; return false; }
-                        if (_copy) _buffer.Spans[SpanCount] = new WorldCellularSpan(kind,
-                            new BoundsInt(x, y, z, xEnd - x, yEnd - y, zEnd - z), material, original, quantity);
+                        if (_validate && SpanCount >= _buffer.MaximumSpanRows) { Failure = WorldCaptureFailure.CellCapacity; return false; }
+                        if (_copy) _buffer.WriteSpanRow(SpanCount,new WorldCellularSpan(kind,
+                            new BoundsInt(x, y, z, xEnd - x, yEnd - y, zEnd - z), material, original, quantity));
                         SpanCount++;
                     }
                 }
@@ -128,7 +132,7 @@ namespace Game.ElementField
             uint remaining, int cursor, uint waitingTicks, long retryTick = 0)
         {
             if (!Inspect()) return false;
-            if (!_copy && PendingCount >= _buffer.Pending.Length)
+            if (_validate && PendingCount >= _buffer.Pending.Length)
             { Failure = WorldCaptureFailure.PendingCapacity; return false; }
             if (_copy) _buffer.Pending[PendingCount] = new WorldPendingDepositSample(domain, index, (byte)request.MaterialKind,
                 request.WorldPosition, request.TotalAmount, request.Radius, request.UseLinearFalloff,

@@ -9,7 +9,8 @@ namespace Game.ElementField
         // Step 登记稳定主材；真正的跨 Owner 交接由世界在本次 Step 退出后进行。
         internal void QueueSleepingLiquid(Vector3Int cell)
         {
-            if (!_indices.TryGetValue(cell, out int index)) return;
+            int index=ResidentSlot(cell);
+            if (index<0) return;
             ref Slot slot = ref _slots[index];
             var motion = ElementCellMaterialRules.Motion(slot.Value.Bulk);
             if (slot.Queued || slot.SleepingLiquid || slot.Value.Amount == 0 || slot.Value.Steam != 0 || slot.Value.Vapor != 0 ||

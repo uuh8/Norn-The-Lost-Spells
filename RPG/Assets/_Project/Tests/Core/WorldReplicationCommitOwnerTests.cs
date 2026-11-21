@@ -20,6 +20,95 @@ namespace Game.Core.Tests
         private static readonly WorldChunkKey Key = new WorldChunkKey(WorldMaterialDomain.Liquid, -1, 0, 0);
 
         [Test]
+        public void CellularCountingOrderMatchesGenericCanonicalWordsAndRejectsDuplicateOrOverflowAtomically()
+        {
+            const WorldMaterialDomain domain=WorldMaterialDomain.Cellular;
+            var key=new WorldChunkKey(domain,-1,-2,1);
+            var dense=new WorldReplicaBuffer(96,0,100000);var generic=new WorldReplicaBuffer(96,0,100000);
+            dense.Geometries[0]=generic.Geometries[0]=new WorldGridGeometry(domain,Vector3.zero,1,8,77,255);
+            for(int n=0;n<96;n++)
+            {
+                int bits=((n/3)*73)&511;var cell=new Vector3Int(-8+(bits>>6),-16+((bits>>3)&7),8+(bits&7));
+                byte material=n%3==0?(byte)1:n%3==1?(byte)7:(byte)8;
+                int shuffled=(n*53)%96;
+                dense.Cells[shuffled]=generic.Cells[shuffled]=new WorldMaterialCellSample(domain,WorldMaterialStorage.Resident,cell,material,10);
+            }
+            dense.Header=new WorldReplicaHeader(1,96,0,1);generic.Header=new WorldReplicaHeader(1,96,0,1,1);
+            // 空地形覆盖触发通用 HeapSort。剔除该额外盒后应逐字取得完全相同的 canonical W2 和 checksum。
+            generic.Spans[0]=new WorldCellularSpan(WorldCellularSpanKind.Terrain,new BoundsInt(new Vector3Int(-1,-9,15),Vector3Int.one),0,0,0);
+            var fastOwner=new WorldReplicationCommitOwner(7,8,96,0,8,2048,100000);
+            var genericOwner=new WorldReplicationCommitOwner(7,8,96,0,8,2048,100000);
+            Assert.That(fastOwner.TryCaptureCommit(dense),Is.True);Assert.That(genericOwner.TryCaptureCommit(generic),Is.True);
+            var actual=new uint[2048];var expected=new uint[2048];
+            Assert.That(fastOwner.TryCopyChunk(key,actual,out var first),Is.True);
+            Assert.That(genericOwner.TryCopyChunk(key,expected,out var other),Is.True);
+            Assert.That(first.WordCount+WorldChunkPayloadCodec.SpanWords,Is.EqualTo(other.WordCount));
+            expected[14]=0;
+            for(int i=0;i<first.WordCount;i++)Assert.That(actual[i],Is.EqualTo(expected[i]),"W2 word "+i);
+            Assert.That(first.Checksum,Is.EqualTo(WorldChunkPayloadCodec.ComputeChecksum(expected,first.WordCount)));
+
+            var old=dense.Cells[1];dense.Cells[1]=generic.Cells[1]=dense.Cells[0];
+            Assert.That(fastOwner.TryCaptureCommit(dense),Is.False);Assert.That(genericOwner.TryCaptureCommit(generic),Is.False);
+            Assert.That(fastOwner.LastFailure,Is.EqualTo(WorldCommitOwnerFailure.Occupancy));Assert.That(genericOwner.LastFailure,Is.EqualTo(fastOwner.LastFailure));
+            dense.Cells[1]=generic.Cells[1]=new WorldMaterialCellSample(domain,WorldMaterialStorage.Resident,old.Cell,old.MaterialId,256);
+            Assert.That(fastOwner.TryCaptureCommit(dense),Is.False);Assert.That(genericOwner.TryCaptureCommit(generic),Is.False);
+            Assert.That(fastOwner.LastFailure,Is.EqualTo(WorldCommitOwnerFailure.InvalidInput));Assert.That(genericOwner.LastFailure,Is.EqualTo(fastOwner.LastFailure));
+            Assert.That(fastOwner.TryGetCurrentHeader(key,out var retained),Is.True);
+            Assert.That(retained.Revision,Is.EqualTo(first.Revision));Assert.That(retained.Checksum,Is.EqualTo(first.Checksum));
+        }
+
+        [Test]
+        public void CompactCellularWireExpandsExactlyAndKeepsCanonicalVersionOnBadOrOversizedPage()
+        {
+            const WorldMaterialDomain domain=WorldMaterialDomain.Cellular;
+            var key=new WorldChunkKey(domain,-1,0,0);
+            var source=new WorldReplicaBuffer(8,1,8192);
+            source.Geometries[0]=new WorldGridGeometry(domain,Vector3.zero,1f,8,763,255);
+            var cell=new Vector3Int(-1,7,2);
+            source.Cells[0]=new WorldMaterialCellSample(domain,WorldMaterialStorage.Resident,cell,1,122);
+            source.Cells[1]=new WorldMaterialCellSample(domain,WorldMaterialStorage.Resident,cell,8,100);
+            source.Spans[0]=new WorldCellularSpan(WorldCellularSpanKind.Terrain,new BoundsInt(cell,Vector3Int.one),0,0,0);
+            source.Pending[0]=new WorldPendingDepositSample(domain,0,1,new Vector3(-.5f,7.5f,2.5f),4,0,false,
+                Vector3.zero,Vector3.up,4,0,0,(1L<<34)+10);
+            source.Header=new WorldReplicaHeader(4,2,1,1,1);
+            var owner=Owner();Assert.That(owner.TryCaptureCommit(source),Is.True);
+            var canonical=new uint[128];Assert.That(owner.TryCopyChunk(key,canonical,out var header),Is.True);
+            var wire=(uint[])canonical.Clone();
+            int packed=WorldChunkPayloadCodec.PackCellularForWire(key,wire,header.WordCount);
+            Assert.That(packed,Is.EqualTo(header.WordCount-12));
+            WorldChunkPayloadHeader HeaderFor(WorldChunkPayloadHeader logical,int length)=>
+                new WorldChunkPayloadHeader(logical.WorldEpoch,logical.SnapshotId,key,logical.Generation,logical.BaseRevision,logical.Revision,
+                    logical.ServerTick,length,logical.Checksum,logical.IsResident);
+            var physical=HeaderFor(header,packed);
+            var receiver=new WorldChunkReplicaAssembler(7,key,2,128,2,128,100);
+            Assert.That(receiver.TryBegin(physical,0),Is.True);
+            Assert.That(receiver.TryReceivePage(physical,0,wire,packed,1),Is.True);
+            Assert.That(receiver.InstalledWireTransfer(physical),Is.True);
+            var read=new uint[header.WordCount];Assert.That(receiver.TryCopyInstalled(read,out var installed),Is.True);
+            Assert.That(installed,Is.EqualTo(header));
+            for(int i=0;i<read.Length;i++)Assert.That(read[i],Is.EqualTo(canonical[i]));
+
+            // 较短的压缩页仍受到解压后最大逻辑字数限制，不得按外部声明扩增内存或取得安装 ACK。
+            var small=new WorldChunkReplicaAssembler(7,key,2,packed,1,128,100);
+            Assert.That(small.TryBegin(physical,0),Is.True);Assert.That(small.TryReceivePage(physical,0,wire,packed,1),Is.False);
+            Assert.That(small.Installed,Is.False);
+            source.Cells[0]=new WorldMaterialCellSample(domain,WorldMaterialStorage.Resident,cell,1,123);
+            source.Header=new WorldReplicaHeader(5,2,1,1,1);
+            Assert.That(owner.TryCaptureCommit(source),Is.True);
+            Assert.That(owner.TryCopyDelta(key,header.Generation,header.Revision,wire,out var delta),Is.True);
+            int length=WorldChunkPayloadCodec.PackCellularForWire(key,wire,delta.WordCount);
+            physical=HeaderFor(delta,length);wire[WorldChunkPayloadCodec.CellularPrefixWords]^=1u<<16;
+            Assert.That(receiver.TryBegin(physical,2),Is.True);Assert.That(receiver.TryReceivePage(physical,0,wire,length,3),Is.False);
+            Assert.That(receiver.LastFailure,Is.EqualTo(WorldReplicaAssemblyFailure.Checksum));
+            Assert.That(receiver.Header,Is.EqualTo(header));
+            // 可信地图允许更大 GMU 时按原始 W2 原样透传；新接收器也接受同版标准 Baseline。
+            var fallback=(uint[])canonical.Clone();fallback[13]=ushort.MaxValue+1u;
+            Assert.That(WorldChunkPayloadCodec.PackCellularForWire(key,fallback,header.WordCount),Is.EqualTo(header.WordCount));
+            Assert.That(fallback[0],Is.EqualTo(WorldChunkPayloadCodec.CellularMagic));
+            Assert.That(receiver.TryBegin(header,4),Is.True);Assert.That(receiver.TryReceivePage(header,0,canonical,header.WordCount,5),Is.True);
+        }
+
+        [Test]
         public void SparseCellularDirectoryKeeps4096BaselinesAndAllocatesOnlyActualPayloads()
         {
             const int limit=4096, chunkSize=8;

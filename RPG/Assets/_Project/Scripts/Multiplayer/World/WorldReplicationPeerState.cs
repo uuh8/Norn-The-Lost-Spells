@@ -22,6 +22,7 @@ namespace Game.Multiplayer
             internal WorldChunkPayloadHeader Header;
             internal WorldReplicationFreezeKind Kind;
             internal int Cursor;
+            internal int WireWords;
             internal double LastSend;
             internal bool Active;
             internal Flight(int words){Frozen=new uint[words];}
@@ -54,7 +55,8 @@ namespace Game.Multiplayer
         public int PagesSentThisRound {get;private set;}
         /// <summary>显式计时诊断只读实际余额；读取不会补充、预留或消耗token，也不参与发送裁决。</summary>
         public double Tokens=>_tokens;
-        private int Pages(Flight flight)=>flight.Header.WordCount==0?1:1+(flight.Header.WordCount-1)/_pageWords;
+        public int PendingWireWords=>Selected.WireWords;
+        private int Pages(Flight flight)=>flight.WireWords==0?1:1+(flight.WireWords-1)/_pageWords;
         public int PageCount=>Pages(Selected);
         public bool AwaitingInstallAck=>Selected.Active && Selected.Cursor==PageCount;
         public WorldReplicationPeerState(int chunks,int maxWords,int pageWords,double bytesPerSecond,double burst)
@@ -86,7 +88,7 @@ namespace Game.Multiplayer
             _indices.Clear();
             _tokens=_burst;_lastRefill=double.NaN;LastFreezeKind=WorldReplicationFreezeKind.None;
             for(int i=0;i<_flights.Length;i++)
-            {var flight=_flights[i];flight.Active=false;flight.Cursor=0;flight.Header=default;flight.Kind=WorldReplicationFreezeKind.None;flight.LastSend=0;}
+            {var flight=_flights[i];flight.Active=false;flight.Cursor=0;flight.WireWords=0;flight.Header=default;flight.Kind=WorldReplicationFreezeKind.None;flight.LastSend=0;}
         }
         public void BeginRound(double now)
         {
@@ -128,6 +130,7 @@ namespace Game.Multiplayer
                 }
             }
             else if(!owner.TryCopyChunk(key,flight.Frozen,out current))return false;
+            flight.WireWords=WorldChunkPayloadCodec.PackCellularForWire(key,flight.Frozen,current.WordCount);
             flight.Header=current;flight.Cursor=0;flight.Active=true;flight.LastSend=now;flight.Kind=reason;
             _selectedFlight=free;_inFlightCount++;LastFreezeKind=reason;return true;
         }
@@ -142,7 +145,7 @@ namespace Game.Multiplayer
                 int index=_nextSendFlight+scan;if(index>=_flights.Length)index-=_flights.Length;
                 var flight=_flights[index];if(!flight.Active || flight.Cursor==Pages(flight))continue;
                 _selectedFlight=index;pageIndex=flight.Cursor;
-                int offset=flight.Cursor*_pageWords;count=Math.Min(_pageWords,flight.Header.WordCount-offset);
+                int offset=flight.Cursor*_pageWords;count=Math.Min(_pageWords,flight.WireWords-offset);
                 if(destination==null || destination.Length<count){count=0;return false;}
                 Array.Copy(flight.Frozen,offset,destination,0,count);return true;
             }

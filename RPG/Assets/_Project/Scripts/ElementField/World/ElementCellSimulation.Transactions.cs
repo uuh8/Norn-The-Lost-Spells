@@ -152,15 +152,19 @@ namespace Game.ElementField
         private int Stage(Vector3Int cell)
         {
             for (int i = 0; i < _editCount; i++) if (_edits[i].Cell == cell) return i;
-            bool found = _indices.TryGetValue(cell, out int slot);
-            Contents initial = found ? _slots[slot].Value : default;
+            int slot=ResidentSlot(cell);
+            Contents initial = slot>=0 ? _slots[slot].Value : default;
             int index = _editCount++;
-            _edits[index] = new Edit { Cell = cell, Slot = found ? slot : -1, Before = initial, After = initial };
+            _edits[index] = new Edit { Cell = cell, Slot = slot, Before = initial, After = initial };
             return index;
         }
 
         private bool CanCommit()
         {
+            // 编辑草稿最多七格。还剩足够槽和通知位置时，哪怕每个编辑都是新格也能提交。
+            // 只在接近边界时做精确去重，满槽时整格跨地址移动仍能复用腾出的源槽。
+            bool inspectChanges=_changed.Count>_changeCapacity-_editCount;
+            if (!inspectChanges && FreeResidentSlots>=_editCount) return true;
             int cells = _residentCount, changes = _changed.Count;
             for (int i = 0; i < _editCount; i++)
             {
@@ -168,9 +172,9 @@ namespace Game.ElementField
                 if (!edit.Changed) continue;
                 if (edit.Before.Empty) cells++;
                 if (edit.After.Empty) cells--;
-                if (!_changedSet.Contains(edit.Cell)) changes++;
+                if (inspectChanges && !_changedSet.Contains(edit.Cell)) changes++;
             }
-            return cells <= _slots.Length && changes <= _changeCapacity;
+            return cells <= _residentLimit && changes <= _changeCapacity;
         }
 
         private bool Commit()
@@ -181,6 +185,7 @@ namespace Game.ElementField
                 if (_stepping) _retry = true;
                 return false;
             }
+            PrepareResidentPages();
             for (int i = 0; i < _editCount; i++)
             {
                 ref Edit edit = ref _edits[i];
@@ -202,9 +207,9 @@ namespace Game.ElementField
                     if (_stepping)
                     {
                         if (slot.MovableStep != _step) { slot.Movable = edit.Before; slot.MovableStep = _step; }
-                        Spend(ref slot.Movable, in edit, edit.Before.Bulk);
-                        Spend(ref slot.Movable, in edit, MaterialId.Steam);
-                        Spend(ref slot.Movable, in edit, MaterialId.ToxicVapor);
+                        if (edit.Before.Amount!=0) Spend(ref slot.Movable, in edit, edit.Before.Bulk);
+                        if (edit.Before.Steam!=0) Spend(ref slot.Movable, in edit, MaterialId.Steam);
+                        if (edit.Before.Vapor!=0) Spend(ref slot.Movable, in edit, MaterialId.ToxicVapor);
                     }
                     slot.Value = edit.After;
                     _totals[(byte)edit.After.Bulk] += edit.After.Amount;
@@ -232,10 +237,13 @@ namespace Game.ElementField
 
         private int Allocate(Vector3Int cell)
         {
-            int index = _freeSlots[--_freeCount];
+            int index;
+            if (_freeHead < 0) index = _nextUnused++;
+            else { index = _freeHead; _freeHead = _slots[index].Next; }
             _slots[index] = new Slot { Coordinate = cell, ResidentIndex = _residentCount };
             _residents[_residentCount++] = index;
             _indices.Add(cell, index);
+            if (_stepping) Lookup(cell).Resident=index;
             return index;
         }
 
@@ -245,11 +253,13 @@ namespace Game.ElementField
             RemoveSleepingLiquid(index);
             ref Slot slot = ref _slots[index];
             _indices.Remove(slot.Coordinate);
+            if (_stepping) Lookup(slot.Coordinate).Resident=-1;
             _impulses.Remove(slot.Coordinate);
             int last = _residents[--_residentCount];
             _residents[slot.ResidentIndex] = last;
             _slots[last].ResidentIndex = slot.ResidentIndex;
-            _freeSlots[_freeCount++] = index;
+            slot.Next = _freeHead;
+            _freeHead = index;
         }
     }
 }

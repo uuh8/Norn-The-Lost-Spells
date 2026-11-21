@@ -55,7 +55,8 @@ namespace Game.ElementField
 
         public void WakeNeighbors(Vector3Int cell)
         {
-            if (_regions.Length == 0 && _coldPages.Count == 0) return;
+            // 一次查询整个半径一邻域。如果作者湖在地图另一侧，不必为同一条动态变化重复做十五次 BVH 查找。
+            if ((_index.Length==0 || !HasAuthoredNeighbor(0,cell)) && !HasColdNeighbor(cell)) return;
             Enqueue(cell);
             for (int i = 0; i < Neighbors.Length; i++) if (Neighbor(cell, Neighbors[i], out var n)) Enqueue(n);
             // 沙的目标可以在斜下方。只通知面邻居会让架在台阶上的沙看见一块永不开放的静水。
@@ -63,6 +64,26 @@ namespace Game.ElementField
                 for (int i = 1; i <= 4; i++) if (Neighbor(above, Neighbors[i], out var grain)) Enqueue(grain);
             if (Neighbor(cell, Vector3Int.down, out var below))
                 for (int i = 1; i <= 4; i++) if (Neighbor(below, Neighbors[i], out var diagonal)) Enqueue(diagonal);
+        }
+
+        private bool HasAuthoredNeighbor(int node,Vector3Int cell)
+        {
+            ref var bounds=ref _index[node];
+            if ((long)cell.x+1<bounds.Min.x || (long)cell.x-1>=bounds.Max.x || (long)cell.y+1<bounds.Min.y ||
+                (long)cell.y-1>=bounds.Max.y || (long)cell.z+1<bounds.Min.z || (long)cell.z-1>=bounds.Max.z) return false;
+            return bounds.Region>=0 || HasAuthoredNeighbor(bounds.Left,cell) || HasAuthoredNeighbor(bounds.Right,cell);
+        }
+
+        private bool HasColdNeighbor(Vector3Int cell)
+        {
+            if (_coldPages.Count==0) return false;
+            // 3³ 邻域在每条轴至多跨两张 4³ 页。绝大多数不在页边缘的变化只需一次页哈希。
+            int x0=(int)(((long)cell.x-1)>>2),x1=(int)(((long)cell.x+1)>>2);
+            int y0=(int)(((long)cell.y-1)>>2),y1=(int)(((long)cell.y+1)>>2);
+            int z0=(int)(((long)cell.z-1)>>2),z1=(int)(((long)cell.z+1)>>2);
+            for(int z=z0;z<=z1;z++) for(int y=y0;y<=y1;y++) for(int x=x0;x<=x1;x++)
+                if (_coldPages.ContainsKey(new Vector3Int(x,y,z))) return true;
+            return false;
         }
 
         private void Enqueue(Vector3Int cell)

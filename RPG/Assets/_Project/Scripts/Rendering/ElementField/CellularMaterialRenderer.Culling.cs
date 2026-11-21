@@ -19,7 +19,6 @@ namespace Game.Rendering
 
         private void IndexPage(ElementChunkKey key, bool present)
         {
-            _visibleSetValid = false;
             var child = new Vector3Int(key.X + PageBias, key.Y + PageBias, key.Z + PageBias);
             for (int level = 0; level < PageTreeDepth; level++)
             {
@@ -45,21 +44,18 @@ namespace Game.Rendering
             }
             Vector3 origin = _world.Origin;
             if (_visibleSetValid && origin.Equals(_visibleOrigin) && meters == _visibleMeters) return;
-            foreach (var page in _visiblePages) page.Visible = false;
+            var old = _visiblePages; _visiblePages = _previousVisiblePages; _previousVisiblePages = old;
+            foreach (var page in old) page.Visible = false;
             _visiblePages.Clear();
             if (_pages.Count <= 32)
             {
-                foreach (var page in _pages.Values) if (IsVisible(page, meters)) _visiblePages.Add(page);
+                foreach (var page in _pages.Values) if (IsVisible(page, meters)) AddVisiblePage(page);
             }
             else CollectNode(PageTreeDepth, Vector3Int.zero, meters);
             // 可见集合只随相机、世界坐标或页的生灭重算。其余帧保持同一批 Draw，
             // 显式记录从 clean 到 dirty 的过渡，无脏页时不再为查找重建工作扫描全部可见页。
-            _visibleDirtyPages = 0;
-            foreach (var page in _visiblePages)
-            {
-                page.Visible = true;
-                if (page.SurfaceDirty || page.GasDirty) _visibleDirtyPages++;
-            }
+            foreach (var page in old) if(!page.Visible) DequeueVisibleDirty(page);
+            old.Clear();
             _visibleOrigin = origin; _visibleMeters = meters; _visibleSetValid = true;
         }
 
@@ -75,7 +71,7 @@ namespace Game.Rendering
             if (level == 0)
             {
                 var key = new ElementChunkKey(node.x - PageBias, node.y - PageBias, node.z - PageBias);
-                if (_pages.TryGetValue(key, out var page)) _visiblePages.Add(page);
+                if (_pages.TryGetValue(key, out var page)) AddVisiblePage(page);
                 return;
             }
             if (!_pageLevels[level - 1].TryGetValue(node, out var children)) return;
@@ -89,6 +85,41 @@ namespace Game.Rendering
         {
             for (int i = 0; i < PageTreeDepth; i++) _pageLevels[i]?.Clear();
             _visibleDirtyPages = 0; _haveFrustum = _visibleSetValid = false;
+            _firstDirty = _lastDirty = null; _frameStart = 0; _previousVisiblePages.Clear();
+        }
+
+        private void AddVisiblePage(Page page)
+        {
+            page.Visible=true; page.VisibleIndex=_visiblePages.Count; _visiblePages.Add(page);
+            QueueVisibleDirty(page);
+        }
+
+        private void RemoveVisiblePage(Page page)
+        {
+            if (!page.Visible) return;
+            int last=_visiblePages.Count-1;
+            var moved=_visiblePages[last]; _visiblePages[page.VisibleIndex]=moved; moved.VisibleIndex=page.VisibleIndex;
+            _visiblePages.RemoveAt(last); page.Visible=false;
+            DequeueVisibleDirty(page);
+        }
+
+        private void QueueVisibleDirty(Page page)
+        {
+            if(!page.Visible || page.Queued || !page.SurfaceDirty && !page.GasDirty)return;
+            // 每页只保留最早尚未处理的排队位置。同页每 tick 重复改量不会重新排队，换视角也保留仍可见页的先后。
+            // 授权提交可能在 LateUpdate 前发生。复用上一可见帧的采样时刻，误差通常不超过一帧，
+            // 避免给每次格写增加原生时钟读取。移出视锥后再次进入会获得新的时间起点。
+            page.Queued=true; page.QueuedAt=_frameStart; page.PreviousDirty=_lastDirty; page.NextDirty=null;
+            if(_lastDirty==null)_firstDirty=page;else _lastDirty.NextDirty=page;
+            _lastDirty=page;_visibleDirtyPages++;
+        }
+
+        private void DequeueVisibleDirty(Page page)
+        {
+            if(!page.Queued)return;
+            if(page.PreviousDirty==null)_firstDirty=page.NextDirty;else page.PreviousDirty.NextDirty=page.NextDirty;
+            if(page.NextDirty==null)_lastDirty=page.PreviousDirty;else page.NextDirty.PreviousDirty=page.PreviousDirty;
+            page.PreviousDirty=page.NextDirty=null;page.Queued=false;_visibleDirtyPages--;
         }
 
         // 大静水区域的边界交接也沿现有页树裁剪。坐标以页为单位作整数比较，

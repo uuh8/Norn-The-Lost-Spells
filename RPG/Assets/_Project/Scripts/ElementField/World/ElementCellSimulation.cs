@@ -58,14 +58,23 @@ namespace Game.ElementField
         private ICellularRestingLiquidReadOnly _restingMaterials;
         internal void BindRestingMaterials(ICellularRestingLiquidReadOnly materials) => _restingMaterials = materials;
         private readonly ElementCellMaterialRules.Transport _transport;
-        private readonly Dictionary<Vector3Int, int> _indices;
-        private readonly Slot[] _slots;
-        private readonly int[] _residents, _freeSlots;
+        private readonly ResidentAddressIndex _indices = new ResidentAddressIndex();
+        private struct StepLookup
+        {
+            public Vector3Int Cell;
+            public ulong Step;
+            public int Resident;
+            public byte Obstacle;
+        }
+        private StepLookup[] _lookups = Array.Empty<StepLookup>();
+        private readonly ResidentPages<Slot> _slots = new ResidentPages<Slot>();
+        private readonly ResidentPages<int> _residents = new ResidentPages<int>();
+        private readonly int _residentLimit;
         private readonly ulong[] _totals = new ulong[256];
         private readonly Queue<Vector3Int> _changed;
         private readonly HashSet<Vector3Int> _changedSet;
         private readonly int _changeCapacity;
-        private int _freeCount, _residentCount, _activeCount, _first = -1, _last = -1;
+        private int _freeHead = -1, _nextUnused, _residentCount, _activeCount, _first = -1, _last = -1;
         private int _sleepFirst = -1, _sleepLast = -1, _sleepCount;
         private ulong _step;
         private bool _stepping, _retry;
@@ -81,16 +90,12 @@ namespace Game.ElementField
             CellCapacity = (uint)capacityPerCell;
             _isBlocked = isBlocked;
             _transport = ElementCellMaterialRules.Bake(transport);
-            _slots = new Slot[maxCells];
-            _indices = new Dictionary<Vector3Int, int>(maxCells);
+            _residentLimit = maxCells;
             _impulseLimit = Math.Min(maxCells, 1024);
-            _impulses = new Dictionary<Vector3Int, CellImpulse>(_impulseLimit);
-            _residents = new int[maxCells];
-            _freeSlots = new int[maxCells];
-            for (int i = maxCells - 1; i >= 0; i--) _freeSlots[_freeCount++] = i;
+            _impulses = new Dictionary<Vector3Int, CellImpulse>();
             _changeCapacity = Math.Max(256, maxCells * 2);
-            _changed = new Queue<Vector3Int>(_changeCapacity);
-            _changedSet = new HashSet<Vector3Int>(_changeCapacity);
+            _changed = new Queue<Vector3Int>();
+            _changedSet = new HashSet<Vector3Int>();
         }
 
         public uint CellCapacity { get; }
@@ -98,7 +103,9 @@ namespace Game.ElementField
         public int ActiveCellCount => _activeCount;
         public int ChangedCellCount => _changed.Count;
         public int SleepingLiquidCandidateCount => _sleepCount;
-        internal int FreeResidentSlots => _freeCount;
+        internal int FreeResidentSlots => _residentLimit - _residentCount;
+        internal int ResidentLimit => _residentLimit;
+        internal int AllocatedResidentSlots => _slots.Capacity;
         public ulong GetTotalQuantity(MaterialId material) => _totals[(byte)material];
 
         public bool TryGetQuantity(Vector3Int cell, MaterialId material, out uint amount)
@@ -159,6 +166,7 @@ namespace Game.ElementField
         public int Step(int budget)
         {
             if (budget <= 0 || _stepping || _activeCount == 0) return 0;
+            EnsureStepLookups();
             _step++;
             int visited = 0;
             _stepping = true;
@@ -185,12 +193,42 @@ namespace Game.ElementField
             return visited;
         }
 
-        private Contents Read(Vector3Int cell) => _indices.TryGetValue(cell, out int index) ? _slots[index].Value : default;
-        private bool Blocked(Vector3Int cell) => _isBlocked != null && _isBlocked(cell);
+        // 运动、扩散、邻格唤醒经常在同一次 Step 多次询问同一地址。只缓存属于当前 Step 的查询，
+        // 碰撞回调按合同只读；驻留槽可以移动，因此 Allocate/Release 必须同时更新正负缓存。
+        private ref StepLookup Lookup(Vector3Int cell)
+        {
+            ref StepLookup entry=ref _lookups[AddressHash(cell) & (_lookups.Length-1)];
+            if (entry.Step!=_step || entry.Cell!=cell) entry=new StepLookup { Cell=cell, Step=_step, Resident=-2 };
+            return ref entry;
+        }
+
+        private int ResidentSlot(Vector3Int cell)
+        {
+            if (!_stepping) return _indices.TryGetValue(cell,out int outside)?outside:-1;
+            ref var entry=ref Lookup(cell);
+            if (entry.Resident == -2) entry.Resident=_indices.TryGetValue(cell,out int found)?found:-1;
+            return entry.Resident;
+        }
+
+        private Contents Read(Vector3Int cell)
+        { int index=ResidentSlot(cell); return index>=0?_slots[index].Value:default; }
+
+        private bool Blocked(Vector3Int cell)
+        {
+            if (_isBlocked==null) return false;
+            if (!_stepping) return _isBlocked(cell);
+            ref var entry=ref Lookup(cell);
+            if (entry.Obstacle!=0) return entry.Obstacle==2;
+            bool obstacle=_isBlocked(cell);
+            // 回调允许只读同一世界；重新取槽，避免嵌套查询恰好使用同一个缓存桶。
+            Lookup(cell).Obstacle=obstacle?(byte)2:(byte)1;
+            return obstacle;
+        }
 
         private uint Movable(Vector3Int cell, MaterialId material)
         {
-            if (!_indices.TryGetValue(cell, out int index)) return 0;
+            int index=ResidentSlot(cell);
+            if (index<0) return 0;
             ref Slot slot = ref _slots[index];
             uint current = slot.Value.Quantity(material);
             return _stepping && slot.MovableStep == _step ? Math.Min(current, slot.Movable.Quantity(material)) : current;
@@ -208,7 +246,8 @@ namespace Game.ElementField
 
         private void Wake(Vector3Int cell)
         {
-            if (!_indices.TryGetValue(cell, out int index)) return;
+            int index=ResidentSlot(cell);
+            if (index<0) return;
             ref Slot slot = ref _slots[index];
             if (slot.Value.Steam == 0 && slot.Value.Vapor == 0 && ElementCellMaterialRules.Motion(slot.Value.Bulk) == ElementCellMotion.Fixed)
             {

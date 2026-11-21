@@ -114,28 +114,87 @@ namespace Game.Core
     }
 
     /// <summary>
-    /// caller-owned固定工作区，仅构造时分配。数组属于调用方，绝不指向live Store；
+    /// caller-owned 工作区。普通构造沿用固定数组；正式 Cellular 权威可按需申请 4096 行的额外页。
     /// 有效前缀由Header限定。调用方应独占缓冲，完成整个TryCapture后再读取。
     /// InspectionBudget限制每遍检查槽/Cell/Region/请求数，两遍总检查数至多其两倍；
     /// 容量/预算不足时Source必须保留所有旧数组与Header，不扩容、不发布半份结果。
     /// </summary>
     public sealed class WorldReplicaBuffer
     {
+        public const int CapturePageRows=4096;
+        private sealed class Overflow<T>
+        {
+            private readonly T[] _first;
+            private T[][] _pages=Array.Empty<T[]>();
+            private int _livePages;
+            internal readonly int Limit;
+            internal Overflow(T[] first,int limit){_first=first;Limit=Math.Max(first.Length,limit);}
+            internal int Allocated=0;
+            internal T Read(int index)=>index<_first.Length?_first[index]:_pages[(index-_first.Length)/CapturePageRows][(index-_first.Length)%CapturePageRows];
+            internal void Write(int index,T value)
+            {
+                if(index<_first.Length){_first[index]=value;return;}
+                if((uint)index>=(uint)Limit)throw new ArgumentOutOfRangeException(nameof(index));
+                int extra=index-_first.Length,page=extra/CapturePageRows;
+                Grow(page);_pages[page][extra%CapturePageRows]=value;
+            }
+            private void Grow(int page)
+            {
+                if(page<_livePages)return;
+                if(page>=_pages.Length)Array.Resize(ref _pages,Math.Max(page+1,Math.Max(4,2*_pages.Length)));
+                while(_livePages<=page)
+                {
+                    int length=Math.Min(CapturePageRows,Limit-_first.Length-_livePages*CapturePageRows);
+                    _pages[_livePages++]=new T[length];Allocated+=length;
+                }
+            }
+            // 私有 staging 与目标共用相同首段尺寸和上限，每页仅复制本次提交的有效前缀。
+            internal void CopyTo(Overflow<T> target,int count)
+            {
+                int head=Math.Min(count,_first.Length);Array.Copy(_first,target._first,head);
+                for(int i=0,remaining=count-head;remaining>0;i++)
+                {
+                    target.Grow(i);int rows=Math.Min(remaining,CapturePageRows);
+                    Array.Copy(_pages[i],target._pages[i],rows);remaining-=rows;
+                }
+            }
+        }
+        private readonly Overflow<WorldMaterialCellSample> _cellRows;
+        private readonly Overflow<WorldCellularSpan> _spanRows;
         public WorldMaterialCellSample[] Cells { get; }
         public WorldPendingDepositSample[] Pending { get; }
         public WorldGridGeometry[] Geometries { get; }
         public WorldCellularSpan[] Spans { get; }
         public WorldChunkKey[] ChangedChunks { get; }
         public int InspectionBudget { get; }
+        public int MaximumCellRows=>_cellRows.Limit;
+        public int MaximumSpanRows=>_spanRows.Limit;
+        public int AllocatedCellRows=>Cells.Length+_cellRows.Allocated;
+        public int AllocatedSpanRows=>Spans.Length+_spanRows.Allocated;
+        public bool UsesPagedCapture=>MaximumCellRows>Cells.Length || MaximumSpanRows>Spans.Length;
+        public WorldMaterialCellSample ReadCellRow(int index)=>_cellRows.Read(index);
+        public WorldCellularSpan ReadSpanRow(int index)=>_spanRows.Read(index);
+        public void WriteCellRow(int index,WorldMaterialCellSample row)=>_cellRows.Write(index,row);
+        public void WriteSpanRow(int index,WorldCellularSpan row)=>_spanRows.Write(index,row);
+        public void CopyRowsFrom(WorldReplicaBuffer source,int cellRows,int spanRows)
+        {
+            if(source==null || Cells.Length!=source.Cells.Length || Spans.Length!=source.Spans.Length ||
+                cellRows<0 || cellRows>MaximumCellRows || cellRows>source.AllocatedCellRows ||
+                spanRows<0 || spanRows>MaximumSpanRows || spanRows>source.AllocatedSpanRows)throw new ArgumentOutOfRangeException();
+            source._cellRows.CopyTo(_cellRows,cellRows);source._spanRows.CopyTo(_spanRows,spanRows);
+        }
         public WorldReplicaHeader Header { get; set; }
         public WorldReplicaBuffer(int cellCapacity, int pendingCapacity, int inspectionBudget)
             : this(cellCapacity,pendingCapacity,inspectionBudget,-1) { }
         public WorldReplicaBuffer(int cellCapacity, int pendingCapacity, int inspectionBudget, int spanCapacity, int changedChunkCapacity = 128)
+            :this(cellCapacity,pendingCapacity,inspectionBudget,spanCapacity,changedChunkCapacity,cellCapacity,spanCapacity) { }
+        public WorldReplicaBuffer(int cellCapacity,int pendingCapacity,int inspectionBudget,int spanCapacity,int changedChunkCapacity,int maximumCellRows,int maximumSpanRows)
         {
             if (cellCapacity < 0 || pendingCapacity < 0 || inspectionBudget <= 0 || spanCapacity < -1 || changedChunkCapacity < 1)
                 throw new ArgumentOutOfRangeException(nameof(cellCapacity));
             Cells = new WorldMaterialCellSample[cellCapacity]; Pending = new WorldPendingDepositSample[pendingCapacity];
             Spans = new WorldCellularSpan[spanCapacity < 0 ? cellCapacity : spanCapacity];
+            _cellRows=new Overflow<WorldMaterialCellSample>(Cells,maximumCellRows);_spanRows=new Overflow<WorldCellularSpan>(Spans,maximumSpanRows);
             ChangedChunks = new WorldChunkKey[changedChunkCapacity];
             Geometries = new WorldGridGeometry[5]; InspectionBudget = inspectionBudget;
         }

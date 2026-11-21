@@ -26,7 +26,8 @@ namespace Game.ElementField
         {
             private readonly ElementCellSimulation _world;
             private readonly GasWorldProfile _profile;
-            private readonly Vector3 _origin, _wind;
+            private readonly Vector3 _origin;
+            private readonly double[] _windAlongFace=new double[6];
             private readonly float _size;
             private readonly int _edge;
             private readonly Func<Vector3,MaterialId,double> _vent;
@@ -51,8 +52,10 @@ namespace Game.ElementField
                     profile.DiluteMaximumCellGmu > profile.CellCapacityGmu * .05d)
                     throw new ArgumentException("GasWorldProfile 的输运／消散配置无效。");
                 _world=world; _profile=profile; _origin=origin; _size=size; _edge=edge;
-                _wind=profile.WindVelocity / size;
-                if (!FluidSpawnRequestValidator.IsFinite(_wind)) throw new ArgumentException("风速超出当前元胞网格可表示的范围。");
+                Vector3 wind=profile.WindVelocity / size;
+                if (!FluidSpawnRequestValidator.IsFinite(wind)) throw new ArgumentException("风速超出当前元胞网格可表示的范围。");
+                for(int face=0;face<6;face++) _windAlongFace[face]=Math.Max(0d,Vector3.Dot(wind,
+                    face<4?Sides[face]:face==4?Vector3Int.up:Vector3Int.down));
                 _vent=vent; _consume=consume;
                 for (int i=0;i<profile.MaterialCount;i++)
                 {
@@ -107,8 +110,12 @@ namespace Game.ElementField
                 var page=_byChunk[ChunkOf(cell)];
                 Contents original=_world.Read(cell);
                 uint concentration=original.Quantity(material);
+                // 在一次连续的六面通量事务中，仅本方法能减少这份源额度。成功后本地扣减，避免每面反复查同一格。
+                uint available=_world.Movable(cell,material);
+                bool canReleaseSource=available==concentration && original.Amount==0 &&
+                    (species==0 ? original.Vapor==0 : original.Steam==0);
                 int first=(_world.FirstSide(cell)+(int)(_world._step%6))%6;
-                for (int i=0;i<6 && _world.Movable(cell,material)!=0;i++)
+                for (int i=0;i<6 && available!=0;i++)
                 {
                     int face=(first+i)%6;
                     Vector3Int direction=face<4?Sides[face]:face==4?Vector3Int.up:Vector3Int.down;
@@ -121,15 +128,19 @@ namespace Game.ElementField
                     double other=sink.Quantity(material)*(double)original.GasSpace(_world.CellCapacity)/sink.GasSpace(_world.CellCapacity);
                     double drift=direction.y*b.BuoyancyPerSecond;
                     double rate=(concentration-other)*b.DiffusionPerSecond/6d + drift*(drift>0?concentration:other) +
-                        Math.Max(0d,Vector3.Dot(_wind,direction))*concentration;
-                    uint move=Credit(page,credit+face,rate,Math.Min(room,_world.Movable(cell,material)));
+                        _windAlongFace[face]*concentration;
+                    // 满槽时一笔“原格留有余量、另建目标格”的小额通量不能提交。纯气格能在等量迁移时
+                    // 复用自己的槽，因而仅在开放真空、确实无槽的组合下等待此面按正常速率挣足整份 GMU。
+                    bool packet=_world.FreeResidentSlots==0 && sink.Empty && canReleaseSource;
+                    uint move=packet ? FullPacketCredit(page,credit+face,rate,available) :
+                        Credit(page,credit+face,rate,Math.Min(room,available));
                     if (move==0) continue;
                     _world._editCount=0;
                     _world._edits[_world.Stage(cell)].After.Remove(material,move);
                     _world._edits[_world.Stage(target)].After.Add(material,move);
-                    _world.Commit();
+                    if (_world.Commit()) available-=move;
+                    else if (packet) page.Credits[credit+face]=-(double)move; // 通知背压仍保留已满的面通量。
                 }
-                uint available=_world.Movable(cell,material);
                 if (available==0) return;
                 uint remove=Credit(page,credit+6,_hasVents && _vent!=null?_vent(Center(cell),material):0,available);
                 if (remove==0) return;
@@ -141,10 +152,27 @@ namespace Game.ElementField
             private uint Credit(GasChunk page,int index,double rate,uint limit)
             {
                 if (rate<=0 || limit==0) { page.Credits[index]=0; return 0; }
-                double accrued=page.Credits[index]+rate*_dt, whole=Math.Floor(accrued);
+                double carry=page.Credits[index];
+                // 恢复空槽后按正常 GMU 粒度扩散。只继承亚整数余量，不把等待整格搬迁的旧整数突然排入新槽。
+                if (carry<0) { carry=-carry; carry-=Math.Floor(carry); }
+                double accrued=carry+rate*_dt, whole=Math.Floor(accrued);
                 page.Credits[index]=accrued-whole;
                 if (whole<1) _world._retry=true;
                 return (uint)Math.Min(limit,whole);
+            }
+
+            private uint FullPacketCredit(GasChunk page,int index,double rate,uint quantity)
+            {
+                if (rate<=0) { page.Credits[index]=0; return 0; }
+                double accrued=Math.Abs(page.Credits[index])+rate*_dt;
+                if (accrued<quantity)
+                {
+                    // 负号只区分“满槽时尚未提交的积分”，物质量始终只有世界真值中的正 GMU。
+                    // 面被挡住、变满、梯度反转、物种离开原格时，现有分支会清除此额外积分。
+                    page.Credits[index]=-accrued; _world._retry=true; return 0;
+                }
+                page.Credits[index]=accrued-Math.Floor(accrued);
+                return quantity;
             }
         }
     }

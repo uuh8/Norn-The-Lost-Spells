@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Game.Core;
 
@@ -6,6 +7,7 @@ namespace Game.ElementField
     public sealed partial class WorldReplicationSource
     {
         private WorldReplicaBuffer _lastBuffer;
+        private WorldReplicaBuffer _staging;
         private ulong _lastCursor, _lastQueueVersion;
         private readonly HashSet<WorldChunkKey> _pendingKeys = new HashSet<WorldChunkKey>();
         private readonly HashSet<WorldChunkKey> _changedKeys = new HashSet<WorldChunkKey>();
@@ -35,18 +37,19 @@ namespace Game.ElementField
                 if (!CollectPending(_changedKeys)) return false;
             }
             if (_changedKeys.Count == 0 || _changedKeys.Count > destination.ChangedChunks.Length) return false;
-            var preflight = new WorldCaptureWriter(destination, false);
-            if (!_world.VisitChangedNetworkChunks(_changedKeys, ref preflight))
+            var copy = new WorldCaptureWriter(_staging,true,true);
+            if (!_world.VisitChangedNetworkChunks(_changedKeys, ref copy))
             {
                 // 极大的稀疏 Chunk 点查工作量可能比全场稀疏枚举更大，此时全捕获仍有机会在预算内完成。
-                if (preflight.Failure != WorldCaptureFailure.InspectionBudget) failure = preflight.Failure;
+                if (copy.Failure != WorldCaptureFailure.InspectionBudget) failure = copy.Failure;
                 return false;
             }
-            var copy = new WorldCaptureWriter(destination, true);
-            _world.VisitChangedNetworkChunks(_changedKeys, ref copy);
+            Array.Copy(_staging.Geometries,destination.Geometries,copy.GeometryCount);
+            destination.CopyRowsFrom(_staging,copy.CellCount,copy.SpanCount);
+            Array.Copy(_staging.Pending,destination.Pending,copy.PendingCount);
             foreach (var key in _changedKeys) destination.ChangedChunks[changedChunkCount++] = key;
             destination.Header = new WorldReplicaHeader(_world.WorldTick, copy.CellCount, copy.PendingCount, copy.GeometryCount, copy.SpanCount);
-            RememberCellularCapture(destination);
+            RememberCellularCapture(destination,false);
             return true;
         }
 
@@ -67,9 +70,13 @@ namespace Game.ElementField
             return true;
         }
 
-        private void RememberCellularCapture(WorldReplicaBuffer buffer)
+        private void RememberCellularCapture(WorldReplicaBuffer buffer,bool full)
         {
             _world.EnableNetworkChangeJournal();
+            if(!ReferenceEquals(buffer,_lastBuffer) || _staging==null)
+                _staging=new WorldReplicaBuffer(buffer.Cells.Length,buffer.Pending.Length,buffer.InspectionBudget,buffer.Spans.Length,1,
+                    buffer.MaximumCellRows,buffer.MaximumSpanRows);
+            if(full)_world.IndexFullCellularCapture(buffer);
             // 首次/队列真变时记录旧目的块，下一批有移动或清空才同时替换旧、新页。
             // 地形、冷水、动态元胞和旧 Fire 都在权威写口登记域地址，空闲 Tick 不扫描任一材料 Store。
             bool refreshPending=!ReferenceEquals(buffer,_lastBuffer) || _lastQueueVersion!=_world.NetworkPending.Revision;

@@ -29,7 +29,8 @@ namespace Game.NetworkProtocol
         // v18增加只读液体运动窗口Kind8；旧端会丢弃该语义，需同版Client/DS及业务清单。
         // v19 的世界页支持统一细格、基底指纹和显式空覆盖，也允许沙、油作为数量资产。
         // 旧四域持久化正文保持 W1；不能让忽略第五域的旧客户端进入同一权威世界。
-        public const uint CurrentVersion = 19;
+        // v20 可传输紧凑的元胞世界页。新端仍可读 W2 原文；握手必须排除只识别 v19 的程序。
+        public const uint CurrentVersion = 20;
         /// <summary>整个 HTTP Ping 请求体的最大字节数，不是所有未来消息的统一上限。</summary>
         public const int MaxPingPayloadBytes = 1024;
         /// <summary>Ping 文本的 UTF-8 字节预算；中文和 Emoji 不能按字符个数估算。</summary>

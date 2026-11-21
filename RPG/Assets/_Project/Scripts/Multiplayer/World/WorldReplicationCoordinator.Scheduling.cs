@@ -61,9 +61,34 @@ namespace Game.Multiplayer
         private sealed class PeerWork
         {
             internal readonly SlotSet Watched,Control,Quantity;
-            internal PeerWork(int chunks) { Watched=new SlotSet(chunks);Control=new SlotSet(chunks);Quantity=new SlotSet(chunks); }
-            internal void Clear() { Watched.Clear();Control.Clear();Quantity.Clear(); }
-            internal void Retire(int slot,int last){Watched.Retire(slot,last);Control.Retire(slot,last);Quantity.Retire(slot,last);}
+            // 两个稀疏候选表只含身边尚未首次安装的块；近处优先与全窗轮询交替，远处和已有图的更新也有份额。
+            internal readonly SlotSet NearEnter,NearFirst;
+            internal bool DataTurn,NearControlTurn=true,NearDataTurn=true;
+            internal int ControlCursor;
+            internal PeerWork(int chunks)
+            {
+                Watched=new SlotSet(chunks);Control=new SlotSet(chunks);Quantity=new SlotSet(chunks);
+                NearEnter=new SlotSet(chunks);NearFirst=new SlotSet(chunks);
+            }
+            internal void Clear()
+            {
+                Watched.Clear();Control.Clear();Quantity.Clear();NearEnter.Clear();NearFirst.Clear();
+                DataTurn=false;NearControlTurn=NearDataTurn=true;ControlCursor=0;
+            }
+            internal void Retire(int slot,int last)
+            {
+                Watched.Retire(slot,last);Control.Retire(slot,last);Quantity.Retire(slot,last);
+                NearEnter.Retire(slot,last);NearFirst.Retire(slot,last);
+                if(ControlCursor==last)ControlCursor=slot;else if(ControlCursor>last)ControlCursor=0;
+            }
+
+            internal int NextControl(bool progressive,out bool nearby)
+            {
+                nearby=progressive && NearControlTurn && NearEnter.Count>0;
+                if(nearby)return NearEnter.AtRank(0);
+                if(!progressive)return Control.AtRank(0);
+                int index=Control.AtOrAfter(ControlCursor);return index>=0?index:Control.AtRank(0);
+            }
         }
 
         private readonly PeerWork[] _work;
@@ -86,7 +111,7 @@ namespace Game.Multiplayer
             }
         }
 
-        private bool RefreshSubscriptions(int slot,bool hasCommit=false)
+        private bool RefreshSubscriptions(int slot,bool hasCommit=false,bool unchangedGeometry=false)
         {
             var peer=_peers[slot];
             if(!_interest.TryGetInterest(peer.ConnectionId,peer.ConnectionEpoch,out var bounds))return true;
@@ -95,38 +120,50 @@ namespace Game.Multiplayer
                 // 旧窗口的实际订阅负责 Leave，新位置附近的候选负责 Enter。远处模型换版无需加入这两个集合。
                 var watched=_work[slot].Watched;
                 for(int i=watched.AtOrAfter(0);i>=0;i=watched.AtOrAfter(i+1))
-                    if(!Reconcile(slot,i))return false;
+                    if(!Reconcile(slot,i,bounds.center))return false;
                 _nearbyKeys.Clear();
                 for(int domain=0;domain<_geometry.Length;domain++)
                     if(_hasGeometry[domain])_nearby.Collect(_geometry[domain],bounds,_nearbyKeys);
                 foreach(var key in _nearbyKeys)
-                    if(!Reconcile(slot,OwnerIndex(key)))return false;
+                    if(!Reconcile(slot,OwnerIndex(key),bounds.center))return false;
                 // 可信内容身份始终给所有玩家，远离原点的新连接也能先确认本地地图基底。
                 int anchor=OwnerIndex(new WorldChunkKey(WorldMaterialDomain.Cellular,0,0,0));
-                if(anchor>=0 && !Reconcile(slot,anchor))return false;
+                if(anchor>=0 && !Reconcile(slot,anchor,bounds.center))return false;
                 _comparedBounds[slot]=bounds;_interestCompared[slot]=true;
             }
             else if(hasCommit)
             {
                 for(int i=0;i<_owner.LastChangeCount;i++)
-                    if(!Reconcile(slot,OwnerIndex(_owner.GetLastChange(i).Key)))return false;
+                {
+                    var change=_owner.GetLastChange(i);int index=OwnerIndex(change.Key);
+                    // 同一权威源的局部提交已由 Owner 确认网格完全不变；一个原有块仅更新数量时，与同一观察窗
+                    // 的空间关系一定不变。创建、移除、冷启动和重新进入仍必须经过真实判交和生命周期调度。
+                    if(unchangedGeometry && change.Kind==WorldChunkChangeKind.Update && _subscriptions[slot,index].Known)
+                        SchedulePeer(slot,index,_owner.GetChunkHeader(index));
+                    else if(!Reconcile(slot,index,bounds.center))return false;
+                }
             }
             // 等待安装 ACK 或短暂保留旧液体表现的已删除地址仍需重新判定；实际活块不参与扫描。
             for(int i=_tombstones.AtOrAfter(0);i>=0;i=_tombstones.AtOrAfter(i+1))
-                if(!Reconcile(slot,i))return false;
+                if(!Reconcile(slot,i,bounds.center))return false;
             return true;
         }
 
-        private bool Reconcile(int slot,int index)
+        private bool Reconcile(int slot,int index,Vector3 observerCenter)
         {
             var header=_owner.GetChunkHeader(index);var key=header.Key;int domain=(int)key.Domain;
             if(!_hasGeometry[domain])return Fail("Missing committed chunk geometry");
             var peer=_peers[slot];var geometry=_geometry[domain];float edge=geometry.CellSize*geometry.ChunkSize;
             var min=geometry.Origin+new Vector3(key.X,key.Y,key.Z)*edge;
             InterestChunkChecks++;
-            bool inside=key.Domain==WorldMaterialDomain.Cellular && key.X==0 && key.Y==0 && key.Z==0 ||
-                _interest.Intersects(peer.ConnectionId,peer.ConnectionEpoch,new Bounds(min+Vector3.one*(edge*.5f),Vector3.one*edge));
+            var chunkBounds=new Bounds(min+Vector3.one*(edge*.5f),Vector3.one*edge);
+            bool anchor=key.Domain==WorldMaterialDomain.Cellular && key.X==0 && key.Y==0 && key.Z==0;
+            bool inside=anchor || _interest.Intersects(peer.ConnectionId,peer.ConnectionEpoch,chunkBounds);
             ref var subscription=ref _subscriptions[slot,index];
+            // 优先半径为两个正式参考块，从已认证的观察窗中心计算。锚点可先获验证，真实 Interest 不变。
+            float nearRadius=2*_referenceSize;
+            subscription.Near=anchor || inside && key.Domain==WorldMaterialDomain.Cellular && _interestConfigured &&
+                chunkBounds.SqrDistance(observerCenter)<=nearRadius*nearRadius;
             if(!header.IsResident && (!subscription.Known || !subscription.Desired && !subscription.Announced ||
                 TombstoneAcknowledged(slot,index,header) && !LiquidMotionRetains(slot,index)))inside=false;
             if(!subscription.Known)
@@ -154,6 +191,8 @@ namespace Game.Multiplayer
             work.Control.Set(index,control);
             bool data=Sendable(slot,index) && !_peers[slot].HasPendingFor(header.Key) && _peers[slot].NeedsSnapshot(header);
             work.Quantity.Set(index,data);
+            work.NearEnter.Set(index,control && s.Near && s.Desired && !s.Announced);
+            work.NearFirst.Set(index,data && s.Near && _peerAckHeaders[slot,index].SubscriptionEpoch!=s.Epoch);
         }
     }
 }

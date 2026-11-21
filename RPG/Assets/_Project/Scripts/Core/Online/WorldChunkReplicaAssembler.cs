@@ -26,6 +26,8 @@ namespace Game.Core
         // 新Begin/Bind会撤销资格，防止上一个订阅的Release被下一订阅复用。
         private bool _interestReleased;
         private WorldChunkPayloadHeader _pending;
+        private WorldChunkPayloadHeader _installedWire;
+        public bool InstalledWireTransfer(WorldChunkPayloadHeader transfer)=>Installed && PayloadAvailable && _installedWire.Equals(transfer);
         private int _receivedCount,_pageCount;
         private long _startTick;
         public ulong ConnectionEpoch {get;private set;}
@@ -89,7 +91,7 @@ namespace Game.Core
             if(HasPending)return Reject(WorldReplicaAssemblyFailure.PendingBusy);
             if(!_interestReleased || PayloadAvailable)return Reject(WorldReplicaAssemblyFailure.WrongIdentity);
             _version.ResetForTrustedKeyRetirement();
-            Installed=false;PayloadAvailable=false;Header=default;_pending=default;
+            Installed=false;PayloadAvailable=false;Header=default;_pending=default;_installedWire=default;
             _receivedCount=0;_pageCount=0;_startTick=0;_interestReleased=false;
             return Accept();
         }
@@ -160,7 +162,8 @@ namespace Game.Core
             {
                 if(!Header.IsResident && h.IsResident && h.Generation==Header.Generation)return Reject(WorldReplicaAssemblyFailure.MissingRevision);
                 // 相同版本必须相同内容；SnapshotId不是“越大越可信”的版本水位。
-                if(h.Generation==Header.Generation && h.Revision==Header.Revision && (h.Checksum!=Header.Checksum || h.WordCount!=Header.WordCount || h.IsResident!=Header.IsResident))return Reject(WorldReplicaAssemblyFailure.Payload);
+                if(h.Generation==Header.Generation && h.Revision==Header.Revision && (h.Checksum!=Header.Checksum ||
+                    h.Key.Domain!=WorldMaterialDomain.Cellular && h.WordCount!=Header.WordCount || h.IsResident!=Header.IsResident))return Reject(WorldReplicaAssemblyFailure.Payload);
                 return true;
             }
             if(h.Generation!=Header.Generation || h.BaseRevision!=Header.Revision || h.Revision<=Header.Revision)return Reject(WorldReplicaAssemblyFailure.MissingRevision);
@@ -185,14 +188,22 @@ namespace Game.Core
             }
             Array.Copy(words,0,_staging,offset,count);_received[pageIndex]=true;_receivedCount++;
             if(_receivedCount!=_pageCount)return Accept();
-            if(WorldChunkPayloadCodec.ComputeChecksum(_staging,_pending.WordCount)!=_pending.Checksum){CancelPending();return Reject(WorldReplicaAssemblyFailure.Checksum);}
-            if(_pending.IsResident && !WorldChunkPayloadCodec.Validate(_staging,_pending.WordCount,Key)){CancelPending();return Reject(WorldReplicaAssemblyFailure.Payload);}
+            int logicalCount=_pending.WordCount;
+            if(WorldChunkPayloadCodec.IsPackedCellular(_staging,logicalCount) &&
+                !WorldChunkPayloadCodec.ExpandCellularWire(Key,ref _staging,_pending.WordCount,_wordLimit,out logicalCount))
+            {CancelPending();return Reject(WorldReplicaAssemblyFailure.Payload);}
+            if(WorldChunkPayloadCodec.ComputeChecksum(_staging,logicalCount)!=_pending.Checksum){CancelPending();return Reject(WorldReplicaAssemblyFailure.Checksum);}
+            if(_pending.IsResident && !WorldChunkPayloadCodec.Validate(_staging,logicalCount,Key) ||
+                Installed && _pending.Generation==Header.Generation && _pending.Revision==Header.Revision && logicalCount!=Header.WordCount)
+            {CancelPending();return Reject(WorldReplicaAssemblyFailure.Payload);}
+            var canonical=new WorldChunkPayloadHeader(_pending.WorldEpoch,_pending.SnapshotId,Key,_pending.Generation,
+                _pending.BaseRevision,_pending.Revision,_pending.ServerTick,logicalCount,_pending.Checksum,_pending.IsResident);
             if(_installer!=null)
             {
                 // 实际Replica先预检并原子安装。重入栅栏保证外部调用期间不能取消/替换候选，
                 // 因而成功返回后版本仍满足Begin时的检查，后续只剩不会失败的内存发布。
                 bool installed=false;_installing=true;
-                try { installed=_installer.TryInstall(_pending,_staging,_pending.WordCount); }
+                try { installed=_installer.TryInstall(canonical,_staging,logicalCount); }
                 catch(Exception exception) { IsInstallerFaulted=true;InstallerException=exception; }
                 finally { _installing=false; }
                 if(IsInstallerFaulted){CancelPending();return Reject(WorldReplicaAssemblyFailure.InstallerFaulted);}
@@ -203,7 +214,7 @@ namespace Game.Core
                 ?_version.TryAcceptBaselineVersion(_pending.WorldEpoch,_pending.Generation,_pending.Revision)
                 :_version.TryAcceptDeltaVersion(_pending.WorldEpoch,_pending.Generation,_pending.BaseRevision,_pending.Revision);
             if(!accepted){CancelPending();return Reject(WorldReplicaAssemblyFailure.StaleVersion);}
-            uint[] old=_published;_published=_staging;_staging=old;Header=_pending;Installed=true;PayloadAvailable=true;CancelPending();return Accept();
+            uint[] old=_published;_published=_staging;_staging=old;Header=canonical;_installedWire=_pending;Installed=true;PayloadAvailable=true;CancelPending();return Accept();
         }
         public void CancelPending(){if(_installing)return;HasPending=false;_receivedCount=0;_pageCount=0;}
         public bool ExpirePending(long nowTick)

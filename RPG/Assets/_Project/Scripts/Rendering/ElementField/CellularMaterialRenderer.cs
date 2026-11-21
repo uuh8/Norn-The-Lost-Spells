@@ -21,6 +21,9 @@ namespace Game.Rendering
         private const int TextureCells = TextureSize * TextureSize * TextureSize;
         private const int RetainedEmptyPages = 8;
         private const float GasBlendSeconds = .3f;
+        private const double VisibleQueueDelaySeconds = .15;
+        private const double MaximumExtraRebuildMs = 2;
+        private const double FrameReserveMs = 2;
         private static readonly int MotionClock = Shader.PropertyToID("_CellularMotionClock");
         private static readonly int MotionRate = Shader.PropertyToID("_CellularMotionRate");
         private readonly Dictionary<Vector3Int, Sample> _departures = new Dictionary<Vector3Int, Sample>(1024);
@@ -32,6 +35,10 @@ namespace Game.Rendering
         [SerializeField] private Material _solidSurface;
         [SerializeField] private Material _gasVolume;
         [SerializeField, Min(1)] private int _maximumPageRebuildsPerFrame = 8;
+        [Tooltip("可见页积压、且该帧无需执行本地材料 Tick 时的追赶上限。额外工作同时受毫秒预算约束。")]
+        [SerializeField, Min(1)] private int _maximumCatchUpPages = 32;
+        [Tooltip("无本地材料 Tick 的追赶预算（毫秒）。队首已等 150ms 且帧有余量时，最多再借 2ms，总追赶预算至多增至 4ms。")]
+        [SerializeField, Min(0)] private float _catchUpRebuildMs = 2f;
 
         internal struct Sample
         {
@@ -56,14 +63,21 @@ namespace Game.Rendering
             internal Color32[] GasHistory;
             // 局部地址为三组低 3 位，值为两种浓度的线性 byte。纯液体页不分配此表。
             internal Dictionary<int, ushort> GasDensity;
+            internal bool NativeWaiting; internal int NativeSeenFrame,NativeDirtyFrame; internal double NativeDirtyAt;
+            internal int VisibleIndex, SurfaceSlots;
+            internal uint WaterIndices, SandIndices;
+            internal bool Queued;
+            internal long QueuedAt;
+            internal Page PreviousDirty, NextDirty;
         }
 
         private static ElementWorldRuntime _observedWorld;
         private readonly Dictionary<ElementChunkKey, Page> _pages = new Dictionary<ElementChunkKey, Page>();
         private readonly Dictionary<Vector3Int, Sample> _samples = new Dictionary<Vector3Int, Sample>();
         private readonly Stack<Page> _empty = new Stack<Page>(RetainedEmptyPages);
-        private readonly List<Page> _visiblePages = new List<Page>(64);
-        private int _rebuildCursor;
+        private List<Page> _visiblePages = new List<Page>(64), _previousVisiblePages = new List<Page>(64);
+        private Page _firstDirty, _lastDirty;
+        private long _frameStart;
         private readonly Plane[] _frustum = new Plane[6];
         private readonly Color32[] _gasPixels = new Color32[TextureCells];
         private readonly CellularMaterialSurfaceMesh _mesher = new CellularMaterialSurfaceMesh();
@@ -177,6 +191,7 @@ namespace Game.Rendering
                 page.Key = key;
                 _pages.Add(key, page);
                 IndexPage(key, true);
+                if (_visibleSetValid && IsVisible(page,_visibleMeters)) AddVisiblePage(page);
             }
             _samples.TryGetValue(cell, out var old);
             bool surfaceChanged = old.Material != sample.Material || old.Quantity != sample.Quantity;
@@ -190,6 +205,7 @@ namespace Game.Rendering
             { sample.ArrivalFrame = Time.frameCount; sample.ArrivalTime = Time.time; }
             else { sample.ArrivalFrame = old.ArrivalFrame; sample.ArrivalTime = old.ArrivalTime; }
             bool gasChanged = old.Steam != sample.Steam || old.Toxic != sample.Toxic;
+            if (CaptureNativeMotion) RecordNativeMotion(cell,in old, in sample);
             if (!surfaceChanged && !gasChanged)
             {
                 if (_resting.CellChanged(cell, sample.Quantity != 0, false)) MarkNeighborPages(cell, key, true, false);
@@ -219,6 +235,11 @@ namespace Game.Rendering
             }
             page.SurfaceCells += (sample.Quantity != 0 ? 1 : 0) - (old.Quantity != 0 ? 1 : 0);
             page.GasCells += (sample.HasGas ? 1 : 0) - (old.HasGas ? 1 : 0);
+            // Draw 的可见条件要求本页有对应相。最后一格离开后立即令它失效，下一次
+            // 该相进入时会重烘。跨相邻页的数据变化无需生成一张从来不会提交的空 Mesh/Texture。
+            if (page.SurfaceCells == 0) page.HasSurface = page.SurfaceDirty = false;
+            if (page.GasCells == 0) page.HasGasTexture = page.GasDirty = false;
+            if (!page.SurfaceDirty && !page.GasDirty && page.Queued) DequeueVisibleDirty(page);
             if (gasChanged)
             {
                 int local = LocalGasIndex(cell);
@@ -253,9 +274,9 @@ namespace Game.Rendering
                     for (int x = key.X - (lx == 0 ? 1 : 0); x <= key.X + (lx == PageSize - 1 ? 1 : 0); x++)
                         if (_pages.TryGetValue(new ElementChunkKey(x, y, z), out var neighbor))
                         {
-                            if (neighbor.Visible && !neighbor.SurfaceDirty && !neighbor.GasDirty) _visibleDirtyPages++;
-                            neighbor.SurfaceDirty |= surfaceChanged;
-                            neighbor.GasDirty |= gasChanged;
+                            neighbor.SurfaceDirty |= surfaceChanged && neighbor.SurfaceCells != 0;
+                            neighbor.GasDirty |= gasChanged && neighbor.GasCells != 0;
+                            QueueVisibleDirty(neighbor);
                         }
         }
 
@@ -361,45 +382,60 @@ namespace Game.Rendering
         private void LateUpdate()
         {
             if (!_bound) TryBind();
-            if (!_bound || _world == null || !_world.isActiveAndEnabled) return;
+            if (!_bound || _world == null || !_world.isActiveAndEnabled) { _frameStart = 0; return; }
             if (_camera == null || !_camera.isActiveAndEnabled) _camera = Camera.main;
-            if (_camera == null) return;
+            if (_camera == null) { _frameStart = 0; return; }
+            long previousFrameStart = _frameStart;
+            _frameStart = System.Diagnostics.Stopwatch.GetTimestamp();
+            long nativeStart = _frameStart;
             _resting.Refresh(_world.CellularRestingLiquids, this);
             float meters = _world.CellSize * PageSize;
             int limit = Mathf.Max(1, _maximumPageRebuildsPerFrame);
             CollectVisiblePages(meters);
-            for (int i = 0, rebuilt = 0; _visibleDirtyPages != 0 && i < _visiblePages.Count && rebuilt < limit; i++)
+            if (CaptureNativeFrames) BeginNativeDraw();
+            // 真实 Tick 帧保留基础页数。即使处于积压状态，也只在最近帧有余量且队首已经等过
+            // 一轮可见更新时借用额外时间。单页 Mesh/Texture 不可中断，页数仍有严格上限。
+            int catchUp = _world.LastFrameTickCount == 0 && _catchUpRebuildMs > 0 ? Mathf.Max(limit,_maximumCatchUpPages) : limit;
+            bool borrow = _visibleDirtyPages > limit && catchUp > limit;
+            long deadline = borrow ? CatchUpDeadline(previousFrameStart) : 0;
+            for (int rebuilt=0; _firstDirty!=null && rebuilt<catchUp; rebuilt++)
             {
-                if (_rebuildCursor >= _visiblePages.Count) _rebuildCursor = 0;
-                var page = _visiblePages[_rebuildCursor++];
-                if (!page.SurfaceDirty && !page.GasDirty) continue;
+                if(rebuilt>=limit && (!borrow || System.Diagnostics.Stopwatch.GetTimestamp()>=deadline))break;
+                var page=_firstDirty;
                 if (page.SurfaceDirty) RebuildSurface(page);
                 if (page.GasDirty) RebuildGas(page);
                 page.SurfaceDirty = page.GasDirty = false;
-                _visibleDirtyPages--;
-                rebuilt++;
+                DequeueVisibleDirty(page);
+                if (CaptureNativeFrames) _nativeDraw.RebuiltPages++;
             }
+            if (CaptureNativeFrames) { _nativeDraw.DirtyVisiblePages = _visibleDirtyPages; _nativeDraw.RebuildMs=NativeMilliseconds(_nativeRebuildStart); }
             for (int slot = 0; slot < CellularMaterialSurfaceMesh.LiquidSlots; slot++)
             {
                 _surfaceProperties[slot].SetFloat(MotionClock, Time.time);
                 _surfaceProperties[slot].SetFloat(MotionRate, 1f / MotionDuration);
             }
             _resting.Draw(_world, _camera, _frustum, _liquid, _solid, _surfaceProperties, gameObject.layer, this, limit);
+            Vector3 benchmarkEye=CaptureNativeFrames?_camera.transform.position-Vector3.one*(meters*.5f):Vector3.zero;
             foreach (var page in _visiblePages)
             {
                 Vector3 position = Position(page, meters);
+                float distanceSquared = CaptureNativeFrames ? (position-benchmarkEye).sqrMagnitude : 0f;
+                if(CaptureNativeFrames)RecordNativeAge(page);
                 if (page.SurfaceCells > 0 && page.HasSurface)
                 {
                     var matrix = Matrix4x4.TRS(position, Quaternion.identity, Vector3.one * _world.CellSize);
-                    for (int slot = 0; slot < CellularMaterialSurfaceMesh.SlotCount; slot++)
+                    for (int slot=0,mask=page.SurfaceSlots; mask!=0; slot++,mask>>=1)
                     {
+                        if((mask&1)==0)continue;
                         var material = slot < CellularMaterialSurfaceMesh.LiquidSlots ? _liquid : _solid;
-                        if (material != null && page.Surface.GetIndexCount(slot) != 0)
-                            Graphics.DrawMesh(page.Surface, matrix, material, gameObject.layer, _camera, slot,
-                                _surfaceProperties[slot], ShadowCastingMode.On, true);
+                        if (material == null || CaptureNativeFrames && NativeHiddenMaterial != MaterialId.Empty
+                            && slot == CellularMaterialSurfaceMesh.Slot(NativeHiddenMaterial)) continue;
+                        Graphics.DrawMesh(page.Surface, matrix, material, gameObject.layer, _camera, slot,
+                            _surfaceProperties[slot], ShadowCastingMode.On, true);
+                        if (CaptureNativeFrames) RecordNativeSurface(slot,slot==CellularMaterialSurfaceMesh.Slot(MaterialId.Water)?page.WaterIndices:page.SandIndices,distanceSquared);
                     }
                 }
-                if (page.GasCells > 0 && page.HasGasTexture && _gas != null)
+                if (page.GasCells > 0 && page.HasGasTexture && _gas != null && (!CaptureNativeFrames || NativeHiddenMaterial != MaterialId.Steam))
                 {
                     float t = Mathf.Clamp01((Time.time - page.GasBlendStart) / GasBlendSeconds);
                     _gasProperties.SetTexture(Density, page.GasTexture);
@@ -409,8 +445,33 @@ namespace Game.Rendering
                     _gasProperties.SetFloat(PresentationTime, Time.time);
                     Graphics.DrawMesh(_gasBounds, Matrix4x4.TRS(position, Quaternion.identity, Vector3.one * meters),
                         _gas, gameObject.layer, _camera, 0, _gasProperties, ShadowCastingMode.Off, false);
+                    if (CaptureNativeFrames)
+                    {
+                        _nativeDraw.GasDraws++; _nativeDraw.GasCells += page.GasCells;
+                        _nativeDraw.GasNearestSquared = Mathf.Min(_nativeDraw.GasNearestSquared, distanceSquared);
+                    }
                 }
             }
+            if(CaptureNativeFrames)_nativeDraw.PresentationMs=NativeMilliseconds(nativeStart);
+        }
+
+        private long CatchUpDeadline(long previousFrameStart)
+        {
+            long now = System.Diagnostics.Stopwatch.GetTimestamp();
+            long frequency = System.Diagnostics.Stopwatch.Frequency;
+            double budget = _catchUpRebuildMs;
+            if (previousFrameStart != 0 && _firstDirty.QueuedAt != 0 &&
+                (now - _firstDirty.QueuedAt) >= VisibleQueueDelaySeconds * frequency)
+            {
+                // 前一 LateUpdate 起点到当前重建的真实墙钟间隔，包含前次呈现、引擎/GPU 等待、
+                // 当前 Update 与本帧剔除。保持至少 2ms 余量；指定高刷新帧率时使用更紧的目标。
+                int targetRate = Math.Max(60, Application.targetFrameRate);
+                double headroom = 1000d / targetRate - FrameReserveMs -
+                    (now - previousFrameStart) * (1000d / frequency);
+                double extra = Math.Min(MaximumExtraRebuildMs, Math.Min(budget, 4d - budget));
+                if (extra > 0 && headroom > 0) budget += Math.Min(extra, headroom);
+            }
+            return now + (long)(budget * .001d * frequency);
         }
 
         private Vector3 Position(Page page, float meters)
@@ -429,6 +490,13 @@ namespace Game.Rendering
                 page.Surface.MarkDynamic();
             }
             _mesher.Build(page.Surface, page.Key, page.Cells, this, _world.CellularCellCapacity);
+            // 只有重烘此 Mesh 才改变 submesh 的索引。缓存几个 bit 后，整图每帧可省下上万次托管到
+            // 原生 Mesh.GetIndexCount 调用；真正的 Draw 提交条件与网格生成时的同一份 index buffer 一致。
+            page.SurfaceSlots=0;
+            for(int slot=0;slot<CellularMaterialSurfaceMesh.SlotCount;slot++)
+                if(_mesher.IndexCount(slot)>0)page.SurfaceSlots|=1<<slot;
+            page.WaterIndices=(uint)_mesher.IndexCount(CellularMaterialSurfaceMesh.Slot(MaterialId.Water));
+            page.SandIndices=(uint)_mesher.IndexCount(CellularMaterialSurfaceMesh.Slot(MaterialId.Sand));
             page.HasSurface = true;
         }
 
@@ -494,8 +562,8 @@ namespace Game.Rendering
 
         private void ReleasePage(Page page)
         {
-            if (page.Visible && (page.SurfaceDirty || page.GasDirty)) _visibleDirtyPages--;
-            page.Visible = false;
+            RemoveVisiblePage(page);
+            page.NativeWaiting=false;
             _pages.Remove(page.Key);
             IndexPage(page.Key, false);
             page.SurfaceDirty = page.GasDirty = page.HasSurface = page.HasGasTexture = false;

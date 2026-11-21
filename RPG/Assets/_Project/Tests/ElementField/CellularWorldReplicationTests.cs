@@ -1,8 +1,10 @@
 using System.Reflection;
 using System.Collections.Generic;
+using Game.Combat;
 using Game.Core;
 using Game.Materials;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -175,6 +177,10 @@ namespace Game.ElementField.Tests
             {
                 var world = host.AddComponent<ElementWorldRuntime>();
                 Set(world, "_profile", _profile); Set(world, "_cellDefinition", _cells);
+                var reaction=AssetDatabase.LoadAssetAtPath<ElementReactionProfile>(
+                    "Assets/_Project/ScriptableObjects/Combat/Status/ElementReactionProfile_Default.asset");
+                Assert.That(reaction,Is.Not.Null);
+                Set(_profile,"_reactionProfile",reaction);
                 Set(world, "_settings", _profile.CreateSimulationSettings());
                 Set(world, "_store", new ElementWorldStore(4, 8)); Set(world, "_worldTick", 1L);
                 var queue = new ElementWriteQueue(8); Set(world, "_writeQueue", queue);

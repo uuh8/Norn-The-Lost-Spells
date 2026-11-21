@@ -37,7 +37,7 @@ namespace Game.Multiplayer
         private readonly Bounds[] _comparedBounds=new Bounds[4];
         private readonly WorldGridGeometry[] _geometry=new WorldGridGeometry[5];
         private readonly bool[] _hasGeometry=new bool[5];
-        private struct Subscription { internal bool Known,Desired,Announced,AnnouncementKnown;internal ulong Epoch,AnnouncedEpoch,PendingEpoch; }
+        private struct Subscription { internal bool Known,Desired,Announced,AnnouncementKnown,Near;internal ulong Epoch,AnnouncedEpoch,PendingEpoch; }
         // Owner退休空Key时会交换末槽；共同退休边界同步搬动这些索引，不按探索历史无限追加。
         private readonly Subscription[,] _subscriptions;
         private readonly ulong[] _nextSubscriptionEpoch=new ulong[4];
@@ -49,6 +49,7 @@ namespace Game.Multiplayer
         private readonly ulong[] _clientSubscriptions,_incomingEpoch;
         private readonly bool[] _clientActive,_needsBaseline;
         private int _preparedSlot=-1,_preparedIndex=-1;
+        private bool _preparedNearControl;
         private uint _preparedKind;
         private ulong _preparedEpoch;
         private float _referenceSize;
@@ -72,6 +73,7 @@ namespace Game.Multiplayer
         public ulong RetiredKeys {get;private set;}
         public WorldReplicationFreezeKind PeerLastFreezeKind(int slot)=>(IsAuthority && (uint)slot<4)?_peers[slot].LastFreezeKind:WorldReplicationFreezeKind.None;
         public WorldChunkPayloadHeader PeerLastFreezeHeader(int slot)=>(IsAuthority && (uint)slot<4)?_peers[slot].PendingHeader:default;
+        public int PeerLastFreezeWireWords(int slot)=>(IsAuthority && (uint)slot<4)?_peers[slot].PendingWireWords:0;
         public bool Faulted {get;private set;}
         public string Failure {get;private set;}
         /// <summary>保留首个外部退休/发送异常用于诊断；故障后不通过换连接代次清空现场。</summary>
@@ -165,6 +167,7 @@ namespace Game.Multiplayer
             if(source==null || buffer==null)return Fail("MissingCaptureSource");
             bool unchanged=ReferenceEquals(source,_committedSource) && ReferenceEquals(buffer,_committedBuffer) &&
                 source is IWorldUnchangedReplicationSource quiet && quiet.TryAdvanceUnchangedCapture(buffer);
+            bool partial=false;
             if(unchanged)
             {
                 if(!_owner.TryAdvanceUnchangedCapture(buffer.Header.WorldTick))return Fail("Commit:"+_owner.LastFailure);
@@ -172,7 +175,7 @@ namespace Game.Multiplayer
             else
             {
                 int changed=0;WorldCaptureFailure failure=WorldCaptureFailure.None;
-                bool partial=ReferenceEquals(source,_committedSource) && ReferenceEquals(buffer,_committedBuffer) &&
+                partial=ReferenceEquals(source,_committedSource) && ReferenceEquals(buffer,_committedBuffer) &&
                     source is IWorldCellularIncrementalSource incremental && incremental.TryCaptureChangedChunks(buffer,out changed,out failure);
                 if(failure!=WorldCaptureFailure.None || !partial && !source.TryCapture(buffer,out failure))return Fail("Source:"+failure);
                 if(!(partial?_owner.TryCaptureChangedChunks(buffer,changed):_owner.TryCaptureCommit(buffer)))return Fail("Commit:"+_owner.LastFailure);
@@ -181,7 +184,7 @@ namespace Game.Multiplayer
             // 仅提交成功后复制可信几何，绝不能把失败capture留下的候选几何用于网络判交。
             for(int i=0;i<buffer.Header.GeometryCount;i++){var g=buffer.Geometries[i];_geometry[(int)g.Domain]=g;_hasGeometry[(int)g.Domain]=true;}
             IndexCommittedChanges();
-            for(int slot=0;slot<4;slot++)if(_active[slot] && !RefreshSubscriptions(slot,true))return false;
+            for(int slot=0;slot<4;slot++)if(_active[slot] && !RefreshSubscriptions(slot,true,partial))return false;
             Captures++;
             return RetireReleasedAuthorityChunks();
         }
@@ -230,28 +233,16 @@ namespace Game.Multiplayer
                 if(_peers[i].RestartTimedOutTransfer(now,2))ObservePeerTiming(i,5);
             }
         }
-        /// <summary>先发有界生命周期，再发冻结页。控制和页共用同一每轮/字节预算，不新造可靠流。</summary>
+        /// <summary>每个 Key 的 Enter 始终先于其正文。Cellular 大量首次订阅时交替服务其他已进入的块，共用同一额度。</summary>
         public bool TryPreparePage(int slot,double now,out WorldPageMessage message)
         {
             message=null;
             if(!IsAuthority || _stopped || Faulted || (uint)slot>=4 || !_active[slot] || !double.IsFinite(now))return false;
             var p=_peers[slot];if(p.PagesSentThisRound>=p.MaximumPagesPerRound || !_interest.TryGetInterest(p.ConnectionId,p.ConnectionEpoch,out _))return false;
             _preparedSlot=-1;
-            int lifecycle=_work[slot].Control.AtRank(0);
-            if(lifecycle>=0)
-            {
-                SendCandidateChecks++;
-                ref var s=ref _subscriptions[slot,lifecycle];
-                uint kind=s.Announced?7u:6u;ulong subscription=s.AnnouncedEpoch;
-                if(kind==6)
-                {
-                    if(_nextSubscriptionEpoch[slot]==ulong.MaxValue)return Fail("Subscription epoch exhausted");
-                    // 编码/限流失败允许跳号；重试重新分配，实际进入可靠同通道的Enter严格单调。
-                    subscription=++_nextSubscriptionEpoch[slot];s.Epoch=subscription;
-                }
-                FillLifecycle(_outbound,_owner.GetChunkHeader(lifecycle).Key,p.ConnectionEpoch,subscription,kind);
-                Prepare(slot,lifecycle,kind,subscription);message=_outbound;return true;
-            }
+            var work=_work[slot];bool progressive=_hasGeometry[(int)WorldMaterialDomain.Cellular];
+            int lifecycle=work.NextControl(progressive,out bool nearbyControl);
+            if(lifecycle>=0 && (!progressive || !work.DataTurn))return PrepareLifecycle(slot,lifecycle,nearbyControl,out message);
             // 每Key各有一份冻结正文；连接/订阅变化只撤销对应flight，不让另一块的ACK
             // 清掉本块或把新订阅号贴到旧正文上。数组固定上限4，不扩张总字节/每轮页预算。
             for(int flight=0;flight<p.MaximumInFlight;flight++)
@@ -272,29 +263,51 @@ namespace Game.Multiplayer
                 var quantity=_work[slot].Quantity;
                 for(int remaining=quantity.Count;remaining>0 && quantity.Count>0 && p.InFlightCount<p.MaximumInFlight;remaining--)
                 {
-                    int index=quantity.AtOrAfter(_cursor[slot]);if(index<0)index=quantity.AtRank(0);
-                    _cursor[slot]=index+1;SendCandidateChecks++;
+                    bool local=progressive && work.NearDataTurn && work.NearFirst.Count>0;
+                    int index=local?work.NearFirst.AtRank(0):quantity.AtOrAfter(_cursor[slot]);
+                    if(index<0)index=quantity.AtRank(0);
+                    if(!local)_cursor[slot]=index+1;
+                    SendCandidateChecks++;
                     var current=_owner.GetChunkHeader(index);
                     if(p.TryFreeze(_owner,current.Key,now))
                     {
-                        quantity.Set(index,false);_subscriptions[slot,index].PendingEpoch=_subscriptions[slot,index].Epoch;
+                        quantity.Set(index,false);work.NearFirst.Set(index,false);
+                        if(progressive)work.NearDataTurn=!work.NearDataTurn;
+                        _subscriptions[slot,index].PendingEpoch=_subscriptions[slot,index].Epoch;
                         ObservePeerTiming(slot,1);
                     }
                     else SchedulePeer(slot,index,current);
                 }
             }
-            if(!p.HasPending)return false;
-            if(!p.TryPeekPage(_page,out int count,out int pageIndex))
-            {if(WorldReplicationTimingTrace.Active!=null && p.AwaitingInstallAck)ObservePeerTiming(slot,3);return false;}
+            if(!p.HasPending || !p.TryPeekPage(_page,out int count,out int pageIndex))
+            {
+                if(WorldReplicationTimingTrace.Active!=null && p.AwaitingInstallAck)ObservePeerTiming(slot,3);
+                // 这一页没有可发正文（典型情况是 4 个 Flight 全在等 ACK），剩余额度立即用于订阅控制。
+                return lifecycle>=0 && PrepareLifecycle(slot,lifecycle,nearbyControl,out message);
+            }
             var h=p.PendingHeader;if(h.ServerTick>uint.MaxValue)return Fail("WorldTick exceeds wire range");
             int pendingIndex=OwnerIndex(h.Key);if(pendingIndex<0 || !Sendable(slot,pendingIndex))return false;
             ulong pendingEpoch=_subscriptions[slot,pendingIndex].PendingEpoch;
             Fill(_outbound,h,p.ConnectionEpoch,h.IsResident?(h.BaseRevision==0?1u:2u):5u);
             _outbound.SubscriptionEpoch=pendingEpoch;
             _outbound.PageIndex=(uint)pageIndex;_outbound.PageCount=(uint)p.PageCount;
-            _outbound.TotalWords=(uint)h.WordCount;_outbound.WordOffset=(uint)(pageIndex*WorldPageCodec.PageWords);
+            _outbound.TotalWords=(uint)p.PendingWireWords;_outbound.WordOffset=(uint)(pageIndex*WorldPageCodec.PageWords);
             for(int i=0;i<count;i++)_outbound.Words.Add(_page[i]);Prepare(slot,pendingIndex,_outbound.Kind,pendingEpoch);
             ObservePeerTiming(slot,2,pageIndex);message=_outbound;return true;
+        }
+        private bool PrepareLifecycle(int slot,int index,bool nearby,out WorldPageMessage message)
+        {
+            message=null;SendCandidateChecks++;
+            ref var s=ref _subscriptions[slot,index];var peer=_peers[slot];
+            uint kind=s.Announced?7u:6u;ulong subscription=s.AnnouncedEpoch;
+            if(kind==6)
+            {
+                if(_nextSubscriptionEpoch[slot]==ulong.MaxValue)return Fail("Subscription epoch exhausted");
+                // 编码或限流失败时允许跳号，真正进入同一可靠通道的 Enter 始终严格单调。
+                subscription=++_nextSubscriptionEpoch[slot];s.Epoch=subscription;
+            }
+            FillLifecycle(_outbound,_owner.GetChunkHeader(index).Key,peer.ConnectionEpoch,subscription,kind);
+            _preparedNearControl=nearby;Prepare(slot,index,kind,subscription);message=_outbound;return true;
         }
         private void Prepare(int slot,int index,uint kind,ulong epoch){_preparedSlot=slot;_preparedIndex=index;_preparedKind=kind;_preparedEpoch=epoch;}
         private int OwnerIndex(WorldChunkKey key)=>_owner.IndexOf(key);
@@ -317,11 +330,14 @@ namespace Game.Multiplayer
             {
                 if(!_peers[slot].TryMarkControlSent(now,encodedAndFramingBytes))
                 {ObservePeerTiming(slot,4,-1,encodedAndFramingBytes);return false;}
+                var work=_work[slot];work.DataTurn=true;work.NearControlTurn=!work.NearControlTurn;
+                if(!_preparedNearControl)work.ControlCursor=_preparedIndex+1;
                 ref var s=ref _subscriptions[slot,_preparedIndex];s.AnnouncementKnown=true;s.Announced=_preparedKind==6;s.AnnouncedEpoch=_preparedEpoch;
                 SchedulePeer(slot,_preparedIndex,_owner.GetChunkHeader(_preparedIndex));
             }
             else if(!_peers[slot].TryMarkPageSent(now,encodedAndFramingBytes))
             {ObservePeerTiming(slot,4,-1,encodedAndFramingBytes);return false;}
+            else _work[slot].DataTurn=false;
             _preparedSlot=-1;PagesSent++;return true;
         }
         public bool ReceiveControl(int slot,int actualConnection,uint actualEpoch,WorldPageMessage message,double now)
@@ -450,8 +466,8 @@ namespace Game.Multiplayer
                 Reply(message,4,out response);return Reject();
             }
             ObserveClientTiming(WorldReplicationTimingStage.ClientReceive,a,h,message.SubscriptionEpoch,2,message.PageIndex,message.PageCount,slot);
-            if(!a.HasPending && a.Installed && a.Header.Equals(h))
-            {LastInstalled=h;Installed++;if(message.Kind==1)BaselineInstalled++;else if(message.Kind==2)DeltaInstalled++;
+            if(!a.HasPending && a.InstalledWireTransfer(h))
+            {LastInstalled=a.Header;Installed++;if(message.Kind==1)BaselineInstalled++;else if(message.Kind==2)DeltaInstalled++;
                 _needsBaseline[slot]=false;Reply(message,3,out response);}
             return true;
         }

@@ -678,7 +678,7 @@ namespace Game.Multiplayer
                     if(frozen.WorldEpoch!=message.WorldEpoch || frozen.Key!=new WorldChunkKey((WorldMaterialDomain)message.Domain,message.ChunkX,message.ChunkY,message.ChunkZ) ||
                         frozen.Generation!=message.Generation || frozen.BaseRevision!=message.BaseRevision || frozen.Revision!=message.Revision ||
                         frozen.SnapshotId!=message.SnapshotId || frozen.Checksum!=message.Checksum || frozen.ServerTick!=message.ServerTick ||
-                        frozen.WordCount!=message.TotalWords || frozen.IsResident!=(message.Kind!=5))
+                        _channel._coordinator.PeerLastFreezeWireWords(slot)!=message.TotalWords || frozen.IsResident!=(message.Kind!=5))
                     {Fail("Latest transfer could not correlate its actual freeze header",now);return;}
                     transfer.Begin(slot,connection.connectionId,message,_channel._coordinator.PeerLastFreezeKind(slot).ToString(),now);
                 }

@@ -17,7 +17,7 @@ namespace Game.ElementField
     public sealed class ElementCellWorldProfile : ScriptableObject
     {
         [SerializeField, Min(1)] private int _capacityPerCell = 255;
-        [SerializeField, Min(1)] private int _maximumOccupiedCells = 32768;
+        [SerializeField, Min(1)] private int _maximumOccupiedCells = 131072;
         [SerializeField, Min(1)] private int _cellsPerTick = 1024;
         [Tooltip("单次球形物质投放可检查的包围盒格数，超过时在入队前返回失败。")]
         [SerializeField, Min(1)] private int _maximumDepositCandidates = 8192;

@@ -39,6 +39,7 @@ namespace Game.Core
         private int _scheduledCount;
         private readonly WorldMaterialCellSample[] _cellScratch;
         private readonly WorldMaterialOccupancySnapshot _occupancy;
+        private CellularRowOrder _cellularOrder;
         private readonly WorldGridGeometry[] _geometries=new WorldGridGeometry[5];
         private readonly bool[] _hasGeometry=new bool[5];
         private WorldGridGeometry _committedCellularGeometry;
@@ -46,7 +47,8 @@ namespace Game.Core
         private readonly bool[] _previousDomains=new bool[5];
         private readonly HashSet<WorldChunkKey> _requestedKeys;
         private readonly int _inspectionBudget, _pendingCapacity;
-        private int _count, _historyHead, _historyCount, _budget;
+        private int _count, _historyHead, _historyCount;
+        private long _budget;
         private long _lastTick=-1;
         public ulong WorldEpoch => _journal.WorldEpoch;
         public ulong CommitSequence => _journal.CommitSequence;
@@ -186,7 +188,14 @@ namespace Game.Core
                 if((byte)key.Domain>(byte)WorldMaterialDomain.Cellular || !_requestedKeys.Add(key))return Reject(WorldCommitOwnerFailure.InvalidInput);
                 if(_indices.TryGetValue(key,out int existing))Schedule(existing);
             }
-            if(h.WorldTick<0 || h.WorldTick<_lastTick || h.CellCount<0 || h.CellCount>source.Cells.Length || h.PendingCount<0 || h.PendingCount>source.Pending.Length || h.PendingCount>_pendingCapacity || h.GeometryCount<0 || h.GeometryCount>_geometries.Length || h.SpanCount<0 || h.SpanCount>source.Spans.Length)return Reject(WorldCommitOwnerFailure.InvalidInput);
+            if(h.WorldTick<0 || h.WorldTick<_lastTick || h.CellCount<0 || h.CellCount>source.AllocatedCellRows || h.PendingCount<0 || h.PendingCount>source.Pending.Length || h.PendingCount>_pendingCapacity || h.GeometryCount<0 || h.GeometryCount>_geometries.Length || h.SpanCount<0 || h.SpanCount>source.AllocatedSpanRows)return Reject(WorldCommitOwnerFailure.InvalidInput);
+            // 按实际有数据的输入页给本次事务分配检查额度；BuildChunk 自身仍受单块原额度约束。
+            // 无论几个输入页，Journal 与所有冻块只在整笔成功后一起发布。
+            if(source.UsesPagedCapture)
+            {
+                long rows=(long)h.CellCount+h.SpanCount;
+                _budget*=Math.Max(1,(rows+WorldReplicaBuffer.CapturePageRows-1)/WorldReplicaBuffer.CapturePageRows);
+            }
             if(!Spend((partial?changedChunkCount:_count)+5L+h.CellCount+h.PendingCount+h.GeometryCount+h.SpanCount))return false;
             Array.Clear(_hasGeometry,0,_hasGeometry.Length);
             int nextCount=_count;
@@ -209,7 +218,7 @@ namespace Game.Core
             }
             for(int i=0;i<h.CellCount;i++)
             {
-                var c=source.Cells[i];if(c.Quantity==0)continue;
+                var c=source.ReadCellRow(i);if(c.Quantity==0)continue;
                 if((byte)c.Domain>(byte)WorldMaterialDomain.Cellular || !_hasGeometry[(int)c.Domain])return Reject(WorldCommitOwnerFailure.InvalidInput);
                 var key=WorldChunkPayloadCodec.CellKey(c.Domain,c.Cell,_geometries[(int)c.Domain].ChunkSize);
                 if(partial && !_requestedKeys.Contains(key))return Reject(WorldCommitOwnerFailure.InvalidInput);
@@ -223,7 +232,7 @@ namespace Game.Core
             for(int i=0;i<h.SpanCount;i++)
             {
                 if(!_hasGeometry[cellularIndex])return Reject(WorldCommitOwnerFailure.InvalidInput);
-                var key=WorldChunkPayloadCodec.CellKey(WorldMaterialDomain.Cellular,source.Spans[i].Cells.position,_geometries[cellularIndex].ChunkSize);
+                var key=WorldChunkPayloadCodec.CellKey(WorldMaterialDomain.Cellular,source.ReadSpanRow(i).Cells.position,_geometries[cellularIndex].ChunkSize);
                 if(partial && !_requestedKeys.Contains(key))return Reject(WorldCommitOwnerFailure.InvalidInput);
                 if(!Activate(key,ref nextCount,out int slot))return false;
                 AddRow(ref _spanRows[slot],i,_nextSpan);
@@ -244,7 +253,14 @@ namespace Game.Core
             {
                 int slot=_scheduled[visit];
                 if(slot<_count && _headers[slot].IsResident)pendingAfter-=_published[slot][2];
-                if(_active[slot] && !BuildChunk(source,slot))return false;
+                if(_active[slot])
+                {
+                    long available=_budget;
+                    if(source.UsesPagedCapture)_budget=Math.Min(available,_inspectionBudget);
+                    long localBudget=_budget;
+                    if(!BuildChunk(source,slot))return false;
+                    _budget=available-(localBudget-_budget);
+                }
                 bool old=slot<_count && _headers[slot].IsResident, now=_active[slot];
                 if(!old && !now)continue;
                 bool changed=old!=now;
@@ -325,17 +341,26 @@ namespace Game.Core
             if(!Spend((long)_cellRows[slot].Count+_pendingRows[slot].Count+11))return false;
             for(int row=_cellRows[slot].First;row!=0;row=_nextCell[row-1])
             {
-                var c=source.Cells[row-1];
+                var c=source.ReadCellRow(row-1);
                 if(cells==_cellScratch.Length)return Reject(WorldCommitOwnerFailure.Capacity);_cellScratch[cells++]=c;
             }
             // HeapSort+线性归并的保守上界与规范化器采用同一检查单位：比较/交换各一次。
             // 用long进行计量，不能再按旧插入排序n²扣预算，否则正常大Chunk会被人为拒绝。
             int levels=0;for(long n=1;n<Math.Max(2,cells);n*=2)levels++;
             if(!Spend(6L*cells*levels+4L*cells))return false;
-            if(!_occupancy.TryCapture(_cellScratch,cells))return Reject(WorldCommitOwnerFailure.Occupancy);
             bool cellular=key.Domain==WorldMaterialDomain.Cellular;
+            // 正式 8³ 元胞的逻辑所有者已唯一，空间键只有 13 位；稠密负载可用两次计数排序免去通用 HeapSort。
+            // 含覆盖盒、多 Owner、异常材料、不同尺寸及小块仍沿通用合同；同一份 W2、验证、校验和与 Journal 继续负责发布。
+            bool ordered=false;
+            if(cellular && geometry.ChunkSize==8 && _spanRows[slot].Count==0 && cells>=32 && cells<=8192)
+            {
+                if(_cellularOrder==null)_cellularOrder=new CellularRowOrder();
+                ordered=_cellularOrder.TryArrange(_cellScratch,cells);
+            }
+            if(!ordered && !_occupancy.TryCapture(_cellScratch,cells))return Reject(WorldCommitOwnerFailure.Occupancy);
+            int rowCount=ordered?cells:_occupancy.Count;
             int prefix=cellular?WorldChunkPayloadCodec.CellularPrefixWords:11;
-            long residentWords=prefix+(long)_occupancy.Count*7;
+            long residentWords=prefix+(long)rowCount*7;
             int stride=cellular?WorldChunkPayloadCodec.CellularPendingWords:WorldChunkPayloadCodec.PendingWords;
             long required=residentWords+(long)stride*_pendingRows[slot].Count+(long)WorldChunkPayloadCodec.SpanWords*_spanRows[slot].Count;
             if(required>_wordLimit)return Reject(WorldCommitOwnerFailure.Capacity);
@@ -345,11 +370,15 @@ namespace Game.Core
                 int capacity=(int)Math.Min(_wordLimit,Math.Max(required,Math.Max(16L,words.Length*2L)));
                 PayloadCapacityWords+=capacity-words.Length;words=_candidate[slot]=new uint[capacity];
             }
-            words[0]=cellular?WorldChunkPayloadCodec.CellularMagic:WorldChunkPayloadCodec.Magic;words[1]=(uint)_occupancy.Count;words[2]=0;words[3]=1;
+            words[0]=cellular?WorldChunkPayloadCodec.CellularMagic:WorldChunkPayloadCodec.Magic;words[1]=(uint)rowCount;words[2]=0;words[3]=1;
             WorldChunkPayloadCodec.WriteGeometry(words,4,geometry);int offset=prefix;
             if(cellular)words[14]=0;
-            if(!Spend((long)_occupancy.Count*7))return false;
-            for(int i=0;i<_occupancy.Count;i++,offset+=7)WorldChunkPayloadCodec.WriteCell(words,offset,_occupancy.GetCell(i));
+            if(!Spend((long)rowCount*7))return false;
+            for(int i=0;i<rowCount;i++,offset+=7)
+            {
+                var cell=ordered?_cellScratch[_cellularOrder.RowAt(i)]:_occupancy.GetCell(i);
+                WorldChunkPayloadCodec.WriteCell(words,offset,cell);
+            }
             int pending=0;
             // Source的FIFO顺序应按QueueIndex递增；主动排序局部Pending让枚举实现细节不产生假差异。
             for(int row=_pendingRows[slot].First;row!=0;row=_nextPending[row-1])
@@ -367,7 +396,7 @@ namespace Game.Core
                 if(!Spend(_spanRows[slot].Count))return false;
                 for(int row=_spanRows[slot].First;row!=0;row=_nextSpan[row-1])
                 {
-                    var span=source.Spans[row-1];
+                    var span=source.ReadSpanRow(row-1);
                     const int spanWords=WorldChunkPayloadCodec.SpanWords;
                     if(words.Length-offset<spanWords)return Reject(WorldCommitOwnerFailure.Capacity);
                     int position=offset;
@@ -379,11 +408,48 @@ namespace Game.Core
                     WorldChunkPayloadCodec.WriteSpan(words,position,span);offset+=spanWords;words[14]++;
                 }
                 // 检查不同类型的盒不重复拥有空间，预算按枚举盒与点的比较上界预扣。
-                long spans=words[14];if(!Spend(spans*(spans-1)/2+spans*_occupancy.Count))return false;
+                long spans=words[14];if(!Spend(spans*(spans-1)/2+spans*rowCount))return false;
             }
             _counts[slot]=offset;
             if(!Spend(offset))return false;
             return WorldChunkPayloadCodec.Validate(words,offset,key) || Reject(WorldCommitOwnerFailure.InvalidInput);
+        }
+        // 一个提交主线程复用两组整数索引。按各轴本地 3 位与材料 4 位排序，顺序与全局 x/y/z/material 严格一致，
+        // 负坐标在同一块中也满足该关系。只移动索引；原始行保留，发现重复所有者时能交回原规则给出同样的失败原因。
+        private sealed class CellularRowOrder
+        {
+            private readonly int[] _low=new int[256],_high=new int[32];
+            private int[] _ordered=Array.Empty<int>(),_byLow=Array.Empty<int>();
+            internal int RowAt(int sortedIndex)=>_ordered[sortedIndex]&0xffff;
+
+            internal bool TryArrange(WorldMaterialCellSample[] cells,int count)
+            {
+                if(_ordered.Length<count)
+                {
+                    int size=Math.Min(8192,Math.Max(count,2*_ordered.Length));
+                    _ordered=new int[size];_byLow=new int[size];
+                }
+                Array.Clear(_low,0,_low.Length);Array.Clear(_high,0,_high.Length);
+                for(int i=0;i<count;i++)
+                {
+                    var cell=cells[i];int material=cell.MaterialId;
+                    if(cell.Domain!=WorldMaterialDomain.Cellular || cell.GridId!=(byte)WorldMaterialDomain.Cellular ||
+                        cell.Storage!=WorldMaterialStorage.Resident || material<1 || material>12)return false;
+                    int key=(cell.Cell.x&7)<<10 | (cell.Cell.y&7)<<7 | (cell.Cell.z&7)<<4 | material;
+                    _ordered[i]=(key<<16)|i;_low[key&255]++;_high[key>>8]++;
+                }
+                Prefix(_low);Prefix(_high);
+                for(int i=0;i<count;i++) { int entry=_ordered[i];_byLow[_low[(entry>>16)&255]++]=entry; }
+                for(int i=0;i<count;i++) { int entry=_byLow[i];_ordered[_high[entry>>24]++]=entry; }
+                for(int i=1;i<count;i++)if((_ordered[i-1]>>16)==(_ordered[i]>>16))return false;
+                return true;
+            }
+
+            private static void Prefix(int[] histogram)
+            {
+                int first=0;
+                for(int i=0;i<histogram.Length;i++){int n=histogram[i];histogram[i]=first;first+=n;}
+            }
         }
         private void AppendHistory(WorldChunkPayloadHeader h)
         {
@@ -440,7 +506,7 @@ namespace Game.Core
             header=default;if(destination==null || destination.Length<h.WordCount)return Reject(WorldCommitOwnerFailure.DestinationCapacity);
             Array.Copy(source,destination,h.WordCount);header=h;LastFailure=WorldCommitOwnerFailure.None;return true;
         }
-        private bool Spend(long work){if(work>_budget)return Reject(WorldCommitOwnerFailure.InspectionBudget);_budget-=(int)work;return true;}
+        private bool Spend(long work){if(work>_budget)return Reject(WorldCommitOwnerFailure.InspectionBudget);_budget-=work;return true;}
         private bool Reject(WorldCommitOwnerFailure f){LastFailure=f;return false;}
     }
 }

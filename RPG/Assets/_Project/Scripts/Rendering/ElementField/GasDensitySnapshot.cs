@@ -18,8 +18,16 @@ namespace Game.Rendering
             for(int i=0;i<pixels.Length;i++)
             {
                 Color32 next=pixels[i],old=history[offset+i];
-                byte steam=first?next.r:(byte)Mathf.RoundToInt(Mathf.Lerp(old.r,old.b,blend));
-                byte toxic=first?next.g:(byte)Mathf.RoundToInt(Mathf.Lerp(old.g,old.a,blend));
+                // 通常绝大多数 Halo 体素为空，或两次上传之间已经到达终点。
+                // 两端都是新浓度时可原样保留；只有尚未结束且端点不同的通道需要插值。
+                if(old.r==next.r && old.g==next.g && old.b==next.r && old.a==next.g)
+                { pixels[i]=old; continue; }
+                byte steam=next.r, toxic=next.g;
+                if(!first)
+                {
+                    steam=blend>=1f || old.r==old.b ? old.b : (byte)Mathf.RoundToInt(Mathf.Lerp(old.r,old.b,blend));
+                    toxic=blend>=1f || old.g==old.a ? old.a : (byte)Mathf.RoundToInt(Mathf.Lerp(old.g,old.a,blend));
+                }
                 var packed=new Color32(steam,toxic,next.r,next.g);
                 pixels[i]=packed; history[offset+i]=packed;
             }

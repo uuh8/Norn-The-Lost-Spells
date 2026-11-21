@@ -122,6 +122,7 @@ namespace Game.ElementField
             }
 
             // 进入含气空间时，气体回到这一步腾出的源空间。两边水/油互换时腾出空间的也可能是另一边。
+            if ((source.Steam | source.Vapor | destination.Steam | destination.Vapor)==0) return Commit();
             MoveExcess(b, a);
             MoveExcess(a, b);
             return Excess(in source) == 0 && Excess(in destination) == 0 && Commit();

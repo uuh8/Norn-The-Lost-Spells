@@ -24,9 +24,15 @@ namespace Game.ElementField
             internal bool Resting;
         }
         private DepositCell[] _depositCells;
-        private Dictionary<Vector3Int, bool> _sceneObstacles;
-        private Vector3Int[] _obstacleKeys;
-        private int _obstacleSlot, _obstacleSlotsUsed;
+        // 同一个流体边界在一个 Tick 内会被许多邻格重复询问。每个 4³ 小页分别记录
+        // “已查询”和“不可穿过”的位，开放空间也能缓存。冲突只淘汰查询结果，不保存物质。
+        private struct EnvironmentPage
+        {
+            internal Vector3Int Key;
+            internal ulong Known;
+            internal ulong Blocked;
+        }
+        private EnvironmentPage[] _environmentPages;
         private Dictionary<ElementChunkKey, bool> _sceneChunks;
         private ElementChunkKey[] _sceneChunkKeys;
         private int _sceneChunkSlot, _sceneChunkSlotsUsed;
@@ -72,8 +78,7 @@ namespace Game.ElementField
                     throw new ContentMigrationException($"静水区域 {i} 与地形或静态 Collider 重叠。");
             }
             int cacheSize = Math.Min(_cellDefinition.MaximumCells, 32768);
-            _sceneObstacles = new Dictionary<Vector3Int, bool>(cacheSize);
-            _obstacleKeys = new Vector3Int[cacheSize];
+            _environmentPages = new EnvironmentPage[Mathf.NextPowerOfTwo(Math.Max(1, cacheSize / 8))];
             int chunkCacheSize = Math.Min(cacheSize, 4096);
             _sceneChunks = new Dictionary<ElementChunkKey, bool>(chunkCacheSize);
             _sceneChunkKeys = new ElementChunkKey[chunkCacheSize];
@@ -92,7 +97,10 @@ namespace Game.ElementField
         private void DisposeCellularWorld()
         {
             _networkChunkChanges = null;
+            _networkPages = null;
+            _networkPagePool = null;
             _networkBatch = null;
+            _environmentPages = null;
             ClearCellularCombustion();
             _conversionScheduler = null;
             CellularLedger = null;
@@ -122,11 +130,8 @@ namespace Game.ElementField
             if (_replicaCellular != null) return _replicaCellular.TryGetContents(cell, out primary, out primaryAmount, out steam, out toxicVapor);
             primary = MaterialId.Empty;
             primaryAmount = steam = toxicVapor = 0;
-            if (CellularSimulation == null || !CellularSimulation.TryGetOccupiedCell(cell, out primary, out primaryAmount)) return false;
-            CellularSimulation.TryGetQuantity(cell, MaterialId.Steam, out steam);
-            CellularSimulation.TryGetQuantity(cell, MaterialId.ToxicVapor, out toxicVapor);
-            if (primary == MaterialId.Steam || primary == MaterialId.ToxicVapor) { primary = MaterialId.Empty; primaryAmount = 0; }
-            return true;
+            return CellularSimulation != null &&
+                CellularSimulation.TryReadContents(cell, out primary, out primaryAmount, out steam, out toxicVapor);
         }
 
         public void VisitCellularOccupiedCells(Action<Vector3Int> visitor)
@@ -151,8 +156,27 @@ namespace Game.ElementField
 
         private bool IsEnvironmentBlockedForCells(Vector3Int cell)
         {
-            if (GetTerrainMaterial(cell) != MaterialId.Empty) return true;
-            if (_sceneObstacles.TryGetValue(cell, out bool blocked)) return blocked;
+            var key = new Vector3Int(cell.x >> 2, cell.y >> 2, cell.z >> 2);
+            ulong bit = EnvironmentBit(cell);
+            ref var page = ref _environmentPages[EnvironmentPageIndex(key)];
+            if (page.Key == key && (page.Known & bit) != 0) return (page.Blocked & bit) != 0;
+            if (page.Key != key) page = new EnvironmentPage { Key = key };
+            bool blocked = GetTerrainMaterial(cell) != MaterialId.Empty || HasStaticSceneGeometry(cell);
+            page.Known |= bit;
+            if (blocked) page.Blocked |= bit;
+            else page.Blocked &= ~bit;
+            return blocked;
+        }
+
+        // 算术右移和取低两位对负坐标也能构成相同的页及页内坐标。
+        private static ulong EnvironmentBit(Vector3Int cell) =>
+            1UL << ((cell.x & 3) | ((cell.y & 3) << 2) | ((cell.z & 3) << 4));
+
+        private int EnvironmentPageIndex(Vector3Int key) =>
+            unchecked(key.x * 73856093 ^ key.y * 19349663 ^ key.z * 83492791) & (_environmentPages.Length - 1);
+
+        private bool HasStaticSceneGeometry(Vector3Int cell)
+        {
             float size = _profile.CellSize;
             ElementWorldCoordinates.GlobalCellToChunkAndLocal(cell, _profile.ChunkSize, out var key, out _);
             if (!_sceneChunks.TryGetValue(key, out bool hasGeometry))
@@ -167,21 +191,16 @@ namespace Game.ElementField
                 _sceneChunkSlot = (_sceneChunkSlot + 1) % _sceneChunkKeys.Length;
                 _sceneChunks[key] = hasGeometry;
             }
-            if (!hasGeometry) return false;
-            blocked = _solidBaker.HasSceneObstacle(_origin + ((Vector3)cell + Vector3.one*.5f)*size, Vector3.one*(size*.49f));
-            // 旧槽在局部失效后可能提前淘汰同坐标的新值，重采只影响缓存命中率。
-            if (_obstacleSlotsUsed == _obstacleKeys.Length) _sceneObstacles.Remove(_obstacleKeys[_obstacleSlot]);
-            else _obstacleSlotsUsed++;
-            _obstacleKeys[_obstacleSlot] = cell;
-            _obstacleSlot = (_obstacleSlot + 1) % _obstacleKeys.Length;
-            _sceneObstacles[cell] = blocked;
-            return blocked;
+            return hasGeometry && _solidBaker.HasSceneObstacle(
+                _origin + ((Vector3)cell + Vector3.one * .5f) * size, Vector3.one * (size * .49f));
         }
 
         private void WakeCellularTerrainChange(Vector3Int cell)
         {
             if (CellularSimulation == null) return;
-            _sceneObstacles.Remove(cell);
+            var pageKey = new Vector3Int(cell.x >> 2, cell.y >> 2, cell.z >> 2);
+            ref var page = ref _environmentPages[EnvironmentPageIndex(pageKey)];
+            if (page.Key == pageKey) page.Known &= ~EnvironmentBit(cell);
             ElementWorldCoordinates.GlobalCellToChunkAndLocal(cell, _profile.ChunkSize, out var key, out _);
             _sceneChunks.Remove(key);
             CellularSimulation.WakeNeighbors(cell);
@@ -434,15 +453,24 @@ namespace Game.ElementField
 
         private void StepCellularWorld()
         {
+            bool measure = FrameBenchmarkTickCompleted != null;
+            long start = measure ? System.Diagnostics.Stopwatch.GetTimestamp() : 0;
             RestingCellsProcessedLastTick = RestingLiquids.Step(_cellDefinition.RestingBudget, CellularSimulation);
             ProcessCellularFireContacts();
             ProcessCellularAbsorption();
             BeginCellularGasTick();
+            if (measure) { MeasuredPreparationMs = MeasuredMilliseconds(start); start = System.Diagnostics.Stopwatch.GetTimestamp(); }
             CellularCellsProcessedLastTick = CellularSimulation.Step(_cellDefinition.WorkBudget);
+            if (measure) { MeasuredTransportMs = MeasuredMilliseconds(start); start = System.Diagnostics.Stopwatch.GetTimestamp(); }
             CellularSimulation.StepGasDilution();
             _conversionScheduler?.Step(_tickInterval);
             PrepareCellularChanges();
+            if (measure) MeasuredCommitMs = MeasuredMilliseconds(start);
         }
+
+        internal double MeasuredPreparationMs { get; private set; }
+        internal double MeasuredTransportMs { get; private set; }
+        internal double MeasuredCommitMs { get; private set; }
 
         // Fire 继续使用旧强度时钟。用已有的灭火公式处理强度，再按本世界的格容量折回水的 GMU。
         // 火和产物在同一个世界锁内提交；若产物放不下，恢复刚扣掉的火。
@@ -497,18 +525,22 @@ namespace Game.ElementField
         private void PrepareCellularChanges()
         {
             _cellPublications.Clear();
-            _publicationSet.Clear();
             while (CellularSimulation.TryDequeueChanged(out var cell))
             {
                 RestingLiquids?.WakeNeighbors(cell);
-                if (_publicationSet.Add(cell)) _cellPublications.Add(cell);
+                _cellPublications.Add(cell);
             }
-            if (RestingLiquids != null)
+            if (RestingLiquids != null && RestingLiquids.HasUnpublishedReplicationChanges)
+            {
+                // 两个 Store 各自保证通知唯一。同一格在动、静表示之间交接时才需要跨 Store 去重。
+                _publicationSet.Clear();
+                _publicationSet.UnionWith(_cellPublications);
                 while (RestingLiquids.TryDequeueChanged(out var restingCell))
                 {
                     CellularSimulation.WakeNeighbors(restingCell);
                     if (_publicationSet.Add(restingCell)) _cellPublications.Add(restingCell);
                 }
+            }
             foreach (var changed in _cellPublications)
                 _cellularCollisions.Set(changed, IsCellularBlockingCell(changed));
             _cellularCollisions.Commit();

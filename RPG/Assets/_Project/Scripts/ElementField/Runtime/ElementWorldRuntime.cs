@@ -730,6 +730,8 @@ namespace Game.ElementField
             // 写入、Phase Solver 和反应必须作为同一提交边界：同步事件期间 Source 不得捕获其中一半。
             // finally 只释放执行标志；异常前已经修改的 Cell/数量/Tick 并未回滚，所以 catch 还必须锁存故障。
             _worldStepInProgress = true;
+            var observer = FrameBenchmarkTickCompleted;
+            long start = observer == null ? 0 : System.Diagnostics.Stopwatch.GetTimestamp();
             try { SimulateOneTickCore(); }
             catch
             {
@@ -737,7 +739,14 @@ namespace Game.ElementField
                 throw;
             }
             finally { _worldStepInProgress = false; }
+            observer?.Invoke(this, MeasuredMilliseconds(start));
         }
+
+        // 包含全部材料规则、碰撞提交和同步通知。可见 Native Player 和无渲染 Authority
+        // 使用同一测量边界；正常游玩没有订阅者时不读取高频时钟。
+        public static event Action<ElementWorldRuntime, double> FrameBenchmarkTickCompleted;
+        private static double MeasuredMilliseconds(long start) =>
+            (System.Diagnostics.Stopwatch.GetTimestamp() - start) * (1000.0 / System.Diagnostics.Stopwatch.Frequency);
 
         private void SimulateOneTickCore()
         {
