@@ -1,0 +1,320 @@
+{
+  "Status": "Measured",
+  "Error": "",
+  "StartedUtc": "2026-11-21T12:41:59.0545578Z",
+  "FinishedUtc": "2026-11-21T12:43:07.6403858Z",
+  "Tier": "high",
+  "MapSource": "Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Home.unity",
+  "MapSourceHash": "223ebf110c6143e124581e4c2467abfae3da86ad4aae70a9d0a000be836b387f",
+  "UnityVersion": "6000.3.16f1",
+  "GraphicsAPI": "Direct3D11",
+  "Gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+  "Vendor": "NVIDIA",
+  "Cpu": "AMD Ryzen 9 7940H w/Radeon 780M Graphics",
+  "Screenshot": "native-final-high.png",
+  "Measurement": "Rendered camera end-to-end wall interval, normal Player Update and URP. GPU timings by FrameTimingManager timestamp. Single-player material owner instantiated from the formal Home prefab; no combat actors, network or inventory session.",
+  "Evidence": "Quantities and draws are explicit Water, Sand, Steam. Moving tick requires gains and losses during one real world tick, excluding benchmark deposits. Pixels compare the same frozen camera against hiding exactly one drawn material after timing; RGB threshold = repeat-capture noise + 2.",
+  "RequestedSeconds": 60.0,
+  "WarmupSeconds": 3.0,
+  "ActualSeconds": 60.0060677,
+  "MeanFps": 90.25753907216952,
+  "ObservedTicksPerSecond": 9.998988818925723,
+  "Width": 1920,
+  "Height": 1080,
+  "VSync": 0,
+  "TargetFrameRate": -1,
+  "VendorId": 4318,
+  "RamMiB": 31969,
+  "VramMiB": 7948,
+  "SeedPlannedPerMaterial": 4800,
+  "FeedAttemptsPerMaterialPerTick": 24,
+  "TargetCameraFrames": 5416,
+  "MissedRendererFrames": 0,
+  "LostFocusFrames": 0,
+  "AllThreeDrawFrames": 5416,
+  "SimultaneousMovingTicks": 600,
+  "ConfiguredResidentCellLimit": 131072,
+  "MaxOldestVisibleDirtyFrames": 94,
+  "RequestedWidth": 1920,
+  "RequestedHeight": 1080,
+  "DetailedRejectionObservations": true,
+  "MaxResidentPages": 1449,
+  "MaxVisiblePages": 1449,
+  "MaxVisibleDirtyPages": 1058,
+  "MaxRebuiltPagesPerFrame": 32,
+  "MaxOccupiedCells": 131072,
+  "MaxActiveCells": 131072,
+  "MaxProcessedLastTick": 1024,
+  "FramesOver16_67ms": 524,
+  "FramesOver33_33ms": 5,
+  "FramesOver100ms": 0,
+  "PositiveGpuTimings": 5412,
+  "PositiveSyncIntervalTimings": 5412,
+  "PixelsCompared": 2073600,
+  "RepeatImageChangedPixels": 0,
+  "SeedAccepted": [
+    4800,
+    4800,
+    4800
+  ],
+  "SeedRejected": [
+    0,
+    0,
+    0
+  ],
+  "FeedAccepted": [
+    10259,
+    9641,
+    3896
+  ],
+  "FeedRejected": [
+    4837,
+    5455,
+    11200
+  ],
+  "Materials": [
+    {
+      "Material": "Water",
+      "MovingTicks": 600,
+      "GainCells": 93691,
+      "LossCells": 90322,
+      "DrawFrames": 5416,
+      "MaxDrawsPerFrame": 1113,
+      "MaxVisibleTrianglesOrGasCells": 251446,
+      "MovingTicksInQuarters": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "MovingTicksInQuadrants": [
+        591,
+        590,
+        591,
+        591
+      ],
+      "RejectedAtResidentLimit": 2381,
+      "RejectedBelowResidentLimit": 2456,
+      "RejectedTargetTerrain": 0,
+      "RejectedTargetResting": 0,
+      "RejectedExistingAtLimit": 910,
+      "RejectedExistingBelowLimit": 2456,
+      "RejectedEmptyAtLimit": 1471,
+      "RejectedEmptyBelowLimit": 0,
+      "NearestDrawPageCenterMeters": 45.321075439453125,
+      "FinalExplicitCells": 21793,
+      "ChangedPixelsAboveNoise": 179192,
+      "FinalExplicitQuantity": 2876269
+    },
+    {
+      "Material": "Sand",
+      "MovingTicks": 600,
+      "GainCells": 85077,
+      "LossCells": 85081,
+      "DrawFrames": 5416,
+      "MaxDrawsPerFrame": 1297,
+      "MaxVisibleTrianglesOrGasCells": 152202,
+      "MovingTicksInQuarters": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "MovingTicksInQuadrants": [
+        592,
+        591,
+        591,
+        591
+      ],
+      "RejectedAtResidentLimit": 2935,
+      "RejectedBelowResidentLimit": 2520,
+      "RejectedTargetTerrain": 0,
+      "RejectedTargetResting": 0,
+      "RejectedExistingAtLimit": 537,
+      "RejectedExistingBelowLimit": 2520,
+      "RejectedEmptyAtLimit": 2398,
+      "RejectedEmptyBelowLimit": 0,
+      "NearestDrawPageCenterMeters": 45.232730865478516,
+      "FinalExplicitCells": 14437,
+      "ChangedPixelsAboveNoise": 214283,
+      "FinalExplicitQuantity": 3681435
+    },
+    {
+      "Material": "Steam",
+      "MovingTicks": 600,
+      "GainCells": 375901,
+      "LossCells": 80148,
+      "DrawFrames": 5416,
+      "MaxDrawsPerFrame": 1089,
+      "MaxVisibleTrianglesOrGasCells": 102008,
+      "MovingTicksInQuarters": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "MovingTicksInQuadrants": [
+        570,
+        575,
+        580,
+        579
+      ],
+      "RejectedAtResidentLimit": 2280,
+      "RejectedBelowResidentLimit": 8920,
+      "RejectedTargetTerrain": 0,
+      "RejectedTargetResting": 0,
+      "RejectedExistingAtLimit": 2280,
+      "RejectedExistingBelowLimit": 8920,
+      "RejectedEmptyAtLimit": 0,
+      "RejectedEmptyBelowLimit": 0,
+      "NearestDrawPageCenterMeters": 44.11349105834961,
+      "FinalExplicitCells": 101513,
+      "ChangedPixelsAboveNoise": 427064,
+      "FinalExplicitQuantity": 1104192
+    }
+  ],
+  "Ground": {
+    "SampleCellY": -1,
+    "WidthCells": 160,
+    "DepthCells": 160,
+    "Columns": 25600,
+    "Soil": 25600,
+    "Rock": 0,
+    "Other": 0,
+    "Empty": 0,
+    "ProbeCell": {
+      "x": -80,
+      "y": -1,
+      "z": -80
+    },
+    "Before": "Soil",
+    "AfterRemoval": "Empty",
+    "AfterRestore": "Soil",
+    "FoundUnoccupiedEdge": true,
+    "Removed": true,
+    "Restored": true
+  },
+  "BatchMode": false,
+  "FrameTimingEnabled": true,
+  "HardwareGraphicsDevice": true,
+  "RealCameraRendered": true,
+  "PixelCapture": true,
+  "VerifiedThreeMaterials": true,
+  "CameraPosition": {
+    "x": 0.0,
+    "y": 44.0,
+    "z": -43.0
+  },
+  "CameraForward": {
+    "x": 0.0,
+    "y": -0.6718149185180664,
+    "z": 0.7407190799713135
+  },
+  "GroundMeters": {
+    "x": 40.0,
+    "y": 0.5,
+    "z": 40.0
+  },
+  "FieldOfView": 50.0,
+  "CellSize": 0.25,
+  "RequestedTickSeconds": 0.10000000149011612,
+  "Capacity": 255,
+  "FirstWorldTick": 29,
+  "LastWorldTick": 629,
+  "DroppedDebtFrames": 0,
+  "FrameMs": {
+    "Count": 5416,
+    "Mean": 11.079406887001474,
+    "P50": 10.163399999996159,
+    "P95": 19.611399999988066,
+    "P99": 24.434700000000475,
+    "Maximum": 57.03789999999742
+  },
+  "TickMs": {
+    "Count": 600,
+    "Mean": 11.525045333333345,
+    "P50": 10.7612,
+    "P95": 17.877200000000002,
+    "P99": 23.9325,
+    "Maximum": 27.7371
+  },
+  "GpuFrameMs": {
+    "Count": 5412,
+    "Mean": 6.5980548824833845,
+    "P50": 6.30272,
+    "P95": 9.00096,
+    "P99": 10.010624,
+    "Maximum": 17.917952
+  },
+  "FeedMs": {
+    "Count": 600,
+    "Mean": 0.4323116666666665,
+    "P50": 0.49720000000000003,
+    "P95": 0.7847000000000001,
+    "P99": 0.9444,
+    "Maximum": 3.753
+  },
+  "PresentationMs": {
+    "Count": 5416,
+    "Mean": 5.695156517725248,
+    "P50": 6.0235,
+    "P95": 7.3329,
+    "P99": 8.417200000000001,
+    "Maximum": 23.4307
+  },
+  "RebuildMs": {
+    "Count": 5416,
+    "Mean": 3.5441336041358906,
+    "P50": 4.0595,
+    "P95": 4.537100000000001,
+    "P99": 5.1926000000000005,
+    "Maximum": 8.943200000000001
+  },
+  "OldestVisibleDirtyMs": {
+    "Count": 5416,
+    "Mean": 460.2098344350078,
+    "P50": 424.23339999999143,
+    "P95": 1044.235399999991,
+    "P99": 1158.9163000000012,
+    "Maximum": 1249.1914000000008
+  },
+  "TenSecondWindows": [
+    {
+      "startSecond": 0,
+      "frames": 1130,
+      "frameP95Ms": 16.427900000003604,
+      "oldestVisibleDirtyP95Ms": 154.26929999999572
+    },
+    {
+      "startSecond": 10,
+      "frames": 951,
+      "frameP95Ms": 17.561799999995742,
+      "oldestVisibleDirtyP95Ms": 250.32290000000046
+    },
+    {
+      "startSecond": 20,
+      "frames": 865,
+      "frameP95Ms": 19.46939999999131,
+      "oldestVisibleDirtyP95Ms": 531.8125000000009
+    },
+    {
+      "startSecond": 30,
+      "frames": 841,
+      "frameP95Ms": 21.278500000008194,
+      "oldestVisibleDirtyP95Ms": 669.610299999988
+    },
+    {
+      "startSecond": 40,
+      "frames": 789,
+      "frameP95Ms": 24.186399999990726,
+      "oldestVisibleDirtyP95Ms": 1167.7205000000015
+    },
+    {
+      "startSecond": 50,
+      "frames": 840,
+      "frameP95Ms": 20.12149999998769,
+      "oldestVisibleDirtyP95Ms": 1008.9708000000002
+    }
+  ],
+  "RawReportSHA256": "FAE2EAADA38672D0EEB87FEB147F51790F0BF5B8E805F56B9D98AD99C386377B"
+}

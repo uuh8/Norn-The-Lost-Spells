@@ -1,0 +1,397 @@
+{
+  "unityVersion": "6000.3.16f1",
+  "ranUtc": "2026-11-21T12:27:27Z",
+  "unityPassed": 96,
+  "unityFailed": 0,
+  "unityCases": [
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.CellularCountingOrderMatchesGenericCanonicalWordsAndRejectsDuplicateOrOverflowAtomically",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.CellularSpansRetryTicksAndLocalRetirementRoundTripWithoutChangingRemoteRevision",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.CoalescedAfterImageChecksItsActualDestinationSizeBeforeCopyingAnything",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.CoalescedDeltaKeepsTheKeyCommitStampAfterAnUnrelatedGlobalCommit",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.CoalescedDeltaReplacesAllCellsInsteadOfOnlyTheLastChangedCell",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.CompactCellularWireExpandsExactlyAndKeepsCanonicalVersionOnBadOrOversizedPage",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.ContiguousDeltaCanCloseDirectlyAtTheActualTerminalTombstone",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.ContiguousSameGenerationDeltaCoalescesToTheLatestCompleteAfterImage",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.DecodeFailureDoesNotChangeDestination",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.EveryDomainIncludingPendingRoundTripsWithoutNarrowingQuantity",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.FailedCaptureNeverRetiresTombstoneAsAnImplicitSideEffect",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.FrozenCopySurvivesLiveMutationAndRemovalCreatesTombstone",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.GeometryAndPendingChangesAreRealCommits",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.IdenticalCaptureDoesNotCommitAndCrossOwnerSumIsCanonical",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.InvalidCaptureIsAtomicAndHistoryGapRequiresBaseline",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.PayloadCapacityFailurePreservesSequenceAndPublishedWords",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.ResidentAndInvalidRetirementRejectWithoutChangingPublishedState",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.RetiredTraversalReusesBoundedSlotsAndPreservesLiquidQuantity",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.RetiringInactiveChunkCompactsLastPayloadWithoutChangingCommittedFacts",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.SparseCellularDirectoryKeeps4096BaselinesAndAllocatesOnlyActualPayloads",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.StorageTransferDoesNotAdvanceRevisionButQuantityDoes",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationCommitOwnerTests.WarmCommitFreezeAndAssemblyHaveZeroPositivelyCalibratedAllocationEvents",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationContractsTests.FixedBuffersAllocateOnlyAtConstructionAndDoNotAdvertiseAuthorityRestore",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationTimingTraceTests.AttachmentRejectsAnotherOwnerAndOldOwnerCannotDetachTheNewTrace",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationTimingTraceTests.BoundEpochFilterDoesNotConsumeCapacityOrCountFilteredEventsAsDrops",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationTimingTraceTests.ConstructorLeavesDiagnosticsInactiveAndBufferEmpty",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationTimingTraceTests.FullBufferRejectsFurtherEventsWithoutOverwritingAcceptedPrefix",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationTimingTraceTests.HeaderAndObservationFieldsAreCapturedByValueWithoutVersionTruncation",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationTimingTraceTests.InvalidReadReturnsFalseAndClearsTheOutValue(-1)",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationTimingTraceTests.InvalidReadReturnsFalseAndClearsTheOutValue(1)",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationTimingTraceTests.KeyFilterIncludesDomainAndEverySignedCoordinate",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationTimingTraceTests.RecordUsesItsOwnRealStopwatchTimestampAndAcceptedEventSequence",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationTimingTraceTests.WarmEnabledRecordHasZeroPositivelyCalibratedAllocationEvents",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationTimingTraceTests.WindowsCalibrationMapsARealRecordedStopwatchValueIntoAnIndependentQpcInterval",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Core.Tests.WorldReplicationTimingTraceTests.ZeroEpochFilterAllowsTheTargetKeyInDifferentWorlds",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.CellularAuthorityScaleTests.SameMovingFrontInTwoWorldSizesAndAtHigherLoad",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.CellularMapTerrainProjectionTests.DiggingDistantRockTileKeepsFirstColliderAndRestoringLastHoleRestoresAuthoredMesh",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.CellularMapTerrainProjectionTests.FlatGroundSplitsOnlyTheHitBranchAndMergesItWhenRestored",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.CellularMaterialRulesTests.AbsorptionQueueRetainsColdContactsBeyondOneTickAndDeduplicatesAcrossNegativePages",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.CellularMaterialRulesTests.DirectedPourMovesOnlyItsOwnQuantityBeforeGravity",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.CellularMaterialRulesTests.ExcavatingSupportWakesArchivedSandWithoutChangingItsQuantity",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.CellularMaterialRulesTests.NewlyFixedIceArchivesWithoutAnActiveTickAndStillCondensesAdjacentSteam",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.CellularMaterialRulesTests.OverflowedColdGrainWakeProgressesBeforeUnrelatedMillionCellLakeBorderCompletes",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.CellularMaterialRulesTests.PartialColdWaterReleasesItsGasSpaceOnMaterialization",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.CellularMaterialRulesTests.RecipeCannotConsumeWhatItCannotPlace",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.CellularMaterialRulesTests.RestingHandoffLeavesAnUpwardPourWithItsTransportOwner",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.CellularSolverScaleTests.MeasureMotionBacklogAndResidentPressure",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.CellularWorldReplicationTests.CompleteReplacementRestoresTerrainAndAllowsGasAbovePartialRestingQuantity",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.CellularWorldReplicationTests.EmptyAnchorAuthenticatesBaseBeforeExposingLakeAndRock",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.CellularWorldReplicationTests.EvictionRestoresBaseAndSameRevisionReentryInstallsTheHolesAgain",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.CellularWorldReplicationTests.IncrementalCaptureNamesAnEmptiedNegativeChunkAndKeepsUnrelatedHistory",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.CellularWorldReplicationTests.ValidWireClaimAboutTheWrongAuthoredLakeLeavesOldChunkAndVersionUntouched",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.CellularWorldReplicationTests.WrongBaseFingerprintCannotPublishOrExposeAuthoredQuantities",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.WorldReplicationSourceTests.AnyGpuMaterialRouteRejectsEvenWhenWaterUsesCpuGrid(Poison)",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.WorldReplicationSourceTests.AnyGpuMaterialRouteRejectsEvenWhenWaterUsesCpuGrid(Sticky)",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.WorldReplicationSourceTests.CallerBufferIsIndependentOfLaterLiveChanges",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.WorldReplicationSourceTests.CapturesFourCpuDomainsAtNativeResolutionIncludingWholeStableDepth",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.WorldReplicationSourceTests.FailurePreservesEveryCallerArrayAndOldHeader(1,16,100000,\"CellCapacity\")",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.WorldReplicationSourceTests.FailurePreservesEveryCallerArrayAndOldHeader(64,1,100000,\"PendingCapacity\")",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.WorldReplicationSourceTests.FailurePreservesEveryCallerArrayAndOldHeader(64,16,1,\"InspectionBudget\")",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.WorldReplicationSourceTests.FourDomainFixtureOwnsCompleteResidentAndPendingQuantitiesBeforeCapture",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.WorldReplicationSourceTests.GpuParticleBackendExplicitlyRejectsIncompleteCpuCapture",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.WorldReplicationSourceTests.PendingPartialProgressAndFifoRemainValueCopies(\"Solid\")",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.WorldReplicationSourceTests.PendingPartialProgressAndFifoRemainValueCopies(\"Gas\")",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.WorldReplicationSourceTests.PreservesCompletePendingRequestsAndDoesNotConsumeQueues",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.WorldReplicationSourceTests.StableExpansionExportsNewOwnerWithoutCountingRetiredRegionAgain",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.WorldReplicationSourceTests.UncommittedWorldCannotChangePreviouslyCapturedCallerData(\"_worldStepInProgress\",\"SimulationInProgress\")",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.ElementField.Tests.WorldReplicationSourceTests.UncommittedWorldCannotChangePreviouslyCapturedCallerData(\"_simulationFaulted\",\"SimulationFaulted\")",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.CellularReplicationScaleDiagnostics.MovingWaterSandAndGasRecordAuthorityToReplicaPressure",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.CellularReplicationScaleDiagnostics.PagedColdCaptureKeepsMoreThan65536DistinctCellsAcrossCheckpointAndReconnect",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationChannelTests.AckBeforeCompleteAndUnrelatedHighIdCannotClearFrozenPayload",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationChannelTests.BaselineLongerThanFourPagesContinuesBeforeInstallAck",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationChannelTests.BurstAndTwoPageRoundLimitNeverAdvanceUnsentPage",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationChannelTests.ReconnectionRejectsOldAckAndRequiresNewBaseline",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationChannelTests.RetransmitUsesSameFrozenWordsAndSnapshot",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationChannelTests.WorldHandshakeRequiresCurrentAuthenticatedIdentityAndCannotReplaceInstalledEpoch",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationMultiFlightTests.AKeyCannotBeAckedBeforeItsOwnPagesFinishAndBaselineRecoveryIsKeyScoped",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationMultiFlightTests.DefaultConstructorRetainsTheOriginalSingleFlightContract",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationMultiFlightTests.FlightsShareTheSameTwoPageRoundLimitAndSingleTokenBucket",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationMultiFlightTests.FourDifferentKeysCanFinishSendingBeforeAnyInstallAckAndFifthKeyIsBounded",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationMultiFlightTests.OutOfOrderAckReleasesOnlyItsOwnFrozenKeyAndRejectsForgedOrDuplicateAck",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationMultiFlightTests.TimeoutRestartsOnlyTheExpiredKeyWithItsOriginalSnapshotAndWords",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationRetirementTests.AClientCanLeaveAndVisitMoreThanItsFixedMetadataCapacity",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationRetirementTests.ADelayedEnterCannotReopenAnAlreadyLeftAddress",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationRetirementTests.ADisconnectedPeerCannotLeaveAnUnsentBorrowBlockingAllRetirement",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationRetirementTests.ANewConnectionEpochClosesOldReplicaQuantitiesUntilCurrentBaseline",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationRetirementTests.AnExternalRetirementExceptionLatchesReplicaFault(False)",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationRetirementTests.AnExternalRetirementExceptionLatchesReplicaFault(True)",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationRetirementTests.AnUnseenLeaveCannotConsumeTheNextRealEnterWatermark",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationRetirementTests.AReliableSendFailureStopsCaptureBeforeReadingAnotherSourceAndKeepsThePrimaryError",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationRetirementTests.AReplicaFaultCannotBeBypassedByRaisingConnectionEpoch",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationRetirementTests.FarEditsIdleTicksAndOnePendingTombstoneOnlyVisitLocalWork",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationRetirementTests.FourPeersRetire240AddressesRejectOldPacketsAndRejoinWithoutDuplicatingQuantity",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationRetirementTests.OneConservedLiquidSampleCanVisitMoreThan128AddressesWithoutFreezing",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationRetirementTests.RealInstalledQuantitySurvives300AddressTransfersAndReturnToTheFirstKey",
+      "result": "Passed"
+    },
+    {
+      "test": "Game.Multiplayer.Tests.WorldReplicationRetirementTests.StartingANewSendRoundCancelsAnUnsentOldBorrow",
+      "result": "Passed"
+    }
+  ],
+  "businessTests": {
+    "area": "Protocol version and content manifest HTTP contracts",
+    "passed": 19,
+    "failed": 0
+  }
+}

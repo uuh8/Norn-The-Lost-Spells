@@ -1,0 +1,259 @@
+{
+  "Status": "Measured",
+  "Error": "",
+  "StartedUtc": "2026-11-21T12:13:10.6448123Z",
+  "FinishedUtc": "2026-11-21T12:13:30.527181Z",
+  "Tier": "high",
+  "MapSource": "Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Home.unity",
+  "MapSourceHash": "223ebf110c6143e124581e4c2467abfae3da86ad4aae70a9d0a000be836b387f",
+  "UnityVersion": "6000.3.16f1",
+  "GraphicsAPI": "Direct3D11",
+  "Gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+  "Vendor": "NVIDIA",
+  "Cpu": "AMD Ryzen 9 7940H w/Radeon 780M Graphics",
+  "Measurement": "Rendered camera end-to-end wall interval, normal Player Update and URP. GPU timings by FrameTimingManager timestamp. Single-player material owner instantiated from the formal Home prefab; no combat actors, network or inventory session.",
+  "Evidence": "Quantities and draws are explicit Water, Sand, Steam. Moving tick requires gains and losses during one real world tick, excluding benchmark deposits. Pixels compare the same frozen camera against hiding exactly one drawn material after timing; RGB threshold = repeat-capture noise + 2.",
+  "RequestedSeconds": 12.0,
+  "WarmupSeconds": 3.0,
+  "ActualSeconds": 12.0032504,
+  "MeanFps": 111.38649577784363,
+  "ObservedTicksPerSecond": 9.997292066822165,
+  "Width": 1920,
+  "Height": 1080,
+  "VSync": 0,
+  "TargetFrameRate": -1,
+  "VendorId": 4318,
+  "RamMiB": 31969,
+  "VramMiB": 7948,
+  "SeedPlannedPerMaterial": 4800,
+  "FeedAttemptsPerMaterialPerTick": 24,
+  "TargetCameraFrames": 1337,
+  "MissedRendererFrames": 0,
+  "LostFocusFrames": 0,
+  "AllThreeDrawFrames": 1337,
+  "SimultaneousMovingTicks": 120,
+  "ConfiguredResidentCellLimit": 32768,
+  "MaxOldestVisibleDirtyFrames": 15,
+  "MaxResidentPages": 1314,
+  "MaxVisiblePages": 1314,
+  "MaxVisibleDirtyPages": 280,
+  "MaxRebuiltPagesPerFrame": 32,
+  "MaxOccupiedCells": 32768,
+  "MaxActiveCells": 32768,
+  "MaxProcessedLastTick": 1024,
+  "FramesOver16_67ms": 115,
+  "FramesOver33_33ms": 0,
+  "FramesOver100ms": 0,
+  "PositiveGpuTimings": 1333,
+  "PositiveSyncIntervalTimings": 1333,
+  "PixelsCompared": 2073600,
+  "RepeatImageChangedPixels": 0,
+  "SeedAccepted": [
+    4800,
+    4800,
+    4800
+  ],
+  "SeedRejected": [
+    0,
+    0,
+    0
+  ],
+  "FeedAccepted": [
+    283,
+    275,
+    542
+  ],
+  "FeedRejected": [
+    3293,
+    3301,
+    3034
+  ],
+  "Materials": [
+    {
+      "Material": "Water",
+      "MovingTicks": 120,
+      "GainCells": 20231,
+      "LossCells": 21564,
+      "DrawFrames": 1337,
+      "MaxDrawsPerFrame": 987,
+      "MaxVisibleTrianglesOrGasCells": 148096,
+      "MovingTicksInQuarters": [
+        30,
+        30,
+        30,
+        30
+      ],
+      "MovingTicksInQuadrants": [
+        90,
+        92,
+        93,
+        96
+      ],
+      "RejectedAtResidentLimit": 3293,
+      "RejectedBelowResidentLimit": 0,
+      "NearestDrawPageCenterMeters": 45.321075439453125,
+      "FinalExplicitCells": 6630,
+      "ChangedPixelsAboveNoise": 114191,
+      "FinalExplicitQuantity": 970853
+    },
+    {
+      "Material": "Sand",
+      "MovingTicks": 120,
+      "GainCells": 19259,
+      "LossCells": 19259,
+      "DrawFrames": 1337,
+      "MaxDrawsPerFrame": 1013,
+      "MaxVisibleTrianglesOrGasCells": 60936,
+      "MovingTicksInQuarters": [
+        30,
+        30,
+        30,
+        30
+      ],
+      "MovingTicksInQuadrants": [
+        90,
+        93,
+        93,
+        96
+      ],
+      "RejectedAtResidentLimit": 3301,
+      "RejectedBelowResidentLimit": 0,
+      "NearestDrawPageCenterMeters": 45.232730865478516,
+      "FinalExplicitCells": 5075,
+      "ChangedPixelsAboveNoise": 142517,
+      "FinalExplicitQuantity": 1294125
+    },
+    {
+      "Material": "Steam",
+      "MovingTicks": 120,
+      "GainCells": 68243,
+      "LossCells": 12685,
+      "DrawFrames": 1337,
+      "MaxDrawsPerFrame": 990,
+      "MaxVisibleTrianglesOrGasCells": 23552,
+      "MovingTicksInQuarters": [
+        30,
+        30,
+        30,
+        30
+      ],
+      "MovingTicksInQuadrants": [
+        76,
+        84,
+        73,
+        73
+      ],
+      "RejectedAtResidentLimit": 3034,
+      "RejectedBelowResidentLimit": 0,
+      "NearestDrawPageCenterMeters": 45.232730865478516,
+      "FinalExplicitCells": 23546,
+      "ChangedPixelsAboveNoise": 345711,
+      "FinalExplicitQuantity": 678434
+    }
+  ],
+  "Ground": {
+    "SampleCellY": -1,
+    "WidthCells": 160,
+    "DepthCells": 160,
+    "Columns": 25600,
+    "Soil": 25600,
+    "Rock": 0,
+    "Other": 0,
+    "Empty": 0,
+    "ProbeCell": {
+      "x": -80,
+      "y": -1,
+      "z": -80
+    },
+    "Before": "Soil",
+    "AfterRemoval": "Empty",
+    "AfterRestore": "Soil",
+    "FoundUnoccupiedEdge": true,
+    "Removed": true,
+    "Restored": true
+  },
+  "BatchMode": false,
+  "FrameTimingEnabled": true,
+  "HardwareGraphicsDevice": true,
+  "RealCameraRendered": true,
+  "PixelCapture": true,
+  "VerifiedThreeMaterials": true,
+  "CameraPosition": {
+    "x": 0.0,
+    "y": 44.0,
+    "z": -43.0
+  },
+  "CameraForward": {
+    "x": 0.0,
+    "y": -0.6718149185180664,
+    "z": 0.7407190799713135
+  },
+  "GroundMeters": {
+    "x": 40.0,
+    "y": 0.5,
+    "z": 40.0
+  },
+  "FieldOfView": 50.0,
+  "CellSize": 0.25,
+  "RequestedTickSeconds": 0.10000000149011612,
+  "Capacity": 255,
+  "FirstWorldTick": 29,
+  "LastWorldTick": 149,
+  "DroppedDebtFrames": 0,
+  "FrameMs": {
+    "Count": 1337,
+    "Mean": 8.977748990276726,
+    "P50": 7.747499999997132,
+    "P95": 19.465900000000147,
+    "P99": 22.45779999999975,
+    "Maximum": 28.73080000000172
+  },
+  "TickMs": {
+    "Count": 120,
+    "Mean": 13.51038,
+    "P50": 13.4336,
+    "P95": 15.739,
+    "P99": 17.4143,
+    "Maximum": 21.1564
+  },
+  "GpuFrameMs": {
+    "Count": 1333,
+    "Mean": 5.86566251162791,
+    "P50": 5.584896,
+    "P95": 8.031232,
+    "P99": 9.156608,
+    "Maximum": 11.254784
+  },
+  "FeedMs": {
+    "Count": 120,
+    "Mean": 0.13917916666666666,
+    "P50": 0.0751,
+    "P95": 0.3612,
+    "P99": 0.5171,
+    "Maximum": 3.483
+  },
+  "PresentationMs": {
+    "Count": 1337,
+    "Mean": 3.633983620044875,
+    "P50": 3.7304000000000004,
+    "P95": 5.2033000000000005,
+    "P99": 6.376600000000001,
+    "Maximum": 7.7007
+  },
+  "RebuildMs": {
+    "Count": 1337,
+    "Mean": 1.6759088257292445,
+    "P50": 2.0369,
+    "P95": 2.1687000000000003,
+    "P99": 2.2772,
+    "Maximum": 4.831300000000001
+  },
+  "OldestVisibleDirtyMs": {
+    "Count": 1337,
+    "Mean": 31.883895362752394,
+    "P50": 27.735800000002087,
+    "P95": 92.41520000000136,
+    "P99": 117.70860000000027,
+    "Maximum": 166.29379999999827
+  }
+}
