@@ -1,0 +1,379 @@
+{
+  "Platform": "Windows local, Unity 6000.3.16f1",
+  "RecordedOn": "2026-11-21",
+  "EditMode": {
+    "Fixtures": [
+      {
+        "Name": "Game.Character.Tests.OnlineCastDriverTests",
+        "Cases": 9
+      },
+      {
+        "Name": "Game.ElementField.Tests.CellularWorldReplicationTests",
+        "Cases": 6
+      },
+      {
+        "Name": "Game.ElementField.Tests.ElementWorldExposureSystemTests",
+        "Cases": 20
+      },
+      {
+        "Name": "Game.ElementField.Tests.MaterialInventoryDepositTests",
+        "Cases": 12
+      },
+      {
+        "Name": "Game.ElementField.Tests.MaterialPhaseIntegrationTests",
+        "Cases": 8
+      },
+      {
+        "Name": "Game.ElementField.Tests.MaterialVolumeAimTests",
+        "Cases": 6
+      },
+      {
+        "Name": "Game.Rendering.Tests.P8ElementWorldSceneContractTests",
+        "Cases": 12
+      },
+      {
+        "Name": "Game.Run.Tests.SinglePlayerProfileSaveTests",
+        "Cases": 19
+      },
+      {
+        "Name": "Game.Run.Tests.StartingInventoryCurrencyTests",
+        "Cases": 9
+      }
+    ],
+    "Passed": 101,
+    "Failed": 0
+  },
+  "PlayMode": {
+    "Passed": 8,
+    "Failed": 0,
+    "Cases": [
+      {
+        "Result": "Passed",
+        "Name": "AllElementOffersAndIceSpellResolveRealImportedSprite"
+      },
+      {
+        "Result": "Passed",
+        "Name": "P7OriginalEntryActivatesOnlyTheFirstTwoOfTwelveAuthoredEnemies"
+      },
+      {
+        "Result": "Passed",
+        "Name": "P8VisibleBossStartsOnlyAfterRealSafetyVolumeExit"
+      },
+      {
+        "Result": "Passed",
+        "Name": "ReplicaPresentationInterestFollowsSceneLocalActorAndRejectsOldSceneAfterReplacement"
+      },
+      {
+        "Result": "Passed",
+        "Name": "PourAndRecollectSandThroughThePlayerConservesGmu"
+      },
+      {
+        "Result": "Passed",
+        "Name": "HomeWaterProjectileReachesTheWorld"
+      },
+      {
+        "Result": "Passed",
+        "Name": "P7WaterProjectileReachesTheWorld"
+      },
+      {
+        "Result": "Passed",
+        "Name": "P8WaterProjectileReachesTheWorld"
+      }
+    ]
+  },
+  "BusinessHttpMySql": {
+    "Schema": "norn_online_test",
+    "Passed": 2,
+    "Migration": "017_cellular_inventory_material_keys.sql",
+    "Failed": 0,
+    "Cases": [
+      "Norn.Business.Tests.AccountShopTests.MixedMaterialBuyAndSalePreserveOriginalLargestRemainderCompositionAndContainerIdentity(first: 11, second: 12)",
+      "Norn.Business.Tests.AccountShopTests.MixedMaterialBuyAndSalePreserveOriginalLargestRemainderCompositionAndContainerIdentity(first: 1, second: 3)"
+    ]
+  },
+  "Shop": {
+    "InitialStockPerMaterial": 60000,
+    "PriceBuy": 4,
+    "PriceSell": 2,
+    "MaterialKeys": [
+      11,
+      12
+    ]
+  },
+  "Projectile": {
+    "PhysicsContact": true,
+    "Scenes": [
+      "home",
+      "p7",
+      "p8"
+    ],
+    "VerifiedKeyboardCast": false,
+    "RealPrefab": "PF_ElementWaterProjectile",
+    "WaterImpactGmuPerMap": 1600
+  },
+  "HomeContainer": {
+    "UsesPlayerControllers": true,
+    "PouredAndRecollectedGmu": 32,
+    "VerifiedKeyboardInput": false,
+    "InitialSandGmu": 64,
+    "ThrownAfterRecollectionGmu": 64
+  },
+  "Scope": {
+    "HubWorldExperiments": false,
+    "DestructibleTerrain": [
+      "Home ground",
+      "P7 four tagged rock bodies",
+      "P8 TerrainData"
+    ],
+    "FourNativeClientsTestedThisRun": false,
+    "OilCombustionRecipe": false,
+    "PriorScaleReport": "native-final-high.json"
+  },
+  "DefectsFoundDuringIntegration": [
+    "P7 fire support sampled obsolete liquid grid",
+    "P8 heightfield impact deposited zero of 1600 GMU",
+    "Dedicated P7 instance resolved authored rock paths from outer bootstrap"
+  ],
+  "NativeLoopback": [
+    {
+      "Protocol": 20,
+      "GameplayHash": "f1420478d19b68f257cdcbfb6f0d2e735cdf53cfbf49e6fee5c830a533c0d9c4",
+      "Passed": true,
+      "Room": "p7",
+      "SandPurchased": 15,
+      "OilPurchased": 9,
+      "ClientResults": [
+        {
+          "Client": "a",
+          "Authenticated": true,
+          "Actor": 1,
+          "WorldEpoch": 16158289964339490280,
+          "WorldTick": 218,
+          "Sand": 15,
+          "Oil": 9,
+          "ChunksInstalled": 13,
+          "Faulted": false
+        },
+        {
+          "Client": "b",
+          "Authenticated": true,
+          "Actor": 2,
+          "WorldEpoch": 16158289964339490280,
+          "WorldTick": 219,
+          "Sand": 15,
+          "Oil": 9,
+          "ChunksInstalled": 21,
+          "Faulted": false
+        }
+      ],
+      "OtherMaps": [
+        {
+          "Map": "home",
+          "ServerReady": true,
+          "ClientAuthenticated": true,
+          "ReplicaWorldReady": true,
+          "WorldEpoch": 2997199824887535008
+        },
+        {
+          "Map": "p8",
+          "ServerReady": true,
+          "ClientAuthenticated": true,
+          "ReplicaWorldReady": true,
+          "WorldEpoch": 9694684440657841558
+        }
+      ],
+      "ThrowReceiptVersion": 7,
+      "LandingChunks": [
+        {
+          "X": -3,
+          "Y": 1,
+          "Z": 2,
+          "Words": 22
+        },
+        {
+          "X": -3,
+          "Y": 0,
+          "Z": 1,
+          "Words": 22
+        }
+      ],
+      "ActorsBeforeApproach": [
+        {
+          "x": -4.949999809265137,
+          "y": 0.0,
+          "z": -8.020000457763672
+        },
+        {
+          "x": -3.749999761581421,
+          "y": 0.0,
+          "z": -8.020000457763672
+        }
+      ],
+      "WalkPulses": {
+        "a": 0,
+        "b": 0
+      },
+      "BottleConsumed": true,
+      "DsMaterialAcks": 16,
+      "DsAcksPerClient": [
+        8,
+        8
+      ],
+      "ActorsAfterApproach": [
+        {
+          "x": -4.949999809265137,
+          "y": 0.0,
+          "z": -8.020000457763672
+        },
+        {
+          "x": -3.749999761581421,
+          "y": 0.0,
+          "z": -8.020000457763672
+        }
+      ],
+      "RecordedUtc": "2026-11-21T13:55:59.1184124Z"
+    },
+    {
+      "Protocol": 20,
+      "GameplayHash": "f1420478d19b68f257cdcbfb6f0d2e735cdf53cfbf49e6fee5c830a533c0d9c4",
+      "Passed": true,
+      "Room": "p8",
+      "SandPurchased": 15,
+      "OilPurchased": 9,
+      "ClientResults": [
+        {
+          "Client": "a",
+          "Authenticated": true,
+          "Actor": 1,
+          "WorldEpoch": 7305511744663432692,
+          "WorldTick": 288,
+          "Sand": 15,
+          "Oil": 9,
+          "ChunksInstalled": 143,
+          "Faulted": false
+        },
+        {
+          "Client": "b",
+          "Authenticated": true,
+          "Actor": 2,
+          "WorldEpoch": 7305511744663432692,
+          "WorldTick": 289,
+          "Sand": 15,
+          "Oil": 9,
+          "ChunksInstalled": 153,
+          "Faulted": false
+        }
+      ],
+      "OtherMaps": [],
+      "ThrowReceiptVersion": 7,
+      "LandingChunks": [
+        {
+          "X": -26,
+          "Y": -1,
+          "Z": 41,
+          "Words": 25
+        },
+        {
+          "X": -26,
+          "Y": -1,
+          "Z": 42,
+          "Words": 95
+        }
+      ],
+      "ActorsBeforeApproach": [
+        {
+          "x": -50.997501373291016,
+          "y": 0.27264320850372314,
+          "z": 52.26874923706055
+        },
+        {
+          "x": -49.79999923706055,
+          "y": 0.1509549915790558,
+          "z": 52.27000045776367
+        }
+      ],
+      "WalkPulses": {
+        "b": 2,
+        "a": 2
+      },
+      "BottleConsumed": true,
+      "DsMaterialAcks": 266,
+      "DsAcksPerClient": [
+        133,
+        133
+      ],
+      "ActorsAfterApproach": [
+        {
+          "x": -50.997501373291016,
+          "y": 0.5491299629211426,
+          "z": 66.93541717529297
+        },
+        {
+          "x": -49.79999923706055,
+          "y": 0.5400271415710449,
+          "z": 68.53666687011719
+        }
+      ],
+      "RecordedUtc": "2026-11-21T13:56:43.4233478Z"
+    }
+  ],
+  "NativeScope": "Fresh local accounts and dedicated MySQL 8.4.13 test databases. Normal HTTP shop, JoinTicket, KCP/UDP, authority inventory and real Rigidbody bottle. Native clients use the production OnlineRoom hierarchy with diagnostic admission. Selection and throw through player driver, movement through Input System. No keyboard cast or rendering performance measurement in these runs.",
+  "WindowsBuilds": [
+    {
+      "Result": "Succeeded",
+      "UnityVersion": "6000.3.16f1",
+      "Output": "Builds/OnlineValidation/RoomServer/20261121T134523Z/NornRoomServer.exe",
+      "RecordedAtUtc": "2026-11-21T13:49:45.7341855Z",
+      "DedicatedServer": true,
+      "RenderingInputsIsolated": false,
+      "ClientResourcesExcluded": false,
+      "Errors": 0
+    },
+    {
+      "Result": "Succeeded",
+      "UnityVersion": "6000.3.16f1",
+      "Output": "Builds/OnlineValidation/InventoryClient/20261121T134948Z/NornInventoryClient.exe",
+      "RecordedAtUtc": "2026-11-21T13:54:29.5527606Z",
+      "DedicatedServer": false,
+      "RenderingInputsIsolated": false,
+      "ClientResourcesExcluded": false,
+      "Errors": 0
+    },
+    {
+      "Result": "Succeeded",
+      "UnityVersion": "6000.3.16f1",
+      "Output": "Builds/OnlineValidation/MenuClient/20261121T135429960Z/NornMenuClient.exe",
+      "RecordedAtUtc": "2026-11-21T13:58:33.6148306Z",
+      "DedicatedServer": false,
+      "RenderingInputsIsolated": false,
+      "ClientResourcesExcluded": false,
+      "Errors": 0
+    }
+  ],
+  "BusinessDllSHA256": "0669A26A1898104C1A48F59E82C541621D17075271DE8CA727AFFB9636841D0F",
+  "InitialNativeFailures": [
+    "Shared test-schema room recovery consumed launch capacity before the test room started; final runs used empty dedicated loopback test database instances.",
+    "P7 Dedicated Server refused the nested P7World before Ready; fixed by scoping rock lookup and author migration to its own inactive map.",
+    "P8 observers outside production Interest received no sand or oil at spawn. After two authenticated clients approached through real movement input, both installed the landing chunks and acknowledged the materials."
+  ],
+  "DefaultLocalPackages": [
+    {
+      "Source": "RPG\\Builds\\OnlineValidation\\RoomServer\\20261121T134523Z",
+      "Target": "RPG\\Builds\\OnlineRooms\\Server",
+      "Backup": "RPG\\Builds\\OnlineRooms\\Server-before-cellular-20261121T135836Z",
+      "FilesHashVerified": 361
+    },
+    {
+      "Source": "RPG\\Builds\\OnlineValidation\\MenuClient\\20261121T135429960Z",
+      "Target": "RPG\\Builds\\OnlineAccounts\\Menu",
+      "Backup": "RPG\\Builds\\OnlineAccounts\\Menu-before-cellular-20261121T135836Z",
+      "FilesHashVerified": 381
+    },
+    {
+      "Source": "Server\\.artifacts\\publish\\cellular-integration-20261121T132635Z",
+      "Target": "Server\\.artifacts\\publish\\online",
+      "Backup": "Server\\.artifacts\\publish\\online-before-cellular-20261121T135836Z",
+      "FilesHashVerified": 13
+    }
+  ]
+}

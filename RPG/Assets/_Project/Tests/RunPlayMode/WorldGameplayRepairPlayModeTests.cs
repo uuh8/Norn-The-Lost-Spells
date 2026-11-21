@@ -402,6 +402,109 @@ namespace Game.Run.Tests
         }
     }
 
+    /// <summary>使用正式单机场景的出生位置、场景碰撞、投射物 Prefab 和自动世界 Tick。
+    /// Editor 直接进入这些场景使用原有 ScenePreview；不加载账号或替换材料配置。</summary>
+    public sealed class FormalMaterialImpactPlayModeTests
+    {
+        private Scene _loaded;
+        private float _initialScale;
+
+        [UnityTest] public IEnumerator HomeWaterProjectileReachesTheWorld() =>
+            Impact("Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Home.unity", "home");
+        [UnityTest] public IEnumerator P7WaterProjectileReachesTheWorld() =>
+            Impact("Assets/_Project/Scenes/P7_DemoRun.unity", "p7");
+        [UnityTest] public IEnumerator P8WaterProjectileReachesTheWorld() =>
+            Impact("Assets/_Project/Scenes/P8_BossField.unity", "p8");
+
+        private IEnumerator Impact(string path, string mapId)
+        {
+            _initialScale = Time.timeScale;
+            _loaded = UnityEditor.SceneManagement.EditorSceneManager.LoadSceneInPlayMode(path, new LoadSceneParameters(LoadSceneMode.Additive));
+            yield return null;
+            yield return null;
+            var world = InMap<ElementWorldRuntime>();
+            Assert.That(world, Is.Not.Null);
+            Assert.That(world.UsesCellularWorld && world.CellularMapContentId == mapId, Is.True, path);
+            Assert.That(ElementRuntimeRegistry.ActiveSink, Is.SameAs(world));
+            var player = InMap<WizardController>();
+            Assert.That(player, Is.Not.Null);
+            InMap<GameplayGuideController>()?.Close();
+            Time.timeScale = 1;
+            Physics.SyncTransforms();
+            Vector3 start = player.transform.position + player.transform.forward * 2.5f + Vector3.up * 2f;
+            Assert.That(_loaded.GetPhysicsScene().Raycast(start, Vector3.down, out var ground, 20f,
+                Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore), Is.True, "出生点前应有可命中的地面。");
+
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Art/Elemental/Prefabs/PF_ElementWaterProjectile.prefab");
+            var shot = Object.Instantiate(prefab, ground.point + Vector3.up * 1.5f, Quaternion.identity);
+            SceneManager.MoveGameObjectToScene(shot, _loaded);
+            var projectile = shot.GetComponent<ProjectileBase>();
+            Assert.That(shot.GetComponent<ElementDepositOnImpact>().TryBuildRequest(ground.point, out var expected), Is.True);
+            ulong initial = world.ConversionLedger.ExternallyInjected(MaterialId.Water);
+            ulong writes = world.ProcessedWriteCount;
+            ProjectileImpactContext? hit = null;
+            projectile.SurfaceImpacted += contact => hit = contact;
+            var owner = player.GetComponent<HealthComponent>();
+            projectile.Init(owner.TeamId, owner.Id, 0f, DamageType.Magical, Vector3.down * 8f, player.CharacterController, false);
+            float until = Time.realtimeSinceStartup + 10f;
+            while (Time.realtimeSinceStartup < until)
+            {
+                if (hit.HasValue && world.ProcessedWriteCount > writes && HasWaterNearImpact(world, hit.Value.Point)) break;
+                yield return null;
+            }
+            Assert.That(hit.HasValue, Is.True, "必须发生真实 Physics 命中。");
+            ulong injected = world.ConversionLedger.ExternallyInjected(MaterialId.Water) - initial;
+            if (injected != expected.TotalAmount)
+                Assert.Fail($"期望 {expected.TotalAmount} GMU，实际入账 {injected}。地面 {ground.collider.name}，" +
+                    $"碰撞 {hit.Value.Point:F3}，法线 {hit.Value.SurfaceNormal:F3}，方向 {hit.Value.IncomingDirection:F3}，" +
+                    $"原点 {world.Origin:F3}，格距 {world.CellSize}，Tick {world.WorldTick}，队列 {world.PendingWriteCount}，" +
+                    $"活跃写入端 {ReferenceEquals(ElementRuntimeRegistry.ActiveSink, world)}，故障 {world.IsSimulationFaulted}。" +
+                    DescribeSurface(world, hit.Value));
+            Assert.That(HasWaterNearImpact(world, hit.Value.Point), Is.True, "角色及采集瞄准使用的只读接口须读到命中处的真实水量。");
+        }
+
+        private static string DescribeSurface(ElementWorldRuntime world, ProjectileImpactContext hit)
+        {
+            var facts = new System.Text.StringBuilder();
+            foreach (float distance in new[] { -.51f, 0f, .51f, 1.51f, 2.51f })
+            {
+                var cell = Vector3Int.FloorToInt((hit.Point + hit.SurfaceNormal * (distance * world.CellSize) - world.Origin) / world.CellSize);
+                var center = world.Origin + ((Vector3)cell + Vector3.one * .5f) * world.CellSize;
+                var overlaps = Physics.OverlapBox(center, Vector3.one * (.49f * world.CellSize), Quaternion.identity, ~0, QueryTriggerInteraction.Ignore);
+                facts.Append($"\n{distance} 格 {cell}，地图 {world.GetTerrainMaterial(cell)}，阻挡 {world.IsMaterialCellBlocked(cell)}，碰撞体 ");
+                foreach (var collider in overlaps) facts.Append(collider.name).Append(' ');
+            }
+            return facts.ToString();
+        }
+
+        private static bool HasWaterNearImpact(ElementWorldRuntime world, Vector3 point)
+        {
+            // 一次自动 Tick 可以在下落后侧移。只看命中附近，同时排除旧 GPU 投影和只入队的数量。
+            var center = Vector3Int.FloorToInt((point - world.Origin) / world.CellSize);
+            int extent = Mathf.CeilToInt(1.25f / world.CellSize);
+            for (int y = -2; y <= extent; y++)
+            for (int z = -extent; z <= extent; z++)
+            for (int x = -extent; x <= extent; x++)
+                if (world.TrySampleMaterial(center + new Vector3Int(x,y,z), MaterialId.Water, out var sample)
+                    && sample.QuantityGmu > 0 && (sample.Source == ElementWorldMaterialSource.Cellular
+                    || sample.Source == ElementWorldMaterialSource.RestingLiquid)) return true;
+            return false;
+        }
+
+        private T InMap<T>() where T : Component
+        {
+            foreach (var root in _loaded.GetRootGameObjects())
+                if (root.GetComponentInChildren<T>() is T found) return found;
+            return null;
+        }
+
+        [UnityTearDown] public IEnumerator Unload()
+        {
+            if (_loaded.IsValid() && _loaded.isLoaded) yield return SceneManager.UnloadSceneAsync(_loaded);
+            Time.timeScale = _initialScale;
+        }
+    }
+
     internal static class GameplayRepairChecks
     {
         internal static IEnumerator CheckFire(ElementWorldRuntime world,Vector3 actor)

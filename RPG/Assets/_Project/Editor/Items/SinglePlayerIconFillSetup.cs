@@ -74,7 +74,12 @@ namespace Game.EditorTools
             var shop=AssetDatabase.LoadAssetAtPath<ShopDefinition>("Assets/_Project/ScriptableObjects/World/Hub/Trading/Shop.asset");
             string[] names={"","water","Fire","poison","Mucus","Ice","Dry mucus","Steam","poison gas"};
             foreach(var offer in shop.Offers)if(offer.IsMaterial)
-            {offer.Icon=SpriteAt(Art+names[offer.MaterialKey]+".png");report.AppendLine(offer.DisplayName+"="+AssetDatabase.GetAssetPath(offer.Icon)+"/"+offer.Icon.name);}
+            {
+                // 原八种材料有历史图标映射。新增报价直接使用 Shop.asset 的图标，避免编号稀疏时索引越界。
+                if (offer.MaterialKey < names.Length) offer.Icon = SpriteAt(Art + names[offer.MaterialKey] + ".png");
+                if (offer.Icon == null) throw new InvalidOperationException("材料报价缺少图标：" + offer.OfferId);
+                report.AppendLine(offer.DisplayName + "=" + AssetDatabase.GetAssetPath(offer.Icon) + "/" + offer.Icon.name);
+            }
             EditorUtility.SetDirty(shop);AssetDatabase.SaveAssetIfDirty(shop);
             foreach(var guid in AssetDatabase.FindAssets("t:ItemDefinition",new[]{"Assets/_Project/ScriptableObjects/"}))
             {

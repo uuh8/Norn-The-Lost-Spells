@@ -445,21 +445,31 @@ namespace Game.ElementField
             if(_world==null)_world=FindFirstObjectByType<ElementWorldRuntime>();
             if(_world==null || _world.ExecutionMode!=WorldExecutionMode.Replica || _world.ReplicaStore==null)return;
             var store=_world.ReplicaStore;var cells=new CellResult[store.CellCount];
+            // 从客户端已安装的状态观察抛瓶。材料可能在两次采样之间进入冷页，
+            // 单看动态行会把归档误判成丢量；初始地形中的岩石和泥土不属于容器数量。
+            var resting = _world.CellularRestingLiquids;
+            ulong sand = resting?.GetTotalQuantity(MaterialId.Sand) ?? 0;
+            ulong oil = resting?.GetTotalQuantity(MaterialId.Oil) ?? 0;
             for(int i=0;i<cells.Length;i++)
             {
                 var c=store.GetCellAt(i);store.TryGetGeometry(c.Domain,out var geometry);var key=WorldChunkPayloadCodec.CellKey(c.Domain,c.Cell,geometry.ChunkSize);
+                if (c.Domain == WorldMaterialDomain.Cellular)
+                {
+                    if (c.MaterialId == (byte)MaterialId.Sand) sand += c.Quantity;
+                    if (c.MaterialId == (byte)MaterialId.Oil) oil += c.Quantity;
+                }
                 cells[i]=new CellResult{Domain=(int)c.Domain,Storage=(int)c.Storage,ChunkX=key.X,ChunkY=key.Y,ChunkZ=key.Z,
                     X=c.Cell.x,Y=c.Cell.y,Z=c.Cell.z,Material=c.MaterialId,Quantity=c.Quantity};
             }
             var report=new ReplicaResult{WorldEpoch=store.WorldEpoch,WorldTick=store.WorldTick,CellCount=store.CellCount,
                 Legacy=store.TotalQuantity(WorldMaterialDomain.LegacyCell),Liquid=store.TotalQuantity(WorldMaterialDomain.Liquid),
                 Solid=store.TotalQuantity(WorldMaterialDomain.Solid),Gas=store.TotalQuantity(WorldMaterialDomain.Gas),Cells=cells,
-                RecordedUtc=DateTime.UtcNow.ToString("O"),Monotonic=now};
+                CellularSand=sand,CellularOil=oil,RecordedUtc=DateTime.UtcNow.ToString("O"),Monotonic=now};
             Directory.CreateDirectory(Path.GetDirectoryName(_replicaOutput));
             File.WriteAllText(_replicaOutput,JsonUtility.ToJson(report,true));
         }
         [Serializable] private struct CellResult{public int Domain,Storage,X,Y,Z,Material,ChunkX,ChunkY,ChunkZ;public uint Quantity;}
-        [Serializable] private sealed class ReplicaResult{public ulong WorldEpoch,Legacy,Liquid,Solid,Gas;public long WorldTick;public int CellCount;public CellResult[] Cells;public string RecordedUtc;public double Monotonic;}
+        [Serializable] private sealed class ReplicaResult{public ulong WorldEpoch,Legacy,Liquid,Solid,Gas,CellularSand,CellularOil;public long WorldTick;public int CellCount;public CellResult[] Cells;public string RecordedUtc;public double Monotonic;}
         [Serializable] private sealed class Result{public bool Accepted,PausedForComparison;public int Quantity,Phase;public long WorldTick,StartTick;public Vector3 Position;public string RecordedUtc;}
     }
 }

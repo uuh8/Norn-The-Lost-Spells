@@ -164,6 +164,8 @@ namespace Game.ElementField
         private static Transform FindMapNode(Transform world, string path)
         {
             if (string.IsNullOrWhiteSpace(path)) return null;
+            var map = FindMapInstanceRoot(world);
+            if (map != null) return map.Find(path);
             Transform found = world.root.Find(path);
             if (found != null) return found;
             var scene = world.gameObject.scene;
@@ -175,6 +177,18 @@ namespace Game.ElementField
             foreach (var root in roots)
                 if (root.name == rootName) return slash >= 0 ? root.transform.Find(path.Substring(slash + 1)) : root.transform;
             return null;
+        }
+
+        internal static Transform FindMapInstanceRoot(Transform world)
+        {
+            // 正式房间先把 inactive 地图实例挂在 OnlineWorldBootstrap 下，再选择/初始化材料后端。
+            // Binding 所在节点才是 __Level 等作者路径的起点。即使本地图的某块岩石缺失，也不能
+            // 从外层 Scene 或另一份地图借同名几何，否则 DS 与 Replica 会对不同碰撞体应用同一份变更。
+            var binding = world.GetComponentInParent<OnlineMaterialWorldBinding>(true);
+            if (binding != null) return binding.transform;
+            var root = world.root;
+            return !world.gameObject.scene.IsValid() || root != world && root.name.EndsWith("World", StringComparison.Ordinal)
+                ? root : null;
         }
 
         internal static void CollectSceneRoots(Transform world, List<GameObject> roots)

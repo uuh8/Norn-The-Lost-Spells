@@ -379,11 +379,29 @@ namespace Game.Rendering
         private static long DistanceToAxis(int value, int min, int max)
             => value < min ? (long)min - value : value >= max ? (long)value - max + 1 : 0;
 
+        internal static Camera ResolveCamera(ElementWorldRuntime world, Camera current)
+        {
+            if (world.ExecutionMode == WorldExecutionMode.Replica)
+            {
+                // OnlineRoom 的入场镜头、保留的 Hub 与正式角色镜头可以同时存在。可见页筛选和
+                // DrawMesh 必须交给当前本机角色的相机，即使上一台相机仍然启用。
+                var actor = LocalActorPresentation.Actor;
+                if (actor != null && actor.scene == world.gameObject.scene && actor.activeInHierarchy &&
+                    LocalActorCameraPresentation.TryGet(actor, out var bound) && bound.isActiveAndEnabled)
+                    return bound;
+
+                // 技术房间可以使用本场景的 MainCamera。无正式绑定时不沿用已解绑的相机或据点镜头。
+                var fallback = Camera.main;
+                return fallback != null && fallback.gameObject.scene == world.gameObject.scene ? fallback : null;
+            }
+            return current != null && current.isActiveAndEnabled ? current : Camera.main;
+        }
+
         private void LateUpdate()
         {
             if (!_bound) TryBind();
             if (!_bound || _world == null || !_world.isActiveAndEnabled) { _frameStart = 0; return; }
-            if (_camera == null || !_camera.isActiveAndEnabled) _camera = Camera.main;
+            _camera = ResolveCamera(_world, _camera);
             if (_camera == null) { _frameStart = 0; return; }
             long previousFrameStart = _frameStart;
             _frameStart = System.Diagnostics.Stopwatch.GetTimestamp();

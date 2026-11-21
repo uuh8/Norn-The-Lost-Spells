@@ -6,7 +6,9 @@ namespace Game.Run
     /// <summary>磁盘普通字段与权威库存之间的边界；完整验证成功才发布 Profile。</summary>
     public static class ProfileSaveMapper
     {
-        public const int CurrentSchema = 14;
+        public const int CurrentSchema = 15;
+        private const ushort OriginalBottleMask = (1 << 1) | (1 << 3) | (1 << 4) | (1 << 7) | (1 << 8);
+        private const ushort CellularBottleMask = OriginalBottleMask | (1 << 11) | (1 << 12);
         public static SinglePlayerSaveDto ToDto(SinglePlayerProfile profile, long generation)
         {
             if (profile == null || generation < 0) throw new ArgumentException("不能保存非法 Profile。");
@@ -88,7 +90,7 @@ namespace Game.Run
                 if (dto.SchemaVersion >= 2 && (rules.Kind == ItemKind.Container
                     ? (item.ContainerCapacity != rules.ContainerCapacity
                         && !(dto.SchemaVersion <= 10 && (item.ContainerCapacity == 150 || item.ContainerCapacity == 300 || item.ContainerCapacity == 600)
-                            && rules.ContainerCapacity == item.ContainerCapacity * 100)) || item.ContainerMaterials != rules.ContainerMaterials
+                            && rules.ContainerCapacity == item.ContainerCapacity * 100)) || !MatchesContainerMask(dto.SchemaVersion, item, rules.ContainerMaterials)
                     : item.ContainerCapacity != 0 || item.ContainerMaterials != 0))
                     return new ProfilePersistenceResult(ProfilePersistenceStatus.InvalidData, "容器固定容量/兼容配置与保存不匹配。");
                 // JsonUtility 会把 null 数组写成 []；非容器的空数组只是“没有组分”。
@@ -99,8 +101,13 @@ namespace Game.Run
                     composition = new ContainerComposition(rules.ContainerCapacity, rules.ContainerMaterials);
                     if (item.Composition.Length > 0)
                     {
-                        for (int j = 0; j < item.Composition.Length; j++) if (item.Composition[j].Quantity == 0)
-                            return new ProfilePersistenceResult(ProfilePersistenceStatus.InvalidData, "零量不能作为已保存组分。");
+                        for (int j = 0; j < item.Composition.Length; j++)
+                        {
+                            var part = item.Composition[j];
+                            if (part.Quantity == 0 || !MaterialAmount.IsLocalInventoryMaterial(part.MaterialKey)
+                                || (item.ContainerMaterials & (1 << part.MaterialKey)) == 0)
+                                return new ProfilePersistenceResult(ProfilePersistenceStatus.InvalidData, "保存组分无效或超出原容器兼容范围。");
+                        }
                         if (!composition.CanAdd(item.Composition, item.Composition.Length))
                             return new ProfilePersistenceResult(ProfilePersistenceStatus.InvalidData, "组分重复、未知或超容。");
                         composition.AddReserved(item.Composition, item.Composition.Length);
@@ -189,6 +196,15 @@ namespace Game.Run
             }
             return new ProfilePersistenceResult(ProfilePersistenceStatus.Success);
         }
+        private static bool MatchesContainerMask(int schema, SinglePlayerItemDto item, ushort currentMask)
+        {
+            if (item.ContainerMaterials == currentMask) return true;
+            // 只迁移两款确实开放了沙、油的通用瓶。按旧掩码检查已装组分，再按当前 Catalog
+            // 建立容器，原有 GMU、位置和实例身份都保留。副本的 Rollback 也通过同一恢复入口。
+            return schema <= 14 && item.ContainerMaterials == OriginalBottleMask && currentMask == CellularBottleMask
+                && (item.ContentId == "item.container.container_01" || item.ContentId == "containertest.bottle");
+        }
+
         private static bool KeepMigratedRaidAssets(InventoryEntry[] before,PendingRaidRecord source,SinglePlayerProfile current,SinglePlayerProfile original)
         {
             var overflow=new System.Collections.Generic.HashSet<string>(StringComparer.Ordinal);

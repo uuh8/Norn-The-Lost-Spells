@@ -7,7 +7,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Game.ElementField;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Game.EditorTools
 {
@@ -23,7 +25,7 @@ namespace Game.EditorTools
             @"^  _cellular(ContentProfile|MapContentId|GeometryDigest|GroundBox|HeightTerrain|RockPaths):[^\n]*\n(?:  - __Level/[^\n]*\n)*",
             RegexOptions.Multiline | RegexOptions.CultureInvariant);
 
-        internal static void Apply(ElementWorldRuntime world, string id, string scenePath, GameObject exportRoot = null)
+        internal static bool Apply(ElementWorldRuntime world, string id, string scenePath, GameObject exportRoot = null)
         {
             var settings = new SerializedObject(world);
             var profile = AssetDatabase.LoadAssetAtPath<ElementCellWorldProfile>(ProfilePath);
@@ -81,7 +83,17 @@ namespace Game.EditorTools
             settings.FindProperty("_cellularHeightTerrain").objectReferenceValue = terrain;
             var paths = settings.FindProperty("_cellularRockPaths"); paths.arraySize = id == "p7" ? RockPaths.Length : 0;
             for (int i = 0; i < paths.arraySize; i++) paths.GetArrayElementAtIndex(i).stringValue = RockPaths[i];
-            settings.ApplyModifiedPropertiesWithoutUndo();
+            return settings.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        internal static void SaveAuthoredScene(Scene scene, ElementWorldRuntime world, string id)
+        {
+            // Layout、碰撞和玩家引用可能在作者工具的同一次操作中改变。磁盘上的上一个版本不能代表
+            // 导出器下一次会读取的 Scene。先完成该工具原本就要执行的保存，再对已写出的字节定稿。
+            if (!EditorSceneManager.SaveScene(scene)) throw new IOException("地图保存失败：" + scene.path);
+            if (world == null || !Apply(world, id, scene.path)) return;
+            // 摘要的输入已排除所有 _cellular 配置字段，因此第二次保存不会让摘要自身递归变化。
+            if (!EditorSceneManager.SaveScene(scene)) throw new IOException("地图材料摘要保存失败：" + scene.path);
         }
 
         private static void Add(SortedDictionary<string,string> inputs, UnityEngine.Object source)

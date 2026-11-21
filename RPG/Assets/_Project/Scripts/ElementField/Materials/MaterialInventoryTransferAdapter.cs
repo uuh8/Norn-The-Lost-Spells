@@ -43,17 +43,23 @@ namespace Game.ElementField
             if (end < start) return;
             // 只走角色触及球内的射线段，Camera 在角色背后也不扩大采集距离；不分配临时集合。
             float step = Mathf.Max(.025f, _world.CellSize * .4f);
-            for (int i = 0; i < 256 && start + i * step <= end; i++)
+            for (int i = 0; i < 256; i++)
             {
-                Vector3 point = e.RayOrigin + direction * (start + i * step);
-                if(TryAimPoint(e,point,false))return;
+                // Physics 把射线截在碰撞表面内很短的一段。若直接舍去不够一步的余量，
+                // 最后一个样本可能仍在空中，准心正对有 Collider 的冰/沙也会采空。
+                float distance = Mathf.Min(start + i * step, end);
+                Vector3 point = e.RayOrigin + direction * distance;
+                if (TryAimPoint(e, point, distance == end)) return;
+                if (distance == end) break;
             }
             float radius=Mathf.Clamp(e.SampleRadius,0,.5f);if(radius<=0||!float.IsFinite(radius))return;
             Vector3 right=Vector3.Cross(direction,Mathf.Abs(direction.y)>.9f?Vector3.right:Vector3.up).normalized;
             Vector3 up=Vector3.Cross(right,direction);float stride=Mathf.Max(.05f,_world.CellSize);
             int width=Mathf.CeilToInt(radius/stride),visited=0;
             // 中心射线先命中；落空才搜索有界圆截面，避免必须精确瞄准一格。候选仍需实体可见。
-            for(float t=start;t<=end&&visited<4096;t+=stride)
+            for (int slice = 0; visited < 4096; slice++)
+            {
+                float t = Mathf.Min(start + slice * stride, end);
                 for(int y=-width;y<=width;y++)for(int x=-width;x<=width;x++)
                 {
                     float dx=x*stride,dy=y*stride;if(dx*dx+dy*dy>radius*radius)continue;
@@ -61,6 +67,8 @@ namespace Game.ElementField
                     if((point-e.ActorPosition).sqrMagnitude>e.Reach*e.Reach)continue;
                     if(TryAimPoint(e,point,true))return;
                 }
+                if (t == end) break;
+            }
         }
         private bool TryAimPoint(MaterialCollectionAimExchange e,Vector3 point,bool visibility)
         {

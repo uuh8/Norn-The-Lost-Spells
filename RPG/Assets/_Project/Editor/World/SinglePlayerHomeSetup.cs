@@ -85,14 +85,14 @@ namespace Game.EditorTools
             {
                 if(!AssetDatabase.CopyAsset(Hub,Home))throw new IOException("复制Home失败");
                 var home=EditorSceneManager.OpenScene(Home,OpenSceneMode.Additive);
-                try{SceneManager.SetActiveScene(home);ApplyHome(home);EditorSceneManager.SaveScene(home);}
+                try{SceneManager.SetActiveScene(home);ApplyHome(home);CellularMapContentSetup.SaveAuthoredScene(home,Find<Game.ElementField.ElementWorldRuntime>(home),"home");}
                 finally{EditorSceneManager.CloseScene(home,true);SceneManager.SetActiveScene(original);}
             }
             else
             {
                 // 已生成Home不重建布局，仅修复从作者预览状态继承的禁用相机根。
                 var home=EditorSceneManager.OpenScene(Home,OpenSceneMode.Additive);
-                try{SceneManager.SetActiveScene(home);EnableCameras(home,false);OrientGold(Find<HomePortal>(home),false);EditorSceneManager.SaveScene(home);}
+                try{SceneManager.SetActiveScene(home);EnableCameras(home,false);OrientGold(Find<HomePortal>(home),false);CellularMapContentSetup.SaveAuthoredScene(home,Find<Game.ElementField.ElementWorldRuntime>(home),"home");}
                 finally{EditorSceneManager.CloseScene(home,true);SceneManager.SetActiveScene(original);}
             }
             var list=new System.Collections.Generic.List<EditorBuildSettingsScene>(EditorBuildSettings.scenes);

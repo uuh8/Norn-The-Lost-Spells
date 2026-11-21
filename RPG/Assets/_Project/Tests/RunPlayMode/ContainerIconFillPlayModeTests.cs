@@ -61,8 +61,14 @@ namespace Game.Run.Tests
             Keys(Key.F);yield return null;Keys();yield return null;Assert.That(ui.IsOpen,Is.True);
             Assert.That(shop.ReadOnly,Is.Not.Null,shop.Message);
             for(int i=0;i<shop.ReadOnly.Count;i++)
-            {var offer=shop.ReadOnly.GetOffer(i);if(offer.IsMaterial){materials++;Assert.That(offer.Icon,Is.Not.Null,offer.DisplayName);Assert.That(AssetDatabase.GetAssetPath(offer.Icon),Does.Contain("Funtion_UI2"));}}
-            Assert.That(materials,Is.EqualTo(8));
+            {
+                var offer=shop.ReadOnly.GetOffer(i);
+                if (!offer.IsMaterial) continue;
+                materials |= 1 << offer.MaterialKey;
+                Assert.That(offer.Icon,Is.Not.Null,offer.DisplayName);
+                if (offer.MaterialKey <= 8) Assert.That(AssetDatabase.GetAssetPath(offer.Icon),Does.Contain("Funtion_UI2"));
+            }
+            Assert.That(materials, Is.EqualTo(0x19FE), "商店应提供原八种材料及可装瓶的沙和油。");
             var spell=AssetDatabase.LoadAssetAtPath<SpellDefinition>("Assets/_Project/ScriptableObjects/Spell/Definitions/Spell_Emit_Iceball.asset");Assert.That(spell.Icon,Is.Not.Null);
             Session.ReadOnly.TryGetView("ice",out var ice);Assert.That(ice.Icon,Is.SameAs(spell.Icon));
             ui.Close();Backpack.OpenBackpack();yield return null;bool found=false;

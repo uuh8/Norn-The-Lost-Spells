@@ -294,15 +294,87 @@ namespace Game.ElementField
 
         private bool ValidCellularWrite(in ElementWriteRequest request)
         {
-            Vector3 velocity = request.InitialVelocity;
-            if (!float.IsFinite(velocity.x) || !float.IsFinite(velocity.y) || !float.IsFinite(velocity.z)) return false;
-            Vector3 position = request.WorldPosition;
-            if (request.TotalAmount == 0 || !float.IsFinite(position.x) || !float.IsFinite(position.y) ||
-                !float.IsFinite(position.z) || !float.IsFinite(request.Radius) || request.Radius < 0 ||
-                !TryGetDepositBounds(in request, out var lo, out var hi)) return false;
+            if (!TryPrepareCellularDeposit(in request, out var placement, out var lo, out var hi, out var mouth)) return false;
             if (request.Radius == 0)
                 return AvailableForDeposit(lo, request.MaterialKind, true, out _) >= request.TotalAmount;
-            return PlanVolumeDeposit(in request, lo, hi, true, out _, out _);
+            return PlanVolumeDeposit(in placement, lo, hi, mouth, true, out _, out _);
+        }
+
+        // Projectile 传来的点在 Collider 表面。半开格的 floor 在墙的负轴面会取到墙内，
+        // 半径写入还可能在薄墙两侧同时造出物质。先找到命中侧的空气，再向外放置出生球；
+        // 这样完整的毒雾弹仍有足够格容量。没有表面法线的场景体积源沿用其原始球心。
+        private bool TryPrepareCellularDeposit(in ElementWriteRequest request, out ElementWriteRequest placement,
+            out Vector3Int lo, out Vector3Int hi, out Vector3Int? mouth)
+        {
+            placement = request;
+            mouth = null;
+            lo = hi = default;
+            if (request.TotalAmount == 0 || !FluidSpawnRequestValidator.IsFinite(request.WorldPosition) ||
+                !FluidSpawnRequestValidator.IsFinite(request.InitialVelocity) || !FluidSpawnRequestValidator.IsFinite(request.SurfaceNormal) ||
+                !float.IsFinite(request.Radius) || request.Radius < 0 || !TryGetDepositBounds(in request, out lo, out hi)) return false;
+            Vector3 normal = request.SurfaceNormal.normalized;
+            if (normal == Vector3.zero) return true;
+
+            float size = _profile.CellSize;
+            Vector3 point = request.WorldPosition;
+            Vector3Int CellAt(Vector3 p) => ElementWorldCoordinates.WorldToGlobalCell(p, _origin, size);
+            Vector3Int contactCell = CellAt(point);
+            Vector3Int insideCell = CellAt(point - normal * (size * .51f));
+            Vector3Int anchor = contactCell;
+            if (IsDepositBarrier(contactCell) || IsDepositBarrier(insideCell))
+            {
+                // 斜面及厚度小于一格的 Collider 可能占据表面外第一格。两格足以离开一个
+                // 与接触点相交的体素；前面还有几何体时交给容量/重试逻辑，不穿入相邻房间。
+                Vector3 exterior = point + normal * (.51f * size);
+                anchor = CellAt(exterior);
+                if (IsDepositBarrier(anchor))
+                {
+                    if (anchor != contactCell && anchor != insideCell &&
+                        !IsHeightfieldSurfaceStep(contactCell, anchor, normal)) return false;
+                    exterior += normal * size;
+                    anchor = CellAt(exterior);
+                    if (IsDepositBarrier(anchor)) return false;
+                }
+                Vector3 center = exterior + normal * Mathf.Max(0f, request.Radius - .51f * size);
+                placement = new ElementWriteRequest(center, request.MaterialKind, request.TotalAmount, request.Radius,
+                    request.UseLinearFalloff, request.InitialVelocity, request.SurfaceNormal);
+                if (!TryGetDepositBounds(in placement, out lo, out hi)) return false;
+            }
+            mouth = anchor;
+            return true;
+        }
+
+        private bool IsDepositBarrier(Vector3Int cell) => IsEnvironmentBlockedForCells(cell) || IsCellularBlockingCell(cell);
+
+        private bool IsHeightfieldSurfaceStep(Vector3Int contact, Vector3Int exterior, Vector3 normal)
+        {
+            // TerrainCollider 的连续碰撞点和按列保守取整的顶层 Soil 可能相差一格。
+            // 只允许向上穿过同一张原始高度场的最后一层；编辑过的土、另加的墙或冰都保留阻挡。
+            if (normal.y <= 0 || exterior.y != contact.y + 1 || _mapSources == null ||
+                _cellularTerrain.TryGetNetworkOverride(contact, out _) || _cellularTerrain.TryGetNetworkOverride(exterior, out _) ||
+                IsCellularBlockingCell(exterior) || HasStaticSceneGeometry(exterior)) return false;
+
+            foreach (var source in _mapSources)
+                if (source.Heightfield != null && source.Contains(contact, _origin, _profile.CellSize) &&
+                    source.Contains(exterior, _origin, _profile.CellSize) &&
+                    !source.Contains(exterior + Vector3Int.up, _origin, _profile.CellSize)) return true;
+            return false;
+        }
+
+        private bool HasOpenDepositPath(Vector3Int from, Vector3Int to)
+        {
+            // 沿六连通格单调接近候选，不允许斜向跨过墙角。每推进一步都减少 Manhattan
+            // 距离，不会循环；出生时才检查，后续水流、粉末和气体仍由原有 Tick 预算推进。
+            while (from != to)
+            {
+                Vector3Int d = to - from;
+                int x = Mathf.Abs(d.x), y = Mathf.Abs(d.y), z = Mathf.Abs(d.z);
+                if (x >= y && x >= z) from.x += Math.Sign(d.x);
+                else if (y >= z) from.y += Math.Sign(d.y);
+                else from.z += Math.Sign(d.z);
+                if (IsDepositBarrier(from)) return false;
+            }
+            return true;
         }
 
         internal uint AvailableForDeposit(Vector3Int cell, MaterialId material, bool mayDisplaceGas, out bool resting)
@@ -348,7 +420,7 @@ namespace Game.ElementField
 
         private bool ApplyCellularWrite(in ElementWriteRequest request)
         {
-            if (!TryGetDepositBounds(in request, out var lo, out var hi)) return false;
+            if (!TryPrepareCellularDeposit(in request, out var placement, out var lo, out var hi, out var mouth)) return false;
             if (request.Radius == 0)
             {
                 if (ElementCellMaterialRules.Motion(request.MaterialKind) == ElementCellMotion.Gas || !RestingLiquids.TryGetCell(lo, out _, out _))
@@ -362,7 +434,7 @@ namespace Game.ElementField
                 PublishCellularImpulse(lo, request.MaterialKind, request.TotalAmount, request.InitialVelocity);
                 return true;
             }
-            if (!PlanVolumeDeposit(in request, lo, hi, false, out int count, out double weights)) return false;
+            if (!PlanVolumeDeposit(in placement, lo, hi, mouth, false, out int count, out double weights)) return false;
             uint remaining = request.TotalAmount;
             // 按原有半径和衰减权重分配。容量截断后再补到其余有空间的位置。
             for (int i = 0; i < count && remaining > 0; i++)
@@ -413,7 +485,7 @@ namespace Game.ElementField
         }
 
         private bool PlanVolumeDeposit(in ElementWriteRequest request, Vector3Int lo, Vector3Int hi,
-            bool checkOnly, out int count, out double weights)
+            Vector3Int? mouth, bool checkOnly, out int count, out double weights)
         {
             int availableSlots = CellularSimulation.FreeResidentSlots;
             int availableRestingEdits = RestingLiquids.MaximumStagedCells;
@@ -426,7 +498,7 @@ namespace Game.ElementField
             {
                 var cell = new Vector3Int(x, y, z);
                 float weight = ElementWorldWriteProcessor.CalculateWeight(cell, in request, _origin, _profile.CellSize);
-                if (weight <= 0) continue;
+                if (weight <= 0 || mouth.HasValue && !HasOpenDepositPath(mouth.Value, cell)) continue;
                 uint room = AvailableForDeposit(cell, request.MaterialKind, false, out bool resting);
                 if (room == 0) continue;
                 if (resting)

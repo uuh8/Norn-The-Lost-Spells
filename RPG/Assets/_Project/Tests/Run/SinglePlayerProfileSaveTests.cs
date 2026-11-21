@@ -12,6 +12,36 @@ namespace Game.Run.Tests
         private ItemOwnershipStore _store;
         private SinglePlayerProfile _profile;
 
+        [TestCase("Item_Container_01.asset", "item.container.container_01")]
+        [TestCase("Definitions/Item_Container_Bottle.asset", "containertest.bottle")]
+        public void OriginalGeneralBottleRestoresItsWaterBeforeGainingSandAndOilCompatibility(string file, string contentId)
+        {
+            var definition = UnityEditor.AssetDatabase.LoadAssetAtPath<ItemDefinition>(
+                "Assets/_Project/ScriptableObjects/Items/Containers/" + file);
+            var store = Store(definition);
+            Add(store, "old-bottle", contentId);
+            store.TryGet("old-bottle", out var original);
+            original.Composition.AddReserved(new[] { new MaterialAmount(1, 73) }, 1);
+            var dto = ProfileSaveMapper.ToDto(new SinglePlayerProfile("player", store), 12);
+            var savedBottle = dto.Items[0];
+            dto.SchemaVersion = 14;
+            savedBottle.ContainerMaterials = 410;
+            Assert.That(ProfileSaveMapper.TryRestore(dto, store.Catalog, out var migrated).Success, Is.True);
+            Assert.That(migrated.Items.TryGet("old-bottle", out var bottle), Is.True);
+            At(migrated.Items, "old-bottle", ItemLocation.Warehouse);
+            Assert.That(bottle.Composition.GetQuantity(1), Is.EqualTo(73ul));
+            Assert.That(bottle.Composition.Total, Is.EqualTo(73ul));
+            Assert.That(bottle.Composition.AllowedMaterials, Is.EqualTo(6554));
+            var current = ProfileSaveMapper.ToDto(migrated, 13);
+            Assert.That(ProfileSaveMapper.TryRestore(current, store.Catalog, out _).Success, Is.True);
+
+            // 迁移只开放今后的采集权限。旧瓶掩码不能凭空装有沙，新格式也不能伪装成旧瓶。
+            savedBottle.Composition[0] = new MaterialAmount(11, 73);
+            Assert.That(ProfileSaveMapper.TryRestore(dto, store.Catalog, out _).Success, Is.False);
+            current.Items[0].ContainerMaterials = 410;
+            Assert.That(ProfileSaveMapper.TryRestore(current, store.Catalog, out _).Success, Is.False);
+        }
+
         [SetUp]
         public void SetupProfile()
         {

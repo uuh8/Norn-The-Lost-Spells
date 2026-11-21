@@ -348,5 +348,113 @@ namespace Game.Run.Tests
             finally {foreach(var asset in _temporary) if(asset!=null) UnityEngine.Object.Destroy(asset);_temporary.Clear();_input?.TearDown();_input=null;}
         }
     }
+    /// <summary>正式 Home 的 ScenePreview 使用临时库存；通过玩家已有控制器把同一份 GMU 交给世界再收回。</summary>
+    public sealed class FormalHomeContainerPlayModeTests
+    {
+        private Scene _home;
+        private float _previousScale;
+
+        [UnityTest]
+        public IEnumerator PourAndRecollectSandThroughThePlayerConservesGmu()
+        {
+            _previousScale = Time.timeScale;
+            _home = EditorSceneManager.LoadSceneInPlayMode("Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Home.unity",
+                new LoadSceneParameters(LoadSceneMode.Additive));
+            yield return null;
+            yield return null;
+            var session = InHome<SinglePlayerInventorySession>();
+            Assert.That(session != null && session.IsScenePreview && session.WorldActionsAllowed, Is.True);
+            InHome<Game.UI.GameplayGuideController>()?.Close();
+            Time.timeScale = 1;
+            var player = InHome<WizardController>();
+            var collection = player.GetComponent<MaterialCollectionController>();
+            var use = player.GetComponent<ContainerUseController>();
+            var world = InHome<ElementWorldRuntime>();
+            Assert.That(world.UsesCellularWorld && world.CellularMapContentId == "home", Is.True);
+
+            const string content = "item.container.container_01", id = "formal-home-sand-bottle";
+            const uint initial = 64, pour = 32;
+            var store = session.Profile.Items;
+            Assert.That(store.Catalog.TryGetRules(content, out var rules), Is.True);
+            var mix = new ContainerComposition(rules.ContainerCapacity, rules.ContainerMaterials);
+            mix.AddReserved(new[] { new MaterialAmount((byte)MaterialId.Sand, initial) }, 1);
+            var bottle = new RuntimeItemState(id, content, 0, composition: mix);
+            Assert.That(store.TryAdd(bottle, new GridPlacement(0, 0, 0).InBackpack(session.EquippedBackpackId)), Is.True);
+            EventBus<ToolbeltBindingRequestedEvent>.Publish(new ToolbeltBindingRequestedEvent { InventoryId = session.ReadOnly.InventoryId,
+                ToolSlot = 0, ItemId = id, ExpectedVersion = session.ToolbeltReadOnly.ConfigurationVersion });
+            EventBus<HeldItemSelectionRequestedEvent>.Publish(new HeldItemSelectionRequestedEvent
+                { InventoryId = session.ReadOnly.InventoryId, SlotIndex = HeldItemSlots.WandCount });
+            Assert.That(collection.SelectedContainerId, Is.EqualTo(id));
+
+            ContainerUseRequestedEvent nozzle = default;
+            Action<ContainerUseRequestedEvent> observe = request => { if (request.ItemId == id) nozzle = request; };
+            ulong imports = world.ImportedMaterialQuantity(MaterialId.Sand), exports = world.ExportedMaterialQuantity(MaterialId.Sand);
+            EventBus<ContainerUseRequestedEvent>.Subscribe(observe);
+            try
+            {
+                Physics.SyncTransforms();
+                use.SubmitUse(ContainerUseKind.Pour, pour, player.transform.position);
+            }
+            finally { EventBus<ContainerUseRequestedEvent>.Unsubscribe(observe); }
+            Assert.That(use.LastResult.Success, Is.True, use.LastResult.Transfer.Failure.ToString());
+            Assert.That(nozzle.HasInitialMotion, Is.True);
+            Assert.That(nozzle.Radius, Is.EqualTo(use.Definition.DepositRadius), "沙使用普通倾倒半径。");
+            var cell = Vector3Int.FloorToInt((nozzle.TargetPosition - world.Origin) / world.CellSize);
+            Assert.That(world.TrySampleMaterial(cell, MaterialId.Sand, out var sample), Is.True);
+            Assert.That(sample.Source, Is.EqualTo(ElementWorldMaterialSource.Cellular));
+            Assert.That(sample.QuantityGmu, Is.EqualTo(pour));
+            Assert.That(bottle.Composition.Total + sample.QuantityGmu, Is.EqualTo(initial));
+
+            // 在下一个世界 Tick 前按喷口格中心收取。这样可检查玩家命令精确搬走了多少，
+            // 也避免把重力移动到邻格的量误判为重复放入或丢失。
+            Vector3 center = world.Origin + ((Vector3)cell + Vector3.one * .5f) * world.CellSize;
+            collection.SubmitSample(center, false, pour);
+            Assert.That(collection.LastFailure, Is.EqualTo(MaterialTransferFailure.None));
+            Assert.That(bottle.Composition.GetQuantity((byte)MaterialId.Sand), Is.EqualTo(initial));
+            Assert.That(world.TryGetQuantity(cell, MaterialId.Sand, out _), Is.False);
+            Assert.That(world.ImportedMaterialQuantity(MaterialId.Sand) - imports, Is.EqualTo(pour));
+            Assert.That(world.ExportedMaterialQuantity(MaterialId.Sand) - exports, Is.EqualTo(pour));
+
+            // 把刚收回的同一瓶投向 Home 地面。整个飞行期间由在途实例持有数量，破裂后只入账一次。
+            var camera = InHome<Camera>();
+            camera.transform.rotation = Quaternion.Euler(80, player.transform.eulerAngles.y, 0);
+            ulong beforeFlight = ResidentSand(world);
+            use.SubmitUse(ContainerUseKind.Throw, 0, player.transform.position);
+            Assert.That(use.LastResult.Success, Is.True, use.LastResult.Transfer.Failure.ToString());
+            Assert.That(session.ReadOnly.TryGetView(id, out var flying), Is.True);
+            Assert.That(flying.Location.Kind, Is.EqualTo(ItemLocationKind.ThrownContainer));
+            Assert.That(InHome<ThrownContainerProjectile>(), Is.Not.Null);
+            float deadline = Time.realtimeSinceStartup + 12;
+            while (session.PendingContainerFlights > 0 && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.That(session.PendingContainerFlights, Is.Zero);
+            Assert.That(session.ReadOnly.TryGetView(id, out _), Is.False);
+            Assert.That(world.ImportedMaterialQuantity(MaterialId.Sand) - imports, Is.EqualTo(pour + initial));
+            Assert.That(ResidentSand(world), Is.EqualTo(beforeFlight + initial));
+        }
+
+        private static ulong ResidentSand(ElementWorldRuntime world)
+        {
+            ulong total = 0;
+            world.VisitCellularOccupiedCells(cell =>
+            {
+                if (world.TryGetCellularContents(cell, out var primary, out uint quantity, out _, out _)
+                    && primary == MaterialId.Sand) total += quantity;
+            });
+            return total;
+        }
+
+        private T InHome<T>() where T : Component
+        {
+            foreach (var root in _home.GetRootGameObjects())
+                if (root.GetComponentInChildren<T>() is T found) return found;
+            return null;
+        }
+
+        [UnityTearDown] public IEnumerator UnloadHome()
+        {
+            if (_home.IsValid() && _home.isLoaded) yield return SceneManager.UnloadSceneAsync(_home);
+            Time.timeScale = _previousScale;
+        }
+    }
 }
 #endif

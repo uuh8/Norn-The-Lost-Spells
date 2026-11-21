@@ -452,12 +452,7 @@ namespace Game.Rendering
                         (cellPosition.x + 0.5f) * cellSize,
                         (cellPosition.y + 0.5f) * cellSize,
                         (cellPosition.z + 0.5f) * cellSize);
-                    ILiquidSurfaceReadOnly liquids=_worldRuntime.GridLiquids;
-                    // 火保持细格分辨率；Solid 查询必须先转入液体网格，不能复用火的格编号。
-                    Vector3Int liquidBelow=liquids!=null
-                        ?ElementWorldCoordinates.WorldToGlobalCell(center-Vector3.up*cellSize,
-                            liquids.Origin,liquids.CellSize):default;
-                    if(liquids!=null && liquids.IsSolidForSurface(liquidBelow))
+                    if (HasGroundSupport(_worldRuntime, cellPosition, center, cellSize))
                         center.y=origin.y+cellPosition.y*cellSize
                             +FireCellEmissionSampler.GroundSourceHeight(cellSize,_profile.MinimumGroundSourceHeight);
                     _seedCpu[seedCount++] = new FireParcelSpawnGpu
@@ -483,6 +478,22 @@ namespace Game.Rendering
             _visualSequence++;
             LastSeedCount = seedCount;
             return seedCount;
+        }
+
+        internal static bool HasGroundSupport(ElementWorldRuntime world, Vector3Int fireCell, Vector3 center, float fireCellSize)
+        {
+            if (world.UsesCellularWorld)
+            {
+                // 火和元胞共享世界细格。只有已提交的地形/阻挡材料抬高火苗；水、毒液、黏液和油
+                // 仍按各自的 Gameplay 规则与火接触。Replica 的同一只读入口查询本地已安装的占据。
+                return fireCell.y != int.MinValue && world.IsMaterialCellBlocked(fireCell + Vector3Int.down);
+            }
+
+            // 原 GridLiquid 地图单独使用粗格。未初始化的兼容组件没有有效格距，也没有可供采样的地板。
+            var liquids = world.GridLiquids;
+            if (liquids == null || !(liquids.CellSize > 0f) || !float.IsFinite(liquids.CellSize)) return false;
+            var below = ElementWorldCoordinates.WorldToGlobalCell(center - Vector3.up * fireCellSize, liquids.Origin, liquids.CellSize);
+            return liquids.IsSolidForSurface(below);
         }
 
         private WorldReplicationTimingTrace PrepareTimingTarget()

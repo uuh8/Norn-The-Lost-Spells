@@ -495,7 +495,7 @@ namespace Game.EditorTools
             EditorUtility.SetDirty(exposure);
             EditorUtility.SetDirty(renderer);
             EditorSceneManager.MarkSceneDirty(scene);
-            EditorSceneManager.SaveScene(scene);
+            CellularMapContentSetup.SaveAuthoredScene(scene, world, "p7");
             GameLog.Info(
                 $"[PBF-TASK13-SETUP] P7 已绑定；FluidColliderAuthoring={authoredColliderCount}。",
                 "Editor");

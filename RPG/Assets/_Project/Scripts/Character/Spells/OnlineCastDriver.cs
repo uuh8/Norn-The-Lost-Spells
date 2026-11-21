@@ -581,9 +581,7 @@ namespace Game.Character
         {
             if (!ClientInventoryReady || !_inventoryReplica.Source.TryCopyContainer(itemId, _clientContainerParts, out int count, out _, out _))
                 return false;
-            for (int i = 0; i < count; i++)
-                if (_clientContainerParts[i].MaterialKey >= 7 && _clientContainerParts[i].Quantity != 0) return true;
-            return false;
+            return MaterialAmount.ContainsGas(_clientContainerParts, count);
         }
         private void BindContainerInput()
         {
@@ -699,8 +697,10 @@ namespace Game.Character
             EventBus<MaterialCollectionAimRequestedEvent>.Publish(new MaterialCollectionAimRequestedEvent { Exchange = _containerAim });
             if (!_containerAim.Handled) return MaterialTransferFailure.WorldUnavailable;
             if (!_containerAim.Found) return MaterialTransferFailure.NoMaterial;
+            // 材料键与组分槽位数无关。沙和油使用 11/12，岩石和泥土只有世界占据；
+            // DS 同时核对库存合同与当前瓶的掩码，命中格本身不能授予采集资格。
             if (!FiniteContainerVector(_containerAim.Point) || (_containerAim.Point - transform.position).sqrMagnitude > reach * reach
-                || _containerAim.MaterialKey < 1 || _containerAim.MaterialKey > 8
+                || !MaterialAmount.IsLocalInventoryMaterial(_containerAim.MaterialKey)
                 || (allowed & 1 << _containerAim.MaterialKey) == 0) return MaterialTransferFailure.GeometryRejected;
             target = _containerAim.Point;
             return MaterialTransferFailure.None;

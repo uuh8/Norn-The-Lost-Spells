@@ -22,6 +22,33 @@ namespace Game.ElementField.Tests
             aim.Handled=false;aim.MaximumRayDistance=4;callback(new MaterialCollectionAimRequestedEvent{Exchange=aim});Assert.That(aim.Found,Is.False,"不能隔着Physics遮挡采气");
             aim.Handled=false;aim.MaximumRayDistance=10;aim.ActorPosition=Vector3.one*90;callback(new MaterialCollectionAimRequestedEvent{Exchange=aim});Assert.That(aim.Found,Is.False);
         }
+        [Test]
+        public void AimSamplesTheVisibleSolidSurfaceBetweenTheLastTwoRaySteps()
+        {
+            using var world = new MaterialInventoryTransferTests.World();
+            MaterialInventoryTransferTests.World.Set(world.Runtime, "_settings",
+                new ElementFieldSimulationSettings(1, 0, 0, 0, 2, false, default));
+            world.Solid.BeginConversionGeometry();
+            Assert.That(world.Solid.StageConversionAdd(Vector3Int.zero, MaterialId.Ice, 100), Is.True);
+            var command = new MaterialCollectionAimExchange
+            {
+                WorldId = "test-world", RayOrigin = new Vector3(100.5f, 100.5f, 95), RayDirection = Vector3.forward,
+                ActorPosition = new Vector3(100.5f, 100.5f, 99.17f), Reach = 3, AllowedMaterials = 1 << (int)MaterialId.Ice,
+                SampleRadius = .5f, MaximumRayDistance = 5.03f
+            };
+            var callback = (Action<MaterialCollectionAimRequestedEvent>)Delegate.CreateDelegate(
+                typeof(Action<MaterialCollectionAimRequestedEvent>), world.Adapter,
+                typeof(MaterialInventoryTransferAdapter).GetMethod("OnAim", BindingFlags.Instance | BindingFlags.NonPublic));
+            // 格子前表面在 z=100，步长 .4，上一次采样点在 99.77；碰撞裁剪的终点刚进入目标格。
+            callback(new MaterialCollectionAimRequestedEvent { Exchange = command });
+            Assert.That(command.Found, Is.True);
+            Assert.That(command.MaterialKey, Is.EqualTo((byte)MaterialId.Ice));
+            command.Handled = false;
+            command.MaximumRayDistance = 4.99f;
+            callback(new MaterialCollectionAimRequestedEvent { Exchange = command });
+            Assert.That(command.Found, Is.False);
+        }
+
         [Test]public void FallingIslandDisplacesGasConservativelyAndPreservesBothSolidMaterials()
         {
             using var world=new MaterialInventoryTransferTests.World();

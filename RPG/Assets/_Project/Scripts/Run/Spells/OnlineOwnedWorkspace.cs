@@ -1227,7 +1227,8 @@ namespace Game.Run
                 && location.OwnerId == PlayerId && location.SlotIndex == toolSlot
                 && _profile.Items.Catalog.TryGet(container.ContentId, out var definition) && definition.Kind == ItemKind.Container;
         }
-        private static bool ContainsGas(RuntimeItemState item) => item.Composition.GetQuantity(7) != 0 || item.Composition.GetQuantity(8) != 0;
+        private static bool ContainsGas(RuntimeItemState item) => item.Composition.GetQuantity(MaterialAmount.SteamKey) != 0
+            || item.Composition.GetQuantity(MaterialAmount.ToxicVaporKey) != 0;
         private void ResetContainerBudgets() { _collectBudget = _pourBudget = 0; _collectRate.Reset(); _pourRate.Reset(); }
         private static bool PositiveFinite(float value) => float.IsFinite(value) && value > 0;
         private static bool Finite(Vector3 value) => float.IsFinite(value.x) && float.IsFinite(value.y) && float.IsFinite(value.z);

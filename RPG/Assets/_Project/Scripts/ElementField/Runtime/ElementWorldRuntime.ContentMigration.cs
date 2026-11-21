@@ -22,9 +22,8 @@ namespace Game.ElementField
                 throw new InvalidOperationException("原材料世界已经持有真实数量，不能再次从作者数据注入。");
             var roots = new List<GameObject>();
             // 导出 prefab 和线上实例均只有一个 World 根；单机场景的作者体积可以是材料 Runtime 的兄弟节点。
-            var scene = gameObject.scene;
-            if (!scene.IsValid() || transform.root.name.EndsWith("World", StringComparison.Ordinal)
-                && transform.root != transform) roots.Add(transform.root.gameObject);
+            var map = CellularMapTerrain.FindMapInstanceRoot(transform);
+            if (map != null) roots.Add(map.gameObject);
             else CellularMapTerrain.CollectSceneRoots(transform, roots);
             var volumes = new List<GridLiquidInitialVolume>(); var lakes = new List<StableLiquidRegionAuthoring>();
             foreach (var root in roots)

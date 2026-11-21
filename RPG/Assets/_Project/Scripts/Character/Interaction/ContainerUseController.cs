@@ -32,8 +32,8 @@ namespace Game.Character
         public ContainerUseDefinition Definition=>_definition;
         private bool ContainsGas(string id)
         {
-            if(_session==null||!_session.TryCopyContainer(id,_composition,out int count,out _,out _))return false;
-            for(int i=0;i<count;i++)if(_composition[i].MaterialKey>=7&&_composition[i].Quantity>0)return true;return false;
+            return _session != null && _session.TryCopyContainer(id, _composition, out int count, out _, out _)
+                && MaterialAmount.ContainsGas(_composition, count);
         }
         private LineRenderer _trajectory;
         private Material _trajectoryMaterial;

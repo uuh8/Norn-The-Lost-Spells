@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Game.Core;
 using Game.ElementField;
 using Game.Materials;
 using Game.Rendering;
@@ -11,7 +13,7 @@ using Object = UnityEngine.Object;
 
 namespace Game.Rendering.Tests
 {
-    /// <summary>正式地图必须消费当前 Grid 规则；Additive 审计保留当前 P7 实例和未保存修改。</summary>
+    /// <summary>核对正式地图选择的材料世界、在线导出和原表现资产；运行时验证使用独立 Scene 副本。</summary>
     public sealed class P8ElementWorldSceneContractTests
     {
         private const string P7 = "Assets/_Project/Scenes/P7_DemoRun.unity";
@@ -21,7 +23,7 @@ namespace Game.Rendering.Tests
 
         [TestCase(P7, Canonical)]
         [TestCase(P8, P8Profile)]
-        public void ProductionSceneOwnsGridRuntimeAndUsesCurrentContinuousSurface(string path, string profilePath)
+        public void ProductionSceneRetainsGridFallbackConfiguration(string path, string profilePath)
         {
             WithScene(path, scene =>
             {
@@ -29,7 +31,7 @@ namespace Game.Rendering.Tests
                 var profile = AssetDatabase.LoadAssetAtPath<ElementWorldProfile>(profilePath);
                 var data = new SerializedObject(world);
                 Assert.That(data.FindProperty("_profile").objectReferenceValue, Is.SameAs(profile));
-                Assert.That(profile.WaterSimulationMode, Is.EqualTo(WaterSimulationMode.GridLiquid), "Scene 必须明确选择当前 GridLiquid。");
+                Assert.That(profile.WaterSimulationMode, Is.EqualTo(WaterSimulationMode.GridLiquid), "旧作者资料回退时应使用该地图原有的 GridLiquid Profile。");
                 Assert.That(profile.EnableFluidChunkStreaming, Is.False);
                 var liquid = Single<LiquidWorldRuntime>(scene);
                 Assert.That(data.FindProperty("_gridLiquidRuntime").objectReferenceValue, Is.SameAs(liquid));
@@ -56,7 +58,7 @@ namespace Game.Rendering.Tests
             });
         }
         [Test]
-        public void P8UsesCanonicalMaterialRulesAndOwnsACompleteGpuRuntimeChain()
+        public void P8SharesCanonicalReactionRulesAndKeepsItsLocalBindings()
         {
             WithScene(P8,scene=>
             {
@@ -91,41 +93,126 @@ namespace Game.Rendering.Tests
                 Assert.That(Reference<Material>(fire,"_gasMaterial"),Is.Not.Null);
             });
         }
-        [Test]
-        public void P8ActualRuntimeRoutesThreeLiquidsAndCapturesTheirSurface()
+        [TestCase("home", "Assets/_Project/Scenes/SinglePlayer/SinglePlayer_Home.unity", "HOME")]
+        [TestCase("p7", P7, "P7")]
+        [TestCase("p8", P8, "P8")]
+        public void ProductionSceneAndItsOnlineExportSelectTheSameCellularBase(string mapId, string path, string assetName)
         {
-            WithScene(P8,scene=>
+            WithScene(path, scene =>
             {
-                var world=Single<ElementWorldRuntime>(scene);var liquid=Single<LiquidWorldRuntime>(scene);
-                // EditMode 显式驱动真实 Scene Runtime；不进入 Play，不执行 Boss AI，也不重载 P7。
+                var world = Single<ElementWorldRuntime>(scene);
+                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"Assets/_Project/Prefabs/World/Online/{assetName}World.prefab");
+                Assert.That(prefab, Is.Not.Null);
+                Assert.That(prefab.activeSelf, Is.False, "在线地图先装配 Authority/Replica 所有权，再激活。");
+                var exports = prefab.GetComponentsInChildren<ElementWorldRuntime>(true);
+                Assert.That(exports.Length, Is.EqualTo(1));
+                var exported = exports[0];
+                foreach (var owner in new[] { world, exported })
+                {
+                    Assert.That(owner.CellularMapContentId, Is.EqualTo(mapId));
+                    Assert.That(owner.UsesCellularWorld, Is.True, "作者几何不能只保存了配置却在初始化选择中回退。");
+                }
+                Assert.That(world.CellularMapBaseFingerprint, Is.Not.Zero);
+                Assert.That(exported.CellularMapBaseFingerprint, Is.EqualTo(world.CellularMapBaseFingerprint));
+            });
+        }
+
+        [Test]
+        public void ReplicaUsesTheReboundActorCameraWhileTheOldCameraIsStillActive()
+        {
+            var owner = new GameObject("Inactive replica");
+            owner.SetActive(false);
+            var world = owner.AddComponent<ElementWorldRuntime>();
+            world.ConfigureExecutionMode(WorldExecutionMode.Replica);
+            var actor = new GameObject("Local actor");
+            var oldCamera = new GameObject("Transition camera").AddComponent<Camera>();
+            var camera = new GameObject("Bound game camera").AddComponent<Camera>();
+            int ownerId = owner.GetInstanceID();
+            try
+            {
+                LocalActorPresentation.Bind(ownerId, actor, true);
+                LocalActorCameraPresentation.Bind(ownerId, actor, oldCamera);
+                Assert.That(CellularMaterialRenderer.ResolveCamera(world, null), Is.SameAs(oldCamera));
+                LocalActorCameraPresentation.Bind(ownerId, actor, camera);
+                Assert.That(oldCamera.isActiveAndEnabled, Is.True);
+                Assert.That(CellularMaterialRenderer.ResolveCamera(world, oldCamera), Is.SameAs(camera));
+            }
+            finally
+            {
+                LocalActorCameraPresentation.Clear(ownerId);
+                LocalActorPresentation.Clear(ownerId);
+                Object.DestroyImmediate(camera.gameObject); Object.DestroyImmediate(oldCamera.gameObject);
+                Object.DestroyImmediate(actor); Object.DestroyImmediate(owner);
+            }
+        }
+
+        [TestCase(WorldExecutionMode.Authority)]
+        [TestCase(WorldExecutionMode.Replica)]
+        public void NestedInactiveP7RoomFindsItsOwnRocksBeforeConfiguringMaterialOwnership(WorldExecutionMode mode)
+        {
+            var room = EditorSceneManager.NewPreviewScene();
+            try
+            {
+                var bootstrap = new GameObject("OnlineRoom bootstrap");
+                SceneManager.MoveGameObjectToScene(bootstrap, room);
+                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/_Project/Prefabs/World/Online/P7World.prefab");
+                var content = Object.Instantiate(prefab, bootstrap.transform, false);
+                Assert.That(content.activeSelf, Is.False);
+                var binding = content.GetComponent<OnlineMaterialWorldBinding>();
+                Assert.That(binding, Is.Not.Null);
+                // 房间仍未激活，__Level 在导出地图根下，Scene 的直接根只有 bootstrap。此时两端都要
+                // 确认四个 MeshCollider 属于自己的地图，不能等 Awake 才修复已缓存的后端选择。
+                Assert.That(binding.TrySetCellularDirectoryLimit(8), Is.True);
+                Assert.That(binding.TryConfigure(mode, 1), Is.True);
+                Assert.That(binding.UsesCellularReplication, Is.True);
+                Assert.That(content.GetComponentInChildren<ElementWorldRuntime>(true).ExecutionMode, Is.EqualTo(mode));
+            }
+            finally { EditorSceneManager.ClosePreviewScene(room); }
+        }
+
+        [Test]
+        public void P8ActualRuntimePublishesLiquidSandAndGasToThePresentationReadModel()
+        {
+            var scene = EditorSceneManager.OpenPreviewScene(P8);
+            try
+            {
+                var world=Single<ElementWorldRuntime>(scene);
+                // 真实 P8 副本走与施法一致的队列，四种液体、沙和蒸汽在同一批 Tick 中推进。
                 var initialize=typeof(ElementWorldRuntime).GetMethod("TryInitialize",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
                 Assert.That((bool)initialize.Invoke(world,null),Is.True);
-                Assert.That(world.EffectiveWaterSimulationMode,Is.EqualTo(WaterSimulationMode.GridLiquid));
+                Assert.That(world.EffectiveWaterSimulationMode,Is.EqualTo(WaterSimulationMode.Cellular));
                 var player=Reference<Transform>(world,"_interestPoint");var terrain=Components<Terrain>(scene)[0];
-                var materials=new[]{MaterialId.Water,MaterialId.Poison,MaterialId.Sticky};
-                var positions=new Vector3[3];ulong before=liquid.TotalQuantity;
+                var materials=new[]{MaterialId.Water,MaterialId.Poison,MaterialId.Sticky,MaterialId.Oil,MaterialId.Sand,MaterialId.Steam};
+                var changed = new HashSet<Vector3Int>();
+                void Observe(Vector3Int cell) => changed.Add(cell);
+                world.CellularContentsChanged += Observe;
                 Physics.SyncTransforms();
                 for(int i=0;i<materials.Length;i++)
                 {
                     var position=player.position+Vector3.forward*(i*3f+2f);
-                    position.y=terrain.SampleHeight(position)+terrain.transform.position.y+.75f;positions[i]=position;
+                    position.y=terrain.SampleHeight(position)+terrain.transform.position.y+3f;
                     var request=new ElementWriteRequest(position,materials[i],255,0f,false);
                     Assert.That(world.TryEnqueueWrite(in request),Is.True,materials[i].ToString());
                 }
-                for(int i=0;i<3;i++)Assert.That(world.TickForTests(.1f),Is.EqualTo(1));
-                Assert.That(liquid.TotalQuantity,Is.EqualTo(before+765));
-                Assert.That(liquid.PendingQuantity,Is.Zero);
-                for(int i=0;i<materials.Length;i++)
+                for(int i=0;i<3;i++)Assert.That(world.TickForTests(world.CellularTickDuration),Is.EqualTo(1));
+                world.CellularContentsChanged -= Observe;
+                var seen = new HashSet<MaterialId>();
+                foreach (var cell in changed)
                 {
-                    Vector3 p=(positions[i]-world.Origin)/world.CellSize;
-                    var center=new Vector3Int(Mathf.FloorToInt(p.x),Mathf.FloorToInt(p.y),Mathf.FloorToInt(p.z));bool queried=false;
-                    for(int y=-6;y<=3;y++)for(int z=-3;z<=3;z++)for(int x=-3;x<=3;x++)
-                        if(world.MaterialAmounts.TryGetAmount(center+new Vector3Int(x,y,z),materials[i],out byte amount)&&amount>0)queried=true;
-                    Assert.That(queried,Is.True,materials[i]+" 写入后必须能由 Gameplay 权威查询读取。");
+                    if (!world.TryGetCellularContents(cell, out var primary, out uint quantity, out uint steam, out _)) continue;
+                    if (quantity > 0 && world.MaterialAmounts.TryGetAmount(cell, primary, out byte amount) && amount > 0)
+                    {
+                        seen.Add(primary);
+                        var fireCell = cell + Vector3Int.up;
+                        var center = world.Origin + ((Vector3)fireCell + Vector3.one * .5f) * world.CellSize;
+                        Assert.That(GpuFireParcelRenderer.HasGroundSupport(world, fireCell, center, world.CellSize),
+                            Is.EqualTo(ElementCellMaterialRules.OccupiesWholeCell(primary)), primary.ToString());
+                    }
+                    if (steam > 0 && world.MaterialAmounts.TryGetAmount(cell, MaterialId.Steam, out byte gas) && gas > 0) seen.Add(MaterialId.Steam);
                 }
-                var frame=new GridLiquidFieldFrame(liquid,64,256,.8f);frame.Capture();
-                Assert.That(frame.Count,Is.GreaterThan(0));Assert.That(frame.OwnerCount,Is.GreaterThan(0));
-            });
+                CollectionAssert.IsSubsetOf(materials, seen, "表现收到变更后读取的材料与 Gameplay 采样必须相符。");
+            }
+            finally { EditorSceneManager.ClosePreviewScene(scene); }
         }
         private static void WithScene(string path,Action<Scene> check)
         {

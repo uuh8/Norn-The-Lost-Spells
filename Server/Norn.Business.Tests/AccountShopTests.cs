@@ -74,14 +74,17 @@ public sealed class AccountShopTests
         Assert.Equal(before.Profile.Items.Length, await db.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM Items WHERE OwnerCharacterId=@Player", new { Player = a.Profile.PlayerId }));
     }
 
-    [Fact, Trait("Category", "DatabaseIntegration")]
-    public async Task MixedMaterialBuyAndSalePreserveOriginalLargestRemainderCompositionAndContainerIdentity()
+    [Theory, Trait("Category", "DatabaseIntegration")]
+    [InlineData(1, 3)]
+    [InlineData(11, 12)]
+    public async Task MixedMaterialBuyAndSalePreserveOriginalLargestRemainderCompositionAndContainerIdentity(byte first, byte second)
     {
         await using var f = new OnlineFactory(); var a = await f.NewPlayerAsync(); var config = Config(f);
         var state = await Shop(a.Client); await Trade(a.Client, Buy(state, BottleOffer(f))); state = await Shop(a.Client);
         var bottle = state.Profile.Items.Single(i => i.ContentId == BottleOffer(f).ContentId);
         var rules = f.Manifest.Items.Single(i => i.ContentId == bottle.ContentId);
-        var materials = config.Offers.Where(o => o.MaterialKey != 0 && (rules.ContainerMaterialsMask & (1 << o.MaterialKey)) != 0).Take(2).ToArray();
+        var materials = config.Offers.Where(o => (o.MaterialKey == first || o.MaterialKey == second)
+            && (rules.ContainerMaterialsMask & (1 << o.MaterialKey)) != 0).OrderBy(o => o.MaterialKey).ToArray();
         Assert.Equal(2, materials.Length);
         await using var db = new MySqlConnection(f.Connection);
         await db.ExecuteAsync("INSERT INTO ItemContainerComponents VALUES(@Id,@A,4),(@Id,@B,6)", new { Id = bottle.InstanceId, A = materials[0].MaterialKey, B = materials[1].MaterialKey });

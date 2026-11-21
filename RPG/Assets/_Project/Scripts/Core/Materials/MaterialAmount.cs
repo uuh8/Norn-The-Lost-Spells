@@ -17,6 +17,16 @@ namespace Game.Core
         public const int LocalInventoryMask = 0x1fe | (1 << 11) | (1 << 12);
         public const int MaximumComponents = 8;
         public const int InventoryMaterialCount = 10;
+        // F/H 的数量预算与喷口半径都使用相同的气体身份。沙、油虽然追加在气体之后，
+        // 其稳定编号只用于识别材料，不能用编号范围推断物态。
+        public const byte SteamKey = 7, ToxicVaporKey = 8;
+        public static bool ContainsGas(MaterialAmount[] parts, int count)
+        {
+            for (int i = 0; i < count; i++)
+                if (parts[i].Quantity != 0 && (parts[i].MaterialKey == SteamKey || parts[i].MaterialKey == ToxicVaporKey))
+                    return true;
+            return false;
+        }
         public static bool IsLocalInventoryMaterial(byte key) => key <= LastLocalInventoryKey && (LocalInventoryMask & (1 << key)) != 0;
         public static bool IsValidLocalInventoryMask(int mask) => mask > 0 && (mask & ~LocalInventoryMask) == 0;
     }

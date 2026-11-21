@@ -1,5 +1,6 @@
 using System.Reflection;
 using Game.Combat;
+using Game.Core;
 using Game.Materials;
 using NUnit.Framework;
 using UnityEditor;
@@ -81,6 +82,100 @@ namespace Game.ElementField.Tests
             }
             finally { Object.DestroyImmediate(host); Object.DestroyImmediate(profile); }
         }
+        [TestCase("Water", MaterialId.Water)]
+        [TestCase("ToxicVapor", MaterialId.ToxicVapor)]
+        public void CellularProjectileImpactFitsTheAuthoredQuantityOnTheHitSide(string prefabName, MaterialId material)
+        {
+            const string assets = "Assets/_Project/";
+            var projectile = AssetDatabase.LoadAssetAtPath<GameObject>(assets + "Art/Elemental/Prefabs/PF_Element" + prefabName + "Projectile.prefab");
+            var impact = projectile.GetComponent<ElementDepositOnImpact>();
+            var profile = Object.Instantiate(AssetDatabase.LoadAssetAtPath<ElementWorldProfile>(assets + "ScriptableObjects/ElementField/ElementWorldProfile_Cellular.asset"));
+            var cells = Object.Instantiate(profile.CellularWorld);
+            var host = new GameObject("Cellular projectile impact");
+            host.SetActive(false);
+            try
+            {
+                Set(profile, "_cellularWorld", cells);
+                // 两面一格厚的墙；撞在 x=0 的负轴面，普通 floor 恰好会落入实心格。
+                // 第二面墙跨过出生球，检查一个可达候选和一个仅在球内、隔墙的候选的区别。
+                Set(cells, "_terrain", new[] {
+                    new ElementTerrainRegion { Cells = new BoundsInt(0,-24,-24,1,48,48), Material = MaterialId.Rock },
+                    new ElementTerrainRegion { Cells = new BoundsInt(-5,-24,-24,1,48,48), Material = MaterialId.Rock }
+                });
+                var world = host.AddComponent<ElementWorldRuntime>();
+                Set(world, "_profile", profile);
+                world.ConfigureExecutionMode(WorldExecutionMode.Authority);
+                host.SetActive(true);
+                if (!world.IsInitialized)
+                    Assert.IsTrue((bool)typeof(ElementWorldRuntime).GetMethod("TryInitialize", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(world, null));
+                Vector3 hit = world.Origin + new Vector3(0, .5f, .5f);
+                Assert.IsTrue(impact.TryBuildImpactRequest(hit, Vector3.right, Vector3.left, out var payload));
+                Assert.AreEqual(material, payload.MaterialKind);
+                Assert.IsTrue(world.TryEnqueueWrite(in payload));
+                // 单格写入覆盖同一面法线的另一种边界。将两次投放分开，避免争用同一格容量。
+                var point = new ElementWriteRequest(hit + Vector3.up * 2f, material, 17, 0f, false, Vector3.zero, Vector3.left);
+                Assert.IsTrue(world.TryEnqueueWrite(in point));
+                world.StepAuthority(world.CellularTickDuration, 1);
+                Assert.AreEqual(0, world.DeferredCellularWritesLastTick);
+                Assert.AreEqual((ulong)payload.TotalAmount + 17UL, world.CellularSimulation.GetTotalQuantity(material) + world.RestingLiquids.GetTotalQuantity(material));
+                Assert.Greater(world.CellularOccupiedCount, 0);
+                world.VisitCellularOccupiedCells(cell => Assert.That(cell.x, Is.InRange(-4, -1), "材料不得出现在任何一面墙的背后"));
+            }
+            finally
+            {
+                Object.DestroyImmediate(host);
+                Object.DestroyImmediate(profile);
+                Object.DestroyImmediate(cells);
+            }
+        }
+
+        [Test]
+        public void HeightfieldTopCellCanBeClearedUnlessAnotherColliderBlocksIt()
+        {
+            var profile = AssetDatabase.LoadAssetAtPath<ElementWorldProfile>("Assets/_Project/ScriptableObjects/ElementField/ElementWorldProfile_Cellular.asset");
+            var data = new TerrainData { heightmapResolution = 33, size = new Vector3(8, 1, 8) };
+            var heights = new float[33, 33];
+            for (int z = 0; z < 33; z++)
+            for (int x = 0; x < 33; x++) heights[z, x] = .30f;
+            data.SetHeights(0, 0, heights);
+            var ground = Terrain.CreateTerrainGameObject(data);
+            var ceiling = new GameObject("Low independent obstacle");
+            var host = new GameObject("Heightfield impact world");
+            host.SetActive(false);
+            try
+            {
+                // P8 实际接触点 y=.127，格距 .25；原始 Terrain 的保守顶格 y=1，
+                // 第一次向外偏半格仍被判实心。放在旁边的独立薄顶棚即使重叠这格也不能穿过。
+                var normal = new Vector3(.031f, .999f, -.016f).normalized;
+                Vector3 hit = new Vector3(2.1f, .127f, 2.77f);
+                Vector3 sheltered = hit + Vector3.right * 3;
+                ceiling.transform.position = new Vector3(sheltered.x, .375f, sheltered.z);
+                ceiling.AddComponent<BoxCollider>().size = Vector3.one * .12f;
+                Physics.SyncTransforms();
+                var world = host.AddComponent<ElementWorldRuntime>();
+                Set(world, "_profile", profile);
+                Set(world, "_cellularContentProfile", profile.CellularWorld);
+                Set(world, "_cellularMapContentId", "heightfield-test");
+                Set(world, "_cellularGeometryDigest", new string('1', 64));
+                Set(world, "_cellularHeightTerrain", ground.GetComponent<Terrain>());
+                world.ConfigureExecutionMode(WorldExecutionMode.Authority);
+                host.SetActive(true);
+                if (!world.IsInitialized)
+                    Assert.IsTrue((bool)typeof(ElementWorldRuntime).GetMethod("TryInitialize", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(world, null));
+                var clear = new ElementWriteRequest(hit, MaterialId.Water, 1600, .75f, true, Vector3.zero, normal);
+                var blocked = new ElementWriteRequest(sheltered, MaterialId.Water, 1600, .75f, true, Vector3.zero, normal);
+                Assert.IsTrue(world.TryEnqueueWrite(in clear));
+                Assert.IsFalse(world.TryEnqueueWrite(in blocked));
+            }
+            finally
+            {
+                Object.DestroyImmediate(host);
+                Object.DestroyImmediate(ceiling);
+                Object.DestroyImmediate(ground);
+                Object.DestroyImmediate(data);
+            }
+        }
+
         [Test]
         public void LocalSolidSupportInvalidationKeepsUnrelatedTerrainCache()
         {

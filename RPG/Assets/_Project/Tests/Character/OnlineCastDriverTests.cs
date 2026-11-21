@@ -1438,6 +1438,62 @@ namespace Game.Character.Tests
                 TransferBudget = 10, AimOrigin = driver.transform.position + Vector3.up, AimDirection = Vector3.forward
             };
 
+        [TestCase(11, true)] [TestCase(12, true)]
+        [TestCase(9, false)] [TestCase(10, false)] [TestCase(5, false)]
+        public void AuthorityCollectionUsesTheConfiguredBottleMaskForWorldMaterialKeys(byte key, bool compatible)
+        {
+            var driver = CreateContainerAuthority(true);
+            driver.StepAuthority(.25f, 1);
+            var intent = ContainerAuthorityIntent(driver);
+            intent.TransferBudget = 1;
+            int writes = 0;
+            // Character 测试替换世界端的命中与扣量回执，库存预约、命令执行和 DTO 导出都走真实 DS。
+            Action<MaterialCollectionAimRequestedEvent> aim = command =>
+            {
+                var hit = command.Exchange;
+                hit.Point = driver.transform.position + Vector3.forward;
+                hit.MaterialKey = key;
+                hit.Handled = hit.Found = true;
+            };
+            Action<MaterialWorldTransferRequestedEvent> transfer = command =>
+            {
+                writes++;
+                var exchange = command.Exchange;
+                exchange.Handled = true;
+                var part = new[] { new MaterialAmount(key, 1) };
+                var result = exchange.Result;
+                if (exchange.Destination.TryReserve(part, part.Length, out result.Failure))
+                {
+                    exchange.Destination.Commit();
+                    result.Transferred = 1;
+                }
+                exchange.Result = result;
+            };
+            EventBus<MaterialCollectionAimRequestedEvent>.Subscribe(aim);
+            EventBus<MaterialWorldTransferRequestedEvent>.Subscribe(transfer);
+            try
+            {
+                var receipt = driver.ExecuteInventoryCommand(intent);
+                Assert.That(receipt.TransferFailure, Is.EqualTo(compatible ? MaterialTransferFailure.None : MaterialTransferFailure.GeometryRejected));
+                Assert.That(receipt.Success, Is.EqualTo(compatible));
+                Assert.That(writes, Is.EqualTo(compatible ? 1 : 0));
+                Assert.That(driver.TryCaptureAuthorityInventoryDiagnostic(2, out var diagnostic), Is.True);
+                var bottle = DiagnosticItem(diagnostic, intent.ItemId);
+                var parts = (MaterialAmount[])DiagnosticValue(bottle, "Components");
+                Assert.That(parts.Length, Is.EqualTo(compatible ? 1 : 0));
+                if (compatible)
+                {
+                    Assert.That(parts[0].MaterialKey, Is.EqualTo(key));
+                    Assert.That(parts[0].Quantity, Is.EqualTo(1ul));
+                }
+            }
+            finally
+            {
+                EventBus<MaterialWorldTransferRequestedEvent>.Unsubscribe(transfer);
+                EventBus<MaterialCollectionAimRequestedEvent>.Unsubscribe(aim);
+            }
+        }
+
         [Test]
         public void AuthorityPourOriginUsesHorizontalAimWithoutRotatingTheActor()
         {
@@ -2326,6 +2382,24 @@ namespace Game.Character.Tests
                 StepContainerInput(.1f);
             }
             Assert.That(_containerInputCommands.Count, Is.EqualTo(6));
+        }
+
+        [TestCase((byte)7, true)] [TestCase((byte)8, true)]
+        [TestCase((byte)11, false)] [TestCase((byte)12, false)]
+        public void HeldPourUsesGasBudgetOnlyForGasInTheConfirmedBottle(byte key, bool gas)
+        {
+            var driver = CreateContainerInput(out var snapshot);
+            snapshot.SnapshotSequence++; snapshot.ServerTick++; snapshot.Assets.InventoryVersion++;
+            var bottle = snapshot.Assets.Items[2];
+            bottle.Revision++;
+            bottle.ContainerState.Components = new[] { new OnlineOwnedMaterialAmountSnapshot { MaterialKey = key, Quantity = 1000 } };
+            Assert.That(driver.InstallClientInventory(ValidationIdentity(_containerDefinitionClone), snapshot, out var error), Is.True, error);
+            InputState(false, UnityEngine.InputSystem.Key.H);
+            StepContainerInput(.1f);
+            Assert.That(_containerInputCommands.Count, Is.EqualTo(1));
+            var use = _containerDefinitionClone.ContainerUse;
+            ulong budget = (ulong)((double)use.PourRate * .1f * (gas ? use.GasPourMultiplier : 1));
+            Assert.That(_containerInputCommands[0].TransferBudget, Is.EqualTo(budget));
         }
 
         [Test]

@@ -107,7 +107,7 @@ namespace Game.EditorTools
                     EditorUtility.SetDirty(targetProfile);AssetDatabase.SaveAssetIfDirty(targetProfile);
                     if(saveScene)
                     {
-                        if(!EditorSceneManager.SaveScene(p8))throw new InvalidOperationException("P8 保存失败。");
+                        CellularMapContentSetup.SaveAuthoredScene(p8, Single<ElementWorldRuntime>(p8), "p8");
                         result.SceneSaved=true;
                     }
                     result.Applied=true;committed=true;
