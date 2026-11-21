@@ -382,6 +382,27 @@ namespace Game.ElementField.Tests
         }
 
         [Test]
+        public void CachedGasKeysFollowEvictionAndSameRevisionReentry()
+        {
+            var store = new WorldReplicaStore(7, 8, 32, 8, 256);
+            var source = new WorldReplicaVolumeReadModel(store, new WorldGridGeometry(WorldMaterialDomain.Gas,Vector3.zero,1,4),
+                32,new[] {MaterialId.Steam});
+            var words = Payload(WorldMaterialDomain.Gas,15);
+            WorldChunkPayloadCodec.WriteCell(words,11,new WorldMaterialCellSample(WorldMaterialDomain.Gas,
+                WorldMaterialStorage.Resident,Vector3Int.zero,(byte)MaterialId.Steam,15));
+            var header = Header(words,WorldMaterialDomain.Gas);
+            Assert.That(source.ResidentChunkCount,Is.Zero);
+            Assert.That(store.TryInstall(header,words,18),Is.True);
+            Assert.That(source.ResidentChunkCount,Is.EqualTo(1));
+            Assert.That(source.GetChunkKey(0),Is.EqualTo(new ElementChunkKey(0,0,0)));
+            Assert.That(store.TryEvictInterest(header.Key),Is.True);
+            Assert.That(source.ResidentChunkCount,Is.Zero);
+            Assert.That(store.TryInstall(header,words,18),Is.True);
+            Assert.That(source.ResidentChunkCount,Is.EqualTo(1));
+            Assert.That(source.GetChunkKey(0),Is.EqualTo(new ElementChunkKey(0,0,0)));
+        }
+
+        [Test]
         public void LiquidReadModelUsesOriginalPresentationContractWithoutRuntimeOwner()
         {
             var profile = ScriptableObject.CreateInstance<LiquidWorldProfile>();

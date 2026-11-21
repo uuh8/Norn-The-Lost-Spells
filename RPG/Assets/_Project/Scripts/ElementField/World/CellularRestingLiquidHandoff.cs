@@ -61,7 +61,7 @@ namespace Game.ElementField
             if (simulation == null || simulation.CellCapacity != CellCapacity || _pendingCount != 0 ||
                 _opening) return false;
             if (!simulation.TryGetOccupiedCell(cell, out MaterialId material, out uint quantity) ||
-                !CanArchive(material, quantity) || simulation.TryGetQuantity(cell, MaterialId.Steam, out _) ||
+                !CanArchive(material, quantity) || simulation.HasPendingImpulse(cell) || simulation.TryGetQuantity(cell, MaterialId.Steam, out _) ||
                 simulation.TryGetQuantity(cell, MaterialId.ToxicVapor, out _) || _totals[(byte)material] > ulong.MaxValue - quantity ||
                 NeedsDynamic(cell, material, quantity, simulation)) return false;
             int region = FindRegion(cell);

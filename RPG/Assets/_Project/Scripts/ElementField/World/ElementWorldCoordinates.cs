@@ -60,9 +60,9 @@ namespace Game.ElementField
             checked
             {
                 return new Vector3Int(
-                    chunk.X * chunkSize + localCell.x,
-                    chunk.Y * chunkSize + localCell.y,
-                    chunk.Z * chunkSize + localCell.z);
+                    (int)((long)chunk.X * chunkSize + localCell.x),
+                    (int)((long)chunk.Y * chunkSize + localCell.y),
+                    (int)((long)chunk.Z * chunkSize + localCell.z));
             }
         }
 

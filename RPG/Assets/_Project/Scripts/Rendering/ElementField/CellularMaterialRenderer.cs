@@ -49,11 +49,13 @@ namespace Game.Rendering
             internal readonly List<Vector3Int> Cells = new List<Vector3Int>(4);
             internal ElementChunkKey Key;
             internal int SurfaceCells, GasCells;
-            internal bool SurfaceDirty, GasDirty, HasSurface, HasGasTexture;
+            internal bool SurfaceDirty, GasDirty, HasSurface, HasGasTexture, Visible;
             internal float GasBlendStart;
             internal Mesh Surface;
             internal Texture3D GasTexture;
             internal Color32[] GasHistory;
+            // 局部地址为三组低 3 位，值为两种浓度的线性 byte。纯液体页不分配此表。
+            internal Dictionary<int, ushort> GasDensity;
         }
 
         private static ElementWorldRuntime _observedWorld;
@@ -217,6 +219,17 @@ namespace Game.Rendering
             }
             page.SurfaceCells += (sample.Quantity != 0 ? 1 : 0) - (old.Quantity != 0 ? 1 : 0);
             page.GasCells += (sample.HasGas ? 1 : 0) - (old.HasGas ? 1 : 0);
+            if (gasChanged)
+            {
+                int local = LocalGasIndex(cell);
+                if (sample.HasGas)
+                {
+                    float scale = 255f / _world.CellularCellCapacity;
+                    page.GasDensity ??= new Dictionary<int, ushort>();
+                    page.GasDensity[local] = (ushort)(EncodeDensity(sample.Steam, scale) | EncodeDensity(sample.Toxic, scale) << 8);
+                }
+                else page.GasDensity.Remove(local);
+            }
             bool restingChanged = _resting.CellChanged(cell, sample.Quantity != 0, surfaceChanged);
             if (surfaceChanged)
             {
@@ -240,6 +253,7 @@ namespace Game.Rendering
                     for (int x = key.X - (lx == 0 ? 1 : 0); x <= key.X + (lx == PageSize - 1 ? 1 : 0); x++)
                         if (_pages.TryGetValue(new ElementChunkKey(x, y, z), out var neighbor))
                         {
+                            if (neighbor.Visible && !neighbor.SurfaceDirty && !neighbor.GasDirty) _visibleDirtyPages++;
                             neighbor.SurfaceDirty |= surfaceChanged;
                             neighbor.GasDirty |= gasChanged;
                         }
@@ -282,11 +296,12 @@ namespace Game.Rendering
         internal void SeedNewRestingRegion(BoundsInt bounds, HashSet<Vector3Int> touching)
         {
             // 新归档或复用的水池只需要本身与共享面的显式格。小池按页坐标直接找；
-            // 范围非常大且稀疏时遍历实际页，避免为大片没有动态材料的空间查询空页。
+            // 范围较大时用已有的稀疏页树裁剪，避免读遍地图其他方向的动态页或逐个探测空坐标。
             var low = new ElementChunkKey(PreviousPage(bounds.xMin), PreviousPage(bounds.yMin), PreviousPage(bounds.zMin));
             var high = Key(bounds.max);
+            if (_pages.Count == 0) return;
             double probes = (double)(high.X - low.X + 1) * (high.Y - low.Y + 1) * (high.Z - low.Z + 1);
-            if (probes <= _pages.Count)
+            if (probes <= 32)
             {
                 for (int z = low.Z; z <= high.Z; z++)
                     for (int y = low.Y; y <= high.Y; y++)
@@ -295,12 +310,7 @@ namespace Game.Rendering
                                 SeedPage(page, bounds, touching);
                 return;
             }
-            foreach (var page in _pages.Values)
-            {
-                var key = page.Key;
-                if (key.X >= low.X && key.X <= high.X && key.Y >= low.Y && key.Y <= high.Y && key.Z >= low.Z && key.Z <= high.Z)
-                    SeedPage(page, bounds, touching);
-            }
+            SeedRestingNode(PageTreeDepth, Vector3Int.zero, low, high, bounds, touching);
         }
 
         // 两个相邻的已提交样本，恰有一处同材同量消失和一处出现时，可连续显示独立水滴。
@@ -354,12 +364,11 @@ namespace Game.Rendering
             if (!_bound || _world == null || !_world.isActiveAndEnabled) return;
             if (_camera == null || !_camera.isActiveAndEnabled) _camera = Camera.main;
             if (_camera == null) return;
-            GeometryUtility.CalculateFrustumPlanes(_camera, _frustum);
             _resting.Refresh(_world.CellularRestingLiquids, this);
             float meters = _world.CellSize * PageSize;
             int limit = Mathf.Max(1, _maximumPageRebuildsPerFrame);
             CollectVisiblePages(meters);
-            for (int i = 0, rebuilt = 0; i < _visiblePages.Count && rebuilt < limit; i++)
+            for (int i = 0, rebuilt = 0; _visibleDirtyPages != 0 && i < _visiblePages.Count && rebuilt < limit; i++)
             {
                 if (_rebuildCursor >= _visiblePages.Count) _rebuildCursor = 0;
                 var page = _visiblePages[_rebuildCursor++];
@@ -367,6 +376,7 @@ namespace Game.Rendering
                 if (page.SurfaceDirty) RebuildSurface(page);
                 if (page.GasDirty) RebuildGas(page);
                 page.SurfaceDirty = page.GasDirty = false;
+                _visibleDirtyPages--;
                 rebuilt++;
             }
             for (int slot = 0; slot < CellularMaterialSurfaceMesh.LiquidSlots; slot++)
@@ -432,16 +442,13 @@ namespace Game.Rendering
                 { name = "Cellular Gas Density", filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp, hideFlags = HideFlags.DontSave };
                 page.GasHistory = new Color32[TextureCells];
             }
-            Vector3Int start = new Vector3Int(page.Key.X, page.Key.Y, page.Key.Z) * PageSize;
-            bool edgePage = IsCoordinateEdge(page.Key);
-            float scale = 255f / _world.CellularCellCapacity;
-            int index = 0;
-            for (int z = 0; z < TextureSize; z++) for (int y = 0; y < TextureSize; y++) for (int x = 0; x < TextureSize; x++)
+            Array.Clear(_gasPixels, 0, _gasPixels.Length);
+            for (int z = -1; z <= 1; z++) for (int y = -1; y <= 1; y++) for (int x = -1; x <= 1; x++)
             {
-                var delta = new Vector3Int(x - 1, y - 1, z - 1);
-                var coordinate = start + delta;
-                var cell = edgePage && OffsetWrapped(start, delta, coordinate) ? default : Read(coordinate);
-                _gasPixels[index++] = new Color32(EncodeDensity(cell.Steam, scale), EncodeDensity(cell.Toxic, scale), 0, 0);
+                // 渲染页坐标仅占 29 位；越过 int 世界边界的邻页不会出现在索引里。
+                var neighbor = new ElementChunkKey(page.Key.X + x, page.Key.Y + y, page.Key.Z + z);
+                if (_pages.TryGetValue(neighbor, out var source) && source.GasCells != 0)
+                    CopyGasHalo(source.GasDensity, x, y, z, _gasPixels);
             }
             // 保留同一张 Texture 上的前后两份密度，复用原气体 Shader 的体积积分和深度截断。
             float blend = Mathf.Clamp01((Time.time - page.GasBlendStart) / GasBlendSeconds);
@@ -455,8 +462,40 @@ namespace Game.Rendering
         private static byte EncodeDensity(uint quantity, float scale)
             => quantity == 0 ? (byte)0 : (byte)Mathf.Clamp(Mathf.RoundToInt(quantity * scale), 1, 255);
 
+        internal static int LocalGasIndex(Vector3Int cell) => (cell.x & (PageSize - 1))
+            | ((cell.y & (PageSize - 1)) << PageShift) | ((cell.z & (PageSize - 1)) << (PageShift * 2));
+
+        // 每个邻页只贡献面、棱或一个角。稀疏页散写实际气体，稠密页读取所需矩形，
+        // 因而单页访问数不超过 min(该页有气格数, 所需 Halo 格数)，不会遍历同页水、沙或固体。
+        internal static void CopyGasHalo(Dictionary<int,ushort> gas, int dx, int dy, int dz, Color32[] pixels)
+        {
+            int x0 = dx < 0 ? PageSize - 1 : 0, x1 = dx > 0 ? 1 : PageSize;
+            int y0 = dy < 0 ? PageSize - 1 : 0, y1 = dy > 0 ? 1 : PageSize;
+            int z0 = dz < 0 ? PageSize - 1 : 0, z1 = dz > 0 ? 1 : PageSize;
+            int start = (1 + dx * PageSize) + TextureSize * ((1 + dy * PageSize) + TextureSize * (1 + dz * PageSize));
+            if (gas.Count < (x1-x0) * (y1-y0) * (z1-z0))
+            {
+                foreach (var pair in gas)
+                {
+                    int x = pair.Key & (PageSize-1), y = (pair.Key >> PageShift) & (PageSize-1), z = pair.Key >> (PageShift*2);
+                    if (x >= x0 && x < x1 && y >= y0 && y < y1 && z >= z0 && z < z1)
+                        pixels[start + x + TextureSize*(y+TextureSize*z)] = GasPixel(pair.Value);
+                }
+            }
+            else
+            {
+                for (int z = z0; z < z1; z++) for (int y = y0; y < y1; y++) for (int x = x0; x < x1; x++)
+                    if (gas.TryGetValue(x | (y << PageShift) | (z << (2*PageShift)), out ushort density))
+                        pixels[start + x + TextureSize*(y+TextureSize*z)] = GasPixel(density);
+            }
+        }
+
+        private static Color32 GasPixel(ushort density) => new Color32((byte)(density & 255), (byte)(density >> 8), 0, 0);
+
         private void ReleasePage(Page page)
         {
+            if (page.Visible && (page.SurfaceDirty || page.GasDirty)) _visibleDirtyPages--;
+            page.Visible = false;
             _pages.Remove(page.Key);
             IndexPage(page.Key, false);
             page.SurfaceDirty = page.GasDirty = page.HasSurface = page.HasGasTexture = false;

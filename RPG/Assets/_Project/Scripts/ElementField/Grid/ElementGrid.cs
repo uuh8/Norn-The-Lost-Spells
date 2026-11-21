@@ -13,8 +13,11 @@ namespace Game.ElementField
         private ElementCell[] _currentCells;
         private ElementCell[] _nextCells;
         private readonly bool[] _solidMask;
-        private readonly int[] _amountDelta;
-        private readonly bool[] _cellDirty;
+        private int[] _amountDelta;
+        private readonly uint[] _dirtyWords;
+        private readonly int[] _touchedWords;
+        private readonly int[] _touchedChunks;
+        private int _dirtyCellCount, _touchedWordCount, _touchedChunkCount;
         private readonly bool[] _chunkDirty;
         private readonly uint[] _chunkVersions;
 
@@ -24,6 +27,9 @@ namespace Game.ElementField
         }
 
         public ElementGrid(Vector3Int dimensions, int maximumCellCount, int chunkSize)
+            : this(dimensions, maximumCellCount, chunkSize, true) { }
+
+        internal ElementGrid(Vector3Int dimensions, int maximumCellCount, int chunkSize, bool denseSolver)
         {
             if (maximumCellCount <= 0)
             {
@@ -62,10 +68,17 @@ namespace Game.ElementField
             // 四个数组只在初始化时分配。Current/Next 支持后续 Double Buffer；Solid 与元素含量分离，
             // 因为“这里有墙”是空间属性，不应该通过伪造一种 MaterialKind 来表达。
             _currentCells = new ElementCell[cellCount];
-            _nextCells = new ElementCell[cellCount];
             _solidMask = new bool[cellCount];
-            _amountDelta = new int[cellCount];
-            _cellDirty = new bool[cellCount];
+            if (denseSolver)
+            {
+                _nextCells = new ElementCell[cellCount];
+                _amountDelta = new int[cellCount];
+            }
+            // 同一个格在多个 Stage 中变化也只计一次。提交只清本步写过的位图字，
+            // 这样一个正在衰减的火点不会让整个 Chunk 的空格进入提交循环。
+            _dirtyWords = new uint[(cellCount - 1) / 32 + 1];
+            _touchedWords = new int[_dirtyWords.Length];
+            _touchedChunks = new int[chunkCount];
             _chunkDirty = new bool[chunkCount];
             _chunkVersions = new uint[chunkCount];
         }
@@ -77,9 +90,10 @@ namespace Game.ElementField
 
         // 写权限只在 Game.ElementField 程序集内部开放；外部模块不能取得数组后绕开 Simulation 改数据。
         internal ElementCell[] CurrentCells => _currentCells;
-        internal ElementCell[] NextCells => _nextCells;
+        // 旧水 Solver 在构造时预分配。元胞世界的火就地推进，每个火块无需再持有整块 Next/Delta。
+        internal ElementCell[] NextCells => _nextCells ??= new ElementCell[CellCount];
         internal bool[] SolidMask => _solidMask;
-        internal int[] AmountDelta => _amountDelta;
+        internal int[] AmountDelta => _amountDelta ??= new int[CellCount];
         internal uint[] ChunkVersions => _chunkVersions;
 
         public ElementCell GetCell(Vector3Int coordinate)
@@ -141,8 +155,8 @@ namespace Game.ElementField
 
                 // Next Buffer 可能仍保存上一 Stage 的旧快照；Debug Clear 必须同时清空，
                 // 否则下一次 Swap 可能把已删除的元素重新带回 Current。
-                _nextCells[index] = default;
-                _amountDelta[index] = 0;
+                if (_nextCells != null) _nextCells[index] = default;
+                if (_amountDelta != null) _amountDelta[index] = 0;
             }
 
             CommitDirtyVersions();
@@ -152,21 +166,22 @@ namespace Game.ElementField
         internal void PrepareNextFromCurrent()
         {
             // Array.Copy 复用已分配的 Double Buffer；它不会产生 GC Alloc。
-            Array.Copy(_currentCells, _nextCells, CellCount);
+            Array.Copy(_currentCells, NextCells, CellCount);
         }
 
         internal void ClearAmountDelta()
         {
-            Array.Clear(_amountDelta, 0, _amountDelta.Length);
+            Array.Clear(AmountDelta, 0, CellCount);
         }
 
         internal int CommitPreparedStage()
         {
+            var next = NextCells;
             int changed = 0;
             for (int index = 0; index < CellCount; index++)
             {
                 ElementCell before = _currentCells[index];
-                ElementCell after = _nextCells[index];
+                ElementCell after = next[index];
                 if (before.MaterialKind == after.MaterialKind && before.Amount == after.Amount)
                     continue;
 
@@ -176,7 +191,7 @@ namespace Game.ElementField
 
             // 交换引用是 O(1)，避免把 Next 再整体复制回 Current。
             ElementCell[] previousCurrent = _currentCells;
-            _currentCells = _nextCells;
+            _currentCells = next;
             _nextCells = previousCurrent;
             return changed;
         }
@@ -188,40 +203,42 @@ namespace Game.ElementField
 
         internal int CommitDirtyVersions()
         {
-            int changedCells = 0;
-            for (int index = 0; index < _cellDirty.Length; index++)
-            {
-                if (!_cellDirty[index])
-                    continue;
-
-                _cellDirty[index] = false;
-                changedCells++;
-            }
+            int changedCells = _dirtyCellCount;
+            for (int i = 0; i < _touchedWordCount; i++)
+                _dirtyWords[_touchedWords[i]] = 0;
 
             // 一个 Chunk 在同一 Tick 内可能有很多 Cell 变化，但 Version 只增加一次。
             // Renderer 只比较“是否不同”，不需要知道 Chunk 内具体变化了多少次。
-            for (int index = 0; index < _chunkDirty.Length; index++)
+            for (int i = 0; i < _touchedChunkCount; i++)
             {
-                if (!_chunkDirty[index])
-                    continue;
-
+                int index = _touchedChunks[i];
                 _chunkDirty[index] = false;
                 _chunkVersions[index]++;
             }
-
+            _dirtyCellCount = _touchedWordCount = _touchedChunkCount = 0;
             return changedCells;
         }
 
-        private void MarkCellDirty(int cellIndex)
+        internal void MarkCellDirty(int cellIndex)
         {
-            _cellDirty[cellIndex] = true;
+            int word = cellIndex >> 5;
+            uint bit = 1u << (cellIndex & 31);
+            uint previous = _dirtyWords[word];
+            if ((previous & bit) != 0) return;
+            if (previous == 0) _touchedWords[_touchedWordCount++] = word;
+            _dirtyWords[word] = previous | bit;
+            _dirtyCellCount++;
             Vector3Int cell = ElementFieldCoordinates.FromIndex(cellIndex, Dimensions);
             Vector3Int chunk = new Vector3Int(
                 cell.x / ChunkSize,
                 cell.y / ChunkSize,
                 cell.z / ChunkSize);
             int chunkIndex = ElementFieldCoordinates.ToIndex(chunk, ChunkCounts);
-            _chunkDirty[chunkIndex] = true;
+            if (!_chunkDirty[chunkIndex])
+            {
+                _chunkDirty[chunkIndex] = true;
+                _touchedChunks[_touchedChunkCount++] = chunkIndex;
+            }
         }
 
         private static int CeilingDivide(int value, int divisor)

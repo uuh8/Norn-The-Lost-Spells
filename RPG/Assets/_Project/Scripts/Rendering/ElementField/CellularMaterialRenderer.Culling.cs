@@ -11,9 +11,15 @@ namespace Game.Rendering
         private const int PageTreeDepth = 32 - PageShift;
         private const int PageBias = 1 << (PageTreeDepth - 1);
         private readonly Dictionary<Vector3Int, byte>[] _pageLevels = new Dictionary<Vector3Int, byte>[PageTreeDepth];
+        private Matrix4x4 _visibleMatrix;
+        private Vector3 _visibleOrigin;
+        private float _visibleMeters;
+        private bool _haveFrustum, _visibleSetValid;
+        private int _visibleDirtyPages;
 
         private void IndexPage(ElementChunkKey key, bool present)
         {
+            _visibleSetValid = false;
             var child = new Vector3Int(key.X + PageBias, key.Y + PageBias, key.Z + PageBias);
             for (int level = 0; level < PageTreeDepth; level++)
             {
@@ -31,13 +37,30 @@ namespace Game.Rendering
 
         private void CollectVisiblePages(float meters)
         {
+            Matrix4x4 matrix = _camera.cullingMatrix;
+            if (!_haveFrustum || !matrix.Equals(_visibleMatrix))
+            {
+                GeometryUtility.CalculateFrustumPlanes(matrix,_frustum);
+                _visibleMatrix = matrix; _haveFrustum = true; _visibleSetValid = false;
+            }
+            Vector3 origin = _world.Origin;
+            if (_visibleSetValid && origin.Equals(_visibleOrigin) && meters == _visibleMeters) return;
+            foreach (var page in _visiblePages) page.Visible = false;
             _visiblePages.Clear();
             if (_pages.Count <= 32)
             {
                 foreach (var page in _pages.Values) if (IsVisible(page, meters)) _visiblePages.Add(page);
-                return;
             }
-            CollectNode(PageTreeDepth, Vector3Int.zero, meters);
+            else CollectNode(PageTreeDepth, Vector3Int.zero, meters);
+            // 可见集合只随相机、世界坐标或页的生灭重算。其余帧保持同一批 Draw，
+            // 显式记录从 clean 到 dirty 的过渡，无脏页时不再为查找重建工作扫描全部可见页。
+            _visibleDirtyPages = 0;
+            foreach (var page in _visiblePages)
+            {
+                page.Visible = true;
+                if (page.SurfaceDirty || page.GasDirty) _visibleDirtyPages++;
+            }
+            _visibleOrigin = origin; _visibleMeters = meters; _visibleSetValid = true;
         }
 
         private void CollectNode(int level, Vector3Int node, float meters)
@@ -65,6 +88,28 @@ namespace Game.Rendering
         private void ClearPageIndex()
         {
             for (int i = 0; i < PageTreeDepth; i++) _pageLevels[i]?.Clear();
+            _visibleDirtyPages = 0; _haveFrustum = _visibleSetValid = false;
+        }
+
+        // 大静水区域的边界交接也沿现有页树裁剪。坐标以页为单位作整数比较，
+        // 因而不会在世界边缘因为 float AABB 精度而遗漏邻格。
+        private void SeedRestingNode(int level, Vector3Int node, ElementChunkKey low, ElementChunkKey high,
+            BoundsInt cells, HashSet<Vector3Int> touching)
+        {
+            int span = 1 << level;
+            var min = new Vector3Int(node.x * span - PageBias, node.y * span - PageBias, node.z * span - PageBias);
+            if (min.x > high.X || min.y > high.Y || min.z > high.Z || min.x + span <= low.X
+                || min.y + span <= low.Y || min.z + span <= low.Z) return;
+            if (level == 0)
+            {
+                if (_pages.TryGetValue(new ElementChunkKey(min.x,min.y,min.z), out var page)) SeedPage(page,cells,touching);
+                return;
+            }
+            if (!_pageLevels[level-1].TryGetValue(node,out byte children)) return;
+            for (int i = 0; i < 8; i++)
+                if ((children & (1 << i)) != 0)
+                    SeedRestingNode(level-1, new Vector3Int(node.x*2+(i&1), node.y*2+((i>>1)&1), node.z*2+((i>>2)&1)),
+                        low, high, cells, touching);
         }
     }
 }

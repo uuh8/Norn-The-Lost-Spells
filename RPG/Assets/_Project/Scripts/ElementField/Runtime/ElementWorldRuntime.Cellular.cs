@@ -79,6 +79,7 @@ namespace Game.ElementField
             _sceneChunkKeys = new ElementChunkKey[chunkCacheSize];
             CellularSimulation = new ElementCellSimulation(_cellDefinition.Capacity, _cellDefinition.MaximumCells,
                 IsBlockedForDynamicMaterial, _cellDefinition.Transport);
+            CellularSimulation.BindRestingMaterials(RestingLiquids);
             InitializeCellularGas();
             _cellularCollisions = new CellularSolidColliders(transform, _profile.CellSize, _profile.ChunkSize, _cellDefinition.TerrainLayer);
             _depositCells = new DepositCell[_cellDefinition.DepositBudget];
@@ -90,6 +91,8 @@ namespace Game.ElementField
 
         private void DisposeCellularWorld()
         {
+            _networkChunkChanges = null;
+            _networkBatch = null;
             ClearCellularCombustion();
             _conversionScheduler = null;
             CellularLedger = null;
@@ -183,6 +186,7 @@ namespace Game.ElementField
             _sceneChunks.Remove(key);
             CellularSimulation.WakeNeighbors(cell);
             RestingLiquids?.WakeNeighbors(cell);
+            WakeSealedAbsorption(cell);
         }
 
         /// <summary>可编辑基底从单格挖空、恢复和材质替换走同一事务。填实前拒绝压掉任何真实材料。
@@ -446,6 +450,8 @@ namespace Game.ElementField
         {
             CollectAndSortGridFireChunks();
             int count = CollectGridFireReactionSamples();
+            _lastGridFireChunks = _gridFireChunkCount;
+            _lastGridFireSamples = count;
             if (_materialReactions.TryResolve(MaterialId.Fire, MaterialId.Water, out var rule) && rule == ElementReactionId.Extinguish)
                 ProcessCellularExtinguish(count, rule);
             _conversionScheduler?.ObserveFire(_fireReactionSamples, count);
@@ -460,7 +466,7 @@ namespace Game.ElementField
                 var source = _fireReactionSamples[i];
                 foreach (var offset in FireContacts)
                 {
-                    Vector3Int cell = source.GlobalCell + offset;
+                    if (!ElementCellSimulation.Offset(source.GlobalCell, offset, out var cell)) continue;
                     if (!TryGetCellularQuantity(cell, MaterialId.Water, out uint water)) continue;
                     var contact = new MaterialContactSnapshot(MaterialId.Fire, source.Amount, MaterialId.Water,
                         (byte)Math.Max(1UL, water * 255UL / CellularCellCapacity));
@@ -504,15 +510,14 @@ namespace Game.ElementField
                     if (_publicationSet.Add(restingCell)) _cellPublications.Add(restingCell);
                 }
             foreach (var changed in _cellPublications)
-            {
-                bool solid = IsCellularBlockingCell(changed);
-                if (_cellularCollisions.Set(changed, solid) && TryResolveResidentCell(changed, out var chunk, out var local))
-                    chunk.Grid.SetSolid(local, solid || IsEnvironmentBlockedForCells(changed));
-            }
+                _cellularCollisions.Set(changed, IsCellularBlockingCell(changed));
             _cellularCollisions.Commit();
-            if (_absorbQueue != null && (CellularSimulation.GetTotalQuantity(MaterialId.Sticky) != 0 ||
-                RestingLiquids.GetTotalQuantity(MaterialId.Sticky) != 0))
-                foreach (var changed in _cellPublications) DiscoverCellularAbsorption(changed);
+            if (_absorbQueue != null)
+            {
+                if (CellularSimulation.GetTotalQuantity(MaterialId.Sticky) != 0 || RestingLiquids.GetTotalQuantity(MaterialId.Sticky) != 0)
+                    foreach (var changed in _cellPublications) DiscoverCellularAbsorption(changed);
+                else if (_sealedAbsorption.Count != 0) _sealedAbsorption.Clear();
+            }
             if (_conversionScheduler != null)
                 foreach (var changed in _cellPublications) _conversionScheduler.ObserveCellular(changed);
         }

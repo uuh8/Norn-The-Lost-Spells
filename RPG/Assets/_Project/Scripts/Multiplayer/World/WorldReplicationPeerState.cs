@@ -190,6 +190,12 @@ namespace Game.Multiplayer
         public void RequireBaseline(WorldChunkKey key)
         {int slot=Find(key);if(slot>=0){_generations[slot]=0;_revisions[slot]=0;}int pending=FindFlight(key);if(pending>=0)ReleaseFlight(pending);}
         public bool HasPendingFor(WorldChunkKey key)=>FindFlight(key)>=0;
+        /// <summary>只比较这个连接已安装的版本事实。RequireBaseline 会清空该水位，新订阅必须重新冻结。</summary>
+        internal bool NeedsSnapshot(WorldChunkPayloadHeader header)
+        {
+            int index=Find(header.Key);
+            return index<0 || _generations[index]!=header.Generation || _revisions[index]!=header.Revision;
+        }
         public bool TryGetPendingHeader(WorldChunkKey key,out WorldChunkPayloadHeader header)
         {int slot=FindFlight(key);header=slot>=0?_flights[slot].Header:default;return slot>=0;}
         public bool IsAwaitingInstallAck(WorldChunkKey key)

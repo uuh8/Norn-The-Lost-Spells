@@ -64,6 +64,13 @@ namespace Game.ElementField
             _readbackInterval = FluidReadbackIntervalPolicy.Sanitize(_readbackInterval);
             _cachedCallback = OnReadbackCompleted;
             _source = _fluidSourceComponent as IFluidGameplayReadbackSource;
+        }
+
+        private void OnEnable()
+        {
+            // 未启用的 Readback Bridge 不需要粒子容量大小的两份 Persistent NativeArray。
+            // 重新启用时重新查询 Source，此前等待中的请求和已创建的缓冲继续由原 Owner 管理。
+            _elapsed = _readbackInterval;
             _supported = SystemInfo.supportsAsyncGPUReadback
                 && _source != null
                 && _elementWorldRuntime != null;
@@ -75,11 +82,6 @@ namespace Game.ElementField
                 EnsureStorage(particleCapacity);
             else
                 _supported = false;
-        }
-
-        private void OnEnable()
-        {
-            _elapsed = _readbackInterval;
         }
 
         private void LateUpdate()

@@ -1,5 +1,6 @@
 using Game.Materials;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.ElementField
@@ -11,6 +12,7 @@ namespace Game.ElementField
     public sealed class ElementBoundaryNeighborPlanner
     {
         private readonly ElementChunkKey[] _pendingKeys;
+        private readonly HashSet<ElementChunkKey> _known;
         private int _pendingCount;
 
         public ElementBoundaryNeighborPlanner(int maximumResidentChunks)
@@ -19,6 +21,7 @@ namespace Game.ElementField
                 throw new ArgumentOutOfRangeException(nameof(maximumResidentChunks));
 
             _pendingKeys = new ElementChunkKey[maximumResidentChunks];
+            _known = new HashSet<ElementChunkKey>(maximumResidentChunks);
         }
 
         public int PrepareNeighbors(
@@ -41,6 +44,9 @@ namespace Game.ElementField
                 throw new ArgumentOutOfRangeException(nameof(worldTick));
 
             _pendingCount = 0;
+            _known.Clear();
+            for (int i = 0; i < simulationChunkCount; i++)
+                if (simulationChunks[i] != null) _known.Add(simulationChunks[i].Key);
             int last = store.ChunkSize - 1;
 
             // 只扫描调用方已经判定为 Active 的初始集合；新建邻居是接收端，不递归向外扩张空 Chunk。
@@ -50,8 +56,25 @@ namespace Game.ElementField
                 if (chunk == null)
                     continue;
                 // GPU/Grid液体不经过旧Cell Water；没有Fire的Chunk无需为火焰准备任何邻居。
-                if (!simulateCellWater && !chunk.HasFire)
+                if (!simulateCellWater)
+                {
+                    // 下落只有一个跨块出口。只读有火的位置，同一个底面只请求一次正下方 Chunk。
+                    if (maxFireDownFlowPerTick != 0 && (long)chunk.Key.Y * chunk.ChunkSize > int.MinValue)
+                        for (int i = chunk.NextFireIndex(0); i >= 0; i = chunk.NextFireIndex(i + 1))
+                        {
+                            if (i / chunk.ChunkSize % chunk.ChunkSize != 0) continue;
+                            var below = new ElementChunkKey(chunk.Key.X, chunk.Key.Y - 1, chunk.Key.Z);
+                            // 元胞地形可在分配旧火块之前查询。岩层整面托住火时不会反复新建空接收块。
+                            if (store.CellularSolidAt != null && !store.TryGetChunk(below, out _))
+                            {
+                                var local = new Vector3Int(i % chunk.ChunkSize, last, i / (chunk.ChunkSize * chunk.ChunkSize));
+                                if (store.CellularSolidAt(ElementWorldCoordinates.ComposeGlobalCell(below, local, chunk.ChunkSize))) continue;
+                            }
+                            QueueNeighbor(store, below, true);
+                            break;
+                        }
                     continue;
+                }
 
                 for (int z = 0; z <= last; z++)
                 for (int y = 0; y <= last; y++)
@@ -67,12 +90,6 @@ namespace Game.ElementField
                     bool fire = cell.MaterialKind == MaterialId.Fire;
                     if (!water && !fire)
                         continue;
-                    if(!simulateCellWater)
-                    {
-                        if(fire && y==0 && maxFireDownFlowPerTick>0)
-                            QueueNeighbor(store,new ElementChunkKey(chunk.Key.X,chunk.Key.Y-1,chunk.Key.Z),true);
-                        continue;
-                    }
 
                     // 对“不存在的水平邻居”，先用与 Solver 完全相同的扩散公式做廉价预测。
                     // transfer = min(maxTransfer, floor((source - 0) / 8))。
@@ -108,8 +125,7 @@ namespace Game.ElementField
                     break;
 
                 ElementChunkKey key = _pendingKeys[i];
-                if (Contains(simulationChunks, simulationChunkCount, key)
-                    || !store.TryGetOrCreateChunk(key, out ElementWorldChunk neighbor))
+                if (!store.TryGetOrCreateChunk(key, out ElementWorldChunk neighbor))
                 {
                     continue;
                 }
@@ -133,27 +149,7 @@ namespace Game.ElementField
             if (_pendingCount >= _pendingKeys.Length)
                 return;
 
-            for (int i = 0; i < _pendingCount; i++)
-            {
-                if (_pendingKeys[i] == key)
-                    return;
-            }
-
-            _pendingKeys[_pendingCount++] = key;
-        }
-
-        private static bool Contains(
-            ElementWorldChunk[] chunks,
-            int count,
-            ElementChunkKey key)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                if (chunks[i] != null && chunks[i].Key == key)
-                    return true;
-            }
-
-            return false;
+            if (_known.Add(key)) _pendingKeys[_pendingCount++] = key;
         }
     }
 }

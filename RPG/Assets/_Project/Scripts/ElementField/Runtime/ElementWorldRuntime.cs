@@ -609,7 +609,8 @@ namespace Game.ElementField
                 _store = new ElementWorldStore(
                     _profile.ChunkSize,
                     _profile.MaximumResidentChunks,
-                    InitializeWorldChunk);
+                    CellularSimulation == null ? InitializeWorldChunk : null);
+                if (CellularSimulation != null) _store.CellularSolidAt = IsSolid;
                 _writeQueue = new ElementWriteQueue(_profile.MaxPendingWrites);
                 if (_effectiveWaterSimulationMode == WaterSimulationMode.GpuPbf
                     && _fluidGameplayOccupancy != null
@@ -1013,15 +1014,9 @@ namespace Game.ElementField
             {
                 ElementWorldChunk chunk = _activeChunks[i];
                 if (!chunk.HasFire) continue;
-                int insert = _gridFireChunkCount++;
-                while (insert > 0
-                    && CompareReactionKeys(_gridFireChunks[insert - 1].Key, chunk.Key) > 0)
-                {
-                    _gridFireChunks[insert] = _gridFireChunks[insert - 1];
-                    insert--;
-                }
-                _gridFireChunks[insert] = chunk;
+                _gridFireChunks[_gridFireChunkCount++] = chunk;
             }
+            ElementWorldChunk.SortByKey(_gridFireChunks, _gridFireChunkCount);
         }
 
         private int CollectGridFireReactionSamples()
@@ -1043,13 +1038,9 @@ namespace Game.ElementField
                 ElementWorldChunk chunk = _gridFireChunks[chunkIndex];
                 ElementCell[] current = chunk.CurrentCells;
                 int firstCell = visited == 0 ? _gridFireCursorCell : 0;
-                for (int index = firstCell; index < cellsPerChunk; index++)
+                for (int index = chunk.NextFireIndex(firstCell); index >= 0; index = chunk.NextFireIndex(index + 1))
                 {
-                    // 循环本身已提供合法线性索引。空格只读同一Current Buffer，
-                    // 确认是Fire后才还原三维坐标，省掉稀疏Chunk的除法/ToIndex往返。
-                    // 每次采集重新取数组引用，不能跨Tick保留Double Buffer交换前的旧数组。
                     ElementCell cell = current[index];
-                    if (cell.MaterialKind != MaterialId.Fire || cell.Amount == 0) continue;
                     int x = index % size;
                     int y = index / size % size;
                     int z = index / (size * size);
@@ -1119,7 +1110,7 @@ namespace Game.ElementField
             ElementWorldCoordinates.GlobalCellToChunkAndLocal(request.GlobalCell,
                 _profile.ChunkSize, out ElementChunkKey key, out Vector3Int local);
             if (!_store.TryGetOrCreateChunk(key, out ElementWorldChunk chunk)
-                || chunk.Grid.IsSolid(local)) return false;
+                || chunk.BlocksMaterial(ElementFieldCoordinates.ToIndex(local, chunk.Grid.Dimensions), local)) return false;
             ElementCell current = chunk.GetCell(local);
             if (!current.IsEmpty && current.MaterialKind != MaterialId.Fire) return false;
             if (current.Amount + request.AmountToAdd > byte.MaxValue) return false;
@@ -1144,26 +1135,7 @@ namespace Game.ElementField
 
         private void SortActiveChunksForReaction()
         {
-            for (int index = 1; index < _activeChunkCount; index++)
-            {
-                ElementWorldChunk value = _activeChunks[index];
-                int insert = index - 1;
-                while (insert >= 0 && CompareReactionKeys(_activeChunks[insert].Key, value.Key) > 0)
-                {
-                    _activeChunks[insert + 1] = _activeChunks[insert];
-                    insert--;
-                }
-                _activeChunks[insert + 1] = value;
-            }
-        }
-
-        private static int CompareReactionKeys(ElementChunkKey left, ElementChunkKey right)
-        {
-            int z = left.Z.CompareTo(right.Z);
-            if (z != 0)
-                return z;
-            int y = left.Y.CompareTo(right.Y);
-            return y != 0 ? y : left.X.CompareTo(right.X);
+            ElementWorldChunk.SortByKey(_activeChunks, _activeChunkCount);
         }
 
         private void RefreshInterestChunk()
@@ -1215,6 +1187,14 @@ namespace Game.ElementField
             {
                 KeyValuePair<ElementChunkKey, ElementWorldChunk> pair = enumerator.Current;
                 ElementWorldChunk chunk = pair.Value;
+                // DS 的玩法活动范围覆盖整房间。元胞世界的地形和静水另有 Owner，
+                // 最后一格火消失后即能归还此槽，连续在不同位置施法不会耗尽旧火仓库。
+                if (CellularSimulation != null && !chunk.HasAnyElement)
+                {
+                    chunk.ActivityState = ElementChunkActivityState.Reclaimable;
+                    _reclaimKeys[reclaimCount++] = pair.Key;
+                    continue;
+                }
                 bool insidePlayerRegion = IsGameplayChunk(pair.Key);
                 // 未结束的 Fire 是世界自身的活动需求，离屏后仍推进到反应/衰减结束。
                 bool reactionFront = ActivityExpansionEnabled && chunk.HasFire;

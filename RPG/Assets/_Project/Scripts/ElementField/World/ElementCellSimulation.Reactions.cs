@@ -28,23 +28,38 @@ namespace Game.ElementField
             return true;
         }
 
+        // 水只转化一部分时，源格仍属于水，产物只能放在六个面邻格。
+        // 在展开一格冷水前按同一容量规则预检；完全封闭的接触可以等到邻域真实改变。
+        internal uint AbsorptionOutletDeficit(Vector3Int center, uint required)
+        {
+            foreach (var face in Faces)
+            {
+                if (!Offset(center, face, out var neighbor) || Blocked(neighbor)) continue;
+                var value = Read(neighbor);
+                uint room = RecipeRoom(in value, MaterialId.Sticky);
+                if (room >= required) return 0;
+                required -= room;
+            }
+            return required;
+        }
+
+        private uint RecipeRoom(in Contents value, MaterialId material)
+        {
+            if (ElementCellMaterialRules.Motion(material) != ElementCellMotion.Gas &&
+                value.Amount != 0 && value.Bulk != material) return 0;
+            if (!ElementCellMaterialRules.OccupiesWholeCell(material)) return value.Free(CellCapacity);
+            return value.Steam != 0 || value.Vapor != 0 ? 0 : CellCapacity - value.Amount;
+        }
+
         private bool PlaceRecipeProduct(Vector3Int center, MaterialId material, uint remaining,
             MaterialConversionPlacement[] placements, ref int count)
         {
-            bool gas = ElementCellMaterialRules.Motion(material) == ElementCellMotion.Gas;
             for (int i = -1; remaining != 0 && i < Faces.Length; i++)
             {
                 Vector3Int cell = center;
                 if (i >= 0 && (!Offset(center, Faces[i], out cell) || Blocked(cell))) continue;
                 ref Contents value = ref _edits[Stage(cell)].After;
-                if (!gas && value.Amount != 0 && value.Bulk != material) continue;
-                uint room = value.Free(CellCapacity);
-                if (ElementCellMaterialRules.OccupiesWholeCell(material))
-                {
-                    if (value.Steam != 0 || value.Vapor != 0) continue;
-                    room = CellCapacity - value.Amount;
-                }
-                uint part = Math.Min(remaining, room);
+                uint part = Math.Min(remaining, RecipeRoom(in value, material));
                 if (part == 0) continue;
                 if (count >= placements.Length) return false;
                 value.Add(material, part);

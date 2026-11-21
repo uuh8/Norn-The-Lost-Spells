@@ -13,6 +13,18 @@ namespace Game.ElementField
         private readonly Dictionary<ElementChunkKey, ElementWorldChunk> _chunks;
         private readonly int _cellCountPerChunk;
         private readonly Action<ElementWorldChunk> _chunkInitializer;
+        private Action<ElementChunkKey> _materialChanged;
+        internal Func<Vector3Int, bool> CellularSolidAt { get; set; }
+        internal ulong ChangeBatch { get; private set; }
+
+        internal void ObserveMaterialChanges(Action<ElementChunkKey> observer)
+        {
+            _materialChanged = observer;
+            AdvanceCaptureBatch();
+        }
+
+        internal void AdvanceCaptureBatch() => ChangeBatch++;
+        internal void ReportMaterialChange(ElementChunkKey key) => _materialChanged?.Invoke(key);
 
         public ElementWorldStore(
             int chunkSize,
@@ -80,7 +92,7 @@ namespace Game.ElementField
                 return false;
             }
 
-            chunk = new ElementWorldChunk(key, ChunkSize, _cellCountPerChunk);
+            chunk = new ElementWorldChunk(key, ChunkSize, _cellCountPerChunk, this);
 
             // 初始化器必须在 Add/return 之前执行：同一 Tick 中，WriteProcessor 会在拿到 Chunk 后立刻
             // 检查 SolidMask。若先返回再 Bake，Deposit 可能先写进 Collider，水也会穿过尚未初始化的地面。

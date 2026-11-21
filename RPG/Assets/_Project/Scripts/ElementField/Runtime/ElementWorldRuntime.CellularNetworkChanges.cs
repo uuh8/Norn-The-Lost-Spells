@@ -8,10 +8,9 @@ namespace Game.ElementField
 {
     public sealed partial class ElementWorldRuntime
     {
-        private ElementChunkKey[] _networkChunkChanges;
+        private WorldChunkKey[] _networkChunkChanges;
         private HashSet<ElementChunkKey> _networkBatch;
         private ulong _networkCursor;
-        internal Dictionary<ElementChunkKey, ElementWorldChunk> NetworkLegacyChunks => _store.Chunks;
         internal ElementWriteQueue NetworkPending => _writeQueue;
         internal ulong NetworkCursor => _networkCursor;
         internal bool HasUnpublishedNetworkCells => CellularSimulation.ChangedCellCount != 0 || RestingLiquids.HasUnpublishedReplicationChanges;
@@ -19,9 +18,13 @@ namespace Game.ElementField
         internal void EnableNetworkChangeJournal()
         {
             if (_networkChunkChanges != null) return;
-            _networkChunkChanges = new ElementChunkKey[Math.Max(256, Math.Min(32768, _cellDefinition.MaximumCells))];
+            _networkChunkChanges = new WorldChunkKey[Math.Max(256, Math.Min(32768, _cellDefinition.MaximumCells))];
             _networkBatch = new HashSet<ElementChunkKey>();
+            _store.ObserveMaterialChanges(RecordLegacyNetworkChunk);
         }
+
+        internal void BeginNetworkCaptureBatch() => _store.AdvanceCaptureBatch();
+        private void RecordLegacyNetworkChunk(ElementChunkKey key) => AppendNetworkChange(key, WorldMaterialDomain.LegacyCell);
 
         private void RecordCellularNetworkBatch(List<Vector3Int> cells)
         {
@@ -41,9 +44,9 @@ namespace Game.ElementField
             AppendNetworkChange(key);
         }
 
-        private void AppendNetworkChange(ElementChunkKey key)
+        private void AppendNetworkChange(ElementChunkKey key, WorldMaterialDomain domain = WorldMaterialDomain.Cellular)
         {
-            _networkChunkChanges[(int)(_networkCursor % (ulong)_networkChunkChanges.Length)] = key;
+            _networkChunkChanges[(int)(_networkCursor % (ulong)_networkChunkChanges.Length)] = new WorldChunkKey(domain, key.X, key.Y, key.Z);
             _networkCursor++;
         }
 
@@ -54,7 +57,7 @@ namespace Game.ElementField
             while (since != _networkCursor)
             {
                 var key = _networkChunkChanges[(int)(since++ % (ulong)_networkChunkChanges.Length)];
-                result.Add(new WorldChunkKey(WorldMaterialDomain.Cellular, key.X, key.Y, key.Z));
+                result.Add(key);
             }
             return true;
         }

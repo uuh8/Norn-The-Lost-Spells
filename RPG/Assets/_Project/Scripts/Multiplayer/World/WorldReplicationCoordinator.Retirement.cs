@@ -39,9 +39,11 @@ namespace Game.Multiplayer
             if(!IsAuthority || _stopped || Faulted)return false;
             // 借出的消息尚未完成预算/发送时，不搬任何共享索引。
             if(_preparedSlot>=0 || _owner.InactiveChunkCount==0)return true;
-            for(int index=_owner.ChunkCount-1;index>=0;index--)
+            for(int rank=_tombstones.Count-1;rank>=0;rank--)
             {
-                var header=_owner.GetChunkHeader(index);if(header.IsResident)continue;
+                // 逆序按实际已删除块访问。Owner 用末槽补洞；更高位已经核验过，本轮无需复查。
+                int index=_tombstones.AtRank(rank);RetirementChunkChecks++;
+                var header=_owner.GetChunkHeader(index);
                 bool released=true;
                 for(int peer=0;peer<4;peer++)
                 {
@@ -58,6 +60,7 @@ namespace Game.Multiplayer
                 if(!RecordCheckpointRetirement(header))return Fail("Checkpoint retirement witness rejected");
                 RetiredKeys++;
                 int last=movedFrom>=0?movedFrom:index;
+                _nearby.Remove(header.Key);_tombstones.Retire(index,last);
                 for(int peer=0;peer<4;peer++)
                 {
                     // 上面已逐Peer预检无匹配冻结页；此处只回收有界已释放发送状态。
@@ -69,6 +72,7 @@ namespace Game.Multiplayer
                         _liquidMotionRetainUntil[peer,index]=_liquidMotionRetainUntil[peer,movedFrom];
                     }
                     _subscriptions[peer,last]=default;_peerAckHeaders[peer,last]=default;
+                    _work[peer].Retire(index,last);
                     _liquidMotionRetainUntil[peer,last]=0;
                     if(movedFrom>=0 && _cursor[peer]==movedFrom)_cursor[peer]=index;
                     if(_cursor[peer]>=_owner.ChunkCount)_cursor[peer]=0;

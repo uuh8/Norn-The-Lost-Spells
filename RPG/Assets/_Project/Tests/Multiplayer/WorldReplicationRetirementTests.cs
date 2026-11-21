@@ -52,6 +52,90 @@ namespace Game.Multiplayer.Tests
         private static ulong Quantity(object store)
             => (ulong)store.GetType().GetMethod("TotalQuantity").Invoke(store, new object[] { WorldMaterialDomain.Liquid });
 
+        // 首次完整捕获后，每次只给一个原生块的完整替换。负坐标上密集排布数千个持久块，
+        // 可以通过真实的 CommitOwner / Peer / Installer 量出工作量，而不依赖特定机器的墙钟。
+        private sealed class SparseSource : IWorldReplicationSource, IWorldUnchangedReplicationSource, IWorldCellularIncrementalSource
+        {
+            internal const int Population=2048;
+            internal int ChangedX;
+            internal uint Amount;
+            private int _tick;
+            private static WorldMaterialCellSample Cell(int chunkX,uint amount) =>
+                new WorldMaterialCellSample(WorldMaterialDomain.Liquid,WorldMaterialStorage.Dynamic,new Vector3Int(chunkX*8,0,0),2,amount);
+            public bool TryCapture(WorldReplicaBuffer b,out WorldCaptureFailure failure)
+            {
+                b.Geometries[0]=new WorldGridGeometry(WorldMaterialDomain.Liquid,Vector3.zero,1,8);
+                for(int i=0;i<Population;i++)b.Cells[i]=Cell(-i-1,10);
+                b.Header=new WorldReplicaHeader(++_tick,Population,0,1);failure=default;return true;
+            }
+            public bool TryAdvanceUnchangedCapture(WorldReplicaBuffer b)
+            {
+                if(ChangedX!=0)return false;
+                var h=b.Header;b.Header=new WorldReplicaHeader(++_tick,h.CellCount,h.PendingCount,h.GeometryCount,h.SpanCount);return true;
+            }
+            public bool TryCaptureChangedChunks(WorldReplicaBuffer b,out int count,out WorldCaptureFailure failure)
+            {
+                b.ChangedChunks[0]=new WorldChunkKey(WorldMaterialDomain.Liquid,ChangedX,0,0);
+                b.Cells[0]=Cell(ChangedX,Amount);b.Header=new WorldReplicaHeader(++_tick,Amount>0?1:0,0,1);
+                ChangedX=0;count=1;failure=default;return true;
+            }
+        }
+
+        [Test]
+        public void FarEditsIdleTicksAndOnePendingTombstoneOnlyVisitLocalWork()
+        {
+            const int size=SparseSource.Population;
+            var server=new WorldReplicationCoordinator(7,99,size+1,128,size,0,2000000);
+            var source=new SparseSource();var buffer=new WorldReplicaBuffer(size,0,2000000);
+            Assert.That(server.Capture(source,buffer),Is.True);
+            Assert.That(server.MetadataKeys,Is.EqualTo(size+1));
+            Assert.That(server.BindPeer(0,10,3),Is.True);
+            Bounds Window(float x)=>new Bounds(new Vector3(x,4,4),Vector3.one*8);
+            Assert.That(server.UpdatePeerInterest(0,10,3,Window(-4)),Is.True);
+            var client=Client(4,out var store);
+            Deliver(server,client,10,3,0);
+            Assert.That(Quantity(store),Is.EqualTo(10uL));
+
+            long checks=server.InterestChunkChecks,send=server.SendCandidateChecks;
+            source.ChangedX=-size;source.Amount=13;
+            Assert.That(server.Capture(source,buffer),Is.True);
+            Assert.That(server.InterestChunkChecks-checks,Is.EqualTo(1),"一个远处的真实修改只需判交这个块。");
+            checks=server.InterestChunkChecks;
+            for(int i=0;i<32;i++)
+            {
+                Assert.That(server.Capture(source,buffer),Is.True);
+                Assert.That(server.UpdatePeerInterest(0,10,3,Window(-4)),Is.True);
+                server.BeginRound(10+i);
+                Assert.That(server.TryPreparePage(0,10+i,out _),Is.False);
+                Assert.That(server.CompleteSendRound(),Is.True);
+            }
+            Assert.That(server.InterestChunkChecks,Is.EqualTo(checks));
+            Assert.That(server.SendCandidateChecks,Is.EqualTo(send));
+
+            // [-16,-8) 与旧窗口 [-8,0) 只共享面。旧块退出，新块取当前 Baseline；远处 2047 块均无发包。
+            Assert.That(server.UpdatePeerInterest(0,10,3,Window(-12)),Is.True);
+            Assert.That(server.InterestChunkChecks-checks,Is.LessThanOrEqualTo(10));
+            var seen=new System.Collections.Generic.List<WorldPageMessage>();
+            Deliver(server,client,10,3,50,sent:seen.Add);
+            Assert.That(seen.Count,Is.EqualTo(3));
+            Assert.That(seen[0].Kind,Is.EqualTo(7u));Assert.That(seen[0].ChunkX,Is.EqualTo(-1));
+            Assert.That(seen[1].Kind,Is.EqualTo(6u));Assert.That(seen[1].ChunkX,Is.EqualTo(-2));
+            Assert.That(seen[2].Kind,Is.EqualTo(1u));Assert.That(Quantity(store),Is.EqualTo(10uL));
+
+            source.ChangedX=-2;source.Amount=0;
+            Assert.That(server.Capture(source,buffer),Is.True);
+            long retirement=server.RetirementChunkChecks;
+            for(int i=0;i<16;i++)Assert.That(server.CompleteSendRound(),Is.True);
+            Assert.That(server.RetirementChunkChecks-retirement,Is.EqualTo(16));
+            seen.Clear();Deliver(server,client,10,3,60,sent:seen.Add);
+            Assert.That(seen.Count,Is.EqualTo(1));Assert.That(seen[0].Kind,Is.EqualTo(5u));
+            Assert.That(Quantity(store),Is.Zero);
+            Assert.That(server.UpdatePeerInterest(0,10,3,Window(-12)),Is.True);
+            seen.Clear();Deliver(server,client,10,3,70,sent:seen.Add);
+            Assert.That(seen.Count,Is.EqualTo(1));Assert.That(seen[0].Kind,Is.EqualTo(7u));
+            Assert.That(server.MetadataKeys,Is.EqualTo(size));Assert.That(server.Faulted,Is.False);
+        }
+
         private static void Deliver(WorldReplicationCoordinator server, WorldReplicationCoordinator client,
             int connection, uint epoch, double start, int slot=0,
             Action<WorldPageMessage> sent=null,Action<WorldPageMessage> acknowledged=null)

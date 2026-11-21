@@ -12,6 +12,9 @@ namespace Game.ElementField
         protected readonly WorldGridGeometry Geometry;
         protected readonly MaterialId[] Materials;
         private readonly ElementChunkKey[] _keys;
+        private uint _keyVersion;
+        private bool _haveKeys;
+        private int _keyCount;
         private readonly bool[] _blocks = new bool[256];
         private readonly uint _capacity;
         public WorldReplicaVolumeReadModel(WorldReplicaStore store, WorldGridGeometry geometry, uint capacity,
@@ -28,8 +31,18 @@ namespace Game.ElementField
         public ulong TotalQuantity => Store.TotalQuantity(Geometry.Domain);
         public int ChunkSize => Geometry.ChunkSize;
         public int MaximumChunks => Store.MaximumChunks;
-        public int ResidentChunkCount => Store.CopyChunkKeys(Geometry.Domain, _keys);
-        public ElementChunkKey GetChunkKey(int index) { Store.CopyChunkKeys(Geometry.Domain, _keys); return _keys[index]; }
+        public int ResidentChunkCount { get { RefreshKeys(); return _keyCount; } }
+        public ElementChunkKey GetChunkKey(int index) { RefreshKeys(); return _keys[index]; }
+        private void RefreshKeys()
+        {
+            // 一次渲染可能先问 Count 再逐个取 Key。安装、Interest Evict 和 Forget 都推进本域
+            // 的已发布版本；读者只在版本变化时重新列举，不会亲自更改 Replica 的 Interest。
+            uint version = Store.DomainVersion(Geometry.Domain);
+            if (_haveKeys && version == _keyVersion) return;
+            _keyCount = Store.CopyChunkKeys(Geometry.Domain,_keys);
+            _keyVersion = version;
+            _haveKeys = true;
+        }
         public uint GetChunkVersion(ElementChunkKey key) => Store.GetChunkVersion(Geometry.Domain, key);
         public bool TryGetQuantity(Vector3Int cell, MaterialId material, out uint quantity)
             => Store.TryGetQuantity(Geometry.Domain, cell, (byte)material, out quantity);

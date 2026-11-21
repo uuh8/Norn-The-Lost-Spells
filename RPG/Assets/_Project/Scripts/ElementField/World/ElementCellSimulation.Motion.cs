@@ -26,6 +26,9 @@ namespace Game.ElementField
                     case ElementCellMotion.Liquid: AdvanceLiquid(cell, initial.Bulk); break;
                 }
             }
+            if (initial.Steam == 0 && initial.Vapor == 0) return;
+            if (_gasEnvironment != null && (Movable(cell, MaterialId.Steam) == 0 && Movable(cell, MaterialId.ToxicVapor) == 0 ||
+                !_gasEnvironment.TryBeginCell(cell))) return;
             if (initial.Steam > 0)
             {
                 // 第一种接触相变：冰面附近的蒸汽可等量冷凝。墙体查询只能回答是否阻挡，
@@ -43,8 +46,12 @@ namespace Game.ElementField
 
         private bool TouchesIce(Vector3Int cell)
         {
+            bool dynamicIce = GetTotalQuantity(MaterialId.Ice) != 0;
+            bool coldIce = _restingMaterials != null && _restingMaterials.GetTotalQuantity(MaterialId.Ice) != 0;
+            if (!dynamicIce && !coldIce) return false;
             for (int i = 0; i < Faces.Length; i++)
-                if (Offset(cell, Faces[i], out Vector3Int neighbor) && Read(neighbor).Bulk == MaterialId.Ice) return true;
+                if (Offset(cell, Faces[i], out Vector3Int neighbor) && (dynamicIce && Read(neighbor).Bulk == MaterialId.Ice ||
+                    coldIce && _restingMaterials.TryGetQuantity(neighbor, MaterialId.Ice, out _))) return true;
             return false;
         }
 

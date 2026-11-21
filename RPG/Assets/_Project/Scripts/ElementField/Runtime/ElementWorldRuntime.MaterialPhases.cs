@@ -68,16 +68,14 @@ namespace Game.ElementField
         public void NotifyMaterialTopologyChanged(Vector3Int cell)
         {
             WakeCellularTerrainChange(cell);
-            if (CellularSimulation == null)
-            {
-                _gridLiquidRuntime?.NotifyMaterialTopologyChanged(cell);
-                _gasRuntime?.NotifyTopologyChanged(cell);
-            }
+            if (CellularSimulation != null) return; // 共用占据查询已失效该位置，下一次火接触直接读取新地形。
+            _gridLiquidRuntime?.NotifyMaterialTopologyChanged(cell);
+            _gasRuntime?.NotifyTopologyChanged(cell);
             if (_store == null) return;
             ElementWorldCoordinates.GlobalCellToChunkAndLocal(cell, _profile.ChunkSize, out ElementChunkKey key, out Vector3Int local);
             if (!_store.TryGetChunk(key, out ElementWorldChunk chunk)) return;
             int index = ElementFieldCoordinates.ToIndex(local, chunk.Grid.Dimensions);
-            chunk.SolidMask[index] = IsCellularBlockingCell(cell) || _solidBaker.SampleSolidWorldCell(cell, _origin, _profile.CellSize);
+            chunk.SolidMask[index] = _solidBaker.SampleSolidWorldCell(cell, _origin, _profile.CellSize);
         }
         public bool TryPrepareMaterialTopologyChange(Vector3Int worldCell, bool becomesSolid)
         {

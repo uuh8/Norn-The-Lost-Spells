@@ -201,7 +201,7 @@ namespace Game.ElementField
             }
 
             int index = ElementFieldCoordinates.ToIndex(localCell, chunk.Grid.Dimensions);
-            if (chunk.SolidMask[index])
+            if (chunk.BlocksMaterial(index, localCell))
             {
                 current = default;
                 return false;

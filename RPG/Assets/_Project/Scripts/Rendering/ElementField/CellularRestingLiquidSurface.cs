@@ -68,6 +68,11 @@ namespace Game.Rendering
         private ulong _layoutVersion;
         private bool _needsColdBind;
         private int _visibleCursor;
+        private bool _haveVisibleRegions;
+        private ulong _visibleLayout;
+        private Matrix4x4 _visibleProjection, _visibleCulling;
+        private Vector3 _visibleOrigin;
+        private float _visibleSize, _visibleNear, _visibleFar;
 
         internal CellularRestingLiquidSurface()
         {
@@ -373,11 +378,7 @@ namespace Game.Rendering
         {
             if (_owner == null || _regions.Count == 0) return;
             float size = world.CellSize;
-            _visibleCandidates.Clear();
-            if (TryGetViewCells(world, camera, out var view))
-                _owner.VisitTouchingRegions(view, _collectCandidate);
-            else
-                for (int i = 0; i < _regions.Count; i++) _visibleCandidates.Add(i);
+            RefreshVisibleRegions(world,camera,frustum);
             // 先收集候选，再建可见区网格。网格生成也会访问同一 BVH，分两步避免重入遍历。
             int start = _visibleCursor < _visibleCandidates.Count ? _visibleCursor : 0;
             for (int i = 0; i < _visibleCandidates.Count; i++)
@@ -387,9 +388,7 @@ namespace Game.Rendering
                 var state = _regions[_visibleCandidates[positionInList]];
                 Material material = ElementCellMaterialRules.Motion(state.Material) == ElementCellMotion.Liquid ? liquid : solid;
                 if (state.Boxes.Count == 0 || material == null) continue;
-                Vector3 extents = (Vector3)state.Cells.size * size;
                 Vector3 position = world.Origin + (Vector3)state.Cells.min * size;
-                if (!GeometryUtility.TestPlanesAABB(frustum, new Bounds(position + extents * .5f, extents))) continue;
                 if (state.MeshDirty && rebuildBudget > 0)
                 {
                     // 相机一次扫到许多历史沙堆时，把 Mesh 构建摊到后续帧。已建几何可继续绘制。
@@ -402,6 +401,36 @@ namespace Game.Rendering
                 Graphics.DrawMesh(state.Mesh, Matrix4x4.TRS(position, Quaternion.identity, Vector3.one * size),
                     material, layer, camera, 0, palette[CellularMaterialSurfaceMesh.Slot(state.Material)], ShadowCastingMode.On, true);
             }
+        }
+
+        private void RefreshVisibleRegions(ElementWorldRuntime world, Camera camera, Plane[] frustum)
+        {
+            var projection = camera.projectionMatrix * camera.worldToCameraMatrix;
+            var culling = camera.cullingMatrix;
+            float size = world.CellSize, near = camera.nearClipPlane, far = camera.farClipPlane;
+            var origin = world.Origin;
+            if (_haveVisibleRegions && _visibleLayout == _layoutVersion && projection.Equals(_visibleProjection)
+                && culling.Equals(_visibleCulling) && size == _visibleSize && near == _visibleNear && far == _visibleFar
+                && origin.Equals(_visibleOrigin)) return;
+            _visibleCandidates.Clear();
+            if (TryGetViewCells(world,camera,out var view))
+                _owner.VisitTouchingRegions(view,_collectCandidate);
+            else
+                for (int i = 0; i < _regions.Count; i++) _visibleCandidates.Add(i);
+            // BVH 回调给的是视锥包围盒中的候选，斜向镜头还要剔除矩形角落。
+            // 只缓存几何范围，水量变化仍会照常驱动该区域的 Mesh 重建。
+            int kept = 0;
+            for (int i = 0; i < _visibleCandidates.Count; i++)
+            {
+                int index = _visibleCandidates[i];
+                var cells = _regions[index].Cells;
+                Vector3 extents = (Vector3)cells.size * size, min = origin + (Vector3)cells.min * size;
+                if (cells.size != Vector3Int.zero && GeometryUtility.TestPlanesAABB(frustum,new Bounds(min+extents*.5f,extents)))
+                    _visibleCandidates[kept++] = index;
+            }
+            _visibleCandidates.RemoveRange(kept,_visibleCandidates.Count-kept);
+            _visibleProjection = projection; _visibleCulling = culling; _visibleSize = size; _visibleOrigin = origin;
+            _visibleNear = near; _visibleFar = far; _visibleLayout = _layoutVersion; _haveVisibleRegions = true;
         }
 
         private static bool TryGetViewCells(ElementWorldRuntime world, Camera camera, out BoundsInt cells)
@@ -436,7 +465,7 @@ namespace Game.Rendering
             foreach (var state in _regions) if (state.Mesh != null) UnityEngine.Object.Destroy(state.Mesh);
             _regions.Clear(); _dirtyRegions.Clear(); _visibleCandidates.Clear(); _planes.Clear(); _rectPools.Clear(); _fragments.Clear();
             _deferredCells.Clear(); _layoutBounds.Clear(); _layoutSlots.Clear();
-            _needsColdBind = false; _layoutVersion = 0;
+            _needsColdBind = false; _haveVisibleRegions = false; _layoutVersion = 0;
             _owner = null; _collecting = null;
         }
     }

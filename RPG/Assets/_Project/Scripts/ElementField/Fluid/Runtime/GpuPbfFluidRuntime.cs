@@ -327,7 +327,8 @@ namespace Game.ElementField
         {
             _debugReadbackCallback = OnDebugReadbackCompleted;
             _reactionAuditReadbackCallback = OnReactionAuditReadbackCompleted;
-            TryInitialize();
+            // 正式地图保留已关闭的旧 PBF 组件。激活 GameObject 仍能触发 Awake，
+            // GPU 池和初始化 Dispatch 只在 OnEnable 或世界明确选择 PBF 时创建。
         }
 
         private void OnEnable()

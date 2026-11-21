@@ -44,9 +44,8 @@ namespace Game.ElementField
         private void ClearCellularCombustion()
         {
             _absorbQueue = null;
-            _absorbSet = null;
+            _sealedAbsorption = null;
             _absorbPlacements = null;
-            _absorbRecoveryRemaining = 0;
             _cellularCanIgnite = false;
             _cellularToxicProcesses = null;
             _cellularToxicResults = null;

@@ -19,10 +19,16 @@ namespace Game.Core
         private WorldChunkKey[] _keys = Array.Empty<WorldChunkKey>(), _candidateKeys = Array.Empty<WorldChunkKey>();
         private WorldChunkPayloadHeader[] _headers = Array.Empty<WorldChunkPayloadHeader>();
         private readonly WorldChunkPayloadHeader[] _historyHeaders;
+        // 环形窗口只从最旧位置淘汰，Journal 保证同一 key/generation 的 Revision 每次严格加一。
+        // 若 base -> base+1 仍在窗口，其后的同代记录必然全部还在；按这条首链查询可免扫其它块的历史。
+        private readonly HashSet<(WorldChunkKey Key,ulong Generation,ulong BaseRevision)> _historyLinks;
         private uint[][] _published = Array.Empty<uint[]>(), _candidate = Array.Empty<uint[]>();
         private int[] _counts = Array.Empty<int>(), _changedSlots = Array.Empty<int>(), _scheduled = Array.Empty<int>();
-        private bool[] _active = Array.Empty<bool>(), _scheduledFlags = Array.Empty<bool>();
+        private bool[] _active = Array.Empty<bool>();
+        private uint[] _scheduledBatch = Array.Empty<uint>();
+        private uint _batch;
         private WorldChunkChange[] _changes = Array.Empty<WorldChunkChange>();
+        private WorldChunkChange[] _committedChanges = Array.Empty<WorldChunkChange>();
         private struct RowList { internal int First, Last, Count; }
         private RowList[] _cellRows = Array.Empty<RowList>(), _pendingRows = Array.Empty<RowList>(), _spanRows = Array.Empty<RowList>();
         private int[] _nextCell = Array.Empty<int>(), _nextPending = Array.Empty<int>(), _nextSpan = Array.Empty<int>();
@@ -51,9 +57,13 @@ namespace Game.Core
         public bool TryAdvanceUnchangedCapture(long worldTick)
         {
             if (_lastTick < 0 || worldTick < _lastTick) return Reject(WorldCommitOwnerFailure.InvalidInput);
-            _lastTick = worldTick; LastFailure = WorldCommitOwnerFailure.None; return true;
+            _lastTick = worldTick; LastChangeCount=0; LastFailure = WorldCommitOwnerFailure.None; return true;
         }
         public int ChunkCount => _count;
+        /// <summary>仅最近成功 Capture 的逻辑变化，失败重试不覆盖此视图；地址不依赖退休时可搬移的目录下标。</summary>
+        public int LastChangeCount { get; private set; }
+        public WorldChunkChange GetLastChange(int index) => (uint)index<(uint)LastChangeCount ?
+            _committedChanges[index] : throw new ArgumentOutOfRangeException(nameof(index));
         public int InactiveChunkCount { get; private set; }
         public int IndexOf(WorldChunkKey key) => _indices.TryGetValue(key,out int index) ? index : -1;
         /// <summary>真实进入payload历史ring的变更记录数；Capture/空提交/Tick均不能冒充日志覆盖。</summary>
@@ -79,6 +89,7 @@ namespace Game.Core
             _indices=new Dictionary<WorldChunkKey,int>(initial);_newIndices=new Dictionary<WorldChunkKey,int>(initial);
             _pendingIds=new HashSet<ulong>(pendingCapacity);_pendingOwners=new Dictionary<ulong,WorldChunkKey>(pendingCapacity);
             _historyHeaders=new WorldChunkPayloadHeader[historyCapacity];
+            _historyLinks=new HashSet<(WorldChunkKey,ulong,ulong)>(historyCapacity);
             EnsureSlots(initial);
             _cellScratch=new WorldMaterialCellSample[cellCapacity];_occupancy=new WorldMaterialOccupancySnapshot(cellCapacity,inspectionBudget);
             _inspectionBudget=inspectionBudget;_pendingCapacity=pendingCapacity;
@@ -90,8 +101,8 @@ namespace Game.Core
             int size=(int)Math.Min(_chunkLimit,Math.Max((long)needed,2L*old));
             Array.Resize(ref _keys,size);Array.Resize(ref _candidateKeys,size);Array.Resize(ref _headers,size);
             Array.Resize(ref _published,size);Array.Resize(ref _candidate,size);Array.Resize(ref _counts,size);
-            Array.Resize(ref _scheduled,size);Array.Resize(ref _scheduledFlags,size);Array.Resize(ref _changedSlots,size);
-            Array.Resize(ref _active,size);Array.Resize(ref _changes,size);
+            Array.Resize(ref _scheduled,size);Array.Resize(ref _scheduledBatch,size);Array.Resize(ref _changedSlots,size);
+            Array.Resize(ref _active,size);Array.Resize(ref _changes,size);Array.Resize(ref _committedChanges,size);
             Array.Resize(ref _cellRows,size);Array.Resize(ref _pendingRows,size);Array.Resize(ref _spanRows,size);
             for(int i=old;i<size;i++)_published[i]=_candidate[i]=Array.Empty<uint>();
         }
@@ -107,8 +118,8 @@ namespace Game.Core
         {if(rows.Length<count)Array.Resize(ref rows,Math.Max(count,rows.Length*2));}
         private void Schedule(int slot)
         {
-            if(_scheduledFlags[slot])return;
-            _scheduledFlags[slot]=true;_scheduled[_scheduledCount++]=slot;_counts[slot]=0;_active[slot]=false;
+            if(_scheduledBatch[slot]==_batch)return;
+            _scheduledBatch[slot]=_batch;_scheduled[_scheduledCount++]=slot;_counts[slot]=0;_active[slot]=false;
             _cellRows[slot]=_pendingRows[slot]=_spanRows[slot]=default;
         }
         public WorldChunkPayloadHeader GetChunkHeader(int index)
@@ -166,7 +177,8 @@ namespace Game.Core
             if(partial && (_lastTick<0 || changedChunkCount>source.ChangedChunks.Length || changedChunkCount>_chunkLimit))
                 return Reject(WorldCommitOwnerFailure.InvalidInput);
             _requestedKeys.Clear();_newIndices.Clear();_pendingIds.Clear();
-            for(int i=0;i<_scheduledCount;i++)_scheduledFlags[_scheduled[i]]=false;
+            if(_batch==uint.MaxValue){Array.Clear(_scheduledBatch,0,_scheduledBatch.Length);_batch=0;}
+            _batch++;
             _scheduledCount=0;
             for(int i=0;i<changedChunkCount;i++)
             {
@@ -279,6 +291,7 @@ namespace Game.Core
                 _headers[slot]=header;AppendHistory(header);
             }
             _count=nextCount;_lastTick=h.WorldTick;LastFailure=WorldCommitOwnerFailure.None;
+            Array.Copy(_changes,_committedChanges,changes);LastChangeCount=changes;
             if(_hasGeometry[cellularIndex])_committedCellularGeometry=_geometries[cellularIndex];
             if(!partial)
             {
@@ -375,7 +388,13 @@ namespace Game.Core
         private void AppendHistory(WorldChunkPayloadHeader h)
         {
             int index=(_historyHead+_historyCount)%_historyHeaders.Length;
-            if(_historyCount==_historyHeaders.Length){index=_historyHead;_historyHead=(_historyHead+1)%_historyHeaders.Length;}else _historyCount++;
+            if(_historyCount==_historyHeaders.Length)
+            {
+                index=_historyHead;_historyHead=(_historyHead+1)%_historyHeaders.Length;
+                var old=_historyHeaders[index];_historyLinks.Remove((old.Key,old.Generation,old.BaseRevision));
+            }
+            else _historyCount++;
+            _historyLinks.Add((h.Key,h.Generation,h.BaseRevision));
             _historyHeaders[index]=h;HistoryRecordsWritten++;
         }
         /// <summary>
@@ -399,7 +418,7 @@ namespace Game.Core
         /// 每条记录保存after-image而非稀疏操作，因此连续中间版无需逐次发包/等ACK；Base仍严格为客户端
         /// 已安装版本，不能把“当前正文可读”误当作历史依赖已证明。缺链、旧窗口或换代仍要求Baseline。
         /// SnapshotId/ServerTick取该Key最后真实提交头，不重封装成后来无关Key推进的global采样序号。
-        /// 只扫固定history ring并复制一块当前payload，不改历史、数量、发送预算或在途冻结快照。
+        /// 验证已提交历史的起始依赖仍在有界窗口，再复制一块当前正文；不修改数量、发送预算或在途快照。
         /// </summary>
         public bool TryCopyDelta(WorldChunkKey key,ulong generation,ulong baseRevision,uint[] destination,out WorldChunkPayloadHeader header)
         {
@@ -408,20 +427,13 @@ namespace Game.Core
             // 先确认当前可寻址生命周期，避免旧ACK/调用者绕过Coordinator而冻结退休或旧代payload。
             if(!_indices.TryGetValue(key,out int slot) || baseRevision==0 || _headers[slot].Generation!=generation
                 || baseRevision>=_headers[slot].Revision)return Reject(WorldCommitOwnerFailure.BaselineRequired);
-            var current=_headers[slot];ulong reached=baseRevision;
-            for(int i=0;i<_historyCount;i++)
-            {
-                int at=(_historyHead+i)%_historyHeaders.Length;var h=_historyHeaders[at];
-                if(h.Key!=key || h.Generation!=generation || h.BaseRevision!=reached || h.Revision<=reached)continue;
-                reached=h.Revision;
-                if(reached!=current.Revision)continue;
-                // 当前after-image与当前真实提交头是同一份已发布事实；只把依赖Base合并为已ACK版。
-                // Copy先检查最终完整正文长度，容量不足不泄漏早先某个较小旧版本或部分数组。
-                var merged=new WorldChunkPayloadHeader(current.WorldEpoch,current.SnapshotId,current.Key,
-                    current.Generation,baseRevision,current.Revision,current.ServerTick,current.WordCount,current.Checksum,current.IsResident);
-                return Copy(merged,_published[slot],destination,out header);
-            }
-            return Reject(WorldCommitOwnerFailure.BaselineRequired);
+            if(!_historyLinks.Contains((key,generation,baseRevision)))return Reject(WorldCommitOwnerFailure.BaselineRequired);
+            // 先验检查对应已经被 FIFO 环保留的首条记录。上方校验当前同代且有更新，
+            // 因此其后的全体连续 Revision 也仍在环内；正文仍绑定当前真实提交头。
+            var current=_headers[slot];
+            var merged=new WorldChunkPayloadHeader(current.WorldEpoch,current.SnapshotId,current.Key,
+                current.Generation,baseRevision,current.Revision,current.ServerTick,current.WordCount,current.Checksum,current.IsResident);
+            return Copy(merged,_published[slot],destination,out header);
         }
         private bool Copy(WorldChunkPayloadHeader h,uint[] source,uint[] destination,out WorldChunkPayloadHeader header)
         {

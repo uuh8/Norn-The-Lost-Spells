@@ -5,18 +5,8 @@ namespace Game.ElementField
 {
     public sealed partial class WorldReplicationSource
     {
-        private struct LegacyStamp
-        {
-            internal ElementWorldChunk Owner;
-            internal uint SimulationVersion;
-            internal ulong DirectWrite;
-            internal bool Matches(ElementWorldChunk chunk) => ReferenceEquals(Owner, chunk) &&
-                SimulationVersion == chunk.Grid.GetChunkVersion(0, 0, 0) && DirectWrite == chunk.DirectWriteVersion;
-        }
-
         private WorldReplicaBuffer _lastBuffer;
         private ulong _lastCursor, _lastQueueVersion;
-        private readonly Dictionary<ElementChunkKey, LegacyStamp> _legacy = new Dictionary<ElementChunkKey, LegacyStamp>();
         private readonly HashSet<WorldChunkKey> _pendingKeys = new HashSet<WorldChunkKey>();
         private readonly HashSet<WorldChunkKey> _changedKeys = new HashSet<WorldChunkKey>();
 
@@ -28,14 +18,6 @@ namespace Game.ElementField
         public bool TryAdvanceUnchangedCapture(WorldReplicaBuffer committedBuffer)
         {
             if (!CanReuse(committedBuffer) || _world.NetworkCursor != _lastCursor || QueueChanged()) return false;
-            int count = 0;
-            foreach (var pair in _world.NetworkLegacyChunks)
-            {
-                if (!pair.Value.HasAnyElement) continue;
-                if (!_legacy.TryGetValue(pair.Key, out var stamp) || !stamp.Matches(pair.Value)) return false;
-                count++;
-            }
-            if (count != _legacy.Count) return false;
             var header = committedBuffer.Header;
             committedBuffer.Header = new WorldReplicaHeader(_world.WorldTick, header.CellCount, header.PendingCount, header.GeometryCount, header.SpanCount);
             return true;
@@ -47,12 +29,6 @@ namespace Game.ElementField
             if (!CanReuse(destination)) return false;
             _changedKeys.Clear();
             if (!_world.CollectNetworkChanges(_lastCursor, _changedKeys)) return false;
-            foreach (var pair in _world.NetworkLegacyChunks)
-                if (pair.Value.HasAnyElement && (!_legacy.TryGetValue(pair.Key, out var stamp) || !stamp.Matches(pair.Value)))
-                    _changedKeys.Add(LegacyKey(pair.Key));
-            foreach (var pair in _legacy)
-                if (!_world.NetworkLegacyChunks.TryGetValue(pair.Key, out var current) || !current.HasAnyElement)
-                    _changedKeys.Add(LegacyKey(pair.Key));
             if (QueueChanged())
             {
                 foreach (var key in _pendingKeys) _changedKeys.Add(key);
@@ -74,7 +50,6 @@ namespace Game.ElementField
             return true;
         }
 
-        private static WorldChunkKey LegacyKey(ElementChunkKey key) => new WorldChunkKey(WorldMaterialDomain.LegacyCell, key.X, key.Y, key.Z);
         private bool QueueChanged() => _lastQueueVersion != _world.NetworkPending.Revision &&
             (_pendingKeys.Count != 0 || _world.NetworkPending.Count != 0);
 
@@ -95,16 +70,16 @@ namespace Game.ElementField
         private void RememberCellularCapture(WorldReplicaBuffer buffer)
         {
             _world.EnableNetworkChangeJournal();
-            _lastBuffer = buffer; _lastCursor = _world.NetworkCursor; _lastQueueVersion = _world.NetworkPending.Revision;
-            _legacy.Clear(); _pendingKeys.Clear();
-            foreach (var pair in _world.NetworkLegacyChunks)
+            // 首次/队列真变时记录旧目的块，下一批有移动或清空才同时替换旧、新页。
+            // 地形、冷水、动态元胞和旧 Fire 都在权威写口登记域地址，空闲 Tick 不扫描任一材料 Store。
+            bool refreshPending=!ReferenceEquals(buffer,_lastBuffer) || _lastQueueVersion!=_world.NetworkPending.Revision;
+            _lastBuffer=buffer;_lastCursor=_world.NetworkCursor;_lastQueueVersion=_world.NetworkPending.Revision;
+            if(refreshPending)
             {
-                var chunk = pair.Value;
-                if (!chunk.HasAnyElement) continue;
-                _legacy.Add(pair.Key, new LegacyStamp { Owner = chunk, SimulationVersion = chunk.Grid.GetChunkVersion(0, 0, 0),
-                    DirectWrite = chunk.DirectWriteVersion });
+                _pendingKeys.Clear();
+                if(!CollectPending(_pendingKeys))_lastBuffer=null;
             }
-            if (!CollectPending(_pendingKeys)) _lastBuffer = null;
+            _world.BeginNetworkCaptureBatch();
         }
     }
 }

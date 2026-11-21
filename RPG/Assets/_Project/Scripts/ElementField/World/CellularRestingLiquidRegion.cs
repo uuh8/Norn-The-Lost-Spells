@@ -16,6 +16,7 @@ namespace Game.ElementField
     public interface ICellularRestingLiquidReadOnly : IMaterialQuantityReadOnly
     {
         uint CellCapacity { get; }
+        ulong GetTotalQuantity(MaterialId material);
         ulong Version { get; }
         ulong RegionLayoutVersion { get; }
         // 区域槽数只增不减。作者索引固定，冷区槽清空后为默认值、之后可复用；表现按布局游标处理旧盒与新盒。

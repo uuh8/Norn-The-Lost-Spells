@@ -13,8 +13,8 @@ namespace Game.ElementField
             ref Slot slot = ref _slots[index];
             var motion = ElementCellMaterialRules.Motion(slot.Value.Bulk);
             if (slot.Queued || slot.SleepingLiquid || slot.Value.Amount == 0 || slot.Value.Steam != 0 || slot.Value.Vapor != 0 ||
-                _impulses.ContainsKey(cell) || motion != ElementCellMotion.Grain && motion != ElementCellMotion.Fixed &&
-                motion != ElementCellMotion.Liquid) return;
+                _impulses.ContainsKey(cell) || motion != ElementCellMotion.Grain && motion != ElementCellMotion.Liquid &&
+                slot.Value.Bulk != MaterialId.Ice && !(slot.Value.Bulk == MaterialId.DriedSlime && slot.Value.Amount == CellCapacity)) return;
             slot.SleepingLiquid = true;
             slot.SleepPrevious = _sleepLast; slot.SleepNext = -1;
             if (_sleepLast < 0) _sleepFirst = index; else _slots[_sleepLast].SleepNext = index;

@@ -46,6 +46,26 @@ namespace Game.ElementField.Tests
             var settings=Settings(false,3);var store=new ElementWorldStore(2,16);var source=Chunk(store,default);source.SetCell(Vector3Int.up,new ElementCell(MaterialId.Fire,200));
             Solver().SimulateActiveChunks(store,new[]{source},1,1,.1f,in settings);Assert.That(source.GetCell(Vector3Int.zero).Amount,Is.EqualTo(197));
         }
+        [Test]
+        public void FireReadsOnlyItsReceiverAndReusesCapacityFreedLowerInColumn()
+        {
+            var settings = Settings(false, 3);
+            var store = new ElementWorldStore(2, 16);
+            var lower = Chunk(store, default);
+            var upper = Chunk(store, new ElementChunkKey(0, 1, 0));
+            int probes = 0;
+            store.CellularSolidAt = cell => { probes++; return false; };
+            lower.SetCell(Vector3Int.up, new ElementCell(MaterialId.Fire, 255));
+            upper.SetCell(Vector3Int.zero, new ElementCell(MaterialId.Fire, 20));
+            var stats = Solver().SimulateActiveChunks(store, new[] { upper, lower }, 2, 1, .1f, in settings);
+            Assert.That(probes, Is.EqualTo(2));
+            Assert.That(lower.GetCell(Vector3Int.zero).Amount, Is.EqualTo(252));
+            Assert.That(lower.GetCell(Vector3Int.up).Amount, Is.EqualTo(17));
+            Assert.That(upper.HasFire, Is.False);
+            Assert.That(stats.FireCellsDecayed, Is.EqualTo(2));
+            Assert.That(stats.ChangedCells, Is.EqualTo(3));
+        }
+
         [Test]public void WarmFireFallHasNoManagedAllocation()
         {
             var settings=Settings(false);var store=new ElementWorldStore(2,16);var source=Chunk(store,default);var solver=Solver();var active=new[]{source};

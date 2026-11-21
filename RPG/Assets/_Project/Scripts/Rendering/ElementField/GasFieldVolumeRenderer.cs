@@ -34,7 +34,21 @@ namespace Game.Rendering
         private float[] _blendStarts;
         private uint[] _steam,_toxic;
         private Dictionary<ElementChunkKey,int> _textureSlots;
-        private bool[] _bound;
+        private int[] _boundSlots;
+        private int _boundCount;
+        private struct VisibleChunk
+        {
+            internal ElementChunkKey Key;
+            internal Vector3 Position;
+            internal float Distance;
+        }
+        private VisibleChunk[] _visible;
+        private int _visibleCount, _lastResidentCount;
+        private uint _lastSourceVersion;
+        private IGasVolumeReadOnly _lastSource;
+        private Matrix4x4 _lastFrustum;
+        private Vector3 _lastInterest, _lastOrigin;
+        private float _lastMeters, _lastFadeEnd;
         private int[] _freeSlots;
         private int _freeCount;
         private bool _reportedPoolMismatch;
@@ -49,6 +63,7 @@ namespace Game.Rendering
         public int UnrepresentedChunksLastFrame { get; private set; }
         public int CopiedDensityChunksLastFrame { get; private set; }
         public long UploadedDensityBytesLastFrame { get; private set; }
+        public int CandidateChunksCheckedLastFrame { get; private set; }
         // Domain Reload 会反序列化现存对象的旧值，修改字段初始值不会迁移 P7。
         // 只在读取时限定有效时长，不在 OnValidate/Start 写 Scene 或触发保存。
         public float EffectiveDensityBlendSeconds => float.IsFinite(_densityBlendSeconds)
@@ -80,7 +95,7 @@ namespace Game.Rendering
             _blendStarts=new float[source.MaximumChunks];
             _steam=new uint[_pixels.Length]; _toxic=new uint[_pixels.Length];
             _textureSlots=new Dictionary<ElementChunkKey,int>(source.MaximumChunks);
-            _bound=new bool[source.MaximumChunks]; _freeSlots=new int[source.MaximumChunks];
+            _boundSlots=new int[source.MaximumChunks]; _freeSlots=new int[source.MaximumChunks]; _visible=new VisibleChunk[source.MaximumChunks];
             for(int i=source.MaximumChunks-1;i>=0;i--) _freeSlots[_freeCount++]=i;
             _properties = new MaterialPropertyBlock(); _planes = new Plane[6]; _camera = Camera.main;
             _cube = CreateCube();
@@ -94,23 +109,19 @@ namespace Game.Rendering
         {
             UploadedChunksLastFrame = DrawnChunksLastFrame = UnrepresentedChunksLastFrame = CopiedDensityChunksLastFrame = 0;
             UploadedDensityBytesLastFrame = 0;
+            CandidateChunksCheckedLastFrame = 0;
             IGasVolumeReadOnly source = _world != null ? _world.GasVolumes : null;
             if (source == null || _textures == null || _material == null) return;
             if (_camera == null) _camera = Camera.main;
             if (_camera == null) return;
-            GeometryUtility.CalculateFrustumPlanes(_camera, _planes);
             int size = source.ChunkSize; float meters = size * _world.CellSize;
-            // Resident 索引是压紧列表，回收会交换位置。Texture 按 World Key 绑定，
-            // 否则删除一处气体就会让不变的远处气团重新采集、上传与分配缓存。
-            for(int slot=0;slot<_bound.Length;slot++) if(_bound[slot] && source.GetChunkVersion(_keys[slot])==0)
-            { _textureSlots.Remove(_keys[slot]); _bound[slot]=false; _uploaded[slot]=false; _freeSlots[_freeCount++]=slot; }
-            for (int i = 0; i < source.ResidentChunkCount; i++)
+            bool refreshed = RefreshCandidates(source,meters);
+            for (int i = 0; i < _visibleCount; i++)
             {
-                ElementChunkKey key = source.GetChunkKey(i);
-                Vector3 position = _world.Origin + new Vector3(key.X, key.Y, key.Z) * meters;
-                var bounds = new Bounds(position + Vector3.one * meters * .5f, Vector3.one * meters);
-                float distance = Vector3.Distance(_world.InterestPosition, bounds.ClosestPoint(_world.InterestPosition));
-                if (distance >= _fadeEnd || !GeometryUtility.TestPlanesAABB(_planes, bounds)) continue;
+                var candidate = _visible[i];
+                ElementChunkKey key = candidate.Key;
+                Vector3 position = candidate.Position;
+                float distance = candidate.Distance;
                 if(!_textureSlots.TryGetValue(key,out int textureSlot))
                 {
                     if(_freeCount==0)
@@ -122,19 +133,14 @@ namespace Game.Rendering
                         { _reportedPoolMismatch=true; GameLog.Error("Gas Texture 池不足：可见气体未显示，请检查 Owner/Renderer 初始化容量。", "Rendering"); }
                         continue;
                     }
-                    textureSlot=_freeSlots[--_freeCount]; _bound[textureSlot]=true; _keys[textureSlot]=key;
+                    textureSlot=_freeSlots[--_freeCount]; _boundSlots[_boundCount++]=textureSlot; _keys[textureSlot]=key;
                     _uploaded[textureSlot]=false; _textureSlots.Add(key,textureSlot);
                 }
                 bool changed = !_uploaded[textureSlot];
                 // Trilinear Filtering 会读取角点与棱边 Halo，因此必须检查全部 26 个邻 Chunk，
                 // 仅检查六个面邻居会让拐角浓度变化后复用旧 Texture，产生接缝。
-                int side = 0;
-                for (int z = -1; z <= 1; z++) for (int y = -1; y <= 1; y++) for (int x = -1; x <= 1; x++)
-                {
-                    var neighbor = new ElementChunkKey(key.X + x, key.Y + y, key.Z + z);
-                    uint version = source.GetChunkVersion(neighbor);
-                    changed |= _versions[textureSlot, side] != version; _versions[textureSlot, side++] = version;
-                }
+                if (refreshed || changed)
+                    changed |= CheckHalo(source,key,textureSlot);
                 if (changed)
                 {
                     _visibleDensity[textureSlot] = Upload(source, key, textureSlot,now); _uploaded[textureSlot] = true;
@@ -156,6 +162,86 @@ namespace Game.Rendering
                     _material, 0, _camera, 0, _properties, ShadowCastingMode.Off, false);
                 DrawnChunksLastFrame++;
             }
+        }
+
+        private bool RefreshCandidates(IGasVolumeReadOnly source, float meters)
+        {
+            int resident = source.ResidentChunkCount;
+            uint version = source.Version;
+            var origin = _world.Origin; var interest = _world.InterestPosition; var frustum = _camera.cullingMatrix;
+            bool newSource = !ReferenceEquals(source,_lastSource);
+            bool membership = newSource || version != _lastSourceVersion || resident != _lastResidentCount;
+            if (!membership && frustum.Equals(_lastFrustum) && interest.Equals(_lastInterest) && origin.Equals(_lastOrigin)
+                && meters == _lastMeters && _fadeEnd == _lastFadeEnd) return false;
+            // ReclaimEmptyChunks 可能与数量改变分属两帧，故同时记录数量版本及 resident 数。
+            // 只核查实际绑定的槽，未使用的 GPU 池容量不会变成空闲场景的逐帧工作。
+            if (membership)
+                for (int i = _boundCount-1; i >= 0; i--)
+                {
+                    int slot = _boundSlots[i];
+                    if (!newSource && source.GetChunkVersion(_keys[slot]) != 0) continue;
+                    _textureSlots.Remove(_keys[slot]); _uploaded[slot] = false;
+                    _boundSlots[i] = _boundSlots[--_boundCount]; _freeSlots[_freeCount++] = slot;
+                }
+            _lastSource = source; _lastSourceVersion = version; _lastResidentCount = resident;
+            _lastFrustum = frustum; _lastInterest = interest; _lastOrigin = origin; _lastMeters = meters; _lastFadeEnd = _fadeEnd;
+            _visibleCount = 0;
+            if (resident == 0) return true;
+            // 换源时只扩 CPU 候选缓冲。GPU 池仍采用原预算，超额可见气体沿用既有诊断。
+            if (resident > _visible.Length) System.Array.Resize(ref _visible,resident);
+            GeometryUtility.CalculateFrustumPlanes(frustum,_planes);
+            // 区域较小但远处驻留了大量 Chunk 时，直接问兴趣范围内的键；稀疏世界走压紧列表。
+            // fallback 条件仍做真实距离和六平面判断，两条枚举路径得到相同的可见集合。
+            if (TryGetLocalKeys(interest,origin,meters,_fadeEnd,resident,out var min,out var max))
+            {
+                for (int z = min.z; z <= max.z; z++)
+                for (int y = min.y; y <= max.y; y++)
+                for (int x = min.x; x <= max.x; x++)
+                {
+                    var key = new ElementChunkKey(x,y,z);
+                    CandidateChunksCheckedLastFrame++;
+                    if (source.GetChunkVersion(key) != 0) AddVisible(key,origin,interest,meters);
+                }
+            }
+            else
+            {
+                CandidateChunksCheckedLastFrame = resident;
+                for (int i = 0; i < resident; i++) AddVisible(source.GetChunkKey(i),origin,interest,meters);
+            }
+            return true;
+        }
+
+        private static bool TryGetLocalKeys(Vector3 interest, Vector3 origin, float meters, float radius, int resident,
+            out Vector3Int min, out Vector3Int max)
+        {
+            min = max = default;
+            if (!(meters > 0f && radius > 0f)) return false;
+            var center = (interest-origin)/meters; var extents = Vector3.one*(radius/meters);
+            for (int i = 0; i < 3; i++)
+                if (!float.IsFinite(center[i]) || !float.IsFinite(extents[i]) || Mathf.Abs(center[i])+extents[i] >= 8388608f) return false;
+            min = Vector3Int.FloorToInt(center-extents)-Vector3Int.one; max = Vector3Int.FloorToInt(center+extents)+Vector3Int.one;
+            long width = (long)max.x-min.x+1, height = (long)max.y-min.y+1, depth = (long)max.z-min.z+1;
+            return width*height <= resident/depth;
+        }
+
+        private void AddVisible(ElementChunkKey key, Vector3 origin, Vector3 interest, float meters)
+        {
+            var position = origin+new Vector3(key.X,key.Y,key.Z)*meters;
+            var bounds = new Bounds(position+Vector3.one*(meters*.5f),Vector3.one*meters);
+            float distance = Vector3.Distance(interest,bounds.ClosestPoint(interest));
+            if (distance >= _fadeEnd || !GeometryUtility.TestPlanesAABB(_planes,bounds)) return;
+            _visible[_visibleCount++] = new VisibleChunk { Key = key, Position = position, Distance = distance };
+        }
+
+        private bool CheckHalo(IGasVolumeReadOnly source, ElementChunkKey key, int slot)
+        {
+            int side = 0; bool changed = false;
+            for (int z = -1; z <= 1; z++) for (int y = -1; y <= 1; y++) for (int x = -1; x <= 1; x++)
+            {
+                uint version = source.GetChunkVersion(new ElementChunkKey(key.X+x,key.Y+y,key.Z+z));
+                changed |= _versions[slot,side] != version; _versions[slot,side++] = version;
+            }
+            return changed;
         }
         private bool Upload(IGasVolumeReadOnly source, ElementChunkKey key,int slot,float now)
         {

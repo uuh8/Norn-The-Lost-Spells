@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Game.ElementField;
 using Game.Materials;
@@ -279,6 +280,53 @@ namespace Game.Rendering.Tests
             fixture.Frame();
             Assert.That(copied.GetValue(fixture.Renderer),Is.EqualTo(0));
             Assert.That(bytes.GetValue(fixture.Renderer),Is.EqualTo(0L));
+        }
+
+        [TestCase(false)]
+        [TestCase(true)]
+        public void CellularSparseAndDensePagesMatchAllHaloFacesEdgesAndCorners(bool dense)
+        {
+            const int n = CellularMaterialRenderer.PageSize, size = n+2;
+            var pixels = new Color32[size*size*size];
+            var reference = new Color32[pixels.Length];
+            for (int dz=-1; dz<=1; dz++) for (int dy=-1; dy<=1; dy++) for (int dx=-1; dx<=1; dx++)
+            {
+                var gas = new Dictionary<int,ushort>();
+                for (int z=0; z<n; z++) for (int y=0; y<n; y++) for (int x=0; x<n; x++)
+                {
+                    int address=x+n*(y+n*z);
+                    if (!dense && address%73!=0) continue;
+                    var cell=new Vector3Int(x+n*dx,y+n*dy,z+n*dz);
+                    ushort pair=(ushort)((1+(address+dx+2)%254) | ((1+(2*address+dz+dy+2)%254)<<8));
+                    gas.Add(CellularMaterialRenderer.LocalGasIndex(cell),pair);
+                    int tx=cell.x+1,ty=cell.y+1,tz=cell.z+1;
+                    if (tx>=0 && tx<size && ty>=0 && ty<size && tz>=0 && tz<size)
+                        reference[tx+size*(ty+size*tz)]=new Color32((byte)pair,(byte)(pair>>8),0,0);
+                }
+                CellularMaterialRenderer.CopyGasHalo(gas,dx,dy,dz,pixels);
+            }
+            CollectionAssert.AreEqual(reference,pixels);
+        }
+
+        [Test]
+        public void ColdGasFramesKeepDrawingWithoutRecullingResidentChunks()
+        {
+            using var fixture=new Fixture();
+            Assert.That(fixture.Store.TryAdd(Vector3Int.zero,MaterialId.Steam,1000),Is.True);
+            fixture.Frame();
+            Assert.That(fixture.Renderer.CandidateChunksCheckedLastFrame,Is.EqualTo(1));
+            fixture.Frame();
+            Assert.That(fixture.Renderer.CandidateChunksCheckedLastFrame,Is.Zero);
+            Assert.That(fixture.Renderer.DrawnChunksLastFrame,Is.EqualTo(1));
+            fixture.CameraHost.transform.position+=Vector3.right;
+            fixture.Frame();
+            Assert.That(fixture.Renderer.CandidateChunksCheckedLastFrame,Is.EqualTo(1));
+            Assert.That(fixture.Renderer.UploadedChunksLastFrame,Is.Zero);
+            Assert.That(fixture.Store.TryRemove(Vector3Int.zero,MaterialId.Steam,1000),Is.True);
+            fixture.Frame();
+            fixture.Store.ReclaimEmptyChunks();
+            fixture.Frame();
+            Assert.That(fixture.Renderer.BoundTextureCount,Is.Zero);
         }
     }
 }

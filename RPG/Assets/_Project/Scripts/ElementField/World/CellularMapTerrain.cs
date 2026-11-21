@@ -266,13 +266,21 @@ namespace Game.ElementField
             private readonly Dictionary<Vector2Int, GameObject> _patches = new Dictionary<Vector2Int, GameObject>();
             // 地形两端的编辑不能互相增加重建工作。列只保存本列被编辑的 Y，Terrain 洞瓦片和
             // Box 二分树各自保存覆盖计数；恢复到原材质时沿同一路径撤掉索引。
-            private readonly Dictionary<Vector2Int, SortedSet<int>> _columnEdits = new Dictionary<Vector2Int, SortedSet<int>>();
+            private readonly Dictionary<Vector2Int, List<int>> _columnEdits = new Dictionary<Vector2Int, List<int>>();
+            private readonly List<int> _columnCuts = new List<int>();
+            private readonly List<KeyValuePair<Vector2Int,GameObject>> _pendingPatches = new List<KeyValuePair<Vector2Int,GameObject>>(4);
+            private readonly bool[,] _holeValue = new bool[1,1];
+            private SurfaceBuilder _meshWorkspace;
+            private Material[] _surfaces;
             private readonly Dictionary<Vector2Int, int> _tileEdits = new Dictionary<Vector2Int, int>();
             private readonly Dictionary<BoundsInt, int> _boxEdits = new Dictionary<BoundsInt, int>();
-            private readonly BoundsInt _boxCells;
-            private readonly Dictionary<Vector2Int, GameObject> _boxTiles = new Dictionary<Vector2Int, GameObject>();
-            private GameObject _boxTileRoot;
-            private const int BoxTileWidth = 16;
+            private readonly BoundsInt _sourceCells;
+            private readonly Dictionary<Vector2Int, GameObject> _sourceTiles = new Dictionary<Vector2Int, GameObject>();
+            // Home 的平地是同质长方体。未编辑区域用一个或多个大 BoxCollider 覆盖；只有命中处才细分到 16×16。
+            private readonly Dictionary<BoundsInt, GameObject> _flatSlabs = new Dictionary<BoundsInt, GameObject>();
+            private readonly BoundsInt _tileCover;
+            private GameObject _sourceTileRoot;
+            private const int SourceTileWidth = 16;
             private readonly Transform _root;
             private readonly Vector3 _origin;
             private readonly float _size;
@@ -284,7 +292,10 @@ namespace Game.ElementField
                 Source = source; _root = root; _origin = root.position; _size = size; _profile = profile;
                 var lo = Vector3Int.FloorToInt((source.Bounds.min - _origin) / size);
                 var hi = Vector3Int.CeilToInt((source.Bounds.max - _origin) / size);
-                _boxCells = new BoundsInt(lo, hi - lo);
+                _sourceCells = new BoundsInt(lo, hi - lo);
+                var minTile = SourceTileKey(lo.x, lo.z);
+                var maxTile = SourceTileKey(hi.x - 1, hi.z - 1);
+                _tileCover = new BoundsInt(minTile.x, 0, minTile.y, maxTile.x - minTile.x + 1, 1, maxTile.y - minTile.y + 1);
             }
 
             private void Bind(bool edited, bool owner = true)
@@ -309,7 +320,7 @@ namespace Game.ElementField
 
             internal void Show(bool visible)
             {
-                if (_boxTileRoot != null) _boxTileRoot.SetActive(Edits.Count != 0);
+                if (_sourceTileRoot != null) _sourceTileRoot.SetActive(Edits.Count != 0);
                 if (visible) { Source.Active = this; Bind(Edits.Count != 0); }
                 else if (Source.Active == this) { Bind(false, false); Source.Active = null; }
             }
@@ -317,47 +328,139 @@ namespace Game.ElementField
             private Rect CellRect(Vector3Int p) => new Rect(_origin.x + p.x * _size, _origin.z + p.z * _size, _size, _size);
             private void TileRange(Vector3Int p, out Vector2Int min, out Vector2Int max)
             {
-                if (Source.Collider is BoxCollider) { min = max = BoxKey(p.x, p.z); return; }
+                if (Source.Heightfield == null) { min = max = SourceTileKey(p.x, p.z); return; }
                 Rect rect = CellRect(p);
                 min = Source.Heightfield != null ? Source.Tile(rect.xMin, rect.yMin) : Vector2Int.zero;
                 max = Source.Heightfield != null ? Source.Tile(rect.xMax - _size * .00001f, rect.yMax - _size * .00001f) : min;
             }
 
-            private static Vector2Int BoxKey(int x, int z) => new Vector2Int(
-                x / BoxTileWidth - (x % BoxTileWidth < 0 ? 1 : 0), z / BoxTileWidth - (z % BoxTileWidth < 0 ? 1 : 0));
-            private BoundsInt BoxTileCells(Vector2Int key)
+            private static Vector2Int SourceTileKey(int x, int z) => new Vector2Int(
+                x / SourceTileWidth - (x % SourceTileWidth < 0 ? 1 : 0), z / SourceTileWidth - (z % SourceTileWidth < 0 ? 1 : 0));
+            private BoundsInt SourceTileCells(Vector2Int key)
             {
-                var min = Vector3Int.Max(_boxCells.min, new Vector3Int(key.x*BoxTileWidth, _boxCells.yMin, key.y*BoxTileWidth));
-                var max = Vector3Int.Min(_boxCells.max, new Vector3Int((key.x+1)*BoxTileWidth, _boxCells.yMax, (key.y+1)*BoxTileWidth));
+                var min = Vector3Int.Max(_sourceCells.min, new Vector3Int(key.x*SourceTileWidth, _sourceCells.yMin, key.y*SourceTileWidth));
+                var max = Vector3Int.Min(_sourceCells.max, new Vector3Int((key.x+1)*SourceTileWidth, _sourceCells.yMax, (key.y+1)*SourceTileWidth));
                 return new BoundsInt(min,max-min);
             }
 
-            private void PrepareBoxTiles()
+            private Rect ProjectionBounds(Vector2Int key)
             {
-                if (_boxTileRoot != null || !(Source.Collider is BoxCollider)) return;
-                var min = BoxKey(_boxCells.xMin,_boxCells.zMin); var max = BoxKey(_boxCells.xMax-1,_boxCells.zMax-1);
-                _boxTileRoot = new GameObject("Authored ground tiles");
-                _boxTileRoot.SetActive(false); _boxTileRoot.transform.SetParent(_root,false);
+                if (Source.Heightfield != null) return Source.TileBounds(key);
+                var box = SourceTileCells(key);
+                var min = Vector3.Max(Source.Bounds.min, _origin + (Vector3)box.min * _size);
+                var max = Vector3.Min(Source.Bounds.max, _origin + (Vector3)box.max * _size);
+                return Rect.MinMaxRect(min.x,min.z,max.x,max.z);
+            }
+
+            private void PrepareSourceTiles(Vector2Int touched)
+            {
+                if (Source.Heightfield != null) return;
+                bool first = _sourceTileRoot == null;
+                if (first)
+                {
+                    _sourceTileRoot = new GameObject("Authored ground tiles");
+                    _sourceTileRoot.SetActive(false); _sourceTileRoot.transform.SetParent(_root,false);
+                }
                 try
                 {
-                    for (int z = min.y; z <= max.y; z++)
-                    for (int x = min.x; x <= max.x; x++)
+                    if (Source.Collider is BoxCollider)
                     {
-                        var key = new Vector2Int(x,z); var box = BoxTileCells(key);
-                        Vector3 a = Vector3.Max(Source.Bounds.min, _origin+(Vector3)box.min*_size);
-                        Vector3 b = Vector3.Min(Source.Bounds.max, _origin+(Vector3)box.max*_size);
-                        bool headless = SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null;
-                        var tile = headless ? new GameObject() : GameObject.CreatePrimitive(PrimitiveType.Cube);
-                        tile.name = "Ground tile"; tile.layer = Source.Collider.gameObject.layer;
-                        tile.transform.SetParent(_boxTileRoot.transform,false);
-                        tile.transform.localPosition = (a+b)*.5f-_origin; tile.transform.localScale = b-a;
-                        if (headless) tile.AddComponent<BoxCollider>();
-                        else if (Source.Surface != null) tile.GetComponent<MeshRenderer>().sharedMaterial = Source.Surface;
-                        tile.GetComponent<BoxCollider>().sharedMaterial = Source.Collider.sharedMaterial;
-                        _boxTiles.Add(key,tile);
+                        if (first) _flatSlabs.Add(_tileCover, CreateFlatSlab(_tileCover));
+                        ExposeFlatTile(touched);
+                        return;
+                    }
+                    if (!first) return;
+                    // 天然岩体保留封闭纵列的真实上下界。第一次替换整个原模型，以后仅重建命中的瓦片。
+                    for (int z = _tileCover.zMin; z < _tileCover.zMax; z++)
+                    for (int x = _tileCover.xMin; x < _tileCover.xMax; x++)
+                    {
+                        var key = new Vector2Int(x,z);
+                        var rock = BakePatch(ProjectionBounds(key),key,false);
+                        rock.transform.SetParent(_sourceTileRoot.transform,false); rock.SetActive(true);
+                        _sourceTiles.Add(key,rock);
                     }
                 }
-                catch { ReleaseObject(_boxTileRoot); _boxTileRoot = null; _boxTiles.Clear(); throw; }
+                catch { if (first) ReleaseSourceTiles(); throw; }
+            }
+
+            private void FitFlatSlab(GameObject slab, BoundsInt tiles)
+            {
+                var lo = SourceTileCells(new Vector2Int(tiles.xMin, tiles.zMin)).min;
+                var hi = SourceTileCells(new Vector2Int(tiles.xMax - 1, tiles.zMax - 1)).max;
+                var a = Vector3.Max(Source.Bounds.min, _origin + (Vector3)lo * _size);
+                var b = Vector3.Min(Source.Bounds.max, _origin + (Vector3)hi * _size);
+                slab.transform.localPosition = (a + b) * .5f - _origin;
+                slab.transform.localScale = b - a;
+            }
+
+            private GameObject CreateFlatSlab(BoundsInt bounds)
+            {
+                bool headless = SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null;
+                var slab = headless ? new GameObject() : GameObject.CreatePrimitive(PrimitiveType.Cube);
+                try
+                {
+                    slab.SetActive(false); slab.name = "Ground tile"; slab.layer = Source.Collider.gameObject.layer;
+                    slab.transform.SetParent(_sourceTileRoot.transform, false);
+                    FitFlatSlab(slab, bounds);
+                    var collider = headless ? slab.AddComponent<BoxCollider>() : slab.GetComponent<BoxCollider>();
+                    collider.sharedMaterial = Source.Collider.sharedMaterial;
+                    if (!headless && Source.Surface != null) slab.GetComponent<MeshRenderer>().sharedMaterial = Source.Surface;
+                    slab.SetActive(true);
+                    return slab;
+                }
+                catch { ReleaseObject(slab); throw; }
+            }
+
+            private void ExposeFlatTile(Vector2Int key)
+            {
+                if (_sourceTiles.ContainsKey(key)) return;
+                var point = new Vector3Int(key.x, 0, key.y);
+                var node = _tileCover;
+                while (node.size != Vector3Int.one)
+                {
+                    SplitBox(node, out var left, out var right);
+                    if (_flatSlabs.TryGetValue(node, out var whole))
+                    {
+                        // 先造另一半，再缩小现有实体。即使下一层构建失败，已发布的两半仍覆盖同一片平地。
+                        var other = CreateFlatSlab(right);
+                        FitFlatSlab(whole, left);
+                        _flatSlabs.Remove(node); _flatSlabs.Add(left, whole); _flatSlabs.Add(right, other);
+                    }
+                    node = left.Contains(point) ? left : right;
+                }
+                _sourceTiles.Add(key, _flatSlabs[node]);
+                _flatSlabs.Remove(node);
+            }
+
+            private void RestoreFlatTile(Vector2Int key)
+            {
+                var point = new Vector3Int(key.x, 0, key.y);
+                if (_sourceTiles.TryGetValue(key, out var tile))
+                {
+                    _sourceTiles.Remove(key); _flatSlabs.Add(new BoundsInt(point, Vector3Int.one), tile);
+                    tile.SetActive(true);
+                }
+                MergePristineFlatSlabs(_tileCover, point);
+            }
+
+            private void MergePristineFlatSlabs(BoundsInt node, Vector3Int point)
+            {
+                if (node.size == Vector3Int.one || _flatSlabs.ContainsKey(node)) return;
+                SplitBox(node, out var left, out var right);
+                MergePristineFlatSlabs(left.Contains(point) ? left : right, point);
+                if (!_flatSlabs.TryGetValue(left, out var a) || !_flatSlabs.TryGetValue(right, out var b)) return;
+                // 两半都恢复才合回一个长方体。相邻仍有洞的瓦片不在 _flatSlabs，已安装的碰撞实例继续生效。
+                FitFlatSlab(a, node); b.SetActive(false); ReleaseObject(b);
+                _flatSlabs.Remove(left); _flatSlabs.Remove(right); _flatSlabs.Add(node, a);
+            }
+
+            private void ReleaseSourceTiles()
+            {
+                if (_sourceTileRoot == null) return;
+                if (Source.Collider is MeshCollider)
+                    foreach (var tile in _sourceTiles.Values) ReleasePatch(tile);
+                _sourceTileRoot.SetActive(false); ReleaseObject(_sourceTileRoot);
+                _sourceTileRoot = null; _sourceTiles.Clear(); _flatSlabs.Clear();
             }
 
             private static void Count<TKey>(Dictionary<TKey,int> counts, TKey key, int delta)
@@ -372,7 +475,7 @@ namespace Game.ElementField
                 for (int x = min.x; x <= max.x; x++) Count(_tileEdits, new Vector2Int(x,z), delta);
                 if (Source.Collider is BoxCollider)
                 {
-                    var box = BoxTileCells(min);
+                    var box = SourceTileCells(min);
                     while (true)
                     {
                         Count(_boxEdits, box, delta);
@@ -384,12 +487,13 @@ namespace Game.ElementField
                 var key = new Vector2Int(p.x,p.z);
                 if (delta > 0)
                 {
-                    if (!_columnEdits.TryGetValue(key, out var levels)) _columnEdits[key] = levels = new SortedSet<int>();
-                    levels.Add(p.y);
+                    if (!_columnEdits.TryGetValue(key, out var levels)) _columnEdits[key] = levels = new List<int>();
+                    int index = levels.BinarySearch(p.y);
+                    if (index < 0) levels.Insert(~index, p.y);
                 }
                 else
                 {
-                    var levels = _columnEdits[key]; levels.Remove(p.y);
+                    var levels = _columnEdits[key]; levels.RemoveAt(levels.BinarySearch(p.y));
                     if (levels.Count == 0) _columnEdits.Remove(key);
                 }
             }
@@ -397,15 +501,18 @@ namespace Game.ElementField
             internal bool Edit(Vector3Int cell, MaterialId material)
             {
                 bool hadOld = Edits.TryGetValue(cell, out var old);
+                if ((hadOld ? old : Source.Material) == material) return true;
+                bool wasEdited = Edits.Count != 0;
                 bool changed = material != Source.Material;
                 int indexDelta = (changed ? 1 : 0) - (hadOld ? 1 : 0);
                 TileRange(cell, out var min, out var max);
                 if (changed) Edits[cell] = material; else Edits.Remove(cell);
                 if (indexDelta != 0) IndexEdit(cell, indexDelta, min, max);
-                var pending = new Dictionary<Vector2Int, GameObject>();
+                var pending = _pendingPatches;
+                pending.Clear();
                 try
                 {
-                    PrepareBoxTiles();
+                    PrepareSourceTiles(min);
                     if (Source.Heightfield != null && _runtimeHeightfield == null)
                     {
                         _runtimeHeightfield = Object.Instantiate(Source.Heightfield);
@@ -417,11 +524,12 @@ namespace Game.ElementField
                     {
                         var key = new Vector2Int(x, z);
                         if (Source.Heightfield != null && Source.Heightfield.IsHole(x, z)) continue;
-                        Rect rect = Source.TileBounds(key);
-                        pending.Add(key, _tileEdits.ContainsKey(key) ? BakePatch(rect, key) : null);
+                        Rect rect = ProjectionBounds(key);
+                        pending.Add(new KeyValuePair<Vector2Int,GameObject>(key,_tileEdits.ContainsKey(key) ? BakePatch(rect, key) : null));
                     }
                     foreach (var pair in pending)
-                        if (_runtimeHeightfield != null) _runtimeHeightfield.SetHoles(pair.Key.x, pair.Key.y, new[,] { { pair.Value == null } });
+                        if (_patches.ContainsKey(pair.Key) != (pair.Value != null))
+                            SetHoleSurface(pair.Key,pair.Value == null);
                 }
                 catch
                 {
@@ -430,21 +538,42 @@ namespace Game.ElementField
                     foreach (var pair in pending)
                     {
                         ReleasePatch(pair.Value);
-                        if (_runtimeHeightfield != null) _runtimeHeightfield.SetHoles(pair.Key.x, pair.Key.y, new[,] { { !_patches.ContainsKey(pair.Key) } });
+                        bool wasPatch = _patches.ContainsKey(pair.Key);
+                        if (wasPatch != (pair.Value != null)) SetHoleSurface(pair.Key,!wasPatch);
+                    }
+                    pending.Clear();
+                    if (Source.Collider is BoxCollider && _sourceTileRoot != null)
+                    {
+                        if (!wasEdited) ReleaseSourceTiles();
+                        else if (!_tileEdits.ContainsKey(min)) RestoreFlatTile(min);
                     }
                     throw;
                 }
                 foreach (var pair in pending)
                 {
                     if (_patches.TryGetValue(pair.Key, out var retired)) { ReleasePatch(retired); _patches.Remove(pair.Key); }
-                    if (_boxTiles.TryGetValue(pair.Key,out var baseTile)) baseTile.SetActive(pair.Value == null);
+                    if (Source.Collider is BoxCollider && pair.Value == null && Edits.Count != 0) RestoreFlatTile(pair.Key);
+                    else if (_sourceTiles.TryGetValue(pair.Key,out var baseTile)) baseTile.SetActive(pair.Value == null);
                     if (pair.Value == null) continue;
                     _patches.Add(pair.Key, pair.Value); pair.Value.SetActive(true);
                 }
-                if (_boxTileRoot != null) _boxTileRoot.SetActive(Edits.Count != 0);
-                if (Source.Active == this) Bind(Edits.Count != 0);
+                pending.Clear();
+                bool edited = Edits.Count != 0;
+                if (wasEdited != edited)
+                {
+                    if (_sourceTileRoot != null) _sourceTileRoot.SetActive(edited);
+                    if (Source.Active == this) Bind(edited);
+                    if (!edited && Source.Collider is BoxCollider) ReleaseSourceTiles();
+                }
                 Physics.SyncTransforms();
                 return true;
+            }
+
+            private void SetHoleSurface(Vector2Int key, bool surfacePresent)
+            {
+                if (_runtimeHeightfield == null) return;
+                _holeValue[0,0] = surfacePresent;
+                _runtimeHeightfield.SetHoles(key.x,key.y,_holeValue);
             }
 
             private static void ReleasePatch(GameObject go)
@@ -460,7 +589,7 @@ namespace Game.ElementField
                 Show(false);
                 foreach (var patch in _patches.Values) ReleasePatch(patch);
                 _patches.Clear();
-                if (_boxTileRoot != null) ReleaseObject(_boxTileRoot);
+                ReleaseSourceTiles();
                 if (_runtimeHeightfield != null) ReleaseObject(_runtimeHeightfield);
                 if (_terrainSurface != null) ReleaseObject(_terrainSurface);
             }

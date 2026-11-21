@@ -17,9 +17,12 @@ namespace Game.ElementField
         private int _deferredCount;
         // 每个有例外的 4³ 页只占一个存在位图；容量随编辑触及的空间变化，初始整湖不生成页面。
         private struct Page { public Vector3Int Key; public ulong Bits; }
+        private struct WakePage { public ulong Bits; public int Next; }
+        private readonly Dictionary<Vector3Int, WakePage> _overflowPages = new Dictionary<Vector3Int, WakePage>();
+        private readonly Queue<Vector3Int> _overflowOrder = new Queue<Vector3Int>();
         private readonly List<Page> _pages = new List<Page>();
         private readonly Dictionary<Vector3Int, int> _pageIndices = new Dictionary<Vector3Int, int>();
-        private bool _scanning, _scanAgain, _preferWork, _preferSleep;
+        private bool _scanning, _scanAgain, _rescanEdits, _preferEdit, _preferWork, _preferSleep, _preferOverflow;
         private struct FaceCursor { public int Region, Face; public long Offset; }
         private readonly Queue<FaceCursor> _border;
         private int _nextNewFace, _scanPage, _scanBit, _scanNeighbor;
@@ -45,13 +48,14 @@ namespace Game.ElementField
             {
                 _pages[index] = _pages[last];
                 _pageIndices[_pages[index].Key] = index;
-                if (_scanning && index <= _scanPage) _scanAgain = true;
+                if (_scanning && index <= _scanPage) _rescanEdits = true;
             }
             _pages.RemoveAt(last);
         }
 
         public void WakeNeighbors(Vector3Int cell)
         {
+            if (_regions.Length == 0 && _coldPages.Count == 0) return;
             Enqueue(cell);
             for (int i = 0; i < Neighbors.Length; i++) if (Neighbor(cell, Neighbors[i], out var n)) Enqueue(n);
             // 沙的目标可以在斜下方。只通知面邻居会让架在台阶上的沙看见一块永不开放的静水。
@@ -64,14 +68,46 @@ namespace Game.ElementField
         private void Enqueue(Vector3Int cell)
         {
             if (FindRegion(cell) < 0 || _queued.Contains(cell)) return;
+            if (_overflowPages.Count == 0 && _work.Count < _workLimit)
+            { _queued.Add(cell); _work.Enqueue(cell); return; }
+            Vector3Int pageKey = PageKey(cell);
+            ulong bit = 1UL << InPage(cell);
+            bool knownPage = _overflowPages.TryGetValue(pageKey, out WakePage overflow);
+            if ((overflow.Bits & bit) != 0) return;
             if (_work.Count < _workLimit) { _queued.Add(cell); _work.Enqueue(cell); return; }
-            // 溢出的候选一定来自原始盒表面或已经编辑的内部界面。恢复游标只重新访问这些面及编辑页。
+            // 优先保存实际唤醒的局部页，每页 64 个位共享一个队列项。普通的单点开挖突发不必启动全湖面恢复。
+            if (knownPage || _overflowPages.Count < _workLimit)
+            {
+                overflow.Bits |= bit;
+                _overflowPages[pageKey] = overflow;
+                if (!knownPage) _overflowOrder.Enqueue(pageKey);
+                return;
+            }
             RequestScan();
+        }
+
+        private Vector3Int TakeOverflow()
+        {
+            Vector3Int key = _overflowOrder.Dequeue();
+            WakePage page = _overflowPages[key];
+            int index = page.Next;
+            while ((page.Bits & (1UL << index)) == 0) index = (index + 1) & 63;
+            page.Bits &= ~(1UL << index);
+            if (page.Bits == 0) _overflowPages.Remove(key);
+            else
+            {
+                // 页间、页内分别轮转。持续写入低位地址也不能抢占同页高位的恢复机会。
+                page.Next = (index + 1) & 63;
+                _overflowPages[key] = page;
+                _overflowOrder.Enqueue(key);
+            }
+            return new Vector3Int((key.x << 2) + (index & 3), (key.y << 2) + ((index >> 2) & 3),
+                (key.z << 2) + (index >> 4));
         }
 
         private void RequestScan()
         {
-            if (_scanning) _scanAgain = true; else _scanning = true;
+            if (_scanning) { _scanAgain = true; _rescanEdits = true; } else _scanning = true;
         }
 
         private void Defer(Vector3Int cell)
@@ -89,9 +125,10 @@ namespace Game.ElementField
             int visited = 0;
             // 只取本轮开始前进入休眠的候选格；预算失败放回候选尾，不会一帧反复审批同一格。
             int sleepBudget = simulation.SleepingLiquidCandidateCount;
-            while (visited < budget && (_work.Count != 0 || _scanning || sleepBudget > 0))
+            while (visited < budget && (_work.Count != 0 || _overflowOrder.Count != 0 || _scanning || sleepBudget > 0))
             {
-                if (sleepBudget > 0 && (_preferSleep || _work.Count == 0 && !_scanning))
+                bool hasWork = _work.Count != 0 || _overflowOrder.Count != 0;
+                if (sleepBudget > 0 && (_preferSleep || !hasWork && !_scanning))
                 {
                     _preferSleep = false;
                     if (!simulation.TryTakeSleepingLiquid(out Vector3Int sleeping)) { sleepBudget = 0; continue; }
@@ -103,9 +140,11 @@ namespace Game.ElementField
                 }
                 _preferSleep = true;
                 Vector3Int cell;
-                if (_work.Count != 0 && (_preferWork || !_scanning))
+                if (hasWork && (_preferWork || !_scanning))
                 {
-                    cell = _work.Dequeue(); _queued.Remove(cell);
+                    if (_overflowOrder.Count != 0 && (_preferOverflow || _work.Count == 0))
+                    { cell = TakeOverflow(); _preferOverflow = false; }
+                    else { cell = _work.Dequeue(); _queued.Remove(cell); _preferOverflow = true; }
                 }
                 else if (!NextScan(out cell)) { _preferWork = true; visited++; continue; }
                 _preferWork = !_preferWork;
@@ -204,9 +243,13 @@ namespace Game.ElementField
 
         private bool NextScan(out Vector3Int cell)
         {
+            if (_scanPage >= _pages.Count && _rescanEdits)
+            { _scanPage = _scanBit = _scanNeighbor = 0; _rescanEdits = false; }
             // 初始逐步检查六个外表面。顶面只关心装配前已放好的砂/重液，敞开的平湖本身不会向上漏水。
-            if (_nextNewFace < _regions.Length * 6 || _border.Count != 0)
+            bool hasFace = _nextNewFace < _regions.Length * 6 || _border.Count != 0;
+            if (hasFace && (_scanPage >= _pages.Count || !_preferEdit))
             {
+                _preferEdit = true;
                 // 每个已配置区域和每个面先获得一次探测，再轮转长面的后续像素。
                 // 一个极大的封闭湖底不能让另一个区域的小开口等到整片湖底扫描完毕。
                 FaceCursor cursor;
@@ -232,6 +275,7 @@ namespace Game.ElementField
             }
             if (_scanPage < _pages.Count)
             {
+                _preferEdit = false;
                 Page page = _pages[_scanPage];
                 ulong bit = 1UL << _scanBit;
                 var source = new Vector3Int((page.Key.x << 2) + (_scanBit & 3),

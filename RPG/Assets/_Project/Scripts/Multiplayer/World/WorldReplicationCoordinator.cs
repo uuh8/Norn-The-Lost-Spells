@@ -35,7 +35,6 @@ namespace Game.Multiplayer
         private readonly WorldInterestCoordinator _interest=new WorldInterestCoordinator();
         private readonly bool[] _interestCompared=new bool[4];
         private readonly Bounds[] _comparedBounds=new Bounds[4];
-        private readonly ulong[] _comparedSequence=new ulong[4];
         private readonly WorldGridGeometry[] _geometry=new WorldGridGeometry[5];
         private readonly bool[] _hasGeometry=new bool[5];
         private struct Subscription { internal bool Known,Desired,Announced,AnnouncementKnown;internal ulong Epoch,AnnouncedEpoch,PendingEpoch; }
@@ -136,7 +135,13 @@ namespace Game.Multiplayer
                 _subscriptions=new Subscription[4,chunks];_peerAckHeaders=new WorldReplicationChunkStamp[4,chunks];
                 _liquidMotionRetainUntil=new double[4,chunks];
                 _peers=new WorldReplicationPeerState[4];
-                for(int i=0;i<4;i++)_peers[i]=new WorldReplicationPeerState(chunks,maxWords,WorldPageCodec.PageWords,quantityBytesPerSecond,quantityBurstBytes,maximumInFlight,maximumPagesPerRound);
+                _nearby=new WorldReplicationInterestIndex();_nearbyKeys=new List<WorldChunkKey>();
+                _tombstones=new SlotSet(chunks);_work=new PeerWork[4];
+                for(int i=0;i<4;i++)
+                {
+                    _work[i]=new PeerWork(chunks);
+                    _peers[i]=new WorldReplicationPeerState(chunks,maxWords,WorldPageCodec.PageWords,quantityBytesPerSecond,quantityBurstBytes,maximumInFlight,maximumPagesPerRound);
+                }
             }
             else
             {
@@ -175,7 +180,8 @@ namespace Game.Multiplayer
             }
             // 仅提交成功后复制可信几何，绝不能把失败capture留下的候选几何用于网络判交。
             for(int i=0;i<buffer.Header.GeometryCount;i++){var g=buffer.Geometries[i];_geometry[(int)g.Domain]=g;_hasGeometry[(int)g.Domain]=true;}
-            for(int slot=0;slot<4;slot++)if(_active[slot])RefreshSubscriptions(slot);
+            IndexCommittedChanges();
+            for(int slot=0;slot<4;slot++)if(_active[slot] && !RefreshSubscriptions(slot,true))return false;
             Captures++;
             return RetireReleasedAuthorityChunks();
         }
@@ -196,39 +202,6 @@ namespace Game.Multiplayer
                 _peers[slot].ConnectionId!=connectionId || _peers[slot].ConnectionEpoch!=epoch || !_interest.TrySetConnection(slot,connectionId,epoch,bounds))return false;
             return RefreshSubscriptions(slot);
         }
-        private bool RefreshSubscriptions(int slot)
-        {
-            var p=_peers[slot];if(!_interest.TryGetInterest(p.ConnectionId,p.ConnectionEpoch,out var bounds))return true;
-            // 角色仍在同一参考窗口、世界未变且没有等待 ACK/延时释放的 tombstone 时，
-            // 本次 Capture/发送轮沿用原订阅，静止的整图编辑历史不会每帧重做 Bounds 判交。
-            if(_owner.InactiveChunkCount==0 && _interestCompared[slot] && _comparedSequence[slot]==_owner.CommitSequence &&
-                _comparedBounds[slot].Equals(bounds))return true;
-            for(int i=0;i<_owner.ChunkCount;i++)
-            {
-                var header=_owner.GetChunkHeader(i);var key=header.Key;int d=(int)key.Domain;
-                if(!_hasGeometry[d])return Fail("Missing committed chunk geometry");
-                var g=_geometry[d];float edge=g.CellSize*g.ChunkSize;
-                Vector3 min=g.Origin+new Vector3(key.X,key.Y,key.Z)*edge;
-                // 远处玩家即使只看见原始基底，也必须先获得同一配置身份。其余块照常按权威位置订阅。
-                bool inside=key.Domain==WorldMaterialDomain.Cellular && key.X==0 && key.Y==0 && key.Z==0 ||
-                    _interest.Intersects(p.ConnectionId,p.ConnectionEpoch,new Bounds(min+Vector3.one*(edge*.5f),Vector3.one*edge));
-                ref var s=ref _subscriptions[slot,i];
-                // 删除仍需让已经订阅的Peer先安装精确tombstone；ACK后才排Leave。
-                // 从未发送过该地址的Peer没有旧量可清，不因一个历史空地址建立新订阅。
-                if(!header.IsResident && (!s.Known || TombstoneAcknowledged(slot,i,header) && !LiquidMotionRetains(slot,i)))inside=false;
-                if(!s.Known)
-                {s.Known=true;s.Epoch=0;s.Desired=inside;s.AnnouncementKnown=!inside;continue;}
-                if(s.Desired==inside)continue;
-                // 新Enter的身份在发送准备阶段按连接顺序分配。这里置0，保证快速Leave/重入
-                // 仍先撤销已公布旧代，而不会在Capture顺序中预分配乱序的全连接水位。
-                if(inside)s.Epoch=0;
-                s.Desired=inside;
-                s.PendingEpoch=0;
-                p.RequireBaseline(key);
-            }
-            _comparedBounds[slot]=bounds;_comparedSequence[slot]=_owner.CommitSequence;_interestCompared[slot]=true;
-            return true;
-        }
         public bool BindPeer(int slot,int connectionId,uint epoch)
         {
             if(!IsAuthority || _stopped || (uint)slot>=4 || connectionId<0 || epoch==0)return false;
@@ -239,7 +212,7 @@ namespace Game.Multiplayer
             p.Reset(connectionId,epoch);_active[slot]=true;_cursor[slot]=0;_peerAcks[slot]=0;
             _nextSubscriptionEpoch[slot]=0;
             _lastPeerAck[slot]=default;
-            _interestCompared[slot]=false;
+            _interestCompared[slot]=false;_work[slot].Clear();
             for(int i=0;i<_subscriptions.GetLength(1);i++){_subscriptions[slot,i]=default;_peerAckHeaders[slot,i]=default;_liquidMotionRetainUntil[slot,i]=0;}
             _resyncCount[slot]=0;_resyncWindow[slot]=double.NaN;return true;
         }
@@ -264,26 +237,20 @@ namespace Game.Multiplayer
             if(!IsAuthority || _stopped || Faulted || (uint)slot>=4 || !_active[slot] || !double.IsFinite(now))return false;
             var p=_peers[slot];if(p.PagesSentThisRound>=p.MaximumPagesPerRound || !_interest.TryGetInterest(p.ConnectionId,p.ConnectionEpoch,out _))return false;
             _preparedSlot=-1;
-            for(int i=0;i<_owner.ChunkCount;i++)
+            int lifecycle=_work[slot].Control.AtRank(0);
+            if(lifecycle>=0)
             {
-                ref var s=ref _subscriptions[slot,i];if(!s.Known)continue;
-                uint kind=0;ulong subscription=0;
-                if(!s.AnnouncementKnown)
-                {
-                    if(!s.Desired){s.AnnouncementKnown=true;s.Announced=false;continue;}
-                    kind=6;
-                }
-                else if(s.Announced && (!s.Desired || s.AnnouncedEpoch!=s.Epoch)){kind=7;subscription=s.AnnouncedEpoch;}
-                else if(s.Desired && (!s.Announced || s.AnnouncedEpoch!=s.Epoch)){kind=6;}
-                if(kind==0)continue;
+                SendCandidateChecks++;
+                ref var s=ref _subscriptions[slot,lifecycle];
+                uint kind=s.Announced?7u:6u;ulong subscription=s.AnnouncedEpoch;
                 if(kind==6)
                 {
                     if(_nextSubscriptionEpoch[slot]==ulong.MaxValue)return Fail("Subscription epoch exhausted");
                     // 编码/限流失败允许跳号；重试重新分配，实际进入可靠同通道的Enter严格单调。
                     subscription=++_nextSubscriptionEpoch[slot];s.Epoch=subscription;
                 }
-                FillLifecycle(_outbound,_owner.GetChunkHeader(i).Key,p.ConnectionEpoch,subscription,kind);
-                Prepare(slot,i,kind,subscription);message=_outbound;return true;
+                FillLifecycle(_outbound,_owner.GetChunkHeader(lifecycle).Key,p.ConnectionEpoch,subscription,kind);
+                Prepare(slot,lifecycle,kind,subscription);message=_outbound;return true;
             }
             // 每Key各有一份冻结正文；连接/订阅变化只撤销对应flight，不让另一块的ACK
             // 清掉本块或把新订阅号贴到旧正文上。数组固定上限4，不扩张总字节/每轮页预算。
@@ -292,18 +259,28 @@ namespace Game.Multiplayer
                 if(!p.TryGetPendingHeaderAt(flight,out var pendingHeader))continue;
                 int index=OwnerIndex(pendingHeader.Key);
                 if(index<0 || !Sendable(slot,index) || _subscriptions[slot,index].PendingEpoch!=_subscriptions[slot,index].Epoch)
-                {p.RequireBaseline(pendingHeader.Key);if(index>=0)_subscriptions[slot,index].PendingEpoch=0;}
+                {
+                    p.RequireBaseline(pendingHeader.Key);
+                    if(index>=0){_subscriptions[slot,index].PendingEpoch=0;SchedulePeer(slot,index,_owner.GetChunkHeader(index));}
+                }
             }
-            if(p.InFlightCount<p.MaximumInFlight && _owner.ChunkCount>0)
+            if(p.InFlightCount<p.MaximumInFlight && _work[slot].Quantity.Count>0)
             {
                 // 固定游标公平轮转，先把同一已提交World的不同Chunk冻结到空槽。
                 // 等某块安装ACK期间，其它块仍可发页；同Key直到ACK/恢复前保持串行，
                 // 不能为了追新Tick替换已冻结的一半正文。Client原有按Key assembler继续原子安装。
-                for(int scan=0;scan<_owner.ChunkCount && p.InFlightCount<p.MaximumInFlight;scan++)
+                var quantity=_work[slot].Quantity;
+                for(int remaining=quantity.Count;remaining>0 && quantity.Count>0 && p.InFlightCount<p.MaximumInFlight;remaining--)
                 {
-                    if(_cursor[slot]>=_owner.ChunkCount)_cursor[slot]=0;int index=_cursor[slot]++;
-                    if(Sendable(slot,index) && p.TryFreeze(_owner,_owner.GetChunkHeader(index).Key,now))
-                    {_subscriptions[slot,index].PendingEpoch=_subscriptions[slot,index].Epoch;ObservePeerTiming(slot,1);}
+                    int index=quantity.AtOrAfter(_cursor[slot]);if(index<0)index=quantity.AtRank(0);
+                    _cursor[slot]=index+1;SendCandidateChecks++;
+                    var current=_owner.GetChunkHeader(index);
+                    if(p.TryFreeze(_owner,current.Key,now))
+                    {
+                        quantity.Set(index,false);_subscriptions[slot,index].PendingEpoch=_subscriptions[slot,index].Epoch;
+                        ObservePeerTiming(slot,1);
+                    }
+                    else SchedulePeer(slot,index,current);
                 }
             }
             if(!p.HasPending)return false;
@@ -341,6 +318,7 @@ namespace Game.Multiplayer
                 if(!_peers[slot].TryMarkControlSent(now,encodedAndFramingBytes))
                 {ObservePeerTiming(slot,4,-1,encodedAndFramingBytes);return false;}
                 ref var s=ref _subscriptions[slot,_preparedIndex];s.AnnouncementKnown=true;s.Announced=_preparedKind==6;s.AnnouncedEpoch=_preparedEpoch;
+                SchedulePeer(slot,_preparedIndex,_owner.GetChunkHeader(_preparedIndex));
             }
             else if(!_peers[slot].TryMarkPageSent(now,encodedAndFramingBytes))
             {ObservePeerTiming(slot,4,-1,encodedAndFramingBytes);return false;}
@@ -367,7 +345,9 @@ namespace Game.Multiplayer
                 LastAcknowledged=h;Acknowledged++;_peerAcks[slot]++;
                 _subscriptions[slot,subscribed].PendingEpoch=0;
                 _lastPeerAck[slot]=Stamp(h,message.SubscriptionEpoch,actualConnection,actualEpoch);
-                _peerAckHeaders[slot,subscribed]=_lastPeerAck[slot];ObserveAcceptedControlTiming(h,message,actualConnection,actualEpoch,slot);return true;
+                _peerAckHeaders[slot,subscribed]=_lastPeerAck[slot];
+                SchedulePeer(slot,subscribed,_owner.GetChunkHeader(subscribed));
+                ObserveAcceptedControlTiming(h,message,actualConnection,actualEpoch,slot);return true;
             }
             if(message.Kind!=4 || !Budget(now,ref _resyncWindow[slot],ref _resyncCount[slot],4))return RejectControlTiming(message,actualConnection,actualEpoch,25);
             LastAcceptedResync=Stamp(h,message.SubscriptionEpoch,actualConnection,actualEpoch);
@@ -375,7 +355,7 @@ namespace Game.Multiplayer
             p.RequireBaseline(h.Key);
             _subscriptions[slot,subscribed].PendingEpoch=0;
             // 下一次仍从刚刚缺失的 Key 当前 Baseline 恢复，不等一次完整游标轮转。
-            for(int i=0;i<_owner.ChunkCount;i++)if(_owner.GetChunkHeader(i).Key==h.Key){_cursor[slot]=i;break;}
+            _cursor[slot]=subscribed;SchedulePeer(slot,subscribed,_owner.GetChunkHeader(subscribed));
             ObserveAcceptedControlTiming(h,message,actualConnection,actualEpoch,slot);
             return true;
         }

@@ -73,7 +73,7 @@ namespace Game.ElementField
         private int FindRegion(Vector3Int cell)
         {
             int authored = _index.Length == 0 ? -1 : Find(0, cell);
-            return authored >= 0 ? authored : FindCold(cell);
+            return authored >= 0 || _coldPages.Count == 0 ? authored : FindCold(cell);
         }
 
         /// <summary>通过作者区 BVH 与动态冷页索引找相交或相贴的区域，含面、棱、角。精确可见面由渲染器裁剪。</summary>

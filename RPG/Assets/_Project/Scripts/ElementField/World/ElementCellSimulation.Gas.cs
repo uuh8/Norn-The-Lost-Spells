@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Game.Materials;
 using UnityEngine;
 
@@ -16,8 +17,9 @@ namespace Game.ElementField
             if (_residentCount != 0 || _gasEnvironment != null) throw new InvalidOperationException("气体环境必须在初次投放前配置。");
             _gasEnvironment = new GasEnvironment(this,profile,origin,size,chunkSize,ventRate,dissipated);
         }
-        internal void BeginGasEnvironmentTick(float dt, ElementWorldActivityRegions regions, bool hasVents)
-            => _gasEnvironment?.Begin(dt,regions,hasVents);
+        internal void BeginGasEnvironmentTick(float dt, ElementWorldActivityRegions regions, bool hasVents, bool hasVentBounds = false)
+            => _gasEnvironment?.Begin(dt,regions,hasVents,hasVentBounds);
+        internal void WakeGasInBounds(Bounds bounds) => _gasEnvironment?.WakeInBounds(bounds);
         internal void StepGasDilution() => _gasEnvironment?.ClearDilute();
 
         private sealed partial class GasEnvironment
@@ -35,6 +37,7 @@ namespace Game.ElementField
             private float _dt;
             private bool _hasVents;
             private int _gasWork;
+            private readonly List<Vector3Int> _waiting = new List<Vector3Int>();
 
             internal GasEnvironment(ElementCellSimulation world, GasWorldProfile profile, Vector3 origin, float size,
                 int edge, Func<Vector3,MaterialId,double> vent, Action<MaterialId,ulong> consume)
@@ -66,11 +69,38 @@ namespace Game.ElementField
             private Vector3 Center(Vector3Int cell) => _origin+((Vector3)cell+Vector3.one*.5f)*_size;
             private bool Active(Vector3Int cell) => _domain==null || _domain.Contains(Center(cell));
 
+            internal bool TryBeginCell(Vector3Int cell)
+            {
+                if (_dt <= 0 || !Active(cell)) return false;
+                if (_gasWork > 0) { _gasWork--; return true; }
+                // 预算以格为单位，同格两种气体能在同一轮各用各的 GMU。未获预算的格保留本轮到达顺序，
+                // 下一轮优先于本轮已获预算且仍在累计分数通量的格，避免恒定队列排列造成饥饿。
+                _world._retry = true;
+                _waiting.Add(cell);
+                return false;
+            }
+
+            internal void PromoteWaitingCells()
+            {
+                for (int i = _waiting.Count - 1; i >= 0; i--)
+                {
+                    if (!_world._indices.TryGetValue(_waiting[i], out int index)) continue;
+                    ref Slot slot = ref _world._slots[index];
+                    if (!slot.Queued || _world._first == index) continue;
+                    _world.Unlink(index);
+                    slot.Queued = true;
+                    slot.Previous = -1;
+                    slot.Next = _world._first;
+                    _world._slots[_world._first].Previous = index;
+                    _world._first = index;
+                    _world._activeCount++;
+                }
+                _waiting.Clear();
+            }
+
             internal void Advance(Vector3Int cell, MaterialId material)
             {
-                if (_dt<=0 || !Active(cell) || !_byCell.TryGetValue(cell,out int slot)) return;
-                if (_gasWork<=0) { _world.Wake(cell); return; }
-                _gasWork--;
+                if (!_byCell.TryGetValue(cell,out int slot)) return;
                 int species=material==MaterialId.Steam?0:1;
                 var b=_behaviors[species];
                 int credit=slot*14+species*7;

@@ -7,6 +7,56 @@ namespace Game.ElementField.Tests
     public sealed class MaterialSolidGasWorldTests
     {
         [Test]
+        public void OneGasCellBudgetRotatesAcrossPersistentCellsAndIncludesBothSpecies()
+        {
+            var profile=ScriptableObject.CreateInstance<GasWorldProfile>();
+            try
+            {
+                GasSetting(profile,"_maximumCellsPerTick",1);
+                GasSetting(profile,"_materials",new[]{new GasMaterialBehavior {Material=MaterialId.Steam},
+                    new GasMaterialBehavior {Material=MaterialId.ToxicVapor}});
+                var a=Vector3Int.zero; var b=new Vector3Int(4,0,0);
+                var cells=new ElementCellSimulation(64,8,p=>p!=a && p!=b);
+                cells.ConfigureGasEnvironment(profile,Vector3.zero,1,4,(p,m)=>1,null);
+                Assert.IsTrue(cells.TryDeposit(a,MaterialId.Steam,20));
+                Assert.IsTrue(cells.TryDeposit(a,MaterialId.ToxicVapor,20));
+                Assert.IsTrue(cells.TryDeposit(b,MaterialId.ToxicVapor,20));
+                for (int t=0;t<4;t++) { cells.BeginGasEnvironmentTick(1,null,true,true); cells.Step(8); }
+                Assert.IsTrue(cells.TryGetQuantity(a,MaterialId.Steam,out uint steam) && steam==18);
+                Assert.IsTrue(cells.TryGetQuantity(a,MaterialId.ToxicVapor,out uint first) && first==18);
+                Assert.IsTrue(cells.TryGetQuantity(b,MaterialId.ToxicVapor,out uint second) && second==18);
+            }
+            finally { Object.DestroyImmediate(profile); }
+        }
+
+        [Test]
+        public void UnchangedVentDoesNotPollSleepingGasAndMovingVentWakesOnlyItsLocalPage()
+        {
+            var profile=ScriptableObject.CreateInstance<GasWorldProfile>();
+            try
+            {
+                GasSetting(profile,"_materials",new[]{new GasMaterialBehavior {Material=MaterialId.ToxicVapor}});
+                int probes=0; bool ventOpen=false;
+                var target=new Vector3Int(100,0,0); var other=new Vector3Int(500,0,0);
+                var cells=new ElementCellSimulation(64,8,p=>p!=target && p!=other);
+                cells.ConfigureGasEnvironment(profile,Vector3.zero,1,4,(p,m)=>{ probes++; return ventOpen?1:0; },null);
+                Assert.IsTrue(cells.TryDeposit(target,MaterialId.ToxicVapor,4));
+                Assert.IsTrue(cells.TryDeposit(other,MaterialId.ToxicVapor,4));
+                cells.BeginGasEnvironmentTick(1,null,true,true); cells.Step(8);
+                Assert.AreEqual(0,cells.ActiveCellCount); probes=0;
+                for (int i=0;i<4;i++) { cells.BeginGasEnvironmentTick(1,null,true,true); cells.Step(8); }
+                Assert.AreEqual(0,probes);
+                ventOpen=true;
+                cells.BeginGasEnvironmentTick(1,null,true,true);
+                cells.WakeGasInBounds(new Bounds((Vector3)target+Vector3.one*.5f,Vector3.zero)); cells.Step(8);
+                Assert.AreEqual(1,probes);
+                Assert.IsTrue(cells.TryGetQuantity(other,MaterialId.ToxicVapor,out uint unchanged) && unchanged==4);
+                Assert.AreEqual(1UL,cells.VentedGasQuantity(MaterialId.ToxicVapor));
+            }
+            finally { Object.DestroyImmediate(profile); }
+        }
+
+        [Test]
         public void CellularWindMovesOneRealUnitAndOnlyTheMatchingVentConsumesIt()
         {
             var profile=ScriptableObject.CreateInstance<GasWorldProfile>();
@@ -56,6 +106,53 @@ namespace Game.ElementField.Tests
 
         private static void GasSetting(GasWorldProfile profile,string field,object value) =>
             typeof(GasWorldProfile).GetField(field,System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance).SetValue(profile,value);
+
+        [Test]
+        public void StationaryDensePagesDoNotDelayAnEligibleThinPage()
+        {
+            var profile=ScriptableObject.CreateInstance<GasWorldProfile>();
+            try
+            {
+                GasSetting(profile,"_diluteMaximumCellGmu",1); GasSetting(profile,"_diluteDelaySeconds",1f);
+                GasSetting(profile,"_diluteChunksPerTick",1);
+                GasSetting(profile,"_materials",new[]{new GasMaterialBehavior {Material=MaterialId.Steam}});
+                var cells=new ElementCellSimulation(32,32,p=>p.y!=0 || p.z!=0 || p.x%4!=0);
+                cells.ConfigureGasEnvironment(profile,Vector3.zero,1,4,null,null);
+                for (int i=0;i<16;i++) Assert.IsTrue(cells.TryDeposit(new Vector3Int(i*4,0,0),MaterialId.Steam,2));
+                Assert.IsTrue(cells.TryDeposit(new Vector3Int(64,0,0),MaterialId.Steam,1));
+                for (int t=0;t<5;t++) { cells.BeginGasEnvironmentTick(.25f,null,false); cells.Step(32); cells.StepGasDilution(); }
+                Assert.AreEqual(1UL,cells.DissipatedGasQuantity(MaterialId.Steam));
+                Assert.AreEqual(32UL,cells.GetTotalQuantity(MaterialId.Steam));
+            }
+            finally { Object.DestroyImmediate(profile); }
+        }
+
+        [Test]
+        public void MovingADistantActivitySourceDoesNotStarveContinuouslyActiveThinPages()
+        {
+            var profile=ScriptableObject.CreateInstance<GasWorldProfile>();
+            try
+            {
+                GasSetting(profile,"_diluteMaximumCellGmu",1);
+                GasSetting(profile,"_diluteDelaySeconds",1f);
+                GasSetting(profile,"_diluteChunksPerTick",1);
+                GasSetting(profile,"_materials",new[]{new GasMaterialBehavior {Material=MaterialId.Steam}});
+                var cells=new ElementCellSimulation(32,8,p=>p.y!=0 || p.z!=0 || p.x%4!=0);
+                cells.ConfigureGasEnvironment(profile,Vector3.zero,1,4,null,null);
+                for (int i=0;i<3;i++) Assert.IsTrue(cells.TryDeposit(new Vector3Int(i*4,0,0),MaterialId.Steam,1));
+                var areas=new ElementWorldActivityRegions();
+                for (int t=0;t<24;t++)
+                {
+                    areas.Clear();
+                    areas.TryAdd(new Bounds(Vector3.zero,Vector3.one*40));
+                    areas.TryAdd(new Bounds(new Vector3(100+t,0,0),Vector3.one*2));
+                    cells.BeginGasEnvironmentTick(.25f,areas,false); cells.Step(8); cells.StepGasDilution();
+                }
+                Assert.AreEqual(3UL,cells.DissipatedGasQuantity(MaterialId.Steam));
+                Assert.AreEqual(0UL,cells.GetTotalQuantity(MaterialId.Steam));
+            }
+            finally { Object.DestroyImmediate(profile); }
+        }
 
         [Test]
         public void ThinGasFirstMovementHasNoFixedPreferredFaceAndConservesQuantity()

@@ -11,19 +11,18 @@ namespace Game.ElementField
         {
             // 原生 Terrain 只替换被修改的 holes texel；索引随该区域的高度图采样，而不是把整座山烘成方块。
             // 可开挖的平地则按稀疏编辑递归切长方体，挖第一个格不会生成数万个并排 Collider。
-            private GameObject BakePatch(Rect rect, Vector2Int key)
+            private GameObject BakePatch(Rect rect, Vector2Int key, bool includeEdits = true)
             {
-                var mesh = new SurfaceBuilder(_origin);
-                Vector3Int lo = Vector3Int.FloorToInt((Source.Bounds.min - _origin) / _size);
-                Vector3Int hi = Vector3Int.CeilToInt((Source.Bounds.max - _origin) / _size);
-                if (Source.Collider is BoxCollider) BuildBox(mesh, BoxTileCells(key));
+                var mesh = _meshWorkspace ??= new SurfaceBuilder(_origin, SystemInfo.graphicsDeviceType != GraphicsDeviceType.Null);
+                mesh.Clear();
+                if (Source.Collider is BoxCollider) BuildBox(mesh, SourceTileCells(key));
                 else
                 {
-                    lo.x = Mathf.FloorToInt((rect.xMin - _origin.x) / _size); lo.z = Mathf.FloorToInt((rect.yMin - _origin.z) / _size);
-                    hi.x = Mathf.CeilToInt((rect.xMax - _origin.x) / _size); hi.z = Mathf.CeilToInt((rect.yMax - _origin.z) / _size);
-                    var cuts = new List<int>();
-                    for (int z = lo.z; z < hi.z; z++)
-                    for (int x = lo.x; x < hi.x; x++)
+                    int xMin = Mathf.FloorToInt((rect.xMin - _origin.x) / _size), zMin = Mathf.FloorToInt((rect.yMin - _origin.z) / _size);
+                    int xMax = Mathf.CeilToInt((rect.xMax - _origin.x) / _size), zMax = Mathf.CeilToInt((rect.yMax - _origin.z) / _size);
+                    var cuts = _columnCuts;
+                    for (int z = zMin; z < zMax; z++)
+                    for (int x = xMin; x < xMax; x++)
                     {
                         var p = new Vector3Int(x, 0, z);
                         if (!Source.Column(p, _origin, _size, out var bottom, out var top)) continue;
@@ -32,16 +31,16 @@ namespace Game.ElementField
                         if (a >= b || c >= d) continue;
                         cuts.Clear();
                         int first = Mathf.FloorToInt((bottom - _origin.y) / _size), last = Mathf.CeilToInt((top - _origin.y) / _size);
-                        cuts.Add(first); cuts.Add(last);
-                        if (_columnEdits.TryGetValue(new Vector2Int(x,z), out var levels))
+                        cuts.Add(first);
+                        if (includeEdits && _columnEdits.TryGetValue(new Vector2Int(x,z), out var levels))
                             foreach (var y in levels)
                                 if (y >= first && y < last) { cuts.Add(y); cuts.Add(y + 1); }
-                        cuts.Sort();
+                        cuts.Add(last);
                         for (int i = 1; i < cuts.Count; i++)
                         {
                             if (cuts[i] <= cuts[i-1]) continue;
                             p.y = cuts[i-1];
-                            MaterialId material = Edits.TryGetValue(p, out var value) ? value : Source.Material;
+                            MaterialId material = includeEdits && Edits.TryGetValue(p, out var value) ? value : Source.Material;
                             if (material == MaterialId.Empty) continue;
                             float floor = Mathf.Max(bottom, _origin.y + p.y * _size);
                             float ceil = _origin.y + cuts[i] * _size;
@@ -65,7 +64,8 @@ namespace Game.ElementField
                     if (SystemInfo.graphicsDeviceType != GraphicsDeviceType.Null)
                     {
                         go.AddComponent<MeshFilter>().sharedMesh = data;
-                        go.AddComponent<MeshRenderer>().sharedMaterials = new[] { Surface(MaterialId.Rock), Surface(MaterialId.Soil) };
+                        _surfaces ??= new[] { Surface(MaterialId.Rock), Surface(MaterialId.Soil) };
+                        go.AddComponent<MeshRenderer>().sharedMaterials = _surfaces;
                     }
                     return go;
                 }
@@ -122,7 +122,9 @@ namespace Game.ElementField
             private readonly List<Vector2> _uv = new List<Vector2>();
             private readonly List<int>[] _triangles = { new List<int>(), new List<int>() };
             private readonly Vector3 _origin;
-            internal SurfaceBuilder(Vector3 origin) { _origin = origin; }
+            private readonly bool _visual;
+            internal SurfaceBuilder(Vector3 origin, bool visual) { _origin = origin; _visual = visual; }
+            internal void Clear() { Vertices.Clear(); _uv.Clear(); _triangles[0].Clear(); _triangles[1].Clear(); }
             internal void Prism(float x0, float x1, float z0, float z1, float bottom, float h0, float h1, float h2, float h3, MaterialId material)
             {
                 int m = material == MaterialId.Rock ? 0 : 1;
@@ -135,17 +137,21 @@ namespace Game.ElementField
             {
                 int n = Vertices.Count;
                 Vertices.Add(a-_origin); Vertices.Add(b-_origin); Vertices.Add(c-_origin); Vertices.Add(d-_origin);
-                float u = Mathf.Max(.01f, Vector3.Distance(a,b)), v = Mathf.Max(.01f, Vector3.Distance(a,d));
-                _uv.Add(Vector2.zero); _uv.Add(new Vector2(u,0)); _uv.Add(new Vector2(u,v)); _uv.Add(new Vector2(0,v));
+                if (_visual)
+                {
+                    float u = Mathf.Max(.01f, Vector3.Distance(a,b)), v = Mathf.Max(.01f, Vector3.Distance(a,d));
+                    _uv.Add(Vector2.zero); _uv.Add(new Vector2(u,0)); _uv.Add(new Vector2(u,v)); _uv.Add(new Vector2(0,v));
+                }
                 var indices = _triangles[m];
                 indices.Add(n); indices.Add(n+1); indices.Add(n+2); indices.Add(n); indices.Add(n+2); indices.Add(n+3);
             }
             internal Mesh Create()
             {
                 var mesh = new Mesh { name = "Editable map terrain", hideFlags = HideFlags.DontSave, indexFormat = IndexFormat.UInt32 };
-                mesh.SetVertices(Vertices); mesh.SetUVs(0,_uv); mesh.subMeshCount = 2;
-                mesh.SetTriangles(_triangles[0],0); mesh.SetTriangles(_triangles[1],1);
-                mesh.RecalculateNormals(); mesh.RecalculateBounds(); return mesh;
+                mesh.SetVertices(Vertices); mesh.subMeshCount = 2;
+                mesh.SetTriangles(_triangles[0],0,false); mesh.SetTriangles(_triangles[1],1,false);
+                if (_visual) { mesh.SetUVs(0,_uv); mesh.RecalculateNormals(); }
+                mesh.RecalculateBounds(); return mesh;
             }
         }
     }

@@ -1,5 +1,6 @@
 using Game.Materials;
 using System;
+using System.Collections.Generic;
 using Game.Combat;
 using Unity.Profiling;
 using UnityEngine;
@@ -42,6 +43,7 @@ namespace Game.ElementField
         };
 
         private readonly ElementWorldChunk[] _simulationChunks;
+        private readonly HashSet<ElementChunkKey> _seen;
         private readonly ElementBoundaryNeighborPlanner _neighborPlanner;
         private readonly MaterialReactionCatalogSnapshot _reactionCatalog;
         private readonly int _settleAfterUnchangedTicks;
@@ -60,6 +62,7 @@ namespace Game.ElementField
 
             // Runtime 初始化时一次性分配；固定 Tick 中只覆盖引用，不创建 List/Array。
             _simulationChunks = new ElementWorldChunk[maximumResidentChunks];
+            _seen = new HashSet<ElementChunkKey>(maximumResidentChunks);
             _neighborPlanner = new ElementBoundaryNeighborPlanner(maximumResidentChunks);
             _settleAfterUnchangedTicks = settleAfterUnchangedTicks;
         }
@@ -96,7 +99,7 @@ namespace Game.ElementField
                         settings.MaxFireDownFlowPerTick,settings.SimulateCellWater);
                 }
             }
-            SortSimulationChunks();
+            ElementWorldChunk.SortByKey(_simulationChunks, _simulationChunkCount);
 
             var stats = new ElementFieldSimulationStats();
             if (settings.SimulateCellWater)
@@ -110,21 +113,31 @@ namespace Game.ElementField
             }
             // HasFire由离散写入/上次Tick提交维护。无火时整段复制/清Delta/扫描/交换都是空工作。
             // 用本Tick开始的保守快照：有火时即使下落到新Chunk，也不能漏掉接收端的衰减。
-            bool hasFire=false;
-            for(int i=0;i<_simulationChunkCount;i++)hasFire|=_simulationChunks[i].HasFire;
-            if(hasFire && settings.MaxFireDownFlowPerTick>0)
-                using(FireFallMarker.Auto())RunFireFallStage(settings.MaxFireDownFlowPerTick);
-            if(hasFire)
-                using (FireDecayMarker.Auto())
-                    RunFireDecayStage(settings.FireDecayPerTick, ref stats);
+            if (!settings.SimulateCellWater)
+            {
+                if (settings.MaxFireDownFlowPerTick != 0)
+                    using (FireFallMarker.Auto()) FallIndexedFire(settings.MaxFireDownFlowPerTick);
+                if (settings.FireDecayPerTick != 0)
+                    using (FireDecayMarker.Auto()) DecayIndexedFire(settings.FireDecayPerTick, ref stats);
+            }
+            else
+            {
+                bool hasFire = false;
+                for (int i = 0; i < _simulationChunkCount; i++) hasFire |= _simulationChunks[i].HasFire;
+                if (hasFire && settings.MaxFireDownFlowPerTick > 0)
+                    using (FireFallMarker.Auto()) RunFireFallStage(settings.MaxFireDownFlowPerTick);
+                if (hasFire)
+                    using (FireDecayMarker.Auto()) RunFireDecayStage(settings.FireDecayPerTick, ref stats);
+            }
 
             using (CommitMarker.Auto())
             {
                 for (int i = 0; i < _simulationChunkCount; i++)
                 {
                     ElementWorldChunk chunk = _simulationChunks[i];
-                    chunk.RefreshNonEmptyCellCount();
+                    if (settings.SimulateCellWater) chunk.RefreshNonEmptyCellCount();
                     int changedCellCount = chunk.Grid.CommitDirtyVersions();
+                    if (changedCellCount > 0) chunk.NotifyMaterialChanged();
                     chunk.RecordSimulationResult(
                         changedCellCount,
                         _settleAfterUnchangedTicks);
@@ -166,10 +179,11 @@ namespace Game.ElementField
             int activeChunkCount)
         {
             int copied = 0;
+            _seen.Clear();
             for (int i = 0; i < activeChunkCount && copied < _simulationChunks.Length; i++)
             {
                 ElementWorldChunk candidate = activeChunks[i];
-                if (candidate == null || ContainsUnsorted(candidate.Key, copied))
+                if (candidate == null || !_seen.Add(candidate.Key))
                     continue;
 
                 candidate.ActivityState = ElementChunkActivityState.Active;
@@ -179,43 +193,6 @@ namespace Game.ElementField
             return copied;
         }
 
-        private bool ContainsUnsorted(ElementChunkKey key, int count)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                if (_simulationChunks[i].Key == key)
-                    return true;
-            }
-
-            return false;
-        }
-
-        private void SortSimulationChunks()
-        {
-            // Dictionary 的枚举顺序不是 Gameplay 契约。这里用无分配 Insertion Sort 固定为 Z→Y→X，
-            // 后续同样的 Local Z→Y→X 遍历便会产生稳定的离散余数和反应顺序。
-            for (int i = 1; i < _simulationChunkCount; i++)
-            {
-                ElementWorldChunk value = _simulationChunks[i];
-                int insert = i - 1;
-                while (insert >= 0 && CompareKeys(_simulationChunks[insert].Key, value.Key) > 0)
-                {
-                    _simulationChunks[insert + 1] = _simulationChunks[insert];
-                    insert--;
-                }
-
-                _simulationChunks[insert + 1] = value;
-            }
-        }
-
-        private static int CompareKeys(ElementChunkKey a, ElementChunkKey b)
-        {
-            int z = a.Z.CompareTo(b.Z);
-            if (z != 0)
-                return z;
-            int y = a.Y.CompareTo(b.Y);
-            return y != 0 ? y : a.X.CompareTo(b.X);
-        }
 
         private void RunReactionStage(
             float deltaTime,
@@ -518,6 +495,51 @@ namespace Game.ElementField
             }
         }
 
+        // 只有正下方能接收火。同一列按世界 Y 从小到大处理（Chunk 和格内均为 Z/Y/X 顺序）。
+        // 接收格已走完自己的下落，源格还未收到上方的火。就地转移与先预约再提交有相同结果，
+        // 也保留了下方先腾出容量的行为。液体/火混用旧 Double Buffer 的模式仍走原 Stage。
+        private void FallIndexedFire(byte maximum)
+        {
+            for (int c = 0; c < _simulationChunkCount; c++)
+            {
+                var source = _simulationChunks[c];
+                for (int i = source.NextFireIndex(0); i >= 0; i = source.NextFireIndex(i + 1))
+                {
+                    var local = ElementFieldCoordinates.FromIndex(i, source.Grid.Dimensions);
+                    if ((long)source.Key.Y * source.ChunkSize + local.y <= int.MinValue ||
+                        !TryResolveNeighbor(source, local, Vector3Int.down, out var target, out var below)) continue;
+                    int ti = ElementFieldCoordinates.ToIndex(below, target.Grid.Dimensions);
+                    var existing = target.CurrentCells[ti];
+                    if (target.BlocksMaterial(ti, below) || !existing.IsEmpty && existing.MaterialKind != MaterialId.Fire) continue;
+                    int remaining = source.CurrentCells[i].Amount;
+                    int original = existing.IsEmpty ? 0 : existing.Amount;
+                    int moved = Math.Min(maximum, Math.Min(remaining, byte.MaxValue - original));
+                    if (moved == 0) continue;
+                    WriteFire(source, i, remaining - moved);
+                    WriteFire(target, ti, original + moved);
+                }
+            }
+        }
+
+        private void DecayIndexedFire(byte decay, ref ElementFieldSimulationStats stats)
+        {
+            for (int c = 0; c < _simulationChunkCount; c++)
+            {
+                var chunk = _simulationChunks[c];
+                for (int i = chunk.NextFireIndex(0); i >= 0; i = chunk.NextFireIndex(i + 1))
+                {
+                    WriteFire(chunk, i, Math.Max(0, chunk.CurrentCells[i].Amount - decay));
+                    stats.FireCellsDecayed++;
+                }
+            }
+        }
+
+        private static void WriteFire(ElementWorldChunk chunk, int index, int amount)
+        {
+            chunk.WriteCell(index, amount == 0 ? default : new ElementCell(MaterialId.Fire, (byte)amount));
+            chunk.Grid.MarkCellDirty(index);
+        }
+
         private void RunFireFallStage(byte maximum)
         {
             PrepareStage();
@@ -657,7 +679,7 @@ namespace Game.ElementField
             {
                 int middle = low + ((high - low) >> 1);
                 ElementWorldChunk candidate = _simulationChunks[middle];
-                int comparison = CompareKeys(candidate.Key, key);
+                int comparison = ElementWorldChunk.CompareKeys(candidate.Key, key);
                 if (comparison == 0)
                 {
                     chunk = candidate;

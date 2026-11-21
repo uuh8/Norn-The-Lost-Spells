@@ -55,6 +55,8 @@ namespace Game.ElementField
             { Vector3Int.up, Vector3Int.down, Vector3Int.right, Vector3Int.forward, Vector3Int.left, Vector3Int.back };
 
         private readonly Func<Vector3Int, bool> _isBlocked;
+        private ICellularRestingLiquidReadOnly _restingMaterials;
+        internal void BindRestingMaterials(ICellularRestingLiquidReadOnly materials) => _restingMaterials = materials;
         private readonly ElementCellMaterialRules.Transport _transport;
         private readonly Dictionary<Vector3Int, int> _indices;
         private readonly Slot[] _slots;
@@ -175,7 +177,11 @@ namespace Game.ElementField
                     visited++;
                 }
             }
-            finally { _stepping = false; }
+            finally
+            {
+                _gasEnvironment?.PromoteWaitingCells();
+                _stepping = false;
+            }
             return visited;
         }
 
@@ -204,6 +210,13 @@ namespace Game.ElementField
         {
             if (!_indices.TryGetValue(cell, out int index)) return;
             ref Slot slot = ref _slots[index];
+            if (slot.Value.Steam == 0 && slot.Value.Vapor == 0 && ElementCellMaterialRules.Motion(slot.Value.Bulk) == ElementCellMotion.Fixed)
+            {
+                // 固定主材没有运动步。冰、满格干黏液刚产生时就可交给冷页；反复收到相邻唤醒也保留其候选顺序。
+                Unlink(index);
+                QueueSleepingLiquid(cell);
+                return;
+            }
             RemoveSleepingLiquid(index);
             if (slot.Queued)
             {
@@ -212,8 +225,6 @@ namespace Game.ElementField
                 if (_stepping && slot.QueuedStep != _step) slot.RevisitStep = _step;
                 return;
             }
-            if (slot.Value.Steam == 0 && slot.Value.Vapor == 0 && ElementCellMaterialRules.Motion(slot.Value.Bulk) == ElementCellMotion.Fixed)
-                return;
             slot.Queued = true;
             slot.QueuedStep = _step;
             slot.Previous = _last;
